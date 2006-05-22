@@ -1,0 +1,38 @@
+package com.aoindustries.aoserv.client;
+
+/*
+ * Copyright 2001-2006 by AO Industries, Inc.,
+ * 2200 Dogwood Ct N, Mobile, Alabama, 36693, U.S.A.
+ * All rights reserved.
+ */
+import java.io.*;
+import java.sql.*;
+import java.util.*;
+
+/**
+ * @version  1.0a
+ *
+ * @author  AO Industries, Inc.
+ */
+final public class SRDiskSpaceTable extends ServerReportSectionTable<SRDiskSpace> {
+
+    SRDiskSpaceTable(AOServConnector connector) {
+	super(connector, SRDiskSpace.class);
+    }
+
+    public SRDiskSpace get(Object pkey) {
+        return get(((Integer)pkey).intValue());
+    }
+
+    public SRDiskSpace get(int pkey) {
+	return getUniqueRow(SRDiskSpace.COLUMN_PKEY, pkey);
+    }
+
+    List<SRDiskSpace> getSRDiskSpaces(ServerReport sr) {
+        return getIndexedRows(SRDiskSpace.COLUMN_SERVER_REPORT, sr.pkey);
+    }
+
+    int getTableID() {
+	return SchemaTable.SR_DISK_SPACE;
+    }
+}

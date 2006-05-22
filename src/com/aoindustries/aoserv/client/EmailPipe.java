@@ -1,0 +1,139 @@
+package com.aoindustries.aoserv.client;
+
+/*
+ * Copyright 2000-2006 by AO Industries, Inc.,
+ * 2200 Dogwood Ct N, Mobile, Alabama, 36693, U.S.A.
+ * All rights reserved.
+ */
+import com.aoindustries.io.*;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.sql.*;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Incoming email addressed to an <code>EmailPipe</code> is piped
+ * into a native process.  This process may then take any action
+ * desired for mail delivery or handling.
+ *
+ * @see  EmailAddress
+ *
+ * @version  1.0a
+ *
+ * @author  AO Industries, Inc.
+ */
+final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implements Removable, Disablable {
+
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_AO_SERVER=1,
+        COLUMN_PACKAGE=3
+    ;
+
+    int ao_server;
+    private String path;
+    String packageName;
+    int disable_log;
+
+    public int addEmailAddress(EmailAddress address) {
+	return table.connector.emailPipeAddresses.addEmailPipeAddress(address, this);
+    }
+
+    public boolean canDisable() {
+        return disable_log==-1;
+    }
+    
+    public boolean canEnable() {
+        DisableLog dl=getDisableLog();
+        if(dl==null) return false;
+        else return dl.canEnable() && getPackage().disable_log==-1;
+    }
+
+    public void disable(DisableLog dl) {
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.EMAIL_PIPES, dl.pkey, pkey);
+    }
+    
+    public void enable() {
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.EMAIL_PIPES, pkey);
+    }
+
+    public Object getColumn(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
+            case 2: return path;
+            case COLUMN_PACKAGE: return packageName;
+            case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public DisableLog getDisableLog() {
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        return obj;
+    }
+
+    public Package getPackage() {
+	Package packageObject = table.connector.packages.get(packageName);
+	if (packageObject == null) throw new WrappedException(new SQLException("Unable to find Package: " + packageName));
+	return packageObject;
+    }
+
+    public String getPath() {
+	return path;
+    }
+
+    public AOServer getAOServer() {
+        AOServer ao=table.connector.aoServers.get(ao_server);
+        if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+        return ao;
+    }
+
+    protected int getTableIDImpl() {
+	return SchemaTable.EMAIL_PIPES;
+    }
+
+    void initImpl(ResultSet result) throws SQLException {
+	pkey = result.getInt(1);
+	ao_server = result.getInt(2);
+	path = result.getString(3);
+	packageName = result.getString(4);
+        disable_log=result.getInt(5);
+        if(result.wasNull()) disable_log=-1;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readCompressedInt();
+	ao_server=in.readCompressedInt();
+	path=in.readUTF();
+	packageName=in.readUTF();
+        disable_log=in.readCompressedInt();
+    }
+
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
+        return Collections.emptyList();
+    }
+
+    public void remove() {
+	table.connector.requestUpdateIL(
+            AOServProtocol.REMOVE,
+            SchemaTable.EMAIL_PIPES,
+            pkey
+	);
+    }
+
+    String toStringImpl() {
+	return ao_server+':'+path;
+    }
+
+    public void write(CompressedDataOutputStream out, String version) throws IOException {
+	out.writeCompressedInt(pkey);
+	out.writeCompressedInt(ao_server);
+	out.writeUTF(path);
+	out.writeUTF(packageName);
+        out.writeCompressedInt(disable_log);
+    }
+}

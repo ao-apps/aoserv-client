@@ -1,0 +1,115 @@
+package com.aoindustries.aoserv.client;
+
+/*
+ * Copyright 2001-2006 by AO Industries, Inc.,
+ * 2200 Dogwood Ct N, Mobile, Alabama, 36693, U.S.A.
+ * All rights reserved.
+ */
+import com.aoindustries.io.*;
+import com.aoindustries.profiler.*;
+import com.aoindustries.util.WrappedException;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
+
+/**
+ * @see  LinuxGroup
+ *
+ * @version  1.0a
+ *
+ * @author  AO Industries, Inc.
+ */
+final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
+
+    LinuxGroupTable(AOServConnector connector) {
+	super(connector, LinuxGroup.class);
+    }
+
+    void addLinuxGroup(String name, Package packageObject, String type) {
+        Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupTable.class, "addLinuxGroup(String,Package)", null);
+        try {
+            connector.requestUpdateIL(
+                AOServProtocol.ADD,
+                SchemaTable.LINUX_GROUPS,
+                name,
+                packageObject.name,
+                type
+            );
+        } finally {
+            Profiler.endProfile(Profiler.UNKNOWN);
+        }
+    }
+
+    public LinuxGroup get(Object pkey) {
+	return getUniqueRow(LinuxGroup.COLUMN_NAME, pkey);
+    }
+
+    List<LinuxGroup> getLinuxGroups(Package pack) {
+        return getIndexedRows(LinuxGroup.COLUMN_PACKAGE, pack.name);
+    }
+
+    int getTableID() {
+        return SchemaTable.LINUX_GROUPS;
+    }
+
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+        Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupTable.class, "handleCommand(String[],InputStream,TerminalWriter,TerminalWriter,boolean)", null);
+        try {
+            String command=args[0];
+            if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_GROUP)) {
+                if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_GROUP, args, 3, err)) {
+                    connector.simpleAOClient.addLinuxGroup(
+                        args[1],
+                        args[2],
+                        args[3]
+                    );
+                }
+                return true;
+            } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_LINUX_GROUP_NAME)) {
+                if(AOSH.checkParamCount(AOSHCommand.CHECK_LINUX_GROUP_NAME, args, 1, err)) {
+                    try {
+                        SimpleAOClient.checkLinuxGroupname(args[1]);
+                        out.println("true");
+                    } catch(IllegalArgumentException iae) {
+                        out.print("aosh: "+AOSHCommand.CHECK_LINUX_GROUP_NAME+": ");
+                        out.println(iae.getMessage());
+                    }
+                    out.flush();
+                }
+                return true;
+            } else if(command.equalsIgnoreCase(AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE)) {
+                if(AOSH.checkParamCount(AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE, args, 1, err)) {
+                    try {
+                        out.println(connector.simpleAOClient.isLinuxGroupNameAvailable(args[1]));
+                        out.flush();
+                    } catch(IllegalArgumentException iae) {
+                        err.print("aosh: "+AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE+": ");
+                        err.println(iae.getMessage());
+                        err.flush();
+                    }
+                }
+                return true;
+            } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_GROUP)) {
+                if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_GROUP, args, 1, err)) {
+                    connector.simpleAOClient.removeLinuxGroup(
+                        args[1]
+                    );
+                }
+                return true;
+            }
+            return false;
+        } finally {
+            Profiler.endProfile(Profiler.UNKNOWN);
+        }
+    }
+
+    public boolean isLinuxGroupNameAvailable(String groupname) {
+        Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupTable.class, "isLinuxGroupNameAvailable(String)", null);
+        try {
+            if(!LinuxGroup.isValidGroupname(groupname)) throw new WrappedException(new SQLException("Invalid groupname: "+groupname));
+            return connector.requestBooleanQuery(AOServProtocol.IS_LINUX_GROUP_NAME_AVAILABLE, groupname);
+        } finally {
+            Profiler.endProfile(Profiler.UNKNOWN);
+        }
+    }
+}

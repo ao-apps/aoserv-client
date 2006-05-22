@@ -1,0 +1,29 @@
+package com.aoindustries.aoserv.client;
+
+/*
+ * Copyright 2001-2006 by AO Industries, Inc.,
+ * 2200 Dogwood Ct N, Mobile, Alabama, 36693, U.S.A.
+ * All rights reserved.
+ */
+
+/**
+ * @see  PostgresReservedWord
+ *
+ * @version  1.0a
+ *
+ * @author  AO Industries, Inc.
+ */
+final public class PostgresReservedWordTable extends GlobalTableStringKey<PostgresReservedWord> {
+
+    PostgresReservedWordTable(AOServConnector connector) {
+	super(connector, PostgresReservedWord.class);
+    }
+
+    public PostgresReservedWord get(Object pkey) {
+	return getUniqueRow(PostgresReservedWord.COLUMN_WORD, pkey);
+    }
+
+    int getTableID() {
+	return SchemaTable.POSTGRES_RESERVED_WORDS;
+    }
+}

@@ -1,0 +1,303 @@
+package com.aoindustries.aoserv.client;
+
+/*
+ * Copyright 2000-2006 by AO Industries, Inc.,
+ * 2200 Dogwood Ct N, Mobile, Alabama, 36693, U.S.A.
+ * All rights reserved.
+ */
+import com.aoindustries.io.*;
+import com.aoindustries.sql.*;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
+
+/**
+ * A <code>MySQLServerUser</code> grants a <code>MySQLUser</code> access
+ * to an <code>AOServer</code>.  Once access is granted to the <code>Server</code>,
+ * access may then be granted to individual <code>MySQLDatabase</code>s via
+ * <code>MySQLDBUser</code>s.
+ *
+ * @see  MySQLUser
+ * @see  MySQLDatabase
+ * @see  MySQLDBUser
+ * @see  MySQLServer
+ *
+ * @version  1.0a
+ *
+ * @author  AO Industries, Inc.
+ */
+final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUser> implements Removable, PasswordProtected, Disablable {
+
+    public static final int
+        UNLIMITED_QUESTIONS=0,
+        DEFAULT_MAX_QUESTIONS=UNLIMITED_QUESTIONS
+    ;
+
+    public static final int
+        UNLIMITED_UPDATES=0,
+        DEFAULT_MAX_UPDATES=UNLIMITED_UPDATES
+    ;
+
+    public static final int
+        UNLIMITED_CONNECTIONS=0,
+        DEFAULT_MAX_CONNECTIONS=UNLIMITED_CONNECTIONS
+    ;
+
+    public static final int
+        UNLIMITED_USER_CONNECTIONS=0,
+        DEFAULT_MAX_USER_CONNECTIONS=UNLIMITED_USER_CONNECTIONS
+    ;
+
+    public static final int MAX_HOST_LENGTH=60;
+
+    /**
+     * Convenience constants for the most commonly used host values.
+     */
+    public static final String
+        ANY_HOST="%",
+        ANY_LOCAL_HOST=null
+    ;
+
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_USERNAME=1,
+        COLUMN_MYSQL_SERVER=2
+    ;
+
+    String username;
+    int mysql_server;
+    String host;
+    int disable_log;
+    private String predisable_password;
+    int max_questions;
+    int max_updates;
+    int max_connections;
+    int max_user_connections;
+
+    public int arePasswordsSet() {
+        return table.connector.requestBooleanQuery(AOServProtocol.IS_MYSQL_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+    }
+
+    public boolean canDisable() {
+        return disable_log==-1;
+    }
+    
+    public boolean canEnable() {
+        DisableLog dl=getDisableLog();
+        if(dl==null) return false;
+        else return dl.canEnable() && getMySQLUser().disable_log==-1;
+    }
+
+    public String[] checkPassword(String password) {
+	return MySQLUser.checkPassword(username, password);
+    }
+
+    public String checkPasswordDescribe(String password) {
+	return MySQLUser.checkPasswordDescribe(username, password);
+    }
+
+    public void disable(DisableLog dl) {
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.MYSQL_SERVER_USERS, dl.pkey, pkey);
+    }
+    
+    public void enable() {
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.MYSQL_SERVER_USERS, pkey);
+    }
+
+    public Object getColumn(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_USERNAME: return username;
+            case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
+            case 3: return host;
+            case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 5: return predisable_password;
+            case 6: return max_questions;
+            case 7: return max_updates;
+            case 8: return max_connections;
+            case 9: return max_user_connections;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public DisableLog getDisableLog() {
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        return obj;
+    }
+
+    public String getHost() {
+	return host;
+    }
+
+    public List<MySQLDBUser> getMySQLDBUsers() {
+        return table.connector.mysqlDBUsers.getMySQLDBUsers(this);
+    }
+
+    public MySQLUser getMySQLUser() {
+	MySQLUser obj=table.connector.mysqlUsers.get(username);
+	if(obj==null) throw new WrappedException(new SQLException("Unable to find MySQLUser: "+username));
+	return obj;
+    }
+
+    public String getPredisablePassword() {
+        return predisable_password;
+    }
+
+    public int getMaxQuestions() {
+        return max_questions;
+    }
+    
+    public int getMaxUpdates() {
+        return max_updates;
+    }
+
+    public int getMaxConnections() {
+        return max_connections;
+    }
+    
+    public int getMaxUserConnections() {
+        return max_user_connections;
+    }
+
+    public MySQLServer getMySQLServer(){
+        // May be filtered
+	return table.connector.mysqlServers.get(mysql_server);
+    }
+
+    protected int getTableIDImpl() {
+	return SchemaTable.MYSQL_SERVER_USERS;
+    }
+
+    void initImpl(ResultSet result) throws SQLException {
+	pkey=result.getInt(1);
+	username=result.getString(2);
+	mysql_server=result.getInt(3);
+	host=result.getString(4);
+        disable_log=result.getInt(5);
+        if(result.wasNull()) disable_log=-1;
+        predisable_password=result.getString(6);
+        max_questions=result.getInt(7);
+        max_updates=result.getInt(8);
+        max_connections=result.getInt(9);
+        max_user_connections=result.getInt(10);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readCompressedInt();
+	username=in.readUTF();
+	mysql_server=in.readCompressedInt();
+        host=readNullUTF(in);
+        disable_log=in.readCompressedInt();
+        predisable_password=readNullUTF(in);
+        max_questions=in.readCompressedInt();
+        max_updates=in.readCompressedInt();
+        max_connections=in.readCompressedInt();
+        max_user_connections=in.readCompressedInt();
+    }
+
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
+        List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+        if(username.equals(MySQLUser.ROOT)) reasons.add(new CannotRemoveReason<MySQLServerUser>("Not allowed to remove the "+MySQLUser.ROOT+" MySQL user", this));
+        return reasons;
+    }
+
+    public void remove() {
+	table.connector.requestUpdateIL(
+            AOServProtocol.REMOVE,
+            SchemaTable.MYSQL_SERVER_USERS,
+            pkey
+	);
+    }
+
+    public void setPassword(String password) {
+        try {
+            AOServConnector connector=table.connector;
+            if(!connector.isSecure()) throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+
+            AOServConnection connection=connector.getConnection();
+            try {
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(AOServProtocol.SET_MYSQL_SERVER_USER_PASSWORD);
+                out.writeCompressedInt(pkey);
+                writeNullUTF(out, password);
+                out.flush();
+
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code!=AOServProtocol.DONE) {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
+                }
+            } catch(IOException err) {
+                connection.close();
+                throw err;
+            } finally {
+                connector.releaseConnection(connection);
+            }
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public void setPredisablePassword(String password) {
+        try {
+            IntList invalidateList;
+            AOServConnector connector=table.connector;
+            AOServConnection connection=connector.getConnection();
+            try {
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(AOServProtocol.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD);
+                out.writeCompressedInt(pkey);
+                writeNullUTF(out, password);
+                out.flush();
+
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                else {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
+                }
+            } catch(IOException err) {
+                connection.close();
+                throw err;
+            } finally {
+                connector.releaseConnection(connection);
+            }
+            connector.tablesUpdated(invalidateList);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    String toStringImpl() {
+        return username+" on "+getMySQLServer().toString();
+    }
+
+    public void write(CompressedDataOutputStream out, String version) throws IOException {
+	out.writeCompressedInt(pkey);
+	out.writeUTF(username);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)<0) out.writeCompressedInt(-1);
+        else out.writeCompressedInt(mysql_server);
+	writeNullUTF(out, host);
+        out.writeCompressedInt(disable_log);
+        writeNullUTF(out, predisable_password);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) {
+            out.writeCompressedInt(max_questions);
+            out.writeCompressedInt(max_updates);
+        }
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_111)>=0) out.writeCompressedInt(max_connections);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) out.writeCompressedInt(max_user_connections);
+    }
+
+    public boolean canSetPassword() {
+        return disable_log==-1 && getMySQLUser().canSetPassword();
+    }
+}
