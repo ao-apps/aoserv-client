@@ -33,9 +33,9 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
     public static final String
         VERSION_7_1_3="7.1.3",
         VERSION_7_2_7="7.2.7",
-        VERSION_7_3_13="7.3.13",
-        VERSION_8_0_6="8.0.6",
-        VERSION_8_1_2="8.1.2"
+        VERSION_7_3_14="7.3.14",
+        VERSION_8_0_7="8.0.7",
+        VERSION_8_1_3="8.1.3"
     ;
 
     /**
@@ -45,9 +45,9 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
      */
     public static final String[] getPreferredVersions() {
         return new String[] {
-            VERSION_8_1_2,
-            VERSION_8_0_6,
-            VERSION_7_3_13,
+            VERSION_8_1_3,
+            VERSION_8_0_7,
+            VERSION_7_3_14,
             VERSION_7_2_7,
             VERSION_7_1_3
         };

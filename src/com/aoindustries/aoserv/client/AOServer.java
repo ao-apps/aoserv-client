@@ -12,7 +12,9 @@ import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
@@ -58,6 +60,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     private String ftpmon_password;
     int daemon_connect_bind;
     private String time_zone;
+    int jilter_bind;
 
     public int addCvsRepository(
         String path,
@@ -272,6 +275,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             case 25: return ftpmon_password;
             case 26: return daemon_connect_bind==-1?null:Integer.valueOf(daemon_connect_bind);
             case 27: return time_zone;
+            case 28: return jilter_bind;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -310,6 +314,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         TimeZone tz=table.connector.timeZones.get(time_zone);
         if(tz==null) throw new WrappedException(new SQLException("Unable to find TimeZone: "+time_zone));
         return tz;
+    }
+
+    public NetBind getJilterBind() {
+	if(jilter_bind==-1) return null;
+        // May be filtered
+        return table.connector.netBinds.get(jilter_bind);
     }
 
     public NetDeviceID getDaemonDeviceID() {
@@ -518,34 +528,64 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return table.connector.majordomoServers.getMajordomoServers(this);
     }
 
+    private static final Map<Integer,Object> mrtgLocks = new HashMap<Integer,Object>();
+
     public void getMrtgFile(String filename, OutputStream out) {
         try {
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.GET_MRTG_FILE);
-                masterOut.writeCompressedInt(pkey);
-                masterOut.writeUTF(filename);
-                masterOut.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                byte[] buff=BufferManager.getBytes();
-                try {
-                    int code;
-                    while((code=in.readByte())==AOServProtocol.NEXT) {
-                        int len=in.readShort();
-                        in.readFully(buff, 0, len);
-                        out.write(buff, 0, len);
+            // Only one MRTG graph per server at a time, if don't get the lock in 15 seconds, return an error
+            synchronized(mrtgLocks) {
+                long startTime = System.currentTimeMillis();
+                do {
+                    if(mrtgLocks.containsKey(pkey)) {
+                        long currentTime = System.currentTimeMillis();
+                        if(startTime > currentTime) startTime = currentTime;
+                        else if((currentTime - startTime)>=15000) throw new IOException("15 second timeout reached while trying to get lock to access server #"+pkey);
+                        else {
+                            try {
+                                mrtgLocks.wait(startTime + 15000 - currentTime);
+                            } catch(InterruptedException err) {
+                                table.connector.errorHandler.reportWarning(err, null);
+                            }
+                        }
                     }
-                    AOServProtocol.checkResult(code, in);
+                } while(mrtgLocks.containsKey(pkey));
+                mrtgLocks.put(pkey, Boolean.TRUE);
+                mrtgLocks.notifyAll();
+            }
+
+            try {
+                AOServConnection connection=table.connector.getConnection();
+                try {
+                    CompressedDataOutputStream masterOut=connection.getOutputStream();
+                    masterOut.writeCompressedInt(AOServProtocol.GET_MRTG_FILE);
+                    masterOut.writeCompressedInt(pkey);
+                    masterOut.writeUTF(filename);
+                    masterOut.flush();
+
+                    CompressedDataInputStream in=connection.getInputStream();
+                    byte[] buff=BufferManager.getBytes();
+                    try {
+                        int code;
+                        while((code=in.readByte())==AOServProtocol.NEXT) {
+                            int len=in.readShort();
+                            in.readFully(buff, 0, len);
+                            out.write(buff, 0, len);
+                        }
+                        AOServProtocol.checkResult(code, in);
+                    } finally {
+                        BufferManager.release(buff);
+                    }
+                } catch(IOException err) {
+                    connection.close();
+                    throw err;
                 } finally {
-                    BufferManager.release(buff);
+                    table.connector.releaseConnection(connection);
                 }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
             } finally {
-                table.connector.releaseConnection(connection);
+                synchronized(mrtgLocks) {
+                    mrtgLocks.remove(pkey);
+                    mrtgLocks.notifyAll();
+                }
             }
         } catch(IOException err) {
             throw new WrappedException(err);
@@ -747,6 +787,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         ftpmon_password=result.getString(26);
         daemon_connect_bind=result.getInt(27);
         time_zone=result.getString(28);
+        jilter_bind=result.getInt(29);
+        if(result.wasNull()) jilter_bind=-1;
     }
 
     public boolean isDNS() {
@@ -826,6 +868,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         ftpmon_password=readNullUTF(in);
         daemon_connect_bind=in.readCompressedInt();
         time_zone=in.readUTF();
+        jilter_bind=in.readCompressedInt();
     }
 
     public void removeExpiredInterBaseBackups() {
@@ -996,5 +1039,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_2)>=0) out.writeUTF(time_zone);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
     }
 }

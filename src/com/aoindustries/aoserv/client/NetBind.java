@@ -65,6 +65,9 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         AOServer aoServer=getAOServerByDaemonNetBind();
         if(aoServer!=null) return "AOServDaemon";
 
+        AOServer jilterServer=getAOServerByJilterNetBind();
+        if(jilterServer!=null) return "AOServDaemon.JilterManager";
+        
         PostgresServer ps=getPostgresServer();
         if(ps!=null) return "PostgreSQL version "+ps.getPostgresVersion().getTechnologyVersion(table.connector).getVersion()+" in "+ps.getDataDirectory();
 
@@ -185,6 +188,10 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     
     public AOServer getAOServerByDaemonNetBind() {
         return table.connector.aoServers.getAOServerByDaemonNetBind(this);
+    }
+
+    public AOServer getAOServerByJilterNetBind() {
+        return table.connector.aoServers.getAOServerByJilterNetBind(this);
     }
 
     public HttpdBind getHttpdBind() {
@@ -314,6 +321,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
                 pkey==ao.daemon_bind
                 || pkey==ao.daemon_connect_bind
             ) reasons.add(new CannotRemoveReason<AOServer>("Used as aoserv-daemon port for server: "+ao.getServer().getHostname(), ao));
+            if(pkey==ao.jilter_bind) reasons.add(new CannotRemoveReason<AOServer>("Used as aoserv-daemon jilter port for server: "+ao.getServer().getHostname(), ao));
         }
 
         // httpd_binds

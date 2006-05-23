@@ -62,7 +62,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_4="1.4",
         VERSION_1_5="1.5",
         VERSION_1_6="1.6",
-        CURRENT_VERSION=VERSION_1_6
+        VERSION_1_7="1.7",
+        CURRENT_VERSION=VERSION_1_7
     ;
 
     /**
@@ -110,7 +111,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
                 VERSION_1_3,
                 VERSION_1_4,
                 VERSION_1_5,
-                VERSION_1_6
+                VERSION_1_6,
+                VERSION_1_7
             };
         } finally {
             Profiler.endProfile(Profiler.FAST);

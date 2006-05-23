@@ -42,6 +42,17 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
         return null;
     }
 
+    AOServer getAOServerByJilterNetBind(NetBind nb) {
+        int pkey=nb.pkey;
+        List<AOServer> servers=getRows();
+        int size=servers.size();
+        for(int c=0;c<size;c++) {
+            AOServer se=servers.get(c);
+            if(se.jilter_bind==pkey) return se;
+        }
+        return null;
+    }
+
     public List<AOServer> getNestedAOServers(AOServer server) {
         int pkey=server.pkey;
         List<AOServer> servers=getRows();
