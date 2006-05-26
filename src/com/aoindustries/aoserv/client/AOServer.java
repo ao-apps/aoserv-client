@@ -61,6 +61,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     int daemon_connect_bind;
     private String time_zone;
     int jilter_bind;
+    private boolean restrict_outbound_email;
 
     public int addCvsRepository(
         String path,
@@ -254,9 +255,9 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             case 4: return rack==-1?null:Integer.valueOf(rack);
             case 5: return Integer.valueOf(disk);
             case 6: return wildcard_https;
-            case 7: return is_interbase?Boolean.TRUE:Boolean.FALSE;
-            case 8: return is_dns?Boolean.TRUE:Boolean.FALSE;
-            case 9: return is_router?Boolean.TRUE:Boolean.FALSE;
+            case 7: return is_interbase;
+            case 8: return is_dns;
+            case 9: return is_router;
             case 10: return iptables_name;
             case 11: return daemon_bind==-1?null:Integer.valueOf(daemon_bind);
             case 12: return daemon_key;
@@ -266,16 +267,17 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             case 16: return failover_server==-1?null:Integer.valueOf(failover_server);
             case 17: return Integer.valueOf(server_report_delay);
             case 18: return Integer.valueOf(server_report_interval);
-            case 19: return is_qmail?Boolean.TRUE:Boolean.FALSE;
+            case 19: return is_qmail;
             case 20: return daemon_device_id;
             case 21: return xeroscape_name;
             case 22: return Integer.valueOf(value);
-            case 23: return monitoring_enabled?Boolean.TRUE:Boolean.FALSE;
+            case 23: return monitoring_enabled;
             case 24: return emailmon_password;
             case 25: return ftpmon_password;
             case 26: return daemon_connect_bind==-1?null:Integer.valueOf(daemon_connect_bind);
             case 27: return time_zone;
             case 28: return jilter_bind;
+            case 29: return restrict_outbound_email;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -320,6 +322,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	if(jilter_bind==-1) return null;
         // May be filtered
         return table.connector.netBinds.get(jilter_bind);
+    }
+    
+    public boolean getRestrictOutboundEmail() {
+        return restrict_outbound_email;
     }
 
     public NetDeviceID getDaemonDeviceID() {
@@ -678,12 +684,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         try {
             // Look for the most-preferred version that has an instance on the server
             List<PostgresServer> pss=getPostgresServers();
-            String[] preferredVersions=PostgresVersion.getPreferredVersions();
-            for(int c=0;c<preferredVersions.length;c++) {
-                String version=preferredVersions[c];
+            String[] preferredMinorVersions=PostgresVersion.getPreferredMinorVersions();
+            for(int c=0;c<preferredMinorVersions.length;c++) {
+                String version=preferredMinorVersions[c];
                 for(int d=0;d<pss.size();d++) {
                     PostgresServer ps=pss.get(d);
-                    if(ps.getPostgresVersion().getTechnologyVersion(table.connector).getVersion().equals(version)) {
+                    if(ps.getPostgresVersion().getMinorVersion().equals(version)) {
                         return ps;
                     }
                 }
@@ -789,6 +795,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         time_zone=result.getString(28);
         jilter_bind=result.getInt(29);
         if(result.wasNull()) jilter_bind=-1;
+        restrict_outbound_email=result.getBoolean(30);
     }
 
     public boolean isDNS() {
@@ -869,6 +876,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         daemon_connect_bind=in.readCompressedInt();
         time_zone=in.readUTF();
         jilter_bind=in.readCompressedInt();
+        restrict_outbound_email=in.readBoolean();
     }
 
     public void removeExpiredInterBaseBackups() {
@@ -1040,5 +1048,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_2)>=0) out.writeUTF(time_zone);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
     }
 }
