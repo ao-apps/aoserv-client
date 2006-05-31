@@ -33,6 +33,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     private int to_server;
     private int max_bit_rate;
     private long last_start_time;
+    private boolean use_compression;
 
     public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) {
 	return table.connector.failoverFileLogs.addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
@@ -53,6 +54,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
             case 2: return Integer.valueOf(to_server);
             case 3: return max_bit_rate==-1?null:Integer.valueOf(max_bit_rate);
             case 4: return last_start_time==-1?null:new java.sql.Date(last_start_time);
+            case 5: return use_compression;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -80,6 +82,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     public long getLastStartTime() {
         return last_start_time;
     }
+    
+    public boolean getUseCompression() {
+        return use_compression;
+    }
 
     protected int getTableIDImpl() {
 	return SchemaTable.FAILOVER_FILE_REPLICATIONS;
@@ -93,6 +99,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         if(result.wasNull()) max_bit_rate=-1;
         Timestamp T=result.getTimestamp(5);
         last_start_time=T==null?-1:T.getTime();
+        use_compression=result.getBoolean(6);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -101,6 +108,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         to_server=in.readCompressedInt();
         max_bit_rate=in.readInt();
         last_start_time=in.readLong();
+        use_compression=in.readBoolean();
     }
 
     public void setLastStartTime(long time) {
@@ -121,5 +129,6 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         out.writeCompressedInt(to_server);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_105)>=0) out.writeInt(max_bit_rate);
         out.writeLong(last_start_time);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_9)>=0) out.writeBoolean(use_compression);
     }
 }

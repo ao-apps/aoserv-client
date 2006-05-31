@@ -64,7 +64,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_6="1.6",
         VERSION_1_7="1.7",
         VERSION_1_8="1.8",
-        CURRENT_VERSION=VERSION_1_8
+        VERSION_1_9="1.9",
+        CURRENT_VERSION=VERSION_1_9
     ;
 
     /**
@@ -114,7 +115,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
                 VERSION_1_5,
                 VERSION_1_6,
                 VERSION_1_7,
-                VERSION_1_8
+                VERSION_1_8,
+                VERSION_1_9
             };
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -410,6 +412,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 
     private long created;
     private String comments;
+    private long last_used;
 
     public Object getColumn(int i) {
         Profiler.startProfile(Profiler.FAST, AOServProtocol.class, "getColValueImpl(int)", null);
@@ -418,6 +421,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
                 case COLUMN_VERSION: return pkey;
                 case 1: return new java.sql.Date(created);
                 case 2: return comments;
+                case 3: return last_used == -1 ? null : new java.sql.Date(last_used);
                 default: throw new IllegalArgumentException("Invalid index: "+i);
             }
         } finally {
@@ -436,6 +440,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
     public String getComments() {
         return comments;
     }
+    
+    public long getLastUsed() {
+        return last_used;
+    }
 
     protected int getTableIDImpl() {
         return SchemaTable.AOSERV_PROTOCOLS;
@@ -445,8 +453,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         Profiler.startProfile(Profiler.FAST, AOServProtocol.class, "initImpl(ResultSet)", null);
         try {
             pkey=result.getString(1);
-            created=result.getTimestamp(2).getTime();
+            created=result.getDate(2).getTime();
             comments=result.getString(3);
+            java.sql.Date D = result.getDate(4);
+            last_used = D==null ? -1 : D.getTime();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -458,6 +468,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
             pkey=in.readUTF();
             created=in.readLong();
             comments=in.readUTF();
+            last_used=in.readLong();
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -469,6 +480,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
             out.writeUTF(pkey);
             out.writeLong(created);
             out.writeUTF(comments);
+            if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_9)>=0) out.writeLong(last_used);
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
