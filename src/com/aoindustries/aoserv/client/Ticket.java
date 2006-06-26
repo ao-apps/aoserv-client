@@ -53,7 +53,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
     }
 
     public void actChangeAdminPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority.pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
     }
 
     public void actChangeClientPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) {
@@ -151,6 +151,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
     }
 
     public TicketPriority getAdminPriority() {
+        if(admin_priority==null) return null;
 	TicketPriority adminPriorityObject = table.connector.ticketPriorities.get(admin_priority);
 	if (adminPriorityObject == null) throw new WrappedException(new SQLException("Unable to find Priority: " + admin_priority));
 	return adminPriorityObject;
@@ -316,7 +317,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	close_date=in.readLong();
 	closed_by=readNullUTF(in);
 	client_priority=in.readUTF();
-	admin_priority=in.readUTF();
+	admin_priority=readNullUTF(in);
 	technology=readNullUTF(in);
 	status=in.readUTF();
         assigned_to = readNullUTF(in);
@@ -349,7 +350,11 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	out.writeLong(close_date);
 	writeNullUTF(out, closed_by);
 	out.writeUTF(client_priority);
-	out.writeUTF(admin_priority);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_10)<0) {
+            out.writeUTF(admin_priority==null ? client_priority : admin_priority);
+        } else {
+            writeNullUTF(out, admin_priority);
+        }
 	writeNullUTF(out, technology);
 	out.writeUTF(status);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_125)>=0) {

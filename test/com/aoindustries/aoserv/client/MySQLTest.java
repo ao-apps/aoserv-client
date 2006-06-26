@@ -398,6 +398,7 @@ public class MySQLTest extends TestCase {
      * Test backup.
      */
     private void backupMySQLDatabases() throws SQLException {
+        /** TODO Disabled until new backup system completed
         System.out.print("Backing-up MySQLDatabases:");
         for(MySQLDatabase md : mysqlDatabases) {
             int pkey=md.backup();
@@ -405,12 +406,14 @@ public class MySQLTest extends TestCase {
             mysqlBackups.put(md, conn.mysqlBackups.get(pkey));
         }
         System.out.println(" Done");
+         */
     }
 
     /**
      * Gets backup data.
      */
     private void getMySQLBackups() throws SQLException {
+        /** TODO Disabled until new backup system completed
         System.out.print("Testing MySQL backup retrieval: ");
         for(MySQLDatabase md : mysqlDatabases) {
             System.out.print('.');
@@ -425,5 +428,6 @@ public class MySQLTest extends TestCase {
             assertEquals(expectedSize, length);
         }
         System.out.println(" Done");
+         */
     }
 }

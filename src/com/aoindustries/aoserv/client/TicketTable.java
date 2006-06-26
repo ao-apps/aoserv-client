@@ -53,7 +53,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 out.writeUTF(details);
                 out.writeLong(deadline);
                 out.writeUTF(client_priority);
-                out.writeUTF(admin_priority);
+                out.writeUTF(admin_priority==null ? "" : admin_priority);
                 out.writeBoolean(technology!=null); if(technology!=null) out.writeUTF(technology);
                 out.writeBoolean(assigned_to!=null); if(assigned_to!=null) out.writeUTF(assigned_to.pkey);
                 out.writeUTF(contact_emails);

@@ -29,7 +29,8 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         //VERSION_7_2="7.2",
         //VERSION_9_2="9.2",
         VERSION_10_1="10.1",
-        VERSION_2006_0="2006.0"
+        VERSION_2006_0="2006.0",
+        VERSION_ES_4="ES 4"
     ;
 
     public static final String DEFAULT_OPERATING_SYSTEM_VERSION=VERSION_2006_0;
@@ -39,7 +40,8 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         //MANDRAKE_9_2_I586=12,
         MANDRAKE_10_1_I586=14,
         //REDHAT_7_2_I686=27
-        MANDRIVA_2006_0_I586=45
+        MANDRIVA_2006_0_I586=45,
+        REDHAT_ES_4_X86_64=47
     ;
 
     private String operating_system;

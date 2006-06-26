@@ -2862,8 +2862,12 @@ final public class SimpleAOClient {
             if(tt==null) throw new IllegalArgumentException("Unable to find TicketType: "+ticket_type);
             TicketPriority clp=connector.ticketPriorities.get(client_priority);
             if(clp==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+client_priority);
-            TicketPriority adp=connector.ticketPriorities.get(admin_priority);
-            if(adp==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+admin_priority);
+            TicketPriority adp;
+            if(admin_priority==null || admin_priority.length()==0) adp=null;
+            else {
+                adp=connector.ticketPriorities.get(admin_priority);
+                if(adp==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+admin_priority);
+            }
             TechnologyName tn;
             if(technology!=null && technology.length()>0) {
                 tn=connector.technologyNames.get(technology);
@@ -3422,8 +3426,13 @@ final public class SimpleAOClient {
         try {
             Ticket ti=connector.tickets.get(ticket_id);
             if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-            TicketPriority pr=connector.ticketPriorities.get(priority);
-            if(pr==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
+            TicketPriority pr;
+            if(priority==null || priority.length()==0) {
+                pr=null;
+            } else {
+                pr=connector.ticketPriorities.get(priority);
+                if(pr==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
+            }
             BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
             if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
             ti.actChangeAdminPriority(pr, pe, comments);

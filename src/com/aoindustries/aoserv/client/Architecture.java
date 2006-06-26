@@ -35,7 +35,8 @@ final public class Architecture extends GlobalObjectStringKey<Architecture> {
         M68K="m68k",
         MIPS="mips",
         PPC="ppc",
-        SPARC="sparc"
+        SPARC="sparc",
+        X86_64="x86_64"
     ;
 
     public static final String DEFAULT_ARCHITECTURE=I686;

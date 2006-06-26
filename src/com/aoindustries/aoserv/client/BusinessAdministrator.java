@@ -80,7 +80,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
             details,
             deadline,
             client_priorityObj.pkey,
-            admin_priorityObj.pkey,
+            admin_priorityObj==null ? null : admin_priorityObj.pkey,
             technologyObj==null?null:technologyObj.pkey,
             assignedTo,
             contact_emails,
