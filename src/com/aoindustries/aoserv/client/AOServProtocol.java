@@ -2,7 +2,7 @@ package com.aoindustries.aoserv.client;
 
 /*
  * Copyright 2001-2006 by AO Industries, Inc.,
- * 2200 Dogwood Ct N, Mobile, Alabama, 36693, U.S.A.
+ * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.io.*;
@@ -66,7 +66,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_8="1.8",
         VERSION_1_9="1.9",
         VERSION_1_10="1.10",
-        CURRENT_VERSION=VERSION_1_10
+        VERSION_1_11="1.10",
+        CURRENT_VERSION=VERSION_1_11
     ;
 
     /**
@@ -118,7 +119,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
                 VERSION_1_7,
                 VERSION_1_8,
                 VERSION_1_9,
-                VERSION_1_10
+                VERSION_1_10,
+                VERSION_1_11
             };
         } finally {
             Profiler.endProfile(Profiler.FAST);

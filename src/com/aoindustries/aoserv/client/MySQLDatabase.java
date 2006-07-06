@@ -2,7 +2,7 @@ package com.aoindustries.aoserv.client;
 
 /*
  * Copyright 2000-2006 by AO Industries, Inc.,
- * 2200 Dogwood Ct N, Mobile, Alabama, 36693, U.S.A.
+ * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.io.*;
@@ -42,7 +42,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
      * The classname of the JDBC driver used for the <code>MySQLDatabase</code>.
      */
     public static final String
-        //REDHAT_JDBC_DRIVER="org.gjt.mm.mysql.Driver",
+        REDHAT_JDBC_DRIVER="com.mysql.jdbc.Driver",
         MANDRAKE_JDBC_DRIVER="com.mysql.jdbc.Driver"
     ;
     
@@ -51,7 +51,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
      * TODO: put the Mandrake documentation on http://www.aoindustries.com/docs/
      */
     public static final String
-        //REDHAT_JDBC_DOCUMENTATION_URL="http://www.aoindustries.com/docs/mm.mysql-2.0.4/mm.doc/book1.htm",
+        REDHAT_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
         MANDRAKE_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html"
     ;
 
@@ -204,10 +204,11 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
     public String getJdbcDriver() {
         int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPKey();
-        if(
-            osv==OperatingSystemVersion.MANDRAKE_10_1_I586
-        ) return MANDRAKE_JDBC_DRIVER;
-        else throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
+        switch(osv) {
+            case OperatingSystemVersion.MANDRAKE_10_1_I586 : return MANDRAKE_JDBC_DRIVER;
+            case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
+            default : throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
+        }
     }
 
     public String getJdbcUrl(boolean ipOnly) {
@@ -228,10 +229,11 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
     public String getJdbcDocumentationUrl() {
         int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPKey();
-        if(
-            osv==OperatingSystemVersion.MANDRAKE_10_1_I586
-        ) return MANDRAKE_JDBC_DOCUMENTATION_URL;
-        else throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
+        switch(osv) {
+            case OperatingSystemVersion.MANDRAKE_10_1_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
+            case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DOCUMENTATION_URL;
+            default : throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
+        }
     }
 
     public MySQLDBUser getMySQLDBUser(MySQLServerUser msu) {
