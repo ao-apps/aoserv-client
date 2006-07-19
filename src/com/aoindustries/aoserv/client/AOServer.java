@@ -63,6 +63,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     int jilter_bind;
     private boolean restrict_outbound_email;
     private String daemon_connect_address;
+    private int failover_batch_size;
 
     public int addCvsRepository(
         String path,
@@ -280,6 +281,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             case 28: return jilter_bind;
             case 29: return restrict_outbound_email;
             case 30: return daemon_connect_address;
+            case 31: return failover_batch_size;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -339,6 +341,13 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      */
     public String getDaemonConnectAddress() {
         return daemon_connect_address;
+    }
+    
+    /**
+     * Gets the number of filesystem entries sent per batch during failover replications.
+     */
+    public int getFailoverBatchSize() {
+        return failover_batch_size;
     }
 
     public NetDeviceID getDaemonDeviceID() {
@@ -810,6 +819,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         if(result.wasNull()) jilter_bind=-1;
         restrict_outbound_email=result.getBoolean(30);
         daemon_connect_address=result.getString(31);
+        failover_batch_size=result.getInt(32);
     }
 
     public boolean isDNS() {
@@ -892,6 +902,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         jilter_bind=in.readCompressedInt();
         restrict_outbound_email=in.readBoolean();
         daemon_connect_address=readNullUTF(in);
+        failover_batch_size=in.readCompressedInt();
     }
 
     public void removeExpiredInterBaseBackups() {
@@ -1065,5 +1076,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_11)>=0) writeNullUTF(out, daemon_connect_address);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
     }
 }
