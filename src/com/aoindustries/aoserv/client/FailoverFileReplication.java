@@ -34,6 +34,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     private int max_bit_rate;
     private long last_start_time;
     private boolean use_compression;
+    private short retention;
 
     public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) {
 	return table.connector.failoverFileLogs.addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
@@ -55,6 +56,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
             case 3: return max_bit_rate==-1?null:Integer.valueOf(max_bit_rate);
             case 4: return last_start_time==-1?null:new java.sql.Date(last_start_time);
             case 5: return use_compression;
+            case 6: return retention;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -86,6 +88,12 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     public boolean getUseCompression() {
         return use_compression;
     }
+    
+    public BackupRetention getRetention() {
+        BackupRetention br=table.connector.backupRetentions.get(retention);
+        if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+retention));
+        return br;
+    }
 
     protected int getTableIDImpl() {
 	return SchemaTable.FAILOVER_FILE_REPLICATIONS;
@@ -100,6 +108,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         Timestamp T=result.getTimestamp(5);
         last_start_time=T==null?-1:T.getTime();
         use_compression=result.getBoolean(6);
+        retention=result.getShort(7);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -109,6 +118,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         max_bit_rate=in.readInt();
         last_start_time=in.readLong();
         use_compression=in.readBoolean();
+        retention=in.readShort();
     }
 
     public void setLastStartTime(long time) {
@@ -130,5 +140,6 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_105)>=0) out.writeInt(max_bit_rate);
         out.writeLong(last_start_time);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_9)>=0) out.writeBoolean(use_compression);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_13)>=0) out.writeShort(retention);
     }
 }
