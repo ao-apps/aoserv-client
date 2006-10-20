@@ -35,6 +35,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     private long last_start_time;
     private boolean use_compression;
     private short retention;
+    private String connect_address;
+    private boolean enabled;
+    private String to_path;
+    private boolean chunk_always;
 
     public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) {
 	return table.connector.failoverFileLogs.addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
@@ -57,6 +61,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
             case 4: return last_start_time==-1?null:new java.sql.Date(last_start_time);
             case 5: return use_compression;
             case 6: return retention;
+            case 7: return connect_address;
+            case 8: return enabled;
+            case 9: return to_path;
+            case 10: return chunk_always;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -94,6 +102,35 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+retention));
         return br;
     }
+    
+    /**
+     * Gets a connect address that should override the normal address resolution mechanisms.  This allows
+     * a replication to be specifically sent through a gigabit connection or alternate route.
+     */
+    public String getConnectAddress() {
+        return connect_address;
+    }
+    
+    /**
+     * Gets the enabled flag for this replication.
+     */
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Gets the destination folder (/var/failover for replication=1 or /var/backup, /var/backup1, ...)
+     */
+    public String getToPath() {
+        return to_path;
+    }
+
+    /**
+     * When set to <code>true</code>, chunking will always be performed (mtime+length will not be considered a sufficient match).
+     */
+    public boolean getChunkAlways() {
+        return chunk_always;
+    }
 
     protected int getTableIDImpl() {
 	return SchemaTable.FAILOVER_FILE_REPLICATIONS;
@@ -109,6 +146,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         last_start_time=T==null?-1:T.getTime();
         use_compression=result.getBoolean(6);
         retention=result.getShort(7);
+        connect_address=result.getString(8);
+        enabled=result.getBoolean(9);
+        to_path=result.getString(10);
+        chunk_always=result.getBoolean(11);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -119,6 +160,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         last_start_time=in.readLong();
         use_compression=in.readBoolean();
         retention=in.readShort();
+        connect_address=readNullUTF(in);
+        enabled=in.readBoolean();
+        to_path=in.readUTF();
+        chunk_always=in.readBoolean();
     }
 
     public void setLastStartTime(long time) {
@@ -141,5 +186,11 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         out.writeLong(last_start_time);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_9)>=0) out.writeBoolean(use_compression);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_13)>=0) out.writeShort(retention);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_14)>=0) writeNullUTF(out, connect_address);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_15)>=0) out.writeBoolean(enabled);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_17)>=0) {
+            out.writeUTF(to_path);
+            out.writeBoolean(chunk_always);
+        }
     }
 }

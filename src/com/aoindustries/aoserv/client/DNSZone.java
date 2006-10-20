@@ -30,7 +30,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         COLUMN_PACKAGE=2
     ;
     
-    public static final int DEFAULT_TTL = 3600;
+    public static final int DEFAULT_TTL = 43200;
 
     /**
      * The zone that is in charge of the API.

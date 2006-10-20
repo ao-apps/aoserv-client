@@ -311,8 +311,14 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	accounting=readNullUTF(in);
 	created_by=readNullUTF(in);
 	ticket_type=in.readUTF();
-	details=in.readUTF();
-	open_date=in.readLong();
+
+        // details workaround for readUTF 64k limit
+        int len=in.readCompressedInt();
+        char[] chars = new char[len];
+        for(int c=0;c<chars.length;c++) chars[c]=in.readChar();
+	details=new String(chars);
+
+        open_date=in.readLong();
 	deadline=in.readLong();
 	close_date=in.readLong();
 	closed_by=readNullUTF(in);
@@ -344,7 +350,13 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
             out.writeUTF(created_by==null ? "":created_by);
         }
 	out.writeUTF(ticket_type);
-	out.writeUTF(details);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_15)<0) {
+            out.writeUTF(details);
+        } else {
+            // details workaround for readUTF 64k limit
+            out.writeCompressedInt(details.length());
+            out.writeChars(details);
+        }
 	out.writeLong(open_date);
 	out.writeLong(deadline);
 	out.writeLong(close_date);

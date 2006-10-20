@@ -138,6 +138,7 @@ abstract public class AOServConnector {
     public final HttpdJKProtocolTable httpdJKProtocols;
     public final HttpdServerTable httpdServers;
     public final HttpdSharedTomcatTable httpdSharedTomcats;
+    public final HttpdSiteAuthenticatedLocationTable httpdSiteAuthenticatedLocationTable;
     public final HttpdSiteBindTable httpdSiteBinds;
     public final HttpdSiteURLTable httpdSiteURLs;
     public final HttpdSiteTable httpdSites;
@@ -352,6 +353,7 @@ abstract public class AOServConnector {
                 httpdJKProtocols=new HttpdJKProtocolTable(this),
                 httpdServers=new HttpdServerTable(this),
                 httpdSharedTomcats=new HttpdSharedTomcatTable(this),
+                httpdSiteAuthenticatedLocationTable=new HttpdSiteAuthenticatedLocationTable(this),
                 httpdSiteBinds=new HttpdSiteBindTable(this),
                 httpdSiteURLs=new HttpdSiteURLTable(this),
                 httpdSites=new HttpdSiteTable(this),

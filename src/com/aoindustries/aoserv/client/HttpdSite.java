@@ -99,6 +99,25 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     private boolean isManual;
     private String awstatsSkipFiles;
 
+    public int addHttpdSiteAuthenticatedLocation(
+        String path,
+        boolean isRegularExpression,
+        String authName,
+        String authGroupFile,
+        String authUserFile,
+        String require
+    ) {
+        return table.connector.httpdSiteAuthenticatedLocationTable.addHttpdSiteAuthenticatedLocation(
+            this,
+            path,
+            isRegularExpression,
+            authName,
+            authGroupFile,
+            authUserFile,
+            require
+        );
+    }
+
     public boolean canDisable() {
         if(disable_log!=-1) return false;
         for(HttpdSiteBind hsb : getHttpdSiteBinds()) if(hsb.disable_log==-1) return false;
@@ -259,6 +278,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         DisableLog obj=table.connector.disableLogs.get(disable_log);
         if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
         return obj;
+    }
+
+    public List<HttpdSiteAuthenticatedLocation> getHttpdSiteAuthenticatedLocations() {
+        return table.connector.httpdSiteAuthenticatedLocationTable.getHttpdSiteAuthenticatedLocations(this);
     }
 
     public List<HttpdSiteBind> getHttpdSiteBinds() {

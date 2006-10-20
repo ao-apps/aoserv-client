@@ -191,6 +191,8 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
     }
 
     public V createInstance() throws IOException {
-        return (V)getNewObject();
+        V obj = (V)getNewObject();
+        if(obj instanceof SingleTableObject) ((SingleTableObject)obj).setTable(this);
+        return obj;
     }
 }

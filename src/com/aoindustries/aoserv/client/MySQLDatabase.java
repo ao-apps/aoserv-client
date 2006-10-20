@@ -206,6 +206,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPKey();
         switch(osv) {
             case OperatingSystemVersion.MANDRAKE_10_1_I586 : return MANDRAKE_JDBC_DRIVER;
+            case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DRIVER;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
             default : throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
         }
@@ -231,6 +232,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPKey();
         switch(osv) {
             case OperatingSystemVersion.MANDRAKE_10_1_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
+            case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DOCUMENTATION_URL;
             default : throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
         }

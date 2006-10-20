@@ -69,7 +69,12 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_11="1.11",
         VERSION_1_12="1.12",
         VERSION_1_13="1.13",
-        CURRENT_VERSION=VERSION_1_13
+        VERSION_1_14="1.14",
+        VERSION_1_15="1.15",
+        VERSION_1_16="1.16",
+        VERSION_1_17="1.17",
+        VERSION_1_18="1.18",
+        CURRENT_VERSION=VERSION_1_18
     ;
 
     /**
@@ -124,7 +129,12 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
                 VERSION_1_10,
                 VERSION_1_11,
                 VERSION_1_12,
-                VERSION_1_13
+                VERSION_1_13,
+                VERSION_1_14,
+                VERSION_1_15,
+                VERSION_1_16,
+                VERSION_1_17,
+                VERSION_1_18
             };
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -397,7 +407,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         IS_MYSQL_SERVER_NAME_AVAILABLE=FLAG_BACKUP_DATA_AS_STORED+1,
         UPDATE_HTTPD_TOMCAT_DATA_SOURCE=IS_MYSQL_SERVER_NAME_AVAILABLE+1,
         UPDATE_HTTPD_TOMCAT_PARAMETER=UPDATE_HTTPD_TOMCAT_DATA_SOURCE+1,
-        GET_FAILOVER_FILE_LOGS_FOR_REPLICATION=UPDATE_HTTPD_TOMCAT_PARAMETER+1
+        GET_FAILOVER_FILE_LOGS_FOR_REPLICATION=UPDATE_HTTPD_TOMCAT_PARAMETER+1,
+        SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES=GET_FAILOVER_FILE_LOGS_FOR_REPLICATION+1
     ;
 
     /**

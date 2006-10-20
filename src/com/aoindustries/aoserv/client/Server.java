@@ -44,6 +44,8 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     private long last_backup_time;
     private int operating_system_version;
     private String asset_label;
+    private float minimum_power;
+    private float maximum_power;
 
     public void addBusiness(
         String accounting,
@@ -280,6 +282,8 @@ final public class Server extends CachedObjectIntegerKey<Server> {
             case 7: return last_backup_time==-1?null:new java.sql.Date(last_backup_time);
             case 8: return Integer.valueOf(operating_system_version);
             case 9: return asset_label;
+            case 10: return minimum_power==Float.NaN ? null : minimum_power;
+            case 11: return maximum_power==Float.NaN ? null : maximum_power;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -368,6 +372,20 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         return table.connector.fileBackups.getLatestFileBackupSet(this);
     }
 
+    /**
+     * Gets the minimum amount of power consumption in amps.  Returns Float.NaN if not available.
+     */
+    public float getMinimumPower() {
+        return minimum_power;
+    }
+
+    /**
+     * Gets the maximum amount of power consumption in amps.  Returns Float.NaN if not available.
+     */
+    public float getMaximumPower() {
+        return maximum_power;
+    }
+
     public ServerFarm getServerFarm() {
 	ServerFarm sf=table.connector.serverFarms.get(farm);
 	if(sf==null) throw new WrappedException(new SQLException("Unable to find ServerFarm: "+farm));
@@ -390,6 +408,10 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         last_backup_time=T==null?-1:T.getTime();
         operating_system_version=result.getInt(9);
         asset_label=result.getString(10);
+        minimum_power=result.getFloat(11);
+        if(result.wasNull()) minimum_power=Float.NaN;
+        maximum_power=result.getFloat(12);
+        if(result.wasNull()) maximum_power=Float.NaN;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -403,6 +425,8 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         last_backup_time=in.readLong();
         operating_system_version=in.readCompressedInt();
         asset_label=readNullUTF(in);
+        minimum_power=in.readFloat();
+        maximum_power=in.readFloat();
     }
 
     public void removeExpiredFileBackups() {
@@ -429,5 +453,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         out.writeLong(last_backup_time);
         out.writeCompressedInt(operating_system_version);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) writeNullUTF(out, asset_label);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_16)>=0) {
+            out.writeFloat(minimum_power);
+            out.writeFloat(maximum_power);
+        }
     }
 }

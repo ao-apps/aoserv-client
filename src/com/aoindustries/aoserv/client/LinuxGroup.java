@@ -35,6 +35,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
      */
     public static final String
         ADM="adm",
+        APACHE="apache",
         AWSTATS="awstats",
         BIN="bin",
         DAEMON="daemon",

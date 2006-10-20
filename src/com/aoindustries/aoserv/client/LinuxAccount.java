@@ -30,6 +30,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * Some commonly used system and application account usernames.
      */
     public static final String
+        APACHE="apache",
         AWSTATS="awstats",
         BIN="bin",
         EMAILMON="emailmon",
