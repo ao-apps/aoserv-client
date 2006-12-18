@@ -91,6 +91,26 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	return url.toString();
     }
 
+    public String getURLNoSlash() {
+	HttpdSiteBind siteBind=getHttpdSiteBind();
+	NetBind netBind=siteBind.getHttpdBind().getNetBind();
+	NetPort port=netBind.getPort();
+	StringBuilder url=new StringBuilder();
+	String protocol;
+	if(siteBind.getSSLCertFile()==null) {
+            // If HTTP
+            url.append("http://");
+            protocol=Protocol.HTTP;
+	} else {
+            // Otherwise must be HTTPS
+            url.append("https://");
+            protocol=Protocol.HTTPS;
+	}
+        url.append(hostname);
+	if(!port.equals(table.connector.protocols.get(protocol).getPort(table.connector))) url.append(':').append(port.getPort());
+	return url.toString();
+    }
+
     void initImpl(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	httpd_site_bind=result.getInt(2);

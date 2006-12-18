@@ -52,6 +52,7 @@ public class SSLConnector extends TCPConnector {
 
     protected SSLConnector(
         String hostname,
+        String local_ip,
         int port,
         String connectAs,
         String authenticateAs,
@@ -63,7 +64,7 @@ public class SSLConnector extends TCPConnector {
         String trustStorePassword,
         ErrorHandler errorHandler
     ) throws IOException {
-	super(hostname, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge, errorHandler);
+	super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge, errorHandler);
         if(
             (
                 SSLConnector.trustStorePath!=null
@@ -105,6 +106,7 @@ public class SSLConnector extends TCPConnector {
 
         SSLSocketFactory sslFact=(SSLSocketFactory)SSLSocketFactory.getDefault();
         Socket regSocket = new Socket();
+        if(local_ip!=null) regSocket.bind(new InetSocketAddress(local_ip, 0));
         regSocket.connect(new InetSocketAddress(hostname, port), AOPool.DEFAULT_CONNECT_TIMEOUT);
         regSocket.setKeepAlive(true);
         regSocket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
@@ -114,6 +116,7 @@ public class SSLConnector extends TCPConnector {
 
     public static synchronized SSLConnector getSSLConnector(
 	String hostname,
+        String local_ip,
 	int port,
 	String connectAs,
 	String authenticateAs,
@@ -130,6 +133,7 @@ public class SSLConnector extends TCPConnector {
             SSLConnector connector=connectors.get(c);
             if(
                 connector.hostname.equals(hostname)
+                && StringUtility.equals(local_ip, connector.local_ip)
                 && connector.port==port
                 && connector.connectAs.equals(connectAs)
                 && connector.authenticateAs.equals(authenticateAs)
@@ -143,6 +147,7 @@ public class SSLConnector extends TCPConnector {
 	}
 	SSLConnector newConnector=new SSLConnector(
             hostname,
+            local_ip,
             port,
             connectAs,
             authenticateAs,
@@ -166,6 +171,7 @@ public class SSLConnector extends TCPConnector {
 	if(username.equals(connectAs)) return this;
 	return getSSLConnector(
             hostname,
+            local_ip,
             port,
             username,
             authenticateAs,

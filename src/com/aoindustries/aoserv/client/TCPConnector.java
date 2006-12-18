@@ -141,6 +141,7 @@ public class TCPConnector extends AOServConnector {
 
     protected TCPConnector(
 	String hostname,
+        String local_ip,
 	int port,
 	String connectAs,
 	String authenticateAs,
@@ -150,7 +151,7 @@ public class TCPConnector extends AOServConnector {
         long maxConnectionAge,
         ErrorHandler errorHandler
     ) throws IOException {
-	super(hostname, port, connectAs, authenticateAs, password, daemonServer, errorHandler);
+	super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, errorHandler);
 	this.poolSize=poolSize;
         this.maxConnectionAge=maxConnectionAge;
 	this.pool=new SocketConnectionPool(this, errorHandler);
@@ -177,12 +178,14 @@ public class TCPConnector extends AOServConnector {
         socket.setKeepAlive(true);
         socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
         //socket.setTcpNoDelay(true);
+        if(local_ip!=null) socket.bind(new InetSocketAddress(local_ip, 0));
         socket.connect(new InetSocketAddress(hostname, port), AOPool.DEFAULT_CONNECT_TIMEOUT);
         return socket;
     }
 
     public static synchronized TCPConnector getTCPConnector(
 	String hostname,
+        String local_ip,
 	int port,
 	String connectAs,
 	String authenticateAs,
@@ -197,6 +200,7 @@ public class TCPConnector extends AOServConnector {
             TCPConnector connector=connectors.get(c);
             if(
                 connector.hostname.equals(hostname)
+                && StringUtility.equals(local_ip, connector.local_ip)
                 && connector.port==port
                 && connector.connectAs.equals(connectAs)
                 && connector.authenticateAs.equals(authenticateAs)
@@ -208,6 +212,7 @@ public class TCPConnector extends AOServConnector {
 	}
 	TCPConnector newConnector=new TCPConnector(
             hostname,
+            local_ip,
             port,
             connectAs,
             authenticateAs,
@@ -265,6 +270,7 @@ public class TCPConnector extends AOServConnector {
 	if(username.equals(connectAs)) return this;
 	return getTCPConnector(
             hostname,
+            local_ip,
             port,
             username,
             authenticateAs,

@@ -9667,6 +9667,32 @@ final public class SimpleAOClient {
     }
 
     /**
+     * Sets the <code>redirect_to_primary_hostname</code> flag for a <code>HttpdSiteBind</code>
+     *
+     * @param  pkey  the primary key of the <code>HttpdSiteBind</code>
+     * @param  redirectToPrimaryHostname  the new flag
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+     * @exception  IllegalArgumentException  if unable to find the <code>HttpdSiteBind</code>
+     *
+     * @see  HttpdSiteBind#setRedirectToPrimaryHostname
+     */
+    public void setHttpdSiteBindRedirectToPrimaryHostname(
+        int pkey,
+        boolean redirectToPrimaryHostname
+    ) throws IllegalArgumentException {
+        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSiteBindRedirectToPrimaryHostname(int,boolean)", null);
+        try {
+            HttpdSiteBind hsb=connector.httpdSiteBinds.get(pkey);
+            if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
+            hsb.setRedirectToPrimaryHostname(redirectToPrimaryHostname);
+        } finally {
+            Profiler.endProfile(Profiler.FAST);
+        }
+    }
+
+    /**
      * Sets the config backup retention for a <code>HttpdSite</code>
      *
      * @param  siteName  the name of the site

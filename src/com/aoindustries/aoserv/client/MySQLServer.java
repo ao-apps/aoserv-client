@@ -127,8 +127,8 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     /**
-     * Gets the minor version number in X.X format.  This corresponds to the installation
-     * directory under /usr/mysql/X.X
+     * Gets the minor version number in X.X[-max|-source] format.  This corresponds to the installation
+     * directory under /usr/mysql/X.X[-max|-source]
      */
     public String getMinorVersion() {
         String version=getVersion().getVersion();
@@ -136,7 +136,10 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         if(pos==-1) return version;
         int pos2=version.indexOf('.', pos+1);
         if(pos2==-1) return version;
-        return version.substring(0, pos2);
+        String S = version.substring(0, pos2);
+        if(version.endsWith("-max")) return S+"-max";
+        if(version.endsWith("-source")) return S+"-source";
+        return S;
     }
 
     public TechnologyVersion getVersion() {

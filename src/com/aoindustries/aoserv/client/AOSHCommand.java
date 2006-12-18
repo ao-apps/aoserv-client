@@ -322,6 +322,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         SET_HTTPD_SHARED_TOMCAT_IS_MANUAL="set_httpd_shared_tomcat_is_manual",
         SET_HTTPD_SHARED_TOMCAT_LOG_BACKUP_RETENTION="set_httpd_shared_tomcat_log_backup_retention",
         SET_HTTPD_SITE_BIND_IS_MANUAL="set_httpd_site_bind_is_manual",
+        SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME="set_httpd_site_bind_redirect_to_primary_hostname",
         SET_HTTPD_SITE_CONFIG_BACKUP_RETENTION="set_httpd_site_config_backup_retention",
         SET_HTTPD_SITE_FILE_BACKUP_RETENTION="set_httpd_site_file_backup_retention",
         SET_HTTPD_SITE_FTP_BACKUP_RETENTION="set_httpd_site_ftp_backup_retention",

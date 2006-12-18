@@ -79,7 +79,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_DNS_RECORD)) {
-            if(AOSH.checkParamCount(AOSHCommand.ADD_DNS_RECORD, args, 5, err)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_DNS_RECORD, args, 6, err)) {
                 int pkey=connector.simpleAOClient.addDNSRecord(
                     args[1],
                     args[2],

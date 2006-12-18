@@ -268,7 +268,7 @@ final public class AOSH extends ShellInterpreter {
     public static String getConfigUsername(InputStream in, TerminalWriter err) throws IOException {
         Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "getConfigUsername(InputStream,TerminalWriter)", null);
         try {
-            String username=AOServClientConfiguration.getProperty("aoserv.client.username");
+            String username=AOServClientConfiguration.getUsername();
             if(username==null || username.length()==0) {
                 // Prompt for the username
                 err.print("Username: ");
@@ -284,7 +284,7 @@ final public class AOSH extends ShellInterpreter {
     public static String getConfigPassword(InputStream in, TerminalWriter err) throws IOException {
         Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "getConfigPassword(InputStream,TerminalWriter)", null);
         try {
-            String password=AOServClientConfiguration.getProperty("aoserv.client.password");
+            String password=AOServClientConfiguration.getPassword();
             if(password==null || password.length()==0) {
                 // Prompt for the password
                 err.print("Password: ");

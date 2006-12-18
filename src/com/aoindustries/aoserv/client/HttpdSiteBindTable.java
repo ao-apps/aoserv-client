@@ -79,6 +79,14 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
                 );
             }
             return true;
+	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME)) {
+            if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, args, 2, err)) {
+                connector.simpleAOClient.setHttpdSiteBindRedirectToPrimaryHostname(
+                    AOSH.parseInt(args[1], "pkey"),
+                    AOSH.parseBoolean(args[2], "redirect_to_primary_hostname")
+                );
+            }
+            return true;
 	} else return false;
     }
 }

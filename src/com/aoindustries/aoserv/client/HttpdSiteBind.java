@@ -36,6 +36,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     int disable_log;
     private String predisable_config;
     private boolean isManual;
+    private boolean redirect_to_primary_hostname;
 
     public int addHttpdSiteURL(String hostname) {
         return table.connector.httpdSiteURLs.addHttpdSiteURL(this, hostname);
@@ -79,6 +80,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
             case 7: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 8: return predisable_config;
             case 9: return isManual?Boolean.TRUE:Boolean.FALSE;
+            case 10: return redirect_to_primary_hostname?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -142,10 +144,15 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         if(result.wasNull()) disable_log=-1;
         predisable_config=result.getString(9);
         isManual=result.getBoolean(10);
+        redirect_to_primary_hostname=result.getBoolean(11);
     }
 
     public boolean isManual() {
         return isManual;
+    }
+    
+    public boolean getRedirectToPrimaryHostname() {
+        return redirect_to_primary_hostname;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -159,12 +166,22 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         disable_log=in.readCompressedInt();
         predisable_config=readNullUTF(in);
         isManual=in.readBoolean();
+        redirect_to_primary_hostname=in.readBoolean();
     }
 
     public void setIsManual(boolean isManual) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSiteBind.class, "setIsManual(boolean)", null);
         try {
             table.connector.requestUpdateIL(AOServProtocol.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
+        } finally {
+            Profiler.endProfile(Profiler.UNKNOWN);
+        }
+    }
+
+    public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) {
+        Profiler.startProfile(Profiler.UNKNOWN, HttpdSiteBind.class, "setRedirectToPrimaryHostname(boolean)", null);
+        try {
+            table.connector.requestUpdateIL(AOServProtocol.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -220,5 +237,6 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         out.writeCompressedInt(disable_log);
         writeNullUTF(out, predisable_config);
         out.writeBoolean(isManual);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_19)>=0) out.writeBoolean(redirect_to_primary_hostname);
     }
 }

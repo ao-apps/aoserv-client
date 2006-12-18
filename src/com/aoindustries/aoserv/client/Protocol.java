@@ -55,6 +55,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         SPOP3="SPOP3",
         SSH="SSH",
         SMTP="SMTP",
+        SMTPS="SMTPS",
         SUBMISSION="submission",
         TALK="talk",
         TELNET="Telnet",

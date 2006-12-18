@@ -30,6 +30,9 @@ final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
         }
     }
 
+    /**
+     * Gets the unique name for this time zone.
+     */
     public String getName() {
         return pkey;
     }

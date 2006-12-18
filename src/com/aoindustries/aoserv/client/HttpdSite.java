@@ -540,7 +540,6 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         out.writeCompressedInt(disable_log);
         out.writeBoolean(isManual);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_129)>=0) writeNullUTF(out, awstatsSkipFiles);
-        
     }
 
     public void getAWStatsFile(String path, String queryString, OutputStream out) {

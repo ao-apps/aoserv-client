@@ -53,6 +53,11 @@ abstract public class AOServConnector {
     final String hostname;
 
     /**
+     * @see  #getLocalIp()
+     */
+    final String local_ip;
+
+    /**
      * @see  #getPort()
      */
     final int port;
@@ -271,6 +276,7 @@ abstract public class AOServConnector {
 
     protected AOServConnector(
         String hostname,
+        String local_ip,
         int port,
         String connectAs,
         String authenticateAs,
@@ -278,9 +284,10 @@ abstract public class AOServConnector {
         String daemonServer,
         ErrorHandler errorHandler
     ) throws IOException {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "<init>(String,int,String,String,String,String,ErrorHandler)", null);
+        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "<init>(String,String,int,String,String,String,String,ErrorHandler)", null);
         try {
             this.hostname=hostname;
+            this.local_ip=local_ip;
             this.port=port;
             this.connectAs=connectAs;
             this.authenticateAs=authenticateAs;
@@ -568,13 +575,13 @@ abstract public class AOServConnector {
     public static AOServConnector getConnector(ErrorHandler errorHandler) throws IOException {
         Profiler.startProfile(Profiler.FAST, AOServConnector.class, "getConnector(ErrorHandler)", null);
         try {
-            String username=AOServClientConfiguration.getProperty("aoserv.client.username");
-            String daemonServer=AOServClientConfiguration.getProperty("aoserv.client.daemon.server");
+            String username=AOServClientConfiguration.getUsername();
+            String daemonServer=AOServClientConfiguration.getDaemonServer();
             if(daemonServer==null || daemonServer.length()==0) daemonServer=null;
             return getConnector(
                 username,
                 username,
-                AOServClientConfiguration.getProperty("aoserv.client.password"),
+                AOServClientConfiguration.getPassword(),
                 daemonServer,
                 errorHandler
             );
@@ -639,40 +646,38 @@ abstract public class AOServConnector {
     public static AOServConnector getConnector(String connectAs, String authenticateAs, String password, String daemonServer, ErrorHandler errorHandler) throws IOException {
         Profiler.startProfile(Profiler.UNKNOWN, AOServConnector.class, "getConnector(String,String,String,String,ErrorHandler)", null);
         try {
-            List<String> protocols=StringUtility.splitStringCommaSpace(AOServClientConfiguration.getProperty("aoserv.client.protocols"));
+            List<String> protocols=AOServClientConfiguration.getProtocols();
             int size=protocols.size();
             for(int c=0;c<size;c++) {
                 String protocol=protocols.get(c);
                 try {
                     AOServConnector connector;
                     if(TCPConnector.PROTOCOL.equals(protocol)) {
-                        String S=AOServClientConfiguration.getProperty("aoserv.client.tcp.connection.max_age");
-                        long maxConnectionAge=S==null || S.length()==0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(S);
                         connector=TCPConnector.getTCPConnector(
-                            AOServClientConfiguration.getProperty("aoserv.client.tcp.hostname"),
-                            Integer.parseInt(AOServClientConfiguration.getProperty("aoserv.client.tcp.port")),
+                            AOServClientConfiguration.getTcpHostname(),
+                            AOServClientConfiguration.getTcpLocalIp(),
+                            AOServClientConfiguration.getTcpPort(),
                             connectAs,
                             authenticateAs,
                             password,
                             daemonServer,
-                            Integer.parseInt(AOServClientConfiguration.getProperty("aoserv.client.tcp.connection.pool.size")),
-                            maxConnectionAge,
+                            AOServClientConfiguration.getTcpConnectionPoolSize(),
+                            AOServClientConfiguration.getTcpConnectionMaxAge(),
                             errorHandler
                         );
                     } else if(SSLConnector.PROTOCOL.equals(protocol)) {
-                        String S=AOServClientConfiguration.getProperty("aoserv.client.ssl.connection.max_age");
-                        long maxConnectionAge=S==null || S.length()==0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(S);
                         connector=SSLConnector.getSSLConnector(
-                            AOServClientConfiguration.getProperty("aoserv.client.ssl.hostname"),
-                            Integer.parseInt(AOServClientConfiguration.getProperty("aoserv.client.ssl.port")),
+                            AOServClientConfiguration.getSslHostname(),
+                            AOServClientConfiguration.getSslLocalIp(),
+                            AOServClientConfiguration.getSslPort(),
                             connectAs,
                             authenticateAs,
                             password,
                             daemonServer,
-                            Integer.parseInt(AOServClientConfiguration.getProperty("aoserv.client.ssl.connection.pool.size")),
-                            maxConnectionAge,
-                            AOServClientConfiguration.getProperty("aoserv.client.ssl.truststore.path"),
-                            AOServClientConfiguration.getProperty("aoserv.client.ssl.truststore.password"),
+                            AOServClientConfiguration.getSslConnectionPoolSize(),
+                            AOServClientConfiguration.getSslConnectionMaxAge(),
+                            AOServClientConfiguration.getSslTruststorePath(),
+                            AOServClientConfiguration.getSslTruststorePassword(),
                             errorHandler
                         );
                     /*
@@ -712,6 +717,13 @@ abstract public class AOServConnector {
      */
     final public String getHostname() {
         return hostname;
+    }
+
+    /**
+     * Gets the optional local IP address that connections are made from.
+     */
+    final public String getLocalIp() {
+        return local_ip;
     }
 
     /**
@@ -915,6 +927,7 @@ abstract public class AOServConnector {
             if(param==null) throw new NullPointerException("param is null");
             if(param instanceof Integer) out.writeCompressedInt((Integer)param);
             else if(param instanceof String) out.writeUTF((String)param);
+            else if(param instanceof Float) out.writeFloat((Float)param);
             else if(param instanceof Long) out.writeLong((Long)param);
             else if(param instanceof Boolean) out.writeBoolean((Boolean)param);
             else if(param instanceof Short) out.writeShort((Short)param);
@@ -1303,7 +1316,7 @@ abstract public class AOServConnector {
     final public String toString() {
         Profiler.startProfile(Profiler.FAST, AOServConnector.class, "toString()", null);
         try {
-            return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&port="+port+"&connectAs="+connectAs+"&authenticateAs="+authenticateAs;
+            return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&local_ip="+local_ip+"&port="+port+"&connectAs="+connectAs+"&authenticateAs="+authenticateAs;
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
