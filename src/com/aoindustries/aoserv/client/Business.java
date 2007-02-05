@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2006 by AO Industries, Inc.,
+ * Copyright 2000-2007 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -517,6 +517,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public List<Transaction> getTransactions() {
 	return table.connector.transactions.getTransactions(pkey);
+    }
+
+    public List<WhoisHistory> getWhoisHistory() {
+        return table.connector.whoisHistory.getWhoisHistory(this);
     }
 
     void initImpl(ResultSet result) throws SQLException {

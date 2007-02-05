@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2006 by AO Industries, Inc.,
+ * Copyright 2001-2007 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -81,7 +81,11 @@ abstract public class AOServConnector {
     private final Object testConnectLock=new Object();
 
     public final ActionTypeTable actionTypes;
+    public ActionTypeTable getActionTypes() {return actionTypes;}
+
     public final ActionTable actions;
+    public ActionTable getActions() {return actions;}
+
     public final AOServerDaemonHostTable aoServerDaemonHosts;
     public final AOServerTable aoServers;
     public final AOServProtocolTable aoservProtocols;
@@ -146,7 +150,10 @@ abstract public class AOServConnector {
     public final HttpdSiteAuthenticatedLocationTable httpdSiteAuthenticatedLocationTable;
     public final HttpdSiteBindTable httpdSiteBinds;
     public final HttpdSiteURLTable httpdSiteURLs;
+
     public final HttpdSiteTable httpdSites;
+    public HttpdSiteTable getHttpdSites() {return httpdSites;}
+
     public final HttpdStaticSiteTable httpdStaticSites;
     public final HttpdTomcatContextTable httpdTomcatContexts;
     public final HttpdTomcatDataSourceTable httpdTomcatDataSources;
@@ -263,7 +270,11 @@ abstract public class AOServConnector {
     public final USStateTable usStates;
     public final UsernameTable usernames;
 
-    final SimpleAOClient simpleAOClient;
+    public final WhoisHistoryTable whoisHistory;
+    public WhoisHistoryTable getWhoisHistory() {return whoisHistory;}
+
+    public final SimpleAOClient simpleAOClient;
+    public SimpleAOClient getSimpleAOClient() {return simpleAOClient;}
 
     /**
      * The tables are placed in this array as they are created.
@@ -478,7 +489,8 @@ abstract public class AOServConnector {
                 transactionTypes=new TransactionTypeTable(this),
                 transactions=new TransactionTable(this),
                 usStates=new USStateTable(this),
-                usernames=new UsernameTable(this)
+                usernames=new UsernameTable(this),
+                whoisHistory=new WhoisHistoryTable(this)
             };
 
             simpleAOClient=new SimpleAOClient(this);

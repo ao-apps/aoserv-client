@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2006 by AO Industries, Inc.,
+ * Copyright 2001-2007 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -111,8 +111,10 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 
     /**
      * Gets the hostname for a fully qualified hostname.  Gets a hostname in <code><i>name</i>.<i>tld</i>.</code> format.
+     *
+     * @exception  IllegalArgumentException  if hostname cannot be resolved to a top level domain
      */
-    public static String getHostTLD(String hostname, List<String> tlds) {
+    public static String getHostTLD(String hostname, List<String> tlds) throws IllegalArgumentException {
     	int hostnameLen=hostname.length();
         if (hostnameLen>0 && hostname.charAt(hostnameLen-1)!='.') {
             hostname = hostname+".";
@@ -135,10 +137,10 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
                 }
             }
 	}
-	throw new WrappedException(new SQLException("Unable to determine the host.tld. format of "+hostname));
+	throw new IllegalArgumentException("Unable to determine the host.tld. format of "+hostname);
     }
 
-    public String getHostTLD(String hostname) {
+    public String getHostTLD(String hostname) throws IllegalArgumentException {
         return getHostTLD(hostname, getDNSTLDs());
     }
 

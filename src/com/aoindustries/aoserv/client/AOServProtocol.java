@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2006 by AO Industries, Inc.,
+ * Copyright 2001-2007 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -75,7 +75,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_17="1.17",
         VERSION_1_18="1.18",
         VERSION_1_19="1.19",
-        CURRENT_VERSION=VERSION_1_19
+        VERSION_1_20="1.20",
+        CURRENT_VERSION=VERSION_1_20
     ;
 
     /**
@@ -136,7 +137,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
                 VERSION_1_16,
                 VERSION_1_17,
                 VERSION_1_18,
-                VERSION_1_19
+                VERSION_1_19,
+                VERSION_1_20
             };
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -411,7 +413,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         UPDATE_HTTPD_TOMCAT_PARAMETER=UPDATE_HTTPD_TOMCAT_DATA_SOURCE+1,
         GET_FAILOVER_FILE_LOGS_FOR_REPLICATION=UPDATE_HTTPD_TOMCAT_PARAMETER+1,
         SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES=GET_FAILOVER_FILE_LOGS_FOR_REPLICATION+1,
-        SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME=SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES+1
+        SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME=SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES+1,
+        GET_WHOIS_HISTORY_WHOIS_OUTPUT=SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME+1
     ;
 
     /**

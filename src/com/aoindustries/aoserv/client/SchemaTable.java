@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2006 by AO Industries, Inc.,
+ * Copyright 2001-2007 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -210,10 +210,11 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         TRANSACTION_TYPES=TIME_ZONES+1,
         TRANSACTIONS=TRANSACTION_TYPES+1,
         US_STATES=TRANSACTIONS+1,
-        USERNAMES=US_STATES+1
+        USERNAMES=US_STATES+1,
+        WHOIS_HISTORY=USERNAMES+1
     ;
 
-    public static final int NUM_TABLES=USERNAMES+1;
+    public static final int NUM_TABLES=WHOIS_HISTORY+1;
 
     String name;
     String display;
