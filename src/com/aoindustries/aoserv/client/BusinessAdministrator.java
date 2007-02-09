@@ -136,7 +136,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         else return dl.canEnable();
     }
 
-    public String[] checkPassword(String password) {
+    public PasswordChecker.Result[] checkPassword(String password) {
 	return checkPassword(pkey, password);
     }
 
@@ -144,7 +144,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public static String[] checkPassword(String username, String password) {
+    public static PasswordChecker.Result[] checkPassword(String username, String password) {
 	return PasswordChecker.checkPassword(username, password, true, false);
     }
 
@@ -152,17 +152,17 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public String checkPasswordDescribe(String password) {
+    /*public String checkPasswordDescribe(String password) {
 	return checkPasswordDescribe(pkey, password);
-    }
+    }*/
 
     /**
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public static String checkPasswordDescribe(String username, String password) {
+    /*public static String checkPasswordDescribe(String username, String password) {
 	return PasswordChecker.checkPasswordDescribe(username, password, true, false);
-    }
+    }*/
 
     /**
      * Encrypts a password.  If the password is <code>null</code>, returns <code>NO_PASSWORD</code>.

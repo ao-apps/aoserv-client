@@ -283,7 +283,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
 
                 } while(entropy<413000000000L);
                 password=pw.toString();
-            } while(PasswordChecker.checkPasswordDescribe("xxx", password, true, false)!=null);
+            } while(PasswordChecker.hasResults(PasswordChecker.checkPassword(null, password, true, false)));
             return password;
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
@@ -385,9 +385,9 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
                 return true;
             } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD)) {
                 if(AOSH.checkParamCount(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
-                    String desc=connector.simpleAOClient.checkLinuxAccountPassword(args[1], args[2]);
-                    if(desc!=null) {
-                        out.println(desc);
+                    PasswordChecker.Result[] results = connector.simpleAOClient.checkLinuxAccountPassword(args[1], args[2]);
+                    if(PasswordChecker.hasResults(results)) {
+                        PasswordChecker.printResults(results, out, Locale.getDefault());
                         out.flush();
                     }
                 }

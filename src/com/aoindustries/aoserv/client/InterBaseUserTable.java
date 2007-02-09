@@ -99,9 +99,9 @@ final public class InterBaseUserTable extends CachedTableStringKey<InterBaseUser
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_INTERBASE_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_INTERBASE_PASSWORD, args, 2, err)) {
                 try {
-                    String desc=SimpleAOClient.checkInterBasePassword(args[1], args[2]);
-                    if(desc!=null) {
-                        out.println(desc);
+                    PasswordChecker.Result[] results = SimpleAOClient.checkInterBasePassword(args[1], args[2]);
+                    if(PasswordChecker.hasResults(results)) {
+                        PasswordChecker.printResults(results, out, Locale.getDefault());
                         out.flush();
                     }
                 } catch(IOException err2) {

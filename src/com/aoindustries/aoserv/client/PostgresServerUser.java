@@ -50,13 +50,13 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         else return dl.canEnable() && getPostgresUser().disable_log==-1;
     }
 
-    public String[] checkPassword(String password) {
+    public PasswordChecker.Result[] checkPassword(String password) {
 	return PostgresUser.checkPassword(username, password);
     }
 
-    public String checkPasswordDescribe(String password) {
+    /*public String checkPasswordDescribe(String password) {
 	return PostgresUser.checkPasswordDescribe(username, password);
-    }
+    }*/
 
     public void disable(DisableLog dl) {
         table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.POSTGRES_SERVER_USERS, dl.pkey, pkey);

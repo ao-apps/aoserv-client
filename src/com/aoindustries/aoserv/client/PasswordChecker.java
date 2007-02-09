@@ -38,25 +38,57 @@ final public class PasswordChecker {
         "dec","december"
     };
 
+    private static final String GOOD_KEY = "PasswordChecker.good";
+
     /**
      * The catergories that are checked.
      */
-    private static final String[] categories={
-        "Length",
-        "Characters",
-        "Case",
-        "Dates",
-        "Dictionary"
+    private static final String[] categoryKeys={
+        "PasswordChecker.category.length",
+        "PasswordChecker.category.characters",
+        "PasswordChecker.category.case",
+        "PasswordChecker.category.dates",
+        "PasswordChecker.category.dictionary"
     };
-    public static final int NUM_CATEGORIES=categories.length;
+    public static final int NUM_CATEGORIES=categoryKeys.length;
 
     private static byte[] cachedWords;
 
+    public static class Result {
+        private String categoryKey;
+        private String resultKey;
+        private String arg0;
+
+        private Result(String categoryKey) {
+            this.categoryKey = categoryKey;
+            this.resultKey = GOOD_KEY;
+            this.arg0 = "";
+        }
+
+        public String getCategoryKey() {
+            return categoryKey;
+        }
+        
+        public String getResultKey() {
+            return resultKey;
+        }
+        
+        public String getArg0() {
+            return arg0;
+        }
+    }
+
     private PasswordChecker() {}
 
-    public static String[] checkPassword(String username, String password, boolean strict, boolean superLax) {
+    public static Result[] getAllGoodResults() {
+        Result[] results = new Result[NUM_CATEGORIES];
+        for(int c=0;c<NUM_CATEGORIES;c++) results[c]=new Result(categoryKeys[c]);
+        return results;
+    }
+
+    public static Result[] checkPassword(String username, String password, boolean strict, boolean superLax) {
         try {
-            String[] results = new String[5];
+            Result[] results = getAllGoodResults();
             int passwordLen = password.length();
             if (passwordLen > 0) {
                 /*
@@ -64,7 +96,7 @@ final public class PasswordChecker {
                  *
                  * Must be at least eight characters
                  */
-                if (passwordLen < (superLax?6:8)) results[0] = superLax ? "The password should be at least six characters." : "The password should be at least eight characters.";
+                if (passwordLen < (superLax?6:8)) results[0].resultKey = superLax ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight";
 
                 /*
                  * Gather password stats
@@ -88,12 +120,9 @@ final public class PasswordChecker {
                  * 2) Must not be all numbers
                  * 3) Must not contain a space
                  */
-                if ((numbercount + specialcount) == passwordLen) results[1] = "The password should not be only numbers";
-                else if (!superLax && (lowercount + uppercount + specialcount) == passwordLen) results[1] = "The password should contain numbers and/or punctuation";
-                if (password.indexOf(' ')!=-1) {
-                    if(results[2]==null) results[2]="The password cannot contain a space character.";
-                    else results[2]=results[2]+" and cannot contain a space character.";
-                } else if(results[2]!=null) results[2]=results[2]+'.';
+                if ((numbercount + specialcount) == passwordLen) results[1].resultKey = "PasswordChecker.characters.notOnlyNumbers";
+                else if (!superLax && (lowercount + uppercount + specialcount) == passwordLen) results[1].resultKey = "PasswordChecker.characters.numbersAndPunctuation";
+                else if (password.indexOf(' ')!=-1) results[1].resultKey="PasswordChecker.characters.notContainSpace";
 
                 /*
                  * Must use different cases
@@ -107,7 +136,7 @@ final public class PasswordChecker {
                         || (uppercount > 1 && lowercount == 0)
                         || (lowercount == 0 && uppercount == 0)
                     )
-                ) results[2] = "The password should have both capital and lower case letters.";
+                ) results[2].resultKey = "PasswordChecker.case.capitalAndLower";
 
                 /*
                  * Generate the backwards version of the password
@@ -123,7 +152,7 @@ final public class PasswordChecker {
                  * Must not be the same as your username
                  */
                 if(username!=null && username.equalsIgnoreCase(password)) {
-                    results[4]="The password cannot be the same as the username.";
+                    results[4].resultKey="PasswordChecker.dictionary.notSameAsUsername";
                 }
 
                 /*
@@ -145,9 +174,9 @@ final public class PasswordChecker {
                             break;
                         }
                     }
-                    if (!goodb) results[3] = "The password must not contain a date.";
+                    if (!goodb) results[3].resultKey = "PasswordChecker.dates.noDate";
 
-                    if(results[4]==null) {
+                    if(results[4].resultKey.equals(GOOD_KEY)) {
                         /*
                          * Dictionary check
                          *
@@ -188,16 +217,21 @@ final public class PasswordChecker {
                                 }
                             }
                         }
-                        if (longest.length() > 0) results[4] = "The password is based on a dictionary word: " + longest;
+                        if (longest.length() > 0) {
+                            results[4].resultKey = "PasswordChecker.dictionary.basedOnWord";
+                            results[4].arg0 = longest;
+                        }
                     }
                 }
-            } else results[0] = "No password entered.";
+            } else results[0].resultKey = "PasswordChecker.length.noPassword";
             return results;
         } catch(IOException err) {
             throw new WrappedException(err);
         }
     }
-
+/**
+ * TODO: Need to pull the values from ApplicationResources here based on locales.
+ *
     public static String checkPasswordDescribe(String username, String password, boolean strict, boolean superLax) {
 	String[] results=checkPassword(username, password, strict, superLax);
 	StringBuilder SB=new StringBuilder();
@@ -210,10 +244,7 @@ final public class PasswordChecker {
 	}
 	return SB.length()==0?null:SB.toString();
     }
-
-    public static String getCategory(int index) {
-	return categories[index];
-    }
+*/
 
     private synchronized static byte[] getDictionary() throws IOException {
 	if(cachedWords==null) {
@@ -240,10 +271,10 @@ final public class PasswordChecker {
 	return cachedWords;
     }
 
-    public static boolean hasResults(String[] results) {
+    public static boolean hasResults(Result[] results) {
         if(results==null) return false;
 	for(int c=0;c<NUM_CATEGORIES;c++) {
-            if(results[c]!=null) return true;
+            if(!results[c].resultKey.equals(GOOD_KEY)) return true;
 	}
 	return false;
     }
@@ -269,5 +300,47 @@ final public class PasswordChecker {
     public static String yearOf(int year) {
 	if(year>=0&&year<=9) return "0"+year;
 	return String.valueOf(year);
+    }
+    
+    /**
+     * Prints the results in the provided locale.
+     */
+    public static void printResults(Result[] results, PrintWriter out, Locale locale) {
+        for(int c=0;c<NUM_CATEGORIES;c++) {
+            out.print(ApplicationResourcesAccessor.getMessage(locale, results[c].getCategoryKey()));
+            out.print(": ");
+            out.println(ApplicationResourcesAccessor.getMessage(locale, results[c].getResultKey(), results[c].getArg0()));
+        }
+    }
+    /**
+     * Prints the results in the provided locale in HTML format.
+     */
+    public static void printResultsHtml(Result[] results, ChainWriter out, Locale locale) {
+        out.print("    <TABLE border='0' cellspacing='0' cellpadding='4'>\n");
+        for(int c=0;c<NUM_CATEGORIES;c++) {
+            out
+                .print("      <TR><TD>")
+                .print(ApplicationResourcesAccessor.getMessage(locale, results[c].getCategoryKey()))
+                .print(":</TD><TD>")
+                .print(ApplicationResourcesAccessor.getMessage(locale, results[c].getResultKey(), results[c].getArg0()))
+                .print("</TD></TR>\n");
+            ;
+        }
+        out.print("    </TABLE>\n");
+    }
+
+    /**
+     * Gets the results as a String.
+     */
+    public static String getResultsString(Result[] results, Locale locale) {
+        StringBuilder SB = new StringBuilder();
+        for(int c=0;c<NUM_CATEGORIES;c++) {
+            SB
+                .append(ApplicationResourcesAccessor.getMessage(locale, results[c].getCategoryKey()))
+                .append(": ")
+                .append(ApplicationResourcesAccessor.getMessage(locale, results[c].getResultKey(), results[c].getArg0()))
+                .append('\n');
+        }
+        return SB.toString();
     }
 }

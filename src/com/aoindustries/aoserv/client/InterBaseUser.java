@@ -76,14 +76,14 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
-    public String[] checkPassword(String password) {
+    public PasswordChecker.Result[] checkPassword(String password) {
         return checkPassword(pkey, password);
     }
 
-    public static String[] checkPassword(String username, String password) {
+    public static PasswordChecker.Result[] checkPassword(String username, String password) {
         return PasswordChecker.checkPassword(username, password, true, false);
     }
-
+/*
     public String checkPasswordDescribe(String password) {
         return checkPasswordDescribe(pkey, password);
     }
@@ -91,7 +91,7 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
     public static String checkPasswordDescribe(String username, String password) {
         return PasswordChecker.checkPasswordDescribe(username, password, true, false);
     }
-
+*/
     public void disable(DisableLog dl) {
         table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.INTERBASE_USERS, dl.pkey, pkey);
     }

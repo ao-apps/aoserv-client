@@ -89,14 +89,14 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         else return dl.canEnable() && getMySQLUser().disable_log==-1;
     }
 
-    public String[] checkPassword(String password) {
+    public PasswordChecker.Result[] checkPassword(String password) {
 	return MySQLUser.checkPassword(username, password);
     }
-
+/*
     public String checkPasswordDescribe(String password) {
 	return MySQLUser.checkPasswordDescribe(username, password);
     }
-
+*/
     public void disable(DisableLog dl) {
         table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.MYSQL_SERVER_USERS, dl.pkey, pkey);
     }

@@ -159,40 +159,41 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     /**
      * Checks the strength of a password as used by this <code>Username</code>.
      */
-    public String[] checkPassword(String password) {
+    public PasswordChecker.Result[] checkPassword(String password) {
 	BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null) {
-            String[] results=ba.checkPassword(password);
+            PasswordChecker.Result[] results=ba.checkPassword(password);
             if(PasswordChecker.hasResults(results)) return results;
 	}
 
 	InterBaseUser iu=getInterBaseUser();
 	if(iu!=null) {
-            String[] results=iu.checkPassword(password);
+            PasswordChecker.Result[] results=iu.checkPassword(password);
             if(PasswordChecker.hasResults(results)) return results;
 	}
 
         LinuxAccount la=getLinuxAccount();
 	if(la!=null) {
-            String[] results=la.checkPassword(password);
+            PasswordChecker.Result[] results=la.checkPassword(password);
             if(PasswordChecker.hasResults(results)) return results;
 	}
 
 	MySQLUser mu=getMySQLUser();
 	if(mu!=null) {
-            String[] results=mu.checkPassword(password);
+            PasswordChecker.Result[] results=mu.checkPassword(password);
             if(PasswordChecker.hasResults(results)) return results;
 	}
 
 	PostgresUser pu=getPostgresUser();
 	if(pu!=null) {
-            String[] results=pu.checkPassword(password);
+            PasswordChecker.Result[] results=pu.checkPassword(password);
             if(PasswordChecker.hasResults(results)) return results;
 	}
 
-	return new String[PasswordChecker.NUM_CATEGORIES];
+        return PasswordChecker.getAllGoodResults();
     }
 
+    /*
     public String checkPasswordDescribe(String password) {
 	BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null) {
@@ -226,7 +227,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
 	return null;
     }
-
+*/
     public void disable(DisableLog dl) {
         table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.USERNAMES, dl.pkey, pkey);
     }

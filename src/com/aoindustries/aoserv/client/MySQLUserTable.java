@@ -72,9 +72,9 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_PASSWORD, args, 2, err)) {
-                String desc=SimpleAOClient.checkMySQLPassword(args[1], args[2]);
-                if(desc!=null) {
-                    out.println(desc);
+                PasswordChecker.Result[] results=SimpleAOClient.checkMySQLPassword(args[1], args[2]);
+                if(PasswordChecker.hasResults(results)) {
+                    PasswordChecker.printResults(results, out, Locale.getDefault());
                     out.flush();
                 }
             }

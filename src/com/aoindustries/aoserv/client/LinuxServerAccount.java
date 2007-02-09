@@ -127,11 +127,10 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         }
     }
 
-    public String[] checkPassword(String password) {
+    public PasswordChecker.Result[] checkPassword(String password) {
         return getLinuxAccount().checkPassword(password);
     }
-
-    public String checkPasswordDescribe(String password) {
+/* String checkPasswordDescribe(String password) {
         Profiler.startProfile(Profiler.FAST, LinuxServerAccount.class, "checkPasswordDescribe(String)", null);
         try {
             return getLinuxAccount().checkPasswordDescribe(password);
@@ -139,7 +138,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
             Profiler.endProfile(Profiler.FAST);
         }
     }
-
+*/
     public long copyHomeDirectory(AOServer toServer) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "copyHomeDirectory(AOServer)", null);
         try {

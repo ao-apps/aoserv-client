@@ -122,7 +122,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         }
     }
 
-    public String[] checkPassword(String password) {
+    public PasswordChecker.Result[] checkPassword(String password) {
         return checkPassword(pkey, type, password);
     }
 
@@ -134,7 +134,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * @see  LinuxAccountType#enforceStrongPassword(String)
      * @see  PasswordChecker#checkPassword(String,String,boolean,boolean)
      */
-    public static String[] checkPassword(String username, String type, String password) {
+    public static PasswordChecker.Result[] checkPassword(String username, String type, String password) {
         Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "checkPassword(String,String,String)", null);
         try {
             boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
@@ -143,11 +143,11 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
             Profiler.endProfile(Profiler.FAST);
         }
     }
-
+/*
     public String checkPasswordDescribe(String password) {
         return checkPasswordDescribe(pkey, type, password);
     }
-
+*/
     /**
      * Checks the strength of a password as required for this
      * <code>LinuxAccount</code>.  The strength requirement
@@ -156,10 +156,10 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * @see  LinuxAccountType#enforceStrongPassword(String)
      * @see  PasswordChecker#checkPasswordDescribe(String,String,boolean,boolean)
      */
-    public static String checkPasswordDescribe(String username, String type, String password) {
+    /*public static String checkPasswordDescribe(String username, String type, String password) {
         boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
         return PasswordChecker.checkPasswordDescribe(username, password, enforceStrong, !enforceStrong);
-    }
+    }*/
 
     public void disable(DisableLog dl) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "disable(DisableLog)", null);

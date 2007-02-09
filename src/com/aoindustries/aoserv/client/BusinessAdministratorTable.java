@@ -136,12 +136,12 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
-                String desc=SimpleAOClient.checkBusinessAdministratorPassword(
+                PasswordChecker.Result[] results = SimpleAOClient.checkBusinessAdministratorPassword(
                     args[1],
                     args[2]
                 );
-                if(desc!=null) {
-                    out.println(desc);
+                if(PasswordChecker.hasResults(results)) {
+                    PasswordChecker.printResults(results, out, Locale.getDefault());
                     out.flush();
                 }
             }

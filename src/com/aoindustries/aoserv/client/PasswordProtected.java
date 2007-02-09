@@ -33,8 +33,8 @@ public interface PasswordProtected {
      */
     int ALL=2;
 
-    String[] checkPassword(String password);
-    String checkPasswordDescribe(String password);
+    PasswordChecker.Result[] checkPassword(String password);
+    //String checkPasswordDescribe(String password);
     boolean canSetPassword();
     int arePasswordsSet();
     void setPassword(String password);

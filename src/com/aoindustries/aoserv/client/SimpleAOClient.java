@@ -3643,14 +3643,14 @@ final public class SimpleAOClient {
      * @see  Username#isValidUsername
      * @see  BusinessAdministrator#checkPasswordDescribe
      */
-    public static String checkBusinessAdministratorPassword(
+    public static PasswordChecker.Result[] checkBusinessAdministratorPassword(
         String username,
         String password
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkBusinessAdministratorPassword(String,String)", null);
         try {
             if(!Username.isValidUsername(username)) throw new IllegalArgumentException("Invalid username: "+username);
-            return BusinessAdministrator.checkPasswordDescribe(username, password);
+            return BusinessAdministrator.checkPassword(username, password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -3833,13 +3833,13 @@ final public class SimpleAOClient {
      * @see  #setInterBaseServerUserPassword
      * @see  InterBaseUser#checkPasswordDescribe
      */
-    public static String checkInterBasePassword(
+    public static PasswordChecker.Result[] checkInterBasePassword(
         String username,
         String password
     ) throws IOException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkInterBasePassword(String,String)", null);
         try {
-            return InterBaseUser.checkPasswordDescribe(username, password);
+            return InterBaseUser.checkPassword(username, password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -3929,13 +3929,13 @@ final public class SimpleAOClient {
      * @see  #setLinuxServerAccountPassword
      * @see  PasswordChecker
      */
-    public String checkLinuxAccountPassword(
+    public PasswordChecker.Result[] checkLinuxAccountPassword(
         String username,
         String password
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkLinuxAccountPassword(String,String)", null);
         try {
-            return getLinuxAccount(username).checkPasswordDescribe(password);
+            return getLinuxAccount(username).checkPassword(password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4024,11 +4024,11 @@ final public class SimpleAOClient {
      * @see  #setMySQLServerUserPassword
      * @see  MySQLUser#checkPasswordDescribe
      */
-    public static String checkMySQLPassword(
+    public static PasswordChecker.Result[] checkMySQLPassword(
         String username,
         String password
     ) {
-        return MySQLUser.checkPasswordDescribe(username, password);
+        return MySQLUser.checkPassword(username, password);
     }
 
     /**
@@ -4137,13 +4137,13 @@ final public class SimpleAOClient {
      * @see  #setPostgresServerUserPassword
      * @see  PostgresUser#checkPasswordDescribe
      */
-    public static String checkPostgresPassword(
+    public static PasswordChecker.Result[] checkPostgresPassword(
         String username,
         String password
     ) throws IOException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkPostgresPassword(String,String)", null);
         try {
-            return PostgresUser.checkPasswordDescribe(username, password);
+            return PostgresUser.checkPassword(username, password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4315,13 +4315,13 @@ final public class SimpleAOClient {
      * @see  #setUsernamePassword
      * @see  Username#checkPasswordDescribe
      */
-    public String checkUsernamePassword(
+    public PasswordChecker.Result[] checkUsernamePassword(
         String username,
         String password
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkUsernamePassword(String,String)", null);
         try {
-            return getUsername(username).checkPasswordDescribe(password);
+            return getUsername(username).checkPassword(password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
