@@ -195,9 +195,16 @@ public class TCPConnector extends AOServConnector {
         long maxConnectionAge,
         ErrorHandler errorHandler
     ) throws IOException {
+        if(connectAs==null) throw new NullPointerException("connectAs is null");
+        if(authenticateAs==null) throw new NullPointerException("authenticateAs is null");
+        if(password==null) throw new NullPointerException("password is null");
 	int size=connectors.size();
 	for(int c=0;c<size;c++) {
             TCPConnector connector=connectors.get(c);
+            if(connector==null) throw new NullPointerException("connector is null");
+            if(connector.connectAs==null) throw new NullPointerException("connector.connectAs is null");
+            if(connector.authenticateAs==null) throw new NullPointerException("connector.authenticateAs is null");
+            if(connector.password==null) throw new NullPointerException("connector.password is null");
             if(
                 connector.hostname.equals(hostname)
                 && StringUtility.equals(local_ip, connector.local_ip)
