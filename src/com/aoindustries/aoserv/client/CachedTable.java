@@ -40,7 +40,7 @@ abstract public class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 
     /**
      * The internal objects are stored in <code>HashMaps</code> of <code>CachedObject[]</code>
-     * based on indexes columns.  Each of the contained List<T> are unmodifiable.
+     * based on indexed columns.  Each of the contained List<T> are unmodifiable.
      */
     private List<Map<Object,List<V>>> indexHashes;
     private BitSet indexesHashed;

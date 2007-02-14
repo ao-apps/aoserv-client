@@ -143,23 +143,6 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
             Profiler.endProfile(Profiler.FAST);
         }
     }
-/*
-    public String checkPasswordDescribe(String password) {
-        return checkPasswordDescribe(pkey, type, password);
-    }
-*/
-    /**
-     * Checks the strength of a password as required for this
-     * <code>LinuxAccount</code>.  The strength requirement
-     * depends on the <code>LinuxAccountType</code>.
-     *
-     * @see  LinuxAccountType#enforceStrongPassword(String)
-     * @see  PasswordChecker#checkPasswordDescribe(String,String,boolean,boolean)
-     */
-    /*public static String checkPasswordDescribe(String username, String type, String password) {
-        boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
-        return PasswordChecker.checkPasswordDescribe(username, password, enforceStrong, !enforceStrong);
-    }*/
 
     public void disable(DisableLog dl) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "disable(DisableLog)", null);

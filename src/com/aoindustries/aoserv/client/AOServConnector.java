@@ -87,8 +87,15 @@ abstract public class AOServConnector {
     public ActionTable getActions() {return actions;}
 
     public final AOServerDaemonHostTable aoServerDaemonHosts;
+
     public final AOServerTable aoServers;
+    public AOServerTable getAoServers() {return aoServers;}
+
     public final AOServProtocolTable aoservProtocols;
+
+    public final AOServPermissionTable aoservPermissions;
+    public AOServPermissionTable getAoservPermissions() {return aoservPermissions;}
+
     public final AOSHCommandTable aoshCommands;
     public final ArchitectureTable architectures;
     public final BackupDataTable backupDatas;
@@ -102,6 +109,10 @@ abstract public class AOServConnector {
     public final BankTable banks;
     public final BlackholeEmailAddressTable blackholeEmailAddresses;
     public final BusinessAdministratorTable businessAdministrators;
+
+    public final BusinessAdministratorPermissionTable businessAdministratorPermissions;
+    public BusinessAdministratorPermissionTable getBusinessAdministratorPermissions() {return businessAdministratorPermissions;}
+
     public final BusinessProfileTable businessProfiles;
     public final BusinessTable businesses;
     public final BusinessServerTable businessServers;
@@ -197,7 +208,10 @@ abstract public class AOServConnector {
     public final MySQLDBUserTable mysqlDBUsers;
     public final MySQLReservedWordTable mysqlReservedWords;
     public final MySQLServerUserTable mysqlServerUsers;
+
     public final MySQLServerTable mysqlServers;
+    public MySQLServerTable getMysqlServers() {return mysqlServers;}
+
     public final MySQLUserTable mysqlUsers;
     public final NetBindTable netBinds;
     public final NetDeviceIDTable netDeviceIDs;
@@ -212,7 +226,10 @@ abstract public class AOServConnector {
     public final PackageCategoryTable packageCategories;
     public final PackageDefinitionLimitTable packageDefinitionLimits;
     public final PackageDefinitionTable packageDefinitions;
+
     public final PackageTable packages;
+    public PackageTable getPackages() {return packages;}
+
     public final PaymentTypeTable paymentTypes;
     public final PhoneNumberTable phoneNumbers;
     public final PostgresBackupTable postgresBackups;
@@ -220,7 +237,10 @@ abstract public class AOServConnector {
     public final PostgresEncodingTable postgresEncodings;
     public final PostgresReservedWordTable postgresReservedWords;
     public final PostgresServerUserTable postgresServerUsers;
+
     public final PostgresServerTable postgresServers;
+    public PostgresServerTable getPostgresServers() {return postgresServers;}
+
     public final PostgresUserTable postgresUsers;
     public final PostgresVersionTable postgresVersions;
     public final PrivateFTPServerTable privateFTPServers;
@@ -313,6 +333,7 @@ abstract public class AOServConnector {
                 aoServerDaemonHosts=new AOServerDaemonHostTable(this),
                 aoServers=new AOServerTable(this),
                 aoservProtocols=new AOServProtocolTable(this),
+                aoservPermissions=new AOServPermissionTable(this),
                 aoshCommands=new AOSHCommandTable(this),
                 architectures=new ArchitectureTable(this),
                 backupDatas=new BackupDataTable(this),
@@ -326,6 +347,7 @@ abstract public class AOServConnector {
                 banks=new BankTable(this),
                 blackholeEmailAddresses=new BlackholeEmailAddressTable(this),
                 businessAdministrators=new BusinessAdministratorTable(this),
+                businessAdministratorPermissions=new BusinessAdministratorPermissionTable(this),
                 businessProfiles=new BusinessProfileTable(this),
                 businesses=new BusinessTable(this),
                 businessServers=new BusinessServerTable(this),

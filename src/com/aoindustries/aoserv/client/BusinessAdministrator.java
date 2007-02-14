@@ -598,4 +598,22 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     public boolean canSetPassword() {
         return disable_log==-1;
     }
+
+    public List<BusinessAdministratorPermission> getPermissions() {
+        return table.connector.businessAdministratorPermissions.getPermissions(this);
+    }
+    
+    /**
+     * Checks if if this business administrator has the provided permission.
+     */
+    public boolean hasPermission(AOServPermission permission) {
+        return hasPermission(permission.getName());
+    }
+
+    /**
+     * Checks if if this business administrator has the provided permission.
+     */
+    public boolean hasPermission(String permission) {
+        return table.connector.businessAdministratorPermissions.hasPermission(this, permission);
+    }
 }

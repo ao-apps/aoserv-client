@@ -3641,7 +3641,7 @@ final public class SimpleAOClient {
      *
      * @see  #setBusinessAdministratorPassword
      * @see  Username#isValidUsername
-     * @see  BusinessAdministrator#checkPasswordDescribe
+     * @see  BusinessAdministrator#checkPassword
      */
     public static PasswordChecker.Result[] checkBusinessAdministratorPassword(
         String username,
@@ -3831,7 +3831,7 @@ final public class SimpleAOClient {
      *
      * @see  #setInterBaseUserPassword
      * @see  #setInterBaseServerUserPassword
-     * @see  InterBaseUser#checkPasswordDescribe
+     * @see  InterBaseUser#checkPassword
      */
     public static PasswordChecker.Result[] checkInterBasePassword(
         String username,
@@ -3924,7 +3924,7 @@ final public class SimpleAOClient {
      *					violation occurs
      * @exception  IllegalArgumentException  if unable to find the <code>LinuxAccount</code>
      *
-     * @see  LinuxAccount#checkPasswordDescribe
+     * @see  LinuxAccount#checkPassword
      * @see  #setLinuxAccountPassword
      * @see  #setLinuxServerAccountPassword
      * @see  PasswordChecker
@@ -4022,7 +4022,7 @@ final public class SimpleAOClient {
      *
      * @see  #setMySQLUserPassword
      * @see  #setMySQLServerUserPassword
-     * @see  MySQLUser#checkPasswordDescribe
+     * @see  MySQLUser#checkPassword
      */
     public static PasswordChecker.Result[] checkMySQLPassword(
         String username,
@@ -4135,7 +4135,7 @@ final public class SimpleAOClient {
      *
      * @see  #setPostgresUserPassword
      * @see  #setPostgresServerUserPassword
-     * @see  PostgresUser#checkPasswordDescribe
+     * @see  PostgresUser#checkPassword
      */
     public static PasswordChecker.Result[] checkPostgresPassword(
         String username,
@@ -4313,7 +4313,7 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
      *
      * @see  #setUsernamePassword
-     * @see  Username#checkPasswordDescribe
+     * @see  Username#checkPassword
      */
     public PasswordChecker.Result[] checkUsernamePassword(
         String username,

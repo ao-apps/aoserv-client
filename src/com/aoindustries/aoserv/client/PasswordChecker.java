@@ -312,6 +312,7 @@ final public class PasswordChecker {
             out.println(ApplicationResourcesAccessor.getMessage(locale, results[c].getResultKey(), results[c].getArg0()));
         }
     }
+
     /**
      * Prints the results in the provided locale in HTML format.
      */
@@ -319,14 +320,33 @@ final public class PasswordChecker {
         out.print("    <TABLE border='0' cellspacing='0' cellpadding='4'>\n");
         for(int c=0;c<NUM_CATEGORIES;c++) {
             out
-                .print("      <TR><TD>")
+                .print("      <TR><TD nowrap>")
                 .print(ApplicationResourcesAccessor.getMessage(locale, results[c].getCategoryKey()))
-                .print(":</TD><TD>")
+                .print(":</TD><TD nowrap>")
                 .print(ApplicationResourcesAccessor.getMessage(locale, results[c].getResultKey(), results[c].getArg0()))
                 .print("</TD></TR>\n");
             ;
         }
         out.print("    </TABLE>\n");
+    }
+
+    /**
+     * Gets the results in the provided locale in HTML format.
+     */
+    public static String getResultsHtml(Result[] results, Locale locale) {
+        StringBuilder SB = new StringBuilder();
+        SB.append("    <TABLE border='0' cellspacing='0' cellpadding='4'>\n");
+        for(int c=0;c<NUM_CATEGORIES;c++) {
+            SB
+                .append("      <TR><TD nowrap>")
+                .append(ApplicationResourcesAccessor.getMessage(locale, results[c].getCategoryKey()))
+                .append(":</TD><TD nowrap>")
+                .append(ApplicationResourcesAccessor.getMessage(locale, results[c].getResultKey(), results[c].getArg0()))
+                .append("</TD></TR>\n");
+            ;
+        }
+        SB.append("    </TABLE>\n");
+        return SB.toString();
     }
 
     /**

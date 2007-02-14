@@ -667,7 +667,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     }
 
     /**
-     * Gets the rows in a more efficient, indexes manner.
+     * Gets the rows in a more efficient, indexed manner.
      *
      * @exception UnsupportedOperationException if not supported by the specific table implementation
      */
@@ -676,7 +676,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     }
 
     /**
-     * Gets the rows in a more efficient, indexes manner.  This default implementation simply throws UnsupportedOperationException.
+     * Gets the rows in a more efficient, indexed manner.  This default implementation simply throws UnsupportedOperationException.
      *
      * @exception UnsupportedOperationException if not supported by the specific table implementation
      */
@@ -929,7 +929,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     public boolean isEmpty() {
         return getRows().isEmpty();
     }
-    
+
     public int size() {
         return getRows().size();
     }
