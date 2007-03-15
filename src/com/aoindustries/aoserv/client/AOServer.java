@@ -430,6 +430,9 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.emailSmtpRelays.getEmailSmtpRelay(pk, this, host);
     }
 
+    /**
+     * Gets all of the smtp relays settings that apply to either all servers or this server specifically.
+     */
     public List<EmailSmtpRelay> getEmailSmtpRelays() {
 	return table.connector.emailSmtpRelays.getEmailSmtpRelays(this);
     }

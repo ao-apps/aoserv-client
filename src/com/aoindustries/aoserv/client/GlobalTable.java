@@ -37,6 +37,14 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     static {
         Arrays.fill(lastLoadeds, -1);
     }
+    
+    /**
+     * Each table has its own lock because we were getting deadlocks with one lock on GlobalTable.class.
+     */
+    private static final Object[] locks = new Object[SchemaTable.NUM_TABLES];
+    static {
+        for(int c=0;c<SchemaTable.NUM_TABLES;c++) locks[c] = new Object();
+    }
 
     /**
      * The internal objects are stored in a <code>HashMap</code>
@@ -84,7 +92,10 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     public final int getGlobalRowCount() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getGlobalRowCount()", null);
         try {
-            List<GlobalObject<?,?>> objs=tableObjs.get(getTableID());
+            List<GlobalObject<?,?>> objs;
+            synchronized(tableObjs) {
+                objs=tableObjs.get(getTableID());
+            }
             if(objs!=null) return objs.size();
             return -1;
         } finally {
@@ -95,16 +106,19 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     final public List<V> getIndexedRows(int col, Object value) {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getIndexedRows(int,Object)", null);
         try {
-            synchronized(GlobalTable.class) {
-                int tableID=getTableID();
+            int tableID=getTableID();
+            synchronized(locks[tableID]) {
                 validateCache();
 
                 BitSet tableLoadeds=indexLoadeds[tableID];
                 if(tableLoadeds==null) indexLoadeds[tableID]=tableLoadeds=new BitSet(col+1);
                 boolean isHashed=tableLoadeds.get(col);
 
-                List<Map<Object,List<GlobalObject<?,?>>>> tableValues=indexHashes.get(tableID);
-                if(tableValues==null) indexHashes.set(tableID, tableValues=new ArrayList<Map<Object,List<GlobalObject<?,?>>>>(col+1));
+                List<Map<Object,List<GlobalObject<?,?>>>> tableValues;
+                synchronized(indexHashes) {
+                    tableValues = indexHashes.get(tableID);
+                    if(tableValues==null) indexHashes.set(tableID, tableValues=new ArrayList<Map<Object,List<GlobalObject<?,?>>>>(col+1));
+                }
                 while(tableValues.size()<=col) tableValues.add(null);
                 Map<Object,List<GlobalObject<?,?>>> colIndexes=tableValues.get(col);
                 if(colIndexes==null) tableValues.set(col, colIndexes=new HashMap<Object,List<GlobalObject<?,?>>>());
@@ -141,8 +155,8 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     final protected V getUniqueRowImpl(int col, Object value) {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getUniqueRowImpl(int,Object)", null);
         try {
-            synchronized(GlobalTable.class) {
-                int tableID=getTableID();
+            int tableID=getTableID();
+            synchronized(locks[tableID]) {
                 validateCache();
 
                 BitSet tableLoadeds=hashLoadeds[tableID];
@@ -152,8 +166,11 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
                 List<V> table=getRows();
                 int size=table.size();
 
-                List<Map<Object,GlobalObject>> tableValues=tableHashes.get(tableID);
-                if(tableValues==null) tableHashes.set(tableID, tableValues=new ArrayList<Map<Object,GlobalObject>>(col+1));
+                List<Map<Object,GlobalObject>> tableValues;
+                synchronized(tableHashes) {
+                    tableValues = tableHashes.get(tableID);
+                    if(tableValues==null) tableHashes.set(tableID, tableValues=new ArrayList<Map<Object,GlobalObject>>(col+1));
+                }
                 while(tableValues.size()<=col) tableValues.add(null);
                 Map<Object,GlobalObject> colValues=tableValues.get(col);
                 if(colValues==null) tableValues.set(col, colValues=new HashMap<Object,GlobalObject>(size*13/9));
@@ -182,9 +199,15 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     public final List<V> getRows() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getRows()", null);
         try {
-            validateCache();
-            List<GlobalObject<?,?>> objs=tableObjs.get(getTableID());
-            return (List)objs;
+            int tableID = getTableID();
+            // We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
+            synchronized(locks[tableID]) {
+                validateCache();
+                synchronized(tableObjs) {
+                    List<GlobalObject<?,?>> objs=tableObjs.get(tableID);
+                    return (List)objs;
+                }
+            }
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -229,7 +252,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "clearCache()", null);
         try {
             int tableID=getTableID();
-            synchronized(GlobalTable.class) {
+            synchronized(locks[tableID]) {
                 lastLoadeds[tableID]=-1;
             }
             super.clearCache();
@@ -245,12 +268,14 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "validateCache()", null);
         try {
             int tableID=getTableID();
-            synchronized(GlobalTable.class) {
+            synchronized(locks[tableID]) {
                 long currentTime=System.currentTimeMillis();
                 long lastLoaded=lastLoadeds[tableID];
                 if(lastLoaded==-1) {
-                    List<GlobalObject<?,?>> list=(List)getObjects(AOServProtocol.GET_TABLE, getTableID());
-                    tableObjs.set(tableID, Collections.unmodifiableList(list));
+                    List<GlobalObject<?,?>> list=(List)getObjects(AOServProtocol.GET_TABLE, tableID);
+                    synchronized(tableObjs) {
+                        tableObjs.set(tableID, Collections.unmodifiableList(list));
+                    }
                     BitSet loaded=hashLoadeds[tableID];
                     if(loaded!=null) loaded.clear();
                     BitSet indexed=indexLoadeds[tableID];
