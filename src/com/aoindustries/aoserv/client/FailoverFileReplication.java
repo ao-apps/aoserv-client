@@ -36,6 +36,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     private boolean use_compression;
     private short retention;
     private String connect_address;
+    private String connect_from;
     private boolean enabled;
     private String to_path;
     private boolean chunk_always;
@@ -62,9 +63,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
             case 5: return use_compression;
             case 6: return retention;
             case 7: return connect_address;
-            case 8: return enabled;
-            case 9: return to_path;
-            case 10: return chunk_always;
+            case 8: return connect_from;
+            case 9: return enabled;
+            case 10: return to_path;
+            case 11: return chunk_always;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -110,7 +112,15 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     public String getConnectAddress() {
         return connect_address;
     }
-    
+
+    /**
+     * Gets the address connections should be made from that overrides the normal address resolution mechanism.  This
+     * allows a replication to be specifically sent through a gigabit connection or alternate route.
+     */
+    public String getConnectFrom() {
+        return connect_from;
+    }
+
     /**
      * Gets the enabled flag for this replication.
      */
@@ -147,9 +157,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         use_compression=result.getBoolean(6);
         retention=result.getShort(7);
         connect_address=result.getString(8);
-        enabled=result.getBoolean(9);
-        to_path=result.getString(10);
-        chunk_always=result.getBoolean(11);
+        connect_from=result.getString(9);
+        enabled=result.getBoolean(10);
+        to_path=result.getString(11);
+        chunk_always=result.getBoolean(12);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -161,6 +172,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         use_compression=in.readBoolean();
         retention=in.readShort();
         connect_address=readNullUTF(in);
+        connect_from=readNullUTF(in);
         enabled=in.readBoolean();
         to_path=in.readUTF();
         chunk_always=in.readBoolean();
@@ -187,6 +199,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_9)>=0) out.writeBoolean(use_compression);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_13)>=0) out.writeShort(retention);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_14)>=0) writeNullUTF(out, connect_address);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_22)>=0) writeNullUTF(out, connect_from);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_15)>=0) out.writeBoolean(enabled);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_17)>=0) {
             out.writeUTF(to_path);
