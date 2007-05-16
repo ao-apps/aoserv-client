@@ -26,7 +26,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * The maximum depth of the business tree.
      */
-    public static final int MAXIMUM_BUSINESS_TREE_DEPTH=5;
+    public static final int MAXIMUM_BUSINESS_TREE_DEPTH=7;
 
     static final int COLUMN_ACCOUNTING=0;
 
@@ -69,7 +69,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	String billingEmail,
 	String technicalContact,
 	String technicalEmail
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.businessProfiles.addBusinessProfile(
             this,
             name,
@@ -877,5 +877,12 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public List<Ticket> getTickets() {
 	return table.connector.tickets.getTickets(this);
+    }
+    
+    /**
+     * Gets all of the encryption keys for this business.
+     */
+    public List<EncryptionKey> getEncryptionKeys() {
+        return table.connector.encryptionKeys.getEncryptionKeys(this);
     }
 }

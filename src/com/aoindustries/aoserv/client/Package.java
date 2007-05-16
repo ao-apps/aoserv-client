@@ -56,6 +56,36 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
      */
     public static final long DEFAULT_DAILY_SMTP_OUT_BANDWIDTH_LIMIT=64*1024*1024;
 
+    /**
+     * The default inbound email burst before rate limiting.
+     */
+    public static final int DEFAULT_EMAIL_IN_BURST = 1000;
+
+    /**
+     * The default sustained inbound email rate in emails/second.
+     */
+    public static final float DEFAULT_EMAIL_IN_RATE = 10f;
+
+    /**
+     * The default outbound email burst before rate limiting.
+     */
+    public static final int DEFAULT_EMAIL_OUT_BURST = 200;
+
+    /**
+     * The default sustained outbound email rate in emails/second.
+     */
+    public static final float DEFAULT_EMAIL_OUT_RATE = .2f;
+
+    /**
+     * The default relay email burst before rate limiting.
+     */
+    public static final int DEFAULT_EMAIL_RELAY_BURST = 100;
+
+    /**
+     * The default sustained relay email rate in emails/second.
+     */
+    public static final float DEFAULT_EMAIL_RELAY_RATE = .1f;
+
     String name;
     String accounting;
     int package_definition;
@@ -66,6 +96,12 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     private int daily_smtp_out_limit;
     private long daily_smtp_out_bandwidth_limit;
     int disable_log;
+    private int email_in_burst;
+    private float email_in_rate;
+    private int email_out_burst;
+    private float email_out_rate;
+    private int email_relay_burst;
+    private float email_relay_rate;
 
     public void addDNSZone(String zone, String ip, int ttl) {
 	table.connector.dnsZones.addDNSZone(this, zone, ip, ttl);
@@ -144,6 +180,12 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
             case 8: return Integer.valueOf(daily_smtp_out_limit);
             case 9: return Long.valueOf(daily_smtp_out_bandwidth_limit);
             case 10: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 11: return email_in_burst==-1 ? null : Integer.valueOf(email_in_burst);
+            case 12: return Float.isNaN(email_in_rate) ? null : Float.valueOf(email_in_rate);
+            case 13: return email_out_burst==-1 ? null : Integer.valueOf(email_out_burst);
+            case 14: return Float.isNaN(email_out_rate) ? null : Float.valueOf(email_out_rate);
+            case 15: return email_relay_burst==-1 ? null : Integer.valueOf(email_relay_burst);
+            case 16: return Float.isNaN(email_relay_rate) ? null : Float.valueOf(email_relay_rate);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -183,6 +225,54 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         DisableLog obj=table.connector.disableLogs.get(disable_log);
         if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
         return obj;
+    }
+    
+    /**
+     * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    public int getEmailInBurst() {
+        return email_in_burst;
+    }
+
+    /**
+     * Gets the inbound sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    public float getEmailInRate() {
+        return email_in_rate;
+    }
+
+    /**
+     * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    public int getEmailOutBurst() {
+        return email_out_burst;
+    }
+
+    /**
+     * Gets the outbound sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    public float getEmailOutRate() {
+        return email_out_rate;
+    }
+
+    /**
+     * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    public int getEmailRelayBurst() {
+        return email_relay_burst;
+    }
+
+    /**
+     * Gets the relay sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    public float getEmailRelayRate() {
+        return email_relay_rate;
     }
 
     public List<DNSZone> getDNSZones() {
@@ -272,19 +362,32 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     }
 
     void initImpl(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-	name = result.getString(2);
-	accounting = result.getString(3);
-        package_definition = result.getInt(4);
-	Timestamp temp5 = result.getTimestamp(5);
+        int pos = 1;
+        pkey = result.getInt(pos++);
+	name = result.getString(pos++);
+	accounting = result.getString(pos++);
+        package_definition = result.getInt(pos++);
+	Timestamp temp5 = result.getTimestamp(pos++);
 	created = temp5 == null ? -1 : temp5.getTime();
-	created_by = result.getString(6);
-        daily_smtp_in_limit=result.getInt(7);
-        daily_smtp_in_bandwidth_limit=result.getLong(8);
-        daily_smtp_out_limit=result.getInt(9);
-        daily_smtp_out_bandwidth_limit=result.getLong(10);
-        disable_log=result.getInt(11);
-        if(result.wasNull()) disable_log=-1;
+	created_by = result.getString(pos++);
+        daily_smtp_in_limit=result.getInt(pos++);
+        daily_smtp_in_bandwidth_limit=result.getLong(pos++);
+        daily_smtp_out_limit=result.getInt(pos++);
+        daily_smtp_out_bandwidth_limit=result.getLong(pos++);
+        disable_log=result.getInt(pos++);
+        if(result.wasNull()) disable_log = -1;
+        email_in_burst=result.getInt(pos++);
+        if(result.wasNull()) email_in_burst = -1;
+        email_in_rate=result.getFloat(pos++);
+        if(result.wasNull()) email_in_rate = Float.NaN;
+        email_out_burst=result.getInt(pos++);
+        if(result.wasNull()) email_out_burst = -1;
+        email_out_rate=result.getFloat(pos++);
+        if(result.wasNull()) email_out_rate = Float.NaN;
+        email_relay_burst=result.getInt(pos++);
+        if(result.wasNull()) email_relay_burst = -1;
+        email_relay_rate=result.getFloat(pos++);
+        if(result.wasNull()) email_relay_rate = Float.NaN;
     }
 
     public static boolean isValidPackageName(String packageName) {
@@ -303,6 +406,12 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         daily_smtp_out_limit=in.readCompressedInt();
         daily_smtp_out_bandwidth_limit=in.readLong();
         disable_log=in.readCompressedInt();
+        email_in_burst=in.readCompressedInt();
+        email_in_rate=in.readFloat();
+        email_out_burst=in.readCompressedInt();
+        email_out_rate=in.readFloat();
+        email_relay_burst=in.readCompressedInt();
+        email_relay_rate=in.readFloat();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
@@ -329,5 +438,13 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         out.writeCompressedInt(daily_smtp_out_limit);
         out.writeLong(daily_smtp_out_bandwidth_limit);
         out.writeCompressedInt(disable_log);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_24)>=0) {
+            out.writeCompressedInt(email_in_burst);
+            out.writeFloat(email_in_rate);
+            out.writeCompressedInt(email_out_burst);
+            out.writeFloat(email_out_rate);
+            out.writeCompressedInt(email_relay_burst);
+            out.writeFloat(email_relay_rate);
+        }        
     }
 }

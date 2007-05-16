@@ -31,6 +31,9 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
     private boolean charge_com_supported;
     private String charge_com_name;
 
+    /**
+     * Gets the two-character unique code for this country.
+     */
     public String getCode() {
 	return pkey;
     }

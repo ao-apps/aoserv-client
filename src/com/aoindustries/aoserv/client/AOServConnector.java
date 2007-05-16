@@ -141,6 +141,10 @@ abstract public class AOServConnector {
     public final EmailSmtpRelayTypeTable emailSmtpRelayTypes;
     public final EmailSmtpRelayTable emailSmtpRelays;
     public final EmailSpamAssassinIntegrationModeTable emailSpamAssassinIntegrationModes;
+
+    public final EncryptionKeyTable encryptionKeys;
+    public EncryptionKeyTable getEncryptionKeys() {return encryptionKeys;}
+
     public final ExpenseCategoryTable expenseCategories;
     public final FailoverFileLogTable failoverFileLogs;
     public final FailoverFileReplicationTable failoverFileReplications;
@@ -255,6 +259,13 @@ abstract public class AOServConnector {
     public final ServerReportTable serverReports;
     public final ServerTable servers;
     public final ShellTable shells;
+
+    public final SignupRequestOptionTable signupRequestOptions;
+    public SignupRequestOptionTable getSignupRequestOptions() {return signupRequestOptions;}
+
+    public final SignupRequestTable signupRequests;
+    public SignupRequestTable getSignupRequests() {return signupRequests;}
+
     public final SpamEmailMessageTable spamEmailMessages;
     public final SRCpuTable srCpu;
     public final SRDbMySQLTable srDbMySQL;
@@ -376,6 +387,7 @@ abstract public class AOServConnector {
                 emailSmtpRelayTypes=new EmailSmtpRelayTypeTable(this),
                 emailSmtpRelays=new EmailSmtpRelayTable(this),
                 emailSpamAssassinIntegrationModes=new EmailSpamAssassinIntegrationModeTable(this),
+                encryptionKeys=new EncryptionKeyTable(this),
                 expenseCategories=new ExpenseCategoryTable(this),
                 failoverFileLogs=new FailoverFileLogTable(this),
                 failoverFileReplications=new FailoverFileReplicationTable(this),
@@ -478,6 +490,8 @@ abstract public class AOServConnector {
                 serverReports=new ServerReportTable(this),
                 servers=new ServerTable(this),
                 shells=new ShellTable(this),
+                signupRequestOptions=new SignupRequestOptionTable(this),
+                signupRequests=new SignupRequestTable(this),
                 spamEmailMessages=new SpamEmailMessageTable(this),
                 srCpu=new SRCpuTable(this),
                 srDbMySQL=new SRDbMySQLTable(this),

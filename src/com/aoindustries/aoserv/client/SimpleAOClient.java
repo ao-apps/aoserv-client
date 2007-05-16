@@ -623,7 +623,7 @@ final public class SimpleAOClient {
         String billingEmail,
         String technicalContact,
         String technicalEmail
-    ) throws IllegalArgumentException {
+    ) throws IllegalArgumentException, IOException, SQLException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addBusinessProfile(String,String,boolean,String,String,String,String,String,String,String,String,boolean,String,String,String,String)", null);
         try {
             return getBusiness(business).addBusinessProfile(
