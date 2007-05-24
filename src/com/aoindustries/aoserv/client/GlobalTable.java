@@ -103,6 +103,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
         }
     }
 
+    @SuppressWarnings({"unchecked"})
     final public List<V> getIndexedRows(int col, Object value) {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getIndexedRows(int,Object)", null);
         try {
@@ -152,6 +153,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
         }
     }
 
+    @SuppressWarnings({"unchecked"})
     final protected V getUniqueRowImpl(int col, Object value) {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getUniqueRowImpl(int,Object)", null);
         try {
@@ -196,6 +198,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
         }
     }
 
+    @SuppressWarnings({"unchecked"})
     public final List<V> getRows() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getRows()", null);
         try {
@@ -264,6 +267,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     /**
      * Reloads the cache if the cache time has expired.
      */
+    @SuppressWarnings({"unchecked"})
     private void validateCache() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "validateCache()", null);
         try {

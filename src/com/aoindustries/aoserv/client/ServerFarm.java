@@ -29,6 +29,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     private boolean allow_same_server_backup;
     private String backup_farm;
     private int owner;
+    private boolean use_restricted_smtp_port;
 
     public Object getColumn(int i) {
         switch(i) {
@@ -38,6 +39,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
             case 3: return allow_same_server_backup?Boolean.TRUE:Boolean.FALSE;
             case 4: return backup_farm;
             case 5: return Integer.valueOf(owner);
+            case 6: return use_restricted_smtp_port;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -55,6 +57,10 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     public Package getOwner() {
         // May be filtered
         return table.connector.packages.get(owner);
+    }
+
+    public boolean useRestrictedSmtpPort() {
+        return use_restricted_smtp_port;
     }
 
     public String getDescription() {
@@ -80,6 +86,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
         allow_same_server_backup = result.getBoolean(4);
         backup_farm = result.getString(5);
         owner = result.getInt(6);
+        use_restricted_smtp_port = result.getBoolean(7);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -89,6 +96,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
         allow_same_server_backup=in.readBoolean();
         backup_farm=in.readUTF();
         owner=in.readCompressedInt();
+        use_restricted_smtp_port = in.readBoolean();
     }
 
     String toStringImpl() {
@@ -102,5 +110,6 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
         out.writeBoolean(allow_same_server_backup);
         out.writeUTF(backup_farm);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_102)>=0) out.writeCompressedInt(owner);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
     }
 }

@@ -816,6 +816,7 @@ abstract public class AOServConnector {
      *
      * @see  SchemaTable
      */
+    @SuppressWarnings({"unchecked"})
     final public AOServTable<?,? extends AOServObject> getTable(int tableID) throws IllegalArgumentException {
         if(tableID>=0 && tableID<SchemaTable.NUM_TABLES) return tables[tableID];
         throw new IllegalArgumentException("Table not found for ID="+tableID);

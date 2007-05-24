@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.WrappedException;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
@@ -34,6 +35,23 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         COLUMN_ACCOUNTING=1
     ;
 
+    /*
+     * Test call
+    public static void main(String[] args) {
+        try {
+            System.out.print(
+                encrypt(
+                    "AO Industries, Inc. (Development) <webmaster@freedom.aoindustries.com>",
+                    "AO Industries, Inc. (Accounting) <accounting@aoindustries.com>",
+                    "Test message"
+                )
+            );
+        } catch(IOException err) {
+            err.printStackTrace();
+        }
+    }
+     */
+
     /**
      * Uses the provided public key to encrypt the data.
      */
@@ -44,7 +62,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
             "--sign",
             "--encrypt",
             "--armor",
-            "--default-key ", '='+signer,
+            "--default-key", '='+signer,
             "--recipient", '='+recipient
         };
         Process P = Runtime.getRuntime().exec(command);
@@ -71,9 +89,19 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
                 in.close();
             }
         } finally {
+            // Read the standard error
+            CharArrayWriter cout = new CharArrayWriter();
+            Reader errIn = new InputStreamReader(P.getErrorStream());
+            try {
+                char[] buff = new char[4096];
+                int ret;
+                while((ret=errIn.read(buff, 0, 4096))!=-1) cout.write(buff, 0, ret);
+            } finally {
+                errIn.close();
+            }
             try {
                 int retCode = P.waitFor();
-                if(retCode!=0) throw new IOException("Non-zero exit value from gpg: "+retCode);
+                if(retCode!=0) throw new IOException("Non-zero exit value from gpg: "+retCode+", standard error was: "+cout.toString());
             } catch(InterruptedException err) {
                 throw new InterruptedIOException("Interrupted while waiting for gpg");
             }

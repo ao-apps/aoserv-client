@@ -150,7 +150,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                                 }
                             }
 
-                            AOServTable aoServTable=schemaTable.getAOServTable(connector);
+                            AOServTable<?,? extends AOServObject> aoServTable=schemaTable.getAOServTable(connector);
 
                             // Parse any order by clause
                             if(c<argCount) {
@@ -202,13 +202,13 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                             // Get the data
                             Object[] values;
                             boolean copy=orderExpressions.size()>0;
-                            List rows=aoServTable.getRows();
+                            List<? extends AOServObject> rows=aoServTable.getRows();
                             // Sort if needed
                             if(orderExpressions.size()>0) {
                                 SQLExpression[] exprs=orderExpressions.toArray(new SQLExpression[orderExpressions.size()]);
                                 boolean[] orders=new boolean[exprs.length];
                                 for(int d=0;d<orders.length;d++) orders[d]=sortOrders.get(d).booleanValue();
-                                rows = new ArrayList(rows);
+                                rows = new ArrayList<AOServObject>(rows);
                                 connector.schemaTypes.sort(rows, exprs, orders);
                             }
 

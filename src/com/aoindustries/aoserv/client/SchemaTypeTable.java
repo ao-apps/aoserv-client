@@ -54,12 +54,12 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
         return SchemaTable.SCHEMA_TYPES;
     }
 
-    public void sort(AOServObject[] list, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Profiler.startProfile(Profiler.UNKNOWN, SchemaTypeTable.class, "sort(AOServObject[],SQLExpression[],boolean[])", null);
+    public <T extends AOServObject> void sort(T[] list, SQLExpression[] sortExpressions, boolean[] sortOrders) {
+        Profiler.startProfile(Profiler.UNKNOWN, SchemaTypeTable.class, "sort(<T extends AOServObject>[],SQLExpression[],boolean[])", null);
         try {
             AutoSort.sortStatic(
                 list,
-                new SQLComparator(
+                new SQLComparator<T>(
                     connector,
                     sortExpressions,
                     sortOrders
@@ -70,12 +70,12 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
         }
     }
 
-    public void sort(List list, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Profiler.startProfile(Profiler.FAST, SchemaTypeTable.class, "sort(List,SQLExpression[],boolean[])", null);
+    public <T extends AOServObject> void sort(List<T> list, SQLExpression[] sortExpressions, boolean[] sortOrders) {
+        Profiler.startProfile(Profiler.FAST, SchemaTypeTable.class, "sort(List<T extends AOServObject>,SQLExpression[],boolean[])", null);
         try {
             AutoSort.sortStatic(
                 list,
-                new SQLComparator(
+                new SQLComparator<T>(
                     connector,
                     sortExpressions,
                     sortOrders

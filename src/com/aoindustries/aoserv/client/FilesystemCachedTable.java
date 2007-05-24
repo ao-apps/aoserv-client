@@ -135,7 +135,15 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
         try {
             SchemaTable schemaTable=getTableSchema();
             SchemaColumn schemaColumn=schemaTable.getSchemaColumn(connector, col);
-            SQLComparator comparator=new SQLComparator(
+            SQLComparator<V> Vcomparator=new SQLComparator<V>(
+                connector,
+                new SQLExpression[] {
+                    new SQLColumnValue(connector, schemaColumn)
+                },
+                new boolean[] {ASCENDING}
+            );
+
+            SQLComparator<Object> Ocomparator=new SQLComparator<Object>(
                 connector,
                 new SQLExpression[] {
                     new SQLColumnValue(connector, schemaColumn)
@@ -158,11 +166,11 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
                         tableList.getObjectFactory()
                     );
                     sortedFileList.addAll(tableList);
-                    AutoSort.sortStatic(sortedFileList, comparator);
+                    AutoSort.sortStatic(sortedFileList, Vcomparator);
                     unmodifiableSortedList=Collections.unmodifiableList(sortedFileList);
                     columnLists.set(col, unmodifiableSortedList);
                 }
-                int index=Collections.binarySearch(unmodifiableSortedList, value, comparator);
+                int index=Collections.binarySearch(unmodifiableSortedList, value, Ocomparator);
                 return index<0?null:unmodifiableSortedList.get(index);
             }
         } catch(IOException err) {
@@ -192,7 +200,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 
     public V createInstance() throws IOException {
         V obj = (V)getNewObject();
-        if(obj instanceof SingleTableObject) ((SingleTableObject)obj).setTable(this);
+        if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
         return obj;
     }
 }

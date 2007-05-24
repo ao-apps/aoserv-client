@@ -5,11 +5,7 @@ package com.aoindustries.aoserv.client;
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.util.Comparator;
 
 /**
  * Compares columns.
@@ -18,7 +14,7 @@ import java.util.*;
  *
  * @author  AO Industries, Inc.
  */
-final public class SQLComparator implements Comparator {
+final public class SQLComparator<T> implements Comparator<T> {
 
     private final AOServConnector connector;
     private final SQLExpression[] exprs;
@@ -34,7 +30,8 @@ final public class SQLComparator implements Comparator {
         this.sortOrders=sortOrders;
     }
 
-    public int compare(Object O1, Object O2) {
+    @SuppressWarnings({"unchecked"})
+    public int compare(T O1, T O2) {
         if(O1 instanceof AOServObject) {
             AOServObject AO1=(AOServObject)O1;
             if(O2 instanceof AOServObject) {
@@ -46,12 +43,12 @@ final public class SQLComparator implements Comparator {
                 return AO1.compareTo(connector, (Comparable)O2, exprs, sortOrders);
             } else throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
         } else if(O1 instanceof Object[]) {
-            Object[] OA1=(Object[])O1;
+            T[] OA1=(T[])O1;
             if(O2 instanceof AOServObject) {
                 AOServObject AO2=(AOServObject)O2;
                 return -AO2.compareTo(connector, OA1, exprs, sortOrders);
             } else if(O2 instanceof Object[]) {
-                return compare(OA1, (Object[])O2);
+                return compare(OA1, (T[])O2);
             } else if(O2 instanceof Comparable) {
                 throw new IllegalArgumentException("Comparing of Object[] and Comparable not supported.");
             } else throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
@@ -68,7 +65,7 @@ final public class SQLComparator implements Comparator {
         } else throw new IllegalArgumentException("O1 must be either AOServObject or Comparable");
     }
 
-    public int compare(Object[] OA1, Object[] OA2) {
+    public int compare(T[] OA1, T[] OA2) {
         int OA1Len=OA1.length;
         int OA2Len=OA2.length;
         if(OA1Len!=OA2Len) throw new IllegalArgumentException("Mismatched array lengths when comparing two Object[]s: OA1.length="+OA1Len+", OA2.length="+OA2Len);

@@ -258,6 +258,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         return 1;
     }
 
+    @SuppressWarnings({"unchecked"})
     protected V getObject(int commID, Object ... params) {
         Profiler.startProfile(Profiler.IO, AOServTable.class, "getObject(int,...)", null);
         try {
@@ -371,6 +372,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         return list;
     }
 
+    @SuppressWarnings({"unchecked"})
     private void getObjects0(
         List<V> list,
         AOServConnection connection,
@@ -484,6 +486,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
+    @SuppressWarnings({"unchecked"})
     private void getObjectsNoProgress0(
         List<V> list,
         AOServConnection connection,
@@ -916,6 +919,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings({"unchecked"})
     public boolean containsValue(Object value) {
         V aoObj=(V)value;
         Object key=aoObj.getKey();
