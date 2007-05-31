@@ -31,7 +31,9 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
         DEDICATED="dedicated",
         MANAGED="managed",
         SYSADMIN="sysadmin",
-        VIRTUAL="virtual"
+        VIRTUAL="virtual",
+        VIRTUAL_DEDICATED="virtual_dedicated",
+        VIRTUAL_MANAGED="virtual_managed"
     ;
 
     private String display;
