@@ -354,10 +354,18 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         }
     }
 
+    /**
+     * @deprecated  Please provide the locale for generated errors.
+     */
     public static String getDefaultHomeDirectory(String username) {
-        Profiler.startProfile(Profiler.FAST, LinuxServerAccount.class, "getDefaultHomeDirectory(String)", null);
+        return getDefaultHomeDirectory(username, Locale.getDefault());
+    }
+
+    public static String getDefaultHomeDirectory(String username, Locale locale) {
+        Profiler.startProfile(Profiler.FAST, LinuxServerAccount.class, "getDefaultHomeDirectory(String,Locale)", null);
         try {
-            if(!Username.isValidUsername(username)) throw new IllegalArgumentException("Invalid username: "+username);
+            String check = Username.checkUsername(username, locale);
+            if(check!=null) throw new IllegalArgumentException(check);
             return "/home/"+username.charAt(0)+'/'+username;
         } finally {
             Profiler.endProfile(Profiler.FAST);

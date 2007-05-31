@@ -1,20 +1,20 @@
-aoserv.client.protocols=tcp
+aoserv.client.protocols=ssl
 
-aoserv.client.tcp.hostname=<master_hostname>
+aoserv.client.tcp.hostname=master.aoindustries.com
 aoserv.client.tcp.local_ip=
 aoserv.client.tcp.port=4582
 aoserv.client.tcp.connection.pool.size=16
 aoserv.client.tcp.connection.max_age=
 
-aoserv.client.ssl.hostname=<master_hostname>
+aoserv.client.ssl.hostname=master.aoindustries.com
 aoserv.client.ssl.local_ip=
 aoserv.client.ssl.port=4583
 aoserv.client.ssl.connection.pool.size=16
 aoserv.client.ssl.connection.max_age=
-aoserv.client.ssl.truststore.path=<truststore_path>
-aoserv.client.ssl.truststore.password=<truststore_password>
+aoserv.client.ssl.truststore.path=
+aoserv.client.ssl.truststore.password=
 
-aoserv.client.username=<ba_username>
-aoserv.client.password=<ba_password>
+aoserv.client.username=
+aoserv.client.password=
 
 aoserv.client.daemon.server=

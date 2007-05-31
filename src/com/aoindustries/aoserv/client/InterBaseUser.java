@@ -234,7 +234,7 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
      * @see  Username#isValidUsername
      */
     public static boolean isValidUsername(String name) {
-        return name.length()<=MAX_USERNAME_LENGTH && Username.isValidUsername(name);
+        return name.length()<=MAX_USERNAME_LENGTH && Username.checkUsername(name, Locale.getDefault())==null;
     }
 
     public boolean canSetPassword() {

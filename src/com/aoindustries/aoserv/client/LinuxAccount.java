@@ -294,9 +294,16 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return getValidHomeDirectories(pkey, ao);
     }
 
+    /**
+     * @deprecated  Please provide the locale for locale-specific errors.
+     */
     public static List<String> getValidHomeDirectories(String username, AOServer ao) {
+        return getValidHomeDirectories(username, ao, Locale.getDefault());
+    }
+
+    public static List<String> getValidHomeDirectories(String username, AOServer ao, Locale locale) {
         List<String> dirs=new ArrayList<String>();
-        if(username!=null) dirs.add(LinuxServerAccount.getDefaultHomeDirectory(username));
+        if(username!=null) dirs.add(LinuxServerAccount.getDefaultHomeDirectory(username, locale));
 
         List<HttpdSite> hss=ao.getHttpdSites();
         int hsslen=hss.size();
@@ -526,7 +533,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "isValidUsername(String)", null);
         try {
             return
-                Username.isValidUsername(username)
+                Username.checkUsername(username, Locale.getDefault())==null
                 && !"bin".equals(username)
                 && !"etc".equals(username)
                 && !"lib".equals(username)

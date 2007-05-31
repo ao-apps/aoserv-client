@@ -319,38 +319,51 @@ final public class Username extends CachedObjectStringKey<Username> implements P
      * it is between 1 and 255 characters in length and uses only ASCII 0x21
      * through 0x7f, excluding the following characters:
      * <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code>
+     *
+     * @return  <code>null</code> if the username is valid or a locale-specific reason why it is not valid
      */
-    public static boolean isValidUsername(String name) {
-	int len = name.length();
-	if (len == 0 || len > MAX_LENGTH)
-		return false;
-	// The first character must be [a-z]
-	char ch = name.charAt(0);
-	if (ch < 'a' || ch > 'z')
-		return false;
-	// The rest may have additional characters
+    public static String checkUsername(String username, Locale locale) {
+	int len = username.length();
+        if(len==0) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.noUsername");
+	if(len > MAX_LENGTH) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.tooLong");
+
+        // The first character must be [a-z]
+	char ch = username.charAt(0);
+	if (ch < 'a' || ch > 'z') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.startAToZ");
+
+        // The rest may have additional characters
 	for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if(
-                ch<0x21
-                || ch>0x7f
-                || (ch>='A' && ch<='Z')
-                || ch==','
-                || ch==':'
-                || ch=='('
-                || ch==')'
-                || ch=='['
-                || ch==']'
-                || ch=='\''
-                || ch=='"'
-                || ch=='|'
-                || ch=='&'
-                || ch==';'
-                || ch=='\\'
-                || ch=='/'
-            ) return false;
+            ch = username.charAt(c);
+            if(ch==' ') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.noSpace");
+            if(ch<=0x21 || ch>0x7f) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.specialCharacter");
+            if(ch>='A' && ch<='Z') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.noCapital");
+            if(ch==',') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.comma");
+            if(ch==':') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.colon");
+            if(ch=='(') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.leftParen");
+            if(ch==')') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.rightParen");
+            if(ch=='[') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.leftSquare");
+            if(ch==']') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.rightSquare");
+            if(ch=='\'') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.apostrophe");
+            if(ch=='"') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.quote");
+            if(ch=='|') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.verticalBar");
+            if(ch=='&') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.ampersand");
+            if(ch==';') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.semicolon");
+            if(ch=='\\') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.backslash");
+            if(ch=='/') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.slash");
 	}
-	return true;
+	return null;
+    }
+
+    /**
+     * Determines if a name can be used as a username.  A name is valid if
+     * it is between 1 and 255 characters in length and uses only ASCII 0x21
+     * through 0x7f, excluding the following characters:
+     * <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code>
+     *
+     * @deprecated  Please use <code>checkUsername(String)</code> instead to provide user with specific problems.
+     */
+    public static boolean isValidUsername(String username) {
+        return checkUsername(username, Locale.getDefault())==null;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {

@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * <code>SimpleAOClient</code> is a simplified interface into the client
@@ -2108,7 +2109,7 @@ final public class SimpleAOClient {
                 home==null
                 || home.length()==0
                 || home.equals("~")
-            ) home=LinuxServerAccount.getDefaultHomeDirectory(username);
+            ) home=LinuxServerAccount.getDefaultHomeDirectory(username, Locale.getDefault());
             return la.addLinuxServerAccount(ao, home);
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -3649,7 +3650,8 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkBusinessAdministratorPassword(String,String)", null);
         try {
-            if(!Username.isValidUsername(username)) throw new IllegalArgumentException("Invalid username: "+username);
+            String check = Username.checkUsername(username, Locale.getDefault());
+            if(check!=null) throw new IllegalArgumentException(check);
             return BusinessAdministrator.checkPassword(username, password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -3671,7 +3673,8 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkBusinessAdministratorUsername(String)", null);
         try {
-            if(!BusinessAdministrator.isValidUsername(username)) throw new IllegalArgumentException("Invalid BusinessAdministrator username: "+username);
+            String check = BusinessAdministrator.checkUsername(username, Locale.getDefault());
+            if(check!=null) throw new IllegalArgumentException(check);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4291,7 +4294,8 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkUsername(String)", null);
         try {
-            if(!Username.isValidUsername(username)) throw new IllegalArgumentException("Invalid username: "+username);
+            String check = Username.checkUsername(username, Locale.getDefault());
+            if(check!=null) throw new IllegalArgumentException(check);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -7400,7 +7404,7 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "isUsernameAvailable(String)", null);
         try {
             checkUsername(username);
-            return connector.usernames.isUsernameAvailable(username);
+            return connector.usernames.isUsernameAvailable(username, Locale.getDefault());
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

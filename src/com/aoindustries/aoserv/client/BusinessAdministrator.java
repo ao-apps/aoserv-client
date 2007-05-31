@@ -589,12 +589,24 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      * Determines if a name can be used as a username.  The same rules apply as for
      * Username.
      *
+     * @see  Username#checkUsername
+     */
+    public static String checkUsername(String name, Locale locale) {
+        return Username.checkUsername(name, locale);
+    }
+    
+    /**
+     * Determines if a name can be used as a username.  The same rules apply as for
+     * Username.
+     *
+     * @deprecated  Please use <code>checkUsername(String)</code> to give users more details when the check fails.
+     *
      * @see  Username#isValidUsername
      */
     public static boolean isValidUsername(String name) {
         return Username.isValidUsername(name);
     }
-    
+
     public boolean canSetPassword() {
         return disable_log==-1;
     }

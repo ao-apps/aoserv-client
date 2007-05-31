@@ -128,8 +128,16 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
 	return false;
     }
 
+    /**
+     * @deprecated  Please provide the locale for locale-specific errors.
+     */
     public boolean isUsernameAvailable(String username) {
-	if(!Username.isValidUsername(username)) throw new WrappedException(new SQLException("Invalid username: "+username));
+        return isUsernameAvailable(username, Locale.getDefault());
+    }
+
+    public boolean isUsernameAvailable(String username, Locale locale) {
+        String check = Username.checkUsername(username, locale);
+	if(check!=null) throw new WrappedException(new SQLException(check));
 	return connector.requestBooleanQuery(AOServProtocol.IS_USERNAME_AVAILABLE, username);
     }
 }
