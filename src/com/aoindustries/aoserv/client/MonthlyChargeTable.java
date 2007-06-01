@@ -141,8 +141,6 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
                     // TODO: Add aoserv_daemon
                     // TODO: Add aoserv_master
-                    // TODO: Add backup_disk
-                    // TODO: Add backup_files
                     // TODO: Add bandwidth
                     // TODO: Add consulting
                     // TODO: Add disk

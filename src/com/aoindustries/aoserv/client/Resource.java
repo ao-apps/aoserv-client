@@ -28,11 +28,11 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
     public static final String
         AOSERV_DAEMON="aoserv_daemon",
         AOSERV_MASTER="aoserv_master",
-        BACKUP_DISK="backup_disk",
-        BACKUP_FILES="backup_files",
         BANDWIDTH="bandwidth",
         CONSULTING="consulting",
         DISK="disk",
+        DISTRIBUTION_SCAN="distribution_scan",
+        FAILOVER="failover",
         HARDWARE_DISK_ATA_7200_120="hardware_disk_ata_7200_120",
         HTTPD="httpd",
         IP="ip",
