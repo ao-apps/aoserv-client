@@ -57,13 +57,15 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     public int addPostgresDatabase(
         String name,
         PostgresServerUser datdba,
-        PostgresEncoding encoding
+        PostgresEncoding encoding,
+        boolean enablePostgis
     ) {
 	return table.connector.postgresDatabases.addPostgresDatabase(
             name,
             this,
             datdba,
-            encoding
+            encoding,
+            enablePostgis
 	);
     }
 

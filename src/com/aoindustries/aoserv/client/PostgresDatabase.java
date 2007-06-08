@@ -71,6 +71,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     private boolean allow_conn;
     private short backup_level;
     private short backup_retention;
+    private boolean enable_postgis;
 
     public boolean allowsConnections() {
 	return allow_conn;
@@ -141,17 +142,25 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         return br;
     }
 
+    /**
+     * Indicates that PostGIS should be enabled for this database.
+     */
+    public boolean getEnablePostgis() {
+        return enable_postgis;
+    }
+
     public Object getColumn(int i) {
         switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_PKEY: return pkey;
             case 1: return name;
-            case COLUMN_POSTGRES_SERVER: return Integer.valueOf(postgres_server);
-            case COLUMN_DATDBA: return Integer.valueOf(datdba);
-            case 4: return Integer.valueOf(encoding);
-            case 5: return is_template?Boolean.TRUE:Boolean.FALSE;
-            case 6: return allow_conn?Boolean.TRUE:Boolean.FALSE;
-            case 7: return Short.valueOf(backup_level);
-            case 8: return Short.valueOf(backup_retention);
+            case COLUMN_POSTGRES_SERVER: return postgres_server;
+            case COLUMN_DATDBA: return datdba;
+            case 4: return encoding;
+            case 5: return is_template;
+            case 6: return allow_conn;
+            case 7: return backup_level;
+            case 8: return backup_retention;
+            case 9: return enable_postgis;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -216,6 +225,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	allow_conn=result.getBoolean(7);
         backup_level=result.getShort(8);
         backup_retention=result.getShort(9);
+        enable_postgis=result.getBoolean(10);
     }
 
     public boolean isTemplate() {
@@ -232,6 +242,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	allow_conn=in.readBoolean();
         backup_level=in.readShort();
         backup_retention=in.readShort();
+        enable_postgis=in.readBoolean();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -266,7 +277,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	return name;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(name);
 	out.writeCompressedInt(postgres_server);
@@ -276,5 +287,6 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	out.writeBoolean(allow_conn);
         out.writeShort(backup_level);
         out.writeShort(backup_retention);
+        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_27)>=0) out.writeBoolean(enable_postgis);
     }
 }

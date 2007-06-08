@@ -2579,9 +2579,10 @@ final public class SimpleAOClient {
         String postgres_server,
         String aoServer,
         String datdba,
-        String encoding
+        String encoding,
+        boolean enablePostgis
     ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addPostgresDatabase(String,String,String,String,String)", null);
+        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addPostgresDatabase(String,String,String,String,String,boolean)", null);
         try {
             checkPostgresDatabaseName(name);
             PostgresServerUser psu=getPostgresServerUser(aoServer, postgres_server, datdba);
@@ -2589,11 +2590,13 @@ final public class SimpleAOClient {
             PostgresVersion pv=ps.getPostgresVersion();
             PostgresEncoding pe=pv.getPostgresEncoding(connector, encoding);
             if(pe==null) throw new IllegalArgumentException("Unable to find PostgresEncoding for PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+": "+encoding);
+            if(enablePostgis && pv.getPostgisVersion(connector)==null) throw new IllegalArgumentException("Unable to enable PostGIS, PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+" doesn't support PostGIS");
             return connector.postgresDatabases.addPostgresDatabase(
                 name,
                 ps,
                 psu,
-                pe
+                pe,
+                enablePostgis
             );
         } finally {
             Profiler.endProfile(Profiler.FAST);

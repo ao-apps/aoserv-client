@@ -27,6 +27,7 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
     static final int COLUMN_VERSION=0;
 
     private String minorVersion;
+    private int postgisVersion;
 
     public static final String TECHNOLOGY_NAME="postgresql";
 
@@ -57,6 +58,7 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
         switch(i) {
             case COLUMN_VERSION: return Integer.valueOf(pkey);
             case 1: return minorVersion;
+            case 2: return postgisVersion==-1 ? null : Integer.valueOf(postgisVersion);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -65,6 +67,16 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
         return minorVersion;
     }
 
+    /**
+     * Gets the PostGIS version of <code>null</code> if not supported by this PostgreSQL version....
+     */
+    public TechnologyVersion getPostgisVersion(AOServConnector connector) {
+        if(postgisVersion==-1) return null;
+        TechnologyVersion tv = connector.technologyVersions.get(postgisVersion);
+        if(tv==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+postgisVersion));
+        return tv;
+    }
+    
     protected int getTableIDImpl() {
 	return SchemaTable.POSTGRES_VERSIONS;
     }
@@ -86,16 +98,20 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
     void initImpl(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
         minorVersion=result.getString(2);
+        postgisVersion=result.getInt(3);
+        if(result.wasNull()) postgisVersion=-1;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
         minorVersion=in.readUTF();
+        postgisVersion=in.readCompressedInt();
     }
 
     public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
         if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_0_A_109)<=0) out.writeCompressedInt(5432);
         if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_0_A_121)>=0) out.writeUTF(minorVersion);
+        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_27)>=0) out.writeCompressedInt(postgisVersion);
     }
 }

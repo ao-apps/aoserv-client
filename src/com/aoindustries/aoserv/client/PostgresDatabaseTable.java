@@ -27,7 +27,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
         String name,
         PostgresServer postgresServer,
         PostgresServerUser datdba,
-        PostgresEncoding encoding
+        PostgresEncoding encoding,
+        boolean enablePostgis
     ) {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.ADD,
@@ -35,7 +36,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
             name,
             postgresServer.pkey,
             datdba.pkey,
-            encoding.pkey
+            encoding.pkey,
+            enablePostgis
 	);
 	return pkey;
     }
@@ -92,7 +94,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
                     args[2],
                     args[3],
                     args[4],
-                    args[5]
+                    args[5],
+                    AOSH.parseBoolean(args[6], "enable_postgis")
                 );
                 out.println(pkey);
                 out.flush();
