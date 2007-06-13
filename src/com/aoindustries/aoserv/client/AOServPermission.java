@@ -28,9 +28,15 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
     public static final String
         // business_administrators
         SET_BUSINESS_ADMINISTRATOR_PASSWORD="set_business_administrator_password",
+        // interbase_server_users
         SET_INTERBASE_SERVER_USER_PASSWORD="set_interbase_server_user_password",
+        // linux_server_accounts
         SET_LINUX_SERVER_ACCOUNT_PASSWORD="set_linux_server_account_password",
+        // mysql_server_users
         SET_MYSQL_SERVER_USER_PASSWORD="set_mysql_server_user_password",
+        // mysql_servers
+        GET_MYSQL_SLAVE_STATUS="get_mysql_slave_status",
+        // postgres_server_users
         SET_POSTGRES_SERVER_USER_PASSWORD="set_postgres_server_user_password"
     ;
 

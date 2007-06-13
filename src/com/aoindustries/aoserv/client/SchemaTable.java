@@ -491,10 +491,10 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
             display=in.readUTF();
             is_public=in.readBoolean();
             description=in.readUTF();
-            dataverse_editor=readNullUTF(in);
+            dataverse_editor=in.readNullUTF();
             since_version=in.readUTF();
-            last_version=readNullUTF(in);
-            default_order_by=readNullUTF(in);
+            last_version=in.readNullUTF();
+            default_order_by=in.readNullUTF();
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -508,10 +508,10 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
             out.writeUTF(display);
             out.writeBoolean(is_public);
             out.writeUTF(description);
-            writeNullUTF(out, dataverse_editor);
+            out.writeNullUTF(dataverse_editor);
             if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) writeNullUTF(out, last_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) writeNullUTF(out, default_order_by);
+            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
+            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) out.writeNullUTF(default_order_by);
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

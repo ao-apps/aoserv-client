@@ -140,7 +140,7 @@ final public class MasterServerProfile extends AOServObject<String,MasterServerP
         level=in.readCompressedInt();
         classname=in.readUTF();
 	method_name=in.readUTF();
-	parameter=readNullUTF(in);
+	parameter=in.readNullUTF();
 	use_count=in.readLong();
 	total_time=in.readLong();
 	min_time=in.readLong();
@@ -156,7 +156,7 @@ final public class MasterServerProfile extends AOServObject<String,MasterServerP
         out.writeCompressedInt(level);
         out.writeUTF(classname);
 	out.writeUTF(method_name);
-        writeNullUTF(out, parameter);
+        out.writeNullUTF(parameter);
 	out.writeLong(use_count);
 	out.writeLong(total_time);
 	out.writeLong(min_time);

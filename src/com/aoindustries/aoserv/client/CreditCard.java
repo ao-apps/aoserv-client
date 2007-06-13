@@ -221,9 +221,9 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	useMonthly=in.readBoolean();
 	isActive=in.readBoolean();
 	deactivatedOn=in.readLong();
-	deactivateReason=readNullUTF(in);
+	deactivateReason=in.readNullUTF();
 	priority=in.readCompressedInt();
-	description=readNullUTF(in);
+	description=in.readNullUTF();
     }
 
     public void remove() {
@@ -259,8 +259,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	out.writeBoolean(useMonthly);
 	out.writeBoolean(isActive);
 	out.writeLong(deactivatedOn);
-	writeNullUTF(out, deactivateReason);
+	out.writeNullUTF(deactivateReason);
 	out.writeCompressedInt(priority);
-	writeNullUTF(out, description);
+	out.writeNullUTF(description);
     }
 }

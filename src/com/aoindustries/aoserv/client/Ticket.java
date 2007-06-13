@@ -308,8 +308,8 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	accounting=readNullUTF(in);
-	created_by=readNullUTF(in);
+	accounting=in.readNullUTF();
+	created_by=in.readNullUTF();
 	ticket_type=in.readUTF();
 
         // details workaround for readUTF 64k limit
@@ -321,12 +321,12 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
         open_date=in.readLong();
 	deadline=in.readLong();
 	close_date=in.readLong();
-	closed_by=readNullUTF(in);
+	closed_by=in.readNullUTF();
 	client_priority=in.readUTF();
-	admin_priority=readNullUTF(in);
-	technology=readNullUTF(in);
+	admin_priority=in.readNullUTF();
+	technology=in.readNullUTF();
 	status=in.readUTF();
-        assigned_to = readNullUTF(in);
+        assigned_to = in.readNullUTF();
         contact_emails = in.readUTF();
         contact_phone_numbers = in.readUTF();
     }
@@ -343,8 +343,8 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_126)>=0) {
-            writeNullUTF(out, accounting);
-            writeNullUTF(out, created_by);
+            out.writeNullUTF(accounting);
+            out.writeNullUTF(created_by);
         } else {
             out.writeUTF(accounting==null ? "":accounting);
             out.writeUTF(created_by==null ? "":created_by);
@@ -360,17 +360,17 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	out.writeLong(open_date);
 	out.writeLong(deadline);
 	out.writeLong(close_date);
-	writeNullUTF(out, closed_by);
+	out.writeNullUTF(closed_by);
 	out.writeUTF(client_priority);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_10)<0) {
             out.writeUTF(admin_priority==null ? client_priority : admin_priority);
         } else {
-            writeNullUTF(out, admin_priority);
+            out.writeNullUTF(admin_priority);
         }
-	writeNullUTF(out, technology);
+	out.writeNullUTF(technology);
 	out.writeUTF(status);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_125)>=0) {
-            writeNullUTF(out, assigned_to);
+            out.writeNullUTF(assigned_to);
             out.writeUTF(contact_emails);
             out.writeUTF(contact_phone_numbers);
         }

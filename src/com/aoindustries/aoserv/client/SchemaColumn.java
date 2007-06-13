@@ -198,7 +198,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
             is_public=in.readBoolean();
             description=in.readUTF();
             since_version=in.readUTF();
-            last_version=readNullUTF(in);
+            last_version=in.readNullUTF();
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -221,7 +221,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
             out.writeBoolean(is_public);
             out.writeUTF(description);
             if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) writeNullUTF(out, last_version);
+            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

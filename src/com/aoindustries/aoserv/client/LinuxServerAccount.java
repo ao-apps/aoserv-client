@@ -655,11 +655,11 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
             inbox_backup_level=in.readShort();
             inbox_backup_retention=in.readShort();
             autoresponder_from=in.readCompressedInt();
-            autoresponder_subject=readNullUTF(in);
-            autoresponder_path=readNullUTF(in);
+            autoresponder_subject=in.readNullUTF();
+            autoresponder_path=in.readNullUTF();
             is_autoresponder_enabled=in.readBoolean();
             disable_log=in.readCompressedInt();
-            predisable_password=readNullUTF(in);
+            predisable_password=in.readNullUTF();
             created=in.readLong();
             use_inbox=in.readBoolean();
             trash_email_retention=in.readCompressedInt();
@@ -905,7 +905,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
                     CompressedDataOutputStream out=connection.getOutputStream();
                     out.writeCompressedInt(AOServProtocol.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD);
                     out.writeCompressedInt(pkey);
-                    writeNullUTF(out, password);
+                    out.writeNullUTF(password);
                     out.flush();
 
                     CompressedDataInputStream in=connection.getInputStream();
@@ -956,11 +956,11 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
             out.writeShort(inbox_backup_level);
             out.writeShort(inbox_backup_retention);
             out.writeCompressedInt(autoresponder_from);
-            writeNullUTF(out, autoresponder_subject);
-            writeNullUTF(out, autoresponder_path);
+            out.writeNullUTF(autoresponder_subject);
+            out.writeNullUTF(autoresponder_path);
             out.writeBoolean(is_autoresponder_enabled);
             out.writeCompressedInt(disable_log);
-            writeNullUTF(out, predisable_password);
+            out.writeNullUTF(predisable_password);
             out.writeLong(created);
             out.writeBoolean(use_inbox);
             out.writeCompressedInt(trash_email_retention);

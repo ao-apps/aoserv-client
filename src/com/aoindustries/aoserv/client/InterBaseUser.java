@@ -172,9 +172,9 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readUTF();
-        first_name=readNullUTF(in);
-        middle_name=readNullUTF(in);
-        last_name=readNullUTF(in);
+        first_name=in.readNullUTF();
+        middle_name=in.readNullUTF();
+        last_name=in.readNullUTF();
         disable_log=in.readCompressedInt();
     }
 
@@ -200,9 +200,9 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeUTF(pkey);
-        writeNullUTF(out, first_name);
-        writeNullUTF(out, middle_name);
-        writeNullUTF(out, last_name);
+        out.writeNullUTF(first_name);
+        out.writeNullUTF(middle_name);
+        out.writeNullUTF(last_name);
         out.writeCompressedInt(disable_log);
     }
 

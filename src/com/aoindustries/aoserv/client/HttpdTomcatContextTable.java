@@ -50,7 +50,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
                 out.writeCompressedInt(AOServProtocol.ADD);
                 out.writeCompressedInt(SchemaTable.HTTPD_TOMCAT_CONTEXTS);
                 out.writeCompressedInt(hts.pkey);
-                AOServObject.writeNullUTF(out, className);
+                out.writeNullUTF(className);
                 out.writeBoolean(cookies);
                 out.writeBoolean(crossContext);
                 out.writeUTF(docBase);
@@ -59,9 +59,9 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
                 out.writeBoolean(privileged);
                 out.writeBoolean(reloadable);
                 out.writeBoolean(useNaming);
-                AOServObject.writeNullUTF(out, wrapperClass);
+                out.writeNullUTF(wrapperClass);
                 out.writeCompressedInt(debug);
-                AOServObject.writeNullUTF(out, workDir);
+                out.writeNullUTF(workDir);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();

@@ -208,9 +208,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         display=in.readUTF();
         description=in.readUTF();
         setup_fee=in.readCompressedInt();
-        setup_fee_transaction_type=readNullUTF(in);
+        setup_fee_transaction_type=in.readNullUTF();
         monthly_rate=in.readCompressedInt();
-        monthly_rate_transaction_type=readNullUTF(in);
+        monthly_rate_transaction_type=in.readNullUTF();
         active=in.readBoolean();
         approved=in.readBoolean();
     }
@@ -228,9 +228,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         out.writeUTF(display);
         out.writeUTF(description);
         out.writeCompressedInt(setup_fee);
-        writeNullUTF(out, setup_fee_transaction_type);
+        out.writeNullUTF(setup_fee_transaction_type);
         out.writeCompressedInt(monthly_rate);
-        writeNullUTF(out, monthly_rate_transaction_type);
+        out.writeNullUTF(monthly_rate_transaction_type);
         out.writeBoolean(active);
         out.writeBoolean(approved);
     }

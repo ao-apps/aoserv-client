@@ -189,9 +189,9 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	pkey=in.readCompressedInt();
 	username=in.readUTF();
 	mysql_server=in.readCompressedInt();
-        host=readNullUTF(in);
+        host=in.readNullUTF();
         disable_log=in.readCompressedInt();
-        predisable_password=readNullUTF(in);
+        predisable_password=in.readNullUTF();
         max_questions=in.readCompressedInt();
         max_updates=in.readCompressedInt();
         max_connections=in.readCompressedInt();
@@ -222,7 +222,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.SET_MYSQL_SERVER_USER_PASSWORD);
                 out.writeCompressedInt(pkey);
-                writeNullUTF(out, password);
+                out.writeNullUTF(password);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -253,7 +253,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD);
                 out.writeCompressedInt(pkey);
-                writeNullUTF(out, password);
+                out.writeNullUTF(password);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -286,9 +286,9 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	out.writeUTF(username);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)<0) out.writeCompressedInt(-1);
         else out.writeCompressedInt(mysql_server);
-	writeNullUTF(out, host);
+	out.writeNullUTF(host);
         out.writeCompressedInt(disable_log);
-        writeNullUTF(out, predisable_password);
+        out.writeNullUTF(predisable_password);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) {
             out.writeCompressedInt(max_questions);
             out.writeCompressedInt(max_updates);

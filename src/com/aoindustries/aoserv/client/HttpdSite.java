@@ -448,7 +448,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         linuxAccount=in.readUTF();
         linuxGroup=in.readUTF();
         serverAdmin=in.readUTF();
-        contentSrc=readNullUTF(in);
+        contentSrc=in.readNullUTF();
         config_backup_level=in.readShort();
         config_backup_retention=in.readShort();
         file_backup_level=in.readShort();
@@ -459,7 +459,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         log_backup_retention=in.readShort();
         disable_log=in.readCompressedInt();
         isManual=in.readBoolean();
-        awstatsSkipFiles=readNullUTF(in);
+        awstatsSkipFiles=in.readNullUTF();
     }
 
     public void remove() {
@@ -528,7 +528,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         out.writeUTF(linuxAccount);
         out.writeUTF(linuxGroup);
         out.writeUTF(serverAdmin);
-        writeNullUTF(out, contentSrc);
+        out.writeNullUTF(contentSrc);
         out.writeShort(config_backup_level);
         out.writeShort(config_backup_retention);
         out.writeShort(file_backup_level);
@@ -539,7 +539,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         out.writeShort(log_backup_retention);
         out.writeCompressedInt(disable_log);
         out.writeBoolean(isManual);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_129)>=0) writeNullUTF(out, awstatsSkipFiles);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_129)>=0) out.writeNullUTF(awstatsSkipFiles);
     }
 
     public void getAWStatsFile(String path, String queryString, OutputStream out) {

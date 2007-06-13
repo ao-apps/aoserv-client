@@ -123,7 +123,7 @@ final public class InterBaseServerUser extends CachedObjectIntegerKey<InterBaseS
 	username=in.readUTF();
 	ao_server=in.readCompressedInt();
         disable_log=in.readCompressedInt();
-        predisable_password=readNullUTF(in);
+        predisable_password=in.readNullUTF();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -186,7 +186,7 @@ final public class InterBaseServerUser extends CachedObjectIntegerKey<InterBaseS
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.SET_INTERBASE_SERVER_USER_PREDISABLE_PASSWORD);
                 out.writeCompressedInt(pkey);
-                writeNullUTF(out, password);
+                out.writeNullUTF(password);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -219,7 +219,7 @@ final public class InterBaseServerUser extends CachedObjectIntegerKey<InterBaseS
 	out.writeUTF(username);
 	out.writeCompressedInt(ao_server);
         out.writeCompressedInt(disable_log);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_115)>=0) writeNullUTF(out, predisable_password);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_115)>=0) out.writeNullUTF(predisable_password);
     }
 
     public boolean canSetPassword() {

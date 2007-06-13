@@ -121,7 +121,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 	username=in.readUTF();
 	postgres_server=in.readCompressedInt();
         disable_log=in.readCompressedInt();
-        predisable_password=readNullUTF(in);
+        predisable_password=in.readNullUTF();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -186,7 +186,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD);
                 out.writeCompressedInt(pkey);
-                writeNullUTF(out, password);
+                out.writeNullUTF(password);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -222,7 +222,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
             out.writeCompressedInt(-1);
         }
         out.writeCompressedInt(disable_log);
-        writeNullUTF(out, predisable_password);
+        out.writeNullUTF(predisable_password);
     }
 
     public boolean canSetPassword() {

@@ -536,11 +536,11 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         Profiler.startProfile(Profiler.IO, AOSHCommand.class, "read(CompressedDataInputStream)", null);
         try {
             pkey=in.readUTF();
-            table_name=readNullUTF(in);
+            table_name=in.readNullUTF();
             short_desc=in.readUTF();
             syntax=in.readUTF();
             since_version=in.readUTF();
-            last_version=readNullUTF(in);
+            last_version=in.readNullUTF();
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -550,11 +550,11 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         Profiler.startProfile(Profiler.IO, AOSHCommand.class, "write(CompressedDataOutputStream,String)", null);
         try {
             out.writeUTF(pkey);
-            writeNullUTF(out, table_name);
+            out.writeNullUTF(table_name);
             out.writeUTF(short_desc);
             out.writeUTF(syntax);
             if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_102)>=0) writeNullUTF(out, last_version);
+            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_102)>=0) out.writeNullUTF(last_version);
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

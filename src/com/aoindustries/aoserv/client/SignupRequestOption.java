@@ -56,14 +56,14 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
         pkey=in.readCompressedInt();
         request=in.readCompressedInt();
         name = in.readUTF();
-        value = readNullUTF(in);
+        value = in.readNullUTF();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(request);
         out.writeUTF(name);
-        writeNullUTF(out, value);
+        out.writeNullUTF(value);
     }
 
     public SignupRequest getSignupRequest() {

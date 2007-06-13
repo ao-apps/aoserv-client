@@ -71,7 +71,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
         tomcat4_shutdown_port=in.readCompressedInt();
-        tomcat4_shutdown_key=readNullUTF(in);
+        tomcat4_shutdown_key=in.readNullUTF();
     }
 
     String toStringImpl() {
@@ -81,6 +81,6 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);
         out.writeCompressedInt(tomcat4_shutdown_port);
-        writeNullUTF(out, tomcat4_shutdown_key);
+        out.writeNullUTF(tomcat4_shutdown_key);
     }
 }

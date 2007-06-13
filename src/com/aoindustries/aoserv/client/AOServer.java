@@ -880,7 +880,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	ram=in.readCompressedInt();
 	rack=in.readCompressedInt();
 	disk=in.readCompressedInt();
-	wildcard_https=readNullUTF(in);
+	wildcard_https=in.readNullUTF();
         is_interbase=in.readBoolean();
 	is_dns=in.readBoolean();
 	is_router=in.readBoolean();
@@ -894,17 +894,17 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         server_report_delay=in.readCompressedInt();
         server_report_interval=in.readCompressedInt();
         is_qmail=in.readBoolean();
-        daemon_device_id=readNullUTF(in);
-        xeroscape_name=readNullUTF(in);
+        daemon_device_id=in.readNullUTF();
+        xeroscape_name=in.readNullUTF();
         value=in.readCompressedInt();
         monitoring_enabled=in.readBoolean();
-        emailmon_password=readNullUTF(in);
-        ftpmon_password=readNullUTF(in);
+        emailmon_password=in.readNullUTF();
+        ftpmon_password=in.readNullUTF();
         daemon_connect_bind=in.readCompressedInt();
         time_zone=in.readUTF();
         jilter_bind=in.readCompressedInt();
         restrict_outbound_email=in.readBoolean();
-        daemon_connect_address=readNullUTF(in);
+        daemon_connect_address=in.readNullUTF();
         failover_batch_size=in.readCompressedInt();
     }
 
@@ -1048,7 +1048,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	out.writeCompressedInt(ram);
 	out.writeCompressedInt(rack);
 	out.writeCompressedInt(disk);
-	writeNullUTF(out, wildcard_https);
+	out.writeNullUTF(wildcard_https);
         out.writeBoolean(is_interbase);
 	out.writeBoolean(is_dns);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)<0) out.writeBoolean(true);
@@ -1063,13 +1063,13 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         out.writeCompressedInt(server_report_delay);
         out.writeCompressedInt(server_report_interval);
         out.writeBoolean(is_qmail);
-        writeNullUTF(out, daemon_device_id);
-        writeNullUTF(out, xeroscape_name);
+        out.writeNullUTF(daemon_device_id);
+        out.writeNullUTF(xeroscape_name);
         out.writeCompressedInt(value);
         out.writeBoolean(monitoring_enabled);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) {
-            writeNullUTF(out, emailmon_password);
-            writeNullUTF(out, ftpmon_password);
+            out.writeNullUTF(emailmon_password);
+            out.writeNullUTF(ftpmon_password);
         } else if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) {
             out.writeUTF(emailmon_password==null?AOServProtocol.FILTERED:emailmon_password);
             out.writeUTF(ftpmon_password==null?AOServProtocol.FILTERED:ftpmon_password);
@@ -1078,7 +1078,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_2)>=0) out.writeUTF(time_zone);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_11)>=0) writeNullUTF(out, daemon_connect_address);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_11)>=0) out.writeNullUTF(daemon_connect_address);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
     }
 }

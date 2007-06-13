@@ -93,7 +93,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
         name=in.readUTF();
         value=in.readUTF();
         override=in.readBoolean();
-        description=readNullUTF(in);
+        description=in.readNullUTF();
     }
 
     public void remove() {
@@ -122,6 +122,6 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
         out.writeUTF(name);
         out.writeUTF(value);
         out.writeBoolean(override);
-        writeNullUTF(out, description);
+        out.writeNullUTF(description);
     }
 }

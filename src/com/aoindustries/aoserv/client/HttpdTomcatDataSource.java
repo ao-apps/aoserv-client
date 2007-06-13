@@ -133,7 +133,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         maxActive=in.readCompressedInt();
         maxIdle=in.readCompressedInt();
         maxWait=in.readCompressedInt();
-        validationQuery=readNullUTF(in);
+        validationQuery=in.readNullUTF();
     }
 
     public void remove() {
@@ -177,6 +177,6 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         out.writeCompressedInt(maxActive);
         out.writeCompressedInt(maxIdle);
         out.writeCompressedInt(maxWait);
-        writeNullUTF(out, validationQuery);
+        out.writeNullUTF(validationQuery);
     }
 }

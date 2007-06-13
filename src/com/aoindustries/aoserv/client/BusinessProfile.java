@@ -211,13 +211,13 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	out.writeUTF(name);
 	out.writeBoolean(isPrivate);
 	out.writeUTF(phone);
-	writeNullUTF(out, fax);
+	out.writeNullUTF(fax);
 	out.writeUTF(address1);
-	writeNullUTF(out, address2);
+	out.writeNullUTF(address2);
 	out.writeUTF(city);
-	writeNullUTF(out, state);
+	out.writeNullUTF(state);
 	out.writeUTF(country);
-	writeNullUTF(out, zip);
+	out.writeNullUTF(zip);
 	out.writeBoolean(sendInvoice);
 	out.writeLong(created);
 	out.writeUTF(billingContact);

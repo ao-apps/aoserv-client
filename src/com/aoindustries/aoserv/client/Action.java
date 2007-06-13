@@ -156,7 +156,7 @@ final public class Action extends AOServObject<Integer,Action> implements Single
             administrator=in.readUTF();
             time=in.readLong();
             action_type=in.readUTF();
-            old_value=readNullUTF(in);
+            old_value=in.readNullUTF();
             comments=in.readUTF();
         } finally {
             Profiler.endProfile(Profiler.IO);
@@ -190,7 +190,7 @@ final public class Action extends AOServObject<Integer,Action> implements Single
             out.writeUTF(administrator);
             out.writeLong(time);
             out.writeUTF(action_type);
-            writeNullUTF(out, old_value);
+            out.writeNullUTF(old_value);
             out.writeUTF(comments);
         } finally {
             Profiler.endProfile(Profiler.IO);

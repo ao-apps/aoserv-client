@@ -509,9 +509,9 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         try {
             out.writeUTF(pkey);
             out.writeUTF(name);
-            writeNullUTF(out, office_location);
-            writeNullUTF(out, office_phone);
-            writeNullUTF(out, home_phone);
+            out.writeNullUTF(office_location);
+            out.writeNullUTF(office_phone);
+            out.writeNullUTF(home_phone);
             out.writeUTF(type);
             out.writeUTF(shell);
             out.writeLong(created);

@@ -417,9 +417,9 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
             out.writeBoolean(monitoring_enabled);
         } else {
             out.writeCompressedInt(monitoring_enabled?300000:-1);
-            writeNullUTF(out, null);
-            writeNullUTF(out, null);
-            writeNullUTF(out, null);
+            out.writeNullUTF(null);
+            out.writeNullUTF(null);
+            out.writeNullUTF(null);
         }
     }
 }

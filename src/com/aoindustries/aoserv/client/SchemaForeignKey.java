@@ -128,7 +128,7 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
             is_bridge = in.readBoolean();
             tied_bridge = in.readCompressedInt();
             since_version=in.readUTF();
-            last_version=readNullUTF(in);
+            last_version=in.readNullUTF();
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -143,7 +143,7 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
             out.writeBoolean(is_bridge);
             out.writeCompressedInt(tied_bridge);
             if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) writeNullUTF(out, last_version);
+            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

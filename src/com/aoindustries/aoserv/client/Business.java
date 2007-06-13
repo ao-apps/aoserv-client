@@ -233,7 +233,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                 out.writeCompressedInt(AOServProtocol.CANCEL_BUSINESS);
                 out.writeUTF(pkey);
                 if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
-                writeNullUTF(out, cancelReason);
+                out.writeNullUTF(cancelReason);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -842,13 +842,13 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	contractVersion=in.readBoolean()?in.readUTF():null;
 	created=in.readLong();
 	canceled=in.readLong();
-	cancelReason=readNullUTF(in);
-	parent=readNullUTF(in);
+	cancelReason=in.readNullUTF();
+	parent=in.readNullUTF();
         can_add_backup_server=in.readBoolean();
 	can_add_businesses=in.readBoolean();
         can_see_prices=in.readBoolean();
         disable_log=in.readCompressedInt();
-        do_not_disable_reason=readNullUTF(in);
+        do_not_disable_reason=in.readNullUTF();
         auto_enable=in.readBoolean();
         bill_parent=in.readBoolean();
     }
@@ -863,14 +863,14 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
 	out.writeLong(created);
 	out.writeLong(canceled);
-	writeNullUTF(out, cancelReason);
-        writeNullUTF(out, parent);
+	out.writeNullUTF(cancelReason);
+        out.writeNullUTF(parent);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
 	out.writeBoolean(can_add_businesses);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_103)>=0) out.writeBoolean(can_see_prices);
         out.writeCompressedInt(disable_log);
-        writeNullUTF(out, do_not_disable_reason);
+        out.writeNullUTF(do_not_disable_reason);
         out.writeBoolean(auto_enable);
         out.writeBoolean(bill_parent);
     }

@@ -56,7 +56,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
                 out.writeCompressedInt(quantity);
                 out.writeCompressedInt(rate);
                 out.writeBoolean(paymentType!=null); if(paymentType!=null) out.writeUTF(paymentType.pkey);
-                AOServObject.writeNullUTF(out, paymentInfo);
+                out.writeNullUTF(paymentInfo);
                 out.writeByte(payment_confirmed);
                 out.flush();
 

@@ -132,7 +132,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         soft_limit=in.readCompressedInt();
         hard_limit=in.readCompressedInt();
         additional_rate=in.readCompressedInt();
-        additional_transaction_type=readNullUTF(in);
+        additional_transaction_type=in.readNullUTF();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
@@ -142,6 +142,6 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         out.writeCompressedInt(soft_limit);
         out.writeCompressedInt(hard_limit);
         out.writeCompressedInt(additional_rate);
-        writeNullUTF(out, additional_transaction_type);
+        out.writeNullUTF(additional_transaction_type);
     }
 }

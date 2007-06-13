@@ -39,9 +39,9 @@ final public class InterBaseUserTable extends CachedTableStringKey<InterBaseUser
                 out.writeCompressedInt(AOServProtocol.ADD);
                 out.writeCompressedInt(SchemaTable.INTERBASE_USERS);
                 out.writeUTF(username.pkey);
-                AOServObject.writeNullUTF(out, firstName);
-                AOServObject.writeNullUTF(out, middleName);
-                AOServObject.writeNullUTF(out, lastName);
+                out.writeNullUTF(firstName);
+                out.writeNullUTF(middleName);
+                out.writeNullUTF(lastName);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();

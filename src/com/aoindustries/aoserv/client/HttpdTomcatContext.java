@@ -220,7 +220,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         tomcat_site=in.readCompressedInt();
-        class_name=readNullUTF(in);
+        class_name=in.readNullUTF();
         cookies=in.readBoolean();
         cross_context=in.readBoolean();
         doc_base=in.readUTF();
@@ -229,9 +229,9 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         privileged=in.readBoolean();
         reloadable=in.readBoolean();
         use_naming=in.readBoolean();
-        wrapper_class=readNullUTF(in);
+        wrapper_class=in.readNullUTF();
         debug=in.readCompressedInt();
-        work_dir=readNullUTF(in);
+        work_dir=in.readNullUTF();
     }
 
     public void setAttributes(
@@ -256,7 +256,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES);
                 out.writeCompressedInt(pkey);
-                AOServObject.writeNullUTF(out, className);
+                out.writeNullUTF(className);
                 out.writeBoolean(cookies);
                 out.writeBoolean(crossContext);
                 out.writeUTF(docBase);
@@ -265,9 +265,9 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
                 out.writeBoolean(privileged);
                 out.writeBoolean(reloadable);
                 out.writeBoolean(useNaming);
-                AOServObject.writeNullUTF(out, wrapperClass);
+                out.writeNullUTF(wrapperClass);
                 out.writeCompressedInt(debug);
-                AOServObject.writeNullUTF(out, workDir);
+                out.writeNullUTF(workDir);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -298,7 +298,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(tomcat_site);
-        writeNullUTF(out, class_name);
+        out.writeNullUTF(class_name);
         out.writeBoolean(cookies);
         out.writeBoolean(cross_context);
         out.writeUTF(doc_base);
@@ -307,8 +307,8 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         out.writeBoolean(privileged);
         out.writeBoolean(reloadable);
         out.writeBoolean(use_naming);
-        writeNullUTF(out, wrapper_class);
+        out.writeNullUTF(wrapper_class);
         out.writeCompressedInt(debug);
-        writeNullUTF(out, work_dir);
+        out.writeNullUTF(work_dir);
     }
 }

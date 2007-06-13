@@ -174,7 +174,7 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         is_secure=in.readBoolean();
         start_time=in.readLong();
         end_time=in.readLong();
-        command=readNullUTF(in);
+        command=in.readNullUTF();
     }
 
     public void setTable(AOServTable<Long,MasterHistory> table) {
@@ -193,6 +193,6 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         out.writeBoolean(is_secure);
         out.writeLong(start_time);
         out.writeLong(end_time);
-        writeNullUTF(out, command);
+        out.writeNullUTF(command);
     }
 }

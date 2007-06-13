@@ -424,7 +424,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         backup_hour=in.readCompressedInt();
         last_backup_time=in.readLong();
         operating_system_version=in.readCompressedInt();
-        asset_label=readNullUTF(in);
+        asset_label=in.readNullUTF();
         minimum_power=in.readFloat();
         maximum_power=in.readFloat();
     }
@@ -452,7 +452,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         out.writeCompressedInt(backup_hour);
         out.writeLong(last_backup_time);
         out.writeCompressedInt(operating_system_version);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) writeNullUTF(out, asset_label);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) out.writeNullUTF(asset_label);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_16)>=0) {
             out.writeFloat(minimum_power);
             out.writeFloat(maximum_power);

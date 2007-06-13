@@ -365,7 +365,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         disable_log=in.readCompressedInt();
         tomcat4_worker=in.readCompressedInt();
         tomcat4_shutdown_port=in.readCompressedInt();
-        tomcat4_shutdown_key=readNullUTF(in);
+        tomcat4_shutdown_key=in.readNullUTF();
         isManual=in.readBoolean();
     }
 
@@ -431,7 +431,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         out.writeCompressedInt(disable_log);
         out.writeCompressedInt(tomcat4_worker);
         out.writeCompressedInt(tomcat4_shutdown_port);
-        writeNullUTF(out, tomcat4_shutdown_key);
+        out.writeNullUTF(tomcat4_shutdown_key);
         out.writeBoolean(isManual);
     }
 }

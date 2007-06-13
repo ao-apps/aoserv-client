@@ -159,7 +159,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	type=in.readUTF();
 	expenseCode=in.readBoolean()?in.readUTF():null;
 	description=in.readUTF();
-	checkNo=readNullUTF(in);
+	checkNo=in.readNullUTF();
 	amount=in.readCompressedInt();
 	confirmed=in.readBoolean();
     }
@@ -177,12 +177,12 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	out.writeLong(time);
 	out.writeCompressedInt(transID);
 	out.writeUTF(bankAccount);
-	writeNullUTF(out, merchantAccount);
+	out.writeNullUTF(merchantAccount);
 	out.writeUTF(administrator);
 	out.writeUTF(type);
-	writeNullUTF(out, expenseCode);
+	out.writeNullUTF(expenseCode);
 	out.writeUTF(description);
-	writeNullUTF(out, checkNo);
+	out.writeNullUTF(checkNo);
 	out.writeCompressedInt(amount);
 	out.writeBoolean(confirmed);
     }

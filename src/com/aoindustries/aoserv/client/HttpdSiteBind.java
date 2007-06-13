@@ -161,10 +161,10 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	httpd_bind=in.readCompressedInt();
 	access_log=in.readUTF();
 	error_log=in.readUTF();
-	sslCertFile=readNullUTF(in);
-	sslCertKeyFile=readNullUTF(in);
+	sslCertFile=in.readNullUTF();
+	sslCertKeyFile=in.readNullUTF();
         disable_log=in.readCompressedInt();
-        predisable_config=readNullUTF(in);
+        predisable_config=in.readNullUTF();
         isManual=in.readBoolean();
         redirect_to_primary_hostname=in.readBoolean();
     }
@@ -196,7 +196,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG);
                 out.writeCompressedInt(pkey);
-                writeNullUTF(out, config);
+                out.writeNullUTF(config);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -232,10 +232,10 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	out.writeCompressedInt(httpd_bind);
 	out.writeUTF(access_log);
 	out.writeUTF(error_log);
-        writeNullUTF(out, sslCertFile);
-        writeNullUTF(out, sslCertKeyFile);
+        out.writeNullUTF(sslCertFile);
+        out.writeNullUTF(sslCertKeyFile);
         out.writeCompressedInt(disable_log);
-        writeNullUTF(out, predisable_config);
+        out.writeNullUTF(predisable_config);
         out.writeBoolean(isManual);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_19)>=0) out.writeBoolean(redirect_to_primary_hostname);
     }

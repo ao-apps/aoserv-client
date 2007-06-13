@@ -89,8 +89,8 @@ final public class MerchantAccount extends CachedObjectStringKey<MerchantAccount
 	pkey=in.readUTF();
 	display=in.readUTF();
 	bankAccount=in.readUTF();
-	javaConnector=readNullUTF(in);
-	url=readNullUTF(in);
+	javaConnector=in.readNullUTF();
+	url=in.readNullUTF();
 	merchantID=in.readUTF();
 	depositDelay=in.readCompressedInt();
 	withdrawalDelay=in.readCompressedInt();
@@ -104,8 +104,8 @@ final public class MerchantAccount extends CachedObjectStringKey<MerchantAccount
 	out.writeUTF(pkey);
 	out.writeUTF(display);
 	out.writeUTF(bankAccount);
-	writeNullUTF(out, javaConnector);
-	writeNullUTF(out, url);
+	out.writeNullUTF(javaConnector);
+	out.writeNullUTF(url);
 	out.writeUTF(merchantID);
 	out.writeCompressedInt(depositDelay);
 	out.writeCompressedInt(withdrawalDelay);

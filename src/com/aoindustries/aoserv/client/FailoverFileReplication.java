@@ -175,8 +175,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         last_start_time=in.readLong();
         use_compression=in.readBoolean();
         retention=in.readShort();
-        connect_address=readNullUTF(in);
-        connect_from=readNullUTF(in);
+        connect_address=in.readNullUTF();
+        connect_from=in.readNullUTF();
         enabled=in.readBoolean();
         to_path=in.readUTF();
         chunk_always=in.readBoolean();
@@ -202,8 +202,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         out.writeLong(last_start_time);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_9)>=0) out.writeBoolean(use_compression);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_13)>=0) out.writeShort(retention);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_14)>=0) writeNullUTF(out, connect_address);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_22)>=0) writeNullUTF(out, connect_from);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_14)>=0) out.writeNullUTF(connect_address);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_22)>=0) out.writeNullUTF(connect_from);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_15)>=0) out.writeBoolean(enabled);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_17)>=0) {
             out.writeUTF(to_path);

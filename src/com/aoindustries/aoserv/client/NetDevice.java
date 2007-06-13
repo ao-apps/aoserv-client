@@ -144,12 +144,12 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	ao_server=in.readCompressedInt();
 	device_id=in.readUTF();
 	description=in.readUTF();
-	delete_route=readNullUTF(in);
-	gateway=readNullUTF(in);
+	delete_route=in.readNullUTF();
+	gateway=in.readNullUTF();
 	netmask=in.readUTF();
-        network=readNullUTF(in);
-        broadcast=readNullUTF(in);
-        mac_address=readNullUTF(in);
+        network=in.readNullUTF();
+        broadcast=in.readNullUTF();
+        mac_address=in.readNullUTF();
         max_bit_rate=in.readLong();
     }
 
@@ -162,15 +162,15 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	out.writeCompressedInt(ao_server);
 	out.writeUTF(device_id);
 	out.writeUTF(description);
-	writeNullUTF(out, delete_route);
-	writeNullUTF(out, gateway);
+	out.writeNullUTF(delete_route);
+	out.writeNullUTF(gateway);
 	out.writeUTF(netmask);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_112)>=0) {
-            writeNullUTF(out, network);
-            writeNullUTF(out, broadcast);
+            out.writeNullUTF(network);
+            out.writeNullUTF(broadcast);
         }
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_128)>=0) {
-            writeNullUTF(out, mac_address);
+            out.writeNullUTF(mac_address);
         }
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_2)>=0) {
             out.writeLong(max_bit_rate);

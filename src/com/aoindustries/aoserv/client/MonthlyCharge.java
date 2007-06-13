@@ -174,7 +174,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
         out.writeUTF(accounting);
 	out.writeUTF(packageName);
 	out.writeUTF(type);
-	writeNullUTF(out, description);
+	out.writeNullUTF(description);
 	out.writeCompressedInt(quantity);
 	out.writeCompressedInt(rate);
 	out.writeLong(created);

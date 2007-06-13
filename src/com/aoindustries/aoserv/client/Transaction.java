@@ -331,10 +331,10 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	description=in.readCompressedUTF();
 	quantity=in.readCompressedInt();
 	rate=in.readCompressedInt();
-	payment_type=readNullUTF(in);
-	payment_info=readNullUTF(in);
-	merchant_account=readNullUTF(in);
-	apr_num=readNullUTF(in);
+	payment_type=in.readNullUTF();
+	payment_info=in.readNullUTF();
+	merchant_account=in.readNullUTF();
+	apr_num=in.readNullUTF();
 	payment_confirmed=in.readByte();
     }
 
@@ -375,13 +375,13 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	out.writeCompressedUTF(description, 4);
 	out.writeCompressedInt(quantity);
 	out.writeCompressedInt(rate);
-	writeNullUTF(out, payment_type);
-	writeNullUTF(out, payment_info);
-	writeNullUTF(out, merchant_account);
+	out.writeNullUTF(payment_type);
+	out.writeNullUTF(payment_info);
+	out.writeNullUTF(merchant_account);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_128)<0) {
             out.writeCompressedInt(-1);
         } else {
-            writeNullUTF(out, apr_num);
+            out.writeNullUTF(apr_num);
         }
 	out.writeByte(payment_confirmed);
     }

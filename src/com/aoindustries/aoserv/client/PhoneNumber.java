@@ -89,12 +89,12 @@ final public class PhoneNumber extends CachedObjectIntegerKey<PhoneNumber> {
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
 	created=in.readLong();
-	business=readNullUTF(in);
-	person=readNullUTF(in);
-	work=readNullUTF(in);
-	cell=readNullUTF(in);
-	home=readNullUTF(in);
-	fax=readNullUTF(in);
+	business=in.readNullUTF();
+	person=in.readNullUTF();
+	work=in.readNullUTF();
+	cell=in.readNullUTF();
+	home=in.readNullUTF();
+	fax=in.readNullUTF();
     }
 
     String toStringImpl() {
@@ -117,11 +117,11 @@ final public class PhoneNumber extends CachedObjectIntegerKey<PhoneNumber> {
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeLong(created);
-	writeNullUTF(out, business);
-	writeNullUTF(out, person);
-	writeNullUTF(out, work);
-	writeNullUTF(out, cell);
-	writeNullUTF(out, home);
-	writeNullUTF(out, fax);
+	out.writeNullUTF(business);
+	out.writeNullUTF(person);
+	out.writeNullUTF(work);
+	out.writeNullUTF(cell);
+	out.writeNullUTF(home);
+	out.writeNullUTF(fax);
     }
 }

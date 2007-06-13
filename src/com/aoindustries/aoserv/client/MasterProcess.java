@@ -225,12 +225,12 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
     public void read(CompressedDataInputStream in) throws IOException {
         process_id=in.readLong();
         connector_id=in.readLong();
-        authenticated_user=readNullUTF(in);
-        effective_user=readNullUTF(in);
+        authenticated_user=in.readNullUTF();
+        effective_user=in.readNullUTF();
         daemon_server=in.readCompressedInt();
         host=in.readUTF();
         protocol=in.readUTF();
-        aoserv_protocol=readNullUTF(in);
+        aoserv_protocol=in.readNullUTF();
         is_secure=in.readBoolean();
         connect_time=in.readLong();
         use_count=in.readLong();
@@ -306,12 +306,12 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeLong(process_id);
         out.writeLong(connector_id);
-        writeNullUTF(out, authenticated_user);
-        writeNullUTF(out, effective_user);
+        out.writeNullUTF(authenticated_user);
+        out.writeNullUTF(effective_user);
         out.writeCompressedInt(daemon_server);
         out.writeUTF(host);
         out.writeUTF(protocol);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) writeNullUTF(out, aoserv_protocol);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
         out.writeBoolean(is_secure);
         out.writeLong(connect_time);
         out.writeLong(use_count);

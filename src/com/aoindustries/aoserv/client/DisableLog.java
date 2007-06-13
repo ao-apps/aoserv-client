@@ -97,7 +97,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         time=in.readLong();
         accounting=in.readUTF();
         disabled_by=in.readUTF();
-        disable_reason=readNullUTF(in);
+        disable_reason=in.readNullUTF();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
@@ -105,6 +105,6 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         out.writeLong(time);
         out.writeUTF(accounting);
         out.writeUTF(disabled_by);
-        writeNullUTF(out, disable_reason);
+        out.writeNullUTF(disable_reason);
     }
 }

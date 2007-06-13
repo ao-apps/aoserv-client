@@ -175,15 +175,6 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
     public abstract void read(CompressedDataInputStream in) throws IOException;
 
-    protected static String readNullUTF(DataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOServObject.class, "readNullUTF(DataInputStream)", null);
-        try {
-            return in.readBoolean()?in.readUTF():null;
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
-    }
-
     final public String toString() {
         return toStringImpl();
     }
@@ -200,14 +191,4 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
     }
 
     public abstract void write(CompressedDataOutputStream out, String version) throws IOException;
-
-    protected static void writeNullUTF(DataOutputStream out, String S) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOServObject.class, "writeNullUTF(DataOutputStream,String)", null);
-        try {
-            out.writeBoolean(S!=null);
-            if(S!=null) out.writeUTF(S);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
-    }
 }
