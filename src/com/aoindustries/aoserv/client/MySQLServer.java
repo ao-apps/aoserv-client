@@ -32,7 +32,8 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     static final int
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=2,
-        COLUMN_NET_BIND=5
+        COLUMN_NET_BIND=5,
+        COLUMN_PACKAGE=6
     ;
 
     /**
@@ -70,6 +71,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     private int version;
     private int max_connections;
     int net_bind;
+    String packageName;
 
     public int addMySQLDatabase(
         String name,
@@ -110,6 +112,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
             case 3: return Integer.valueOf(version);
             case 4: return Integer.valueOf(max_connections);
             case COLUMN_NET_BIND: return Integer.valueOf(net_bind);
+            case COLUMN_PACKAGE: return packageName;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -164,8 +167,18 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return nb;
     }
 
+    public Package getPackage() {
+        Package pk=table.connector.packages.get(packageName);
+        if(pk==null) throw new WrappedException(new SQLException("Unable to find Package: "+packageName));
+        return pk;
+    }
+
     public MySQLDatabase getMySQLDatabase(String name) {
 	return table.connector.mysqlDatabases.getMySQLDatabase(name, this);
+    }
+
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() {
+        return table.connector.failoverMySQLReplications.getFailoverMySQLReplications(this);
     }
 
     public List<MySQLDatabase> getMySQLDatabases() {
@@ -203,6 +216,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	version=result.getInt(4);
         max_connections=result.getInt(5);
         net_bind=result.getInt(6);
+        packageName=result.getString(7);
     }
 
     public boolean isMySQLDatabaseNameAvailable(String name) {
@@ -216,6 +230,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	version=in.readCompressedInt();
         max_connections=in.readCompressedInt();
         net_bind=in.readCompressedInt();
+        packageName=in.readUTF();
     }
 
     public void restartMySQL() {
@@ -241,5 +256,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	out.writeCompressedInt(version);
         out.writeCompressedInt(max_connections);
         out.writeCompressedInt(net_bind);
+        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_28)>=0) out.writeUTF(packageName);
     }
 }

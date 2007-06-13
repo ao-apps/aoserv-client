@@ -149,6 +149,10 @@ abstract public class AOServConnector {
     public final FailoverFileLogTable failoverFileLogs;
     public final FailoverFileReplicationTable failoverFileReplications;
     public final FailoverFileScheduleTable failoverFileSchedules;
+
+    public final FailoverMySQLReplicationTable failoverMySQLReplications;
+    public FailoverMySQLReplicationTable getFailoverMySQLReplications() {return failoverMySQLReplications;}
+
     public final FileBackupTable fileBackups;
     public final FileBackupDeviceTable fileBackupDevices;
     public final FileBackupRootTable fileBackupRoots;
@@ -392,6 +396,7 @@ abstract public class AOServConnector {
                 failoverFileLogs=new FailoverFileLogTable(this),
                 failoverFileReplications=new FailoverFileReplicationTable(this),
                 failoverFileSchedules=new FailoverFileScheduleTable(this),
+                failoverMySQLReplications=new FailoverMySQLReplicationTable(this),
                 fileBackups=new FileBackupTable(this),
                 fileBackupDevices=new FileBackupDeviceTable(this),
                 fileBackupRoots=new FileBackupRootTable(this),

@@ -68,6 +68,10 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 	return null;
     }
 
+    List<MySQLServer> getMySQLServers(Package pk) {
+        return getIndexedRows(MySQLServer.COLUMN_PACKAGE, pk.name);
+    }
+
     int getTableID() {
 	return SchemaTable.MYSQL_SERVERS;
     }

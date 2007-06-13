@@ -37,6 +37,7 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
         HTTPD="httpd",
         IP="ip",
         JAVAVM="javavm",
+        MYSQL_REPLICATION="mysql_replication",
         POP="pop",
         RACK="rack",
         SERVER_DATABASE="server_database",

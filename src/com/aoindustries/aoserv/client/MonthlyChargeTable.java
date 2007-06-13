@@ -58,6 +58,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         final Resource httpdResource=connector.resources.get(Resource.HTTPD);
         final Resource javavmResource=connector.resources.get(Resource.JAVAVM);
         final Resource ipResource=connector.resources.get(Resource.IP);
+        final Resource mysqlReplicationResource=connector.resources.get(Resource.MYSQL_REPLICATION);
         final Resource popResource=connector.resources.get(Resource.POP);
         final Resource siteResource=connector.resources.get(Resource.SITE);
         final Resource userResource=connector.resources.get(Resource.USER);
@@ -237,6 +238,35 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                         }
                     }
                     
+                    // Add the mysql_replications
+                    {
+                        PackageDefinitionLimit limit=packageDefinition.getLimit(mysqlReplicationResource);
+                        if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
+                            List<FailoverMySQLReplication> fmrs = pack.getFailoverMySQLReplications();
+                            if(!fmrs.isEmpty()) {
+                                if(limit==null) throw new WrappedException(new SQLException("FailoverMySQLReplications exist, but no limit defined for Package="+pack.pkey+", PackageDefinition="+packageDefinition.pkey));
+                                if(fmrs.size()>limit.getSoftLimit()) {
+                                    int addRate=limit.getAdditionalRate();
+                                    if(addRate<0) throw new WrappedException(new SQLException("Additional FailoverMySQLReplications exist, but no additional rate defined for Package="+pack.pkey+", PackageDefinition="+packageDefinition.pkey));
+                                    TransactionType addType=limit.getAdditionalTransactionType();
+                                    if(addType==null) throw new WrappedException(new SQLException("Additional FailoverMySQLReplications exist, but no additional TransactionType defined for Package="+pack.pkey+", PackageDefinition="+packageDefinition.pkey));
+                                    charges.add(
+                                        new MonthlyCharge(
+                                            this,
+                                            acctBusiness,
+                                            pack,
+                                            addType,
+                                            "Additional MySQL Replications ("+limit.getSoftLimit()+" included with package, have "+fmrs.size()+")",
+                                            (fmrs.size()-limit.getSoftLimit())*1000,
+                                            addRate,
+                                            business_administrator
+                                        )
+                                    );
+                                }
+                            }
+                        }
+                    }
+
                     // Add POP accounts
                     {
                         PackageDefinitionLimit limit=packageDefinition.getLimit(popResource);

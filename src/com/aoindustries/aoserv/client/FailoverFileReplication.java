@@ -95,6 +95,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         return last_start_time;
     }
     
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() {
+        return table.connector.failoverMySQLReplications.getFailoverMySQLReplications(this);
+    }
+
     public boolean getUseCompression() {
         return use_compression;
     }

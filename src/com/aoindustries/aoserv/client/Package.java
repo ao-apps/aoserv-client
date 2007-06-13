@@ -311,6 +311,14 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return table.connector.mysqlDatabases.getMySQLDatabases(this);
     }
 
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() {
+        return table.connector.failoverMySQLReplications.getFailoverMySQLReplications(this);
+    }
+
+    public List<MySQLServer> getMySQLServers() {
+	return table.connector.mysqlServers.getMySQLServers(this);
+    }
+
     public List<MySQLUser> getMySQLUsers() {
 	return table.connector.mysqlUsers.getMySQLUsers(this);
     }
