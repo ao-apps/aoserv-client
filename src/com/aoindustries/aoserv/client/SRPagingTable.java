@@ -25,7 +25,7 @@ final public class SRPagingTable extends ServerReportSectionTable<SRPaging> {
 	return getUniqueRow(SRPaging.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_PAGING;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_PAGING;
     }
 }

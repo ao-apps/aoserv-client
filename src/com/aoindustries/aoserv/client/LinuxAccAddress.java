@@ -60,8 +60,8 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
 	return linuxAccountObject;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.LINUX_ACC_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_ACC_ADDRESSES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -73,7 +73,7 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
 	email_address=in.readCompressedInt();
-	linux_account=in.readUTF();
+	linux_account=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -83,7 +83,7 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.LINUX_ACC_ADDRESSES,
+            SchemaTable.TableID.LINUX_ACC_ADDRESSES,
             pkey
 	);
     }

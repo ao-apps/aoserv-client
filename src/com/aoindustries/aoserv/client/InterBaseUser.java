@@ -76,12 +76,12 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) {
-        return checkPassword(pkey, password);
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+        return checkPassword(userLocale, pkey, password);
     }
 
-    public static PasswordChecker.Result[] checkPassword(String username, String password) {
-        return PasswordChecker.checkPassword(username, password, true, false);
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) {
+        return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
 /*
     public String checkPasswordDescribe(String password) {
@@ -93,11 +93,11 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
     }
 */
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.INTERBASE_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.INTERBASE_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.INTERBASE_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.INTERBASE_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -151,8 +151,8 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
         return table.connector.interBaseServerUsers.getInterBaseServerUsers(pkey);
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.INTERBASE_USERS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.INTERBASE_USERS;
     }
 
     public Username getUsername() {
@@ -171,7 +171,7 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF();
+        pkey=in.readUTF().intern();
         first_name=in.readNullUTF();
         middle_name=in.readNullUTF();
         last_name=in.readNullUTF();
@@ -189,7 +189,7 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
     public void remove() {
         table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.INTERBASE_USERS,
+            SchemaTable.TableID.INTERBASE_USERS,
             pkey
         );
     }

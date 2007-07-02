@@ -213,8 +213,8 @@ final public class SRNetTCP extends ServerReportSection<SRNetTCP> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_NET_TCP;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_TCP;
     }
 
     int hashCodeImpl() {

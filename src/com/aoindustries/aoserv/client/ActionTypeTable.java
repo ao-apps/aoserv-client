@@ -31,7 +31,7 @@ final public class ActionTypeTable extends GlobalTableStringKey<ActionType> {
         return getUniqueRow(ActionType.COLUMN_TYPE, type);
     }
 
-    int getTableID() {
-        return SchemaTable.ACTION_TYPES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.ACTION_TYPES;
     }
 }

@@ -73,7 +73,7 @@ final public class SocketConnectionPool extends AOPool {
 
     protected void printConnectionStats(ChainWriter out) throws IOException {
         // Create statistics on the caches
-        int totalTables=SchemaTable.NUM_TABLES;
+        int totalTables=SchemaTable.TableID.values().length;
         int totalLoaded=0;
         int totalCaches=0;
         int totalActive=0;

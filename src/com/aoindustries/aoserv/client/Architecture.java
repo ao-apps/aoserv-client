@@ -64,8 +64,8 @@ final public class Architecture extends GlobalObjectStringKey<Architecture> {
         return bits;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.ARCHITECTURES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.ARCHITECTURES;
     }
 
     void initImpl(ResultSet results) throws SQLException {
@@ -76,7 +76,7 @@ final public class Architecture extends GlobalObjectStringKey<Architecture> {
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, Architecture.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
+            pkey=in.readUTF().intern();
             bits=in.readCompressedInt();
         } finally {
             Profiler.endProfile(Profiler.IO);

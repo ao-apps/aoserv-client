@@ -58,7 +58,8 @@ public class TCPConnector extends AOServConnector {
                                         // Must also not have any invalidate listeners
                                         boolean foundListener=false;
                                         if(tables!=null) {
-                                            for(int c=0;c<SchemaTable.NUM_TABLES;c++) {
+                                            int numTables = SchemaTable.TableID.values().length;
+                                            for(int c=0;c<numTables;c++) {
                                                 AOServTable table=tables[c];
                                                 if(table!=null) {
                                                     List listeners=table.tableListeners;

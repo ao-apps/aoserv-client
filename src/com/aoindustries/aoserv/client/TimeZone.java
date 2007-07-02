@@ -37,8 +37,8 @@ final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
         return pkey;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.TIME_ZONES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.TIME_ZONES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -46,7 +46,7 @@ final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF();
+        pkey=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

@@ -159,38 +159,38 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     /**
      * Checks the strength of a password as used by this <code>Username</code>.
      */
-    public PasswordChecker.Result[] checkPassword(String password) {
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
 	BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null) {
-            PasswordChecker.Result[] results=ba.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
+            PasswordChecker.Result[] results=ba.checkPassword(userLocale, password);
+            if(PasswordChecker.hasResults(userLocale, results)) return results;
 	}
 
 	InterBaseUser iu=getInterBaseUser();
 	if(iu!=null) {
-            PasswordChecker.Result[] results=iu.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
+            PasswordChecker.Result[] results=iu.checkPassword(userLocale, password);
+            if(PasswordChecker.hasResults(userLocale, results)) return results;
 	}
 
         LinuxAccount la=getLinuxAccount();
 	if(la!=null) {
-            PasswordChecker.Result[] results=la.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
+            PasswordChecker.Result[] results=la.checkPassword(userLocale, password);
+            if(PasswordChecker.hasResults(userLocale, results)) return results;
 	}
 
 	MySQLUser mu=getMySQLUser();
 	if(mu!=null) {
-            PasswordChecker.Result[] results=mu.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
+            PasswordChecker.Result[] results=mu.checkPassword(userLocale, password);
+            if(PasswordChecker.hasResults(userLocale, results)) return results;
 	}
 
 	PostgresUser pu=getPostgresUser();
 	if(pu!=null) {
-            PasswordChecker.Result[] results=pu.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
+            PasswordChecker.Result[] results=pu.checkPassword(userLocale, password);
+            if(PasswordChecker.hasResults(userLocale, results)) return results;
 	}
 
-        return PasswordChecker.getAllGoodResults();
+        return PasswordChecker.getAllGoodResults(userLocale);
     }
 
     /*
@@ -229,11 +229,11 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 */
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.USERNAMES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.USERNAMES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
     public BusinessAdministrator getBusinessAdministrator() {
@@ -279,8 +279,8 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.USERNAMES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.USERNAMES;
     }
 
     public String getUsername() {
@@ -367,8 +367,8 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
-	packageName=in.readUTF();
+	pkey=in.readUTF().intern();
+	packageName=in.readUTF().intern();
         disable_log=in.readCompressedInt();
     }
 
@@ -392,7 +392,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.USERNAMES,
+            SchemaTable.TableID.USERNAMES,
             pkey
 	);
     }

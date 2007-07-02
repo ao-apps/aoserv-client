@@ -34,7 +34,7 @@ public final class AOServerDaemonHostTable extends CachedTableIntegerKey<AOServe
         return getIndexedRows(AOServerDaemonHost.COLUMN_AO_SERVER, aoServer.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.AO_SERVER_DAEMON_HOSTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.AO_SERVER_DAEMON_HOSTS;
     }
 }

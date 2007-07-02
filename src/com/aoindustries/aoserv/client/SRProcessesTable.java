@@ -25,7 +25,7 @@ final public class SRProcessesTable extends ServerReportSectionTable<SRProcesses
 	return getUniqueRow(SRProcesses.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_PROCESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_PROCESSES;
     }
 }

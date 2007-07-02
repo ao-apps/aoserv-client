@@ -159,8 +159,8 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         return work_dir;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_TOMCAT_CONTEXTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS;
     }
 
     public List<HttpdTomcatDataSource> getHttpdTomcatDataSources() {
@@ -292,7 +292,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public void remove() {
-        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.HTTPD_TOMCAT_CONTEXTS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

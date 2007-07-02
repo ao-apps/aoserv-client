@@ -48,7 +48,7 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
         return getIndexedRows(FailoverMySQLReplication.COLUMN_REPLICATION, replication.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.FAILOVER_MYSQL_REPLICATIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_MYSQL_REPLICATIONS;
     }
 }

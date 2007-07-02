@@ -30,7 +30,7 @@ final public class SRNetDeviceTable extends ServerReportSectionTable<SRNetDevice
         return getIndexedRows(SRNetDevice.COLUMN_SERVER_REPORT, sr.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_NET_DEVICES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_DEVICES;
     }
 }

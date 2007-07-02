@@ -25,7 +25,7 @@ final public class SRNetTCPTable extends ServerReportSectionTable<SRNetTCP> {
 	return getUniqueRow(SRNetTCP.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_NET_TCP;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_TCP;
     }
 }

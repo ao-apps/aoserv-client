@@ -28,7 +28,7 @@ final public class SRDbPostgresTable extends ServerReportSectionTable<SRDbPostgr
 	return getUniqueRow(SRDbPostgres.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_DB_POSTGRES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DB_POSTGRES;
     }
 }

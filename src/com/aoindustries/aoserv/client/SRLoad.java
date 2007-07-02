@@ -49,8 +49,8 @@ final public class SRLoad extends ServerReportSection<SRLoad> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_LOAD;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_LOAD;
     }
 
     int hashCodeImpl() {

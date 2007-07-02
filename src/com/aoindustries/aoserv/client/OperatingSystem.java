@@ -73,8 +73,8 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
         }
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.OPERATING_SYSTEMS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.OPERATING_SYSTEMS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -91,7 +91,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, OperatingSystem.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
+            pkey=in.readUTF().intern();
             display=in.readUTF();
             is_unix=in.readBoolean();
         } finally {

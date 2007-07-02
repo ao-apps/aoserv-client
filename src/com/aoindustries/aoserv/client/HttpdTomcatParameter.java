@@ -74,8 +74,8 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
         return description;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_TOMCAT_PARAMETERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -97,7 +97,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
     }
 
     public void remove() {
-        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.HTTPD_TOMCAT_PARAMETERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS, pkey);
     }
 
     public void update(

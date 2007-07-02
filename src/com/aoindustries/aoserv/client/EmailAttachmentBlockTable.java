@@ -35,7 +35,7 @@ public final class EmailAttachmentBlockTable extends CachedTableIntegerKey<Email
         return getIndexedRows(EmailAttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.EMAIL_ATTACHMENT_BLOCKS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_ATTACHMENT_BLOCKS;
     }
 }

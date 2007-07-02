@@ -57,8 +57,8 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
         return server;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MASTER_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_SERVERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -69,7 +69,7 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	username=in.readUTF();
+	username=in.readUTF().intern();
 	server=in.readCompressedInt();
     }
 

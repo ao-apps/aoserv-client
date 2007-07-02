@@ -44,8 +44,8 @@ final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol
 	return protocol;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_JK_PROTOCOLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JK_PROTOCOLS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -53,7 +53,7 @@ final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

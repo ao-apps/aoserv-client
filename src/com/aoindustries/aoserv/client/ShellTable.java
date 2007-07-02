@@ -19,8 +19,8 @@ final public class ShellTable extends GlobalTableStringKey<Shell> {
 	super(connector, Shell.class);
     }
 
-    int getTableID() {
-	return SchemaTable.SHELLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SHELLS;
     }
 
     public Shell get(Object pkey) {

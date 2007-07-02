@@ -51,7 +51,7 @@ final public class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
 	return getUniqueRow(OperatingSystemVersion.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-        return SchemaTable.OPERATING_SYSTEM_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.OPERATING_SYSTEM_VERSIONS;
     }
 }

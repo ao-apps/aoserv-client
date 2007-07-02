@@ -66,9 +66,10 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
         return objs;
     }
 
-    int getTableID() {
-	return SchemaTable.AO_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.AO_SERVERS;
     }
+
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.GET_MRTG_FILE)) {

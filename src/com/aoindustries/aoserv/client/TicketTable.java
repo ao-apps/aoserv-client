@@ -46,7 +46,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.TICKETS);
+                out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
                 out.writeBoolean(business!=null); if(business!=null) out.writeUTF(business.pkey);
                 out.writeUTF(businessAdministratorObj.pkey);
                 out.writeUTF(ticket_type);
@@ -85,21 +85,21 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
     }
 
     public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TICKETS);
+        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.TICKETS);
     }
 
     public int size() {
-        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TICKETS);
+        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.TICKETS);
     }
 
     public List<Ticket> getRows() {
         List<Ticket> list=new ArrayList<Ticket>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TICKETS);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.TICKETS);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.TICKETS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKETS;
     }
 
     public Ticket get(Object pkey) {
@@ -107,7 +107,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
     }
 
     public Ticket get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TICKETS, pkey);
+        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.TICKETS, pkey);
     }
 
     List<Ticket> getTickets(BusinessAdministrator business_administrator) {

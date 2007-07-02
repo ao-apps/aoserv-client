@@ -54,8 +54,8 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
 	return eat;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_ATTACHMENT_BLOCKS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_ATTACHMENT_BLOCKS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -67,7 +67,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
 	linux_server_account=in.readCompressedInt();
-	extension=in.readUTF();
+	extension=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -77,7 +77,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.EMAIL_ATTACHMENT_BLOCKS,
+            SchemaTable.TableID.EMAIL_ATTACHMENT_BLOCKS,
             pkey
 	);
     }

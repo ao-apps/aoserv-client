@@ -119,8 +119,8 @@ final public class InterBaseBackup extends CachedObjectIntegerKey<InterBaseBacku
 	return start_time;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.INTERBASE_BACKUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_BACKUPS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -156,7 +156,7 @@ final public class InterBaseBackup extends CachedObjectIntegerKey<InterBaseBacku
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.INTERBASE_BACKUPS,
+            SchemaTable.TableID.INTERBASE_BACKUPS,
             pkey
 	);
     }

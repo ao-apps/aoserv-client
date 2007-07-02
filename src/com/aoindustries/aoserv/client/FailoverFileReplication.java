@@ -75,15 +75,15 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         return table.connector.failoverFileSchedules.getFailoverFileSchedules(this);
     }
 
-    public AOServer getFromAOServer() {
+    public AOServer getFromAOServer() throws SQLException {
         AOServer ao=table.connector.aoServers.get(from_server);
-        if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+from_server));
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+from_server);
         return ao;
     }
 
-    public AOServer getToAOServer() {
+    public AOServer getToAOServer() throws SQLException {
         AOServer ao=table.connector.aoServers.get(to_server);
-        if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+to_server));
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+to_server);
         return ao;
     }
  
@@ -146,8 +146,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         return chunk_always;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.FAILOVER_FILE_REPLICATIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_FILE_REPLICATIONS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -175,10 +175,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         last_start_time=in.readLong();
         use_compression=in.readBoolean();
         retention=in.readShort();
-        connect_address=in.readNullUTF();
-        connect_from=in.readNullUTF();
+        connect_address=StringUtility.intern(in.readNullUTF());
+        connect_from=StringUtility.intern(in.readNullUTF());
         enabled=in.readBoolean();
-        to_path=in.readUTF();
+        to_path=in.readUTF().intern();
         chunk_always=in.readBoolean();
     }
 
@@ -191,7 +191,11 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     String toStringImpl() {
-        return getFromAOServer().getServer().getHostname()+"->"+getToAOServer().getServer().getHostname();
+        try {
+            return getFromAOServer().getServer().getHostname()+"->"+getToAOServer().getServer().getHostname();
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

@@ -59,8 +59,8 @@ final public class NetPortTable extends AOServTable<Integer,NetPort> {
         return netPorts;
     }
 
-    int getTableID() {
-	return SchemaTable.NET_PORTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_PORTS;
     }
 
     protected NetPort getUniqueRowImpl(int col, Object value) {

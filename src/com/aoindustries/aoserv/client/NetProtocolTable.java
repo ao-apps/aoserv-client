@@ -26,7 +26,7 @@ final public class NetProtocolTable extends GlobalTableStringKey<NetProtocol> {
 	return getUniqueRow(NetProtocol.COLUMN_PROTOCOL, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.NET_PROTOCOLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_PROTOCOLS;
     }
 }

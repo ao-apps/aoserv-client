@@ -60,11 +60,11 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.EMAIL_SMTP_RELAYS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.EMAIL_SMTP_RELAYS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -132,8 +132,8 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         return table.connector.spamEmailMessages.getSpamEmailMessages(this);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_SMTP_RELAYS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_SMTP_RELAYS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -161,10 +161,10 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	packageName=in.readUTF();
+	packageName=in.readUTF().intern();
 	ao_server=in.readCompressedInt();
 	host=in.readUTF();
-        type=in.readUTF();
+        type=in.readUTF().intern();
 	created=in.readLong();
 	last_refreshed=in.readLong();
 	refresh_count=in.readCompressedInt();
@@ -187,7 +187,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.EMAIL_SMTP_RELAYS,
+            SchemaTable.TableID.EMAIL_SMTP_RELAYS,
             pkey
 	);
     }

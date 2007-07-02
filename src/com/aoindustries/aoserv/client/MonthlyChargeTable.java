@@ -379,8 +379,8 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         return getMonthlyCharges(connector.getThisBusinessAdministrator(), null);
     }
 
-    int getTableID() {
-	return SchemaTable.MONTHLY_CHARGES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MONTHLY_CHARGES;
     }
 
     final public List<MonthlyCharge> getIndexedRows(int col, Object value) {

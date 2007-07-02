@@ -30,7 +30,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         try {
             connector.requestUpdateIL(
                 AOServProtocol.ADD,
-                SchemaTable.LINUX_GROUPS,
+                SchemaTable.TableID.LINUX_GROUPS,
                 name,
                 packageObject.name,
                 type
@@ -48,8 +48,8 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         return getIndexedRows(LinuxGroup.COLUMN_PACKAGE, pack.name);
     }
 
-    int getTableID() {
-        return SchemaTable.LINUX_GROUPS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_GROUPS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

@@ -51,11 +51,11 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.EMAIL_PIPES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.EMAIL_PIPES, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.EMAIL_PIPES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.EMAIL_PIPES, pkey);
     }
 
     public Object getColumn(int i) {
@@ -92,8 +92,8 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
         return ao;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_PIPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_PIPES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -109,7 +109,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 	pkey=in.readCompressedInt();
 	ao_server=in.readCompressedInt();
 	path=in.readUTF();
-	packageName=in.readUTF();
+	packageName=in.readUTF().intern();
         disable_log=in.readCompressedInt();
     }
 
@@ -120,7 +120,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.EMAIL_PIPES,
+            SchemaTable.TableID.EMAIL_PIPES,
             pkey
 	);
     }

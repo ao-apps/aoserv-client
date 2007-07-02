@@ -268,8 +268,8 @@ final public class SRDiskAccess extends ServerReportSection<SRDiskAccess> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_DISK_ACCESS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DISK_ACCESS;
     }
 
     int hashCodeImpl() {

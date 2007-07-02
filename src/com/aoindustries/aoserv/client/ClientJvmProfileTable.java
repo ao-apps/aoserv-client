@@ -38,8 +38,8 @@ final public class ClientJvmProfileTable extends AOServTable<String,ClientJvmPro
         return cjps;
     }
 
-    int getTableID() {
-	return SchemaTable.CLIENT_JVM_PROFILE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.CLIENT_JVM_PROFILE;
     }
 
     protected ClientJvmProfile getUniqueRowImpl(int col, Object value) {

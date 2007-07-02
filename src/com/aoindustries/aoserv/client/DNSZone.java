@@ -144,8 +144,8 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         return ttl;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.DNS_ZONES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_ZONES;
     }
 
     public String getZone() {
@@ -230,10 +230,10 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	file=in.readUTF();
-	packageName=in.readUTF();
-	hostmaster=in.readUTF();
+	packageName=in.readUTF().intern();
+	hostmaster=in.readUTF().intern();
 	serial=in.readLong();
         ttl=in.readCompressedInt();
     }
@@ -245,7 +245,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.DNS_ZONES, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.DNS_ZONES, pkey);
     }
     
     public void setTTL(int ttl) {

@@ -88,12 +88,12 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         return trace;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) {
-        return checkPassword(pkey, password);
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+        return checkPassword(userLocale, pkey, password);
     }
 
-    public static PasswordChecker.Result[] checkPassword(String username, String password) {
-        return PasswordChecker.checkPassword(username, password, true, false);
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) {
+        return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
 
     /*public String checkPasswordDescribe(String password) {
@@ -105,11 +105,11 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     }*/
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.POSTGRES_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.POSTGRES_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.POSTGRES_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -137,8 +137,8 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         return table.connector.postgresServerUsers.getPostgresServerUsers(this);
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.POSTGRES_USERS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.POSTGRES_USERS;
     }
 
     public Username getUsername() {
@@ -162,7 +162,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF();
+        pkey=in.readUTF().intern();
         createdb=in.readBoolean();
         trace=in.readBoolean();
         superPriv=in.readBoolean();
@@ -179,7 +179,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     public void remove() {
         table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.POSTGRES_USERS,
+            SchemaTable.TableID.POSTGRES_USERS,
             pkey
         );
     }

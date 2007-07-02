@@ -51,8 +51,8 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         return ms;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.FAILOVER_MYSQL_REPLICATIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_MYSQL_REPLICATIONS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

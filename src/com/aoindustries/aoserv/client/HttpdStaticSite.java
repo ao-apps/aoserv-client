@@ -36,8 +36,8 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_STATIC_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_STATIC_SITES;
     }
 
     void initImpl(ResultSet result) throws SQLException {

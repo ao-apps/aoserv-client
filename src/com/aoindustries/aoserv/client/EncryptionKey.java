@@ -214,8 +214,8 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         return credit_card_recipient;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.ENCRYPTION_KEYS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.ENCRYPTION_KEYS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -230,7 +230,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	accounting=in.readUTF();
+	accounting=in.readUTF().intern();
         id = in.readUTF();
         signup_signer=in.readBoolean();
         signup_recipient=in.readBoolean();

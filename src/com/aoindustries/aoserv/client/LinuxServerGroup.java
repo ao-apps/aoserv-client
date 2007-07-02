@@ -90,8 +90,8 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         }
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.LINUX_SERVER_GROUPS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_SERVER_GROUPS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -111,7 +111,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         Profiler.startProfile(Profiler.IO, LinuxServerGroup.class, "read(CompressedDataInputStream)", null);
         try {
             pkey=in.readCompressedInt();
-            name=in.readUTF();
+            name=in.readUTF().intern();
             ao_server=in.readCompressedInt();
             gid=in.readCompressedInt();
             created=in.readLong();
@@ -174,7 +174,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         try {
             table.connector.requestUpdateIL(
                 AOServProtocol.REMOVE,
-                SchemaTable.LINUX_SERVER_GROUPS,
+                SchemaTable.TableID.LINUX_SERVER_GROUPS,
                 pkey
             );
         } finally {

@@ -26,7 +26,7 @@ final public class EmailSmtpRelayTypeTable extends GlobalTableStringKey<EmailSmt
 	return getUniqueRow(EmailSmtpRelayType.COLUMN_NAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.EMAIL_SMTP_RELAY_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_SMTP_RELAY_TYPES;
     }
 }

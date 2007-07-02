@@ -66,8 +66,8 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
         return description;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.ACTION_TYPES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.ACTION_TYPES;
     }
 
     public String getType() {
@@ -87,7 +87,7 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, ActionType.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
+            pkey=in.readUTF().intern();
             description=in.readUTF();
         } finally {
             Profiler.endProfile(Profiler.IO);

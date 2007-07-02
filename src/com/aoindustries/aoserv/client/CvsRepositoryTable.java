@@ -34,7 +34,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
     ) {
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.CVS_REPOSITORIES,
+            SchemaTable.TableID.CVS_REPOSITORIES,
             ao.pkey,
             path,
             lsa.pkey,
@@ -96,8 +96,8 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         return getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.CVS_REPOSITORIES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.CVS_REPOSITORIES;
     }
 
     public List<String> getValidPrefixes() {

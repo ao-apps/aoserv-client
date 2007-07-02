@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * All of the permissions within the system.
@@ -25,27 +26,45 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
     /**
      * The possible permissions.
      */
-    public static final String
+    public enum Permission {
         // business_administrators
-        SET_BUSINESS_ADMINISTRATOR_PASSWORD="set_business_administrator_password",
+        set_business_administrator_password,
+        // credit_card_processors
+        get_credit_card_processors,
+        // credit_cards
+        get_credit_cards,
+        add_credit_card,
+        delete_credit_card,
+        edit_card_card,
         // interbase_server_users
-        SET_INTERBASE_SERVER_USER_PASSWORD="set_interbase_server_user_password",
+        set_interbase_server_user_password,
         // linux_server_accounts
-        SET_LINUX_SERVER_ACCOUNT_PASSWORD="set_linux_server_account_password",
+        set_linux_server_account_password,
         // mysql_server_users
-        SET_MYSQL_SERVER_USER_PASSWORD="set_mysql_server_user_password",
+        set_mysql_server_user_password,
         // mysql_servers
-        GET_MYSQL_SLAVE_STATUS="get_mysql_slave_status",
+        get_mysql_master_status,
+        get_mysql_slave_status,
         // postgres_server_users
-        SET_POSTGRES_SERVER_USER_PASSWORD="set_postgres_server_user_password"
-    ;
+        set_postgres_server_user_password;
+        
+        /**
+         * Gets the permission display value in the JVM-default locale.
+         */
+        public String toString() {
+            return toString(Locale.getDefault());
+        }
+        
+        /**
+         * Gets the permission display value in the provided locale.
+         */
+        public String toString(Locale userLocale) {
+            return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+name()+".display");
+        }
+    }
 
     // From database
     private short sort_order;
-
-    // Used internally
-    private String displayKey;
-    private String descriptionKey;
 
     public Object getColumn(int i) {
         switch(i) {
@@ -56,21 +75,21 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
     }
 
     /**
-     * Gets the key into aoserv-client ApplicationResources.properties language bundle for the short display value for this permission.
+     * Gets the locale-specific short display value for this permission.
      */
-    public String getDisplayKey() {
-        return displayKey;
+    public String getDisplay(Locale userLocale) {
+        return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+pkey+".display");
     }
 
     /**
-     * Gets the key into aoserv-client ApplicationResources.properties language bundle for the description of this permission.
+     * Gets the locale-specific description of this permission.
      */
-    public String getDescriptionKey() {
-        return descriptionKey;
+    public String getDescription(Locale userLocale) {
+        return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+pkey+".description");
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.AOSERV_PERMISSIONS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.AOSERV_PERMISSIONS;
     }
 
     public String getName() {
@@ -80,15 +99,11 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
     void initImpl(ResultSet result) throws SQLException {
         pkey = result.getString(1);
         sort_order = result.getShort(2);
-        displayKey = "AOServPermission."+pkey+".display";
-        descriptionKey = "AOServPermission."+pkey+".description";
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF();
+        pkey=in.readUTF().intern();
         sort_order = in.readShort();
-        displayKey = "AOServPermission."+pkey+".display";
-        descriptionKey = "AOServPermission."+pkey+".description";
     }
 
     String toStringImpl() {

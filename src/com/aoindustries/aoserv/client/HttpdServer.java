@@ -146,8 +146,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SERVERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

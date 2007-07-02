@@ -26,7 +26,7 @@ final public class InterBaseReservedWordTable extends GlobalTableStringKey<Inter
 	return getUniqueRow(InterBaseReservedWord.COLUMN_WORD, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.INTERBASE_RESERVED_WORDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_RESERVED_WORDS;
     }
 }

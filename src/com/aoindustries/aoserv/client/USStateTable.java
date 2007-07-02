@@ -22,8 +22,8 @@ final public class USStateTable extends GlobalTableStringKey<USState> {
 	super(connector, USState.class);
     }
 
-    int getTableID() {
-	return SchemaTable.US_STATES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.US_STATES;
     }
 
     public USState get(Object pkey) {

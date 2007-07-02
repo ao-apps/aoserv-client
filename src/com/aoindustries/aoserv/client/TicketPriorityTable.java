@@ -19,8 +19,8 @@ final public class TicketPriorityTable extends GlobalTableStringKey<TicketPriori
 	super(connector, TicketPriority.class);
     }
 
-    int getTableID() {
-	return SchemaTable.TICKET_PRIORITIES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKET_PRIORITIES;
     }
 
     public TicketPriority get(Object pkey) {

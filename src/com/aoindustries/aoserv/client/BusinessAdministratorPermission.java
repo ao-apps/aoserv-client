@@ -50,8 +50,8 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
         return ap;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BUSINESS_ADMINISTRATOR_PERMISSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -62,8 +62,8 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-        username=in.readUTF();
-        permission=in.readUTF();
+        username=in.readUTF().intern();
+        permission=in.readUTF().intern();
     }
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);

@@ -79,8 +79,8 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SPAM_EMAIL_MESSAGES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SPAM_EMAIL_MESSAGES;
     }
 
     int hashCodeImpl() {

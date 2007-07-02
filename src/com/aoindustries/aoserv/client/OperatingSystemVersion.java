@@ -111,8 +111,8 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         return sort_order;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.OPERATING_SYSTEM_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.OPERATING_SYSTEM_VERSIONS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -135,10 +135,10 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         Profiler.startProfile(Profiler.IO, OperatingSystemVersion.class, "read(CompressedDataInputStream)", null);
         try {
             pkey=in.readCompressedInt();
-            operating_system=in.readUTF();
+            operating_system=in.readUTF().intern();
             version_number=in.readUTF();
             version_name=in.readUTF();
-            architecture=in.readUTF();
+            architecture=in.readUTF().intern();
             display=in.readUTF();
             is_aoserv_daemon_supported=in.readBoolean();
             sort_order=in.readShort();

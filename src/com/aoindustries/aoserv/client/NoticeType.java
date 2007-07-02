@@ -42,8 +42,8 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
 	return description;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.NOTICE_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NOTICE_TYPES;
     }
 
     public String getType() {
@@ -56,7 +56,7 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
     }
 

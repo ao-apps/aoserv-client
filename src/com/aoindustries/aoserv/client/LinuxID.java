@@ -52,8 +52,8 @@ final public class LinuxID extends AOServObject<Integer,LinuxID> {
 	return id;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.LINUX_IDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_IDS;
     }
 
     int hashCodeImpl() {

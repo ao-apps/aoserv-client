@@ -55,8 +55,8 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
 	return ao;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SYSTEM_EMAIL_ALIASES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SYSTEM_EMAIL_ALIASES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -69,8 +69,8 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
 	ao_server=in.readCompressedInt();
-	address=in.readUTF();
-	destination=in.readUTF();
+	address=in.readUTF().intern();
+	destination=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

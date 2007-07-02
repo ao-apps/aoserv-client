@@ -50,7 +50,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
         try {
             CompressedDataOutputStream out=connection.getOutputStream();
             out.writeCompressedInt(AOServProtocol.ADD);
-            out.writeCompressedInt(SchemaTable.BUSINESS_PROFILES);
+            out.writeCompressedInt(SchemaTable.TableID.BUSINESS_PROFILES.ordinal());
             out.writeUTF(business.getAccounting());
             out.writeUTF(name);
             out.writeBoolean(isPrivate);
@@ -124,8 +124,8 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
         return getIndexedRows(BusinessProfile.COLUMN_ACCOUNTING, business.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.BUSINESS_PROFILES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_PROFILES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

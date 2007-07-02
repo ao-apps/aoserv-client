@@ -131,8 +131,8 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         }
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.LINUX_GROUPS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_GROUPS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -186,9 +186,9 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, LinuxGroup.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
-            packageName=in.readUTF();
-            type=in.readUTF();
+            pkey=in.readUTF().intern();
+            packageName=in.readUTF().intern();
+            type=in.readUTF().intern();
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -220,7 +220,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         try {
             table.connector.requestUpdateIL(
                 AOServProtocol.REMOVE,
-                SchemaTable.LINUX_GROUPS,
+                SchemaTable.TableID.LINUX_GROUPS,
                 pkey
             );
         } finally {

@@ -174,8 +174,8 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         return fsync;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.POSTGRES_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_SERVERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -196,7 +196,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	name=in.readUTF();
+	name=in.readUTF().intern();
 	ao_server=in.readCompressedInt();
 	version=in.readCompressedInt();
         max_connections=in.readCompressedInt();

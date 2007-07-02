@@ -47,8 +47,8 @@ final public class DNSTLD extends GlobalObjectStringKey<DNSTLD> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.DNS_TLDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_TLDS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -57,7 +57,7 @@ final public class DNSTLD extends GlobalObjectStringKey<DNSTLD> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
     }
 

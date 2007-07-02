@@ -478,7 +478,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
 
                 sortIfNeeded(list);
             } catch(IOException err) {
-                System.err.println("Error trying to getObjects for table #"+getTableID());
+                System.err.println("Error trying to getObjects for table "+getTableID());
                 throw new WrappedException(err);
             }
         } finally {
@@ -635,18 +635,14 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     /**
      * Gets the unique identifier for this table.  Each
      * table has a unique identifier, as defined in
-     * <code>SchemaTable</code>.  Please note that the
-     * identifiers for a table might change over time,
-     * so it should not be used for any long term
-     * persistance mechanisms, the table name should
-     * be used instead.
+     * <code>SchemaTable.TableID</code>.
      *
-     * @return  the unique identifier for this table
+     * @return  the identifier for this table
      *
-     * @see  AOServConnector.getTable(int)
-     * @see  SchemaTable
+     * @see  AOServConnector#getTable(SchemaTable.TableID)
+     * @see  SchemaTable.TableID
      */
-    abstract int getTableID();
+    public abstract SchemaTable.TableID getTableID();
 
     private TableLoadListenerEntry[] getTableLoadListeners() {
         Profiler.startProfile(Profiler.FAST, AOServTable.class, "getTableLoadListeners()", null);

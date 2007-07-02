@@ -30,7 +30,7 @@ final public class PhoneNumberTable extends CachedTableIntegerKey<PhoneNumber> {
 	return getUniqueRow(PhoneNumber.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.PHONE_NUMBERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PHONE_NUMBERS;
     }
 }

@@ -84,7 +84,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_26="1.26",
         VERSION_1_27="1.27",
         VERSION_1_28="1.28",
-        CURRENT_VERSION=VERSION_1_28
+        VERSION_1_29="1.29",
+        CURRENT_VERSION=VERSION_1_29
     ;
 
     /**
@@ -154,7 +155,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
                 VERSION_1_25,
                 VERSION_1_26,
                 VERSION_1_27,
-                VERSION_1_28
+                VERSION_1_28,
+                VERSION_1_29
             };
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -431,7 +433,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES=GET_FAILOVER_FILE_LOGS_FOR_REPLICATION+1,
         SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME=SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES+1,
         GET_WHOIS_HISTORY_WHOIS_OUTPUT=SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME+1,
-        GET_MYSQL_SLAVE_STATUS=GET_WHOIS_HISTORY_WHOIS_OUTPUT+1
+        GET_MYSQL_SLAVE_STATUS=GET_WHOIS_HISTORY_WHOIS_OUTPUT+1,
+        GET_MYSQL_MASTER_STATUS=GET_MYSQL_SLAVE_STATUS+1
     ;
 
     /**
@@ -487,8 +490,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         return last_used;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.AOSERV_PROTOCOLS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.AOSERV_PROTOCOLS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -507,7 +510,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, AOServProtocol.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
+            pkey=in.readUTF().intern();
             created=in.readLong();
             comments=in.readUTF();
             last_used=in.readLong();

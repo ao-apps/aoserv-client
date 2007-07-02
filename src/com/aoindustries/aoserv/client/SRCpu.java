@@ -100,8 +100,8 @@ public final class SRCpu extends ServerReportSection<SRCpu> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_CPU;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_CPU;
     }
 
     int hashCodeImpl() {

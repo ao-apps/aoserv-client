@@ -278,8 +278,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TRANSACTIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TRANSACTIONS;
     }
 
     public long getTime() {
@@ -324,16 +324,16 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
     public void read(CompressedDataInputStream in) throws IOException {
 	time=in.readLong();
 	transid=in.readCompressedInt();
-	accounting=in.readCompressedUTF();
-        source_accounting=in.readCompressedUTF();
-	username=in.readCompressedUTF();
-	type=in.readCompressedUTF();
+	accounting=in.readCompressedUTF().intern();
+        source_accounting=in.readCompressedUTF().intern();
+	username=in.readCompressedUTF().intern();
+	type=in.readCompressedUTF().intern();
 	description=in.readCompressedUTF();
 	quantity=in.readCompressedInt();
 	rate=in.readCompressedInt();
-	payment_type=in.readNullUTF();
+	payment_type=StringUtility.intern(in.readNullUTF());
 	payment_info=in.readNullUTF();
-	merchant_account=in.readNullUTF();
+	merchant_account=StringUtility.intern(in.readNullUTF());
 	apr_num=in.readNullUTF();
 	payment_confirmed=in.readByte();
     }

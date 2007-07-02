@@ -30,8 +30,8 @@ final public class DNSForbiddenZone extends GlobalObjectStringKey<DNSForbiddenZo
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.DNS_FORBIDDEN_ZONES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_FORBIDDEN_ZONES;
     }
 
     public String getZone() {
@@ -43,7 +43,7 @@ final public class DNSForbiddenZone extends GlobalObjectStringKey<DNSForbiddenZo
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

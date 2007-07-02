@@ -28,7 +28,7 @@ final public class AOServProtocolTable extends GlobalTableStringKey<AOServProtoc
         return getUniqueRow(AOServProtocol.COLUMN_VERSION, version);
     }
 
-    int getTableID() {
-        return SchemaTable.AOSERV_PROTOCOLS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.AOSERV_PROTOCOLS;
     }
 }

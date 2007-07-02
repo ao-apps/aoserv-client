@@ -116,8 +116,8 @@ final public class ClientJvmProfile extends AOServObject<String,ClientJvmProfile
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.CLIENT_JVM_PROFILE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.CLIENT_JVM_PROFILE;
     }
 
     public long getTotalTime() {

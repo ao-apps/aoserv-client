@@ -104,8 +104,8 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         return validationQuery;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_TOMCAT_DATA_SOURCES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -128,7 +128,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         name=in.readUTF();
         driverClassName=in.readUTF();
         url=in.readUTF();
-        username=in.readUTF();
+        username=in.readUTF().intern();
         password=in.readUTF();
         maxActive=in.readCompressedInt();
         maxIdle=in.readCompressedInt();
@@ -137,7 +137,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
     }
 
     public void remove() {
-        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.HTTPD_TOMCAT_DATA_SOURCES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
     }
 
     public void update(

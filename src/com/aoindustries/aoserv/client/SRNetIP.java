@@ -247,8 +247,8 @@ final public class SRNetIP extends ServerReportSection<SRNetIP> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_NET_IP;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_IP;
     }
 
     int hashCodeImpl() {

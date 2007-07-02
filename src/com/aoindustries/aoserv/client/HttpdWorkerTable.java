@@ -80,7 +80,7 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 	return getUniqueRow(HttpdWorker.COLUMN_NET_BIND, nb.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_WORKERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_WORKERS;
     }
 }

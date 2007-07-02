@@ -35,7 +35,7 @@ final public class FileBackupRootTable extends CachedTableIntegerKey<FileBackupR
 	return getUniqueRow(FileBackupRoot.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.FILE_BACKUP_ROOTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FILE_BACKUP_ROOTS;
     }
 }

@@ -66,8 +66,8 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_SITE_URLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SITE_URLS;
     }
 
     public String getURL() {
@@ -135,7 +135,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     public void remove() {
-        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.HTTPD_SITE_URLS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_SITE_URLS, pkey);
     }
 
     public void setAsPrimary() {

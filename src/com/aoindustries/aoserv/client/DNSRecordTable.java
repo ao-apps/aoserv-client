@@ -33,7 +33,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
     ) {
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.DNS_RECORDS,
+            SchemaTable.TableID.DNS_RECORDS,
             zone.pkey,
             domain,
             type.pkey,
@@ -72,8 +72,8 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
         return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.DNS_RECORDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_RECORDS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

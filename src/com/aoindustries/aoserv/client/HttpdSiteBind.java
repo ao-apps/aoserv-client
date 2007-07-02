@@ -53,11 +53,11 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.HTTPD_SITE_BINDS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.HTTPD_SITE_BINDS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, pkey);
     }
 
     public String getAccessLog() {
@@ -128,8 +128,8 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	return sslCertKeyFile;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_SITE_BINDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SITE_BINDS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

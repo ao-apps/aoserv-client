@@ -47,8 +47,8 @@ public final class EmailAttachmentType extends GlobalObjectStringKey<EmailAttach
         return is_default_block;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_ATTACHMENT_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_ATTACHMENT_TYPES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -58,7 +58,7 @@ public final class EmailAttachmentType extends GlobalObjectStringKey<EmailAttach
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF();
+        pkey=in.readUTF().intern();
         description=in.readUTF();
         is_default_block=in.readBoolean();
     }

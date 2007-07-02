@@ -113,8 +113,8 @@ final public class PostgresBackup extends CachedObjectIntegerKey<PostgresBackup>
 	return start_time;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.POSTGRES_BACKUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_BACKUPS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -148,7 +148,7 @@ final public class PostgresBackup extends CachedObjectIntegerKey<PostgresBackup>
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.POSTGRES_BACKUPS,
+            SchemaTable.TableID.POSTGRES_BACKUPS,
             pkey
 	);
     }

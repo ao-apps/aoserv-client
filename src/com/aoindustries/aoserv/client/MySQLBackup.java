@@ -113,8 +113,8 @@ final public class MySQLBackup extends CachedObjectIntegerKey<MySQLBackup> imple
 	return start_time;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MYSQL_BACKUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_BACKUPS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -148,7 +148,7 @@ final public class MySQLBackup extends CachedObjectIntegerKey<MySQLBackup> imple
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.MYSQL_BACKUPS,
+            SchemaTable.TableID.MYSQL_BACKUPS,
             pkey
 	);
     }

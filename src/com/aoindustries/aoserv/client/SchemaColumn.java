@@ -150,8 +150,8 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
         return type;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.SCHEMA_COLUMNS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.SCHEMA_COLUMNS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -189,16 +189,16 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
         Profiler.startProfile(Profiler.IO, SchemaColumn.class, "read(CompressedDataInputStream)", null);
         try {
             pkey=in.readCompressedInt();
-            table_name=in.readUTF();
-            column_name=in.readUTF();
+            table_name=in.readUTF().intern();
+            column_name=in.readUTF().intern();
             index=in.readCompressedInt();
-            type=in.readUTF();
+            type=in.readUTF().intern();
             is_nullable=in.readBoolean();
             is_unique=in.readBoolean();
             is_public=in.readBoolean();
             description=in.readUTF();
-            since_version=in.readUTF();
-            last_version=in.readNullUTF();
+            since_version=in.readUTF().intern();
+            last_version=StringUtility.intern(in.readNullUTF());
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

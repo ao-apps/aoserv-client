@@ -275,8 +275,8 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return obj;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.NET_BINDS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.NET_BINDS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -297,12 +297,12 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-        packageName=in.readUTF();
+        packageName=in.readUTF().intern();
         ao_server=in.readCompressedInt();
         ip_address=in.readCompressedInt();
         port=in.readCompressedInt();
-        net_protocol=in.readUTF();
-        app_protocol=in.readUTF();
+        net_protocol=in.readUTF().intern();
+        app_protocol=in.readUTF().intern();
         open_firewall=in.readBoolean();
         monitoring_enabled=in.readBoolean();
     }
@@ -383,7 +383,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     public void remove() {
         table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.NET_BINDS,
+            SchemaTable.TableID.NET_BINDS,
             pkey
         );
     }

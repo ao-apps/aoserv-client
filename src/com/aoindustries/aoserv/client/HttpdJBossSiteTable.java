@@ -46,7 +46,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.HTTPD_JBOSS_SITES);
+                out.writeCompressedInt(SchemaTable.TableID.HTTPD_JBOSS_SITES.ordinal());
                 out.writeCompressedInt(aoServer.pkey);
                 out.writeUTF(siteName);
                 out.writeUTF(packageObj.name);
@@ -155,8 +155,8 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 	return null;
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_JBOSS_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JBOSS_SITES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

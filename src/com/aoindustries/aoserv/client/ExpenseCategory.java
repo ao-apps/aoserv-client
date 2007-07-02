@@ -30,8 +30,8 @@ final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EXPENSE_CATEGORIES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EXPENSE_CATEGORIES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -39,7 +39,7 @@ final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

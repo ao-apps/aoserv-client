@@ -50,8 +50,8 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         else return dl.canEnable() && getPostgresUser().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) {
-	return PostgresUser.checkPassword(username, password);
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+	return PostgresUser.checkPassword(userLocale, username, password);
     }
 
     /*public String checkPasswordDescribe(String password) {
@@ -59,11 +59,11 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     }*/
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.POSTGRES_SERVER_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.POSTGRES_SERVER_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -103,8 +103,8 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 	return table.connector.postgresServers.get(postgres_server);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.POSTGRES_SERVER_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_SERVER_USERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -118,7 +118,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	username=in.readUTF();
+	username=in.readUTF().intern();
 	postgres_server=in.readCompressedInt();
         disable_log=in.readCompressedInt();
         predisable_password=in.readNullUTF();
@@ -140,7 +140,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.POSTGRES_SERVER_USERS,
+            SchemaTable.TableID.POSTGRES_SERVER_USERS,
             pkey
 	);
     }

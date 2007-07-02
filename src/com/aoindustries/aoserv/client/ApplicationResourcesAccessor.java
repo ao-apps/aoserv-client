@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.StringUtility;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -34,7 +33,7 @@ final class ApplicationResourcesAccessor {
     
     public static String getMessage(Locale locale, String key, Object arg0) {
         String message = getString(locale, key);
-        message = StringUtility.replace(message, "{0}", arg0==null ? "null" : arg0.toString());
+        message = message.replace("{0}", arg0==null ? "null" : arg0.toString());
         return message;
     }
 

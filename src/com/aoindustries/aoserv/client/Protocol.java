@@ -102,8 +102,8 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         return pkey;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.PROTOCOLS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.PROTOCOLS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -115,11 +115,11 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF();
+        pkey=in.readUTF().intern();
         port=in.readCompressedInt();
         name=in.readUTF();
         is_user_service=in.readBoolean();
-        net_protocol=in.readUTF();
+        net_protocol=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

@@ -211,8 +211,8 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.POSTGRES_DATABASES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_DATABASES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -264,13 +264,13 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.POSTGRES_DATABASES,
+            SchemaTable.TableID.POSTGRES_DATABASES,
             pkey
 	);
     }
 
     public void setBackupRetention(short days) {
-        table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.POSTGRES_DATABASES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.POSTGRES_DATABASES, pkey);
     }
 
     String toStringImpl() {

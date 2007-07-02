@@ -681,52 +681,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Adds a credit card to a <code>Business</code>.  The data must already be
-     * encrypted and the new card will have a priority higher than any existing
-     * card.
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>Business</code>
-     *
-     * @see  CreditCard
-     * @see  Business#addCreditCard
-     */
-    public int addCreditCard(
-        String accounting,
-        String encryptedCardNumber,
-        String cardInfo,
-        String encryptedExpirationMonth,
-        String encryptedExpirationYear,
-        String encryptedCardholderName,
-        String encryptedStreetAddress,
-        String encryptedCity,
-        String encryptedState,
-        String encryptedZIP,
-        boolean useMonthly,
-        String description
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addCreditCard(String,String,String,String,String,String,String,String,String,String,boolean,String)", null);
-        try {
-            return getBusiness(accounting).addCreditCard(
-                encryptedCardNumber.getBytes(),
-                cardInfo,
-                encryptedExpirationMonth.getBytes(),
-                encryptedExpirationYear.getBytes(),
-                encryptedCardholderName.getBytes(),
-                encryptedStreetAddress.getBytes(),
-                encryptedCity.getBytes(),
-                encryptedState==null || encryptedState.length()==0?null:encryptedState.getBytes(),
-                encryptedZIP==null || encryptedZIP.length()==0?null:encryptedZIP.getBytes(),
-                useMonthly,
-                description==null || description.length()==0?null:description
-            );
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Adds a new <code>CvsRepository</code> to a <code>Server</code>.
      *
      * @param  aoServer  the hostname of the server
@@ -3655,7 +3609,7 @@ final public class SimpleAOClient {
         try {
             String check = Username.checkUsername(username, Locale.getDefault());
             if(check!=null) throw new IllegalArgumentException(check);
-            return BusinessAdministrator.checkPassword(username, password);
+            return BusinessAdministrator.checkPassword(Locale.getDefault(), username, password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -3845,7 +3799,7 @@ final public class SimpleAOClient {
     ) throws IOException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkInterBasePassword(String,String)", null);
         try {
-            return InterBaseUser.checkPassword(username, password);
+            return InterBaseUser.checkPassword(Locale.getDefault(), username, password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -3941,7 +3895,7 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkLinuxAccountPassword(String,String)", null);
         try {
-            return getLinuxAccount(username).checkPassword(password);
+            return getLinuxAccount(username).checkPassword(Locale.getDefault(), password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4034,7 +3988,7 @@ final public class SimpleAOClient {
         String username,
         String password
     ) {
-        return MySQLUser.checkPassword(username, password);
+        return MySQLUser.checkPassword(Locale.getDefault(), username, password);
     }
 
     /**
@@ -4149,7 +4103,7 @@ final public class SimpleAOClient {
     ) throws IOException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkPostgresPassword(String,String)", null);
         try {
-            return PostgresUser.checkPassword(username, password);
+            return PostgresUser.checkPassword(Locale.getDefault(), username, password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4328,7 +4282,7 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkUsernamePassword(String,String)", null);
         try {
-            return getUsername(username).checkPassword(password);
+            return getUsername(username).checkPassword(Locale.getDefault(), password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4489,7 +4443,6 @@ final public class SimpleAOClient {
      * @see  CreditCard#declined
      * @see  #declineTransaction
      * @see  Transaction
-     * @see  #addCreditCard
      * @see  CreditCard
      */
     public void declineCreditCard(
@@ -6810,7 +6763,7 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "invalidate(int,String)", null);
         try {
-            if(tableID<0 || tableID>=SchemaTable.NUM_TABLES) throw new IllegalArgumentException("Invalid table ID: "+tableID);
+            if(tableID<0 || tableID>=SchemaTable.TableID.values().length) throw new IllegalArgumentException("Invalid table ID: "+tableID);
             if(server!=null && server.length()==0) server=null;
             connector.invalidateTable(tableID, server);
         } finally {
@@ -7705,7 +7658,6 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if unable to find the <code>CreditCard</code>
      *
      * @see  CreditCard#remove
-     * @see  #addCreditCard
      */
     public void removeCreditCard(
         int pkey

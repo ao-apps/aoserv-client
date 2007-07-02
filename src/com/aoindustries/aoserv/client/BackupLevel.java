@@ -60,8 +60,8 @@ final public class BackupLevel extends GlobalObject<Short,BackupLevel> {
 	return level;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BACKUP_LEVELS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_LEVELS;
     }
 
     int hashCodeImpl() {

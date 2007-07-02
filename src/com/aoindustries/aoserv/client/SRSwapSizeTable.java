@@ -30,7 +30,7 @@ final public class SRSwapSizeTable extends ServerReportSectionTable<SRSwapSize> 
         return getIndexedRows(SRSwapSize.COLUMN_SERVER_REPORT, sr.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_SWAP_SIZE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_SWAP_SIZE;
     }
 }

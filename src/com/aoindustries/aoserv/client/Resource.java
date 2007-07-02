@@ -77,8 +77,8 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.RESOURCES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.RESOURCES;
     }
 
     public String getSingularDisplayUnit() {
@@ -102,10 +102,10 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
-	singular_display_unit=in.readUTF();
-	plural_display_unit=in.readUTF();
-        per_unit=in.readUTF();
+	pkey=in.readUTF().intern();
+	singular_display_unit=in.readUTF().intern();
+	plural_display_unit=in.readUTF().intern();
+        per_unit=in.readUTF().intern();
 	description=in.readUTF();
     }
 

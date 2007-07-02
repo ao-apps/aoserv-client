@@ -392,8 +392,8 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	return sf;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SERVERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -416,10 +416,10 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	hostname=in.readUTF();
-	farm=in.readUTF();
-        owner=in.readUTF();
-	administrator=in.readUTF();
+	hostname=in.readUTF().intern();
+	farm=in.readUTF().intern();
+        owner=in.readUTF().intern();
+	administrator=in.readUTF().intern();
 	description=in.readUTF();
         backup_hour=in.readCompressedInt();
         last_backup_time=in.readLong();

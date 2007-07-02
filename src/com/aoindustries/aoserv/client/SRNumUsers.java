@@ -49,8 +49,8 @@ final public class SRNumUsers extends ServerReportSection<SRNumUsers> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_NUM_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NUM_USERS;
     }
 
     int hashCodeImpl() {

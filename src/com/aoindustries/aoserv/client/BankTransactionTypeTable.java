@@ -26,7 +26,7 @@ final public class BankTransactionTypeTable extends CachedTableStringKey<BankTra
 	return getUniqueRow(BankTransactionType.COLUMN_NAME, name);
     }
 
-    int getTableID() {
-	return SchemaTable.BANK_TRANSACTION_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANK_TRANSACTION_TYPES;
     }
 }

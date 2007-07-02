@@ -34,7 +34,7 @@ final public class InterBaseServerUserTable extends CachedTableIntegerKey<InterB
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.INTERBASE_SERVER_USERS);
+                out.writeCompressedInt(SchemaTable.TableID.INTERBASE_SERVER_USERS.ordinal());
                 out.writeUTF(username);
                 out.writeCompressedInt(aoServer.pkey);
                 out.flush();
@@ -91,8 +91,8 @@ final public class InterBaseServerUserTable extends CachedTableIntegerKey<InterB
 	return null;
     }
 
-    int getTableID() {
-	return SchemaTable.INTERBASE_SERVER_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_SERVER_USERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

@@ -36,7 +36,7 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
     ) {
     	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.FAILOVER_FILE_LOG,
+            SchemaTable.TableID.FAILOVER_FILE_LOG,
             replication.pkey,
             startTime,
             endTime,
@@ -52,12 +52,12 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
     }
 
     public FailoverFileLog get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.FAILOVER_FILE_LOG, pkey);
+        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.FAILOVER_FILE_LOG, pkey);
     }
 
     public List<FailoverFileLog> getRows() {
         List<FailoverFileLog> list=new ArrayList<FailoverFileLog>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.FAILOVER_FILE_LOG);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.FAILOVER_FILE_LOG);
         return list;
     }
 
@@ -67,8 +67,8 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.FAILOVER_FILE_LOG;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_FILE_LOG;
     }
 
     protected FailoverFileLog getUniqueRowImpl(int col, Object value) {

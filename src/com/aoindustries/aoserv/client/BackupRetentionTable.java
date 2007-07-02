@@ -30,7 +30,7 @@ final public class BackupRetentionTable extends GlobalTable<Short,BackupRetentio
 	return getUniqueRow(BackupRetention.COLUMN_DAYS, days);
     }
 
-    int getTableID() {
-	return SchemaTable.BACKUP_RETENTIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_RETENTIONS;
     }
 }

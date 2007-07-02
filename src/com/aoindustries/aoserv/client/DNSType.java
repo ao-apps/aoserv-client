@@ -76,8 +76,8 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 	return description;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.DNS_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_TYPES;
     }
 
     public String getType() {
@@ -100,7 +100,7 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
 	is_mx=in.readBoolean();
 	param_ip=in.readBoolean();

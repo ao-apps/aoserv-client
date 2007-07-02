@@ -49,7 +49,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.BUSINESS_ADMINISTRATORS);
+                out.writeCompressedInt(SchemaTable.TableID.BUSINESS_ADMINISTRATORS.ordinal());
                 out.writeUTF(username.pkey);
                 out.writeUTF(name);
                 if(title!=null && title.length()==0) title=null;
@@ -106,8 +106,8 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
         return getUniqueRow(BusinessAdministrator.COLUMN_USERNAME, username);
     }
 
-    int getTableID() {
-        return SchemaTable.BUSINESS_ADMINISTRATORS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.BUSINESS_ADMINISTRATORS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -140,8 +140,8 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
                     args[1],
                     args[2]
                 );
-                if(PasswordChecker.hasResults(results)) {
-                    PasswordChecker.printResults(results, out, Locale.getDefault());
+                if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                    PasswordChecker.printResults(results, out);
                     out.flush();
                 }
             }

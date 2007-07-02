@@ -26,7 +26,7 @@ public final class EmailSpamAssassinIntegrationModeTable extends GlobalTableStri
     public EmailSpamAssassinIntegrationMode get(Object pkey) {
 	return getUniqueRow(EmailSpamAssassinIntegrationMode.COLUMN_NAME, pkey);
     }
-    int getTableID() {
-        return SchemaTable.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
     }
 }

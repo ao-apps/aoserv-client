@@ -26,7 +26,7 @@ final public class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCate
 	return getUniqueRow(ExpenseCategory.COLUMN_CODE, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.EXPENSE_CATEGORIES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EXPENSE_CATEGORIES;
     }
 }

@@ -59,8 +59,8 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
         return emailAddressObject;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_FORWARDING;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_FORWARDING;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -82,7 +82,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.EMAIL_FORWARDING,
+            SchemaTable.TableID.EMAIL_FORWARDING,
             pkey
 	);
     }

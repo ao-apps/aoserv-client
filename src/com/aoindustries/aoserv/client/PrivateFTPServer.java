@@ -92,8 +92,8 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
         return root;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.PRIVATE_FTP_SERVERS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.PRIVATE_FTP_SERVERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

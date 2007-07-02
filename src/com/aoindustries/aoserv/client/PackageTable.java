@@ -31,7 +31,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
     ) {
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.PACKAGES,
+            SchemaTable.TableID.PACKAGES,
             name,
             business.pkey,
             packageDefinition.pkey
@@ -64,8 +64,8 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
         return getIndexedRows(Package.COLUMN_PACKAGE_DEFINITION, pd.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.PACKAGES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PACKAGES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

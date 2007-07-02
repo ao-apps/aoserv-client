@@ -59,8 +59,8 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SHELLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SHELLS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -78,7 +78,7 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	is_login=in.readBoolean();
 	is_system=in.readBoolean();
     }

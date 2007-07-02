@@ -50,8 +50,8 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BANK_TRANSACTION_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANK_TRANSACTION_TYPES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -66,7 +66,7 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	display=in.readUTF();
 	description=in.readUTF();
 	isNegative=in.readBoolean();

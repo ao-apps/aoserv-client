@@ -125,8 +125,8 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         return require;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -148,11 +148,11 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         auth_name=in.readCompressedUTF();
         auth_group_file=in.readCompressedUTF();
         auth_user_file=in.readCompressedUTF();
-        require=in.readCompressedUTF();
+        require=in.readCompressedUTF().intern();
     }
 
     public void remove() {
-        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
     }
 
     public void setAttributes(

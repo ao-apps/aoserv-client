@@ -36,7 +36,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
     }
 
     void addDNSZone(Package packageObj, String zone, String ip, int ttl) {
-	connector.requestUpdateIL(AOServProtocol.ADD, SchemaTable.DNS_ZONES, packageObj.name, zone, ip, ttl);
+	connector.requestUpdateIL(AOServProtocol.ADD, SchemaTable.TableID.DNS_ZONES, packageObj.name, zone, ip, ttl);
     }
 
     /**
@@ -144,8 +144,8 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
         return getHostTLD(hostname, getDNSTLDs());
     }
 
-    int getTableID() {
-	return SchemaTable.DNS_ZONES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_ZONES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

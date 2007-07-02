@@ -55,8 +55,8 @@ final public class IncomingPayment extends CachedObjectIntegerKey<IncomingPaymen
 	return encryptedExpirationYear;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.INCOMING_PAYMENTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INCOMING_PAYMENTS;
     }
 
     public Transaction getTransaction() {
@@ -88,7 +88,7 @@ final public class IncomingPayment extends CachedObjectIntegerKey<IncomingPaymen
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.INCOMING_PAYMENTS,
+            SchemaTable.TableID.INCOMING_PAYMENTS,
             pkey
 	);
     }

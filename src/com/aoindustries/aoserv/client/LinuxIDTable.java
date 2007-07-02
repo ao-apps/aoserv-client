@@ -62,8 +62,8 @@ final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
         return ids;
     }
 
-    int getTableID() {
-	return SchemaTable.LINUX_IDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_IDS;
     }
 
     protected LinuxID getUniqueRowImpl(int col, Object value) {

@@ -125,8 +125,8 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	return rate;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MONTHLY_CHARGES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MONTHLY_CHARGES;
     }
 
     public TransactionType getType() {
@@ -154,14 +154,14 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-        accounting=in.readUTF();
-	packageName=in.readUTF();
-	type=in.readUTF();
+        accounting=in.readUTF().intern();
+	packageName=in.readUTF().intern();
+	type=in.readUTF().intern();
 	description=in.readBoolean()?in.readUTF():null;
 	quantity=in.readCompressedInt();
 	rate=in.readCompressedInt();
 	created=in.readLong();
-	created_by=in.readUTF();
+	created_by=in.readUTF().intern();
 	active=in.readBoolean();
     }
 

@@ -56,8 +56,8 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
 	return emailListObject;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_LIST_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_LIST_ADDRESSES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -89,7 +89,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.EMAIL_LIST_ADDRESSES,
+            SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
             pkey
 	);
     }

@@ -47,7 +47,7 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.HTTPD_TOMCAT_SHARED_SITES);
+                out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES.ordinal());
                 out.writeCompressedInt(aoServer.pkey);
                 out.writeUTF(siteName);
                 out.writeUTF(packageObj.name);
@@ -102,8 +102,8 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
         return getIndexedRows(HttpdTomcatSharedSite.COLUMN_HTTPD_SHARED_TOMCAT, tomcat.pkey);
     }
 
-    int getTableID() {
-        return SchemaTable.HTTPD_TOMCAT_SHARED_SITES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES;
     }
 
     boolean handleCommand(

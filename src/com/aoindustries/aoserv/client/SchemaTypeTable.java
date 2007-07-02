@@ -50,8 +50,8 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
         return getUniqueRow(SchemaType.COLUMN_TYPE, type);
     }
 
-    int getTableID() {
-        return SchemaTable.SCHEMA_TYPES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.SCHEMA_TYPES;
     }
 
     public <T extends AOServObject> void sort(T[] list, SQLExpression[] sortExpressions, boolean[] sortOrders) {

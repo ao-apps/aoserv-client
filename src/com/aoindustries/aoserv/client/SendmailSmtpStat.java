@@ -136,8 +136,8 @@ final public class SendmailSmtpStat extends AOServObject<Integer,SendmailSmtpSta
         return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SENDMAIL_SMTP_STATS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SENDMAIL_SMTP_STATS;
     }
 
     int hashCodeImpl() {
@@ -161,7 +161,7 @@ final public class SendmailSmtpStat extends AOServObject<Integer,SendmailSmtpSta
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-        packageName=in.readUTF();
+        packageName=in.readUTF().intern();
         date=in.readLong();
         ao_server=in.readCompressedInt();
         email_in_count=in.readCompressedInt();

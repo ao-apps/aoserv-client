@@ -26,7 +26,7 @@ final public class LinuxAccountTypeTable extends GlobalTableStringKey<LinuxAccou
 	return getUniqueRow(LinuxAccountType.COLUMN_NAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.LINUX_ACCOUNT_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_ACCOUNT_TYPES;
     }
 }

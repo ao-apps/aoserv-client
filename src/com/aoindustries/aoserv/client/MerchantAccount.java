@@ -62,8 +62,8 @@ final public class MerchantAccount extends CachedObjectStringKey<MerchantAccount
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MERCHANT_ACCOUNTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MERCHANT_ACCOUNTS;
     }
 
     public String getURL() {
@@ -86,9 +86,9 @@ final public class MerchantAccount extends CachedObjectStringKey<MerchantAccount
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	display=in.readUTF();
-	bankAccount=in.readUTF();
+	bankAccount=in.readUTF().intern();
 	javaConnector=in.readNullUTF();
 	url=in.readNullUTF();
 	merchantID=in.readUTF();

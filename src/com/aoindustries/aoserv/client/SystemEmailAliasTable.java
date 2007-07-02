@@ -34,7 +34,7 @@ final public class SystemEmailAliasTable extends CachedTableIntegerKey<SystemEma
 	return getUniqueRow(SystemEmailAlias.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SYSTEM_EMAIL_ALIASES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SYSTEM_EMAIL_ALIASES;
     }
 }

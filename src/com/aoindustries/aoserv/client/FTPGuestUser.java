@@ -40,8 +40,8 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.FTP_GUEST_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FTP_GUEST_USERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -49,7 +49,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -59,7 +59,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.FTP_GUEST_USERS,
+            SchemaTable.TableID.FTP_GUEST_USERS,
             pkey
 	);
     }

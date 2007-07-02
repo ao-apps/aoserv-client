@@ -23,7 +23,7 @@ final public class ProtocolTable extends GlobalTableStringKey<Protocol> {
 	return getUniqueRow(Protocol.COLUMN_PROTOCOL, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.PROTOCOLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PROTOCOLS;
     }
 }

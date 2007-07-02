@@ -32,8 +32,8 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
 	return getUniqueRow(SignupRequest.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SIGNUP_REQUESTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SIGNUP_REQUESTS;
     }
     
     /**
@@ -139,7 +139,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
         try {
             CompressedDataOutputStream out=connection.getOutputStream();
             out.writeCompressedInt(AOServProtocol.ADD);
-            out.writeCompressedInt(SchemaTable.SIGNUP_REQUESTS);
+            out.writeCompressedInt(SchemaTable.TableID.SIGNUP_REQUESTS.ordinal());
             out.writeUTF(accounting);
             out.writeUTF(ip_address);
             out.writeCompressedInt(package_definition.getPKey());

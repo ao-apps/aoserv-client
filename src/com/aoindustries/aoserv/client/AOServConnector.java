@@ -118,7 +118,16 @@ abstract public class AOServConnector {
     public final BusinessServerTable businessServers;
     public final ClientJvmProfileTable clientJvmProfiles;
     public final CountryCodeTable countryCodes;
+
+    public final CreditCardProcessorTable creditCardProcessors;
+    public CreditCardProcessorTable getCreditCardProcessors() {return creditCardProcessors;}
+
+    public final CreditCardTransactionTable creditCardTransactions;
+    public CreditCardTransactionTable getCreditCardTransactions() {return creditCardTransactions;}
+
     public final CreditCardTable creditCards;
+    public CreditCardTable getCreditCards() {return creditCards;}
+
     public final CvsRepositoryTable cvsRepositories;
     public final DaemonProfileTable daemonProfiles;
     public final DisableLogTable disableLogs;
@@ -368,6 +377,8 @@ abstract public class AOServConnector {
                 businessServers=new BusinessServerTable(this),
                 clientJvmProfiles=new ClientJvmProfileTable(this),
                 countryCodes=new CountryCodeTable(this),
+                creditCardProcessors=new CreditCardProcessorTable(this),
+                creditCardTransactions=new CreditCardTransactionTable(this),
                 creditCards=new CreditCardTable(this),
                 cvsRepositories=new CvsRepositoryTable(this),
                 daemonProfiles=new DaemonProfileTable(this),
@@ -546,7 +557,7 @@ abstract public class AOServConnector {
     public void clearCaches() {
         Profiler.startProfile(Profiler.FAST, AOServConnector.class, "clearCaches()", null);
         try {
-            for(int c=0;c<SchemaTable.NUM_TABLES;c++) {
+            for(int c=0;c<tables.length;c++) {
                 tables[c].clearCache();
             }
         } finally {
@@ -823,7 +834,7 @@ abstract public class AOServConnector {
      */
     @SuppressWarnings({"unchecked"})
     final public AOServTable<?,? extends AOServObject> getTable(int tableID) throws IllegalArgumentException {
-        if(tableID>=0 && tableID<SchemaTable.NUM_TABLES) return tables[tableID];
+        if(tableID>=0 && tableID<tables.length) return tables[tableID];
         throw new IllegalArgumentException("Table not found for ID="+tableID);
     }
 
@@ -837,8 +848,8 @@ abstract public class AOServConnector {
      * @see  SchemaTable
      */
     final public AOServTable[] getTables() {
-        AOServTable[] tables=new AOServTable[SchemaTable.NUM_TABLES];
-        System.arraycopy(this.tables, 0, tables, 0, SchemaTable.NUM_TABLES);
+        AOServTable[] tables=new AOServTable[this.tables.length];
+        System.arraycopy(this.tables, 0, tables, 0, tables.length);
         return tables;
     }
 
@@ -970,7 +981,7 @@ abstract public class AOServConnector {
     final public void removeFromAllTables(TableListener listener) {
         Profiler.startProfile(Profiler.FAST, AOServConnector.class, "removeFromAllTables(TableListener)", null);
         try {
-            for(int c=0;c<SchemaTable.NUM_TABLES;c++) tables[c].removeTableListener(listener);
+            for(int c=0;c<tables.length;c++) tables[c].removeTableListener(listener);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -979,7 +990,8 @@ abstract public class AOServConnector {
     static void writeParams(Object[] params, CompressedDataOutputStream out) throws IOException {
         for(Object param : params) {
             if(param==null) throw new NullPointerException("param is null");
-            if(param instanceof Integer) out.writeCompressedInt((Integer)param);
+            if(param instanceof Integer) out.writeCompressedInt(((Integer)param).intValue());
+            else if(param instanceof SchemaTable.TableID) out.writeCompressedInt(((SchemaTable.TableID)param).ordinal());
             else if(param instanceof String) out.writeUTF((String)param);
             else if(param instanceof Float) out.writeFloat((Float)param);
             else if(param instanceof Long) out.writeLong((Long)param);

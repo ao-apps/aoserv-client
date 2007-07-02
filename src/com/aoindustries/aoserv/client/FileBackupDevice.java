@@ -79,8 +79,8 @@ final public class FileBackupDevice extends GlobalObject<Short,FileBackupDevice>
         return pkey;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.FILE_BACKUP_DEVICES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.FILE_BACKUP_DEVICES;
     }
 
     int hashCodeImpl() {

@@ -95,11 +95,11 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.CVS_REPOSITORIES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.CVS_REPOSITORIES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
     public BackupLevel getBackupLevel() {
@@ -170,8 +170,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         return created;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.CVS_REPOSITORIES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.CVS_REPOSITORIES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -204,13 +204,13 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.CVS_REPOSITORIES, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
     public void setBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, CvsRepository.class, "setBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.CVS_REPOSITORIES, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

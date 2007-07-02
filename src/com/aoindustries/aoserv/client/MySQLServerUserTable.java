@@ -33,7 +33,7 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.MYSQL_SERVER_USERS);
+                out.writeCompressedInt(SchemaTable.TableID.MYSQL_SERVER_USERS.ordinal());
                 out.writeUTF(username);
                 out.writeCompressedInt(mysqlServer.pkey);
                 out.writeBoolean(host!=null); if(host!=null) out.writeUTF(host);
@@ -91,8 +91,8 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
         return getIndexedRows(MySQLServerUser.COLUMN_MYSQL_SERVER, ms.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MYSQL_SERVER_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_SERVER_USERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

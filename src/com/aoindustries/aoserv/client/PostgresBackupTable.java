@@ -35,8 +35,8 @@ final public class PostgresBackupTable extends CachedTableIntegerKey<PostgresBac
         return getIndexedRows(PostgresBackup.COLUMN_POSTGRES_SERVER, postgresServer.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.POSTGRES_BACKUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_BACKUPS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

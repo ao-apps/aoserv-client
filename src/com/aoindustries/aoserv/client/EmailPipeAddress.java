@@ -53,8 +53,8 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 	return emailPipeObject;
     }
     
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_PIPE_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_PIPE_ADDRESSES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -97,7 +97,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.EMAIL_PIPE_ADDRESSES,
+            SchemaTable.TableID.EMAIL_PIPE_ADDRESSES,
             pkey
 	);
     }

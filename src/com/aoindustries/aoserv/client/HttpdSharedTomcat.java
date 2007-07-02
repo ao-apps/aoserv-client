@@ -116,11 +116,11 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.HTTPD_SHARED_TOMCATS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.HTTPD_SHARED_TOMCATS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
     public BackupLevel getConfigBackupLevel() {
@@ -262,8 +262,8 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return obj;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.HTTPD_SHARED_TOMCATS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.HTTPD_SHARED_TOMCATS;
     }
 
     public HttpdWorker getTomcat4Worker() {
@@ -370,13 +370,13 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.HTTPD_SHARED_TOMCATS, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
     public void setConfigBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSharedTomcat.class, "setConfigBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.HTTPD_SHARED_TOMCATS, pkey, COLUMN_CONFIG_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey, COLUMN_CONFIG_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -385,7 +385,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     public void setFileBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSharedTomcat.class, "setFileBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.HTTPD_SHARED_TOMCATS, pkey, COLUMN_FILE_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey, COLUMN_FILE_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -403,7 +403,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     public void setLogBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSharedTomcat.class, "setLogBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.HTTPD_SHARED_TOMCATS, pkey, COLUMN_LOG_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey, COLUMN_LOG_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

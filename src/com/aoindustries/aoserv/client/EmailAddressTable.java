@@ -28,7 +28,7 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
 	if (!EmailAddress.isValidFormat(address)) throw new WrappedException(new SQLException("Invalid email address: " + address));
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.EMAIL_ADDRESSES,
+            SchemaTable.TableID.EMAIL_ADDRESSES,
             address,
             domainObject.pkey
 	);
@@ -66,8 +66,8 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.EMAIL_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_ADDRESSES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

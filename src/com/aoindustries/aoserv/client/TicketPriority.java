@@ -43,8 +43,8 @@ final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> 
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TICKET_PRIORITIES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKET_PRIORITIES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -52,7 +52,7 @@ final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> 
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

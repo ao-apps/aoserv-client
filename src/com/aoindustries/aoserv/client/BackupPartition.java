@@ -117,8 +117,8 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
         return desired_free_space;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BACKUP_PARTITIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_PARTITIONS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -146,8 +146,8 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         ao_server=in.readCompressedInt();
-        device=in.readUTF();
-        path=in.readUTF();
+        device=in.readUTF().intern();
+        path=in.readUTF().intern();
         minimum_free_space=in.readLong();
         desired_free_space=in.readLong();
         enabled=in.readBoolean();

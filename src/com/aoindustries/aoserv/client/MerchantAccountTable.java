@@ -26,7 +26,7 @@ final public class MerchantAccountTable extends CachedTableStringKey<MerchantAcc
 	return getUniqueRow(MerchantAccount.COLUMN_NAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MERCHANT_ACCOUNTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MERCHANT_ACCOUNTS;
     }
 }

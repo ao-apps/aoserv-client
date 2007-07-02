@@ -36,8 +36,8 @@ final public class Technology extends GlobalObjectIntegerKey<Technology> {
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TECHNOLOGIES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGIES;
     }
 
     public TechnologyClass getTechnologyClass(AOServConnector connector) {
@@ -60,8 +60,8 @@ final public class Technology extends GlobalObjectIntegerKey<Technology> {
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey = in.readCompressedInt();
-	name = in.readUTF();
-	clazz = in.readUTF();
+	name = in.readUTF().intern();
+	clazz = in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

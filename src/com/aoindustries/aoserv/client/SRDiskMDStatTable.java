@@ -30,7 +30,7 @@ final public class SRDiskMDStatTable extends ServerReportSectionTable<SRDiskMDSt
         return getIndexedRows(SRDiskMDStat.COLUMN_SERVER_REPORT, sr.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_DISK_MDSTAT;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DISK_MDSTAT;
     }
 }

@@ -35,7 +35,7 @@ final public class FailoverFileScheduleTable extends CachedTableIntegerKey<Failo
 	return getUniqueRow(FailoverFileSchedule.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.FAILOVER_FILE_SCHEDULE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_FILE_SCHEDULE;
     }
 }

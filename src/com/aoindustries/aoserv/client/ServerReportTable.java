@@ -27,7 +27,7 @@ final public class ServerReportTable extends CachedTableIntegerKey<ServerReport>
 	return getUniqueRow(ServerReport.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SERVER_REPORTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SERVER_REPORTS;
     }
 }

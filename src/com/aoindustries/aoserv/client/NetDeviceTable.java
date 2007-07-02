@@ -45,7 +45,7 @@ final public class NetDeviceTable extends CachedTableIntegerKey<NetDevice> {
         return null;
     }
 
-    int getTableID() {
-	return SchemaTable.NET_DEVICES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_DEVICES;
     }
 }

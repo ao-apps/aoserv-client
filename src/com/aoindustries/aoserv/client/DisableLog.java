@@ -39,7 +39,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
             .getUsername()
             .getPackage()
             .getBusiness()
-            .isBusinessOrParent(
+            .isBusinessOrParentOf(
                 disabledBy
                 .getUsername()
                 .getPackage()
@@ -80,8 +80,8 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         return disable_reason;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.DISABLE_LOG;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DISABLE_LOG;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -95,8 +95,8 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         time=in.readLong();
-        accounting=in.readUTF();
-        disabled_by=in.readUTF();
+        accounting=in.readUTF().intern();
+        disabled_by=in.readUTF().intern();
         disable_reason=in.readNullUTF();
     }
 

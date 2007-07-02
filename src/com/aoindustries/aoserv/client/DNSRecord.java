@@ -79,8 +79,8 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	return mx_priority;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.DNS_RECORDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_RECORDS;
     }
 
     public DNSType getType() {
@@ -111,11 +111,11 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	zone=in.readUTF();
-	domain=in.readUTF();
-	type=in.readUTF();
+	zone=in.readUTF().intern();
+	domain=in.readUTF().intern();
+	type=in.readUTF().intern();
 	mx_priority=in.readCompressedInt();
-	destination=in.readUTF();
+	destination=in.readUTF().intern();
         dhcpAddress=in.readCompressedInt();
         ttl=in.readCompressedInt();
     }
@@ -125,7 +125,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.DNS_RECORDS, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.DNS_RECORDS, pkey);
     }
 
     String toStringImpl() {

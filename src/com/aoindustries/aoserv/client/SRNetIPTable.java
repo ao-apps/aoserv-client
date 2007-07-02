@@ -25,7 +25,7 @@ final public class SRNetIPTable extends ServerReportSectionTable<SRNetIP> {
 	return getUniqueRow(SRNetIP.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_NET_IP;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_IP;
     }
 }

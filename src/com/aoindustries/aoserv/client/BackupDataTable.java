@@ -188,7 +188,7 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
     }
 
     public BackupData get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.BACKUP_DATA, pkey);
+        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.BACKUP_DATA, pkey);
     }
 
     public void getBackupData(
@@ -257,11 +257,11 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
     }
 
     public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.BACKUP_DATA);
+        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.BACKUP_DATA);
     }
 
     public int size() {
-        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.BACKUP_DATA);
+        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.BACKUP_DATA);
     }
 
     public IntsAndLongs getBackupDataPKeys(boolean hasDataOnly, BackupLevel minBackupLevel) {
@@ -306,12 +306,12 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
 
     public List<BackupData> getRows() {
         List<BackupData> list=new ArrayList<BackupData>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.BACKUP_DATA);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.BACKUP_DATA);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.BACKUP_DATA;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_DATA;
     }
 
     protected BackupData getUniqueRowImpl(int col, Object value) {
@@ -481,9 +481,9 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
                         return null;
                     } else if(code==AOServProtocol.NEXT) {
                         int aoServerPKey=in.readCompressedInt();
-                        String host=in.readUTF();
+                        String host=in.readUTF().intern();
                         int port=in.readCompressedInt();
-                        String protocol=in.readUTF();
+                        String protocol=in.readUTF().intern();
                         long key=in.readLong();
                         return new SendDataToDaemonAccess(
                             aoServerPKey,

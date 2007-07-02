@@ -25,7 +25,7 @@ final public class SRNetUDPTable extends ServerReportSectionTable<SRNetUDP> {
 	return getUniqueRow(SRNetUDP.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_NET_UDP;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_UDP;
     }
 }

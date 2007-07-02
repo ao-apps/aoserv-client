@@ -252,8 +252,8 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         }
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.MAJORDOMO_LISTS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.MAJORDOMO_LISTS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

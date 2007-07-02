@@ -56,8 +56,8 @@ final public class FileBackupRoot extends CachedObjectIntegerKey<FileBackupRoot>
         return pk;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.FILE_BACKUP_ROOTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FILE_BACKUP_ROOTS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

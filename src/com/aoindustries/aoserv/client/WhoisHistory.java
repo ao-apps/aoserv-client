@@ -88,8 +88,8 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
         return whois_output;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.WHOIS_HISTORY;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.WHOIS_HISTORY;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -103,8 +103,8 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey = in.readCompressedInt();
         time = in.readLong();
-        accounting = in.readUTF();
-        zone = in.readUTF();
+        accounting = in.readUTF().intern();
+        zone = in.readUTF().intern();
         // Note: this is loaded in a separate call to the master as needed to conserve heap space: whois_output = in.readUTF();
     }
 

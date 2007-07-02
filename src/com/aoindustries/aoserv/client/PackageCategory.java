@@ -59,8 +59,8 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
         return display;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.PACKAGE_CATEGORIES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.PACKAGE_CATEGORIES;
     }
 
     void initImpl(ResultSet results) throws SQLException {
@@ -76,7 +76,7 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, PackageCategory.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
+            pkey=in.readUTF().intern();
             display=in.readUTF();
         } finally {
             Profiler.endProfile(Profiler.IO);

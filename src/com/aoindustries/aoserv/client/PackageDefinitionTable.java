@@ -44,7 +44,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.PACKAGE_DEFINITIONS);
+                out.writeCompressedInt(SchemaTable.TableID.PACKAGE_DEFINITIONS.ordinal());
                 out.writeUTF(business.pkey);
                 out.writeUTF(category.pkey);
                 out.writeUTF(name);
@@ -124,7 +124,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.PACKAGE_DEFINITIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PACKAGE_DEFINITIONS;
     }
 }

@@ -26,7 +26,7 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
     int addPostgresServerUser(String username, PostgresServer postgresServer) {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.POSTGRES_SERVER_USERS,
+            SchemaTable.TableID.POSTGRES_SERVER_USERS,
             username,
             postgresServer.pkey
 	);
@@ -66,8 +66,8 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
         return getIndexedRows(PostgresServerUser.COLUMN_POSTGRES_SERVER, postgresServer.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.POSTGRES_SERVER_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_SERVER_USERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

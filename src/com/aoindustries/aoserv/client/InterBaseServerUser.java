@@ -51,8 +51,8 @@ final public class InterBaseServerUser extends CachedObjectIntegerKey<InterBaseS
         else return dl.canEnable() && getInterBaseUser().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) {
-        return InterBaseUser.checkPassword(username, password);
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+        return InterBaseUser.checkPassword(userLocale, username, password);
     }
 /*
     public String checkPasswordDescribe(String password) {
@@ -60,11 +60,11 @@ final public class InterBaseServerUser extends CachedObjectIntegerKey<InterBaseS
     }
 */
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.INTERBASE_SERVER_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.INTERBASE_SERVER_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.INTERBASE_SERVER_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.INTERBASE_SERVER_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -105,8 +105,8 @@ final public class InterBaseServerUser extends CachedObjectIntegerKey<InterBaseS
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.INTERBASE_SERVER_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_SERVER_USERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -120,7 +120,7 @@ final public class InterBaseServerUser extends CachedObjectIntegerKey<InterBaseS
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	username=in.readUTF();
+	username=in.readUTF().intern();
 	ao_server=in.readCompressedInt();
         disable_log=in.readCompressedInt();
         predisable_password=in.readNullUTF();
@@ -140,7 +140,7 @@ final public class InterBaseServerUser extends CachedObjectIntegerKey<InterBaseS
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.INTERBASE_SERVER_USERS,
+            SchemaTable.TableID.INTERBASE_SERVER_USERS,
             pkey
 	);
     }

@@ -29,7 +29,7 @@ final public class OperatingSystemTable extends GlobalTableStringKey<OperatingSy
 	return getUniqueRow(OperatingSystem.COLUMN_NAME, pkey);
     }
 
-    int getTableID() {
-        return SchemaTable.OPERATING_SYSTEMS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.OPERATING_SYSTEMS;
     }
 }

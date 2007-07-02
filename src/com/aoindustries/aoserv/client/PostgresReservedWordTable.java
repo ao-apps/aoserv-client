@@ -23,7 +23,7 @@ final public class PostgresReservedWordTable extends GlobalTableStringKey<Postgr
 	return getUniqueRow(PostgresReservedWord.COLUMN_WORD, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.POSTGRES_RESERVED_WORDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_RESERVED_WORDS;
     }
 }

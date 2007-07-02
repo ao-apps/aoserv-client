@@ -93,8 +93,8 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
         return recurse;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.FILE_BACKUP_SETTINGS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FILE_BACKUP_SETTINGS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -120,7 +120,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.FILE_BACKUP_SETTINGS,
+            SchemaTable.TableID.FILE_BACKUP_SETTINGS,
             pkey
 	);
     }

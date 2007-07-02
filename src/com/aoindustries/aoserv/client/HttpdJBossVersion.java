@@ -50,8 +50,8 @@ final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVe
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_JBOSS_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JBOSS_VERSIONS;
     }
 
     public TechnologyVersion getTechnologyVersion(AOServConnector connector) {

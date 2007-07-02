@@ -29,7 +29,7 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
     }
 
     public BankTransaction get(int transid) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.BANK_TRANSACTIONS, transid);
+        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.BANK_TRANSACTIONS, transid);
     }
 
     List<BankTransaction> getBankTransactions(BankAccount account) {
@@ -38,12 +38,12 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 
     public List<BankTransaction> getRows() {
         List<BankTransaction> list=new ArrayList<BankTransaction>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.BANK_TRANSACTIONS);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.BANK_TRANSACTIONS);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.BANK_TRANSACTIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANK_TRANSACTIONS;
     }
 
     protected BankTransaction getUniqueRowImpl(int col, Object value) {

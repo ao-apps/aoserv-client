@@ -463,8 +463,8 @@ final public class SRKernel extends ServerReportSection<SRKernel> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_KERNEL;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_KERNEL;
     }
 
     int hashCodeImpl() {

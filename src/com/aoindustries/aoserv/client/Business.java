@@ -98,30 +98,42 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public int addCreditCard(
-	byte[] cardNumber,
-	String cardInfo,
-	byte[] expirationMonth,
-	byte[] expirationYear,
-	byte[] cardholderName,
-	byte[] streetAddress,
-	byte[] city,
-	byte[] state,
-	byte[] zip,
-	boolean useMonthly,
-	String description
+        String cardInfo,
+        CreditCardProcessor processor,
+        String providerUniqueId,
+        String firstName,
+        String lastName,
+        String companyName,
+        String email,
+        String phone,
+        String fax,
+        String customerTaxId,
+        String streetAddress1,
+        String streetAddress2,
+        String city,
+        String state,
+        String postalCode,
+        CountryCode countryCode,
+        String description
     ) {
 	return table.connector.creditCards.addCreditCard(
             this,
-            cardNumber,
             cardInfo,
-            expirationMonth,
-            expirationYear,
-            cardholderName,
-            streetAddress,
+            processor,
+            providerUniqueId,
+            firstName,
+            lastName,
+            companyName,
+            email,
+            phone,
+            fax,
+            customerTaxId,
+            streetAddress1,
+            streetAddress2,
             city,
             state,
-            zip,
-            useMonthly,
+            postalCode,
+            countryCode,
             description
 	);
     }
@@ -292,11 +304,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.BUSINESSES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.BUSINESSES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
     }
 
     public int getAccountBalance() {
@@ -428,6 +440,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return created;
     }
 
+    public List<CreditCardProcessor> getCreditCardProcessors() {
+	return table.connector.creditCardProcessors.getCreditCardProcessors(this);
+    }
+
     public List<CreditCard> getCreditCards() {
 	return table.connector.creditCards.getCreditCards(this);
     }
@@ -505,8 +521,8 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return table.connector.emailDomains.getEmailDomains(this);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BUSINESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESSES;
     }
 
     public int getTotalMonthlyRate() {
@@ -523,23 +539,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return table.connector.whoisHistory.getWhoisHistory(this);
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	contractVersion = result.getString(2);
-	created = result.getTimestamp(3).getTime();
-	Timestamp T = result.getTimestamp(4);
-	if (result.wasNull()) canceled = -1;
-	else canceled = T.getTime();
-	cancelReason = result.getString(5);
-	parent = result.getString(6);
-        can_add_backup_server=result.getBoolean(7);
-	can_add_businesses=result.getBoolean(8);
-        can_see_prices=result.getBoolean(9);
-        disable_log=result.getInt(10);
-        if(result.wasNull()) disable_log=-1;
-        do_not_disable_reason=result.getString(11);
-        auto_enable=result.getBoolean(12);
-        bill_parent=result.getBoolean(13);
+    /**
+     * @deprecated  Please use <code>isBusinessOrParentOf</code> instead.
+     */
+    public boolean isBusinessOrParent(Business other) {
+        return isBusinessOrParentOf(other);
     }
 
     /**
@@ -547,7 +551,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * or a parent of it.  This is often used for access control between
      * accounts.
      */
-    public boolean isBusinessOrParent(Business other) {
+    public boolean isBusinessOrParentOf(Business other) {
         while(other!=null) {
             if(equals(other)) return true;
             other=other.getParentBusiness();
@@ -837,13 +841,32 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         }
     }
 
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
-	contractVersion=in.readBoolean()?in.readUTF():null;
+     void initImpl(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	contractVersion = result.getString(2);
+	created = result.getTimestamp(3).getTime();
+	Timestamp T = result.getTimestamp(4);
+	if (result.wasNull()) canceled = -1;
+	else canceled = T.getTime();
+	cancelReason = result.getString(5);
+	parent = result.getString(6);
+        can_add_backup_server=result.getBoolean(7);
+	can_add_businesses=result.getBoolean(8);
+        can_see_prices=result.getBoolean(9);
+        disable_log=result.getInt(10);
+        if(result.wasNull()) disable_log=-1;
+        do_not_disable_reason=result.getString(11);
+        auto_enable=result.getBoolean(12);
+        bill_parent=result.getBoolean(13);
+    }
+
+     public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	contractVersion=StringUtility.intern(in.readNullUTF());
 	created=in.readLong();
 	canceled=in.readLong();
 	cancelReason=in.readNullUTF();
-	parent=in.readNullUTF();
+	parent=StringUtility.intern(in.readNullUTF());
         can_add_backup_server=in.readBoolean();
 	can_add_businesses=in.readBoolean();
         can_see_prices=in.readBoolean();

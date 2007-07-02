@@ -25,7 +25,7 @@ final public class SRLoadTable extends ServerReportSectionTable<SRLoad> {
 	return getUniqueRow(SRLoad.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_LOAD;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_LOAD;
     }
 }

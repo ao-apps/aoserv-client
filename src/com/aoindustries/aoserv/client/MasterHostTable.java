@@ -30,7 +30,7 @@ final public class MasterHostTable extends CachedTableIntegerKey<MasterHost> {
 	return getUniqueRow(MasterHost.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MASTER_HOSTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_HOSTS;
     }
 }

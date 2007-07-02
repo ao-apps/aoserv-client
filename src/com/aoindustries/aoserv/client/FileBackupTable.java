@@ -51,7 +51,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.FILE_BACKUPS);
+                out.writeCompressedInt(SchemaTable.TableID.FILE_BACKUPS.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.writeUTF(path);
                 out.writeShort(device.pkey);
@@ -291,7 +291,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
     }
 
     public FileBackup get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.FILE_BACKUPS, pkey);
+        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.FILE_BACKUPS, pkey);
     }
 
     public void getFileBackups(
@@ -406,11 +406,11 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
     }
 
     public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.FILE_BACKUPS);
+        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.FILE_BACKUPS);
     }
 
     public int size() {
-        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.FILE_BACKUPS);
+        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.FILE_BACKUPS);
     }
 
     public void flagFileBackupsAsDeleted(
@@ -483,12 +483,12 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
 
     public List<FileBackup> getRows() {
         List<FileBackup> list=new ArrayList<FileBackup>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.FILE_BACKUPS);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.FILE_BACKUPS);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.FILE_BACKUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FILE_BACKUPS;
     }
 
     protected FileBackup getUniqueRowImpl(int col, Object value) {
@@ -525,7 +525,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
     public void removeFileBackup(int pkey) {
 	connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.FILE_BACKUPS,
+            SchemaTable.TableID.FILE_BACKUPS,
             pkey
 	);
     }

@@ -83,8 +83,8 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.NOTICE_LOG;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NOTICE_LOG;
     }
 
     public Transaction getTransaction() {
@@ -109,11 +109,11 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
 	create_time=in.readLong();
-	accounting=in.readUTF();
+	accounting=in.readUTF().intern();
 	billing_contact=in.readUTF();
 	billing_email=in.readUTF();
 	balance=in.readCompressedInt();
-	notice_type=in.readUTF();
+	notice_type=in.readUTF().intern();
 	transid=in.readCompressedInt();
     }
 

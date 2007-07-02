@@ -26,7 +26,7 @@ final public class DistroFileTypeTable extends GlobalTableStringKey<DistroFileTy
 	return getUniqueRow(DistroFileType.COLUMN_TYPE, type);
     }
 
-    int getTableID() {
-	return SchemaTable.DISTRO_FILE_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DISTRO_FILE_TYPES;
     }
 }

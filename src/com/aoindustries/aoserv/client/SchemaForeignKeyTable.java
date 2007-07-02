@@ -162,7 +162,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
         }
     }
 
-    int getTableID() {
-        return SchemaTable.SCHEMA_FOREIGN_KEYS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.SCHEMA_FOREIGN_KEYS;
     }
 }

@@ -25,7 +25,7 @@ final public class SRNumUsersTable extends ServerReportSectionTable<SRNumUsers> 
 	return getUniqueRow(SRNumUsers.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_NUM_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NUM_USERS;
     }
 }

@@ -119,8 +119,8 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         }
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SIGNUP_REQUESTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SIGNUP_REQUESTS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -166,7 +166,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	accounting=in.readUTF();
+	accounting=in.readUTF().intern();
         time=in.readLong();
         ip_address=in.readUTF();
         package_definition=in.readCompressedInt();
@@ -176,8 +176,8 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         business_address1=in.readUTF();
         business_address2=in.readNullUTF();
         business_city=in.readUTF();
-        business_state=in.readNullUTF();
-        business_country=in.readUTF();
+        business_state=StringUtility.intern(in.readNullUTF());
+        business_country=in.readUTF().intern();
         business_zip=in.readNullUTF();
         ba_name=in.readUTF();
         ba_title=in.readNullUTF();
@@ -189,17 +189,17 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         ba_address1=in.readNullUTF();
         ba_address2=in.readNullUTF();
         ba_city=in.readNullUTF();
-        ba_state=in.readNullUTF();
-        ba_country=in.readNullUTF();
+        ba_state=StringUtility.intern(in.readNullUTF());
+        ba_country=StringUtility.intern(in.readNullUTF());
         ba_zip=in.readNullUTF();
-        ba_username=in.readUTF();
+        ba_username=in.readUTF().intern();
         billing_contact=in.readUTF();
         billing_email=in.readUTF();
         billing_use_monthly=in.readBoolean();
         billing_pay_one_year=in.readBoolean();
         encrypted_data=in.readUTF();
         encryption_key=in.readCompressedInt();
-        completed_by=in.readNullUTF();
+        completed_by=StringUtility.intern(in.readNullUTF());
         completed_time=in.readLong();
     }
 

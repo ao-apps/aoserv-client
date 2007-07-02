@@ -43,7 +43,7 @@ final public class PostgresEncodingTable extends GlobalTableIntegerKey<PostgresE
         return null;
     }
 
-    int getTableID() {
-        return SchemaTable.POSTGRES_ENCODINGS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.POSTGRES_ENCODINGS;
     }
 }

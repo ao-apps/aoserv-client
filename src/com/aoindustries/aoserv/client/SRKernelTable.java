@@ -25,7 +25,7 @@ final public class SRKernelTable extends ServerReportSectionTable<SRKernel> {
 	return getUniqueRow(SRKernel.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_KERNEL;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_KERNEL;
     }
 }

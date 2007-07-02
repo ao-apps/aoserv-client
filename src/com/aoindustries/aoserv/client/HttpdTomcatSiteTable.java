@@ -23,8 +23,8 @@ final public class HttpdTomcatSiteTable extends CachedTableIntegerKey<HttpdTomca
 	super(connector, HttpdTomcatSite.class);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_TOMCAT_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_SITES;
     }
 
     public HttpdTomcatSite get(Object pkey) {

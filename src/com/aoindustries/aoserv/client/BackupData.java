@@ -348,8 +348,8 @@ final public class BackupData extends AOServObject<Integer,BackupData> implement
         return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BACKUP_DATA;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_DATA;
     }
 
     int hashCodeImpl() {

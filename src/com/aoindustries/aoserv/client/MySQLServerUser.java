@@ -89,8 +89,8 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         else return dl.canEnable() && getMySQLUser().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) {
-	return MySQLUser.checkPassword(username, password);
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+	return MySQLUser.checkPassword(userLocale, username, password);
     }
 /*
     public String checkPasswordDescribe(String password) {
@@ -98,11 +98,11 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     }
 */
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.MYSQL_SERVER_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.MYSQL_SERVER_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.MYSQL_SERVER_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.MYSQL_SERVER_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -167,8 +167,8 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	return table.connector.mysqlServers.get(mysql_server);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MYSQL_SERVER_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_SERVER_USERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -187,9 +187,9 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	username=in.readUTF();
+	username=in.readUTF().intern();
 	mysql_server=in.readCompressedInt();
-        host=in.readNullUTF();
+        host=StringUtility.intern(in.readNullUTF());
         disable_log=in.readCompressedInt();
         predisable_password=in.readNullUTF();
         max_questions=in.readCompressedInt();
@@ -207,7 +207,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.MYSQL_SERVER_USERS,
+            SchemaTable.TableID.MYSQL_SERVER_USERS,
             pkey
 	);
     }

@@ -354,8 +354,8 @@ final public class SRNetDevice extends ServerReportSection<SRNetDevice> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_NET_DEVICES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_DEVICES;
     }
 
     int hashCodeImpl() {
@@ -422,7 +422,7 @@ final public class SRNetDevice extends ServerReportSection<SRNetDevice> {
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         server_report=in.readCompressedInt();
-        device_id=in.readUTF();
+        device_id=in.readUTF().intern();
         rx_bytes_min=in.readFloat();
         rx_bytes_avg=in.readFloat();
         rx_bytes_max=in.readFloat();

@@ -106,8 +106,8 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BUSINESS_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_SERVERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -131,7 +131,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	accounting=in.readUTF();
+	accounting=in.readUTF().intern();
 	server=in.readCompressedInt();
 	is_default=in.readBoolean();
         can_configure_backup=in.readBoolean();
@@ -161,7 +161,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         // No children should be able to access the server
         List<Business> bus=table.connector.businesses.getRows();
         for(int c=0;c<bus.size();c++) {
-            if(bu.isBusinessOrParent(bus.get(c))) {
+            if(bu.isBusinessOrParentOf(bus.get(c))) {
                 Business bu2=bus.get(c);
                 if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<Business>("Child business "+bu2.getAccounting()+" still has access to "+se.getHostname(), bu2));
                 List<Package> pks=bu2.getPackages();
@@ -264,7 +264,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.BUSINESS_SERVERS, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
     }
 
     public void setAsDefault() {

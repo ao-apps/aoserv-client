@@ -26,7 +26,7 @@ final public class HttpdJKCodeTable extends GlobalTableStringKey<HttpdJKCode> {
 	return getUniqueRow(HttpdJKCode.COLUMN_CODE, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_JK_CODES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JK_CODES;
     }
 }

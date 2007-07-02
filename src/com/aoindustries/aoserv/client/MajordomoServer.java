@@ -154,8 +154,8 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MAJORDOMO_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MAJORDOMO_SERVERS;
     }
 
     public MajordomoVersion getVersion() {
@@ -180,7 +180,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	pkey=in.readCompressedInt();
 	linux_server_account=in.readCompressedInt();
 	linux_server_group=in.readCompressedInt();
-	version=in.readUTF();
+	version=in.readUTF().intern();
 	majordomo_pipe_address=in.readCompressedInt();
 	owner_majordomo_add=in.readCompressedInt();
 	majordomo_owner_add=in.readCompressedInt();
@@ -191,7 +191,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.MAJORDOMO_SERVERS,
+            SchemaTable.TableID.MAJORDOMO_SERVERS,
             pkey
 	);
     }
@@ -199,7 +199,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     public void setBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, MajordomoServer.class, "setBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.MAJORDOMO_SERVERS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.MAJORDOMO_SERVERS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

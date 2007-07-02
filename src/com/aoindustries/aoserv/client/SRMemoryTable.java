@@ -25,7 +25,7 @@ final public class SRMemoryTable extends ServerReportSectionTable<SRMemory> {
 	return getUniqueRow(SRMemory.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_MEMORY;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_MEMORY;
     }
 }

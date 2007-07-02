@@ -30,7 +30,7 @@ final public class HttpdStaticSiteTable extends CachedTableIntegerKey<HttpdStati
 	return getUniqueRow(HttpdStaticSite.COLUMN_HTTPD_SITE, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_STATIC_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_STATIC_SITES;
     }
 }

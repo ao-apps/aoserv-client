@@ -95,8 +95,8 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	return getUniqueRow(Server.COLUMN_HOSTNAME, hostname);
     }
 
-    int getTableID() {
-	return SchemaTable.SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SERVERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

@@ -34,7 +34,7 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
     ) {
         return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.HTTPD_TOMCAT_DATA_SOURCES,
+            SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES,
             htc.pkey,
             name,
             driverClassName,
@@ -73,8 +73,8 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
         return null;
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_TOMCAT_DATA_SOURCES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

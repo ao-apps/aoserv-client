@@ -122,8 +122,8 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         }
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) {
-        return checkPassword(pkey, type, password);
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+        return checkPassword(userLocale, pkey, type, password);
     }
 
     /**
@@ -134,20 +134,15 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * @see  LinuxAccountType#enforceStrongPassword(String)
      * @see  PasswordChecker#checkPassword(String,String,boolean,boolean)
      */
-    public static PasswordChecker.Result[] checkPassword(String username, String type, String password) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "checkPassword(String,String,String)", null);
-        try {
-            boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
-            return PasswordChecker.checkPassword(username, password, enforceStrong, !enforceStrong);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String type, String password) {
+        boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
+        return PasswordChecker.checkPassword(userLocale, username, password, enforceStrong, !enforceStrong);
     }
 
     public void disable(DisableLog dl) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "disable(DisableLog)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.LINUX_ACCOUNTS, dl.pkey, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -156,7 +151,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void enable() {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "enable()", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.LINUX_ACCOUNTS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -269,8 +264,8 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         }
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.LINUX_ACCOUNTS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_ACCOUNTS;
     }
 
     public LinuxAccountType getType() {
@@ -396,13 +391,13 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, LinuxAccount.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
+            pkey=in.readUTF().intern();
             name=in.readUTF();
             office_location=in.readBoolean()?in.readUTF():null;
             office_phone=in.readBoolean()?in.readUTF():null;
             home_phone=in.readBoolean()?in.readUTF():null;
-            type=in.readUTF();
-            shell=in.readUTF();
+            type=in.readUTF().intern();
+            shell=in.readUTF().intern();
             created=in.readLong();
             disable_log=in.readCompressedInt();
         } finally {
@@ -431,7 +426,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         try {
             table.connector.requestUpdateIL(
                 AOServProtocol.REMOVE,
-                SchemaTable.LINUX_ACCOUNTS,
+                SchemaTable.TableID.LINUX_ACCOUNTS,
                 pkey
             );
         } finally {

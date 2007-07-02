@@ -26,7 +26,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
     int addLinuxAccAddress(EmailAddress emailAddressObject, LinuxAccount linuxAccountObject) {
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.LINUX_ACC_ADDRESSES,
+            SchemaTable.TableID.LINUX_ACC_ADDRESSES,
             emailAddressObject.pkey,
             linuxAccountObject.pkey
 	);
@@ -134,8 +134,8 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
         return getIndexedRows(LinuxAccAddress.COLUMN_EMAIL_ADDRESS, address.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.LINUX_ACC_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_ACC_ADDRESSES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

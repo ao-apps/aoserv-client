@@ -33,7 +33,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      * The last time that the data was loaded, or
      * <code>-1</code> if not yet loaded.
      */
-    private static final long[] lastLoadeds=new long[SchemaTable.NUM_TABLES];
+    private static final long[] lastLoadeds=new long[SchemaTable.TableID.values().length];
     static {
         Arrays.fill(lastLoadeds, -1);
     }
@@ -41,9 +41,9 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     /**
      * Each table has its own lock because we were getting deadlocks with one lock on GlobalTable.class.
      */
-    private static final Object[] locks = new Object[SchemaTable.NUM_TABLES];
+    private static final Object[] locks = new Object[SchemaTable.TableID.values().length];
     static {
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) locks[c] = new Object();
+        for(int c=0;c<locks.length;c++) locks[c] = new Object();
     }
 
     /**
@@ -51,11 +51,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      * based on the server and then the table ID, and then the
      * column number.
      */
-    private static final List<List<Map<Object,GlobalObject>>> tableHashes=new ArrayList<List<Map<Object,GlobalObject>>>(SchemaTable.NUM_TABLES);
+    private static final List<List<Map<Object,GlobalObject>>> tableHashes=new ArrayList<List<Map<Object,GlobalObject>>>(SchemaTable.TableID.values().length);
     static {
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) tableHashes.add(null);
+        int numTables = SchemaTable.TableID.values().length;
+        for(int c=0;c<numTables;c++) tableHashes.add(null);
     }
-    private static final BitSet[] hashLoadeds=new BitSet[SchemaTable.NUM_TABLES];
+    private static final BitSet[] hashLoadeds=new BitSet[SchemaTable.TableID.values().length];
 
     /**
      * The internal indexes are stored in a <code>HashMap</code>
@@ -64,19 +65,21 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      * a <code>ArrayList</code> or <code>AOServObject[]</code>.
      * All of the List<GlobalObject> stored here are unmodifiable.
      */
-    private static final List<List<Map<Object,List<GlobalObject<?,?>>>>> indexHashes=new ArrayList<List<Map<Object,List<GlobalObject<?,?>>>>>(SchemaTable.NUM_TABLES);
+    private static final List<List<Map<Object,List<GlobalObject<?,?>>>>> indexHashes=new ArrayList<List<Map<Object,List<GlobalObject<?,?>>>>>(SchemaTable.TableID.values().length);
     static {
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) indexHashes.add(null);
+        int numTables = SchemaTable.TableID.values().length;
+        for(int c=0;c<numTables;c++) indexHashes.add(null);
     }
-    private static final BitSet[] indexLoadeds=new BitSet[SchemaTable.NUM_TABLES];
+    private static final BitSet[] indexLoadeds=new BitSet[SchemaTable.TableID.values().length];
 
     /**
      * The internal objects are stored in this list.  Each of the contained
      * List<GlobalObject> is unmodifiable.
      */
-    private static final List<List<GlobalObject<?,?>>> tableObjs=new ArrayList<List<GlobalObject<?,?>>>(SchemaTable.NUM_TABLES);
+    private static final List<List<GlobalObject<?,?>>> tableObjs=new ArrayList<List<GlobalObject<?,?>>>(SchemaTable.TableID.values().length);
     static {
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) tableObjs.add(null);
+        int numTables = SchemaTable.TableID.values().length;
+        for(int c=0;c<numTables;c++) tableObjs.add(null);
     }
 
     protected GlobalTable(AOServConnector connector, Class<V> clazz) {
@@ -94,7 +97,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
         try {
             List<GlobalObject<?,?>> objs;
             synchronized(tableObjs) {
-                objs=tableObjs.get(getTableID());
+                objs=tableObjs.get(getTableID().ordinal());
             }
             if(objs!=null) return objs.size();
             return -1;
@@ -107,18 +110,18 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     final public List<V> getIndexedRows(int col, Object value) {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getIndexedRows(int,Object)", null);
         try {
-            int tableID=getTableID();
-            synchronized(locks[tableID]) {
+            SchemaTable.TableID tableID=getTableID();
+            synchronized(locks[tableID.ordinal()]) {
                 validateCache();
 
-                BitSet tableLoadeds=indexLoadeds[tableID];
-                if(tableLoadeds==null) indexLoadeds[tableID]=tableLoadeds=new BitSet(col+1);
+                BitSet tableLoadeds=indexLoadeds[tableID.ordinal()];
+                if(tableLoadeds==null) indexLoadeds[tableID.ordinal()]=tableLoadeds=new BitSet(col+1);
                 boolean isHashed=tableLoadeds.get(col);
 
                 List<Map<Object,List<GlobalObject<?,?>>>> tableValues;
                 synchronized(indexHashes) {
-                    tableValues = indexHashes.get(tableID);
-                    if(tableValues==null) indexHashes.set(tableID, tableValues=new ArrayList<Map<Object,List<GlobalObject<?,?>>>>(col+1));
+                    tableValues = indexHashes.get(tableID.ordinal());
+                    if(tableValues==null) indexHashes.set(tableID.ordinal(), tableValues=new ArrayList<Map<Object,List<GlobalObject<?,?>>>>(col+1));
                 }
                 while(tableValues.size()<=col) tableValues.add(null);
                 Map<Object,List<GlobalObject<?,?>>> colIndexes=tableValues.get(col);
@@ -157,12 +160,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     final protected V getUniqueRowImpl(int col, Object value) {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getUniqueRowImpl(int,Object)", null);
         try {
-            int tableID=getTableID();
-            synchronized(locks[tableID]) {
+            SchemaTable.TableID tableID=getTableID();
+            synchronized(locks[tableID.ordinal()]) {
                 validateCache();
 
-                BitSet tableLoadeds=hashLoadeds[tableID];
-                if(tableLoadeds==null) hashLoadeds[tableID]=tableLoadeds=new BitSet(col+1);
+                BitSet tableLoadeds=hashLoadeds[tableID.ordinal()];
+                if(tableLoadeds==null) hashLoadeds[tableID.ordinal()]=tableLoadeds=new BitSet(col+1);
                 boolean isHashed=tableLoadeds.get(col);
 
                 List<V> table=getRows();
@@ -170,8 +173,8 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 
                 List<Map<Object,GlobalObject>> tableValues;
                 synchronized(tableHashes) {
-                    tableValues = tableHashes.get(tableID);
-                    if(tableValues==null) tableHashes.set(tableID, tableValues=new ArrayList<Map<Object,GlobalObject>>(col+1));
+                    tableValues = tableHashes.get(tableID.ordinal());
+                    if(tableValues==null) tableHashes.set(tableID.ordinal(), tableValues=new ArrayList<Map<Object,GlobalObject>>(col+1));
                 }
                 while(tableValues.size()<=col) tableValues.add(null);
                 Map<Object,GlobalObject> colValues=tableValues.get(col);
@@ -184,7 +187,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
                         Object cvalue=O.getColumn(col);
                         if(cvalue!=null) {
                             GlobalObject old=colValues.put(cvalue, O);
-                            if(old!=null) throw new WrappedException(new SQLException("Duplicate pkey entry for table #"+getTableID()+" ("+getTableName()+"), column #"+col+": "+cvalue));
+                            if(old!=null) throw new WrappedException(new SQLException("Duplicate pkey entry for table "+getTableID()+" ("+getTableName()+"), column #"+col+": "+cvalue));
                         }
                     }
 
@@ -202,12 +205,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     public final List<V> getRows() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getRows()", null);
         try {
-            int tableID = getTableID();
+            SchemaTable.TableID tableID = getTableID();
             // We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
-            synchronized(locks[tableID]) {
+            synchronized(locks[tableID.ordinal()]) {
                 validateCache();
                 synchronized(tableObjs) {
-                    List<GlobalObject<?,?>> objs=tableObjs.get(tableID);
+                    List<GlobalObject<?,?>> objs=tableObjs.get(tableID.ordinal());
                     return (List)objs;
                 }
             }
@@ -222,7 +225,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     boolean isHashed(int column) {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "isHashed(int)", null);
         try {
-            BitSet table=hashLoadeds[getTableID()];
+            BitSet table=hashLoadeds[getTableID().ordinal()];
             return table!=null && table.get(column);
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -235,7 +238,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     boolean isIndexed(int column) {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "isIndexed(int)", null);
         try {
-            BitSet table=indexLoadeds[getTableID()];
+            BitSet table=indexLoadeds[getTableID().ordinal()];
             return table!=null && table.get(column);
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -245,7 +248,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     final public boolean isLoaded() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "isLoaded()", null);
         try {
-            return lastLoadeds[getTableID()]!=-1;
+            return lastLoadeds[getTableID().ordinal()]!=-1;
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -254,9 +257,9 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     public void clearCache() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "clearCache()", null);
         try {
-            int tableID=getTableID();
-            synchronized(locks[tableID]) {
-                lastLoadeds[tableID]=-1;
+            SchemaTable.TableID tableID=getTableID();
+            synchronized(locks[tableID.ordinal()]) {
+                lastLoadeds[tableID.ordinal()]=-1;
             }
             super.clearCache();
         } finally {
@@ -271,20 +274,20 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     private void validateCache() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "validateCache()", null);
         try {
-            int tableID=getTableID();
-            synchronized(locks[tableID]) {
+            SchemaTable.TableID tableID=getTableID();
+            synchronized(locks[tableID.ordinal()]) {
                 long currentTime=System.currentTimeMillis();
-                long lastLoaded=lastLoadeds[tableID];
+                long lastLoaded=lastLoadeds[tableID.ordinal()];
                 if(lastLoaded==-1) {
-                    List<GlobalObject<?,?>> list=(List)getObjects(AOServProtocol.GET_TABLE, tableID);
+                    List<GlobalObject<?,?>> list=(List)getObjects(AOServProtocol.GET_TABLE, tableID.ordinal());
                     synchronized(tableObjs) {
-                        tableObjs.set(tableID, Collections.unmodifiableList(list));
+                        tableObjs.set(tableID.ordinal(), Collections.unmodifiableList(list));
                     }
-                    BitSet loaded=hashLoadeds[tableID];
+                    BitSet loaded=hashLoadeds[tableID.ordinal()];
                     if(loaded!=null) loaded.clear();
-                    BitSet indexed=indexLoadeds[tableID];
+                    BitSet indexed=indexLoadeds[tableID.ordinal()];
                     if(indexed!=null) indexed.clear();
-                    lastLoadeds[tableID]=currentTime;
+                    lastLoadeds[tableID.ordinal()]=currentTime;
                 }
             }
         } finally {

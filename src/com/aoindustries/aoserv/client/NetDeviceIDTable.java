@@ -26,7 +26,7 @@ final public class NetDeviceIDTable extends GlobalTableStringKey<NetDeviceID> {
 	return getUniqueRow(NetDeviceID.COLUMN_NAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.NET_DEVICE_IDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_DEVICE_IDS;
     }
 }

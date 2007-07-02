@@ -49,8 +49,8 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 	return ao;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.AO_SERVER_DAEMON_HOSTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.AO_SERVER_DAEMON_HOSTS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -62,7 +62,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
 	aoServer=in.readCompressedInt();
-	host=in.readUTF();
+	host=in.readUTF().intern();
     }
 
     String toStringImpl() {

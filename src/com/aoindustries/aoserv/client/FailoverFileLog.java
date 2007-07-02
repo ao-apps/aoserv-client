@@ -92,8 +92,8 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.FAILOVER_FILE_LOG;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_FILE_LOG;
     }
 
     public int getUpdated() {

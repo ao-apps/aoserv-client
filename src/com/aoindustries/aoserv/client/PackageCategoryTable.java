@@ -26,7 +26,7 @@ public final class PackageCategoryTable extends GlobalTableStringKey<PackageCate
 	return getUniqueRow(PackageCategory.COLUMN_NAME, pkey);
     }
 
-    int getTableID() {
-        return SchemaTable.PACKAGE_CATEGORIES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.PACKAGE_CATEGORIES;
     }
 }

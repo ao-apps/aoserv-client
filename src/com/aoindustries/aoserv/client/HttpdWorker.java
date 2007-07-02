@@ -79,8 +79,8 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_WORKERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_WORKERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

@@ -62,8 +62,8 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
         return np;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.NET_TCP_REDIRECTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_TCP_REDIRECTS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -78,7 +78,7 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
         pkey=in.readCompressedInt();
         cps=in.readCompressedInt();
         cps_overload_sleep_time=in.readCompressedInt();
-        destination_host=in.readUTF();
+        destination_host=in.readUTF().intern();
         destination_port=in.readCompressedInt();
     }
 

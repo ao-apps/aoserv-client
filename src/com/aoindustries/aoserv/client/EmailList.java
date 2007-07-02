@@ -81,7 +81,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public void disable(DisableLog dl) {
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "disable(DisableLog)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.EMAIL_LISTS, dl.pkey, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -90,7 +90,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public void enable() {
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "enable()", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.EMAIL_LISTS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -244,8 +244,8 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         return path;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.EMAIL_LISTS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.EMAIL_LISTS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -321,7 +321,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         try {
             table.connector.requestUpdateIL(
                 AOServProtocol.REMOVE,
-                SchemaTable.EMAIL_LISTS,
+                SchemaTable.TableID.EMAIL_LISTS,
                 pkey
             );
         } finally {
@@ -341,7 +341,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public void setBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "setBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.EMAIL_LISTS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.EMAIL_LISTS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

@@ -243,8 +243,8 @@ public final class FileBackup extends AOServObject<Integer,FileBackup> implement
         return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.FILE_BACKUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FILE_BACKUPS;
     }
 
     int hashCodeImpl() {

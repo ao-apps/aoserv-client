@@ -40,8 +40,8 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
         }
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SIGNUP_REQUEST_OPTIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SIGNUP_REQUEST_OPTIONS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -55,7 +55,7 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         request=in.readCompressedInt();
-        name = in.readUTF();
+        name = in.readUTF().intern();
         value = in.readNullUTF();
     }
 

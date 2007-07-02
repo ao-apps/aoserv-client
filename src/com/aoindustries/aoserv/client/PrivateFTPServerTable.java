@@ -57,7 +57,7 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
         return null;
     }
 
-    int getTableID() {
-	return SchemaTable.PRIVATE_FTP_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PRIVATE_FTP_SERVERS;
     }
 }

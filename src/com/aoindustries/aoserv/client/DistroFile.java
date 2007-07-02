@@ -171,8 +171,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         return pkey;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.DISTRO_FILES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.DISTRO_FILES;
     }
 
     public int hashCodeImpl() {
@@ -209,10 +209,10 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
             operating_system_version=in.readCompressedInt();
             path=in.readCompressedUTF();
             optional=in.readBoolean();
-            type=in.readCompressedUTF();
+            type=in.readCompressedUTF().intern();
             mode=in.readLong();
-            linux_account=in.readCompressedUTF();
-            linux_group=in.readCompressedUTF();
+            linux_account=in.readCompressedUTF().intern();
+            linux_group=in.readCompressedUTF().intern();
             size=in.readLong();
             has_file_md5=in.readBoolean();
             file_md5_hi=has_file_md5?in.readLong():-1;
@@ -230,10 +230,10 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
             operating_system_version=in.readInt();
             path=in.readUTF();
             optional=in.readBoolean();
-            type=in.readUTF();
+            type=in.readUTF().intern();
             mode=in.readLong();
-            linux_account=in.readUTF();
-            linux_group=in.readUTF();
+            linux_account=in.readUTF().intern();
+            linux_group=in.readUTF().intern();
             size=in.readLong();
             has_file_md5=in.readBoolean();
             file_md5_hi=has_file_md5?in.readLong():-1;

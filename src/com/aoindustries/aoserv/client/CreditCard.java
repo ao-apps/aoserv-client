@@ -5,18 +5,20 @@ package com.aoindustries.aoserv.client;
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * A <code>CreditCard</code> stores credit card information in an encrypted
- * format.
- *
- * @version  1.0a
+ * A <code>CreditCard</code> stores credit card information.
  *
  * @author  AO Industries, Inc.
  */
@@ -28,22 +30,28 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     ;
 
     String accounting;
-    private byte[] cardNumber;
     private String cardInfo;
-    private byte[]
-        expirationMonth,
-        expirationYear,
-        cardholderName,
-        streetAddress,
-        city,
-        state,
-        zip;
+    private String processorId;
+    private String providerUniqueId;
+    private String firstName;
+    private String lastName;
+    private String companyName;
+    private String email;
+    private String phone;
+    private String fax;
+    private String customerTaxId;
+    private String streetAddress1;
+    private String streetAddress2;
+    private String city;
+    private String state;
+    private String postalCode;
+    private String countryCode;
     private long created;
     private String createdBy;
-    private boolean useMonthly, isActive;
+    private boolean useMonthly;
+    private boolean isActive;
     private long deactivatedOn;
     private String deactivateReason;
-    private int priority;
     private String description;
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -67,16 +75,31 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return business;
     }
 
-    public byte[] getCardholderName() {
-	return cardholderName;
-    }
-
     public String getCardInfo() {
 	return cardInfo;
     }
 
     /**
+     * Gets the processor that is storing the credit card numbers.
+     */
+    public CreditCardProcessor getCreditCardProcessor() {
+        CreditCardProcessor ccp = table.connector.creditCardProcessors.get(processorId);
+        if(ccp==null) throw new WrappedException(new SQLException("Unable to find CreditCardProcessor: "+processorId));
+        return ccp;
+    }
+
+    /**
+     * Gets the unique identifier that represents the CISP - compliant storage mechanism for the card
+     * number and expiration date.
+     */
+    public String getProviderUniqueId() {
+	return providerUniqueId;
+    }
+
+    /**
      * Gets the default card info for a credit card number.
+     *
+     * @deprecated  Please use <code>com.aoindustries.creditcards.CreditCard#maskCardNumber instead.
      */
     public static String getCardInfo(String cardNumber) {
         String nums = "";
@@ -91,37 +114,89 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return nums;
     }
 
-    public byte[] getCardNumber() {
-	return cardNumber;
-    }
-
-    public byte[] getCity() {
-	return city;
-    }
-
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ACCOUNTING: return accounting;
-            case 2: return new String(cardNumber);
-            case 3: return cardInfo;
-            case 4: return new String(expirationMonth);
-            case 5: return new String(expirationYear);
-            case 6: return new String(cardholderName);
-            case 7: return new String(streetAddress);
-            case 8: return new String(city);
-            case 9: return state==null?null:new String(state);
-            case 10: return zip==null?null:new String(zip);
-            case 11: return new java.sql.Date(created);
-            case 12: return createdBy;
-            case 13: return useMonthly?Boolean.TRUE:Boolean.FALSE;
-            case 14: return isActive?Boolean.TRUE:Boolean.FALSE;
-            case 15: return deactivatedOn==-1?null:new java.sql.Date(deactivatedOn);
-            case 16: return deactivateReason;
-            case 17: return Integer.valueOf(priority);
-            case 18: return description;
+            case 2: return cardInfo;
+            case 3: return processorId;
+            case 4: return providerUniqueId;
+            case 5: return firstName;
+            case 6: return lastName;
+            case 7: return companyName;
+            case 8: return email;
+            case 9: return phone;
+            case 10: return fax;
+            case 11: return customerTaxId;
+            case 12: return streetAddress1;
+            case 13: return streetAddress2;
+            case 14: return city;
+            case 15: return state;
+            case 16: return postalCode;
+            case 17: return countryCode;
+            case 18: return new java.sql.Date(created);
+            case 19: return createdBy;
+            case 20: return useMonthly?Boolean.TRUE:Boolean.FALSE;
+            case 21: return isActive?Boolean.TRUE:Boolean.FALSE;
+            case 22: return deactivatedOn==-1?null:new java.sql.Date(deactivatedOn);
+            case 23: return deactivateReason;
+            case 24: return description;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public String getFax() {
+        return fax;
+    }
+    
+    public String getCustomerTaxId() {
+        return customerTaxId;
+    }
+    
+    public String getStreetAddress1() {
+        return streetAddress1;
+    }
+    
+    public String getStreetAddress2() {
+        return streetAddress2;
+    }
+
+    public String getCity() {
+        return city;
+    }
+    
+    public String getState() {
+        return state;
+    }
+    
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public CountryCode getCountryCode() {
+        CountryCode countryCode = table.connector.countryCodes.get(this.countryCode);
+        if (countryCode == null) throw new WrappedException(new SQLException("Unable to find CountryCode: " + this.countryCode));
+        return countryCode;
     }
 
     public long getCreated() {
@@ -138,6 +213,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	return deactivatedOn;
     }
 
+    public String getDeactivatedOnString() {
+	return deactivatedOn==-1 ? null : SQLUtility.getDate(deactivatedOn);
+    }
+
     public String getDeactivateReason() {
 	return deactivateReason;
     }
@@ -146,121 +225,123 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	return description;
     }
 
-    public byte[] getExpirationMonth() {
-	return expirationMonth;
-    }
-
-    public byte[] getExpirationYear() {
-	return expirationYear;
-    }
-
-    public int getPriority() {
-	return priority;
-    }
-
-    public byte[] getState() {
-	return state;
-    }
-
-    public byte[] getStreetAddress() {
-	return streetAddress;
-    }
-
-    protected int getTableIDImpl() {
-	return SchemaTable.CREDIT_CARDS;
-    }
-
-    public byte[] getZIP() {
-	return zip;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.CREDIT_CARDS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
-	pkey = result.getInt(1);
-	accounting = result.getString(2);
-	cardNumber = result.getString(3).getBytes();
-	cardInfo = result.getString(4);
-	expirationMonth = result.getString(5).getBytes();
-	expirationYear = result.getString(6).getBytes();
-	cardholderName = result.getString(7).getBytes();
-	streetAddress = result.getString(8).getBytes();
-	city = result.getString(9).getBytes();
-	String S=result.getString(10);
-	state = S==null?null:S.getBytes();
-	zip = result.getString(11).getBytes();
-	created = result.getTimestamp(12).getTime();
-	createdBy = result.getString(13);
-	useMonthly = result.getBoolean(14);
-	isActive = result.getBoolean(15);
-	Timestamp time = result.getTimestamp(16);
+        int pos = 1;
+	pkey = result.getInt(pos++);
+	accounting = result.getString(pos++);
+	cardInfo = result.getString(pos++);
+        processorId = result.getString(pos++);
+        providerUniqueId = result.getString(pos++);
+        firstName = result.getString(pos++);
+        lastName = result.getString(pos++);
+        companyName = result.getString(pos++);
+        email = result.getString(pos++);
+        phone = result.getString(pos++);
+        fax = result.getString(pos++);
+        customerTaxId = result.getString(pos++);
+        streetAddress1 = result.getString(pos++);
+        streetAddress2 = result.getString(pos++);
+        city = result.getString(pos++);
+        state = result.getString(pos++);
+        postalCode = result.getString(pos++);
+        countryCode = result.getString(pos++);
+	created = result.getTimestamp(pos++).getTime();
+	createdBy = result.getString(pos++);
+	useMonthly = result.getBoolean(pos++);
+	isActive = result.getBoolean(pos++);
+	Timestamp time = result.getTimestamp(pos++);
 	deactivatedOn = time == null ? -1 : time.getTime();
-	deactivateReason = result.getString(17);
-	priority = result.getInt(18);
-	description = result.getString(19);
+	deactivateReason = result.getString(pos++);
+	description = result.getString(pos++);
     }
 
-    public boolean isActive() {
+    public boolean getIsActive() {
 	return isActive;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	accounting=in.readUTF();
-	in.readFully(cardNumber=new byte[in.readCompressedInt()]);
-	cardInfo=in.readUTF();
-	in.readFully(expirationMonth=new byte[in.readCompressedInt()]);
-	in.readFully(expirationYear=new byte[in.readCompressedInt()]);
-	in.readFully(cardholderName=new byte[in.readCompressedInt()]);
-	in.readFully(streetAddress=new byte[in.readCompressedInt()]);
-	in.readFully(city=new byte[in.readCompressedInt()]);
-	int len=in.readCompressedInt();
-	state=len>=0?new byte[len]:null;
-	if(state!=null) in.readFully(state);
-	in.readFully(zip=new byte[in.readCompressedInt()]);
+	accounting=in.readUTF().intern();
+        cardInfo=in.readUTF();
+        processorId=in.readUTF().intern();
+        providerUniqueId=in.readUTF();
+        firstName=in.readUTF();
+        lastName=in.readUTF();
+        companyName=in.readNullUTF();
+        email=in.readNullUTF();
+        phone=in.readNullUTF();
+        fax=in.readNullUTF();
+        customerTaxId=in.readNullUTF();
+        streetAddress1=in.readUTF();
+        streetAddress2=in.readNullUTF();
+        city=in.readUTF();
+        state=StringUtility.intern(in.readNullUTF());
+        postalCode=in.readNullUTF();
+        countryCode=in.readUTF().intern();
 	created=in.readLong();
-	createdBy=in.readUTF();
+	createdBy=in.readUTF().intern();
 	useMonthly=in.readBoolean();
 	isActive=in.readBoolean();
 	deactivatedOn=in.readLong();
 	deactivateReason=in.readNullUTF();
-	priority=in.readCompressedInt();
 	description=in.readNullUTF();
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.CREDIT_CARDS, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
     }
 
     String toStringImpl() {
 	return cardInfo;
     }
 
-    public boolean useMonthly() {
+    public boolean getUseMonthly() {
 	return useMonthly;
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(accounting);
-	out.writeCompressedInt(cardNumber.length); out.write(cardNumber);
+	if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) out.writeCompressedInt(0);
 	out.writeUTF(cardInfo);
-	out.writeCompressedInt(expirationMonth.length); out.write(expirationMonth);
-	out.writeCompressedInt(expirationYear.length); out.write(expirationYear);
-	out.writeCompressedInt(cardholderName.length); out.write(cardholderName);
-	out.writeCompressedInt(streetAddress.length); out.write(streetAddress);
-	out.writeCompressedInt(city.length); out.write(city);
-	if(state==null) out.writeCompressedInt(-1);
-	else {
-            out.writeCompressedInt(state.length);
-            out.write(state);
-	}
-	out.writeCompressedInt(zip.length); out.write(zip);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) {
+            out.writeCompressedInt(0);
+            out.writeCompressedInt(0);
+            out.writeCompressedInt(0);
+            out.writeCompressedInt(0);
+            out.writeCompressedInt(0);
+            if(state==null) out.writeCompressedInt(-1);
+            else out.writeCompressedInt(0);
+            out.writeCompressedInt(0);
+        }
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) {
+            out.writeUTF(processorId);
+            out.writeUTF(providerUniqueId);
+            out.writeUTF(firstName);
+            out.writeUTF(lastName);
+            out.writeNullUTF(companyName);
+            out.writeNullUTF(email);
+            out.writeNullUTF(phone);
+            out.writeNullUTF(fax);
+            out.writeNullUTF(customerTaxId);
+            out.writeUTF(streetAddress1);
+            out.writeNullUTF(streetAddress2);
+            out.writeUTF(city);
+            out.writeNullUTF(state);
+            out.writeNullUTF(postalCode);
+            out.writeUTF(countryCode);
+        }
 	out.writeLong(created);
 	out.writeUTF(createdBy);
 	out.writeBoolean(useMonthly);
 	out.writeBoolean(isActive);
 	out.writeLong(deactivatedOn);
 	out.writeNullUTF(deactivateReason);
-	out.writeCompressedInt(priority);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
 	out.writeNullUTF(description);
     }
 }

@@ -44,7 +44,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
         return null;
     }
 
-    int getTableID() {
-	return SchemaTable.PACKAGE_DEFINITION_LIMITS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PACKAGE_DEFINITION_LIMITS;
     }
 }

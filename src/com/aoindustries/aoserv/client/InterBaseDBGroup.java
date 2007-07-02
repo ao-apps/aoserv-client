@@ -85,8 +85,8 @@ final public class InterBaseDBGroup extends CachedObjectIntegerKey<InterBaseDBGr
         return lsg;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.INTERBASE_DB_GROUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_DB_GROUPS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -118,7 +118,7 @@ final public class InterBaseDBGroup extends CachedObjectIntegerKey<InterBaseDBGr
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.INTERBASE_DB_GROUPS,
+            SchemaTable.TableID.INTERBASE_DB_GROUPS,
             pkey
 	);
     }

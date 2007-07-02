@@ -30,7 +30,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
     }
 
     public BackupReport get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.BACKUP_REPORTS, pkey);
+        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.BACKUP_REPORTS, pkey);
     }
 
     List<BackupReport> getBackupReports(Package pk) {
@@ -69,12 +69,12 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 
     public List<BackupReport> getRows() {
         List<BackupReport> list=new ArrayList<BackupReport>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.BACKUP_REPORTS);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.BACKUP_REPORTS);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.BACKUP_REPORTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_REPORTS;
     }
 
     protected BackupReport getUniqueRowImpl(int col, Object value) {

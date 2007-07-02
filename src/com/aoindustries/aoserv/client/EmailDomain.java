@@ -95,8 +95,8 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	return ao;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_DOMAINS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_DOMAINS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -139,7 +139,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         pkey=in.readCompressedInt();
 	domain=in.readUTF();
 	ao_server=in.readCompressedInt();
-	packageName=in.readUTF();
+	packageName=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -159,7 +159,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.EMAIL_DOMAINS,
+            SchemaTable.TableID.EMAIL_DOMAINS,
             pkey
 	);
     }

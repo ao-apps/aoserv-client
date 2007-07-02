@@ -65,7 +65,7 @@ final public class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
 	return paymentType;
     }
 
-    int getTableID() {
-	return SchemaTable.PAYMENT_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PAYMENT_TYPES;
     }
 }

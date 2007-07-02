@@ -126,8 +126,8 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.DAEMON_PROFILE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DAEMON_PROFILE;
     }
 
     public long getTotalTime() {
@@ -143,7 +143,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        server=in.readUTF();
+        server=in.readUTF().intern();
         level=in.readCompressedInt();
         classname=in.readUTF();
 	method_name=in.readUTF();

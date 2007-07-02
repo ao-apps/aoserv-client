@@ -48,8 +48,8 @@ final public class NetPort extends AOServObject<Integer,NetPort> {
 	return port;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.NET_PORTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_PORTS;
     }
 
     int hashCodeImpl() {

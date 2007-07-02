@@ -24,7 +24,7 @@ final public class SignupRequestOptionTable extends CachedTableIntegerKey<Signup
 	return getUniqueRow(SignupRequestOption.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SIGNUP_REQUEST_OPTIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SIGNUP_REQUEST_OPTIONS;
     }
 }

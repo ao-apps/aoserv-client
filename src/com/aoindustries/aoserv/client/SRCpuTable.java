@@ -30,7 +30,7 @@ final public class SRCpuTable extends ServerReportSectionTable<SRCpu> {
         return getIndexedRows(SRCpu.COLUMN_SERVER_REPORT, sr.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_CPU;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_CPU;
     }
 }

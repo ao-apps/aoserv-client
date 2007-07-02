@@ -21,8 +21,8 @@ final public class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
 	super(connector, TimeZone.class);
     }
 
-    int getTableID() {
-        return SchemaTable.TIME_ZONES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.TIME_ZONES;
     }
 
     public TimeZone get(Object pkey) {

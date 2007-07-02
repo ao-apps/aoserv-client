@@ -77,8 +77,8 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         }
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.LINUX_GROUP_ACCOUNTS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_GROUP_ACCOUNTS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -101,8 +101,8 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         Profiler.startProfile(Profiler.IO, LinuxGroupAccount.class, "read(CompressedDataInputStream)", null);
         try {
             pkey=in.readCompressedInt();
-            group_name=in.readUTF();
-            username=in.readUTF();
+            group_name=in.readUTF().intern();
+            username=in.readUTF().intern();
             is_primary=in.readBoolean();
         } finally {
             Profiler.endProfile(Profiler.IO);
@@ -120,7 +120,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         try {
             table.connector.requestUpdateIL(
                 AOServProtocol.REMOVE,
-                SchemaTable.LINUX_GROUP_ACCOUNTS,
+                SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
                 pkey
             );
         } finally {

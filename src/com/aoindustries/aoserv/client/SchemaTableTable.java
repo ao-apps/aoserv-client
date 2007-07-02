@@ -37,6 +37,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
     public SchemaTable get(Object pkey) {
         if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
         else if(pkey instanceof String) return get((String)pkey);
+        else if(pkey instanceof SchemaTable.TableID) return get((SchemaTable.TableID)pkey);
         else throw new IllegalArgumentException("Must be an Integer or a String");
     }
 
@@ -48,8 +49,12 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
         return getUniqueRow(SchemaTable.COLUMN_NAME, name);
     }
 
-    int getTableID() {
-        return SchemaTable.SCHEMA_TABLES;
+    public SchemaTable get(SchemaTable.TableID tableID) {
+        return get(tableID.ordinal());
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.SCHEMA_TABLES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

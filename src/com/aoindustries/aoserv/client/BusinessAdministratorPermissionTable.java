@@ -29,8 +29,8 @@ final public class BusinessAdministratorPermissionTable extends CachedTableInteg
 	return getUniqueRow(BusinessAdministratorPermission.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.BUSINESS_ADMINISTRATOR_PERMISSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
     }
 
     List<BusinessAdministratorPermission> getPermissions(BusinessAdministrator ba) {

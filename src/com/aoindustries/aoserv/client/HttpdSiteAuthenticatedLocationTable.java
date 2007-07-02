@@ -32,7 +32,7 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
         String authUserFile,
         String require
     ) {
-        return connector.requestIntQueryIL(AOServProtocol.ADD, SchemaTable.HTTPD_SITE_AUTHENTICATED_LOCATIONS, hs.getPKey(), path, isRegularExpression, authName, authGroupFile, authUserFile, require);
+        return connector.requestIntQueryIL(AOServProtocol.ADD, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, hs.getPKey(), path, isRegularExpression, authName, authGroupFile, authUserFile, require);
     }
 
     public HttpdSiteAuthenticatedLocation get(Object pkey) {
@@ -47,7 +47,7 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
         return getIndexedRows(HttpdSiteAuthenticatedLocation.COLUMN_HTTPD_SITE, site.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
     }
 }

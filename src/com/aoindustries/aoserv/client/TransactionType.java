@@ -70,8 +70,8 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TRANSACTION_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TRANSACTION_TYPES;
     }
 
     public String getUnit() {
@@ -91,10 +91,10 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	display=in.readUTF();
 	description=in.readUTF();
-	unit=in.readUTF();
+	unit=in.readUTF().intern();
 	isCredit=in.readBoolean();
     }
 

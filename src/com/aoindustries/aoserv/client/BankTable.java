@@ -26,7 +26,7 @@ final public class BankTable extends CachedTableStringKey<Bank> {
 	return getUniqueRow(Bank.COLUMN_NAME, name);
     }
 
-    int getTableID() {
-	return SchemaTable.BANKS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANKS;
     }
 }

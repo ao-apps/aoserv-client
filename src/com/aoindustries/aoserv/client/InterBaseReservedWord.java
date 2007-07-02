@@ -28,8 +28,8 @@ final public class InterBaseReservedWord extends GlobalObjectStringKey<InterBase
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.INTERBASE_RESERVED_WORDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_RESERVED_WORDS;
     }
 
     public String getWord() {

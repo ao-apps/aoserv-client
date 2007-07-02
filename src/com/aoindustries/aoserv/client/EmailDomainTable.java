@@ -28,7 +28,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	if (!EmailDomain.isValidFormat(domain)) throw new WrappedException(new SQLException("Invalid domain format: " + domain));
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.EMAIL_DOMAINS,
+            SchemaTable.TableID.EMAIL_DOMAINS,
             domain,
             ao.pkey,
             packageObject.name
@@ -75,8 +75,8 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	return null;
     }
 
-    int getTableID() {
-	return SchemaTable.EMAIL_DOMAINS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_DOMAINS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

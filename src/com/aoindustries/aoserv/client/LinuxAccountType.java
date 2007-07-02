@@ -140,8 +140,8 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	throw new WrappedException(new SQLException("Unknown type: "+type));
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.LINUX_ACCOUNT_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_ACCOUNT_TYPES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -172,7 +172,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
 	is_email=in.readBoolean();
     }

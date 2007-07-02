@@ -25,7 +25,7 @@ final public class SRNetICMPTable extends ServerReportSectionTable<SRNetICMP> {
 	return getUniqueRow(SRNetICMP.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_NET_ICMP;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_ICMP;
     }
 }

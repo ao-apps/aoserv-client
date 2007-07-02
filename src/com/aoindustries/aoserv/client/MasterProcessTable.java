@@ -35,12 +35,12 @@ final public class MasterProcessTable extends AOServTable<Long,MasterProcess> {
 
     public List<MasterProcess> getRows() {
         List<MasterProcess> list=new ArrayList<MasterProcess>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.MASTER_PROCESSES);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.MASTER_PROCESSES);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.MASTER_PROCESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_PROCESSES;
     }
 
     protected MasterProcess getUniqueRowImpl(int col, Object value) {

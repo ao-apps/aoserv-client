@@ -29,7 +29,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 	if (!EmailAddress.isValidEmailAddress(destination)) throw new WrappedException(new SQLException("Invalid destination: " + destination));
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.EMAIL_FORWARDING,
+            SchemaTable.TableID.EMAIL_FORWARDING,
             emailAddressObject.pkey,
             destination
 	);
@@ -87,8 +87,8 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.EMAIL_FORWARDING;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_FORWARDING;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

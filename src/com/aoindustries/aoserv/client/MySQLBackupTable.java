@@ -35,8 +35,8 @@ final public class MySQLBackupTable extends CachedTableIntegerKey<MySQLBackup> {
         return getIndexedRows(MySQLBackup.COLUMN_MYSQL_SERVER, mysqlServer.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MYSQL_BACKUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_BACKUPS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

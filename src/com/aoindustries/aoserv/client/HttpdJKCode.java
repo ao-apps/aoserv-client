@@ -34,8 +34,8 @@ final public class HttpdJKCode extends GlobalObjectStringKey<HttpdJKCode> {
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_JK_CODES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JK_CODES;
     }
 
     void initImpl(ResultSet result) throws SQLException {

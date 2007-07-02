@@ -127,11 +127,11 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
     public abstract K getKey();
 
-    final public int getTableID() {
-        return getTableIDImpl();
-    }
+    public abstract SchemaTable.TableID getTableID();
 
-    abstract protected int getTableIDImpl();
+    final protected int getTableIDImpl() {
+        throw new RuntimeException("TODO: Delete this method");
+    }
 
     final public SchemaTable getTableSchema(AOServConnector connector) {
         return connector.schemaTables.get(getTableID());

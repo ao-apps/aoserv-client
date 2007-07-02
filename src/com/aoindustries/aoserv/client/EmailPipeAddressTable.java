@@ -26,7 +26,7 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
     int addEmailPipeAddress(EmailAddress emailAddressObject, EmailPipe emailPipeObject) {
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.EMAIL_PIPE_ADDRESSES,
+            SchemaTable.TableID.EMAIL_PIPE_ADDRESSES,
             emailAddressObject.pkey,
             emailPipeObject.pkey
 	);
@@ -96,8 +96,8 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.EMAIL_PIPE_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_PIPE_ADDRESSES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

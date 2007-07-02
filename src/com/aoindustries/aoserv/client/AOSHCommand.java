@@ -5,12 +5,15 @@ package com.aoindustries.aoserv.client;
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.profiler.Profiler;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Information about every command in the <code>AOSH</code> is
@@ -37,7 +40,6 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         ADD_BUSINESS_ADMINISTRATOR="add_business_administrator",
         ADD_BUSINESS_PROFILE="add_business_profile",
         ADD_BUSINESS_SERVER="add_business_server",
-        ADD_CREDIT_CARD="add_credit_card",
         ADD_CVS_REPOSITORY="add_cvs_repository",
         ADD_DNS_RECORD="add_dns_record",
         ADD_DNS_ZONE="add_dns_zone",
@@ -456,8 +458,8 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         return last_version;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.AOSH_COMMANDS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.AOSH_COMMANDS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -535,12 +537,12 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, AOSHCommand.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
-            table_name=in.readNullUTF();
+            pkey=in.readUTF().intern();
+            table_name=StringUtility.intern(in.readNullUTF());
             short_desc=in.readUTF();
             syntax=in.readUTF();
-            since_version=in.readUTF();
-            last_version=in.readNullUTF();
+            since_version=in.readUTF().intern();
+            last_version=StringUtility.intern(in.readNullUTF());
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

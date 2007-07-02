@@ -26,7 +26,7 @@ final public class LinuxGroupTypeTable extends GlobalTableStringKey<LinuxGroupTy
 	return getUniqueRow(LinuxGroupType.COLUMN_NAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.LINUX_GROUP_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_GROUP_TYPES;
     }
 }

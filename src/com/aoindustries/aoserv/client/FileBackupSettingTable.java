@@ -27,7 +27,7 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
     int addFileBackupSetting(Server se, String path, Package packageObj, BackupLevel backupLevel, BackupRetention backupRetention, boolean recurse) {
         return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.FILE_BACKUP_SETTINGS,
+            SchemaTable.TableID.FILE_BACKUP_SETTINGS,
             se.pkey,
             path,
             packageObj.pkey,
@@ -79,8 +79,8 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.FILE_BACKUP_SETTINGS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FILE_BACKUP_SETTINGS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

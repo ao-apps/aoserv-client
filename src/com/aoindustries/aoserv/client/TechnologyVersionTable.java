@@ -73,8 +73,8 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
 	return orderLabels[index];
     }
 
-    int getTableID() {
-	return SchemaTable.TECHNOLOGY_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGY_VERSIONS;
     }
 
     TechnologyVersion getTechnologyVersion(TechnologyName techName, String version, OperatingSystemVersion osv) {

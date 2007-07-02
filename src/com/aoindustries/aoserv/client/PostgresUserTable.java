@@ -27,7 +27,7 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
     void addPostgresUser(String username) {
         connector.requestUpdateIL(
             AOServProtocol.ADD,
-            SchemaTable.POSTGRES_USERS,
+            SchemaTable.TableID.POSTGRES_USERS,
             username
         );
     }
@@ -49,8 +49,8 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
         return matches;
     }
 
-    int getTableID() {
-        return SchemaTable.POSTGRES_USERS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.POSTGRES_USERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -76,8 +76,8 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
             if(AOSH.checkParamCount(AOSHCommand.CHECK_POSTGRES_PASSWORD, args, 2, err)) {
                 try {
                     PasswordChecker.Result[] results = SimpleAOClient.checkPostgresPassword(args[1], args[2]);
-                    if(PasswordChecker.hasResults(results)) {
-                        PasswordChecker.printResults(results, out, Locale.getDefault());
+                    if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                        PasswordChecker.printResults(results, out);
                         out.flush();
                     }
                 } catch(IOException err2) {
@@ -133,7 +133,7 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
             AOServProtocol.WAIT_FOR_REBUILD,
-            SchemaTable.POSTGRES_USERS,
+            SchemaTable.TableID.POSTGRES_USERS,
             aoServer.pkey
         );
     }

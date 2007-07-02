@@ -58,8 +58,8 @@ final public class LinuxGroupType extends GlobalObjectStringKey<LinuxGroupType> 
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.LINUX_GROUP_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_GROUP_TYPES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -68,7 +68,7 @@ final public class LinuxGroupType extends GlobalObjectStringKey<LinuxGroupType> 
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
     }
 

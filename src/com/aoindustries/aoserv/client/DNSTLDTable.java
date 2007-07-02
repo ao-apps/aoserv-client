@@ -26,7 +26,7 @@ final public class DNSTLDTable extends GlobalTableStringKey<DNSTLD> {
 	return getUniqueRow(DNSTLD.COLUMN_DOMAIN, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.DNS_TLDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_TLDS;
     }
 }

@@ -26,7 +26,7 @@ final public class DNSTypeTable extends GlobalTableStringKey<DNSType> {
 	return getUniqueRow(DNSType.COLUMN_TYPE, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.DNS_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_TYPES;
     }
 }

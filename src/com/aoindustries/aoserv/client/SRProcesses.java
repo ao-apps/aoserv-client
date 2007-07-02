@@ -283,8 +283,8 @@ final public class SRProcesses extends ServerReportSection<SRProcesses> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_PROCESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_PROCESSES;
     }
 
     int hashCodeImpl() {

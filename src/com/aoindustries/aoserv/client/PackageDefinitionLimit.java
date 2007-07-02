@@ -108,8 +108,8 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         return tt;
     }
     
-    protected int getTableIDImpl() {
-	return SchemaTable.PACKAGE_DEFINITION_LIMITS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PACKAGE_DEFINITION_LIMITS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -128,11 +128,11 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         package_definition=in.readCompressedInt();
-        resource=in.readUTF();
+        resource=in.readUTF().intern();
         soft_limit=in.readCompressedInt();
         hard_limit=in.readCompressedInt();
         additional_rate=in.readCompressedInt();
-        additional_transaction_type=in.readNullUTF();
+        additional_transaction_type=StringUtility.intern(in.readNullUTF());
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

@@ -31,7 +31,7 @@ final public class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKe
         return getIndexedRows(EncryptionKey.COLUMN_ACCOUNTING, business.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.ENCRYPTION_KEYS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.ENCRYPTION_KEYS;
     }
 }

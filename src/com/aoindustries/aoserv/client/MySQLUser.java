@@ -199,12 +199,12 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return update_priv;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) {
-        return checkPassword(pkey, password);
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+        return checkPassword(userLocale, pkey, password);
     }
 
-    public static PasswordChecker.Result[] checkPassword(String username, String password) {
-        return PasswordChecker.checkPassword(username, password, true, false);
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) {
+        return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
 
     /*public String checkPasswordDescribe(String password) {
@@ -216,11 +216,11 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     }*/
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.MYSQL_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.MYSQL_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.MYSQL_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.MYSQL_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -272,8 +272,8 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return table.connector.mysqlServerUsers.getMySQLServerUsers(this);
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.MYSQL_USERS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.MYSQL_USERS;
     }
 
     public Username getUsername() {
@@ -315,7 +315,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF();
+        pkey=in.readUTF().intern();
         select_priv=in.readBoolean();
         insert_priv=in.readBoolean();
         update_priv=in.readBoolean();
@@ -354,7 +354,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     public void remove() {
         table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.MYSQL_USERS,
+            SchemaTable.TableID.MYSQL_USERS,
             pkey
         );
     }

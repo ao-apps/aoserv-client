@@ -82,8 +82,8 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_JBOSS_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JBOSS_SITES;
     }
 
     public NetBind getWebserverBind() {

@@ -42,8 +42,8 @@ final public class USState extends GlobalObjectStringKey<USState> {
 	return name;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.US_STATES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.US_STATES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -52,7 +52,7 @@ final public class USState extends GlobalObjectStringKey<USState> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	name=in.readUTF();
     }
 

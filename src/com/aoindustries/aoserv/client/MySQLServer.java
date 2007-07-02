@@ -205,8 +205,8 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	return pu;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MYSQL_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_SERVERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -225,12 +225,12 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	name=in.readUTF();
+	name=in.readUTF().intern();
 	ao_server=in.readCompressedInt();
 	version=in.readCompressedInt();
         max_connections=in.readCompressedInt();
         net_bind=in.readCompressedInt();
-        packageName=in.readUTF();
+        packageName=in.readUTF().intern();
     }
 
     public void restartMySQL() {
@@ -257,5 +257,58 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         out.writeCompressedInt(max_connections);
         out.writeCompressedInt(net_bind);
         if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_28)>=0) out.writeUTF(packageName);
+    }
+
+    final public static class MasterStatus {
+
+        final private String file;
+        final private String position;
+        
+        public MasterStatus(
+            String file,
+            String position
+        ) {
+            this.file=file;
+            this.position=position;
+        }
+
+        public String getFile() {
+            return file;
+        }
+
+        public String getPosition() {
+            return position;
+        }
+    }
+
+    /**
+     * Gets the master status or <code>null</code> if no master status provided by MySQL.  If any error occurs, throws either
+     * IOException or SQLException.
+     */
+    public MasterStatus getMasterStatus() throws IOException, SQLException {
+        AOServConnection connection=table.connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.GET_MYSQL_MASTER_STATUS);
+            out.writeCompressedInt(pkey);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.NEXT) {
+                return new MasterStatus(
+                    in.readNullUTF(),
+                    in.readNullUTF()
+                );
+            } else if(code==AOServProtocol.DONE) {
+                return null;
+            } else AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
+        }
     }
 }

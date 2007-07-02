@@ -59,8 +59,8 @@ final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TECHNOLOGY_CLASSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGY_CLASSES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -69,7 +69,7 @@ final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
     }
 

@@ -285,8 +285,8 @@ final public class SRNetICMP extends ServerReportSection<SRNetICMP> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_NET_ICMP;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_ICMP;
     }
 
     int hashCodeImpl() {

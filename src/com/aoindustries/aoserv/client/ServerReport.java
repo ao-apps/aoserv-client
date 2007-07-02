@@ -180,8 +180,8 @@ final public class ServerReport extends CachedObjectIntegerKey<ServerReport> {
         return failover_server!=-1?null:table.connector.srSwapSize.getSRSwapSizes(this);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SERVER_REPORTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SERVER_REPORTS;
     }
 
     public long getTime() {

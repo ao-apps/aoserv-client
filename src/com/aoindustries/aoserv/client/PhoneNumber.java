@@ -67,8 +67,8 @@ final public class PhoneNumber extends CachedObjectIntegerKey<PhoneNumber> {
 	return person;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.PHONE_NUMBERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PHONE_NUMBERS;
     }
 
     public String getWork() {

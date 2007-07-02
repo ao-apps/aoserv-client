@@ -39,8 +39,8 @@ final public class NetProtocol extends GlobalObjectStringKey<NetProtocol> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.NET_PROTOCOLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_PROTOCOLS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -48,7 +48,7 @@ final public class NetProtocol extends GlobalObjectStringKey<NetProtocol> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

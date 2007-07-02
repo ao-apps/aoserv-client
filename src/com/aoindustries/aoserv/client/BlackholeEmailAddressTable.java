@@ -43,8 +43,8 @@ final public class BlackholeEmailAddressTable extends CachedTableIntegerKey<Blac
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.BLACKHOLE_EMAIL_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BLACKHOLE_EMAIL_ADDRESSES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

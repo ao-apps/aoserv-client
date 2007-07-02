@@ -78,8 +78,8 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.IP_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.IP_ADDRESSES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

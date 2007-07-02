@@ -27,7 +27,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
     void addUsername(Package packageObject, String username) {
 	connector.requestUpdateIL(
             AOServProtocol.ADD,
-            SchemaTable.USERNAMES,
+            SchemaTable.TableID.USERNAMES,
             packageObject.name,
             username
 	);
@@ -37,8 +37,8 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
 	return getUniqueRow(Username.COLUMN_USERNAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.USERNAMES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.USERNAMES;
     }
 
     List<Username> getUsernames(Package pack) {
@@ -80,8 +80,8 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_USERNAME_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_USERNAME_PASSWORD, args, 2, err)) {
                 PasswordChecker.Result[] results = connector.simpleAOClient.checkUsernamePassword(args[1], args[2]);
-                if(PasswordChecker.hasResults(results)) {
-                    PasswordChecker.printResults(results, out, Locale.getDefault());
+                if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                    PasswordChecker.printResults(results, out);
                     out.flush();
                 }
             }

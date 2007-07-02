@@ -67,8 +67,8 @@ final public class SRSwapRate extends ServerReportSection<SRSwapRate> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_SWAP_RATE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_SWAP_RATE;
     }
 
     int hashCodeImpl() {

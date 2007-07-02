@@ -30,7 +30,7 @@ final public class MasterServerTable extends CachedTableIntegerKey<MasterServer>
 	return getUniqueRow(MasterServer.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MASTER_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_SERVERS;
     }
 }

@@ -37,7 +37,7 @@ final public class PostgresVersionTable extends GlobalTableIntegerKey<PostgresVe
 	);
     }
 
-    int getTableID() {
-	return SchemaTable.POSTGRES_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_VERSIONS;
     }
 }

@@ -30,7 +30,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         try {
             int pkey=connector.requestIntQueryIL(
                 AOServProtocol.ADD,
-                SchemaTable.LINUX_SERVER_GROUPS,
+                SchemaTable.TableID.LINUX_SERVER_GROUPS,
                 linuxGroup.pkey,
                 aoServer.pkey
             );
@@ -189,8 +189,8 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         }
     }
 
-    int getTableID() {
-        return SchemaTable.LINUX_SERVER_GROUPS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_SERVER_GROUPS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

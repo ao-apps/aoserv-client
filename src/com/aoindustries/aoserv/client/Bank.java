@@ -39,8 +39,8 @@ final public class Bank extends CachedObjectStringKey<Bank> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BANKS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANKS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -49,7 +49,7 @@ final public class Bank extends CachedObjectStringKey<Bank> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	display=in.readUTF();
     }
 

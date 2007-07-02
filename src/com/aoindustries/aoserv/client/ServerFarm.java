@@ -75,8 +75,8 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 	return protected_net;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SERVER_FARMS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SERVER_FARMS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -90,11 +90,11 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
-	protected_net=in.readUTF();
+	protected_net=in.readUTF().intern();
         allow_same_server_backup=in.readBoolean();
-        backup_farm=in.readUTF();
+        backup_farm=in.readUTF().intern();
         owner=in.readCompressedInt();
         use_restricted_smtp_port = in.readBoolean();
     }

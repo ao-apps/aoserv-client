@@ -110,8 +110,8 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MASTER_SERVER_STATS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_SERVER_STATS;
     }
 
     public String getValue() {
@@ -123,7 +123,7 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	name=in.readUTF();
+	name=in.readUTF().intern();
 	value=in.readBoolean()?in.readUTF():null;
 	description=in.readUTF();
     }

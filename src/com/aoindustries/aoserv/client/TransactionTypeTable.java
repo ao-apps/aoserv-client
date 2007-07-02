@@ -22,8 +22,8 @@ public final class TransactionTypeTable extends GlobalTableStringKey<Transaction
 	super(connector, TransactionType.class);
     }
 
-    int getTableID() {
-	return SchemaTable.TRANSACTION_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TRANSACTION_TYPES;
     }
 
     public TransactionType get(Object pkey) {

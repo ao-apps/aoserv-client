@@ -35,12 +35,12 @@ final public class MasterHistoryTable extends AOServTable<Long,MasterHistory> {
 
     public List<MasterHistory> getRows() {
         List<MasterHistory> list=new ArrayList<MasterHistory>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.MASTER_HISTORY);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.MASTER_HISTORY);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.MASTER_HISTORY;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_HISTORY;
     }
 
     protected MasterHistory getUniqueRowImpl(int col, Object value) {

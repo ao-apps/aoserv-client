@@ -26,7 +26,7 @@ final public class MySQLReservedWordTable extends GlobalTableStringKey<MySQLRese
 	return getUniqueRow(MySQLReservedWord.COLUMN_WORD, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MYSQL_RESERVED_WORDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_RESERVED_WORDS;
     }
 }

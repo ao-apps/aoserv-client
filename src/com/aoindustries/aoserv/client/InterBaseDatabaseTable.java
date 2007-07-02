@@ -31,7 +31,7 @@ final public class InterBaseDatabaseTable extends CachedTableIntegerKey<InterBas
     int addInterBaseDatabase(InterBaseDBGroup dbGroup, String name, InterBaseServerUser datdba) {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.INTERBASE_DATABASES,
+            SchemaTable.TableID.INTERBASE_DATABASES,
             name,
             dbGroup.pkey,
             datdba.pkey
@@ -89,8 +89,8 @@ final public class InterBaseDatabaseTable extends CachedTableIntegerKey<InterBas
         return getIndexedRows(InterBaseDatabase.COLUMN_DATDBA, isu.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.INTERBASE_DATABASES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_DATABASES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

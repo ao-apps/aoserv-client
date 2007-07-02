@@ -23,7 +23,7 @@ final public class ResourceTable extends GlobalTableStringKey<Resource> {
 	return getUniqueRow(Resource.COLUMN_NAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.RESOURCES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.RESOURCES;
     }
 }

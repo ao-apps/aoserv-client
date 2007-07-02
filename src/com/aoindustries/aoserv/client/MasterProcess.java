@@ -214,8 +214,8 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MASTER_PROCESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_PROCESSES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -225,18 +225,18 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
     public void read(CompressedDataInputStream in) throws IOException {
         process_id=in.readLong();
         connector_id=in.readLong();
-        authenticated_user=in.readNullUTF();
-        effective_user=in.readNullUTF();
+        authenticated_user=StringUtility.intern(in.readNullUTF());
+        effective_user=StringUtility.intern(in.readNullUTF());
         daemon_server=in.readCompressedInt();
-        host=in.readUTF();
-        protocol=in.readUTF();
-        aoserv_protocol=in.readNullUTF();
+        host=in.readUTF().intern();
+        protocol=in.readUTF().intern();
+        aoserv_protocol=StringUtility.intern(in.readNullUTF());
         is_secure=in.readBoolean();
         connect_time=in.readLong();
         use_count=in.readLong();
         total_time=in.readLong();
         priority=in.readCompressedInt();
-        state=in.readUTF();
+        state=in.readUTF().intern();
         if(in.readBoolean()) {
             command=new Object[] {in.readUTF()};
         } else {

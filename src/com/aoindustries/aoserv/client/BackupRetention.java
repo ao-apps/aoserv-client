@@ -51,8 +51,8 @@ final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
 	return days;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BACKUP_RETENTIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_RETENTIONS;
     }
 
     int hashCodeImpl() {

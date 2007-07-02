@@ -32,7 +32,7 @@ final public class IncomingPaymentTable extends CachedTableIntegerKey<IncomingPa
     ) {
 	connector.requestUpdateIL(
             AOServProtocol.ADD,
-            SchemaTable.INCOMING_PAYMENTS,
+            SchemaTable.TableID.INCOMING_PAYMENTS,
             transaction.transid,
             encryptedCardName,
             encryptedCardNumber,
@@ -49,8 +49,8 @@ final public class IncomingPaymentTable extends CachedTableIntegerKey<IncomingPa
 	return getUniqueRow(IncomingPayment.COLUMN_TRANSID, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.INCOMING_PAYMENTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INCOMING_PAYMENTS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

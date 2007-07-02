@@ -40,7 +40,7 @@ final public class HttpdJBossVersionTable extends GlobalTableIntegerKey<HttpdJBo
 	);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_JBOSS_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JBOSS_VERSIONS;
     }
 }

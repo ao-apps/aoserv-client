@@ -46,7 +46,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
                     out.writeCompressedInt(AOServProtocol.ADD);
-                    out.writeCompressedInt(SchemaTable.LINUX_ACCOUNTS);
+                    out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
                     out.writeUTF(usernameObject.pkey);
                     out.writeUTF(primaryGroup);
                     out.writeUTF(name);
@@ -283,7 +283,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
 
                 } while(entropy<413000000000L);
                 password=pw.toString();
-            } while(PasswordChecker.hasResults(PasswordChecker.checkPassword(null, password, true, false)));
+            } while(PasswordChecker.hasResults(Locale.getDefault(), PasswordChecker.checkPassword(Locale.getDefault(), null, password, true, false)));
             return password;
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
@@ -340,8 +340,8 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         }
     }
 
-    int getTableID() {
-        return SchemaTable.LINUX_ACCOUNTS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_ACCOUNTS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -386,8 +386,8 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD)) {
                 if(AOSH.checkParamCount(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
                     PasswordChecker.Result[] results = connector.simpleAOClient.checkLinuxAccountPassword(args[1], args[2]);
-                    if(PasswordChecker.hasResults(results)) {
-                        PasswordChecker.printResults(results, out, Locale.getDefault());
+                    if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                        PasswordChecker.printResults(results, out);
                         out.flush();
                     }
                 }
@@ -471,7 +471,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         try {
             connector.requestUpdate(
                 AOServProtocol.WAIT_FOR_REBUILD,
-                SchemaTable.LINUX_ACCOUNTS,
+                SchemaTable.TableID.LINUX_ACCOUNTS,
                 aoServer.pkey
             );
         } finally {

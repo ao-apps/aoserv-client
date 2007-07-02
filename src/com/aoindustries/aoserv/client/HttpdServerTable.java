@@ -38,7 +38,7 @@ final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
         return getIndexedRows(HttpdServer.COLUMN_PACKAGE, pk.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SERVERS;
     }
 }

@@ -57,8 +57,8 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
         return osv;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TECHNOLOGY_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGY_VERSIONS;
     }
 
     public TechnologyName getTechnologyName(AOServConnector connector) {
@@ -87,10 +87,10 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	name=in.readUTF();
+	name=in.readUTF().intern();
 	version=in.readUTF();
 	updated=in.readLong();
-	owner=in.readUTF();
+	owner=in.readUTF().intern();
         operating_system_version=in.readCompressedInt();
     }
 

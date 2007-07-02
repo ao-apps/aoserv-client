@@ -41,7 +41,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.HTTPD_SHARED_TOMCATS);
+                out.writeCompressedInt(SchemaTable.TableID.HTTPD_SHARED_TOMCATS.ordinal());
                 out.writeUTF(name);
                 out.writeCompressedInt(aoServer.pkey);
                 out.writeCompressedInt(version.getTechnologyVersion(connector).getPKey());
@@ -127,8 +127,8 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	return null;
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_SHARED_TOMCATS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SHARED_TOMCATS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

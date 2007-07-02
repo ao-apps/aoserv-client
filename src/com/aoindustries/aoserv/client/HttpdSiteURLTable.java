@@ -25,7 +25,7 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
     }
 
     int addHttpdSiteURL(HttpdSiteBind hsb, String hostname) {
-        return connector.requestIntQueryIL(AOServProtocol.ADD, SchemaTable.HTTPD_SITE_URLS, hsb.pkey, hostname);
+        return connector.requestIntQueryIL(AOServProtocol.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
     }
 
     public HttpdSiteURL get(Object pkey) {
@@ -63,8 +63,8 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_SITE_URLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SITE_URLS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

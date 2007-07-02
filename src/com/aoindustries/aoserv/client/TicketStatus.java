@@ -54,8 +54,8 @@ final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TICKET_STATI;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKET_STATI;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -64,7 +64,7 @@ final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
     }
 

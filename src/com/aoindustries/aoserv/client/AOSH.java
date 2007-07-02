@@ -194,7 +194,7 @@ final public class AOSH extends ShellInterpreter {
                             if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+lowerCommand+"', table='"+table.getTableName()+'\'');
                         }
                         /*
-                        for(int c=0;c<SchemaTable.NUM_TABLES;c++) {
+                        for(int c=0;c<SchemaTable.TableID.values().length;c++) {
                             AOServTable table=connector.getTable(c);
                             if(table.handleCommand(args, in, out, err, isInteractive())) {
                                 done=true;
@@ -222,7 +222,7 @@ final public class AOSH extends ShellInterpreter {
                 SchemaTableTable schemaTableTable=connector.schemaTables;
                 // Find the table ID
                 int tableID=-1;
-                for(int d=0;d<SchemaTable.NUM_TABLES;d++) {
+                for(int d=0;d<SchemaTable.TableID.values().length;d++) {
                     if(schemaTableTable.get(d).getName().equalsIgnoreCase(tableName)) {
                         tableID=d;
                         break;

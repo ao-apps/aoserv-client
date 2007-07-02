@@ -33,7 +33,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         try {
             int pkey=connector.requestIntQueryIL(
                 AOServProtocol.ADD,
-                SchemaTable.LINUX_SERVER_ACCOUNTS,
+                SchemaTable.TableID.LINUX_SERVER_ACCOUNTS,
                 linuxAccount.pkey,
                 aoServer.pkey,
                 home
@@ -275,8 +275,8 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         }
     }
 
-    int getTableID() {
-        return SchemaTable.LINUX_SERVER_ACCOUNTS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_SERVER_ACCOUNTS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

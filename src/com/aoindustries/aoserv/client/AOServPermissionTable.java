@@ -25,7 +25,11 @@ final public class AOServPermissionTable extends GlobalTableStringKey<AOServPerm
         return getUniqueRow(AOServPermission.COLUMN_NAME, name);
     }
 
-    int getTableID() {
-        return SchemaTable.AOSERV_PERMISSIONS;
+    public AOServPermission get(AOServPermission.Permission permission) {
+        return getUniqueRow(AOServPermission.COLUMN_NAME, permission.name());
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.AOSERV_PERMISSIONS;
     }
 }

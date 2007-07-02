@@ -33,7 +33,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.EMAIL_SMTP_RELAYS);
+                out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
                 out.writeUTF(pack.name);
                 out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);
                 out.writeUTF(host);
@@ -107,8 +107,8 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.EMAIL_SMTP_RELAYS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_SMTP_RELAYS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

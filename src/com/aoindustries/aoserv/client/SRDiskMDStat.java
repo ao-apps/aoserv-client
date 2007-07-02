@@ -124,8 +124,8 @@ final public class SRDiskMDStat extends ServerReportSection<SRDiskMDStat> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_DISK_MDSTAT;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DISK_MDSTAT;
     }
 
     int hashCodeImpl() {

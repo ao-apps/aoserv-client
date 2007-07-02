@@ -58,8 +58,8 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 	return install_dir;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_TOMCAT_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_VERSIONS;
     }
 
     public TechnologyVersion getTechnologyVersion(AOServConnector connector) {

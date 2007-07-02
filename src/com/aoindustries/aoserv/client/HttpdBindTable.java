@@ -34,7 +34,7 @@ final public class HttpdBindTable extends CachedTableIntegerKey<HttpdBind> {
 	return getUniqueRow(HttpdBind.COLUMN_NET_BIND, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_BINDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_BINDS;
     }
 }

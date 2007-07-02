@@ -35,8 +35,8 @@ final public class InterBaseBackupTable extends CachedTableIntegerKey<InterBaseB
         return getIndexedRows(InterBaseBackup.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.INTERBASE_BACKUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_BACKUPS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

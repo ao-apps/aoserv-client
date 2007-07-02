@@ -26,7 +26,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
     void addMySQLUser(String username) {
         connector.requestUpdateIL(
             AOServProtocol.ADD,
-            SchemaTable.MYSQL_USERS,
+            SchemaTable.TableID.MYSQL_USERS,
             username
         );
     }
@@ -47,8 +47,8 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         return matches;
     }
 
-    int getTableID() {
-        return SchemaTable.MYSQL_USERS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.MYSQL_USERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -73,8 +73,8 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_PASSWORD, args, 2, err)) {
                 PasswordChecker.Result[] results=SimpleAOClient.checkMySQLPassword(args[1], args[2]);
-                if(PasswordChecker.hasResults(results)) {
-                    PasswordChecker.printResults(results, out, Locale.getDefault());
+                if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                    PasswordChecker.printResults(results, out);
                     out.flush();
                 }
             }
@@ -127,7 +127,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
             AOServProtocol.WAIT_FOR_REBUILD,
-            SchemaTable.MYSQL_USERS,
+            SchemaTable.TableID.MYSQL_USERS,
             aoServer.pkey
         );
     }

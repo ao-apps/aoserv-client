@@ -157,8 +157,8 @@ final public class SRDbMySQL extends ServerReportSection<SRDbMySQL> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_DB_MYSQL;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DB_MYSQL;
     }
 
     int hashCodeImpl() {

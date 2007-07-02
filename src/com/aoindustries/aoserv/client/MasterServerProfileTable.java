@@ -31,12 +31,12 @@ final public class MasterServerProfileTable extends AOServTable<String,MasterSer
 
     public List<MasterServerProfile> getRows() {
         List<MasterServerProfile> list=new ArrayList<MasterServerProfile>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.MASTER_SERVER_PROFILE);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.MASTER_SERVER_PROFILE);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.MASTER_SERVER_PROFILE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_SERVER_PROFILE;
     }
 
     protected MasterServerProfile getUniqueRowImpl(int col, Object value) {

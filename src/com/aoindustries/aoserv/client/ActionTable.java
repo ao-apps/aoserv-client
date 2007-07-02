@@ -30,7 +30,7 @@ final public class ActionTable extends AOServTable<Integer,Action> {
     }
 
     public Action get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.ACTIONS, pkey);
+        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.ACTIONS, pkey);
     }
 
     List<Action> getActions(Ticket ticket) {
@@ -52,21 +52,21 @@ final public class ActionTable extends AOServTable<Integer,Action> {
     }
 
     public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.ACTIONS);
+        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.ACTIONS);
     }
 
     public int size() {
-        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.ACTIONS);
+        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.ACTIONS);
     }
 
     public List<Action> getRows() {
         List<Action> list=new ArrayList<Action>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.ACTIONS);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.ACTIONS);
         return list;
     }
 
-    int getTableID() {
-        return SchemaTable.ACTIONS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.ACTIONS;
     }
 
     protected Action getUniqueRowImpl(int col, Object value) {

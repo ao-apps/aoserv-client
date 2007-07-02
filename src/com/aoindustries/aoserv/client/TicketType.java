@@ -70,8 +70,8 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
 	return description;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TICKET_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKET_TYPES;
     }
 
     public String getType() {
@@ -89,7 +89,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
 	client_view=in.readBoolean();
     }

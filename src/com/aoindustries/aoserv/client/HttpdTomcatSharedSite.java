@@ -72,8 +72,8 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_TOMCAT_SHARED_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES;
     }
 
     void initImpl(ResultSet result) throws SQLException {

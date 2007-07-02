@@ -54,8 +54,8 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
         return enabled;
     }
     
-    protected int getTableIDImpl() {
-	return SchemaTable.FAILOVER_FILE_SCHEDULE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_FILE_SCHEDULE;
     }
 
     void initImpl(ResultSet result) throws SQLException {

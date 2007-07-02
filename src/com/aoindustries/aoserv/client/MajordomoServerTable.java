@@ -34,7 +34,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         try {
             connector.requestUpdateIL(
                 AOServProtocol.ADD,
-                SchemaTable.MAJORDOMO_SERVERS,
+                SchemaTable.TableID.MAJORDOMO_SERVERS,
                 emailDomain.pkey,
                 linuxServerAccount.pkey,
                 linuxServerGroup.pkey,
@@ -70,8 +70,8 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         }
     }
 
-    int getTableID() {
-        return SchemaTable.MAJORDOMO_SERVERS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.MAJORDOMO_SERVERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

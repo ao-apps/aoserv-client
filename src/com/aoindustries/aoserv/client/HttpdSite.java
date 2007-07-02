@@ -139,11 +139,11 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.HTTPD_SITES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.HTTPD_SITES, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.HTTPD_SITES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
     public BackupLevel getConfigBackupLevel() {
@@ -358,8 +358,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         return site_name;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.HTTPD_SITES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.HTTPD_SITES;
     }
 
     //public void initializePasswdFile(String username, String password) {
@@ -444,9 +444,9 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         ao_server=in.readCompressedInt();
         site_name=in.readUTF();
         list_first=in.readBoolean();
-        packageName=in.readUTF();
-        linuxAccount=in.readUTF();
-        linuxGroup=in.readUTF();
+        packageName=in.readUTF().intern();
+        linuxAccount=in.readUTF().intern();
+        linuxGroup=in.readUTF().intern();
         serverAdmin=in.readUTF();
         contentSrc=in.readNullUTF();
         config_backup_level=in.readShort();
@@ -463,13 +463,13 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.HTTPD_SITES, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
     public void setConfigBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setConfigBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.HTTPD_SITES, pkey, COLUMN_CONFIG_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SITES, pkey, COLUMN_CONFIG_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -478,7 +478,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     public void setFileBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setFileBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.HTTPD_SITES, pkey, COLUMN_FILE_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SITES, pkey, COLUMN_FILE_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -487,7 +487,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     public void setFtpBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setFtpBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.HTTPD_SITES, pkey, COLUMN_FTP_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SITES, pkey, COLUMN_FTP_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -505,7 +505,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     public void setLogBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setLogBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.HTTPD_SITES, pkey, COLUMN_LOG_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SITES, pkey, COLUMN_LOG_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

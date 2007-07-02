@@ -64,8 +64,8 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.PAYMENT_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PAYMENT_TYPES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -80,7 +80,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
 	isActive=in.readBoolean();
 	allowWeb=in.readBoolean();

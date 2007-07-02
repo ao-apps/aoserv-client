@@ -25,7 +25,7 @@ final public class SRSwapRateTable extends ServerReportSectionTable<SRSwapRate> 
 	return getUniqueRow(SRSwapRate.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_SWAP_RATE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_SWAP_RATE;
     }
 }

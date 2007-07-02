@@ -884,8 +884,8 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         }
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.SCHEMA_TYPES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.SCHEMA_TYPES;
     }
 
     public String getType() {
@@ -979,7 +979,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, SchemaType.class, "read(CompressedDataInputStream)", null);
         try {
-            type=in.readUTF();
+            type=in.readUTF().intern();
             pkey=in.readCompressedInt();
         } finally {
             Profiler.endProfile(Profiler.IO);

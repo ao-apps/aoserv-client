@@ -266,8 +266,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MYSQL_DATABASES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_DATABASES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -283,7 +283,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	pkey=in.readCompressedInt();
 	name=in.readUTF();
 	mysql_server=in.readCompressedInt();
-	packageName=in.readUTF();
+	packageName=in.readUTF().intern();
         backup_level=in.readShort();
         backup_retention=in.readShort();
     }
@@ -298,13 +298,13 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.MYSQL_DATABASES,
+            SchemaTable.TableID.MYSQL_DATABASES,
             pkey
 	);
     }
 
     public void setBackupRetention(short days) {
-        table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.MYSQL_DATABASES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.MYSQL_DATABASES, pkey);
     }
 
     String toStringImpl() {

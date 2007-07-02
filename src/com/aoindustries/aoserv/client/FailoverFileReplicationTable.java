@@ -44,7 +44,7 @@ final public class FailoverFileReplicationTable extends CachedTableIntegerKey<Fa
 	return getUniqueRow(FailoverFileReplication.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.FAILOVER_FILE_REPLICATIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_FILE_REPLICATIONS;
     }
 }

@@ -45,8 +45,8 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MASTER_HOSTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_HOSTS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -57,8 +57,8 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	username=in.readUTF();
-	host=in.readUTF();
+	username=in.readUTF().intern();
+	host=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

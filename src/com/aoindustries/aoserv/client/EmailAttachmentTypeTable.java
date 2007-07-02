@@ -28,7 +28,7 @@ public final class EmailAttachmentTypeTable extends GlobalTableStringKey<EmailAt
 	return getUniqueRow(EmailAttachmentType.COLUMN_EXTENSION, pkey);
     }
 
-    int getTableID() {
-        return SchemaTable.EMAIL_ATTACHMENT_TYPES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.EMAIL_ATTACHMENT_TYPES;
     }
 }

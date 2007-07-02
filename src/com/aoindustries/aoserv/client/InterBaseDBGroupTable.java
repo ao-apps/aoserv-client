@@ -31,7 +31,7 @@ final public class InterBaseDBGroupTable extends CachedTableIntegerKey<InterBase
     public int addInterBaseDBGroup(String name, LinuxServerGroup lsg) {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.INTERBASE_DB_GROUPS,
+            SchemaTable.TableID.INTERBASE_DB_GROUPS,
             name,
             lsg.pkey
 	);
@@ -82,8 +82,8 @@ final public class InterBaseDBGroupTable extends CachedTableIntegerKey<InterBase
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.INTERBASE_DB_GROUPS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_DB_GROUPS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

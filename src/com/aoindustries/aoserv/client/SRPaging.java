@@ -67,8 +67,8 @@ final public class SRPaging extends ServerReportSection<SRPaging> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_PAGING;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_PAGING;
     }
 
     int hashCodeImpl() {

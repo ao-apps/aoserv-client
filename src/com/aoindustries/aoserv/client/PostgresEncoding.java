@@ -95,8 +95,8 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
         return pv;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.POSTGRES_ENCODINGS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_ENCODINGS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -107,7 +107,7 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	encoding=in.readUTF();
+	encoding=in.readUTF().intern();
         postgres_version=in.readCompressedInt();
     }
 

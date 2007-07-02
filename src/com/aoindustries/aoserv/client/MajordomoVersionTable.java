@@ -26,7 +26,7 @@ final public class MajordomoVersionTable extends GlobalTableStringKey<MajordomoV
 	return getUniqueRow(MajordomoVersion.COLUMN_VERSION, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MAJORDOMO_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MAJORDOMO_VERSIONS;
     }
 }

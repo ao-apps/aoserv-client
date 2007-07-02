@@ -150,11 +150,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.PACKAGES, dl.pkey, name);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.PACKAGES, dl.pkey, name);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.PACKAGES, name);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.PACKAGES, name);
     }
 
     public List<BackupReport> getBackupReports() {
@@ -361,8 +361,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return table.connector.sendmailSmtpStats.getSendmailSmtpStats(this);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.PACKAGES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PACKAGES;
     }
 
     public List<Username> getUsernames() {
@@ -404,11 +404,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	name=in.readUTF();
-	accounting=in.readUTF();
+	name=in.readUTF().intern();
+	accounting=in.readUTF().intern();
         package_definition=in.readCompressedInt();
 	created=in.readLong();
-	created_by=in.readUTF();
+	created_by=in.readUTF().intern();
         daily_smtp_in_limit=in.readCompressedInt();
         daily_smtp_in_bandwidth_limit=in.readLong();
         daily_smtp_out_limit=in.readCompressedInt();

@@ -26,7 +26,7 @@ final public class NoticeTypeTable extends GlobalTableStringKey<NoticeType> {
 	return getUniqueRow(NoticeType.COLUMN_TYPE, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.NOTICE_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NOTICE_TYPES;
     }
 }

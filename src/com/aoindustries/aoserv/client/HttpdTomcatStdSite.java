@@ -57,8 +57,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
         return nb;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_TOMCAT_STD_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_STD_SITES;
     }
 
     void initImpl(ResultSet result) throws SQLException {

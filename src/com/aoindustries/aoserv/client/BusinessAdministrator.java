@@ -127,7 +127,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         if(getDisableLog()!=null || other.getDisableLog()!=null) return false;
         Business business=getUsername().getPackage().getBusiness();
         Business otherBusiness=other.getUsername().getPackage().getBusiness();
-        return !business.equals(otherBusiness) && business.isBusinessOrParent(otherBusiness);
+        return !business.equals(otherBusiness) && business.isBusinessOrParentOf(otherBusiness);
     }
 
     public boolean canEnable() {
@@ -136,16 +136,16 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         else return dl.canEnable();
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) {
-	return checkPassword(pkey, password);
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+	return checkPassword(userLocale, pkey, password);
     }
 
     /**
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public static PasswordChecker.Result[] checkPassword(String username, String password) {
-	return PasswordChecker.checkPassword(username, password, true, false);
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) {
+	return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
 
     /**
@@ -174,11 +174,11 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.BUSINESS_ADMINISTRATORS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
     }
 
     public List<Action> getActions() {
@@ -297,8 +297,8 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return state;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BUSINESS_ADMINISTRATORS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_ADMINISTRATORS;
     }
 
     public List<Ticket> getTickets() {
@@ -325,32 +325,6 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
     public String getZIP() {
 	return zip;
-    }
-
-    void initImpl(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	password = result.getString(2).trim();
-        name = result.getString(3);
-	title = result.getString(4);
-	String S=result.getString(5);
-	birthday = S==null?-1:SQLUtility.getDate(S.substring(0,10)).getTime();
-	isPreferred = result.getBoolean(6);
-	isPrivate = result.getBoolean(7);
-	created = result.getTimestamp(8).getTime();
-	work_phone = result.getString(9);
-	home_phone = result.getString(10);
-	cell_phone = result.getString(11);
-	fax = result.getString(12);
-	email = result.getString(13);
-	address1 = result.getString(14);
-	address2 = result.getString(15);
-	city = result.getString(16);
-	state = result.getString(17);
-	country = result.getString(18);
-	zip = result.getString(19);
-        disable_log=result.getInt(20);
-        if(result.wasNull()) disable_log=-1;
-        can_switch_users=result.getBoolean(21);
     }
 
     public boolean isActiveAccounting() {
@@ -424,8 +398,34 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return false;
     }
 
+    void initImpl(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	password = result.getString(2).trim();
+        name = result.getString(3);
+	title = result.getString(4);
+	String S=result.getString(5);
+	birthday = S==null?-1:SQLUtility.getDate(S.substring(0,10)).getTime();
+	isPreferred = result.getBoolean(6);
+	isPrivate = result.getBoolean(7);
+	created = result.getTimestamp(8).getTime();
+	work_phone = result.getString(9);
+	home_phone = result.getString(10);
+	cell_phone = result.getString(11);
+	fax = result.getString(12);
+	email = result.getString(13);
+	address1 = result.getString(14);
+	address2 = result.getString(15);
+	city = result.getString(16);
+	state = result.getString(17);
+	country = result.getString(18);
+	zip = result.getString(19);
+        disable_log=result.getInt(20);
+        if(result.wasNull()) disable_log=-1;
+        can_switch_users=result.getBoolean(21);
+    }
+
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	password=in.readUTF();
 	name=in.readUTF();
 	title=in.readNullUTF();
@@ -441,8 +441,8 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	address1=in.readNullUTF();
 	address2=in.readNullUTF();
 	city=in.readNullUTF();
-	state=in.readNullUTF();
-	country=in.readNullUTF();
+	state=StringUtility.intern(in.readNullUTF());
+	country=StringUtility.intern(in.readNullUTF());
 	zip=in.readNullUTF();
         disable_log=in.readCompressedInt();
         can_switch_users=in.readBoolean();
@@ -473,7 +473,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.BUSINESS_ADMINISTRATORS,
+            SchemaTable.TableID.BUSINESS_ADMINISTRATORS,
             pkey
 	);
     }
@@ -616,14 +616,21 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
     
     /**
-     * Checks if if this business administrator has the provided permission.
+     * Checks if this business administrator has the provided permission.
      */
     public boolean hasPermission(AOServPermission permission) {
         return hasPermission(permission.getName());
     }
 
     /**
-     * Checks if if this business administrator has the provided permission.
+     * Checks if this business administrator has the provided permission.
+     */
+    public boolean hasPermission(AOServPermission.Permission permission) {
+        return hasPermission(permission.name());
+    }
+
+    /**
+     * Checks if this business administrator has the provided permission.
      */
     public boolean hasPermission(String permission) {
         return table.connector.businessAdministratorPermissions.hasPermission(this, permission);

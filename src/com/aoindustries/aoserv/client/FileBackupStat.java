@@ -124,8 +124,8 @@ final public class FileBackupStat extends CachedObjectIntegerKey<FileBackupStat>
         return is_successful;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.FILE_BACKUP_STATS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FILE_BACKUP_STATS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

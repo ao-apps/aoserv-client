@@ -80,7 +80,7 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
         return results;
     }
 
-    int getTableID() {
-	return SchemaTable.COUNTRY_CODES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.COUNTRY_CODES;
     }
 }

@@ -155,8 +155,8 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MASTER_HISTORY;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_HISTORY;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -167,10 +167,10 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         command_id=in.readLong();
         process_id=in.readLong();
         connector_id=in.readLong();
-        authenticated_user=in.readUTF();
-        effective_user=in.readUTF();
-        host=in.readUTF();
-        protocol=in.readUTF();
+        authenticated_user=in.readUTF().intern();
+        effective_user=in.readUTF().intern();
+        host=in.readUTF().intern();
+        protocol=in.readUTF().intern();
         is_secure=in.readBoolean();
         start_time=in.readLong();
         end_time=in.readLong();

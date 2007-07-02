@@ -62,8 +62,8 @@ public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKe
         return sort_order;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
     }
 
     void initImpl(ResultSet results) throws SQLException {
@@ -80,7 +80,7 @@ public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKe
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, EmailSpamAssassinIntegrationMode.class, "read(CompressedDataInputStream)", null);
         try {
-            pkey=in.readUTF();
+            pkey=in.readUTF().intern();
             display=in.readUTF();
             sort_order=in.readCompressedInt();
         } finally {

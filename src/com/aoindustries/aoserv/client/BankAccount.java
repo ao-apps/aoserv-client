@@ -57,8 +57,8 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BANK_ACCOUNTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANK_ACCOUNTS;
     }
 
     public int getWithdrawalDelay() {

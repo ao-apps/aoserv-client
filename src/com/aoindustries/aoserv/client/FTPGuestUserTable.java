@@ -26,7 +26,7 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
     void addFTPGuestUser(String username) {
 	connector.requestUpdateIL(
             AOServProtocol.ADD,
-            SchemaTable.FTP_GUEST_USERS,
+            SchemaTable.TableID.FTP_GUEST_USERS,
             username
 	);
     }
@@ -46,8 +46,8 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
 	return getUniqueRow(FTPGuestUser.COLUMN_USERNAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.FTP_GUEST_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FTP_GUEST_USERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

@@ -88,8 +88,8 @@ final public class SRSwapSize extends ServerReportSection<SRSwapSize> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_SWAP_SIZE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_SWAP_SIZE;
     }
 
     int hashCodeImpl() {

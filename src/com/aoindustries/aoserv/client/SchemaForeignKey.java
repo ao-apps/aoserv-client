@@ -75,8 +75,8 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
         }
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.SCHEMA_FOREIGN_KEYS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.SCHEMA_FOREIGN_KEYS;
     }
 
     public SchemaForeignKey getTiedBridge(AOServConnector connector) {
@@ -127,8 +127,8 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
             foreign_column = in.readCompressedInt();
             is_bridge = in.readBoolean();
             tied_bridge = in.readCompressedInt();
-            since_version=in.readUTF();
-            last_version=in.readNullUTF();
+            since_version=in.readUTF().intern();
+            last_version=StringUtility.intern(in.readNullUTF());
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

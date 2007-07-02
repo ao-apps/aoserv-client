@@ -33,7 +33,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
         if(!version.name.equals(TechnologyName.MYSQL)) throw new WrappedException(new SQLException("TechnologyVersion must have name of "+TechnologyName.MYSQL+": "+version.name));
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.MYSQL_SERVERS,
+            SchemaTable.TableID.MYSQL_SERVERS,
             name,
             aoServer.pkey,
             version.pkey,
@@ -72,8 +72,8 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
         return getIndexedRows(MySQLServer.COLUMN_PACKAGE, pk.name);
     }
 
-    int getTableID() {
-	return SchemaTable.MYSQL_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_SERVERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -148,7 +148,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
             AOServProtocol.WAIT_FOR_REBUILD,
-            SchemaTable.MYSQL_SERVERS,
+            SchemaTable.TableID.MYSQL_SERVERS,
             aoServer.pkey
         );
     }

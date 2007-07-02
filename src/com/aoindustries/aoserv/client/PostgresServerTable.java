@@ -34,7 +34,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
     ) {
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.POSTGRES_SERVERS,
+            SchemaTable.TableID.POSTGRES_SERVERS,
             name,
             aoServer.pkey,
             version.pkey,
@@ -72,8 +72,8 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 	return null;
     }
 
-    int getTableID() {
-	return SchemaTable.POSTGRES_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_SERVERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -148,7 +148,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
             AOServProtocol.WAIT_FOR_REBUILD,
-            SchemaTable.POSTGRES_SERVERS,
+            SchemaTable.TableID.POSTGRES_SERVERS,
             aoServer.pkey
         );
     }

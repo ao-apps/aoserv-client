@@ -49,7 +49,7 @@ final public class FileBackupStatTable extends CachedTableIntegerKey<FileBackupS
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.FILE_BACKUP_STATS);
+                out.writeCompressedInt(SchemaTable.TableID.FILE_BACKUP_STATS.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.writeLong(startTime);
                 out.writeLong(endTime);
@@ -103,7 +103,7 @@ final public class FileBackupStatTable extends CachedTableIntegerKey<FileBackupS
         return getIndexedRows(FileBackupStat.COLUMN_SERVER, se.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.FILE_BACKUP_STATS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FILE_BACKUP_STATS;
     }
 }

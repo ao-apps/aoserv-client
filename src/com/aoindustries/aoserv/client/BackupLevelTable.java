@@ -30,7 +30,7 @@ final public class BackupLevelTable extends GlobalTable<Short,BackupLevel> {
 	return getUniqueRow(BackupLevel.COLUMN_LEVEL, level);
     }
 
-    int getTableID() {
-	return SchemaTable.BACKUP_LEVELS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_LEVELS;
     }
 }

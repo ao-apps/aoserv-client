@@ -47,8 +47,8 @@ final public class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.DISTRO_FILE_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DISTRO_FILE_TYPES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -57,7 +57,7 @@ final public class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	description=in.readUTF();
     }
 

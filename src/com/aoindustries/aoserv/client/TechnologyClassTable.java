@@ -19,8 +19,8 @@ final public class TechnologyClassTable extends GlobalTableStringKey<TechnologyC
 	super(connector, TechnologyClass.class);
     }
 
-    int getTableID() {
-	return SchemaTable.TECHNOLOGY_CLASSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGY_CLASSES;
     }
 
     public TechnologyClass get(Object pkey) {

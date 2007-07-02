@@ -71,8 +71,8 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
         }
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MASTER_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_USERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -103,7 +103,7 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	is_active=in.readBoolean();
 	can_access_accounting=in.readBoolean();
 	can_access_bank_account=in.readBoolean();

@@ -34,7 +34,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
     ) {
 	connector.requestUpdateIL(
             AOServProtocol.ADD,
-            SchemaTable.NOTICE_LOG,
+            SchemaTable.TableID.NOTICE_LOG,
             accounting,
             billingContact,
             emailAddress,
@@ -56,8 +56,8 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
         return getIndexedRows(NoticeLog.COLUMN_ACCOUNTING, bu.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.NOTICE_LOG;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NOTICE_LOG;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

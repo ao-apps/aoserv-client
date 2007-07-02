@@ -52,8 +52,8 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 	return obj;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.HTTPD_BINDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_BINDS;
     }
 
     void initImpl(ResultSet result) throws SQLException {

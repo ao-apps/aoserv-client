@@ -105,8 +105,8 @@ final public class SRNetUDP extends ServerReportSection<SRNetUDP> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_NET_UDP;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_NET_UDP;
     }
 
     int hashCodeImpl() {

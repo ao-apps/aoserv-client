@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * Classes that are <code>PasswordProtected</code> provide mechanisms for
@@ -33,7 +34,7 @@ public interface PasswordProtected {
      */
     int ALL=2;
 
-    PasswordChecker.Result[] checkPassword(String password);
+    PasswordChecker.Result[] checkPassword(Locale userLocale, String password);
     //String checkPasswordDescribe(String password);
     boolean canSetPassword();
     int arePasswordsSet();

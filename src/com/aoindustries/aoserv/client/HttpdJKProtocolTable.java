@@ -26,7 +26,7 @@ final public class HttpdJKProtocolTable extends GlobalTableStringKey<HttpdJKProt
 	return getUniqueRow(HttpdJKProtocol.COLUMN_PROTOCOL, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_JK_PROTOCOLS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JK_PROTOCOLS;
     }
 }

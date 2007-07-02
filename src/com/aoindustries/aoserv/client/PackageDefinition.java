@@ -178,8 +178,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return approved;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.PACKAGE_DEFINITIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PACKAGE_DEFINITIONS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -201,16 +201,16 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-        accounting=in.readUTF();
-        category=in.readUTF();
+        accounting=in.readUTF().intern();
+        category=in.readUTF().intern();
         name=in.readUTF();
         version=in.readUTF();
         display=in.readUTF();
         description=in.readUTF();
         setup_fee=in.readCompressedInt();
-        setup_fee_transaction_type=in.readNullUTF();
+        setup_fee_transaction_type=StringUtility.intern(in.readNullUTF());
         monthly_rate=in.readCompressedInt();
-        monthly_rate_transaction_type=in.readNullUTF();
+        monthly_rate_transaction_type=StringUtility.intern(in.readNullUTF());
         active=in.readBoolean();
         approved=in.readBoolean();
     }
@@ -245,7 +245,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.PACKAGE_DEFINITIONS,
+            SchemaTable.TableID.PACKAGE_DEFINITIONS,
             pkey
 	);
     }

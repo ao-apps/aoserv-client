@@ -30,7 +30,7 @@ final public class SRDiskAccessTable extends ServerReportSectionTable<SRDiskAcce
         return getIndexedRows(SRDiskAccess.COLUMN_SERVER_REPORT, sr.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_DISK_ACCESS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DISK_ACCESS;
     }
 }

@@ -106,8 +106,8 @@ final public class SRDiskSpace extends ServerReportSection<SRDiskSpace> {
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_DISK_SPACE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DISK_SPACE;
     }
 
     int hashCodeImpl() {

@@ -26,7 +26,7 @@ final public class MasterUserTable extends CachedTableStringKey<MasterUser> {
 	return getUniqueRow(MasterUser.COLUMN_USERNAME, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MASTER_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_USERS;
     }
 }

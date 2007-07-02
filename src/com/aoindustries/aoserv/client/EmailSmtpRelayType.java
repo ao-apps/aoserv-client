@@ -58,8 +58,8 @@ final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRel
         return qmail_config;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_SMTP_RELAY_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_SMTP_RELAY_TYPES;
     }
 
     public String getVerb() {
@@ -77,7 +77,7 @@ final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRel
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
         sendmail_config=in.readUTF();
         qmail_config=in.readUTF();
     }

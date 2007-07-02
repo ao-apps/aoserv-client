@@ -35,7 +35,7 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.DISABLE_LOG);
+                out.writeCompressedInt(SchemaTable.TableID.DISABLE_LOG.ordinal());
                 out.writeUTF(bu.pkey);
                 out.writeBoolean(disableReason!=null); if(disableReason!=null) out.writeUTF(disableReason);
                 out.flush();
@@ -72,7 +72,7 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 	return getUniqueRow(DisableLog.COLUMN_PKEY, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.DISABLE_LOG;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DISABLE_LOG;
     }
 }

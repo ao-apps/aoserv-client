@@ -166,8 +166,8 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return isDHCP;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.IP_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.IP_ADDRESSES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -236,11 +236,11 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-        ip_address=in.readUTF();
+        ip_address=in.readUTF().intern();
         net_device=in.readCompressedInt();
         is_alias=in.readBoolean();
         hostname=in.readUTF();
-        packageName=in.readUTF();
+        packageName=in.readUTF().intern();
         created=in.readLong();
         available=in.readBoolean();
         isOverflow=in.readBoolean();

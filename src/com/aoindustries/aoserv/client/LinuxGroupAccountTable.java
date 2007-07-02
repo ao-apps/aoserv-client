@@ -42,7 +42,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         try {
             int pkey=connector.requestIntQueryIL(
                 AOServProtocol.ADD,
-                SchemaTable.LINUX_GROUP_ACCOUNTS,
+                SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
                 groupNameObject.pkey,
                 usernameObject.pkey
             );
@@ -127,8 +127,8 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         }
     }
 
-    int getTableID() {
-        return SchemaTable.LINUX_GROUP_ACCOUNTS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_GROUP_ACCOUNTS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

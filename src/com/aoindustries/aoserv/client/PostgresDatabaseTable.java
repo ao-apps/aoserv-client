@@ -32,7 +32,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
     ) {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.POSTGRES_DATABASES,
+            SchemaTable.TableID.POSTGRES_DATABASES,
             name,
             postgresServer.pkey,
             datdba.pkey,
@@ -81,8 +81,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
         return getIndexedRows(PostgresDatabase.COLUMN_POSTGRES_SERVER, postgresServer.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.POSTGRES_DATABASES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_DATABASES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -223,7 +223,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
             AOServProtocol.WAIT_FOR_REBUILD,
-            SchemaTable.POSTGRES_DATABASES,
+            SchemaTable.TableID.POSTGRES_DATABASES,
             aoServer.pkey
         );
     }

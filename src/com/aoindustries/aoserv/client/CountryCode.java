@@ -12,9 +12,10 @@ import java.sql.*;
 
 /**
  * A <code>CountryCode</code> is a simple wrapper for country
- * code and name mappings.
+ * code and name mappings.  Each code is a two-digit ISO 3166-1 alpha-2 country
+ * code.
  *
- * @version  1.0a
+ * See <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2</a>
  *
  * @author  AO Industries, Inc.
  */
@@ -58,8 +59,8 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 	return charge_com_name==null?name:charge_com_name;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.COUNTRY_CODES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.COUNTRY_CODES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -70,10 +71,10 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	name=in.readUTF();
         charge_com_supported = in.readBoolean();
-        charge_com_name = in.readBoolean()?in.readUTF():null;
+        charge_com_name = in.readNullUTF();
     }
 
     String toStringImpl() {

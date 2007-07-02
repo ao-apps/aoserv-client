@@ -116,8 +116,8 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
         return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BANK_TRANSACTIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANK_TRANSACTIONS;
     }
 
     public long getTime() {
@@ -153,11 +153,11 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
     public void read(CompressedDataInputStream in) throws IOException {
 	time=in.readLong();
 	transID=in.readCompressedInt();
-	bankAccount=in.readUTF();
-	merchantAccount=in.readBoolean()?in.readUTF():null;
-	administrator=in.readUTF();
-	type=in.readUTF();
-	expenseCode=in.readBoolean()?in.readUTF():null;
+	bankAccount=in.readUTF().intern();
+	merchantAccount=StringUtility.intern(in.readNullUTF());
+	administrator=in.readUTF().intern();
+	type=in.readUTF().intern();
+	expenseCode=StringUtility.intern(in.readNullUTF());
 	description=in.readUTF();
 	checkNo=in.readNullUTF();
 	amount=in.readCompressedInt();

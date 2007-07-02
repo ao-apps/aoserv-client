@@ -26,7 +26,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
     int addEmailListAddress(EmailAddress emailAddressObject, EmailList emailListObject) {
 	return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.EMAIL_LIST_ADDRESSES,
+            SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
             emailAddressObject.pkey,
             emailListObject.pkey
 	);
@@ -102,8 +102,8 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.EMAIL_LIST_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_LIST_ADDRESSES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

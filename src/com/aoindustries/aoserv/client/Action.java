@@ -111,8 +111,8 @@ final public class Action extends AOServObject<Integer,Action> implements Single
         return table;
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.ACTIONS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.ACTIONS;
     }
 
     public Ticket getTicket() {
@@ -153,9 +153,9 @@ final public class Action extends AOServObject<Integer,Action> implements Single
         try {
             pkey=in.readCompressedInt();
             ticket_id=in.readCompressedInt();
-            administrator=in.readUTF();
+            administrator=in.readUTF().intern();
             time=in.readLong();
-            action_type=in.readUTF();
+            action_type=in.readUTF().intern();
             old_value=in.readNullUTF();
             comments=in.readUTF();
         } finally {

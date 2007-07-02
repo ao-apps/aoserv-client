@@ -22,17 +22,19 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
     /**
      * The columns for tables are cached for faster lookups.
      */
-    private static final List<List<SchemaColumn>> tableColumns=new ArrayList<List<SchemaColumn>>(SchemaTable.NUM_TABLES);
+    private static final List<List<SchemaColumn>> tableColumns=new ArrayList<List<SchemaColumn>>(SchemaTable.TableID.values().length);
     static {
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) tableColumns.add(null);
+        int numTables = SchemaTable.TableID.values().length;
+        for(int c=0;c<numTables;c++) tableColumns.add(null);
     }
 
     /**
      * The nameToColumns are cached for faster lookups.
      */
-    private static final List<Map<String,SchemaColumn>> nameToColumns=new ArrayList<Map<String,SchemaColumn>>(SchemaTable.NUM_TABLES);
+    private static final List<Map<String,SchemaColumn>> nameToColumns=new ArrayList<Map<String,SchemaColumn>>(SchemaTable.TableID.values().length);
     static {
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) nameToColumns.add(null);
+        int numTables = SchemaTable.TableID.values().length;
+        for(int c=0;c<numTables;c++) nameToColumns.add(null);
     }
 
     SchemaColumnTable(AOServConnector connector) {
@@ -111,15 +113,16 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
         }
     }
 
-    int getTableID() {
-        return SchemaTable.SCHEMA_COLUMNS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.SCHEMA_COLUMNS;
     }
 
     public void clearCache() {
         Profiler.startProfile(Profiler.UNKNOWN, SchemaColumnTable.class, "clearCache()", null);
         try {
             synchronized(this) {
-                for(int c=0;c<SchemaTable.NUM_TABLES;c++) {
+                int numTables = SchemaTable.TableID.values().length;
+                for(int c=0;c<numTables;c++) {
                     synchronized(tableColumns) {
                         tableColumns.set(c, null);
                     }

@@ -444,10 +444,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return table.connector.failoverFileReplications.getFailoverFileReplications(this);
     }
 
-    public AOServer getFailoverServer() {
+    public AOServer getFailoverServer() throws SQLException {
         if(failover_server==-1) return null;
         AOServer se=table.connector.aoServers.get(failover_server);
-        if(se==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+failover_server));
+        if(se==null) new SQLException("Unable to find AOServer: "+failover_server);
         return se;
     }
 
@@ -769,8 +769,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.systemEmailAliases.getSystemEmailAliases(this);
     }
     
-    protected int getTableIDImpl() {
-	return SchemaTable.AO_SERVERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.AO_SERVERS;
     }
 
     public String getXeroscapeName() {
@@ -783,46 +783,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     
     public String getWildcardHTTPS() {
 	return wildcard_https;
-    }
-
-    void initImpl(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-	num_cpu=result.getInt(2);
-	cpu_speed=result.getInt(3);
-	ram = result.getInt(4);
-	rack = result.getInt(5);
-        if(result.wasNull()) rack=-1;
-	disk = result.getInt(6);
-	wildcard_https = result.getString(7);
-        is_interbase=result.getBoolean(8);
-	is_dns=result.getBoolean(9);
-	is_router=result.getBoolean(10);
-	iptables_name=result.getString(11);
-	daemon_bind=result.getInt(12);
-	if(result.wasNull()) daemon_bind=-1;
-	daemon_key=result.getString(13);
-	pool_size=result.getInt(14);
-        distro_hour=result.getInt(15);
-        Timestamp T=result.getTimestamp(16);
-        last_distro_time=T==null?-1:T.getTime();
-        failover_server=result.getInt(17);
-        if(result.wasNull()) failover_server=-1;
-        server_report_delay=result.getInt(18);
-        server_report_interval=result.getInt(19);
-        is_qmail=result.getBoolean(20);
-        daemon_device_id=result.getString(21);
-        xeroscape_name=result.getString(22);
-        value=SQLUtility.getPennies(result.getString(23));
-        monitoring_enabled=result.getBoolean(24);
-        emailmon_password=result.getString(25);
-        ftpmon_password=result.getString(26);
-        daemon_connect_bind=result.getInt(27);
-        time_zone=result.getString(28);
-        jilter_bind=result.getInt(29);
-        if(result.wasNull()) jilter_bind=-1;
-        restrict_outbound_email=result.getBoolean(30);
-        daemon_connect_address=result.getString(31);
-        failover_batch_size=result.getInt(32);
     }
 
     public boolean isDNS() {
@@ -873,6 +833,46 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return is_router;
     }
 
+    void initImpl(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+	num_cpu=result.getInt(2);
+	cpu_speed=result.getInt(3);
+	ram = result.getInt(4);
+	rack = result.getInt(5);
+        if(result.wasNull()) rack=-1;
+	disk = result.getInt(6);
+	wildcard_https = result.getString(7);
+        is_interbase=result.getBoolean(8);
+	is_dns=result.getBoolean(9);
+	is_router=result.getBoolean(10);
+	iptables_name=result.getString(11);
+	daemon_bind=result.getInt(12);
+	if(result.wasNull()) daemon_bind=-1;
+	daemon_key=result.getString(13);
+	pool_size=result.getInt(14);
+        distro_hour=result.getInt(15);
+        Timestamp T=result.getTimestamp(16);
+        last_distro_time=T==null?-1:T.getTime();
+        failover_server=result.getInt(17);
+        if(result.wasNull()) failover_server=-1;
+        server_report_delay=result.getInt(18);
+        server_report_interval=result.getInt(19);
+        is_qmail=result.getBoolean(20);
+        daemon_device_id=result.getString(21);
+        xeroscape_name=result.getString(22);
+        value=SQLUtility.getPennies(result.getString(23));
+        monitoring_enabled=result.getBoolean(24);
+        emailmon_password=result.getString(25);
+        ftpmon_password=result.getString(26);
+        daemon_connect_bind=result.getInt(27);
+        time_zone=result.getString(28);
+        jilter_bind=result.getInt(29);
+        if(result.wasNull()) jilter_bind=-1;
+        restrict_outbound_email=result.getBoolean(30);
+        daemon_connect_address=result.getString(31);
+        failover_batch_size=result.getInt(32);
+    }
+
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
 	num_cpu=in.readCompressedInt();
@@ -894,17 +894,17 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         server_report_delay=in.readCompressedInt();
         server_report_interval=in.readCompressedInt();
         is_qmail=in.readBoolean();
-        daemon_device_id=in.readNullUTF();
+        daemon_device_id=StringUtility.intern(in.readNullUTF());
         xeroscape_name=in.readNullUTF();
         value=in.readCompressedInt();
         monitoring_enabled=in.readBoolean();
         emailmon_password=in.readNullUTF();
         ftpmon_password=in.readNullUTF();
         daemon_connect_bind=in.readCompressedInt();
-        time_zone=in.readUTF();
+        time_zone=in.readUTF().intern();
         jilter_bind=in.readCompressedInt();
         restrict_outbound_email=in.readBoolean();
-        daemon_connect_address=in.readNullUTF();
+        daemon_connect_address=StringUtility.intern(in.readNullUTF());
         failover_batch_size=in.readCompressedInt();
     }
 

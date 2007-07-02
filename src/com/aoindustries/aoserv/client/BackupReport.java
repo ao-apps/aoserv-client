@@ -114,8 +114,8 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
         return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BACKUP_REPORTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_REPORTS;
     }
 
     int hashCodeImpl() {

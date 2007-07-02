@@ -36,7 +36,7 @@ final public class TicketTypeTable extends GlobalTableStringKey<TicketType> {
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.TICKET_TYPES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKET_TYPES;
     }
 }

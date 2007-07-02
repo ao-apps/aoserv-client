@@ -19,8 +19,8 @@ final public class TicketStatusTable extends GlobalTableStringKey<TicketStatus> 
 	super(connector, TicketStatus.class);
     }
 
-    int getTableID() {
-	return SchemaTable.TICKET_STATI;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKET_STATI;
     }
 
     public TicketStatus get(Object pkey) {

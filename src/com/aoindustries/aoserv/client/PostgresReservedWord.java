@@ -28,8 +28,8 @@ final public class PostgresReservedWord extends GlobalObjectStringKey<PostgresRe
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.POSTGRES_RESERVED_WORDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_RESERVED_WORDS;
     }
 
     public String getWord() {

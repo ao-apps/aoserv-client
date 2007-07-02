@@ -30,7 +30,7 @@ public final class NetTcpRedirectTable extends CachedTableIntegerKey<NetTcpRedir
 	return getUniqueRow(NetTcpRedirect.COLUMN_NET_BIND, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.NET_TCP_REDIRECTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_TCP_REDIRECTS;
     }
 }

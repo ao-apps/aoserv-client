@@ -26,7 +26,7 @@ final public class DNSForbiddenZoneTable extends GlobalTableStringKey<DNSForbidd
 	return getUniqueRow(DNSForbiddenZone.COLUMN_ZONE, pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.DNS_FORBIDDEN_ZONES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DNS_FORBIDDEN_ZONES;
     }
 }

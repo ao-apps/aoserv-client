@@ -46,7 +46,7 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.HTTPD_TOMCAT_STD_SITES);
+                out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_STD_SITES.ordinal());
                 out.writeCompressedInt(aoServer.pkey);
                 out.writeUTF(siteName);
                 out.writeUTF(packageObj.name);
@@ -107,8 +107,8 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 	return null;
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_TOMCAT_STD_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_STD_SITES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

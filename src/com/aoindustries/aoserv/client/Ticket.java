@@ -257,8 +257,8 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TICKETS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKETS;
     }
 
     public TechnologyName getTechnology() {
@@ -310,7 +310,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	pkey=in.readCompressedInt();
 	accounting=in.readNullUTF();
 	created_by=in.readNullUTF();
-	ticket_type=in.readUTF();
+	ticket_type=in.readUTF().intern();
 
         // details workaround for readUTF 64k limit
         int len=in.readCompressedInt();
@@ -321,12 +321,12 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
         open_date=in.readLong();
 	deadline=in.readLong();
 	close_date=in.readLong();
-	closed_by=in.readNullUTF();
-	client_priority=in.readUTF();
-	admin_priority=in.readNullUTF();
-	technology=in.readNullUTF();
-	status=in.readUTF();
-        assigned_to = in.readNullUTF();
+	closed_by=StringUtility.intern(in.readNullUTF());
+	client_priority=in.readUTF().intern();
+	admin_priority=StringUtility.intern(in.readNullUTF());
+	technology=StringUtility.intern(in.readNullUTF());
+	status=in.readUTF().intern();
+        assigned_to = StringUtility.intern(in.readNullUTF());
         contact_emails = in.readUTF();
         contact_phone_numbers = in.readUTF();
     }

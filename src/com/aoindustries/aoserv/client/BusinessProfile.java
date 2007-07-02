@@ -122,8 +122,8 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	return state;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BUSINESS_PROFILES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_PROFILES;
     }
 
     public String getTechnicalContact() {
@@ -176,18 +176,18 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	accounting=in.readUTF();
+	accounting=in.readUTF().intern();
 	priority=in.readCompressedInt();
 	name=in.readUTF();
 	isPrivate=in.readBoolean();
 	phone=in.readUTF();
-	fax=in.readBoolean()?in.readUTF():null;
+	fax=in.readNullUTF();
 	address1=in.readUTF();
-	address2=in.readBoolean()?in.readUTF():null;
+	address2=in.readNullUTF();
 	city=in.readUTF();
-	state=in.readBoolean()?in.readUTF():null;
-	country=in.readUTF();
-	zip=in.readBoolean()?in.readUTF():null;
+	state=StringUtility.intern(in.readNullUTF());
+	country=in.readUTF().intern();
+	zip=in.readNullUTF();
 	sendInvoice=in.readBoolean();
 	created=in.readLong();
 	billingContact=in.readUTF();

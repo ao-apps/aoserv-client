@@ -20,8 +20,8 @@ final public class TechnologyTable extends GlobalTableIntegerKey<Technology> {
 	super(connector, Technology.class);
     }
 
-    int getTableID() {
-	return SchemaTable.TECHNOLOGIES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGIES;
     }
 
     public Technology get(Object pkey) {

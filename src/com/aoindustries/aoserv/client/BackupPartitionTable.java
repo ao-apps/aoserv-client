@@ -57,8 +57,8 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 	return null;
     }
 
-    int getTableID() {
-	return SchemaTable.BACKUP_PARTITIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_PARTITIONS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

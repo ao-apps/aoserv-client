@@ -47,7 +47,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.TRANSACTIONS);
+                out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
                 out.writeUTF(business.pkey);
                 out.writeUTF(sourceBusiness.pkey);
                 out.writeUTF(business_administrator.pkey);
@@ -126,12 +126,12 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 
     public List<Transaction> getRows() {
         List<Transaction> list=new ArrayList<Transaction>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TRANSACTIONS);
+        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.TRANSACTIONS);
         return list;
     }
 
-    int getTableID() {
-	return SchemaTable.TRANSACTIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TRANSACTIONS;
     }
 
     public Transaction get(Object transid) {
@@ -139,7 +139,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     }
 
     public Transaction get(int transid) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TRANSACTIONS, transid);
+        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.TRANSACTIONS, transid);
     }
 
     List<Transaction> getTransactions(TransactionSearchCriteria search) {

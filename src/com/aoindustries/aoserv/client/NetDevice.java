@@ -120,8 +120,8 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	return ao;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.NET_DEVICES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_DEVICES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -142,13 +142,13 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
 	ao_server=in.readCompressedInt();
-	device_id=in.readUTF();
+	device_id=in.readUTF().intern();
 	description=in.readUTF();
-	delete_route=in.readNullUTF();
-	gateway=in.readNullUTF();
-	netmask=in.readUTF();
-        network=in.readNullUTF();
-        broadcast=in.readNullUTF();
+	delete_route=StringUtility.intern(in.readNullUTF());
+	gateway=StringUtility.intern(in.readNullUTF());
+	netmask=in.readUTF().intern();
+        network=StringUtility.intern(in.readNullUTF());
+        broadcast=StringUtility.intern(in.readNullUTF());
         mac_address=in.readNullUTF();
         max_bit_rate=in.readLong();
     }

@@ -117,8 +117,8 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         return table.connector.linuxAccAddresses.getLinuxAccAddress(this, la);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.EMAIL_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_ADDRESSES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -223,7 +223,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.EMAIL_ADDRESSES,
+            SchemaTable.TableID.EMAIL_ADDRESSES,
             pkey
 	);
     }

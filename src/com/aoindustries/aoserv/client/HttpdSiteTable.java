@@ -93,8 +93,8 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_SITES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SITES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -233,7 +233,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
     void waitForRebuild(AOServer aoServer) {
 	connector.requestUpdate(
             AOServProtocol.WAIT_FOR_REBUILD,
-            SchemaTable.HTTPD_SITES,
+            SchemaTable.TableID.HTTPD_SITES,
             aoServer.pkey
         );
     }

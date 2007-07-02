@@ -65,8 +65,8 @@ final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> 
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.TECHNOLOGY_NAMES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGY_NAMES;
     }
 
     public List<Technology> getTechnologies(AOServConnector connector) {
@@ -89,7 +89,7 @@ final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> 
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	image_filename=in.readBoolean()?in.readUTF():null;
 	image_width=in.readCompressedInt();
 	image_height=in.readCompressedInt();

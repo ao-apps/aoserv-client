@@ -37,7 +37,7 @@ final public class InterBaseUserTable extends CachedTableStringKey<InterBaseUser
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.INTERBASE_USERS);
+                out.writeCompressedInt(SchemaTable.TableID.INTERBASE_USERS.ordinal());
                 out.writeUTF(username.pkey);
                 out.writeNullUTF(firstName);
                 out.writeNullUTF(middleName);
@@ -66,8 +66,8 @@ final public class InterBaseUserTable extends CachedTableStringKey<InterBaseUser
         }
     }
 
-    int getTableID() {
-        return SchemaTable.INTERBASE_USERS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.INTERBASE_USERS;
     }
 
     public InterBaseUser get(Object pkey) {
@@ -100,8 +100,8 @@ final public class InterBaseUserTable extends CachedTableStringKey<InterBaseUser
             if(AOSH.checkParamCount(AOSHCommand.CHECK_INTERBASE_PASSWORD, args, 2, err)) {
                 try {
                     PasswordChecker.Result[] results = SimpleAOClient.checkInterBasePassword(args[1], args[2]);
-                    if(PasswordChecker.hasResults(results)) {
-                        PasswordChecker.printResults(results, out, Locale.getDefault());
+                    if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                        PasswordChecker.printResults(results, out);
                         out.flush();
                     }
                 } catch(IOException err2) {
@@ -157,7 +157,7 @@ final public class InterBaseUserTable extends CachedTableStringKey<InterBaseUser
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
             AOServProtocol.WAIT_FOR_REBUILD,
-            SchemaTable.INTERBASE_USERS,
+            SchemaTable.TableID.INTERBASE_USERS,
             aoServer.pkey
         );
     }

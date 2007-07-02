@@ -43,8 +43,8 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 	return created;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MAJORDOMO_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MAJORDOMO_VERSIONS;
     }
 
     public String getVersion() {
@@ -57,7 +57,7 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	created=in.readLong();
     }
 

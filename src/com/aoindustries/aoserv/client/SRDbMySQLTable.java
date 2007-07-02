@@ -25,7 +25,7 @@ final public class SRDbMySQLTable extends ServerReportSectionTable<SRDbMySQL> {
 	return getUniqueRow(SRDbMySQL.COLUMN_SERVER_REPORT, serverReport);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_DB_MYSQL;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DB_MYSQL;
     }
 }

@@ -25,7 +25,7 @@ final public class FileBackupDeviceTable extends GlobalTable<Short,FileBackupDev
     }
 
     public short addFileBackupDevice(long device, boolean canBackup, String description) {
-        return connector.requestShortQueryIL(AOServProtocol.ADD, SchemaTable.FILE_BACKUP_DEVICES, device, canBackup, description);
+        return connector.requestShortQueryIL(AOServProtocol.ADD, SchemaTable.TableID.FILE_BACKUP_DEVICES, device, canBackup, description);
     }
 
     public FileBackupDevice get(Object pkey) {
@@ -42,8 +42,8 @@ final public class FileBackupDeviceTable extends GlobalTable<Short,FileBackupDev
         return getUniqueRow(FileBackupDevice.COLUMN_DEVICE, device);
     }
 
-    int getTableID() {
-        return SchemaTable.FILE_BACKUP_DEVICES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.FILE_BACKUP_DEVICES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

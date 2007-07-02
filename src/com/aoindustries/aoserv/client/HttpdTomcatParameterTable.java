@@ -33,7 +33,7 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
     ) {
         return connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.HTTPD_TOMCAT_PARAMETERS,
+            SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS,
             htc.pkey,
             name,
             value,
@@ -67,8 +67,8 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
         return null;
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_TOMCAT_PARAMETERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

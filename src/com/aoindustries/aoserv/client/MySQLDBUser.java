@@ -158,8 +158,8 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 	return table.connector.mysqlServerUsers.get(mysql_user);
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MYSQL_DB_USERS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_DB_USERS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -218,7 +218,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.MYSQL_DB_USERS,
+            SchemaTable.TableID.MYSQL_DB_USERS,
             pkey
 	);
     }

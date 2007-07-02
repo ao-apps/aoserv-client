@@ -180,8 +180,8 @@ final public class InterBaseDatabase extends CachedObjectIntegerKey<InterBaseDat
         return getInterBaseDBGroup().getPath()+'/'+name+DB_FILENAME_EXTENSION;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.INTERBASE_DATABASES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.INTERBASE_DATABASES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -209,7 +209,7 @@ final public class InterBaseDatabase extends CachedObjectIntegerKey<InterBaseDat
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.INTERBASE_DATABASES,
+            SchemaTable.TableID.INTERBASE_DATABASES,
             pkey
 	);
     }

@@ -47,8 +47,8 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
 	return pkey;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.NET_DEVICE_IDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_DEVICE_IDS;
     }
 
     void initImpl(ResultSet results) throws SQLException {
@@ -61,7 +61,7 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
+	pkey=in.readUTF().intern();
 	is_loopback=in.readBoolean();
     }
 

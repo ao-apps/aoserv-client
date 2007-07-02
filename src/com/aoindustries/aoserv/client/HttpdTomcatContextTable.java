@@ -48,7 +48,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.HTTPD_TOMCAT_CONTEXTS);
+                out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS.ordinal());
                 out.writeCompressedInt(hts.pkey);
                 out.writeNullUTF(className);
                 out.writeBoolean(cookies);
@@ -111,8 +111,8 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
         return getIndexedRows(HttpdTomcatContext.COLUMN_TOMCAT_SITE, hts.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_TOMCAT_CONTEXTS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

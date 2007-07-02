@@ -27,7 +27,7 @@ final public class ArchitectureTable extends GlobalTableStringKey<Architecture> 
         return getUniqueRow(Architecture.COLUMN_NAME, name);
     }
 
-    int getTableID() {
-        return SchemaTable.ARCHITECTURES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.ARCHITECTURES;
     }
 }

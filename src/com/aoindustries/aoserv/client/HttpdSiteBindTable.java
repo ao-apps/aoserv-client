@@ -49,8 +49,8 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_SITE_BINDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SITE_BINDS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

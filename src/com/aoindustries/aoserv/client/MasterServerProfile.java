@@ -120,8 +120,8 @@ final public class MasterServerProfile extends AOServObject<String,MasterServerP
 	return table;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.MASTER_SERVER_PROFILE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_SERVER_PROFILE;
     }
 
     public long getTotalTime() {

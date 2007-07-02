@@ -32,7 +32,7 @@ final public class SRDiskSpaceTable extends ServerReportSectionTable<SRDiskSpace
         return getIndexedRows(SRDiskSpace.COLUMN_SERVER_REPORT, sr.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.SR_DISK_SPACE;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DISK_SPACE;
     }
 }

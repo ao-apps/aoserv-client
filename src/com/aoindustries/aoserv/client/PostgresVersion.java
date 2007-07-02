@@ -77,8 +77,8 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
         return tv;
     }
     
-    protected int getTableIDImpl() {
-	return SchemaTable.POSTGRES_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_VERSIONS;
     }
 
     public List<PostgresEncoding> getPostgresEncodings(AOServConnector connector) {
@@ -104,7 +104,7 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-        minorVersion=in.readUTF();
+        minorVersion=in.readUTF().intern();
         postgisVersion=in.readCompressedInt();
     }
 

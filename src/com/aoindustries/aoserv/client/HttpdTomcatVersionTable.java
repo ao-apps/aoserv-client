@@ -40,7 +40,7 @@ final public class HttpdTomcatVersionTable extends GlobalTableIntegerKey<HttpdTo
 	);
     }
 
-    int getTableID() {
-	return SchemaTable.HTTPD_TOMCAT_VERSIONS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_TOMCAT_VERSIONS;
     }
 }

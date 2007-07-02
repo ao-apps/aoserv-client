@@ -43,7 +43,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.BUSINESSES);
+                out.writeCompressedInt(SchemaTable.TableID.BUSINESSES.ordinal());
                 out.writeUTF(accounting);
                 out.writeBoolean(contractNumber!=null);
                 if(contractNumber!=null) out.writeUTF(contractNumber);
@@ -119,8 +119,8 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
         return bu;
     }
 
-    int getTableID() {
-	return SchemaTable.BUSINESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESSES;
     }
 
     public List<Business> getTopLevelBusinesses() {

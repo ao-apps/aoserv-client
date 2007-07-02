@@ -138,8 +138,8 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         return table.connector.httpdWorkers.getHttpdWorkers(this);
     }
 
-    protected int getTableIDImpl() {
-        return SchemaTable.HTTPD_TOMCAT_SITES;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.HTTPD_TOMCAT_SITES;
     }
 
     void initImpl(ResultSet result) throws SQLException {

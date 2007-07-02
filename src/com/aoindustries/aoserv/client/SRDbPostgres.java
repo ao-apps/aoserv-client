@@ -49,8 +49,8 @@ final public class SRDbPostgres extends ServerReportSection<SRDbPostgres> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_DB_POSTGRES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_DB_POSTGRES;
     }
 
     int hashCodeImpl() {

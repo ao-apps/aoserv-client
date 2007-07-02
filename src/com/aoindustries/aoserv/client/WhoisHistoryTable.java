@@ -36,7 +36,7 @@ final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
         return getIndexedRows(WhoisHistory.COLUMN_ACCOUNTING, bu.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.WHOIS_HISTORY;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.WHOIS_HISTORY;
     }
 }

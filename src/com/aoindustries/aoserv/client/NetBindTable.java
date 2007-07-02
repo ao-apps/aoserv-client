@@ -42,7 +42,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.ADD);
-                out.writeCompressedInt(SchemaTable.NET_BINDS);
+                out.writeCompressedInt(SchemaTable.TableID.NET_BINDS.ordinal());
                 out.writeCompressedInt(ao.pkey);
                 out.writeUTF(pk.name);
                 out.writeCompressedInt(ia.pkey);
@@ -162,8 +162,8 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	return matches;
     }
 
-    int getTableID() {
-	return SchemaTable.NET_BINDS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_BINDS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {

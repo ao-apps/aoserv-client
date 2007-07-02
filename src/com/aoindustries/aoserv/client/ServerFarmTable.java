@@ -23,7 +23,7 @@ final public class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
 	return getUniqueRow(ServerFarm.COLUMN_NAME, name);
     }
 
-    int getTableID() {
-	return SchemaTable.SERVER_FARMS;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SERVER_FARMS;
     }
 }

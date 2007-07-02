@@ -30,7 +30,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
     ) {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.ADD,
-            SchemaTable.MYSQL_DATABASES,
+            SchemaTable.TableID.MYSQL_DATABASES,
             name,
             mysqlServer.pkey,
             packageObj.name
@@ -64,8 +64,8 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
         return getIndexedRows(MySQLDatabase.COLUMN_MYSQL_SERVER, ms.pkey);
     }
 
-    int getTableID() {
-	return SchemaTable.MYSQL_DATABASES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MYSQL_DATABASES;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -194,7 +194,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
             AOServProtocol.WAIT_FOR_REBUILD,
-            SchemaTable.MYSQL_DATABASES,
+            SchemaTable.TableID.MYSQL_DATABASES,
             aoServer.pkey
         );
     }

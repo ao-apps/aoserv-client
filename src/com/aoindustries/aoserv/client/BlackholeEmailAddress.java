@@ -39,8 +39,8 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
         return emailAddressObject;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.BLACKHOLE_EMAIL_ADDRESSES;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BLACKHOLE_EMAIL_ADDRESSES;
     }
 
     void initImpl(ResultSet result) throws SQLException {
@@ -58,7 +58,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
     public void remove() {
 	table.connector.requestUpdateIL(
             AOServProtocol.REMOVE,
-            SchemaTable.BLACKHOLE_EMAIL_ADDRESSES,
+            SchemaTable.TableID.BLACKHOLE_EMAIL_ADDRESSES,
             pkey
 	);
     }

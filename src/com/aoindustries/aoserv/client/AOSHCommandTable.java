@@ -62,8 +62,8 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
         return getAOSHCommands(null);
     }
 
-    int getTableID() {
-        return SchemaTable.AOSH_COMMANDS;
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.AOSH_COMMANDS;
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
@@ -74,7 +74,8 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
                 int argCount=args.length;
                 if(argCount==1) {
                     SchemaTableTable schemaTableTable=connector.schemaTables;
-                    for(int c=-1;c<SchemaTable.NUM_TABLES;c++) {
+                    int numTables = SchemaTable.TableID.values().length;
+                    for(int c=-1;c<numTables;c++) {
                         SchemaTable schemaTable=c==-1?null:schemaTableTable.get(c);
                         String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
                         List<AOSHCommand> commands=c==-1?getGlobalAOSHCommands():schemaTable.getAOSHCommands(connector);
@@ -88,7 +89,8 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
                 } else if(argCount==2) {
                     if(args[1].equals("syntax")) {
                         SchemaTableTable schemaTableTable=connector.schemaTables;
-                        for(int c=-1;c<SchemaTable.NUM_TABLES;c++) {
+                        int numTables = SchemaTable.TableID.values().length;
+                        for(int c=-1;c<numTables;c++) {
                             SchemaTable schemaTable=c==-1?null:schemaTableTable.get(c);
                             String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
                             List<AOSHCommand> commands=c==-1?getGlobalAOSHCommands():schemaTable.getAOSHCommands(connector);

@@ -283,8 +283,8 @@ final public class SRMemory extends ServerReportSection<SRMemory> {
 	return server_report;
     }
 
-    protected int getTableIDImpl() {
-	return SchemaTable.SR_MEMORY;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.SR_MEMORY;
     }
 
     int hashCodeImpl() {
