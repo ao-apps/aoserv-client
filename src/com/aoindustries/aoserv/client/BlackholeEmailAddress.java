@@ -57,7 +57,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
     
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.BLACKHOLE_EMAIL_ADDRESSES,
             pkey
 	);

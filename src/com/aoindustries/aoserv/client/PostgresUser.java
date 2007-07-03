@@ -105,11 +105,11 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     }*/
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.POSTGRES_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -178,7 +178,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 
     public void remove() {
         table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_USERS,
             pkey
         );

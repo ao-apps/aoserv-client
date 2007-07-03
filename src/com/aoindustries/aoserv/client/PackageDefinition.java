@@ -88,7 +88,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.SET_PACKAGE_DEFINITION_LIMITS);
+                out.writeCompressedInt(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS.ordinal());
                 out.writeCompressedInt(pkey);
                 out.writeCompressedInt(limits.length);
                 for(int c=0;c<limits.length;c++) {
@@ -167,11 +167,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     }
     
     public int copy() {
-        return table.connector.requestIntQueryIL(AOServProtocol.COPY_PACKAGE_DEFINITION, pkey);
+        return table.connector.requestIntQueryIL(AOServProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
     }
 
     public void setActive(boolean active) {
-        table.connector.requestUpdateIL(AOServProtocol.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
     }
 
     public boolean isApproved() {
@@ -244,7 +244,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.PACKAGE_DEFINITIONS,
             pkey
 	);
@@ -267,7 +267,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.UPDATE_PACKAGE_DEFINITION);
+                out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION.ordinal());
                 out.writeCompressedInt(pkey);
                 out.writeUTF(business.pkey);
                 out.writeUTF(category.pkey);

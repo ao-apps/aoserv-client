@@ -184,7 +184,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 
     public void setLastStartTime(long time) {
         table.connector.requestUpdateIL(
-            AOServProtocol.SET_LAST_FAILOVER_REPLICATION_TIME,
+            AOServProtocol.CommandID.SET_LAST_FAILOVER_REPLICATION_TIME,
             pkey,
             time
         );

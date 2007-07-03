@@ -117,7 +117,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
     public int backup() {
 	return table.connector.requestIntQueryIL(
-            AOServProtocol.BACKUP_MYSQL_DATABASE,
+            AOServProtocol.CommandID.BACKUP_MYSQL_DATABASE,
             pkey
 	);
     }
@@ -132,7 +132,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.DUMP_MYSQL_DATABASE);
+                masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
                 masterOut.writeCompressedInt(pkey);
                 masterOut.flush();
 
@@ -297,14 +297,14 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DATABASES,
             pkey
 	);
     }
 
     public void setBackupRetention(short days) {
-        table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.MYSQL_DATABASES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.MYSQL_DATABASES, pkey);
     }
 
     String toStringImpl() {

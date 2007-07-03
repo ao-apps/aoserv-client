@@ -50,7 +50,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
             int pkey;
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.FILE_BACKUPS.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.writeUTF(path);
@@ -130,7 +130,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD_FILE_BACKUPS);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD_FILE_BACKUPS.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.writeCompressedInt(count);
                 for(int c=0;c<batchSize;c++) {
@@ -215,7 +215,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
                 AOServConnection connection=connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.FIND_LATEST_FILE_BACKUP_SET_ATTRIBUTE_MATCHES);
+                    out.writeCompressedInt(AOServProtocol.CommandID.FIND_LATEST_FILE_BACKUP_SET_ATTRIBUTE_MATCHES.ordinal());
                     out.writeCompressedInt(server.pkey);
                     out.writeCompressedInt(batchSize);
                     for(int c=0;c<batchSize;c++) {
@@ -291,7 +291,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
     }
 
     public FileBackup get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.FILE_BACKUPS, pkey);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.FILE_BACKUPS, pkey);
     }
 
     public void getFileBackups(
@@ -304,7 +304,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
                 AOServConnection connection=connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.GET_FILE_BACKUPS_PKEYS);
+                    out.writeCompressedInt(AOServProtocol.CommandID.GET_FILE_BACKUPS_PKEYS.ordinal());
                     out.writeCompressedInt(batchSize);
                     for(int c=0;c<batchSize;c++) out.writeCompressedInt(pkeys[c]);
                     out.flush();
@@ -339,23 +339,23 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
     }
 
     List<FileBackup> getFileBackups(Server server) {
-	return getObjectsNoProgress(AOServProtocol.GET_FILE_BACKUPS_SERVER, server.pkey);
+	return getObjectsNoProgress(AOServProtocol.CommandID.GET_FILE_BACKUPS_SERVER, server.pkey);
     }
 
     List<FileBackup> getFileBackupChildren(Server server, String path) {
-	return getObjectsNoProgress(AOServProtocol.GET_FILE_BACKUP_CHILDREN, server.pkey, path);
+	return getObjectsNoProgress(AOServProtocol.CommandID.GET_FILE_BACKUP_CHILDREN, server.pkey, path);
     }
 
     List<FileBackup> findHardLinks(Server server, FileBackupDevice device, long inode) {
-	return getObjectsNoProgress(AOServProtocol.FIND_HARD_LINKS, server.pkey, device.getPKey(), inode);
+	return getObjectsNoProgress(AOServProtocol.CommandID.FIND_HARD_LINKS, server.pkey, device.getPKey(), inode);
     }
 
     List<FileBackup> getFileBackupVersions(Server server, String path) {
-	return getObjectsNoProgress(AOServProtocol.GET_FILE_BACKUP_VERSIONS, server.pkey, path);
+	return getObjectsNoProgress(AOServProtocol.CommandID.GET_FILE_BACKUP_VERSIONS, server.pkey, path);
     }
 
     public List<FileBackup> findFileBackupsByMD5(long md5_hi, long md5_lo, Server server) {
-	return getObjectsNoProgress(AOServProtocol.FIND_FILE_BACKUPS_BY_MD5, md5_hi, md5_lo, server==null?-1:server.pkey);
+	return getObjectsNoProgress(AOServProtocol.CommandID.FIND_FILE_BACKUPS_BY_MD5, md5_hi, md5_lo, server==null?-1:server.pkey);
     }
 
     /**
@@ -369,7 +369,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.GET_FILE_BACKUP_SET_SERVER);
+                out.writeCompressedInt(AOServProtocol.CommandID.GET_FILE_BACKUP_SET_SERVER.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.writeBoolean(path!=null); if(path!=null) out.writeUTF(path);
                 out.writeLong(time);
@@ -406,11 +406,11 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
     }
 
     public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.FILE_BACKUPS);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.FILE_BACKUPS);
     }
 
     public int size() {
-        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.FILE_BACKUPS);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.FILE_BACKUPS);
     }
 
     public void flagFileBackupsAsDeleted(
@@ -422,7 +422,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.FLAG_FILE_BACKUPS_AS_DELETED);
+                out.writeCompressedInt(AOServProtocol.CommandID.FLAG_FILE_BACKUPS_AS_DELETED.ordinal());
                 out.writeCompressedInt(batchSize);
                 for(int c=0;c<batchSize;c++) out.writeCompressedInt(pkeys[c]);
                 out.flush();
@@ -454,7 +454,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.GET_LATEST_FILE_BACKUP_SET);
+                out.writeCompressedInt(AOServProtocol.CommandID.GET_LATEST_FILE_BACKUP_SET.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.flush();
 
@@ -483,7 +483,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
 
     public List<FileBackup> getRows() {
         List<FileBackup> list=new ArrayList<FileBackup>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.FILE_BACKUPS);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.FILE_BACKUPS);
         return list;
     }
 
@@ -517,14 +517,14 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
 
     void removeExpiredFileBackups(Server server) {
 	connector.requestUpdateIL(
-            AOServProtocol.REMOVE_EXPIRED_FILE_BACKUPS,
+            AOServProtocol.CommandID.REMOVE_EXPIRED_FILE_BACKUPS,
             server.pkey
 	);
     }
 
     public void removeFileBackup(int pkey) {
 	connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FILE_BACKUPS,
             pkey
 	);

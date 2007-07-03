@@ -31,7 +31,7 @@ final public class IncomingPaymentTable extends CachedTableIntegerKey<IncomingPa
 	byte[] encryptedExpirationYear
     ) {
 	connector.requestUpdateIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.INCOMING_PAYMENTS,
             transaction.transid,
             encryptedCardName,

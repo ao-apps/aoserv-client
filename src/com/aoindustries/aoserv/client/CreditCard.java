@@ -63,7 +63,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
      */
     public void declined(String reason) {
 	table.connector.requestUpdateIL(
-            AOServProtocol.CREDIT_CARD_DECLINED,
+            AOServProtocol.CommandID.CREDIT_CARD_DECLINED,
             pkey,
             reason
 	);
@@ -292,7 +292,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
     }
 
     String toStringImpl() {
@@ -343,5 +343,44 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	out.writeNullUTF(deactivateReason);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
 	out.writeNullUTF(description);
+    }
+    
+    /**
+     * Updates the credit card information (not including the card number).
+     */
+    public void update(
+        String firstName,
+        String lastName,
+        String companyName,
+        String email,
+        String phone,
+        String fax,
+        String customerTaxId,
+        String streetAddress1,
+        String streetAddress2,
+        String city,
+        String state,
+        String postalCode,
+        CountryCode countryCode,
+        String description
+    ) {
+	table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.UPDATE_CREDIT_CARD,
+            pkey,
+            firstName,
+            lastName,
+            companyName==null ? "" : companyName,
+            email==null ? "" : email,
+            phone==null ? "" : phone,
+            fax==null ? "" : fax,
+            customerTaxId==null ? "" : customerTaxId,
+            streetAddress1,
+            streetAddress2==null ? "" : streetAddress2,
+            city,
+            state==null ? "" : state,
+            postalCode==null ? "" : postalCode,
+            countryCode.getCode(),
+            description==null ? "" : description
+        );
     }
 }

@@ -207,15 +207,15 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     public void restartPostgreSQL() {
-        table.connector.requestUpdate(AOServProtocol.RESTART_POSTGRESQL, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_POSTGRESQL, pkey);
     }
 
     public void startPostgreSQL() {
-        table.connector.requestUpdate(AOServProtocol.START_POSTGRESQL, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.START_POSTGRESQL, pkey);
     }
 
     public void stopPostgreSQL() {
-        table.connector.requestUpdate(AOServProtocol.STOP_POSTGRESQL, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
     }
 
     String toStringImpl() {

@@ -33,7 +33,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	int transid
     ) {
 	connector.requestUpdateIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.NOTICE_LOG,
             accounting,
             billingContact,

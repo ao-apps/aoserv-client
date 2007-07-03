@@ -30,13 +30,13 @@ final public class ActionTable extends AOServTable<Integer,Action> {
     }
 
     public Action get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.ACTIONS, pkey);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.ACTIONS, pkey);
     }
 
     List<Action> getActions(Ticket ticket) {
         Profiler.startProfile(Profiler.IO, ActionTable.class, "getActions(Ticket)", null);
         try {
-            return getObjects(AOServProtocol.GET_ACTIONS_TICKET, ticket.pkey);
+            return getObjects(AOServProtocol.CommandID.GET_ACTIONS_TICKET, ticket.pkey);
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -45,23 +45,23 @@ final public class ActionTable extends AOServTable<Integer,Action> {
     List<Action> getActions(BusinessAdministrator ba) {
         Profiler.startProfile(Profiler.IO, ActionTable.class, "getActions(BusinessAdministrator)", null);
         try {
-            return getObjects(AOServProtocol.GET_ACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
+            return getObjects(AOServProtocol.CommandID.GET_ACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
     }
 
     public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.ACTIONS);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.ACTIONS);
     }
 
     public int size() {
-        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.ACTIONS);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.ACTIONS);
     }
 
     public List<Action> getRows() {
         List<Action> list=new ArrayList<Action>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.ACTIONS);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.ACTIONS);
         return list;
     }
 

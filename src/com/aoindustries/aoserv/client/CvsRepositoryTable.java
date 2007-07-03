@@ -33,7 +33,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         long mode
     ) {
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.CVS_REPOSITORIES,
             ao.pkey,
             path,

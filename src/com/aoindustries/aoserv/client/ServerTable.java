@@ -44,7 +44,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
             int pkey;
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD_BACKUP_SERVER);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD_BACKUP_SERVER.ordinal());
                 out.writeUTF(hostname);
                 out.writeUTF(farm.getName());
                 out.writeCompressedInt(owner.getPKey());

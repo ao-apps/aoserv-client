@@ -135,11 +135,11 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     public void remove() {
-        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_SITE_URLS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITE_URLS, pkey);
     }
 
     public void setAsPrimary() {
-        table.connector.requestUpdateIL(AOServProtocol.SET_PRIMARY_HTTPD_SITE_URL, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_PRIMARY_HTTPD_SITE_URL, pkey);
     }
 
     String toStringImpl() {

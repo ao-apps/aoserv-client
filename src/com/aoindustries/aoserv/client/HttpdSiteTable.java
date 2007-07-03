@@ -24,7 +24,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
     }
 
     public String generateSiteName(String template) {
-	return connector.requestStringQuery(AOServProtocol.GENERATE_SITE_NAME, template);
+	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SITE_NAME, template);
     }
 
     public HttpdSite get(Object pkey) {
@@ -227,12 +227,12 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
     }
 
     public boolean isSiteNameAvailable(String sitename) {
-	return connector.requestBooleanQuery(AOServProtocol.IS_SITE_NAME_AVAILABLE, sitename);
+	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_SITE_NAME_AVAILABLE, sitename);
     }
 
     void waitForRebuild(AOServer aoServer) {
 	connector.requestUpdate(
-            AOServProtocol.WAIT_FOR_REBUILD,
+            AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.HTTPD_SITES,
             aoServer.pkey
         );

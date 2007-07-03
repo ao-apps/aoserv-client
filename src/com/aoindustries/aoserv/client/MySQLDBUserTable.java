@@ -50,7 +50,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.MYSQL_DB_USERS.ordinal());
                 out.writeCompressedInt(md.pkey);
                 out.writeCompressedInt(msu.pkey);
@@ -202,7 +202,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
-            AOServProtocol.WAIT_FOR_REBUILD,
+            AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_DB_USERS,
             aoServer.pkey
         );

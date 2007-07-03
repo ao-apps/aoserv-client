@@ -47,7 +47,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
             int pkey;
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS.ordinal());
                 out.writeCompressedInt(hts.pkey);
                 out.writeNullUTF(className);

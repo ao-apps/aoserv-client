@@ -79,7 +79,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
     public int backup() {
 	return table.connector.requestIntQueryIL(
-            AOServProtocol.BACKUP_POSTGRES_DATABASE,
+            AOServProtocol.CommandID.BACKUP_POSTGRES_DATABASE,
             pkey
 	);
     }
@@ -94,7 +94,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.DUMP_POSTGRES_DATABASE);
+                masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
                 masterOut.writeCompressedInt(pkey);
                 masterOut.flush();
 
@@ -263,14 +263,14 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_DATABASES,
             pkey
 	);
     }
 
     public void setBackupRetention(short days) {
-        table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.POSTGRES_DATABASES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.POSTGRES_DATABASES, pkey);
     }
 
     String toStringImpl() {

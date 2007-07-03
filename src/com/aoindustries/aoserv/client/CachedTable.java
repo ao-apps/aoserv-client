@@ -229,7 +229,7 @@ abstract public class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
                // If the system time was reset to previous time
                || currentTime<lastLoaded
             ) {
-                tableData=Collections.unmodifiableList(getObjects(AOServProtocol.GET_TABLE, getTableID()));
+                tableData=Collections.unmodifiableList(getObjects(AOServProtocol.CommandID.GET_TABLE, getTableID()));
                 lastLoaded=currentTime;
                 if(columnHashes!=null) {
                     int len=columnHashes.size();

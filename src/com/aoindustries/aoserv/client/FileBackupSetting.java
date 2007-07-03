@@ -119,7 +119,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FILE_BACKUP_SETTINGS,
             pkey
 	);
@@ -133,7 +133,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
         boolean recurse
     ) {
         table.connector.requestUpdateIL(
-            AOServProtocol.SET_FILE_BACKUP_SETTINGS,
+            AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
             pkey,
             path,
             packageObj.pkey,

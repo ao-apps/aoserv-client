@@ -30,7 +30,7 @@ final public class InterBaseDatabaseTable extends CachedTableIntegerKey<InterBas
 
     int addInterBaseDatabase(InterBaseDBGroup dbGroup, String name, InterBaseServerUser datdba) {
 	int pkey=connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.INTERBASE_DATABASES,
             name,
             dbGroup.pkey,
@@ -41,7 +41,7 @@ final public class InterBaseDatabaseTable extends CachedTableIntegerKey<InterBas
 
     String generateInterBaseDatabaseName(InterBaseDBGroup dbGroup, String template_base, String template_added) {
 	return connector.requestStringQuery(
-            AOServProtocol.GENERATE_INTERBASE_DATABASE_NAME,
+            AOServProtocol.CommandID.GENERATE_INTERBASE_DATABASE_NAME,
             dbGroup.pkey,
             template_base,
             template_added
@@ -173,7 +173,7 @@ final public class InterBaseDatabaseTable extends CachedTableIntegerKey<InterBas
     }
 
     boolean isInterBaseDatabaseNameAvailable(InterBaseDBGroup dbGroup, String name) {
-        return connector.requestBooleanQuery(AOServProtocol.IS_INTERBASE_DATABASE_NAME_AVAILABLE, dbGroup.pkey, name);
+        return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_INTERBASE_DATABASE_NAME_AVAILABLE, dbGroup.pkey, name);
     }
 
     public boolean isValidDatabaseName(String name) {

@@ -30,7 +30,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
         PackageDefinition packageDefinition
     ) {
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.PACKAGES,
             name,
             business.pkey,
@@ -53,7 +53,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
     }
 
     public String generatePackageName(String template) {
-	return connector.requestStringQuery(AOServProtocol.GENERATE_PACKAGE_NAME, template);
+	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_PACKAGE_NAME, template);
     }
 
     List<Package> getPackages(Business business) {
@@ -139,6 +139,6 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 
     public boolean isPackageNameAvailable(String packageName) {
 	if(!Package.isValidPackageName(packageName)) throw new WrappedException(new SQLException("Invalid package name: "+packageName));
-	return connector.requestBooleanQuery(AOServProtocol.IS_PACKAGE_NAME_AVAILABLE, packageName);
+	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_PACKAGE_NAME_AVAILABLE, packageName);
     }
 }

@@ -57,6 +57,6 @@ final public class InterBaseBackupTable extends CachedTableIntegerKey<InterBaseB
     }
 
     void removeExpiredInterBaseBackups(AOServer aoServer) {
-	connector.requestUpdateIL(AOServProtocol.REMOVE_EXPIRED_INTERBASE_BACKUPS, aoServer.pkey);
+	connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE_EXPIRED_INTERBASE_BACKUPS, aoServer.pkey);
     }
 }

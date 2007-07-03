@@ -48,7 +48,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.BUSINESS_ADMINISTRATORS.ordinal());
                 out.writeUTF(username.pkey);
                 out.writeUTF(name);

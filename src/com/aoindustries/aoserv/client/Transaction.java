@@ -95,7 +95,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.TRANSACTION_APPROVED);
+                out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_APPROVED.ordinal());
                 out.writeCompressedInt(transid);
                 out.writeUTF(paymentType.pkey);
                 out.writeBoolean(payment_info!=null);
@@ -132,7 +132,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.TRANSACTION_DECLINED);
+                out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_DECLINED.ordinal());
                 out.writeCompressedInt(transid);
                 out.writeUTF(paymentType.pkey);
                 out.writeBoolean(payment_info!=null);

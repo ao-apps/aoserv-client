@@ -31,7 +31,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
         boolean enablePostgis
     ) {
 	int pkey=connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_DATABASES,
             name,
             postgresServer.pkey,
@@ -43,7 +43,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
     }
 
     public String generatePostgresDatabaseName(String template_base, String template_added) {
-	return connector.requestStringQuery(AOServProtocol.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added);
+	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added);
     }
 
     public PostgresDatabase get(Object pkey) {
@@ -189,7 +189,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 
     boolean isPostgresDatabaseNameAvailable(String name, PostgresServer postgresServer) {
 	return connector.requestBooleanQuery(
-            AOServProtocol.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
+            AOServProtocol.CommandID.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
             name,
             postgresServer.pkey
         );
@@ -222,7 +222,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
-            AOServProtocol.WAIT_FOR_REBUILD,
+            AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.POSTGRES_DATABASES,
             aoServer.pkey
         );

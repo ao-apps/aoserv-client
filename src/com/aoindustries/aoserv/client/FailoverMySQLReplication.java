@@ -191,7 +191,7 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         AOServConnection connection=table.connector.getConnection();
         try {
             CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.GET_MYSQL_SLAVE_STATUS);
+            out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_SLAVE_STATUS.ordinal());
             out.writeCompressedInt(pkey);
             out.flush();
 

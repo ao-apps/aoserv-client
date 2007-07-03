@@ -382,7 +382,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void remove() {
         table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.NET_BINDS,
             pkey
         );
@@ -390,7 +390,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void setMonitoringEnabled(boolean monitoring_enabled) {
         table.connector.requestUpdateIL(
-            AOServProtocol.SET_NET_BIND_MONITORING,
+            AOServProtocol.CommandID.SET_NET_BIND_MONITORING,
             pkey,
             monitoring_enabled
         );
@@ -398,7 +398,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void setOpenFirewall(boolean open_firewall) {
         table.connector.requestUpdateIL(
-            AOServProtocol.SET_NET_BIND_OPEN_FIREWALL,
+            AOServProtocol.CommandID.SET_NET_BIND_OPEN_FIREWALL,
             pkey,
             open_firewall
         );

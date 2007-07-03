@@ -36,7 +36,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
     }
 
     void addDNSZone(Package packageObj, String zone, String ip, int ttl) {
-	connector.requestUpdateIL(AOServProtocol.ADD, SchemaTable.TableID.DNS_ZONES, packageObj.name, zone, ip, ttl);
+	connector.requestUpdateIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.DNS_ZONES, packageObj.name, zone, ip, ttl);
     }
 
     /**
@@ -214,7 +214,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
     }
 
     public boolean isDNSZoneAvailable(String zone) {
-	return connector.requestBooleanQuery(AOServProtocol.IS_DNS_ZONE_AVAILABLE, zone);
+	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_DNS_ZONE_AVAILABLE, zone);
     }
 
     public static boolean isValidHostnamePart(String name) {

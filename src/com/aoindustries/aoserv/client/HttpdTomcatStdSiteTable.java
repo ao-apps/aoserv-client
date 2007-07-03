@@ -45,7 +45,7 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_STD_SITES.ordinal());
                 out.writeCompressedInt(aoServer.pkey);
                 out.writeUTF(siteName);

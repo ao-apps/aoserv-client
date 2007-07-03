@@ -159,7 +159,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.START_JVM);
+                out.writeCompressedInt(AOServProtocol.CommandID.START_JVM.ordinal());
                 out.writeCompressedInt(pkey);
                 out.flush();
 
@@ -186,7 +186,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.STOP_JVM);
+                out.writeCompressedInt(AOServProtocol.CommandID.STOP_JVM.ordinal());
                 out.writeCompressedInt(pkey);
                 out.flush();
 

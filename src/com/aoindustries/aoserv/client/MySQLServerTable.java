@@ -32,7 +32,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
     ) {
         if(!version.name.equals(TechnologyName.MYSQL)) throw new WrappedException(new SQLException("TechnologyVersion must have name of "+TechnologyName.MYSQL+": "+version.name));
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MYSQL_SERVERS,
             name,
             aoServer.pkey,
@@ -142,12 +142,12 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
     }
 
     boolean isMySQLServerNameAvailable(String name, AOServer ao) {
-	return connector.requestBooleanQuery(AOServProtocol.IS_MYSQL_SERVER_NAME_AVAILABLE, name, ao.pkey);
+	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_MYSQL_SERVER_NAME_AVAILABLE, name, ao.pkey);
     }
 
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
-            AOServProtocol.WAIT_FOR_REBUILD,
+            AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_SERVERS,
             aoServer.pkey
         );

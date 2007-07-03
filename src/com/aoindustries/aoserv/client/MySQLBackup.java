@@ -147,7 +147,7 @@ final public class MySQLBackup extends CachedObjectIntegerKey<MySQLBackup> imple
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_BACKUPS,
             pkey
 	);

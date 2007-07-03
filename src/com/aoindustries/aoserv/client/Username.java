@@ -229,11 +229,11 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 */
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
     public BusinessAdministrator getBusinessAdministrator() {
@@ -391,7 +391,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.USERNAMES,
             pkey
 	);

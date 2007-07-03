@@ -30,7 +30,7 @@ final public class InterBaseDBGroupTable extends CachedTableIntegerKey<InterBase
 
     public int addInterBaseDBGroup(String name, LinuxServerGroup lsg) {
 	int pkey=connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.INTERBASE_DB_GROUPS,
             name,
             lsg.pkey
@@ -40,7 +40,7 @@ final public class InterBaseDBGroupTable extends CachedTableIntegerKey<InterBase
 
     String generateInterBaseDBGroupName(AOServer aoServer, String template_base, String template_added) {
 	return connector.requestStringQuery(
-            AOServProtocol.GENERATE_INTERBASE_DB_GROUP_NAME,
+            AOServProtocol.CommandID.GENERATE_INTERBASE_DB_GROUP_NAME,
             aoServer.pkey,
             template_base,
             template_added
@@ -140,7 +140,7 @@ final public class InterBaseDBGroupTable extends CachedTableIntegerKey<InterBase
     }
 
     boolean isInterBaseDBGroupNameAvailable(AOServer aoServer, String name) {
-        return connector.requestBooleanQuery(AOServProtocol.IS_INTERBASE_DB_GROUP_NAME_AVAILABLE, aoServer.pkey, name);
+        return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_INTERBASE_DB_GROUP_NAME_AVAILABLE, aoServer.pkey, name);
     }
 
     public boolean isValidDBGroupName(String name) {

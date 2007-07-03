@@ -35,7 +35,7 @@ final public class MasterHistoryTable extends AOServTable<Long,MasterHistory> {
 
     public List<MasterHistory> getRows() {
         List<MasterHistory> list=new ArrayList<MasterHistory>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.MASTER_HISTORY);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_HISTORY);
         return list;
     }
 

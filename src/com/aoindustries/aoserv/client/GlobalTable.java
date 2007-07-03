@@ -279,7 +279,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
                 long currentTime=System.currentTimeMillis();
                 long lastLoaded=lastLoadeds[tableID.ordinal()];
                 if(lastLoaded==-1) {
-                    List<GlobalObject<?,?>> list=(List)getObjects(AOServProtocol.GET_TABLE, tableID.ordinal());
+                    List<GlobalObject<?,?>> list=(List)getObjects(AOServProtocol.CommandID.GET_TABLE, tableID.ordinal());
                     synchronized(tableObjs) {
                         tableObjs.set(tableID.ordinal(), Collections.unmodifiableList(list));
                     }

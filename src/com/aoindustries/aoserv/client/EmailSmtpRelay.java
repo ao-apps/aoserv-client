@@ -60,11 +60,11 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -174,7 +174,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 
     public void refresh(long minDuration) {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REFRESH_EMAIL_SMTP_RELAY,
+            AOServProtocol.CommandID.REFRESH_EMAIL_SMTP_RELAY,
             pkey,
             minDuration
 	);
@@ -186,7 +186,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_SMTP_RELAYS,
             pkey
 	);

@@ -25,7 +25,7 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
 
     void addFTPGuestUser(String username) {
 	connector.requestUpdateIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.FTP_GUEST_USERS,
             username
 	);

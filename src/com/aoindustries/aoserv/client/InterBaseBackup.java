@@ -155,7 +155,7 @@ final public class InterBaseBackup extends CachedObjectIntegerKey<InterBaseBacku
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.INTERBASE_BACKUPS,
             pkey
 	);

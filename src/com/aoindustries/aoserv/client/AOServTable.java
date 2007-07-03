@@ -259,14 +259,14 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     }
 
     @SuppressWarnings({"unchecked"})
-    protected V getObject(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObject(int,...)", null);
+    protected V getObject(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObject(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     AOServConnector.writeParams(params, out);
                     out.flush();
 
@@ -296,8 +296,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
-    protected List<V> getObjects(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "getObjects(int,...)", null);
+    protected List<V> getObjects(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.FAST, AOServTable.class, "getObjects(AOServProtocol.CommandID,...)", null);
         try {
             List<V> list=new ArrayList<V>();
             getObjects(list, commID, params);
@@ -307,8 +307,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
-    protected void getObjects(List<V> list, int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObjects(List<V>,int,...)", null);
+    protected void getObjects(List<V> list, AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObjects(List<V>,AOServProtocol.CommandID,...)", null);
         try {
             try {
                 // Get a snapshot of all listeners
@@ -335,7 +335,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
                 AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     out.writeBoolean(listeners!=null);
                     AOServConnector.writeParams(params, out);
                     out.flush();
@@ -366,7 +366,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
-    protected List<V> getObjects(int commID, Streamable param1) {
+    protected List<V> getObjects(AOServProtocol.CommandID commID, Streamable param1) {
         List<V> list=new ArrayList<V>();
         getObjects(list, commID, param1);
         return list;
@@ -438,14 +438,14 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
-    protected List<V> getObjectsNoProgress(int commID, Object ... params) {
+    protected List<V> getObjectsNoProgress(AOServProtocol.CommandID commID, Object ... params) {
         List<V> list=new ArrayList<V>();
         getObjectsNoProgress(list, commID, params);
         return list;
     }
 
-    protected void getObjectsNoProgress(List<V> list, int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObjectNoProgress(List<V>,int,...)", null);
+    protected void getObjectsNoProgress(List<V> list, AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObjectNoProgress(List<V>,AOServProtocol.CommandID,...)", null);
         try {
             try {
                 // Get a snapshot of all load listeners
@@ -460,7 +460,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
                 AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     AOServConnector.writeParams(params, out);
                     out.flush();
 

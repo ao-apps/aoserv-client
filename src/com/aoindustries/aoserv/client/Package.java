@@ -150,11 +150,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.PACKAGES, dl.pkey, name);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.PACKAGES, dl.pkey, name);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.PACKAGES, name);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.PACKAGES, name);
     }
 
     public List<BackupReport> getBackupReports() {

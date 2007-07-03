@@ -45,7 +45,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
                 out.writeBoolean(business!=null); if(business!=null) out.writeUTF(business.pkey);
                 out.writeUTF(businessAdministratorObj.pkey);
@@ -85,16 +85,16 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
     }
 
     public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.TICKETS);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.TICKETS);
     }
 
     public int size() {
-        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.TICKETS);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.TICKETS);
     }
 
     public List<Ticket> getRows() {
         List<Ticket> list=new ArrayList<Ticket>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.TICKETS);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TICKETS);
         return list;
     }
 
@@ -107,25 +107,25 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
     }
 
     public Ticket get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.TICKETS, pkey);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TICKETS, pkey);
     }
 
     List<Ticket> getTickets(BusinessAdministrator business_administrator) {
 	boolean isAdmin = business_administrator.isActiveTicketAdmin();
 	if(isAdmin) return getRows();
-	return getObjects(AOServProtocol.GET_TICKETS_BUSINESS_ADMINISTRATOR, business_administrator.pkey);
+	return getObjects(AOServProtocol.CommandID.GET_TICKETS_BUSINESS_ADMINISTRATOR, business_administrator.pkey);
     }
 
     List<Ticket> getTickets(Business business) {
-	return getObjects(AOServProtocol.GET_TICKETS_BUSINESS, business.pkey);
+	return getObjects(AOServProtocol.CommandID.GET_TICKETS_BUSINESS, business.pkey);
     }
 
     List<Ticket> getCreatedTickets(BusinessAdministrator ba) {
-	return getObjects(AOServProtocol.GET_TICKETS_CREATED_BUSINESS_ADMINISTRATOR, ba.pkey);
+	return getObjects(AOServProtocol.CommandID.GET_TICKETS_CREATED_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
     List<Ticket> getClosedTickets(BusinessAdministrator ba) {
-	return getObjects(AOServProtocol.GET_TICKETS_CLOSED_BUSINESS_ADMINISTRATOR, ba.pkey);
+	return getObjects(AOServProtocol.CommandID.GET_TICKETS_CLOSED_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
     protected Ticket getUniqueRowImpl(int col, Object value) {

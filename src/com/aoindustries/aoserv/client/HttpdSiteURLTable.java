@@ -25,7 +25,7 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
     }
 
     int addHttpdSiteURL(HttpdSiteBind hsb, String hostname) {
-        return connector.requestIntQueryIL(AOServProtocol.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
+        return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
     }
 
     public HttpdSiteURL get(Object pkey) {

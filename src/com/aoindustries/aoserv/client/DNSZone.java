@@ -245,11 +245,11 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.DNS_ZONES, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_ZONES, pkey);
     }
     
     public void setTTL(int ttl) {
-        table.connector.requestUpdateIL(AOServProtocol.SET_DNS_ZONE_TTL, pkey, ttl);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_DNS_ZONE_TTL, pkey, ttl);
         this.ttl=ttl;
     }
 

@@ -29,7 +29,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerGroupTable.class, "addLinuxServerGroup(LinuxGroup,AOServer)", null);
         try {
             int pkey=connector.requestIntQueryIL(
-                AOServProtocol.ADD,
+                AOServProtocol.CommandID.ADD,
                 SchemaTable.TableID.LINUX_SERVER_GROUPS,
                 linuxGroup.pkey,
                 aoServer.pkey

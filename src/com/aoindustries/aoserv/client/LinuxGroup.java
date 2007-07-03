@@ -219,7 +219,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         Profiler.startProfile(Profiler.UNKNOWN, LinuxGroup.class, "remove()", null);
         try {
             table.connector.requestUpdateIL(
-                AOServProtocol.REMOVE,
+                AOServProtocol.CommandID.REMOVE,
                 SchemaTable.TableID.LINUX_GROUPS,
                 pkey
             );

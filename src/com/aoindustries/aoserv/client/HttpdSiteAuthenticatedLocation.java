@@ -152,7 +152,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
     }
 
     public void remove() {
-        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
     }
 
     public void setAttributes(
@@ -164,7 +164,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         String require
     ) {
         table.connector.requestUpdateIL(
-            AOServProtocol.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES,
+            AOServProtocol.CommandID.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES,
             pkey,
             path,
             isRegularExpression,

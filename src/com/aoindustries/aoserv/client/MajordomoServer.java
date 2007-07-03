@@ -190,7 +190,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MAJORDOMO_SERVERS,
             pkey
 	);
@@ -199,7 +199,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     public void setBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, MajordomoServer.class, "setBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.MAJORDOMO_SERVERS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.MAJORDOMO_SERVERS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

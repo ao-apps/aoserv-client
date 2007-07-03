@@ -36,7 +36,7 @@ final public class InterBaseUserTable extends CachedTableStringKey<InterBaseUser
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.INTERBASE_USERS.ordinal());
                 out.writeUTF(username.pkey);
                 out.writeNullUTF(firstName);
@@ -156,7 +156,7 @@ final public class InterBaseUserTable extends CachedTableStringKey<InterBaseUser
 
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
-            AOServProtocol.WAIT_FOR_REBUILD,
+            AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.INTERBASE_USERS,
             aoServer.pkey
         );

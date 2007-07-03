@@ -81,7 +81,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public void disable(DisableLog dl) {
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "disable(DisableLog)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -90,7 +90,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public void enable() {
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "enable()", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -103,7 +103,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public String getAddressList() {
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "getAddressList()", null);
         try {
-            return table.connector.requestStringQuery(AOServProtocol.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
+            return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -320,7 +320,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "remove()", null);
         try {
             table.connector.requestUpdateIL(
-                AOServProtocol.REMOVE,
+                AOServProtocol.CommandID.REMOVE,
                 SchemaTable.TableID.EMAIL_LISTS,
                 pkey
             );
@@ -332,7 +332,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public void setAddressList(String addresses) {
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "setAddressList(String)", null);
         try {
-            table.connector.requestUpdate(AOServProtocol.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
+            table.connector.requestUpdate(AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -341,7 +341,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public void setBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "setBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.EMAIL_LISTS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.EMAIL_LISTS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

@@ -103,7 +103,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
                         getRecordLength(),
                         this
                     );
-                    getObjects(newTableList, AOServProtocol.GET_TABLE, getTableID());
+                    getObjects(newTableList, AOServProtocol.CommandID.GET_TABLE, getTableID());
                     tableList=newTableList;
                     unmodifiableTableList=Collections.unmodifiableList(tableList);
                     lastLoaded=currentTime;

@@ -49,19 +49,19 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
     private String contact_phone_numbers;
 
     public void actBounceTicket(BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.BOUNCE_TICKET, pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
     public void actChangeAdminPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
     }
 
     public void actChangeClientPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.CHANGE_TICKET_CLIENT_PRIORITY, pkey, priority.pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_CLIENT_PRIORITY, pkey, priority.pkey, business_administrator.pkey, comments);
     }
 
     public void actChangeDeadline(long deadline, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.CHANGE_TICKET_DEADLINE, pkey, deadline, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_DEADLINE, pkey, deadline, business_administrator.pkey, comments);
     }
 
     public void actChangeTechnology(TechnologyName technology, BusinessAdministrator business_administrator, String comments) {
@@ -70,7 +70,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CHANGE_TICKET_TECHNOLOGY);
+                out.writeCompressedInt(AOServProtocol.CommandID.CHANGE_TICKET_TECHNOLOGY.ordinal());
                 out.writeCompressedInt(pkey);
                 out.writeBoolean(technology!=null);
                 if(technology!=null) out.writeUTF(technology.pkey);
@@ -100,43 +100,43 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
     }
 
     public void actChangeTicketType(TicketType ticket_type, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
     }
 
     public void actAssignTo(BusinessAdministrator assignedTo, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
     }
 
     public void setBusiness(Business business, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.SET_TICKET_BUSINESS, pkey, business==null?"":business.getAccounting(), business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_BUSINESS, pkey, business==null?"":business.getAccounting(), business_administrator.pkey, comments);
     }
 
     public void actSetContactEmails(String contactEmails, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.SET_TICKET_CONTACT_EMAILS, pkey, contactEmails, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_CONTACT_EMAILS, pkey, contactEmails, business_administrator.pkey, comments);
     }
 
     public void actSetContactPhoneNumbers(String contactPhoneNumbers, BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers, business_administrator.pkey, comments);
     }
 
     public void actCompleteTicket(BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.COMPLETE_TICKET, pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.COMPLETE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
     public void actHoldTicket(String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.HOLD_TICKET, pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.HOLD_TICKET, pkey, comments);
     }
 
     public void actKillTicket(BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.KILL_TICKET, pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.KILL_TICKET, pkey, business_administrator.pkey, comments);
     }
 
     public void actReactivateTicket(BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.REACTIVATE_TICKET, pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
     public void actWorkEntry(BusinessAdministrator business_administrator, String comments) {
-	table.connector.requestUpdateIL(AOServProtocol.TICKET_WORK, pkey, business_administrator.pkey, comments);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);
     }
 
     boolean equalsImpl(Object O) {

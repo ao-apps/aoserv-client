@@ -29,16 +29,16 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
     }
 
     public BankTransaction get(int transid) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.BANK_TRANSACTIONS, transid);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BANK_TRANSACTIONS, transid);
     }
 
     List<BankTransaction> getBankTransactions(BankAccount account) {
-	return getObjects(AOServProtocol.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
+	return getObjects(AOServProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
     }
 
     public List<BankTransaction> getRows() {
         List<BankTransaction> list=new ArrayList<BankTransaction>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.BANK_TRANSACTIONS);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BANK_TRANSACTIONS);
         return list;
     }
 

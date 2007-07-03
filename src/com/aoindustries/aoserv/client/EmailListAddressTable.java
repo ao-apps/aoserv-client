@@ -25,7 +25,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
 
     int addEmailListAddress(EmailAddress emailAddressObject, EmailList emailListObject) {
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
             emailAddressObject.pkey,
             emailListObject.pkey

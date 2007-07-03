@@ -32,7 +32,7 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.MYSQL_SERVER_USERS.ordinal());
                 out.writeUTF(username);
                 out.writeCompressedInt(mysqlServer.pkey);

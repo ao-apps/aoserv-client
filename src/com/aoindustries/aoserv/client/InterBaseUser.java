@@ -93,11 +93,11 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
     }
 */
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.INTERBASE_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.INTERBASE_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.INTERBASE_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.INTERBASE_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -188,7 +188,7 @@ final public class InterBaseUser extends CachedObjectStringKey<InterBaseUser> im
 
     public void remove() {
         table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.INTERBASE_USERS,
             pkey
         );

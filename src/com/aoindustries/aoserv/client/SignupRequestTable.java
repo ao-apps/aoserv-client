@@ -138,7 +138,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
         int pkey;
         try {
             CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.ADD);
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
             out.writeCompressedInt(SchemaTable.TableID.SIGNUP_REQUESTS.ordinal());
             out.writeUTF(accounting);
             out.writeUTF(ip_address);

@@ -29,7 +29,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
         Package packageObj
     ) {
 	int pkey=connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MYSQL_DATABASES,
             name,
             mysqlServer.pkey,
@@ -39,7 +39,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
     }
 
     public String generateMySQLDatabaseName(String template_base, String template_added) {
-	return connector.requestStringQuery(AOServProtocol.GENERATE_MYSQL_DATABASE_NAME, template_base, template_added);
+	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_MYSQL_DATABASE_NAME, template_base, template_added);
     }
 
     public MySQLDatabase get(Object pkey) {
@@ -163,7 +163,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
     }
 
     boolean isMySQLDatabaseNameAvailable(String name, MySQLServer mysqlServer) {
-        return connector.requestBooleanQuery(AOServProtocol.IS_MYSQL_DATABASE_NAME_AVAILABLE, name, mysqlServer.pkey);
+        return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_MYSQL_DATABASE_NAME_AVAILABLE, name, mysqlServer.pkey);
     }
 
     public boolean isValidDatabaseName(String name) {
@@ -193,7 +193,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
-            AOServProtocol.WAIT_FOR_REBUILD,
+            AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_DATABASES,
             aoServer.pkey
         );

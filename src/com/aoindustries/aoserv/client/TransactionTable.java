@@ -46,7 +46,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
                 out.writeUTF(business.pkey);
                 out.writeUTF(sourceBusiness.pkey);
@@ -96,37 +96,37 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	synchronized(this) {
 	    Integer O=accountBalances.get(accounting);
 	    if(O!=null) return O.intValue();
-	    int balance=connector.requestIntQuery(AOServProtocol.GET_ACCOUNT_BALANCE, accounting);
+	    int balance=connector.requestIntQuery(AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting);
 	    accountBalances.put(accounting, Integer.valueOf(balance));
 	    return balance;
 	}
     }
 
     int getAccountBalance(String accounting, long before) {
-        return connector.requestIntQuery(AOServProtocol.GET_ACCOUNT_BALANCE_BEFORE, accounting, before);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting, before);
     }
 
     int getConfirmedAccountBalance(String accounting) {
 	synchronized(this) {
 	    Integer O=confirmedAccountBalances.get(accounting);
 	    if(O!=null) return O.intValue();
-	    int balance=connector.requestIntQuery(AOServProtocol.GET_CONFIRMED_ACCOUNT_BALANCE, accounting);
+	    int balance=connector.requestIntQuery(AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting);
 	    confirmedAccountBalances.put(accounting, Integer.valueOf(balance));
 	    return balance;
 	}
     }
 
     int getConfirmedAccountBalance(String accounting, long before) {
-	return connector.requestIntQuery(AOServProtocol.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting, before);
+	return connector.requestIntQuery(AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting, before);
     }
 
     public List<Transaction> getPendingPayments() {
-        return getObjects(AOServProtocol.GET_PENDING_PAYMENTS);
+        return getObjects(AOServProtocol.CommandID.GET_PENDING_PAYMENTS);
     }
 
     public List<Transaction> getRows() {
         List<Transaction> list=new ArrayList<Transaction>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.TRANSACTIONS);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TRANSACTIONS);
         return list;
     }
 
@@ -139,19 +139,19 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     }
 
     public Transaction get(int transid) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.TRANSACTIONS, transid);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TRANSACTIONS, transid);
     }
 
     List<Transaction> getTransactions(TransactionSearchCriteria search) {
-        return getObjects(AOServProtocol.GET_TRANSACTIONS_SEARCH, search);
+        return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
     }
 
     List<Transaction> getTransactions(String accounting) {
-        return getObjects(AOServProtocol.GET_TRANSACTIONS_BUSINESS, accounting);
+        return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting);
     }
 
     List<Transaction> getTransactions(BusinessAdministrator ba) {
-        return getObjects(AOServProtocol.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
+        return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
     final public List<Transaction> getIndexedRows(int col, Object value) {

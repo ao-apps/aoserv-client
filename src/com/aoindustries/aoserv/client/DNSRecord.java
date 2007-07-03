@@ -125,7 +125,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.DNS_RECORDS, pkey);
+	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_RECORDS, pkey);
     }
 
     String toStringImpl() {

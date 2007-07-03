@@ -42,7 +42,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.BUSINESSES.ordinal());
                 out.writeUTF(accounting);
                 out.writeBoolean(contractNumber!=null);
@@ -84,7 +84,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     }
 
     public String generateAccountingCode(String template) {
-	return connector.requestStringQuery(AOServProtocol.GENERATE_ACCOUNTING_CODE, template);
+	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_ACCOUNTING_CODE, template);
     }
 
     /**
@@ -108,7 +108,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     }
 
     synchronized public String getRootAccounting() {
-        if(rootAccounting==null) rootAccounting=connector.requestStringQuery(AOServProtocol.GET_ROOT_BUSINESS);
+        if(rootAccounting==null) rootAccounting=connector.requestStringQuery(AOServProtocol.CommandID.GET_ROOT_BUSINESS);
         return rootAccounting;
     }
 
@@ -234,6 +234,6 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 
     public boolean isAccountingAvailable(String accounting) {
 	if(!Business.isValidAccounting(accounting)) throw new WrappedException(new SQLException("Invalid accounting code: "+accounting));
-	return connector.requestBooleanQuery(AOServProtocol.IS_ACCOUNTING_AVAILABLE, accounting);
+	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_ACCOUNTING_AVAILABLE, accounting);
     }
 }

@@ -41,7 +41,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.NET_BINDS.ordinal());
                 out.writeCompressedInt(ao.pkey);
                 out.writeUTF(pk.name);

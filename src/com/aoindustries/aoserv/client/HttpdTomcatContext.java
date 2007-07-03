@@ -254,7 +254,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES);
+                out.writeCompressedInt(AOServProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES.ordinal());
                 out.writeCompressedInt(pkey);
                 out.writeNullUTF(className);
                 out.writeBoolean(cookies);
@@ -292,7 +292,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public void remove() {
-        table.connector.requestUpdateIL(AOServProtocol.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

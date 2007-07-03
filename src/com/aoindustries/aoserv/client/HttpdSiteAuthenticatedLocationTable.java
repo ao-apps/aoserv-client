@@ -32,7 +32,7 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
         String authUserFile,
         String require
     ) {
-        return connector.requestIntQueryIL(AOServProtocol.ADD, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, hs.getPKey(), path, isRegularExpression, authName, authGroupFile, authUserFile, require);
+        return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, hs.getPKey(), path, isRegularExpression, authName, authGroupFile, authUserFile, require);
     }
 
     public HttpdSiteAuthenticatedLocation get(Object pkey) {

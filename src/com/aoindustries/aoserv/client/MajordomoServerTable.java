@@ -33,7 +33,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         Profiler.startProfile(Profiler.UNKNOWN, MajordomoServerTable.class, "addMajordomoServer(EmailDomain,LinuxServerAccount,LinuxServerGroup,MajordomoVersion)", null);
         try {
             connector.requestUpdateIL(
-                AOServProtocol.ADD,
+                AOServProtocol.CommandID.ADD,
                 SchemaTable.TableID.MAJORDOMO_SERVERS,
                 emailDomain.pkey,
                 linuxServerAccount.pkey,

@@ -36,7 +36,7 @@ final public class MasterServerStatTable extends AOServTable<String,MasterServer
 
     public List<MasterServerStat> getRows() {
         List<MasterServerStat> list=new ArrayList<MasterServerStat>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.MASTER_SERVER_STATS);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_SERVER_STATS);
         return list;
     }
 

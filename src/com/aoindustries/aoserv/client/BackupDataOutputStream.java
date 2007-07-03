@@ -39,7 +39,7 @@ final public class BackupDataOutputStream extends OutputStream {
         boolean initDone=false;
         try {
             out=conn.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.SEND_BACKUP_DATA);
+            out.writeCompressedInt(AOServProtocol.CommandID.SEND_BACKUP_DATA.ordinal());
             out.writeCompressedInt(backupData);
             out.writeUTF(filename);
             out.writeBoolean(isCompressed);

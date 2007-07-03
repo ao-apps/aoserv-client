@@ -147,7 +147,7 @@ final public class PostgresBackup extends CachedObjectIntegerKey<PostgresBackup>
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_BACKUPS,
             pkey
 	);

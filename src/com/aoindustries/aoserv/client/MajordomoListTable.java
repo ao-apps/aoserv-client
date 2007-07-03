@@ -33,7 +33,7 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
         Profiler.startProfile(Profiler.UNKNOWN, MajordomoListTable.class, "addMajordomoList(MajordomoServer,String)", null);
         try {
             return connector.requestIntQueryIL(
-                AOServProtocol.ADD,
+                AOServProtocol.CommandID.ADD,
                 SchemaTable.TableID.MAJORDOMO_LISTS,
                 majordomoServer.pkey,
                 listName

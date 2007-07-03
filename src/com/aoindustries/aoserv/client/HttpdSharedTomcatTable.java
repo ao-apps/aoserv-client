@@ -40,7 +40,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.HTTPD_SHARED_TOMCATS.ordinal());
                 out.writeUTF(name);
                 out.writeCompressedInt(aoServer.pkey);
@@ -76,7 +76,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
     }
 
     public String generateSharedTomcatName(String template) {
-	return connector.requestStringQuery(AOServProtocol.GENERATE_SHARED_TOMCAT_NAME, template);
+	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SHARED_TOMCAT_NAME, template);
     }
 
     public HttpdSharedTomcat get(Object pkey) {
@@ -238,7 +238,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 
     public boolean isSharedTomcatNameAvailable(String name) {
 	return connector.requestBooleanQuery(
-            AOServProtocol.IS_SHARED_TOMCAT_NAME_AVAILABLE,
+            AOServProtocol.CommandID.IS_SHARED_TOMCAT_NAME_AVAILABLE,
             name
 	);
     }

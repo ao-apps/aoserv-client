@@ -217,7 +217,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DB_USERS,
             pkey
 	);

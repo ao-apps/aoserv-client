@@ -28,7 +28,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
     int addEmailForwarding(EmailAddress emailAddressObject, String destination) {
 	if (!EmailAddress.isValidEmailAddress(destination)) throw new WrappedException(new SQLException("Invalid destination: " + destination));
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_FORWARDING,
             emailAddressObject.pkey,
             destination

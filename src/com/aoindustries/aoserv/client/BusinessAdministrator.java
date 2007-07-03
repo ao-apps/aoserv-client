@@ -59,7 +59,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     boolean can_switch_users;
 
     public int arePasswordsSet() {
-        return table.connector.requestBooleanQuery(AOServProtocol.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+        return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
     public int addTicket(
@@ -174,11 +174,11 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
     }
 
     public List<Action> getActions() {
@@ -472,7 +472,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.BUSINESS_ADMINISTRATORS,
             pkey
 	);
@@ -486,7 +486,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     public void setPassword(String plaintext) {
 	AOServConnector connector=table.connector;
 	if(!connector.isSecure()) throw new WrappedException(new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure."));
-	connector.requestUpdateIL(AOServProtocol.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
+	connector.requestUpdateIL(AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
     }
 
     public void setProfile(
@@ -511,7 +511,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.SET_BUSINESS_ADMINISTRATOR_PROFILE);
+                out.writeCompressedInt(AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE.ordinal());
                 out.writeUTF(pkey);
                 out.writeUTF(name);
                 if(title!=null && title.length()==0) title=null;

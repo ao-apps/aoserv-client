@@ -39,7 +39,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.GET_BACKUP_DATAS_FOR_BACKUP_PARTITION);
+                out.writeCompressedInt(AOServProtocol.CommandID.GET_BACKUP_DATAS_FOR_BACKUP_PARTITION.ordinal());
                 out.writeCompressedInt(pkey);
                 out.writeBoolean(hasDataOnly);
                 out.flush();
@@ -88,11 +88,11 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     }
 
     public long getDiskTotalSize() {
-        return table.connector.requestLongQuery(AOServProtocol.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
+        return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
     }
 
     public long getDiskUsedSize() {
-        return table.connector.requestLongQuery(AOServProtocol.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
+        return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
     }
 
     public AOServer getAOServer() {

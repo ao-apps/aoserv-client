@@ -588,7 +588,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                 AOServConnection connection=table.connector.getConnection();
                 try {
                     CompressedDataOutputStream masterOut=connection.getOutputStream();
-                    masterOut.writeCompressedInt(AOServProtocol.GET_MRTG_FILE);
+                    masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_MRTG_FILE.ordinal());
                     masterOut.writeCompressedInt(pkey);
                     masterOut.writeUTF(filename);
                     masterOut.flush();
@@ -921,28 +921,28 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public void restartApache() {
-        table.connector.requestUpdate(AOServProtocol.RESTART_APACHE, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_APACHE, pkey);
     }
 
     public void restartCron() {
-        table.connector.requestUpdate(AOServProtocol.RESTART_CRON, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_CRON, pkey);
     }
 
     public void restartInterBase() {
-        table.connector.requestUpdate(AOServProtocol.RESTART_INTERBASE, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_INTERBASE, pkey);
     }
 
     public void restartXfs() {
-        table.connector.requestUpdate(AOServProtocol.RESTART_XFS, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_XFS, pkey);
     }
 
     public void restartXvfb() {
-        table.connector.requestUpdate(AOServProtocol.RESTART_XVFB, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_XVFB, pkey);
     }
 
     public long requestDaemonAccess(int daemonCommandCode, int param1) {
         return table.connector.requestLongQuery(
-            AOServProtocol.REQUEST_DAEMON_ACCESS,
+            AOServProtocol.CommandID.REQUEST_DAEMON_ACCESS,
             pkey,
             daemonCommandCode,
             param1
@@ -950,15 +950,15 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public void setLastDistroTime(long distroTime) {
-        table.connector.requestUpdateIL(AOServProtocol.SET_LAST_DISTRO_TIME, pkey, distroTime);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
     }
 
     public void startApache() {
-        table.connector.requestUpdate(AOServProtocol.START_APACHE, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.START_APACHE, pkey);
     }
 
     public void startCron() {
-        table.connector.requestUpdate(AOServProtocol.START_CRON, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.START_CRON, pkey);
     }
 
     public void startDistro(boolean includeUser) {
@@ -966,35 +966,35 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public void startInterBase() {
-        table.connector.requestUpdate(AOServProtocol.START_INTERBASE, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.START_INTERBASE, pkey);
     }
 
     public void startXfs() {
-        table.connector.requestUpdate(AOServProtocol.START_XFS, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.START_XFS, pkey);
     }
 
     public void startXvfb() {
-        table.connector.requestUpdate(AOServProtocol.START_XVFB, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.START_XVFB, pkey);
     }
 
     public void stopApache() {
-        table.connector.requestUpdate(AOServProtocol.STOP_APACHE, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_APACHE, pkey);
     }
 
     public void stopCron() {
-        table.connector.requestUpdate(AOServProtocol.STOP_CRON, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_CRON, pkey);
     }
 
     public void stopInterBase() {
-        table.connector.requestUpdate(AOServProtocol.STOP_INTERBASE, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_INTERBASE, pkey);
     }
 
     public void stopXfs() {
-        table.connector.requestUpdate(AOServProtocol.STOP_XFS, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_XFS, pkey);
     }
 
     public void stopXvfb() {
-        table.connector.requestUpdate(AOServProtocol.STOP_XVFB, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_XVFB, pkey);
     }
 
     protected String toStringImpl() {

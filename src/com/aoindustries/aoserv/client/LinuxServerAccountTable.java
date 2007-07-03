@@ -32,7 +32,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccountTable.class, "addLinuxServerAccount(LinuxAccount,AOServer,String)", null);
         try {
             int pkey=connector.requestIntQueryIL(
-                AOServProtocol.ADD,
+                AOServProtocol.CommandID.ADD,
                 SchemaTable.TableID.LINUX_SERVER_ACCOUNTS,
                 linuxAccount.pkey,
                 aoServer.pkey,

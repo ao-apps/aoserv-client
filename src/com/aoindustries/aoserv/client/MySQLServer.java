@@ -234,15 +234,15 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public void restartMySQL() {
-        table.connector.requestUpdate(AOServProtocol.RESTART_MYSQL, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_MYSQL, pkey);
     }
 
     public void startMySQL() {
-        table.connector.requestUpdate(AOServProtocol.START_MYSQL, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.START_MYSQL, pkey);
     }
 
     public void stopMySQL() {
-        table.connector.requestUpdate(AOServProtocol.STOP_MYSQL, pkey);
+        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_MYSQL, pkey);
     }
 
     String toStringImpl() {
@@ -289,7 +289,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         AOServConnection connection=table.connector.getConnection();
         try {
             CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.GET_MYSQL_MASTER_STATUS);
+            out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_MASTER_STATUS.ordinal());
             out.writeCompressedInt(pkey);
             out.flush();
 

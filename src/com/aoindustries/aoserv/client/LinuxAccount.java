@@ -142,7 +142,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void disable(DisableLog dl) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "disable(DisableLog)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -151,7 +151,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void enable() {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "enable()", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -425,7 +425,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "remove()", null);
         try {
             table.connector.requestUpdateIL(
-                AOServProtocol.REMOVE,
+                AOServProtocol.CommandID.REMOVE,
                 SchemaTable.TableID.LINUX_ACCOUNTS,
                 pkey
             );
@@ -446,7 +446,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void setHomePhone(String phone) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setHomePhone(String)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -455,7 +455,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void setName(String name) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setName(String)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_ACCOUNT_NAME, pkey, name);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -464,7 +464,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void setOfficeLocation(String location) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setOfficeLocation(String)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -473,7 +473,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void setOfficePhone(String phone) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setOfficePhone(String)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -493,7 +493,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     public void setShell(Shell shell) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setShell(Shell)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

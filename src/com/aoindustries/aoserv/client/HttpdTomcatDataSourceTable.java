@@ -33,7 +33,7 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
         String validationQuery
     ) {
         return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES,
             htc.pkey,
             name,

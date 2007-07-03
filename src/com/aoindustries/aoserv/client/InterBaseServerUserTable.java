@@ -33,7 +33,7 @@ final public class InterBaseServerUserTable extends CachedTableIntegerKey<InterB
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.INTERBASE_SERVER_USERS.ordinal());
                 out.writeUTF(username);
                 out.writeCompressedInt(aoServer.pkey);

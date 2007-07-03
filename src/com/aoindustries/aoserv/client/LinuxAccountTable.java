@@ -45,7 +45,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
                 AOServConnection connection=connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.ADD);
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
                     out.writeUTF(usernameObject.pkey);
                     out.writeUTF(primaryGroup);
@@ -470,7 +470,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         Profiler.startProfile(Profiler.UNKNOWN, LinuxAccountTable.class, "waitForRebuild(AOServer)", null);
         try {
             connector.requestUpdate(
-                AOServProtocol.WAIT_FOR_REBUILD,
+                AOServProtocol.CommandID.WAIT_FOR_REBUILD,
                 SchemaTable.TableID.LINUX_ACCOUNTS,
                 aoServer.pkey
             );

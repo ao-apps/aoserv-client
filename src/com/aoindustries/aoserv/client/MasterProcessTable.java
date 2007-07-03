@@ -35,7 +35,7 @@ final public class MasterProcessTable extends AOServTable<Long,MasterProcess> {
 
     public List<MasterProcess> getRows() {
         List<MasterProcess> list=new ArrayList<MasterProcess>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.MASTER_PROCESSES);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_PROCESSES);
         return list;
     }
 

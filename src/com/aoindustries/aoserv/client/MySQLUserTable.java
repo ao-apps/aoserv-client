@@ -25,7 +25,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 
     void addMySQLUser(String username) {
         connector.requestUpdateIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MYSQL_USERS,
             username
         );
@@ -126,7 +126,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
-            AOServProtocol.WAIT_FOR_REBUILD,
+            AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_USERS,
             aoServer.pkey
         );

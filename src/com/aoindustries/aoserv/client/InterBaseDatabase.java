@@ -64,7 +64,7 @@ final public class InterBaseDatabase extends CachedObjectIntegerKey<InterBaseDat
 
     public int backup() {
 	int backupPKey=table.connector.requestIntQueryIL(
-            AOServProtocol.BACKUP_INTERBASE_DATABASE,
+            AOServProtocol.CommandID.BACKUP_INTERBASE_DATABASE,
             pkey
 	);
 	return backupPKey;
@@ -80,7 +80,7 @@ final public class InterBaseDatabase extends CachedObjectIntegerKey<InterBaseDat
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.DUMP_INTERBASE_DATABASE);
+                masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_INTERBASE_DATABASE.ordinal());
                 masterOut.writeCompressedInt(pkey);
                 masterOut.flush();
 
@@ -208,7 +208,7 @@ final public class InterBaseDatabase extends CachedObjectIntegerKey<InterBaseDat
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.INTERBASE_DATABASES,
             pkey
 	);

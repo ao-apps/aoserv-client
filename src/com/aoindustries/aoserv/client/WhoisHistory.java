@@ -84,7 +84,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
      * values per instance.
      */
     public String getWhoisOutput() {
-        if(whois_output==null) whois_output = table.connector.requestStringQuery(AOServProtocol.GET_WHOIS_HISTORY_WHOIS_OUTPUT, pkey);
+        if(whois_output==null) whois_output = table.connector.requestStringQuery(AOServProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT, pkey);
         return whois_output;
     }
 

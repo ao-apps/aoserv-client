@@ -35,7 +35,7 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
         boolean isSuccessful
     ) {
     	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.FAILOVER_FILE_LOG,
             replication.pkey,
             startTime,
@@ -52,18 +52,18 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
     }
 
     public FailoverFileLog get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.FAILOVER_FILE_LOG, pkey);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.FAILOVER_FILE_LOG, pkey);
     }
 
     public List<FailoverFileLog> getRows() {
         List<FailoverFileLog> list=new ArrayList<FailoverFileLog>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.FAILOVER_FILE_LOG);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.FAILOVER_FILE_LOG);
         return list;
     }
 
     List<FailoverFileLog> getFailoverFileLogs(FailoverFileReplication replication, int maxRows) {
         List<FailoverFileLog> list=new ArrayList<FailoverFileLog>();
-        getObjectsNoProgress(list, AOServProtocol.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.pkey, maxRows);
+        getObjectsNoProgress(list, AOServProtocol.CommandID.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.pkey, maxRows);
         return list;
     }
 

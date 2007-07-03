@@ -29,7 +29,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupTable.class, "addLinuxGroup(String,Package)", null);
         try {
             connector.requestUpdateIL(
-                AOServProtocol.ADD,
+                AOServProtocol.CommandID.ADD,
                 SchemaTable.TableID.LINUX_GROUPS,
                 name,
                 packageObject.name,
@@ -107,7 +107,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupTable.class, "isLinuxGroupNameAvailable(String)", null);
         try {
             if(!LinuxGroup.isValidGroupname(groupname)) throw new WrappedException(new SQLException("Invalid groupname: "+groupname));
-            return connector.requestBooleanQuery(AOServProtocol.IS_LINUX_GROUP_NAME_AVAILABLE, groupname);
+            return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_LINUX_GROUP_NAME_AVAILABLE, groupname);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

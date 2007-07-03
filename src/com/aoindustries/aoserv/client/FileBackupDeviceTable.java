@@ -25,7 +25,7 @@ final public class FileBackupDeviceTable extends GlobalTable<Short,FileBackupDev
     }
 
     public short addFileBackupDevice(long device, boolean canBackup, String description) {
-        return connector.requestShortQueryIL(AOServProtocol.ADD, SchemaTable.TableID.FILE_BACKUP_DEVICES, device, canBackup, description);
+        return connector.requestShortQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.FILE_BACKUP_DEVICES, device, canBackup, description);
     }
 
     public FileBackupDevice get(Object pkey) {

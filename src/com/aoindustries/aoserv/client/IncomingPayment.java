@@ -87,7 +87,7 @@ final public class IncomingPayment extends CachedObjectIntegerKey<IncomingPaymen
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.INCOMING_PAYMENTS,
             pkey
 	);

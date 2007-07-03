@@ -88,7 +88,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
             pkey
 	);

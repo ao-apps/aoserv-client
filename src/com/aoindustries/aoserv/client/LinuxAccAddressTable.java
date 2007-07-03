@@ -25,7 +25,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 
     int addLinuxAccAddress(EmailAddress emailAddressObject, LinuxAccount linuxAccountObject) {
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_ACC_ADDRESSES,
             emailAddressObject.pkey,
             linuxAccountObject.pkey

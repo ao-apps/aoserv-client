@@ -54,7 +54,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.CREDIT_CARDS.ordinal());
                 out.writeUTF(business.pkey);
                 out.writeUTF(cardInfo);

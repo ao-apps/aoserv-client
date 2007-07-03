@@ -222,7 +222,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
      */
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_ADDRESSES,
             pkey
 	);

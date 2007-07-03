@@ -81,7 +81,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
     
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_FORWARDING,
             pkey
 	);

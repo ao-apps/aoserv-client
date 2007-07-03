@@ -173,7 +173,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerGroup.class, "remove()", null);
         try {
             table.connector.requestUpdateIL(
-                AOServProtocol.REMOVE,
+                AOServProtocol.CommandID.REMOVE,
                 SchemaTable.TableID.LINUX_SERVER_GROUPS,
                 pkey
             );

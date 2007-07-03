@@ -76,7 +76,7 @@ final public class SocketConnection extends AOServConnection {
 	}
 	if(out!=null) {
             try {
-                out.writeCompressedInt(AOServProtocol.QUIT);
+                out.writeCompressedInt(AOServProtocol.CommandID.QUIT.ordinal());
                 out.flush();
             } catch(SocketException err) {
                 // Normal when the other side has terminated the connection

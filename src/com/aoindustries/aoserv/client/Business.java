@@ -242,7 +242,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CANCEL_BUSINESS);
+                out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
                 out.writeUTF(pkey);
                 if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
                 out.writeNullUTF(cancelReason);
@@ -304,11 +304,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
     }
 
     public int getAccountBalance() {
@@ -878,7 +878,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public void setAccounting(String accounting) {
         if(!isValidAccounting(accounting)) throw new WrappedException(new SQLException("Invalid accounting code: "+accounting));
-        table.connector.requestUpdateIL(AOServProtocol.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

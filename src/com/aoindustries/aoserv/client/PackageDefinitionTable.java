@@ -43,7 +43,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.PACKAGE_DEFINITIONS.ordinal());
                 out.writeUTF(business.pkey);
                 out.writeUTF(category.pkey);

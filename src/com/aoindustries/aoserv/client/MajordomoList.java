@@ -153,7 +153,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     public String getInfoFile() {
         Profiler.startProfile(Profiler.UNKNOWN, MajordomoList.class, "getInfoFile()", null);
         try {
-            return table.connector.requestStringQuery(AOServProtocol.GET_MAJORDOMO_INFO_FILE, pkey);
+            return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -165,7 +165,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     public String getIntroFile() {
         Profiler.startProfile(Profiler.UNKNOWN, MajordomoList.class, "getIntroFile()", null);
         try {
-            return table.connector.requestStringQuery(AOServProtocol.GET_MAJORDOMO_INTRO_FILE, pkey);
+            return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -315,7 +315,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     public void setInfoFile(String file) {
         Profiler.startProfile(Profiler.UNKNOWN, MajordomoList.class, "setInfoFile(String)", null);
         try {
-            table.connector.requestUpdate(AOServProtocol.SET_MAJORDOMO_INFO_FILE, pkey, file);
+            table.connector.requestUpdate(AOServProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -324,7 +324,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     public void setIntroFile(String file) {
         Profiler.startProfile(Profiler.UNKNOWN, MajordomoList.class, "setIntroFile(String)", null);
         try {
-            table.connector.requestUpdate(AOServProtocol.SET_MAJORDOMO_INTRO_FILE, pkey, file);
+            table.connector.requestUpdate(AOServProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

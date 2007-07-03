@@ -49,7 +49,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
         int pkey;
         try {
             CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.ADD);
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
             out.writeCompressedInt(SchemaTable.TableID.BUSINESS_PROFILES.ordinal());
             out.writeUTF(business.getAccounting());
             out.writeUTF(name);

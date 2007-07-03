@@ -52,7 +52,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
         Profiler.startProfile(Profiler.UNKNOWN, DistroFileTable.class, "getCachedRowCount()", null);
         try {
             if(isLoaded()) return super.getCachedRowCount();
-            else return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
+            else return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -62,7 +62,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
         Profiler.startProfile(Profiler.UNKNOWN, DistroFileTable.class, "getRowCount()", null);
         try {
             if(isLoaded()) return super.size();
-            else return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
+            else return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -95,7 +95,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
         Profiler.startProfile(Profiler.UNKNOWN, DistroFileTable.class, "startDistro(AOServer,boolean)", null);
         try {
             connector.requestUpdate(
-                AOServProtocol.START_DISTRO,
+                AOServProtocol.CommandID.START_DISTRO,
                 server.pkey,
                 includeUser
             );

@@ -22,7 +22,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
     }
 
     int addBusinessServer(Business business, Server server, boolean can_configure_backup) {
-	return connector.requestIntQueryIL(AOServProtocol.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey, can_configure_backup);
+	return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey, can_configure_backup);
     }
 
     public BusinessServer get(Object pkey) {

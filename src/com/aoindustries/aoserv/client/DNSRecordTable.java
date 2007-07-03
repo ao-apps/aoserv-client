@@ -32,7 +32,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
         int ttl
     ) {
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.DNS_RECORDS,
             zone.pkey,
             domain,

@@ -76,7 +76,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_ATTACHMENT_BLOCKS,
             pkey
 	);

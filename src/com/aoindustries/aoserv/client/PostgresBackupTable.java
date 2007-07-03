@@ -58,7 +58,7 @@ final public class PostgresBackupTable extends CachedTableIntegerKey<PostgresBac
 
     void removeExpiredPostgresBackups(AOServer aoServer) {
 	connector.requestUpdateIL(
-            AOServProtocol.REMOVE_EXPIRED_POSTGRES_BACKUPS,
+            AOServProtocol.CommandID.REMOVE_EXPIRED_POSTGRES_BACKUPS,
             aoServer.pkey
 	);
     }

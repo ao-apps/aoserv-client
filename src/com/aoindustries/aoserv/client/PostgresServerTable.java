@@ -33,7 +33,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
         boolean fsync
     ) {
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_SERVERS,
             name,
             aoServer.pkey,
@@ -142,12 +142,12 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
     }
 
     boolean isPostgresServerNameAvailable(String name, AOServer ao) {
-	return connector.requestBooleanQuery(AOServProtocol.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.pkey);
+	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.pkey);
     }
 
     void waitForRebuild(AOServer aoServer) {
         connector.requestUpdate(
-            AOServProtocol.WAIT_FOR_REBUILD,
+            AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.POSTGRES_SERVERS,
             aoServer.pkey
         );

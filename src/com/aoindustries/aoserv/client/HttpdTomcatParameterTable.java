@@ -32,7 +32,7 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
         String description
     ) {
         return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS,
             htc.pkey,
             name,

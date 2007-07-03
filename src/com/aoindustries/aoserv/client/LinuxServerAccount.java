@@ -146,7 +146,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
                 AOServConnection connection=table.connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.COPY_HOME_DIRECTORY);
+                    out.writeCompressedInt(AOServProtocol.CommandID.COPY_HOME_DIRECTORY.ordinal());
                     out.writeCompressedInt(pkey);
                     out.writeCompressedInt(toServer.pkey);
                     out.flush();
@@ -174,7 +174,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void copyPassword(LinuxServerAccount other) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "copyPassword(LinuxServerAccount)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -183,7 +183,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void disable(DisableLog dl) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "disable(DisableLog)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, dl.pkey, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, dl.pkey, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -192,7 +192,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void enable() {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "enable()", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -314,7 +314,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public String getAutoresponderContent() {
         Profiler.startProfile(Profiler.FAST, LinuxServerAccount.class, "getAutoresponderContent()", null);
         try {
-            String content=table.connector.requestStringQuery(AOServProtocol.GET_AUTORESPONDER_CONTENT, pkey);
+            String content=table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AUTORESPONDER_CONTENT, pkey);
             if(content.length()==0) return null;
             return content;
         } finally {
@@ -348,7 +348,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public String getCronTable() {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "getCronTable()", null);
         try {
-            return table.connector.requestStringQuery(AOServProtocol.GET_CRON_TABLE, pkey);
+            return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_CRON_TABLE, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -418,7 +418,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
                 AOServConnection connection=table.connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.GET_INBOX_ATTRIBUTES);
+                    out.writeCompressedInt(AOServProtocol.CommandID.GET_INBOX_ATTRIBUTES.ordinal());
                     out.writeCompressedInt(pkey);
                     out.flush();
 
@@ -460,7 +460,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
                     AOServConnection connection=table.connector.getConnection();
                     try {
                         CompressedDataOutputStream out=connection.getOutputStream();
-                        out.writeCompressedInt(AOServProtocol.GET_IMAP_FOLDER_SIZES);
+                        out.writeCompressedInt(AOServProtocol.CommandID.GET_IMAP_FOLDER_SIZES.ordinal());
                         out.writeCompressedInt(pkey);
                         out.writeCompressedInt(folderNames.length);
                         for(int c=0;c<folderNames.length;c++) out.writeUTF(folderNames[c]);
@@ -625,7 +625,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public int isProcmailManual() {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "isProcmailManual()", null);
         try {
-            return table.connector.requestIntQuery(AOServProtocol.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
+            return table.connector.requestIntQuery(AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -634,7 +634,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public int arePasswordsSet() {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "arePasswordsSet()", null);
         try {
-            return table.connector.requestBooleanQuery(AOServProtocol.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+            return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -737,7 +737,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "remove()", null);
         try {
             table.connector.requestUpdateIL(
-                AOServProtocol.REMOVE,
+                AOServProtocol.CommandID.REMOVE,
                 SchemaTable.TableID.LINUX_SERVER_ACCOUNTS,
                 pkey
             );
@@ -749,7 +749,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setCronBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setCronBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey, COLUMN_CRON_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey, COLUMN_CRON_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -758,7 +758,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setHomeBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setHomeBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey, COLUMN_HOME_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey, COLUMN_HOME_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -767,7 +767,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setImapFolderSubscribed(String folder, boolean subscribed) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setImapFolderSubscribed(String,boolean)", null);
         try {
-            table.connector.requestUpdate(AOServProtocol.SET_IMAP_FOLDER_SUBSCRIBED, pkey, folder, subscribed);
+            table.connector.requestUpdate(AOServProtocol.CommandID.SET_IMAP_FOLDER_SUBSCRIBED, pkey, folder, subscribed);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -776,7 +776,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setInboxBackupRetention(short days) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setInboxBackupRetention(short)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_BACKUP_RETENTION, days, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey, COLUMN_INBOX_BACKUP_RETENTION);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey, COLUMN_INBOX_BACKUP_RETENTION);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -785,7 +785,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setCronTable(String cronTable) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setCronTable(String)", null);
         try {
-            table.connector.requestUpdate(AOServProtocol.SET_CRON_TABLE, pkey, cronTable);
+            table.connector.requestUpdate(AOServProtocol.CommandID.SET_CRON_TABLE, pkey, cronTable);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -796,7 +796,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         try {
             AOServConnector connector=table.connector;
             if(!connector.isSecure()) throw new WrappedException(new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure."));
-            connector.requestUpdateIL(AOServProtocol.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
+            connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -815,7 +815,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
                 AOServConnection connection=table.connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.SET_AUTORESPONDER);
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_AUTORESPONDER.ordinal());
                     out.writeCompressedInt(pkey);
                     out.writeCompressedInt(from==null?-1:from.getPKey());
                     out.writeBoolean(subject!=null);
@@ -852,7 +852,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setTrashEmailRetention(int days) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setTrashEmailRetention(int)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, pkey, days);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, pkey, days);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -861,7 +861,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setJunkEmailRetention(int days) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setJunkEmailRetention(int)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, pkey, days);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, pkey, days);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -870,7 +870,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setEmailSpamAssassinIntegrationMode(EmailSpamAssassinIntegrationMode mode) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setEmailSpamAssassinIntegrationMode(EmailSpamAssassinIntegrationMode)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE, pkey, mode.pkey);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE, pkey, mode.pkey);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -879,7 +879,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setSpamAssassinRequiredScore(float required_score) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setSpamAssassinRequiredScore(float)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, required_score);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, required_score);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -888,7 +888,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public void setUseInbox(boolean useInbox) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "setUseInbox(boolean)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -903,7 +903,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
                 AOServConnection connection=connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD);
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD.ordinal());
                     out.writeCompressedInt(pkey);
                     out.writeNullUTF(password);
                     out.flush();
@@ -988,7 +988,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public boolean passwordMatches(String password) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccount.class, "passwordMatches(String)", null);
         try {
-            return table.connector.requestBooleanQuery(AOServProtocol.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
+            return table.connector.requestBooleanQuery(AOServProtocol.CommandID.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

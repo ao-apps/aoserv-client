@@ -27,7 +27,7 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
     int addEmailAddress(String address, EmailDomain domainObject) {
 	if (!EmailAddress.isValidFormat(address)) throw new WrappedException(new SQLException("Invalid email address: " + address));
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_ADDRESSES,
             address,
             domainObject.pkey

@@ -57,6 +57,6 @@ final public class MySQLBackupTable extends CachedTableIntegerKey<MySQLBackup> {
     }
 
     void removeExpiredMySQLBackups(AOServer aoServer) {
-	connector.requestUpdateIL(AOServProtocol.REMOVE_EXPIRED_MYSQL_BACKUPS, aoServer.pkey);
+	connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE_EXPIRED_MYSQL_BACKUPS, aoServer.pkey);
     }
 }

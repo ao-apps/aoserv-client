@@ -31,7 +31,7 @@ final public class MasterServerProfileTable extends AOServTable<String,MasterSer
 
     public List<MasterServerProfile> getRows() {
         List<MasterServerProfile> list=new ArrayList<MasterServerProfile>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.MASTER_SERVER_PROFILE);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_SERVER_PROFILE);
         return list;
     }
 

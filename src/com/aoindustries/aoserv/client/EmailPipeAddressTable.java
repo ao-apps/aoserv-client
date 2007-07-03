@@ -25,7 +25,7 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
 
     int addEmailPipeAddress(EmailAddress emailAddressObject, EmailPipe emailPipeObject) {
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_PIPE_ADDRESSES,
             emailAddressObject.pkey,
             emailPipeObject.pkey

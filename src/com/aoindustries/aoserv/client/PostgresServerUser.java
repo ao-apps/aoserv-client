@@ -37,7 +37,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     private String predisable_password;
 
     public int arePasswordsSet() {
-        return table.connector.requestBooleanQuery(AOServProtocol.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+        return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
     public boolean canDisable() {
@@ -59,11 +59,11 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     }*/
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -139,7 +139,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_SERVER_USERS,
             pkey
 	);
@@ -153,7 +153,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.SET_POSTGRES_SERVER_USER_PASSWORD);
+                out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PASSWORD.ordinal());
                 out.writeCompressedInt(pkey);
                 out.writeBoolean(password!=null); if(password!=null) out.writeUTF(password);
                 out.flush();
@@ -184,7 +184,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD);
+                out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
                 out.writeCompressedInt(pkey);
                 out.writeNullUTF(password);
                 out.flush();

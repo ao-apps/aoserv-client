@@ -32,7 +32,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
                 out.writeUTF(pack.name);
                 out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);

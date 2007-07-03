@@ -34,7 +34,7 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.DISABLE_LOG.ordinal());
                 out.writeUTF(bu.pkey);
                 out.writeBoolean(disableReason!=null); if(disableReason!=null) out.writeUTF(disableReason);

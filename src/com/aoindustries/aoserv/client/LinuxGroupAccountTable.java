@@ -41,7 +41,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupAccountTable.class, "addLinuxGroupAccount(LinuxGroup,LinuxAccount)", null);
         try {
             int pkey=connector.requestIntQueryIL(
-                AOServProtocol.ADD,
+                AOServProtocol.CommandID.ADD,
                 SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
                 groupNameObject.pkey,
                 usernameObject.pkey

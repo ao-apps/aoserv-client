@@ -119,7 +119,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupAccount.class, "remove()", null);
         try {
             table.connector.requestUpdateIL(
-                AOServProtocol.REMOVE,
+                AOServProtocol.CommandID.REMOVE,
                 SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
                 pkey
             );
@@ -132,7 +132,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupAccount.class, "setAsPrimary()", null);
         try {
             table.connector.requestUpdateIL(
-                AOServProtocol.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
+                AOServProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
                 pkey
             );
         } finally {

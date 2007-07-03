@@ -26,7 +26,7 @@ final public class DaemonProfileTable extends AOServTable<Object,DaemonProfile> 
 
     public List<DaemonProfile> getRows() {
         List<DaemonProfile> list=new ArrayList<DaemonProfile>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.DAEMON_PROFILE);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.DAEMON_PROFILE);
         return list;
     }
 

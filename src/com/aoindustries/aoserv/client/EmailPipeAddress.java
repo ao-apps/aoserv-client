@@ -96,7 +96,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_PIPE_ADDRESSES,
             pkey
 	);

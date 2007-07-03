@@ -31,7 +31,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 	if (!EmailList.isValidRegularPath(path)) throw new IllegalArgumentException("Invalid list path: " + path);
 
 	return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_LISTS,
             path,
             linuxAccountObject.pkey,

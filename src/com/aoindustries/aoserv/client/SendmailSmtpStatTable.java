@@ -35,7 +35,7 @@ final public class SendmailSmtpStatTable extends AOServTable<Integer,SendmailSmt
         long out_bandwidth
     ) {
         return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.SENDMAIL_SMTP_STATS,
             pack.name,
             date,
@@ -52,7 +52,7 @@ final public class SendmailSmtpStatTable extends AOServTable<Integer,SendmailSmt
     }
 
     public SendmailSmtpStat get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.SENDMAIL_SMTP_STATS, pkey);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.SENDMAIL_SMTP_STATS, pkey);
     }
 
     List<SendmailSmtpStat> getSendmailSmtpStats(Package pk) {
@@ -67,7 +67,7 @@ final public class SendmailSmtpStatTable extends AOServTable<Integer,SendmailSmt
 
     public List<SendmailSmtpStat> getRows() {
         List<SendmailSmtpStat> list=new ArrayList<SendmailSmtpStat>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.SENDMAIL_SMTP_STATS);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.SENDMAIL_SMTP_STATS);
         return list;
     }
 

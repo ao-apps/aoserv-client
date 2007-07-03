@@ -41,7 +41,7 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.FIND_OR_ADD_BACKUP_DATA);
+                out.writeCompressedInt(AOServProtocol.CommandID.FIND_OR_ADD_BACKUP_DATA.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.writeLong(length);
                 out.writeLong(md5_hi);
@@ -129,7 +129,7 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.FIND_OR_ADD_BACKUP_DATAS);
+                out.writeCompressedInt(AOServProtocol.CommandID.FIND_OR_ADD_BACKUP_DATAS.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.writeCompressedInt(uniqueBatchSize);
                 for(int c=0;c<uniqueBatchSize;c++) {
@@ -188,7 +188,7 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
     }
 
     public BackupData get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.BACKUP_DATA, pkey);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BACKUP_DATA, pkey);
     }
 
     public void getBackupData(
@@ -210,7 +210,7 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
                 AOServConnection connection=connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.GET_BACKUP_DATAS_PKEYS);
+                    out.writeCompressedInt(AOServProtocol.CommandID.GET_BACKUP_DATAS_PKEYS.ordinal());
                     out.writeCompressedInt(count);
                     for(int c=0;c<batchSize;c++) {
                         FileBackup fb=fileBackups.get(c);
@@ -257,11 +257,11 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
     }
 
     public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.GET_CACHED_ROW_COUNT, SchemaTable.TableID.BACKUP_DATA);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.BACKUP_DATA);
     }
 
     public int size() {
-        return connector.requestIntQuery(AOServProtocol.GET_ROW_COUNT, SchemaTable.TableID.BACKUP_DATA);
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.BACKUP_DATA);
     }
 
     public IntsAndLongs getBackupDataPKeys(boolean hasDataOnly, BackupLevel minBackupLevel) {
@@ -271,7 +271,7 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.GET_BACKUP_DATA_PKEYS);
+                out.writeCompressedInt(AOServProtocol.CommandID.GET_BACKUP_DATA_PKEYS.ordinal());
                 out.writeBoolean(hasDataOnly);
                 out.writeShort(minBackupLevel.getLevel());
                 out.flush();
@@ -306,7 +306,7 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
 
     public List<BackupData> getRows() {
         List<BackupData> list=new ArrayList<BackupData>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.BACKUP_DATA);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BACKUP_DATA);
         return list;
     }
 
@@ -469,7 +469,7 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
                 AOServConnection connection=connector.getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.REQUEST_SEND_BACKUP_DATA_TO_DAEMON);
+                    out.writeCompressedInt(AOServProtocol.CommandID.REQUEST_SEND_BACKUP_DATA_TO_DAEMON.ordinal());
                     out.writeCompressedInt(backupData);
                     out.writeLong(md5_hi);
                     out.writeLong(md5_lo);
@@ -528,9 +528,9 @@ final public class BackupDataTable extends AOServTable<Integer,BackupData> {
         Profiler.startProfile(Profiler.UNKNOWN, BackupDataTable.class, "flagAsStored(int,boolean,long)", null);
         try {
             if(isCompressed) {
-                connector.requestUpdate(AOServProtocol.FLAG_BACKUP_DATA_AS_STORED, backupData, true, compressedSize);
+                connector.requestUpdate(AOServProtocol.CommandID.FLAG_BACKUP_DATA_AS_STORED, backupData, true, compressedSize);
             } else {
-                connector.requestUpdate(AOServProtocol.FLAG_BACKUP_DATA_AS_STORED, backupData, false);
+                connector.requestUpdate(AOServProtocol.CommandID.FLAG_BACKUP_DATA_AS_STORED, backupData, false);
             }
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);

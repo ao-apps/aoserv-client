@@ -886,7 +886,7 @@ abstract public class AOServConnector {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.INVALIDATE_TABLE);
+                    out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
                     out.writeCompressedInt(tableID);
                     out.writeBoolean(server!=null);
                     if(server!=null) out.writeUTF(server);
@@ -953,7 +953,7 @@ abstract public class AOServConnector {
         Profiler.startProfile(Profiler.FAST, AOServConnector.class, "ping()", null);
         try {
             long startTime=System.currentTimeMillis();
-            requestUpdate(AOServProtocol.PING);
+            requestUpdate(AOServProtocol.CommandID.PING);
             long timeSpan=System.currentTimeMillis()-startTime;
             if(timeSpan>Integer.MAX_VALUE) return Integer.MAX_VALUE;
             return (int)timeSpan;
@@ -990,8 +990,9 @@ abstract public class AOServConnector {
     static void writeParams(Object[] params, CompressedDataOutputStream out) throws IOException {
         for(Object param : params) {
             if(param==null) throw new NullPointerException("param is null");
-            if(param instanceof Integer) out.writeCompressedInt(((Integer)param).intValue());
+            else if(param instanceof Integer) out.writeCompressedInt(((Integer)param).intValue());
             else if(param instanceof SchemaTable.TableID) out.writeCompressedInt(((SchemaTable.TableID)param).ordinal());
+            else if(param instanceof AOServProtocol.CommandID) out.writeCompressedInt(((AOServProtocol.CommandID)param).ordinal());
             else if(param instanceof String) out.writeUTF((String)param);
             else if(param instanceof Float) out.writeFloat((Float)param);
             else if(param instanceof Long) out.writeLong((Long)param);
@@ -1007,14 +1008,14 @@ abstract public class AOServConnector {
         }
     }
 
-    final boolean requestBooleanQuery(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestBooleanQuery(int,...)", null);
+    final boolean requestBooleanQuery(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestBooleanQuery(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1039,14 +1040,14 @@ abstract public class AOServConnector {
         }
     }
 
-    final int requestIntQuery(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestIntQuery(int,...)", null);
+    final int requestIntQuery(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestIntQuery(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1071,8 +1072,8 @@ abstract public class AOServConnector {
         }
     }
 
-    final int requestIntQueryIL(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestIntQueryIL(int,...)", null);
+    final int requestIntQueryIL(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestIntQueryIL(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 int result;
@@ -1080,7 +1081,7 @@ abstract public class AOServConnector {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1111,14 +1112,14 @@ abstract public class AOServConnector {
         }
     }
 
-    final long requestLongQuery(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestLongQuery(int,...)", null);
+    final long requestLongQuery(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestLongQuery(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1143,14 +1144,14 @@ abstract public class AOServConnector {
         }
     }
 
-    final short requestShortQuery(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestShortQuery(int,...)", null);
+    final short requestShortQuery(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestShortQuery(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1175,8 +1176,8 @@ abstract public class AOServConnector {
         }
     }
 
-    final short requestShortQueryIL(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestShortQueryIL(int,...)", null);
+    final short requestShortQueryIL(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestShortQueryIL(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 short result;
@@ -1184,7 +1185,7 @@ abstract public class AOServConnector {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1215,14 +1216,14 @@ abstract public class AOServConnector {
         }
     }
 
-    final String requestStringQuery(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestStringQuery(int,...)", null);
+    final String requestStringQuery(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestStringQuery(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1247,14 +1248,14 @@ abstract public class AOServConnector {
         }
     }
 
-    final void requestUpdate(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestUpdate(int,...)", null);
+    final void requestUpdate(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestUpdate(AOServProtocol.CommandID,...)", null);
         try {
             try {
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1277,15 +1278,15 @@ abstract public class AOServConnector {
         }
     }
 
-    final void requestUpdateIL(int commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestUpdateIL(int,Object...)", null);
+    final void requestUpdateIL(AOServProtocol.CommandID commID, Object ... params) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestUpdateIL(AOServProtocol.CommandID,Object...)", null);
         try {
             try {
                 IntList invalidateList;
                 AOServConnection connection=getConnection();
                 try {
                     CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID);
+                    out.writeCompressedInt(commID.ordinal());
                     writeParams(params, out);
                     out.flush();
 
@@ -1353,7 +1354,7 @@ abstract public class AOServConnector {
                     AOServConnection conn=getConnection();
                     try {
                         CompressedDataOutputStream out=conn.getOutputStream();
-                        out.writeCompressedInt(AOServProtocol.TEST_CONNECTION);
+                        out.writeCompressedInt(AOServProtocol.CommandID.TEST_CONNECTION.ordinal());
                         out.flush();
 
                         CompressedDataInputStream in=conn.getInputStream();
@@ -1404,7 +1405,7 @@ abstract public class AOServConnector {
                 AOServConnection conn=getConnection();
                 try {
                     CompressedDataOutputStream out=conn.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.GET_MASTER_ENTROPY);
+                    out.writeCompressedInt(AOServProtocol.CommandID.GET_MASTER_ENTROPY.ordinal());
                     out.writeCompressedInt(numBytes);
                     out.flush();
 
@@ -1440,7 +1441,7 @@ abstract public class AOServConnector {
     public long getMasterEntropyNeeded() {
         Profiler.startProfile(Profiler.FAST, AOServConnector.class, "getMasterEntropyNeeded()", null);
         try {
-            return requestLongQuery(AOServProtocol.GET_MASTER_ENTROPY_NEEDED);
+            return requestLongQuery(AOServProtocol.CommandID.GET_MASTER_ENTROPY_NEEDED);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -1456,7 +1457,7 @@ abstract public class AOServConnector {
                 AOServConnection conn=getConnection();
                 try {
                     CompressedDataOutputStream out=conn.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.ADD_MASTER_ENTROPY);
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD_MASTER_ENTROPY.ordinal());
                     out.writeCompressedInt(numBytes);
                     for(int c=0;c<numBytes;c++) out.writeByte(buff[c]);
                     out.flush();

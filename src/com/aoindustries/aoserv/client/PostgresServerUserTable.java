@@ -25,7 +25,7 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
 
     int addPostgresServerUser(String username, PostgresServer postgresServer) {
 	int pkey=connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_SERVER_USERS,
             username,
             postgresServer.pkey

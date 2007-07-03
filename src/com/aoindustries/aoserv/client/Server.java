@@ -434,7 +434,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     public void setLastBackupTime(long backupTime) {
-        table.connector.requestUpdateIL(AOServProtocol.SET_LAST_BACKUP_TIME, pkey, backupTime);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LAST_BACKUP_TIME, pkey, backupTime);
     }
 
     protected String toStringImpl() {

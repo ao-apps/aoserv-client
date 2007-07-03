@@ -216,11 +216,11 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     }*/
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.MYSQL_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.MYSQL_USERS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.MYSQL_USERS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.MYSQL_USERS, pkey);
     }
 
     public Object getColumn(int i) {
@@ -353,7 +353,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
     public void remove() {
         table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_USERS,
             pkey
         );

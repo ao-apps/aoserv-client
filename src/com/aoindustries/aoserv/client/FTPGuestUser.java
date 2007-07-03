@@ -58,7 +58,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
 
     public void remove() {
 	table.connector.requestUpdateIL(
-            AOServProtocol.REMOVE,
+            AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FTP_GUEST_USERS,
             pkey
 	);

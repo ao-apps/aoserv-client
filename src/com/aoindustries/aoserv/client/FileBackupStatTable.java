@@ -48,7 +48,7 @@ final public class FileBackupStatTable extends CachedTableIntegerKey<FileBackupS
             int pkey;
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.ADD);
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.FILE_BACKUP_STATS.ordinal());
                 out.writeCompressedInt(server.pkey);
                 out.writeLong(startTime);

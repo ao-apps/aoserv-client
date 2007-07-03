@@ -44,7 +44,7 @@ public class TCPConnector extends AOServConnector {
                         AOServConnection conn=getConnection();
                         try {
                             CompressedDataOutputStream out=conn.getOutputStream();
-                            out.writeCompressedInt(AOServProtocol.LISTEN_CACHES);
+                            out.writeCompressedInt(AOServProtocol.CommandID.LISTEN_CACHES.ordinal());
                             out.flush();
 
                             CompressedDataInputStream in=conn.getInputStream();

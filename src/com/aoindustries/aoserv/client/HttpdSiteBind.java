@@ -53,11 +53,11 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public void disable(DisableLog dl) {
-        table.connector.requestUpdateIL(AOServProtocol.DISABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, dl.pkey, pkey);
     }
     
     public void enable() {
-        table.connector.requestUpdateIL(AOServProtocol.ENABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, pkey);
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, pkey);
     }
 
     public String getAccessLog() {
@@ -172,7 +172,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     public void setIsManual(boolean isManual) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSiteBind.class, "setIsManual(boolean)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -181,7 +181,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSiteBind.class, "setRedirectToPrimaryHostname(boolean)", null);
         try {
-            table.connector.requestUpdateIL(AOServProtocol.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -194,7 +194,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
             AOServConnection connection=connector.getConnection();
             try {
                 CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG);
+                out.writeCompressedInt(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG.ordinal());
                 out.writeCompressedInt(pkey);
                 out.writeNullUTF(config);
                 out.flush();

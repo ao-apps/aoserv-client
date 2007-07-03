@@ -126,7 +126,7 @@ final public class BackupData extends AOServObject<Integer,BackupData> implement
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.GET_BACKUP_DATA);
+                masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_BACKUP_DATA.ordinal());
                 masterOut.writeCompressedInt(pkey);
                 masterOut.writeLong(skipBytes);
                 masterOut.flush();
@@ -214,7 +214,7 @@ final public class BackupData extends AOServObject<Integer,BackupData> implement
             AOServConnection connection=table.connector.getConnection();
             try {
                 CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.GET_BACKUP_DATA);
+                masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_BACKUP_DATA.ordinal());
                 masterOut.writeCompressedInt(pkey);
                 masterOut.writeLong(skipBytes);
                 masterOut.flush();
@@ -299,7 +299,7 @@ final public class BackupData extends AOServObject<Integer,BackupData> implement
     }
 
     public String getFilename() {
-        return table.connector.requestStringQuery(AOServProtocol.GET_FILENAME_FOR_BACKUP_DATA, pkey);
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_FILENAME_FOR_BACKUP_DATA, pkey);
     }
 
     public boolean isStored() {

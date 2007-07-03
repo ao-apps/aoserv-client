@@ -26,7 +26,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
     
     int addSpamEmailMessage(EmailSmtpRelay esr, String message) {
         return connector.requestIntQueryIL(
-            AOServProtocol.ADD,
+            AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.SPAM_EMAIL_MESSAGES,
             esr.pkey,
             message
@@ -35,7 +35,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
 
     public List<SpamEmailMessage> getRows() {
         List<SpamEmailMessage> list=new ArrayList<SpamEmailMessage>();
-        getObjects(list, AOServProtocol.GET_TABLE, SchemaTable.TableID.SPAM_EMAIL_MESSAGES);
+        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.SPAM_EMAIL_MESSAGES);
         return list;
     }
 
@@ -48,7 +48,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
     }
 
     public SpamEmailMessage get(int pkey) {
-        return getObject(AOServProtocol.GET_OBJECT, SchemaTable.TableID.SPAM_EMAIL_MESSAGES, pkey);
+        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.SPAM_EMAIL_MESSAGES, pkey);
     }
 
     List<SpamEmailMessage> getSpamEmailMessages(EmailSmtpRelay esr) {
@@ -56,7 +56,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
     }
 
     List<SpamEmailMessage> getSpamEmailMessages(int esr) {
-        return getObjects(AOServProtocol.GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY, esr);
+        return getObjects(AOServProtocol.CommandID.GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY, esr);
     }
 
     final public List<SpamEmailMessage> getIndexedRows(int col, Object value) {
