@@ -71,9 +71,14 @@ final public class SocketConnectionPool extends AOPool {
 	return ((SocketConnection)O).isClosed();
     }
 
+    /**
+     * Avoid repeated copies.
+     */
+    private static final int numTables = SchemaTable.TableID.values().length;
+
     protected void printConnectionStats(ChainWriter out) throws IOException {
         // Create statistics on the caches
-        int totalTables=SchemaTable.TableID.values().length;
+        int totalTables=numTables;
         int totalLoaded=0;
         int totalCaches=0;
         int totalActive=0;

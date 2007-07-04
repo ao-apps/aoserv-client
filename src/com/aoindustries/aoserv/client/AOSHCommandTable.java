@@ -66,6 +66,11 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
         return SchemaTable.TableID.AOSH_COMMANDS;
     }
 
+    /**
+     * Avoid repeated array copies.
+     */
+    private static final int numTables = SchemaTable.TableID.values().length;
+
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
         Profiler.startProfile(Profiler.UNKNOWN, AOSHCommandTable.class, "handleCommand(String[],InputStream,TerminalWriter,TerminalWriter,boolean)", null);
         try {
@@ -74,7 +79,6 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
                 int argCount=args.length;
                 if(argCount==1) {
                     SchemaTableTable schemaTableTable=connector.schemaTables;
-                    int numTables = SchemaTable.TableID.values().length;
                     for(int c=-1;c<numTables;c++) {
                         SchemaTable schemaTable=c==-1?null:schemaTableTable.get(c);
                         String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
@@ -89,7 +93,6 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
                 } else if(argCount==2) {
                     if(args[1].equals("syntax")) {
                         SchemaTableTable schemaTableTable=connector.schemaTables;
-                        int numTables = SchemaTable.TableID.values().length;
                         for(int c=-1;c<numTables;c++) {
                             SchemaTable schemaTable=c==-1?null:schemaTableTable.get(c);
                             String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
@@ -160,10 +163,10 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
     public void clearCache() {
         Profiler.startProfile(Profiler.FAST, AOSHCommandTable.class, "clearCache()", null);
         try {
+            super.clearCache();
             synchronized(this) {
                 tableCommands.clear();
             }
-            super.clearCache();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

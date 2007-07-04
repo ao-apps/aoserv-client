@@ -85,11 +85,11 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     }
 
     public void clearCache() {
+        super.clearCache();
         synchronized(this) {
             accountBalances.clear();
             confirmedAccountBalances.clear();
         }
-        super.clearCache();
     }
 
     int getAccountBalance(String accounting) {

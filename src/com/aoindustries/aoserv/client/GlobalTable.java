@@ -29,11 +29,12 @@ import java.util.Map;
  */
 abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServTable<K,V> {
 
+    private static final int numTables = SchemaTable.TableID.values().length;
     /**
      * The last time that the data was loaded, or
      * <code>-1</code> if not yet loaded.
      */
-    private static final long[] lastLoadeds=new long[SchemaTable.TableID.values().length];
+    private static final long[] lastLoadeds=new long[numTables];
     static {
         Arrays.fill(lastLoadeds, -1);
     }
@@ -41,7 +42,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     /**
      * Each table has its own lock because we were getting deadlocks with one lock on GlobalTable.class.
      */
-    private static final Object[] locks = new Object[SchemaTable.TableID.values().length];
+    private static final Object[] locks = new Object[numTables];
     static {
         for(int c=0;c<locks.length;c++) locks[c] = new Object();
     }
@@ -51,12 +52,11 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      * based on the server and then the table ID, and then the
      * column number.
      */
-    private static final List<List<Map<Object,GlobalObject>>> tableHashes=new ArrayList<List<Map<Object,GlobalObject>>>(SchemaTable.TableID.values().length);
+    private static final List<List<Map<Object,GlobalObject>>> tableHashes=new ArrayList<List<Map<Object,GlobalObject>>>(numTables);
     static {
-        int numTables = SchemaTable.TableID.values().length;
         for(int c=0;c<numTables;c++) tableHashes.add(null);
     }
-    private static final BitSet[] hashLoadeds=new BitSet[SchemaTable.TableID.values().length];
+    private static final BitSet[] hashLoadeds=new BitSet[numTables];
 
     /**
      * The internal indexes are stored in a <code>HashMap</code>
@@ -65,20 +65,18 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      * a <code>ArrayList</code> or <code>AOServObject[]</code>.
      * All of the List<GlobalObject> stored here are unmodifiable.
      */
-    private static final List<List<Map<Object,List<GlobalObject<?,?>>>>> indexHashes=new ArrayList<List<Map<Object,List<GlobalObject<?,?>>>>>(SchemaTable.TableID.values().length);
+    private static final List<List<Map<Object,List<GlobalObject<?,?>>>>> indexHashes=new ArrayList<List<Map<Object,List<GlobalObject<?,?>>>>>(numTables);
     static {
-        int numTables = SchemaTable.TableID.values().length;
         for(int c=0;c<numTables;c++) indexHashes.add(null);
     }
-    private static final BitSet[] indexLoadeds=new BitSet[SchemaTable.TableID.values().length];
+    private static final BitSet[] indexLoadeds=new BitSet[numTables];
 
     /**
      * The internal objects are stored in this list.  Each of the contained
      * List<GlobalObject> is unmodifiable.
      */
-    private static final List<List<GlobalObject<?,?>>> tableObjs=new ArrayList<List<GlobalObject<?,?>>>(SchemaTable.TableID.values().length);
+    private static final List<List<GlobalObject<?,?>>> tableObjs=new ArrayList<List<GlobalObject<?,?>>>(numTables);
     static {
-        int numTables = SchemaTable.TableID.values().length;
         for(int c=0;c<numTables;c++) tableObjs.add(null);
     }
 
@@ -257,11 +255,11 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     public void clearCache() {
         Profiler.startProfile(Profiler.FAST, GlobalTable.class, "clearCache()", null);
         try {
+            super.clearCache();
             SchemaTable.TableID tableID=getTableID();
             synchronized(locks[tableID.ordinal()]) {
                 lastLoadeds[tableID.ordinal()]=-1;
             }
-            super.clearCache();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

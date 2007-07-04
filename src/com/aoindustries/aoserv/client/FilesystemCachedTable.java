@@ -70,13 +70,13 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
     public void clearCache() {
         Profiler.startProfile(Profiler.UNKNOWN, FilesystemCachedTable.class, "clearCache()", null);
         try {
+            super.clearCache();
             synchronized(this) {
                 lastLoaded=-1;
                 tableList=null;
                 unmodifiableTableList=null;
                 if(columnLists!=null) columnLists.clear();
             }
-            super.clearCache();
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

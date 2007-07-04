@@ -19,21 +19,21 @@ import java.util.*;
  */
 final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn> {
 
+    /** Avoid repeated copies. */
+    private static final int numTables = SchemaTable.TableID.values().length;
     /**
      * The columns for tables are cached for faster lookups.
      */
-    private static final List<List<SchemaColumn>> tableColumns=new ArrayList<List<SchemaColumn>>(SchemaTable.TableID.values().length);
+    private static final List<List<SchemaColumn>> tableColumns=new ArrayList<List<SchemaColumn>>(numTables);
     static {
-        int numTables = SchemaTable.TableID.values().length;
         for(int c=0;c<numTables;c++) tableColumns.add(null);
     }
 
     /**
      * The nameToColumns are cached for faster lookups.
      */
-    private static final List<Map<String,SchemaColumn>> nameToColumns=new ArrayList<Map<String,SchemaColumn>>(SchemaTable.TableID.values().length);
+    private static final List<Map<String,SchemaColumn>> nameToColumns=new ArrayList<Map<String,SchemaColumn>>(numTables);
     static {
-        int numTables = SchemaTable.TableID.values().length;
         for(int c=0;c<numTables;c++) nameToColumns.add(null);
     }
 
@@ -120,8 +120,8 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
     public void clearCache() {
         Profiler.startProfile(Profiler.UNKNOWN, SchemaColumnTable.class, "clearCache()", null);
         try {
+            super.clearCache();
             synchronized(this) {
-                int numTables = SchemaTable.TableID.values().length;
                 for(int c=0;c<numTables;c++) {
                     synchronized(tableColumns) {
                         tableColumns.set(c, null);
@@ -132,7 +132,6 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
                     }
                 }
             }
-            super.clearCache();
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }

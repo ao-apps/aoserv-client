@@ -41,13 +41,13 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
     }
 
     public void clearCache() {
+        super.clearCache();
         synchronized(gidHash) {
             gidHashBuilt=false;
         }
         synchronized(nameHash) {
             nameHashBuilt=false;
         }
-        super.clearCache();
     }
 
     public LinuxServerGroup get(Object pkey) {

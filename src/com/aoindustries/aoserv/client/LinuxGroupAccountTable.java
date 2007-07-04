@@ -169,13 +169,13 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
     public void clearCache() {
         Profiler.startProfile(Profiler.FAST, LinuxGroupAccountTable.class, "clearCache()", null);
         try {
+            super.clearCache();
             synchronized(hash) {
                 hashBuilt=false;
             }
             synchronized(primaryHash) {
                 primaryHashBuilt=false;
             }
-            super.clearCache();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

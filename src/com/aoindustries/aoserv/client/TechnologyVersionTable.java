@@ -38,10 +38,10 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
     }
 
     public void clearCache() {
+        super.clearCache();
         synchronized(TechnologyVersionTable.class) {
             maximumUpdatedTime=-1;
         }
-        super.clearCache();
     }
 
     public TechnologyVersion get(Object pkey) {

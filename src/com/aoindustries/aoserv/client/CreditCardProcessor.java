@@ -19,18 +19,10 @@ import java.sql.SQLException;
  */
 final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardProcessor> {
 
-    public enum Column {
-        pkey,
-        accounting,
-        className,
-        param1,
-        param2,
-        param3,
-        param4,
-        enabled,
-        weight,
-        description
-    }
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_ACCOUNTING=1
+    ;
 
     private String accounting;
     private String className;
@@ -49,17 +41,17 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
     }
 
     public Object getColumn(int i) {
-        switch(Column.values()[i]) {
-            case pkey: return pkey;
-            case accounting: return accounting;
-            case className: return className;
-            case param1: return param1;
-            case param2: return param2;
-            case param3: return param3;
-            case param4: return param4;
-            case enabled: return enabled;
-            case weight: return weight;
-            case description: return description;
+        switch(i) {
+            case COLUMN_PKEY: return pkey;
+            case COLUMN_ACCOUNTING: return accounting;
+            case 2: return className;
+            case 3: return param1;
+            case 4: return param2;
+            case 5: return param3;
+            case 6: return param4;
+            case 7: return enabled;
+            case 8: return weight;
+            case 9: return description;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }

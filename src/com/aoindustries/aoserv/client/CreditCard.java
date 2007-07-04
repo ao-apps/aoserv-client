@@ -383,4 +383,27 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             description==null ? "" : description
         );
     }
+
+    /**
+     * Updates the credit card info (masked card number).
+     */
+    public void updateCardInfo(
+        String cardInfo
+    ) {
+	table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.UPDATE_CREDIT_CARD_CARD_INFO,
+            pkey,
+            cardInfo
+        );
+    }
+
+    /**
+     * Reactivates a credit card.
+     */
+    public void reactivate() {
+	table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.REACTIVATE_CREDIT_CARD,
+            pkey
+        );
+    }
 }

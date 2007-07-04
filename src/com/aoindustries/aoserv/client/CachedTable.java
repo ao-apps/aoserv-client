@@ -191,6 +191,7 @@ abstract public class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
     public void clearCache() {
         Profiler.startProfile(Profiler.FAST, CachedTable.class, "clearCache()", null);
         try {
+            super.clearCache();
             synchronized(this) {
                 lastLoaded=-1;
                 if(columnHashes!=null) {
@@ -210,7 +211,6 @@ abstract public class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
                 }
                 if(indexesHashed!=null) indexesHashed.clear();
             }
-            super.clearCache();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

@@ -39,12 +39,12 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
     }
 
     public void clearCache() {
+        super.clearCache();
         synchronized(SchemaForeignKeyTable.class) {
             tableKeys.clear();
             referencesHash.clear();
             referencedByHash.clear();
         }
-        super.clearCache();
     }
 
     List<SchemaForeignKey> getDataverseBridges(SchemaTable table, boolean matchBothWays) {

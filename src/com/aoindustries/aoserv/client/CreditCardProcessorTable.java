@@ -19,15 +19,15 @@ final public class CreditCardProcessorTable extends CachedTableStringKey<CreditC
     }
 
     public CreditCardProcessor get(Object pkey) {
-	return getUniqueRow(CreditCardProcessor.Column.pkey.ordinal(), pkey);
+	return getUniqueRow(CreditCardProcessor.COLUMN_PKEY, pkey);
     }
 
     public CreditCardProcessor get(String pkey) {
-	return getUniqueRow(CreditCardProcessor.Column.pkey.ordinal(), pkey);
+	return getUniqueRow(CreditCardProcessor.COLUMN_PKEY, pkey);
     }
 
     List<CreditCardProcessor> getCreditCardProcessors(Business business) {
-        return getIndexedRows(CreditCardProcessor.Column.accounting.ordinal(), business.pkey);
+        return getIndexedRows(CreditCardProcessor.COLUMN_ACCOUNTING, business.pkey);
     }
 
     public SchemaTable.TableID getTableID() {

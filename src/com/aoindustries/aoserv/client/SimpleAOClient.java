@@ -6742,6 +6742,8 @@ final public class SimpleAOClient {
     }
      */
 
+    private static final int numTables = SchemaTable.TableID.values().length;
+
     /**
      * Invalidates a table, causing all caches of the table to be removed and all configurations
      * based on the table to be reevaluated.
@@ -6763,7 +6765,7 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "invalidate(int,String)", null);
         try {
-            if(tableID<0 || tableID>=SchemaTable.TableID.values().length) throw new IllegalArgumentException("Invalid table ID: "+tableID);
+            if(tableID<0 || tableID>=numTables) throw new IllegalArgumentException("Invalid table ID: "+tableID);
             if(server!=null && server.length()==0) server=null;
             connector.invalidateTable(tableID, server);
         } finally {

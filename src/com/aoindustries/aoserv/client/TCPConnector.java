@@ -26,6 +26,9 @@ import java.util.*;
 public class TCPConnector extends AOServConnector {
 
     private static final int MAX_IDLE_LISTEN_CACHES=15*60*1000;
+    
+    /** Avoid repeated copies using static final int. */
+    private static final int numTables = SchemaTable.TableID.values().length;
 
     class CacheMonitor extends Thread {
 
@@ -58,7 +61,6 @@ public class TCPConnector extends AOServConnector {
                                         // Must also not have any invalidate listeners
                                         boolean foundListener=false;
                                         if(tables!=null) {
-                                            int numTables = SchemaTable.TableID.values().length;
                                             for(int c=0;c<numTables;c++) {
                                                 AOServTable table=tables[c];
                                                 if(table!=null) {

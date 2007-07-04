@@ -215,6 +215,11 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         SERVER_DOWN=2
     ;
 
+    /**
+     * Since the ordinals are used in the protocol (for compatibility with older implementations), values
+     * must be added to the end of this enum.  Values may not be removed (since this would change the
+     * ordinals).
+     */
     public enum CommandID {
         ADD,
         GET_OBJECT,
@@ -433,7 +438,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_WHOIS_HISTORY_WHOIS_OUTPUT,
         GET_MYSQL_SLAVE_STATUS,
         GET_MYSQL_MASTER_STATUS,
-        UPDATE_CREDIT_CARD
+        UPDATE_CREDIT_CARD,
+        UPDATE_CREDIT_CARD_CARD_INFO,
+        REACTIVATE_CREDIT_CARD
     }
 
     /**

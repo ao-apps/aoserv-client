@@ -35,7 +35,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         get_credit_cards,
         add_credit_card,
         delete_credit_card,
-        edit_card_card,
+        edit_credit_card,
         // interbase_server_users
         set_interbase_server_user_password,
         // linux_server_accounts

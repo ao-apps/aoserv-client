@@ -154,6 +154,9 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
+    /** Avoid repeated array copies. */
+    private static final int numTables = SchemaTable.TableID.values().length;
+
     /**
      * Processes one command and returns.
      *
@@ -194,7 +197,7 @@ final public class AOSH extends ShellInterpreter {
                             if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+lowerCommand+"', table='"+table.getTableName()+'\'');
                         }
                         /*
-                        for(int c=0;c<SchemaTable.TableID.values().length;c++) {
+                        for(int c=0;c<numTables;c++) {
                             AOServTable table=connector.getTable(c);
                             if(table.handleCommand(args, in, out, err, isInteractive())) {
                                 done=true;
@@ -222,7 +225,7 @@ final public class AOSH extends ShellInterpreter {
                 SchemaTableTable schemaTableTable=connector.schemaTables;
                 // Find the table ID
                 int tableID=-1;
-                for(int d=0;d<SchemaTable.TableID.values().length;d++) {
+                for(int d=0;d<numTables;d++) {
                     if(schemaTableTable.get(d).getName().equalsIgnoreCase(tableName)) {
                         tableID=d;
                         break;

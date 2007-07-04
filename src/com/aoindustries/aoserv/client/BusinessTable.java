@@ -77,10 +77,10 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     }
 
     public void clearCache() {
+        super.clearCache();
         synchronized(this) {
             rootAccounting=null;
         }
-        super.clearCache();
     }
 
     public String generateAccountingCode(String template) {

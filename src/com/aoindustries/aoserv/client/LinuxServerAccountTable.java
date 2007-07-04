@@ -45,13 +45,13 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
     }
 
     public void clearCache() {
+        super.clearCache();
         synchronized(uidHash) {
             uidHashBuilt=false;
         }
         synchronized(nameHash) {
             nameHashBuilt=false;
         }
-        super.clearCache();
     }
 
     public LinuxServerAccount get(Object pkey) {
