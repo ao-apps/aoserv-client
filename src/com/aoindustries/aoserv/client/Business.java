@@ -908,4 +908,16 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public List<EncryptionKey> getEncryptionKeys() {
         return table.connector.encryptionKeys.getEncryptionKeys(this);
     }
+    
+    /**
+     * Sets the credit card that will be used monthly.  Any other selected card will
+     * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
+     */
+    public void setUseMonthlyCreditCard(CreditCard creditCard) {
+        table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
+            pkey,
+            creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPKey())
+        );
+    }
 }

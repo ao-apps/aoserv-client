@@ -440,7 +440,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_MYSQL_MASTER_STATUS,
         UPDATE_CREDIT_CARD,
         UPDATE_CREDIT_CARD_CARD_INFO,
-        REACTIVATE_CREDIT_CARD
+        REACTIVATE_CREDIT_CARD,
+        SET_CREDIT_CARD_USE_MONTHLY
     }
 
     /**
