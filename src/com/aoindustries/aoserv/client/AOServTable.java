@@ -639,7 +639,6 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      *
      * @return  the identifier for this table
      *
-     * @see  AOServConnector#getTable(SchemaTable.TableID)
      * @see  SchemaTable.TableID
      */
     public abstract SchemaTable.TableID getTableID();

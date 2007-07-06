@@ -132,7 +132,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * depends on the <code>LinuxAccountType</code>.
      *
      * @see  LinuxAccountType#enforceStrongPassword(String)
-     * @see  PasswordChecker#checkPassword(String,String,boolean,boolean)
+     * @see  PasswordChecker#checkPassword(Locale,String,String,boolean,boolean)
      */
     public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String type, String password) {
         boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
