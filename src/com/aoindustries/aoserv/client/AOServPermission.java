@@ -31,6 +31,8 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         set_business_administrator_password,
         // credit_card_processors
         get_credit_card_processors,
+        // credit_card_transactions
+        add_credit_card_transaction,
         // credit_cards
         get_credit_cards,
         add_credit_card,

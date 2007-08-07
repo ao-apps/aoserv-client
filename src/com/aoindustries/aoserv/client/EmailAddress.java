@@ -152,6 +152,8 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 
     public static boolean isValidFormat(String name) {
 	int len = name.length();
+        // May not be empty (previously used for catch-all addresses)
+        if(len<=0) return false;
 	for (int c = 0; c < len; c++) {
             char ch = name.charAt(c);
             if (

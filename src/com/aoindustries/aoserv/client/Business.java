@@ -6,8 +6,10 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.*;
 import java.io.*;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 
@@ -135,6 +137,104 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             postalCode,
             countryCode,
             description
+	);
+    }
+
+    /**
+     * Adds a transaction in the pending state.
+     */
+    public int addCreditCardTransaction(
+        CreditCardProcessor processor,
+        boolean testMode,
+        int duplicateWindow,
+        String orderNumber,
+        String currencyCode,
+        BigDecimal amount,
+        BigDecimal taxAmount,
+        boolean taxExempt,
+        BigDecimal shippingAmount,
+        BigDecimal dutyAmount,
+        String shippingFirstName,
+        String shippingLastName,
+        String shippingCompanyName,
+        String shippingStreetAddress1,
+        String shippingStreetAddress2,
+        String shippingCity,
+        String shippingState,
+        String shippingPostalCode,
+        String shippingCountryCode,
+        boolean emailCustomer,
+        String merchantEmail,
+        String invoiceNumber,
+        String purchaseOrderNumber,
+        String description,
+        BusinessAdministrator creditCardCreatedBy,
+        Business creditCardAccounting,
+        String creditCardProviderUniqueId,
+        String creditCardMaskedCardNumber,
+        String creditCardFirstName,
+        String creditCardLastName,
+        String creditCardCompanyName,
+        String creditCardEmail,
+        String creditCardPhone,
+        String creditCardFax,
+        String creditCardCustomerTaxId,
+        String creditCardStreetAddress1,
+        String creditCardStreetAddress2,
+        String creditCardCity,
+        String creditCardState,
+        String creditCardPostalCode,
+        String creditCardCountryCode,
+        String creditCardComments,
+        long authorizationTime,
+        BusinessAdministrator authorizationUsername
+    ) throws IOException, SQLException {
+	return table.connector.creditCardTransactions.addCreditCardTransaction(
+            this,
+            processor,
+            testMode,
+            duplicateWindow,
+            orderNumber,
+            currencyCode,
+            amount,
+            taxAmount,
+            taxExempt,
+            shippingAmount,
+            dutyAmount,
+            shippingFirstName,
+            shippingLastName,
+            shippingCompanyName,
+            shippingStreetAddress1,
+            shippingStreetAddress2,
+            shippingCity,
+            shippingState,
+            shippingPostalCode,
+            shippingCountryCode,
+            emailCustomer,
+            merchantEmail,
+            invoiceNumber,
+            purchaseOrderNumber,
+            description,
+            creditCardCreatedBy,
+            creditCardAccounting,
+            creditCardProviderUniqueId,
+            creditCardMaskedCardNumber,
+            creditCardFirstName,
+            creditCardLastName,
+            creditCardCompanyName,
+            creditCardEmail,
+            creditCardPhone,
+            creditCardFax,
+            creditCardCustomerTaxId,
+            creditCardStreetAddress1,
+            creditCardStreetAddress2,
+            creditCardCity,
+            creditCardState,
+            creditCardPostalCode,
+            creditCardCountryCode,
+            creditCardComments,
+            authorizationTime,
+            authorizationUsername
 	);
     }
 
@@ -319,6 +419,20 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return table.connector.transactions.getAccountBalance(pkey, before);
     }
 
+    /**
+     * @see  #getAccountBalance()
+     */
+    public String getAccountBalanceString() {
+        return "$"+SQLUtility.getDecimal(getAccountBalance());
+    }
+
+    /**
+     * @see  #getAccountBalance(long)
+     */
+    public String getAccountBalanceString(long before) {
+        return "$"+SQLUtility.getDecimal(getAccountBalance(before));
+    }
+
     public String getAccounting() {
 	return pkey;
     }
@@ -492,6 +606,13 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         int total=0;
         for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total+=mc.getPennies();
         return total;
+    }
+
+    /**
+     * @see  #getMonthlyRate()
+     */
+    public String getMonthlyRateString() {
+        return "$"+SQLUtility.getDecimal(getMonthlyRate());
     }
 
     public List<NoticeLog> getNoticeLogs() {

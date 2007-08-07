@@ -330,7 +330,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     }
 
     /**
-     * Gets the time of the authorization.
+     * Gets the time of the authorization or <code>-1</code> if not available.
      */
     public long getAuthorizationTime() {
         return authorizationTime;
@@ -340,6 +340,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
      * Gets the <code>BusinessAdministrator</code> who authorized this transactions.
      */
     public BusinessAdministrator getAuthorizationAdministrator() {
+        if(authorizationUsername==null) return null;
         BusinessAdministrator business_administrator = table.connector.businessAdministrators.get(authorizationUsername);
         if (business_administrator == null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: " + authorizationUsername));
         return business_administrator;
@@ -537,7 +538,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
             case 41: return creditCardPostalCode;
             case 42: return creditCardCountryCode;
             case 43: return creditCardComments;
-            case 44: return new java.sql.Date(authorizationTime);
+            case 44: return authorizationTime==-1 ? null : new java.sql.Date(authorizationTime);
             case 45: return authorizationUsername;
             case 46: return authorizationCommunicationResult;
             case 47: return authorizationProviderErrorCode;
@@ -624,7 +625,8 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         creditCardPostalCode = result.getString(pos++);
         creditCardCountryCode = result.getString(pos++);
         creditCardComments = result.getString(pos++);
-        authorizationTime = result.getTimestamp(pos++).getTime();
+        Timestamp T = result.getTimestamp(pos++);
+        authorizationTime = T==null ? -1 : T.getTime();
         authorizationUsername = result.getString(pos++);
         authorizationCommunicationResult = result.getString(pos++);
         authorizationProviderErrorCode = result.getString(pos++);
@@ -642,7 +644,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         authorizationProviderAvsResult = result.getString(pos++);
         authorizationAvsResult = result.getString(pos++);
         authorizationApprovalCode = result.getString(pos++);
-        Timestamp T = result.getTimestamp(pos++);
+        T = result.getTimestamp(pos++);
         captureTime = T==null ? -1 : T.getTime();
         captureUsername = result.getString(pos++);
         captureCommunicationResult = result.getString(pos++);
@@ -710,8 +712,8 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         creditCardCountryCode = in.readUTF().intern();
         creditCardComments = in.readNullUTF();
         authorizationTime = in.readLong();
-        authorizationUsername = in.readUTF().intern();
-        authorizationCommunicationResult = in.readUTF().intern();
+        authorizationUsername = StringUtility.intern(in.readNullUTF());
+        authorizationCommunicationResult = StringUtility.intern(in.readNullUTF());
         authorizationProviderErrorCode = StringUtility.intern(in.readNullUTF());
         authorizationErrorCode = StringUtility.intern(in.readNullUTF());
         authorizationProviderErrorMessage = in.readNullUTF();
@@ -790,8 +792,8 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         out.writeUTF(creditCardCountryCode);
         out.writeNullUTF(creditCardComments);
         out.writeLong(authorizationTime);
-        out.writeUTF(authorizationUsername);
-        out.writeUTF(authorizationCommunicationResult);
+        out.writeNullUTF(authorizationUsername);
+        out.writeNullUTF(authorizationCommunicationResult);
         out.writeNullUTF(authorizationProviderErrorCode);
         out.writeNullUTF(authorizationErrorCode);
         out.writeNullUTF(authorizationProviderErrorMessage);
