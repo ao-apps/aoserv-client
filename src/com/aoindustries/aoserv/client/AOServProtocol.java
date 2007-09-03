@@ -441,7 +441,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         UPDATE_CREDIT_CARD,
         UPDATE_CREDIT_CARD_CARD_INFO,
         REACTIVATE_CREDIT_CARD,
-        SET_CREDIT_CARD_USE_MONTHLY
+        SET_CREDIT_CARD_USE_MONTHLY,
+        CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
+        TRANSACTION_HELD
     }
 
     /**

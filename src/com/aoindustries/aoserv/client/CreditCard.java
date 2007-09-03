@@ -26,12 +26,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=1
+        COLUMN_PROCESSOR_ID=1,
+        COLUMN_ACCOUNTING=2
     ;
 
-    String accounting;
-    private String cardInfo;
     private String processorId;
+    String accounting;
+    private String groupName;
+    private String cardInfo;
     private String providerUniqueId;
     private String firstName;
     private String lastName;
@@ -48,6 +50,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     private String countryCode;
     private long created;
     private String createdBy;
+    private String principalName;
     private boolean useMonthly;
     private boolean isActive;
     private long deactivatedOn;
@@ -69,16 +72,6 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	);
     }
 
-    public Business getBusiness() {
-        Business business = table.connector.businesses.get(accounting);
-        if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
-        return business;
-    }
-
-    public String getCardInfo() {
-	return cardInfo;
-    }
-
     /**
      * Gets the processor that is storing the credit card numbers.
      */
@@ -86,6 +79,23 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         CreditCardProcessor ccp = table.connector.creditCardProcessors.get(processorId);
         if(ccp==null) throw new WrappedException(new SQLException("Unable to find CreditCardProcessor: "+processorId));
         return ccp;
+    }
+
+    public Business getBusiness() {
+        Business business = table.connector.businesses.get(accounting);
+        if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+        return business;
+    }
+
+    /**
+     * Gets the application-specific grouping for this credit card.
+     */
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public String getCardInfo() {
+	return cardInfo;
     }
 
     /**
@@ -99,7 +109,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     /**
      * Gets the default card info for a credit card number.
      *
-     * @deprecated  Please use <code>com.aoindustries.creditcards.CreditCard#maskCardNumber instead.
+     * @deprecated  Please use <code>com.aoindustries.creditcards.CreditCard#maskCardNumber(String)</code> instead.
+     * @see         com.aoindustries.creditcards.CreditCard#maskCardNumber(String)
      */
     public static String getCardInfo(String cardNumber) {
         String nums = "";
@@ -117,30 +128,32 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_PROCESSOR_ID: return processorId;
             case COLUMN_ACCOUNTING: return accounting;
-            case 2: return cardInfo;
-            case 3: return processorId;
-            case 4: return providerUniqueId;
-            case 5: return firstName;
-            case 6: return lastName;
-            case 7: return companyName;
-            case 8: return email;
-            case 9: return phone;
-            case 10: return fax;
-            case 11: return customerTaxId;
-            case 12: return streetAddress1;
-            case 13: return streetAddress2;
-            case 14: return city;
-            case 15: return state;
-            case 16: return postalCode;
-            case 17: return countryCode;
-            case 18: return new java.sql.Date(created);
-            case 19: return createdBy;
-            case 20: return useMonthly?Boolean.TRUE:Boolean.FALSE;
-            case 21: return isActive?Boolean.TRUE:Boolean.FALSE;
-            case 22: return deactivatedOn==-1?null:new java.sql.Date(deactivatedOn);
-            case 23: return deactivateReason;
-            case 24: return description;
+            case 3: return groupName;
+            case 4: return cardInfo;
+            case 5: return providerUniqueId;
+            case 6: return firstName;
+            case 7: return lastName;
+            case 8: return companyName;
+            case 9: return email;
+            case 10: return phone;
+            case 11: return fax;
+            case 12: return customerTaxId;
+            case 13: return streetAddress1;
+            case 14: return streetAddress2;
+            case 15: return city;
+            case 16: return state;
+            case 17: return postalCode;
+            case 18: return countryCode;
+            case 19: return new java.sql.Date(created);
+            case 20: return createdBy;
+            case 21: return principalName;
+            case 22: return useMonthly?Boolean.TRUE:Boolean.FALSE;
+            case 23: return isActive?Boolean.TRUE:Boolean.FALSE;
+            case 24: return deactivatedOn==-1?null:new java.sql.Date(deactivatedOn);
+            case 25: return deactivateReason;
+            case 26: return description;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -209,6 +222,13 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return business_administrator;
     }
 
+    /**
+     * Gets the application-provided principal name that stored this credit card.
+     */
+    public String getPrincipalName() {
+        return principalName;
+    }
+
     public long getDeactivatedOn() {
 	return deactivatedOn;
     }
@@ -232,9 +252,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     void initImpl(ResultSet result) throws SQLException {
         int pos = 1;
 	pkey = result.getInt(pos++);
-	accounting = result.getString(pos++);
-	cardInfo = result.getString(pos++);
         processorId = result.getString(pos++);
+	accounting = result.getString(pos++);
+        groupName = result.getString(pos++);
+	cardInfo = result.getString(pos++);
         providerUniqueId = result.getString(pos++);
         firstName = result.getString(pos++);
         lastName = result.getString(pos++);
@@ -251,6 +272,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         countryCode = result.getString(pos++);
 	created = result.getTimestamp(pos++).getTime();
 	createdBy = result.getString(pos++);
+        principalName = result.getString(pos++);
 	useMonthly = result.getBoolean(pos++);
 	isActive = result.getBoolean(pos++);
 	Timestamp time = result.getTimestamp(pos++);
@@ -265,9 +287,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	accounting=in.readUTF().intern();
-        cardInfo=in.readUTF();
         processorId=in.readUTF().intern();
+	accounting=in.readUTF().intern();
+        groupName=in.readNullUTF();
+        cardInfo=in.readUTF();
         providerUniqueId=in.readUTF();
         firstName=in.readUTF();
         lastName=in.readUTF();
@@ -284,6 +307,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         countryCode=in.readUTF().intern();
 	created=in.readLong();
 	createdBy=in.readUTF().intern();
+        principalName=in.readNullUTF();
 	useMonthly=in.readBoolean();
 	isActive=in.readBoolean();
 	deactivatedOn=in.readLong();
@@ -305,8 +329,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) out.writeUTF(processorId);
 	out.writeUTF(accounting);
 	if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) out.writeCompressedInt(0);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) out.writeNullUTF(groupName);
 	out.writeUTF(cardInfo);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) {
             out.writeCompressedInt(0);
@@ -319,7 +345,6 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             out.writeCompressedInt(0);
         }
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) {
-            out.writeUTF(processorId);
             out.writeUTF(providerUniqueId);
             out.writeUTF(firstName);
             out.writeUTF(lastName);
@@ -337,6 +362,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         }
 	out.writeLong(created);
 	out.writeUTF(createdBy);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) out.writeNullUTF(principalName);
 	out.writeBoolean(useMonthly);
 	out.writeBoolean(isActive);
 	out.writeLong(deactivatedOn);

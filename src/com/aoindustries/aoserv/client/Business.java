@@ -100,8 +100,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public int addCreditCard(
-        String cardInfo,
         CreditCardProcessor processor,
+        String groupName,
+        String cardInfo,
         String providerUniqueId,
         String firstName,
         String lastName,
@@ -116,12 +117,14 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         String state,
         String postalCode,
         CountryCode countryCode,
+        String principalName,
         String description
     ) {
 	return table.connector.creditCards.addCreditCard(
-            this,
-            cardInfo,
             processor,
+            this,
+            groupName,
+            cardInfo,
             providerUniqueId,
             firstName,
             lastName,
@@ -136,6 +139,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             state,
             postalCode,
             countryCode,
+            principalName,
             description
 	);
     }
@@ -145,6 +149,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      */
     public int addCreditCardTransaction(
         CreditCardProcessor processor,
+        String groupName,
         boolean testMode,
         int duplicateWindow,
         String orderNumber,
@@ -169,7 +174,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         String purchaseOrderNumber,
         String description,
         BusinessAdministrator creditCardCreatedBy,
+        String creditCardPrincipalName,
         Business creditCardAccounting,
+        String creditCardGroupName,
         String creditCardProviderUniqueId,
         String creditCardMaskedCardNumber,
         String creditCardFirstName,
@@ -187,11 +194,12 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         String creditCardCountryCode,
         String creditCardComments,
         long authorizationTime,
-        BusinessAdministrator authorizationUsername
+        String authorizationPrincipalName
     ) throws IOException, SQLException {
 	return table.connector.creditCardTransactions.addCreditCardTransaction(
-            this,
             processor,
+            this,
+            groupName,
             testMode,
             duplicateWindow,
             orderNumber,
@@ -216,7 +224,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             purchaseOrderNumber,
             description,
             creditCardCreatedBy,
+            creditCardPrincipalName,
             creditCardAccounting,
+            creditCardGroupName,
             creditCardProviderUniqueId,
             creditCardMaskedCardNumber,
             creditCardFirstName,
@@ -234,7 +244,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             creditCardCountryCode,
             creditCardComments,
             authorizationTime,
-            authorizationUsername
+            authorizationPrincipalName
 	);
     }
 
@@ -306,6 +316,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	int rate,
         PaymentType paymentType,
         String paymentInfo,
+        CreditCardProcessor processor,
 	byte payment_confirmed
     ) {
 	return table.connector.transactions.addTransaction(
@@ -318,6 +329,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             rate,
             paymentType,
             paymentInfo,
+            processor,
             payment_confirmed
 	);
     }
@@ -1040,5 +1052,12 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             pkey,
             creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPKey())
         );
+    }
+    
+    /**
+     * Gets the most recent credit card transaction.
+     */
+    public CreditCardTransaction getLastCreditCardTransaction() {
+        return table.connector.creditCardTransactions.getLastCreditCardTransaction(this);
     }
 }

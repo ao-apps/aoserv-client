@@ -25,7 +25,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
     private int transID;
     private String
         bankAccount,
-        merchantAccount,
+        processor,
         administrator,
         type,
         expenseCode,
@@ -73,7 +73,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
             case 0: return new java.sql.Date(time);
             case 1: return Integer.valueOf(transID);
             case 2: return bankAccount;
-            case 3: return merchantAccount;
+            case 3: return processor;
             case 4: return administrator;
             case 5: return type;
             case 6: return expenseCode;
@@ -96,11 +96,11 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return cat;
     }
 
-    public MerchantAccount getMerchantAccount() {
-        if (merchantAccount == null) return null;
-        MerchantAccount merchantAccountObject = table.connector.merchantAccounts.get(merchantAccount);
-        if (merchantAccountObject == null) throw new WrappedException(new SQLException("MerchantAccount not found: " + merchantAccount));
-        return merchantAccountObject;
+    public CreditCardProcessor getCreditCardProcessor() {
+        if (processor == null) return null;
+        CreditCardProcessor ccProcessor = table.connector.creditCardProcessors.get(processor);
+        if (ccProcessor == null) throw new WrappedException(new SQLException("CreditCardProcessor not found: " + processor));
+        return ccProcessor;
     }
 
     public Integer getKey() {
@@ -136,7 +136,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	time = result.getTimestamp(1).getTime();
 	transID = result.getInt(2);
 	bankAccount = result.getString(3);
-	merchantAccount = result.getString(4);
+	processor = result.getString(4);
 	administrator = result.getString(5);
 	type = result.getString(6);
 	expenseCode = result.getString(7);
@@ -151,17 +151,17 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	time=in.readLong();
-	transID=in.readCompressedInt();
-	bankAccount=in.readUTF().intern();
-	merchantAccount=StringUtility.intern(in.readNullUTF());
-	administrator=in.readUTF().intern();
-	type=in.readUTF().intern();
-	expenseCode=StringUtility.intern(in.readNullUTF());
-	description=in.readUTF();
-	checkNo=in.readNullUTF();
-	amount=in.readCompressedInt();
-	confirmed=in.readBoolean();
+	time = in.readLong();
+	transID = in.readCompressedInt();
+	bankAccount = in.readUTF().intern();
+	processor = StringUtility.intern(in.readNullUTF());
+	administrator = in.readUTF().intern();
+	type = in.readUTF().intern();
+	expenseCode = StringUtility.intern(in.readNullUTF());
+	description = in.readUTF();
+	checkNo = in.readNullUTF();
+	amount = in.readCompressedInt();
+	confirmed = in.readBoolean();
     }
 
     public void setTable(AOServTable<Integer,BankTransaction> table) {
@@ -177,7 +177,11 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	out.writeLong(time);
 	out.writeCompressedInt(transID);
 	out.writeUTF(bankAccount);
-	out.writeNullUTF(merchantAccount);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)<0) {
+            out.writeNullUTF(null);
+        } else {
+            out.writeNullUTF(processor);
+        }
 	out.writeUTF(administrator);
 	out.writeUTF(type);
 	out.writeNullUTF(expenseCode);

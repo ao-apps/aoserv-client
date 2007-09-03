@@ -26,8 +26,9 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
     }
 
     int addCreditCardTransaction(
-        Business business,
         CreditCardProcessor processor,
+        Business business,
+        String groupName,
         boolean testMode,
         int duplicateWindow,
         String orderNumber,
@@ -52,7 +53,9 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
         String purchaseOrderNumber,
         String description,
         BusinessAdministrator creditCardCreatedBy,
+        String creditCardPrincipalName,
         Business creditCardAccounting,
+        String creditCardGroupName,
         String creditCardProviderUniqueId,
         String creditCardMaskedCardNumber,
         String creditCardFirstName,
@@ -70,7 +73,7 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
         String creditCardCountryCode,
         String creditCardComments,
         long authorizationTime,
-        BusinessAdministrator authorizationUsername
+        String authorizationPrincipalName
     ) throws IOException, SQLException {
         if(!connector.isSecure()) throw new IOException("Credit card transactions may only be added when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 
@@ -81,8 +84,9 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
             CompressedDataOutputStream out=connection.getOutputStream();
             out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
             out.writeCompressedInt(SchemaTable.TableID.CREDIT_CARD_TRANSACTIONS.ordinal());
-            out.writeUTF(business.pkey);
             out.writeUTF(processor.pkey);
+            out.writeUTF(business.pkey);
+            out.writeNullUTF(groupName);
             out.writeBoolean(testMode);
             out.writeCompressedInt(duplicateWindow);
             out.writeNullUTF(orderNumber);
@@ -107,7 +111,9 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
             out.writeNullUTF(purchaseOrderNumber);
             out.writeNullUTF(description);
             out.writeUTF(creditCardCreatedBy.pkey);
+            out.writeNullUTF(creditCardPrincipalName);
             out.writeUTF(creditCardAccounting.getAccounting());
+            out.writeNullUTF(creditCardGroupName);
             out.writeNullUTF(creditCardProviderUniqueId);
             out.writeUTF(creditCardMaskedCardNumber);
             out.writeUTF(creditCardFirstName);
@@ -125,7 +131,7 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
             out.writeUTF(creditCardCountryCode);
             out.writeNullUTF(creditCardComments);
             out.writeLong(authorizationTime);
-            out.writeUTF(authorizationUsername.pkey);
+            out.writeNullUTF(authorizationPrincipalName);
             out.flush();
 
             CompressedDataInputStream in=connection.getInputStream();
@@ -157,5 +163,17 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.CREDIT_CARD_TRANSACTIONS;
+    }
+    
+    CreditCardTransaction getLastCreditCardTransaction(Business bu) {
+        String accounting = bu.pkey;
+        // Sorted by accounting, time, so we search for first match from the bottom
+        // TODO: We could do a binary search on accounting code and time to make this faster
+        List<CreditCardTransaction> ccts = getRows();
+        for(int c=ccts.size()-1; c>=0; c--) {
+            CreditCardTransaction cct = ccts.get(c);
+            if(cct.accounting.equals(accounting)) return cct;
+        }
+        return null;
     }
 }

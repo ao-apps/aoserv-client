@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
@@ -24,12 +25,12 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 
     static final int
         COLUMN_PKEY = 0,
-        COLUMN_ACCOUNTING = 1,
-        COLUMN_PROCESSOR_ID = 2
+        COLUMN_PROCESSOR_ID = 1
     ;
 
-    private String accounting;
     private String processorId;
+    String accounting;
+    private String groupName;
     private boolean testMode;
     private int duplicateWindow;
     private String orderNumber;
@@ -54,7 +55,9 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     private String purchaseOrderNumber;
     private String description;
     private String creditCardCreatedBy;
+    private String creditCardPrincipalName;
     private String creditCardAccounting;
+    private String creditCardGroupName;
     private String creditCardProviderUniqueId;
     private String creditCardMaskedCardNumber;
     private String creditCardFirstName;
@@ -73,6 +76,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     private String creditCardComments;
     private long authorizationTime;
     private String authorizationUsername;
+    private String authorizationPrincipalName;
     private String authorizationCommunicationResult;
     private String authorizationProviderErrorCode;
     private String authorizationErrorCode;
@@ -91,6 +95,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     private String authorizationApprovalCode;
     private long captureTime;
     private String captureUsername;
+    private String capturePrincipalName;
     private String captureCommunicationResult;
     private String captureProviderErrorCode;
     private String captureErrorCode;
@@ -98,18 +103,13 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     private String captureProviderUniqueId;
     private long voidTime;
     private String voidUsername;
+    private String voidPrincipalName;
     private String voidCommunicationResult;
     private String voidProviderErrorCode;
     private String voidErrorCode;
     private String voidProviderErrorMessage;
     private String voidProviderUniqueId;
     private String status;
-
-    public Business getBusiness() {
-        Business business = table.connector.businesses.get(accounting);
-        if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
-        return business;
-    }
 
     /**
      * Gets the credit card processor used for this transaction.
@@ -118,6 +118,24 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         CreditCardProcessor ccp = table.connector.creditCardProcessors.get(processorId);
         if(ccp==null) throw new WrappedException(new SQLException("Unable to find CreditCardProcessor: "+processorId));
         return ccp;
+    }
+
+    /**
+     * For AOServ sub-account support, this is the business that is making the payment.
+     * For application-only use (not a sub-account to parent-account payment), use the same business
+     * as the owner of the credit card processor.
+     */
+    public Business getBusiness() throws SQLException {
+        Business business = table.connector.businesses.get(accounting);
+        if(business==null) throw new SQLException("Unable to find Business: "+accounting);
+        return business;
+    }
+
+    /**
+     * Gets the group name for this transaction.  This is an arbitrary accounting name or grouping level.
+     */
+    public String getGroupName() {
+        return groupName;
     }
 
     /**
@@ -142,7 +160,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     }
 
     /**
-     * Gets the 3-character country code for the currency used in this transaction.
+     * Gets the 3-character ISO 4217 country code for the currency used in this transaction.
      *
      * These are obtained from <a href="http://en.wikipedia.org/wiki/ISO_4217">http://en.wikipedia.org/wiki/ISO_4217</a>
      */
@@ -252,10 +270,21 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         return business_administrator;
     }
 
+    /**
+     * Gets the application-provided principal who added this credit card.
+     */
+    public String getCreditCardPrincipalName() {
+        return creditCardPrincipalName;
+    }
+
     public Business getCreditCardBusiness() {
         Business business = table.connector.businesses.get(creditCardAccounting);
         if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + creditCardAccounting));
         return business;
+    }
+
+    public String getCreditCardGroupName() {
+        return creditCardGroupName;
     }
 
     public String getCreditCardProviderUniqueId() {
@@ -337,13 +366,22 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     }
     
     /**
-     * Gets the <code>BusinessAdministrator</code> who authorized this transactions.
+     * Gets the <code>BusinessAdministrator</code> who authorized this transactions.  This is the
+     * username of the account that has access to control credit card transactions.
      */
     public BusinessAdministrator getAuthorizationAdministrator() {
         if(authorizationUsername==null) return null;
         BusinessAdministrator business_administrator = table.connector.businessAdministrators.get(authorizationUsername);
         if (business_administrator == null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: " + authorizationUsername));
         return business_administrator;
+    }
+
+    /**
+     * Gets the application-specific username who authorized this transaction.  For pure-AOServ data, this
+     * will contain the username of the <code>BusinessAdministrator</code> who was logged in and made the payment.
+     */
+    public String getAuthorizationPrincipalName() {
+        return authorizationPrincipalName;
     }
 
     public String getAuthorizationCommunicationResult() {
@@ -418,13 +456,22 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     }
     
     /**
-     * Gets the <code>BusinessAdministrator</code> who captured this transactions.
+     * Gets the <code>BusinessAdministrator</code> who captured this transactions.  This is the
+     * username of the account that has access to control credit card transactions.
      */
     public BusinessAdministrator getCaptureAdministrator() {
         if(captureUsername==null) return null;
         BusinessAdministrator business_administrator = table.connector.businessAdministrators.get(captureUsername);
         if (business_administrator == null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: " + captureUsername));
         return business_administrator;
+    }
+
+    /**
+     * Gets the application-specific username who captured this transaction.  For pure-AOServ data, this
+     * will contain the username of the <code>BusinessAdministrator</code> who was logged in and initiated the capture.
+     */
+    public String getCapturePrincipalName() {
+        return capturePrincipalName;
     }
 
     public String getCaptureCommunicationResult() {
@@ -455,13 +502,22 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     }
     
     /**
-     * Gets the <code>BusinessAdministrator</code> who voided this transactions.
+     * Gets the <code>BusinessAdministrator</code> who voided this transactions.  This is the
+     * username of the account that has access to control credit card transactions.
      */
     public BusinessAdministrator getVoidAdministrator() {
         if(voidUsername==null) return null;
         BusinessAdministrator business_administrator = table.connector.businessAdministrators.get(voidUsername);
         if (business_administrator == null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: " + voidUsername));
         return business_administrator;
+    }
+
+    /**
+     * Gets the application-specific username who voided this transaction.  For pure-AOServ data, this
+     * will contain the username of the <code>BusinessAdministrator</code> who was logged in and caused the void.
+     */
+    public String getVoidPrincipalName() {
+        return voidPrincipalName;
     }
 
     public String getVoidCommunicationResult() {
@@ -495,82 +551,88 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_ACCOUNTING: return accounting;
             case COLUMN_PROCESSOR_ID: return processorId;
-            case 3: return Boolean.valueOf(testMode);
-            case 4: return Integer.valueOf(duplicateWindow);
-            case 5: return orderNumber;
-            case 6: return currencyCode;
-            case 7: return amount;
-            case 8: return taxAmount;
-            case 9: return Boolean.valueOf(taxExempt);
-            case 10: return shippingAmount;
-            case 11: return dutyAmount;
-            case 12: return shippingFirstName;
-            case 13: return shippingLastName;
-            case 14: return shippingCompanyName;
-            case 15: return shippingStreetAddress1;
-            case 16: return shippingStreetAddress2;
-            case 17: return shippingCity;
-            case 18: return shippingState;
-            case 19: return shippingPostalCode;
-            case 20: return shippingCountryCode;
-            case 21: return Boolean.valueOf(emailCustomer);
-            case 22: return merchantEmail;
-            case 23: return invoiceNumber;
-            case 24: return purchaseOrderNumber;
-            case 25: return description;
-            case 26: return creditCardCreatedBy;
-            case 27: return creditCardAccounting;
-            case 28: return creditCardProviderUniqueId;
-            case 29: return creditCardMaskedCardNumber;
-            case 30: return creditCardFirstName;
-            case 31: return creditCardLastName;
-            case 32: return creditCardCompanyName;
-            case 33: return creditCardEmail;
-            case 34: return creditCardPhone;
-            case 35: return creditCardFax;
-            case 36: return creditCardCustomerTaxId;
-            case 37: return creditCardStreetAddress1;
-            case 38: return creditCardStreetAddress2;
-            case 39: return creditCardCity;
-            case 40: return creditCardState;
-            case 41: return creditCardPostalCode;
-            case 42: return creditCardCountryCode;
-            case 43: return creditCardComments;
-            case 44: return authorizationTime==-1 ? null : new java.sql.Date(authorizationTime);
-            case 45: return authorizationUsername;
-            case 46: return authorizationCommunicationResult;
-            case 47: return authorizationProviderErrorCode;
-            case 48: return authorizationErrorCode;
-            case 49: return authorizationProviderErrorMessage;
-            case 50: return authorizationProviderUniqueId;
-            case 51: return authorizationProviderApprovalResult;
-            case 52: return authorizationApprovalResult;
-            case 53: return authorizationProviderDeclineReason;
-            case 54: return authorizationDeclineReason;
-            case 55: return authorizationProviderReviewReason;
-            case 56: return authorizationReviewReason;
-            case 57: return authorizationProviderCvvResult;
-            case 58: return authorizationCvvResult;
-            case 59: return authorizationProviderAvsResult;
-            case 60: return authorizationAvsResult;
-            case 61: return authorizationApprovalCode;
-            case 62: return captureTime==-1 ? null : new java.sql.Date(captureTime);
-            case 63: return captureUsername;
-            case 64: return captureCommunicationResult;
-            case 65: return captureProviderErrorCode;
-            case 66: return captureErrorCode;
-            case 67: return captureProviderErrorMessage;
-            case 68: return captureProviderUniqueId;
-            case 69: return voidTime==-1 ? null : new java.sql.Date(voidTime);
-            case 70: return voidUsername;
-            case 71: return voidCommunicationResult;
-            case 72: return voidProviderErrorCode;
-            case 73: return voidErrorCode;
-            case 74: return voidProviderErrorMessage;
-            case 75: return voidProviderUniqueId;
-            case 76: return status;
+            case 2: return accounting;
+            case 3: return groupName;
+            case 4: return Boolean.valueOf(testMode);
+            case 5: return Integer.valueOf(duplicateWindow);
+            case 6: return orderNumber;
+            case 7: return currencyCode;
+            case 8: return amount;
+            case 9: return taxAmount;
+            case 10: return Boolean.valueOf(taxExempt);
+            case 11: return shippingAmount;
+            case 12: return dutyAmount;
+            case 13: return shippingFirstName;
+            case 14: return shippingLastName;
+            case 15: return shippingCompanyName;
+            case 16: return shippingStreetAddress1;
+            case 17: return shippingStreetAddress2;
+            case 18: return shippingCity;
+            case 19: return shippingState;
+            case 20: return shippingPostalCode;
+            case 21: return shippingCountryCode;
+            case 22: return Boolean.valueOf(emailCustomer);
+            case 23: return merchantEmail;
+            case 24: return invoiceNumber;
+            case 25: return purchaseOrderNumber;
+            case 26: return description;
+            case 27: return creditCardCreatedBy;
+            case 28: return creditCardPrincipalName;
+            case 29: return creditCardAccounting;
+            case 30: return creditCardGroupName;
+            case 31: return creditCardProviderUniqueId;
+            case 32: return creditCardMaskedCardNumber;
+            case 33: return creditCardFirstName;
+            case 34: return creditCardLastName;
+            case 35: return creditCardCompanyName;
+            case 36: return creditCardEmail;
+            case 37: return creditCardPhone;
+            case 38: return creditCardFax;
+            case 39: return creditCardCustomerTaxId;
+            case 40: return creditCardStreetAddress1;
+            case 41: return creditCardStreetAddress2;
+            case 42: return creditCardCity;
+            case 43: return creditCardState;
+            case 44: return creditCardPostalCode;
+            case 45: return creditCardCountryCode;
+            case 46: return creditCardComments;
+            case 47: return authorizationTime==-1 ? null : new java.sql.Date(authorizationTime);
+            case 48: return authorizationUsername;
+            case 49: return authorizationPrincipalName;
+            case 50: return authorizationCommunicationResult;
+            case 51: return authorizationProviderErrorCode;
+            case 52: return authorizationErrorCode;
+            case 53: return authorizationProviderErrorMessage;
+            case 54: return authorizationProviderUniqueId;
+            case 55: return authorizationProviderApprovalResult;
+            case 56: return authorizationApprovalResult;
+            case 57: return authorizationProviderDeclineReason;
+            case 58: return authorizationDeclineReason;
+            case 59: return authorizationProviderReviewReason;
+            case 60: return authorizationReviewReason;
+            case 61: return authorizationProviderCvvResult;
+            case 62: return authorizationCvvResult;
+            case 63: return authorizationProviderAvsResult;
+            case 64: return authorizationAvsResult;
+            case 65: return authorizationApprovalCode;
+            case 66: return captureTime==-1 ? null : new java.sql.Date(captureTime);
+            case 67: return captureUsername;
+            case 68: return capturePrincipalName;
+            case 69: return captureCommunicationResult;
+            case 70: return captureProviderErrorCode;
+            case 71: return captureErrorCode;
+            case 72: return captureProviderErrorMessage;
+            case 73: return captureProviderUniqueId;
+            case 74: return voidTime==-1 ? null : new java.sql.Date(voidTime);
+            case 75: return voidUsername;
+            case 76: return voidPrincipalName;
+            case 77: return voidCommunicationResult;
+            case 78: return voidProviderErrorCode;
+            case 79: return voidErrorCode;
+            case 80: return voidProviderErrorMessage;
+            case 81: return voidProviderUniqueId;
+            case 82: return status;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -582,8 +644,9 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     void initImpl(ResultSet result) throws SQLException {
         int pos = 1;
 	pkey = result.getInt(pos++);
-	accounting = result.getString(pos++);
         processorId = result.getString(pos++);
+        accounting = result.getString(pos++);
+	groupName = result.getString(pos++);
         testMode = result.getBoolean(pos++);
         duplicateWindow = result.getInt(pos++);
         orderNumber = result.getString(pos++);
@@ -608,7 +671,9 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         purchaseOrderNumber = result.getString(pos++);
         description = result.getString(pos++);
         creditCardCreatedBy = result.getString(pos++);
+        creditCardPrincipalName = result.getString(pos++);
         creditCardAccounting = result.getString(pos++);
+        creditCardGroupName = result.getString(pos++);
         creditCardProviderUniqueId = result.getString(pos++);
         creditCardMaskedCardNumber = result.getString(pos++);
         creditCardFirstName = result.getString(pos++);
@@ -628,6 +693,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         Timestamp T = result.getTimestamp(pos++);
         authorizationTime = T==null ? -1 : T.getTime();
         authorizationUsername = result.getString(pos++);
+        authorizationPrincipalName = result.getString(pos++);
         authorizationCommunicationResult = result.getString(pos++);
         authorizationProviderErrorCode = result.getString(pos++);
         authorizationErrorCode = result.getString(pos++);
@@ -647,6 +713,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         T = result.getTimestamp(pos++);
         captureTime = T==null ? -1 : T.getTime();
         captureUsername = result.getString(pos++);
+        capturePrincipalName = result.getString(pos++);
         captureCommunicationResult = result.getString(pos++);
         captureProviderErrorCode = result.getString(pos++);
         captureErrorCode = result.getString(pos++);
@@ -655,6 +722,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         T = result.getTimestamp(pos++);
         voidTime = T==null ? -1 : T.getTime();
         voidUsername = result.getString(pos++);
+        voidPrincipalName = result.getString(pos++);
         voidCommunicationResult = result.getString(pos++);
         voidProviderErrorCode = result.getString(pos++);
         voidErrorCode = result.getString(pos++);
@@ -665,8 +733,9 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey = in.readCompressedInt();
-	accounting = in.readUTF().intern();
         processorId = in.readUTF().intern();
+        accounting = in.readUTF().intern();
+	groupName = in.readNullUTF();
         testMode = in.readBoolean();
         duplicateWindow = in.readCompressedInt();
         orderNumber = in.readNullUTF();
@@ -694,8 +763,10 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         purchaseOrderNumber = in.readNullUTF();
         description = in.readNullUTF();
         creditCardCreatedBy = in.readUTF().intern();
+        creditCardPrincipalName = in.readNullUTF();
         creditCardAccounting = in.readUTF().intern();
-        creditCardProviderUniqueId = in.readUTF();
+        creditCardGroupName = in.readNullUTF();
+        creditCardProviderUniqueId = in.readNullUTF();
         creditCardMaskedCardNumber = in.readUTF();
         creditCardFirstName = in.readUTF();
         creditCardLastName = in.readUTF();
@@ -713,6 +784,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         creditCardComments = in.readNullUTF();
         authorizationTime = in.readLong();
         authorizationUsername = StringUtility.intern(in.readNullUTF());
+        authorizationPrincipalName = StringUtility.intern(in.readNullUTF());
         authorizationCommunicationResult = StringUtility.intern(in.readNullUTF());
         authorizationProviderErrorCode = StringUtility.intern(in.readNullUTF());
         authorizationErrorCode = StringUtility.intern(in.readNullUTF());
@@ -731,6 +803,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         authorizationApprovalCode = in.readNullUTF();
         captureTime = in.readLong();
         captureUsername = StringUtility.intern(in.readNullUTF());
+        capturePrincipalName = StringUtility.intern(in.readNullUTF());
         captureCommunicationResult = StringUtility.intern(in.readNullUTF());
         captureProviderErrorCode = StringUtility.intern(in.readNullUTF());
         captureErrorCode = StringUtility.intern(in.readNullUTF());
@@ -738,6 +811,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         captureProviderUniqueId = in.readNullUTF();
         voidTime = in.readLong();
         voidUsername = StringUtility.intern(in.readNullUTF());
+        voidPrincipalName = StringUtility.intern(in.readNullUTF());
         voidCommunicationResult = StringUtility.intern(in.readNullUTF());
         voidProviderErrorCode = StringUtility.intern(in.readNullUTF());
         voidErrorCode = StringUtility.intern(in.readNullUTF());
@@ -748,8 +822,9 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);
-	out.writeUTF(accounting);
         out.writeUTF(processorId);
+        out.writeUTF(accounting);
+	out.writeNullUTF(groupName);
         out.writeBoolean(testMode);
         out.writeCompressedInt(duplicateWindow);
         out.writeNullUTF(orderNumber);
@@ -774,8 +849,10 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         out.writeNullUTF(purchaseOrderNumber);
         out.writeNullUTF(description);
         out.writeUTF(creditCardCreatedBy);
+        out.writeNullUTF(creditCardPrincipalName);
         out.writeUTF(creditCardAccounting);
-        out.writeUTF(creditCardProviderUniqueId);
+        out.writeNullUTF(creditCardGroupName);
+        out.writeNullUTF(creditCardProviderUniqueId);
         out.writeUTF(creditCardMaskedCardNumber);
         out.writeUTF(creditCardFirstName);
         out.writeUTF(creditCardLastName);
@@ -793,6 +870,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         out.writeNullUTF(creditCardComments);
         out.writeLong(authorizationTime);
         out.writeNullUTF(authorizationUsername);
+        out.writeNullUTF(authorizationPrincipalName);
         out.writeNullUTF(authorizationCommunicationResult);
         out.writeNullUTF(authorizationProviderErrorCode);
         out.writeNullUTF(authorizationErrorCode);
@@ -811,6 +889,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         out.writeNullUTF(authorizationApprovalCode);
         out.writeLong(captureTime);
         out.writeNullUTF(captureUsername);
+        out.writeNullUTF(capturePrincipalName);
         out.writeNullUTF(captureCommunicationResult);
         out.writeNullUTF(captureProviderErrorCode);
         out.writeNullUTF(captureErrorCode);
@@ -818,11 +897,92 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         out.writeNullUTF(captureProviderUniqueId);
         out.writeLong(voidTime);
         out.writeNullUTF(voidUsername);
+        out.writeNullUTF(voidPrincipalName);
         out.writeNullUTF(voidCommunicationResult);
         out.writeNullUTF(voidProviderErrorCode);
         out.writeNullUTF(voidErrorCode);
         out.writeNullUTF(voidProviderErrorMessage);
         out.writeNullUTF(voidProviderUniqueId);
         out.writeUTF(status);
+    }
+    
+    /**
+     * Called when a sale (combined authorization and capture) has been completed.
+     */
+    public void saleCompleted(
+        String authorizationCommunicationResult,
+        String authorizationProviderErrorCode,
+        String authorizationErrorCode,
+        String authorizationProviderErrorMessage,
+        String authorizationProviderUniqueId,
+        String providerApprovalResult,
+        String approvalResult,
+        String providerDeclineReason,
+        String declineReason,
+        String providerReviewReason,
+        String reviewReason,
+        String providerCvvResult,
+        String cvvResult,
+        String providerAvsResult,
+        String avsResult,
+        String approvalCode,
+        long captureTime,
+        String capturePrincipalName,
+        String captureCommunicationResult,
+        String captureProviderErrorCode,
+        String captureErrorCode,
+        String captureProviderErrorMessage,
+        String captureProviderUniqueId,
+        String status
+    ) throws IOException, SQLException {
+        if(!table.connector.isSecure()) throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+table.connector.getProtocol()+" protocol, which is not secure.");
+
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.CREDIT_CARD_TRANSACTION_SALE_COMPLETED.ordinal());
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(authorizationCommunicationResult);
+            out.writeNullUTF(authorizationProviderErrorCode);
+            out.writeNullUTF(authorizationErrorCode);
+            out.writeNullUTF(authorizationProviderErrorMessage);
+            out.writeNullUTF(authorizationProviderUniqueId);
+            out.writeNullUTF(providerApprovalResult);
+            out.writeNullUTF(approvalResult);
+            out.writeNullUTF(providerDeclineReason);
+            out.writeNullUTF(declineReason);
+            out.writeNullUTF(providerReviewReason);
+            out.writeNullUTF(reviewReason);
+            out.writeNullUTF(providerCvvResult);
+            out.writeNullUTF(cvvResult);
+            out.writeNullUTF(providerAvsResult);
+            out.writeNullUTF(avsResult);
+            out.writeNullUTF(approvalCode);
+            out.writeLong(captureTime);
+            out.writeNullUTF(capturePrincipalName);
+            out.writeNullUTF(captureCommunicationResult);
+            out.writeNullUTF(captureProviderErrorCode);
+            out.writeNullUTF(captureErrorCode);
+            out.writeNullUTF(captureProviderErrorMessage);
+            out.writeNullUTF(captureProviderUniqueId);
+            out.writeNullUTF(status);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unknown response code: "+code);
+            }
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
+        }
+        table.connector.tablesUpdated(invalidateList);
     }
 }

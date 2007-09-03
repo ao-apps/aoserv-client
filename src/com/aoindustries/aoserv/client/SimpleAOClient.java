@@ -1657,46 +1657,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Stores the encrypted payment details for a credit card payment.  Once the transaction
-     * has been processed, the <code>IncomingPayment</code> data will be removed.
-     *
-     * @param  transid  the transaction ID of the <code>Transaction</code>
-     * @param  encryptedCardName  the cardholder's name
-     * @param  encryptedCardNumber  the card number
-     * @param  encryptedExpirationMonth  the card expiration month
-     * @param  encryptedExpirationYear  the card expiration year
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data
-     *					integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Transaction</code>
-     *
-     * @see  IncomingPayment
-     * @see  Transaction#addIncomingPayment
-     */
-    public void addIncomingPayment(
-        int transid,
-        String encryptedCardName,
-        String encryptedCardNumber,
-        String encryptedExpirationMonth,
-        String encryptedExpirationYear
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addIncomingPayment(int,String,String,String,String)", null);
-        try {
-            Transaction trans=connector.transactions.get(transid);
-            if(trans==null) throw new IllegalArgumentException("Unable to find Transaction: "+transid);
-            trans.addIncomingPayment(
-                encryptedCardName.getBytes(),
-                encryptedCardNumber.getBytes(),
-                encryptedExpirationMonth.getBytes(),
-                encryptedExpirationYear.getBytes()
-            );
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Adds a new <code>InterBaseDatabase</code> to the system.
      * <p>
      * Because updates the the InterBase configurations are batched, the database may not be immediately
@@ -2904,6 +2864,7 @@ final public class SimpleAOClient {
      * @param  rate  the rate in hundredths
      * @param  paymentType
      * @param  paymentInfo
+     * @param  processor
      * @param  payment_confirmed  the confirmation status of the transaction
      *
      * @return  the transid of the new <code>Transaction</code>
@@ -2933,9 +2894,10 @@ final public class SimpleAOClient {
         int rate,
         String paymentType,
         String paymentInfo,
+        String processor,
         byte payment_confirmed
     ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addTransaction(String,String,String,String,int,int,String,String,byte)", null);
+        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addTransaction(String,String,String,String,int,int,String,String,String,byte)", null);
         try {
             Business bu=getBusiness(business);
             Business sourceBU=getBusiness(source_business);
@@ -2950,6 +2912,12 @@ final public class SimpleAOClient {
                 if(pt==null) throw new IllegalArgumentException("Unable to find PaymentType: "+paymentType);
             }
             if(paymentInfo!=null && paymentInfo.length()==0) paymentInfo=null;
+            CreditCardProcessor ccProcessor;
+            if(processor==null || processor.length()==0) ccProcessor=null;
+            else {
+                ccProcessor = connector.creditCardProcessors.get(processor);
+                if(ccProcessor==null) throw new IllegalArgumentException("Unable to find CreditCardProcessor: "+processor);
+            }
             return bu.addTransaction(
                 sourceBU,
                 pe,
@@ -2959,6 +2927,7 @@ final public class SimpleAOClient {
                 rate,
                 pt,
                 paymentInfo,
+                ccProcessor,
                 payment_confirmed
             );
         } finally {
@@ -3134,54 +3103,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "areUsernamePasswordsSet(String)", null);
         try {
             return getUsername(username).arePasswordsSet();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Flags a <code>Transaction</code> as approved.
-     *
-     * @param  transid  the ID of the <code>Transaction</code>
-     * @param  paymentType  the payment type as found in <code>PaymentType</code>
-     * @param  paymentInfo  any payment details or <code>null</code> for none
-     * @param  merchant  the name of the <code>MerchantAccount</code> used for processing or <code>null</code>
-     *					for none
-     * @param  aprNum  the APR number or <code>Transaction.UNASSIGNED</code> for none
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Transaction</code>,
-     *					<code>PaymentType</code>, or <code>MerchantAccount</code>
-     *
-     * @see  Transaction#approved
-     * @see  #addTransaction
-     * @see  Transaction
-     * @see  PaymentType
-     * @see  MerchantAccount
-     */
-    public void approveTransaction(
-        int transid,
-        String paymentType,
-        String paymentInfo,
-        String merchant,
-        String aprNum
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "approveTransaction(int,String,String,String,String)", null);
-        try {
-            Transaction tr=connector.transactions.get(transid);
-            if(tr==null) throw new IllegalArgumentException("Unable to find Transaction: "+transid);
-            PaymentType pt=connector.paymentTypes.get(paymentType);
-            if(pt==null) throw new IllegalArgumentException("Unable to find PaymentType: "+paymentType);
-            MerchantAccount ma=connector.merchantAccounts.get(merchant);
-            if(ma==null) throw new IllegalArgumentException("Unable to find MerchantAccount: "+merchant);
-            tr.approved(
-                pt,
-                paymentInfo,
-                ma,
-                aprNum
-            );
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4454,57 +4375,6 @@ final public class SimpleAOClient {
             CreditCard card=connector.creditCards.get(pkey);
             if(card==null) throw new IllegalArgumentException("Unable to find CreditCard: "+pkey);
             card.declined(reason);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Flags a <code>Transaction</code> as <code>NOT_CONFIRMED</code>.  When a
-     * <code>Transaction</code> either fails, or should never have existed, it
-     * is flagged as <code>NOT_CONFIRMED</code>.
-     *
-     * @param  transid  the ID of the <code>Transaction</code>
-     * @param  paymentType  the type of payment attempted as found in
-     *					<code>PaymentType</code>
-     * @param  paymentInfo  the payment information, such as the last four digits
-     *					of the credit card number or the check number
-     * @param  merchant  the name of the <code>MerchantAccount</code> that was used
-     *					for the processing
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Transaction</code>,
-     *					<code>PaymentType</code>, or <code>MerchantAccount</code>.
-     *
-     * @see  Transaction#declined
-     * @see  Transaction#NOT_CONFIRMED
-     * @see  Transaction
-     * @see  #declineCreditCard
-     * @see  CreditCard
-     * @see  PaymentType
-     * @see  MerchantAccount
-     */
-    public void declineTransaction(
-        int transid,
-        String paymentType,
-        String paymentInfo,
-        String merchant
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "declineTransaction(int,String,String,String)", null);
-        try {
-            Transaction tr=connector.transactions.get(transid);
-            if(tr==null) throw new IllegalArgumentException("Unable to find Transaction: "+transid);
-            PaymentType pt=connector.paymentTypes.get(paymentType);
-            if(pt==null) throw new IllegalArgumentException("Unable to find PaymentType: "+paymentType);
-            MerchantAccount ma=connector.merchantAccounts.get(merchant);
-            if(ma==null) throw new IllegalArgumentException("Unable to find MerchantAccount: "+merchant);
-            tr.declined(
-                pt,
-                paymentInfo,
-                ma
-            );
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -8180,34 +8050,6 @@ final public class SimpleAOClient {
             HttpdTomcatParameter htp=connector.httpdTomcatParameters.get(pkey);
             if(htp==null) throw new IllegalArgumentException("Unable to find HttpdTomcatParameter: "+pkey);
             htp.remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Removes the <code>IncomingPayment</code> data from a <code>Transaction</code>.  Credit card
-     * information is encrypted and temporarily stored until the transaction has been processed, once
-     * complete, the credit card information is removed.
-     *
-     * @param  transid  the ID of the <code>Transaction</code> that has been completed
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>IncomingPayment</code>
-     *
-     * @see  IncomingPayment#remove
-     * @see  #addIncomingPayment
-     */
-    public void removeIncomingPayment(
-        int transid
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeIncomingPayment(int)", null);
-        try {
-            IncomingPayment ip=connector.incomingPayments.get(transid);
-            if(ip==null) throw new IllegalArgumentException("Unable to find IncomingPayment: "+transid);
-            ip.remove();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

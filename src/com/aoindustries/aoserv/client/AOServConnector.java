@@ -5,15 +5,23 @@ package com.aoindustries.aoserv.client;
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.table.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.security.*;
-import java.util.*;
+import com.aoindustries.io.ChainWriter;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.Streamable;
+import com.aoindustries.profiler.Profiler;
+import com.aoindustries.table.TableListener;
+import com.aoindustries.util.ErrorHandler;
+import com.aoindustries.util.IntArrayList;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StandardErrorHandler;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Random;
 
 /**
  * An <code>AOServConnector</code> provides the connection
@@ -191,7 +199,6 @@ abstract public class AOServConnector {
     public final HttpdTomcatStdSiteTable httpdTomcatStdSites;
     public final HttpdTomcatVersionTable httpdTomcatVersions;
     public final HttpdWorkerTable httpdWorkers;
-    public final IncomingPaymentTable incomingPayments;
     public final InterBaseBackupTable interBaseBackups;
     public final InterBaseDatabaseTable interBaseDatabases;
     public final InterBaseDBGroupTable interBaseDBGroups;
@@ -218,7 +225,6 @@ abstract public class AOServConnector {
     public final MasterServerStatTable masterServerStats;
     public final MasterServerTable masterServers;
     public final MasterUserTable masterUsers;
-    public final MerchantAccountTable merchantAccounts;
     public final MonthlyChargeTable monthlyCharges;
     public final MySQLBackupTable mysqlBackups;
     public final MySQLDatabaseTable mysqlDatabases;
@@ -434,7 +440,6 @@ abstract public class AOServConnector {
                 httpdTomcatStdSites=new HttpdTomcatStdSiteTable(this),
                 httpdTomcatVersions=new HttpdTomcatVersionTable(this),
                 httpdWorkers=new HttpdWorkerTable(this),
-                incomingPayments=new IncomingPaymentTable(this),
                 interBaseBackups=new InterBaseBackupTable(this),
                 interBaseDatabases=new InterBaseDatabaseTable(this),
                 interBaseDBGroups=new InterBaseDBGroupTable(this),
@@ -461,7 +466,6 @@ abstract public class AOServConnector {
                 masterServerStats=new MasterServerStatTable(this),
                 masterServers=new MasterServerTable(this),
                 masterUsers=new MasterUserTable(this),
-                merchantAccounts=new MerchantAccountTable(this),
                 monthlyCharges=new MonthlyChargeTable(this),
                 mysqlBackups=new MySQLBackupTable(this),
                 mysqlDatabases=new MySQLDatabaseTable(this),

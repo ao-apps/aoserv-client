@@ -27,9 +27,10 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
     }
 
     int addCreditCard(
-	Business business,
-        String cardInfo,
         CreditCardProcessor processor,
+	Business business,
+        String groupName,
+        String cardInfo,
         String providerUniqueId,
         String firstName,
         String lastName,
@@ -44,6 +45,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
         String state,
         String postalCode,
         CountryCode countryCode,
+        String principalName,
         String description
     ) {
         try {
@@ -56,9 +58,10 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.CREDIT_CARDS.ordinal());
-                out.writeUTF(business.pkey);
-                out.writeUTF(cardInfo);
                 out.writeUTF(processor.pkey);
+                out.writeUTF(business.pkey);
+                out.writeNullUTF(groupName);
+                out.writeUTF(cardInfo);
                 out.writeUTF(providerUniqueId);
                 out.writeUTF(firstName);
                 out.writeUTF(lastName);
@@ -73,6 +76,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
                 out.writeNullUTF(state);
                 out.writeNullUTF(postalCode);
                 out.writeUTF(countryCode.pkey);
+                out.writeNullUTF(principalName);
                 out.writeNullUTF(description);
                 out.flush();
 

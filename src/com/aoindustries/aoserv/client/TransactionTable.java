@@ -38,6 +38,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         int rate,
         PaymentType paymentType,
         String paymentInfo,
+        CreditCardProcessor processor,
 	byte payment_confirmed
     ) {
         try {
@@ -57,6 +58,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
                 out.writeCompressedInt(rate);
                 out.writeBoolean(paymentType!=null); if(paymentType!=null) out.writeUTF(paymentType.pkey);
                 out.writeNullUTF(paymentInfo);
+                out.writeNullUTF(processor==null ? null : processor.getProviderId());
                 out.writeByte(payment_confirmed);
                 out.flush();
 
@@ -172,12 +174,12 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_TRANSACTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.ADD_TRANSACTION, args, 10, err)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_TRANSACTION, args, 11, err)) {
                 byte pc;
-                if(args[10].equals("Y")) pc=Transaction.CONFIRMED;
-                else if(args[10].equals("W")) pc=Transaction.WAITING_CONFIRMATION;
-                else if(args[10].equals("N")) pc=Transaction.NOT_CONFIRMED;
-                else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: "+args[10]);
+                if(args[11].equals("Y")) pc=Transaction.CONFIRMED;
+                else if(args[11].equals("W")) pc=Transaction.WAITING_CONFIRMATION;
+                else if(args[11].equals("N")) pc=Transaction.NOT_CONFIRMED;
+                else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: "+args[11]);
                 int transid=connector.simpleAOClient.addTransaction(
                     args[1],
                     args[2],
@@ -188,31 +190,11 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
                     AOSH.parsePennies(args[7], "rate"),
                     args[8],
                     args[9],
+                    args[10],
                     pc
                 );
                 out.println(transid);
                 out.flush();
-            }
-            return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.APPROVE_TRANSACTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.APPROVE_TRANSACTION, args, 5, err)) {
-                connector.simpleAOClient.approveTransaction(
-                    AOSH.parseInt(args[1], "transid"),
-                    args[2],
-                    args[3],
-                    args[4],
-                    args[5]
-                );
-            }
-            return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.DECLINE_TRANSACTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.DECLINE_TRANSACTION, args, 5, err)) {
-                connector.simpleAOClient.declineTransaction(
-                    AOSH.parseInt(args[1], "transid"),
-                    args[2],
-                    args[3],
-                    args[4]
-                );
             }
             return true;
 	}

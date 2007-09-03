@@ -57,8 +57,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
      */
     private int rate;
 
-    private String payment_type, payment_info, merchant_account;
-    private String apr_num;
+    private String payment_type, payment_info, processor;
+    private int creditCardTransaction;
 
     /**
      * Payment confirmation.
@@ -74,22 +74,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
     private byte payment_confirmed;
 
-    public void addIncomingPayment(
-	byte[] encryptedCardName,
-	byte[] encryptedCardNumber,
-	byte[] encryptedExpirationMonth,
-	byte[] encryptedExpirationYear
-    ) {
-	table.connector.incomingPayments.addIncomingPayment(
-            this,
-            encryptedCardName,
-            encryptedCardNumber,
-            encryptedExpirationMonth,
-            encryptedExpirationYear
-	);
-    }
-
-    public void approved(PaymentType paymentType, String payment_info, MerchantAccount merchant, String apr_num) {
+    public void approved(int creditCardTransaction) {
         try {
             IntList invalidateList;
             AOServConnection connection=table.connector.getConnection();
@@ -97,12 +82,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_APPROVED.ordinal());
                 out.writeCompressedInt(transid);
-                out.writeUTF(paymentType.pkey);
-                out.writeBoolean(payment_info!=null);
-                if(payment_info!=null) out.writeUTF(payment_info);
-                out.writeBoolean(merchant!=null);
-                if(merchant!=null) out.writeUTF(merchant.pkey);
-                out.writeUTF(apr_num);
+                out.writeCompressedInt(creditCardTransaction);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -126,7 +106,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
         }
     }
 
-    public void declined(PaymentType paymentType, String payment_info, MerchantAccount merchant) {
+    public void declined(int creditCardTransaction) {
         try {
             IntList invalidateList;
             AOServConnection connection=table.connector.getConnection();
@@ -134,11 +114,39 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_DECLINED.ordinal());
                 out.writeCompressedInt(transid);
-                out.writeUTF(paymentType.pkey);
-                out.writeBoolean(payment_info!=null);
-                if(payment_info!=null) out.writeUTF(payment_info);
-                out.writeBoolean(merchant!=null);
-                if(merchant!=null) out.writeUTF(merchant.pkey);
+                out.writeCompressedInt(creditCardTransaction);
+                out.flush();
+
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                else {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
+                }
+            } catch(IOException err) {
+                connection.close();
+                throw err;
+            } finally {
+                table.connector.releaseConnection(connection);
+            }
+            table.connector.tablesUpdated(invalidateList);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public void held(int creditCardTransaction) {
+        try {
+            IntList invalidateList;
+            AOServConnection connection=table.connector.getConnection();
+            try {
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_HELD.ordinal());
+                out.writeCompressedInt(transid);
+                out.writeCompressedInt(creditCardTransaction);
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -169,8 +177,16 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	;
     }
 
+    /**
+     * @deprecated  Please directly access via <code>getCreditCardTransaction()</code>.
+     *              Beware that <code>getCreditCardTransaction()</code> might return <code>null</code>.
+     *
+     * @see  #getCreditCardTransaction()
+     * @see  CreditCardTransaction#getAuthorizationApprovalCode()
+     */
     public String getAprNum() {
-	return apr_num;
+        CreditCardTransaction cct = getCreditCardTransaction();
+        return cct==null ? null : cct.getAuthorizationApprovalCode();
     }
 
     public Business getBusiness() {
@@ -207,8 +223,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
             case 8: return Integer.valueOf(rate);
             case 9: return payment_type;
             case 10: return payment_info;
-            case 11: return merchant_account;
-            case 12: return apr_num;
+            case 11: return processor;
+            case 12: return creditCardTransaction==-1 ? null : Integer.valueOf(creditCardTransaction);
             case 13: return payment_confirmed==CONFIRMED?"Y":payment_confirmed==NOT_CONFIRMED?"N":"W";
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -218,15 +234,18 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return description;
     }
 
-    public IncomingPayment getIncomingPayment() {
-	return table.connector.incomingPayments.get(transid);
+    public CreditCardProcessor getCreditCardProcessor() {
+	if (processor == null) return null;
+	CreditCardProcessor creditCardProcessor = table.connector.creditCardProcessors.get(processor);
+	if (creditCardProcessor == null) throw new WrappedException(new SQLException("Unable to find CreditCardProcessor: " + processor));
+	return creditCardProcessor;
     }
 
-    public MerchantAccount getMerchantAccount() {
-	if (merchant_account == null) return null;
-	MerchantAccount merchantAccount = table.connector.merchantAccounts.get(merchant_account);
-	if (merchantAccount == null) throw new WrappedException(new SQLException("MerchantAccount not found: " + merchant_account));
-	return merchantAccount;
+    public CreditCardTransaction getCreditCardTransaction() {
+	if (creditCardTransaction == -1) return null;
+	CreditCardTransaction cct = table.connector.creditCardTransactions.get(creditCardTransaction);
+	if (cct == null) throw new WrappedException(new SQLException("Unable to find CreditCardTransaction: " + creditCardTransaction));
+	return cct;
     }
 
     public byte getPaymentConfirmation() {
@@ -301,20 +320,22 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
     }
 
     void initImpl(ResultSet result) throws SQLException {
-	time = result.getTimestamp(1).getTime();
-	transid = result.getInt(2);
-	accounting = result.getString(3);
-        source_accounting = result.getString(4);
-	username = result.getString(5);
-	type = result.getString(6);
-	description = result.getString(7);
-	quantity = SQLUtility.getMillis(result.getString(8));
-	rate = SQLUtility.getPennies(result.getString(9));
-	payment_type = result.getString(10);
-	payment_info = result.getString(11);
-	merchant_account = result.getString(12);
-	apr_num = result.getString(13);
-	String typeString = result.getString(14);
+        int pos = 1;
+	time = result.getTimestamp(pos++).getTime();
+	transid = result.getInt(pos++);
+	accounting = result.getString(pos++);
+        source_accounting = result.getString(pos++);
+	username = result.getString(pos++);
+	type = result.getString(pos++);
+	description = result.getString(pos++);
+	quantity = SQLUtility.getMillis(result.getString(pos++));
+	rate = SQLUtility.getPennies(result.getString(pos++));
+	payment_type = result.getString(pos++);
+	payment_info = result.getString(pos++);
+	processor = result.getString(pos++);
+        creditCardTransaction = result.getInt(pos++);
+        if(result.wasNull()) creditCardTransaction = -1;
+	String typeString = result.getString(pos++);
 	if("Y".equals(typeString)) payment_confirmed=CONFIRMED;
 	else if("N".equals(typeString)) payment_confirmed=NOT_CONFIRMED;
 	else if("W".equals(typeString)) payment_confirmed=WAITING_CONFIRMATION;
@@ -333,8 +354,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	rate=in.readCompressedInt();
 	payment_type=StringUtility.intern(in.readNullUTF());
 	payment_info=in.readNullUTF();
-	merchant_account=StringUtility.intern(in.readNullUTF());
-	apr_num=in.readNullUTF();
+	processor = StringUtility.intern(in.readNullUTF());
+        creditCardTransaction = in.readCompressedInt();
 	payment_confirmed=in.readByte();
     }
 
@@ -377,11 +398,16 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	out.writeCompressedInt(rate);
 	out.writeNullUTF(payment_type);
 	out.writeNullUTF(payment_info);
-	out.writeNullUTF(merchant_account);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)<0) {
+            out.writeNullUTF(null);
+        } else {
+            out.writeNullUTF(processor);
+            out.writeCompressedInt(creditCardTransaction);
+        }
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_128)<0) {
             out.writeCompressedInt(-1);
-        } else {
-            out.writeNullUTF(apr_num);
+        } else if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)<0) {
+            out.writeNullUTF(null);
         }
 	out.writeByte(payment_confirmed);
     }
