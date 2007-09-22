@@ -43,6 +43,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         DEFAULT_MODE,
         0755,
         0775,
+        2770,
         3770
     };
 
