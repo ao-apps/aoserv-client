@@ -74,11 +74,14 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_POSTGRES_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_POSTGRES_SERVER_USER, args, 3, err)) {
-                connector.simpleAOClient.addPostgresServerUser(
-                    args[1],
-                    args[2],
-                    args[3]
+                out.println(
+                    connector.simpleAOClient.addPostgresServerUser(
+                        args[1],
+                        args[2],
+                        args[3]
+                    )
                 );
+                out.flush();
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_POSTGRES_SERVER_USER)) {
