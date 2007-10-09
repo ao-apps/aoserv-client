@@ -29,7 +29,7 @@ abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>> exten
 	;
     }
 
-    public int getPKey() {
+    public int getPkey() {
 	return pkey;
     }
 

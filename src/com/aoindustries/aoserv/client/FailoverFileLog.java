@@ -65,7 +65,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	return endTime;
     }
 
-    public int getPKey() {
+    public int getPkey() {
 	return pkey;
     }
 

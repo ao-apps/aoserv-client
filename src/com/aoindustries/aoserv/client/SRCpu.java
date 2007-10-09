@@ -52,7 +52,7 @@ public final class SRCpu extends ServerReportSection<SRCpu> {
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

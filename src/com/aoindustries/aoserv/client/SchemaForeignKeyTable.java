@@ -139,7 +139,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
         try {
             synchronized(SchemaForeignKeyTable.class) {
                 rebuildReferenceHashes();
-                List<SchemaForeignKey> matches=referencedByHash.get(Integer.valueOf(column.getPKey()));
+                List<SchemaForeignKey> matches=referencedByHash.get(Integer.valueOf(column.getPkey()));
                 if(matches!=null) return matches;
                 else return Collections.emptyList();
             }
@@ -153,7 +153,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
         try {
             synchronized(SchemaForeignKeyTable.class) {
                 rebuildReferenceHashes();
-                List<SchemaForeignKey> matches=referencesHash.get(Integer.valueOf(column.getPKey()));
+                List<SchemaForeignKey> matches=referencesHash.get(Integer.valueOf(column.getPkey()));
                 if(matches!=null) return matches;
                 else return Collections.emptyList();
             }

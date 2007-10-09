@@ -54,7 +54,7 @@ final public class SRDiskSpace extends ServerReportSection<SRDiskSpace> {
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

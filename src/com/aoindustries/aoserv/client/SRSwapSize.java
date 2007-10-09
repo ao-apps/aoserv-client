@@ -48,7 +48,7 @@ final public class SRSwapSize extends ServerReportSection<SRSwapSize> {
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

@@ -33,7 +33,7 @@ final public class PostgresVersionTable extends GlobalTableIntegerKey<PostgresVe
             .technologyNames
             .get(PostgresVersion.TECHNOLOGY_NAME)
             .getTechnologyVersion(connector, version, osv)
-            .getPKey()
+            .getPkey()
 	);
     }
 

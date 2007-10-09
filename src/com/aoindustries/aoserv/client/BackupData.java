@@ -104,7 +104,7 @@ final public class BackupData extends AOServObject<Integer,BackupData> implement
         );
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

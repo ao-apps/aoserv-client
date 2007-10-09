@@ -94,7 +94,7 @@ final public class Action extends AOServObject<Integer,Action> implements Single
         return old_value;
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

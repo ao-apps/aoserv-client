@@ -1050,7 +1050,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
             pkey,
-            creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPKey())
+            creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPkey())
         );
     }
     

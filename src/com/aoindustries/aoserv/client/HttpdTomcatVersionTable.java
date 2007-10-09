@@ -36,7 +36,7 @@ final public class HttpdTomcatVersionTable extends GlobalTableIntegerKey<HttpdTo
             .technologyNames
             .get(HttpdTomcatVersion.TECHNOLOGY_NAME)
             .getTechnologyVersion(connector, version, osv)
-            .getPKey()
+            .getPkey()
 	);
     }
 

@@ -1239,7 +1239,7 @@ final public class SimpleAOClient {
                 ip,
                 primaryHttpHostname,
                 altHttpHostnames,
-                hjv.getTechnologyVersion(connector).getPKey(),
+                hjv.getTechnologyVersion(connector).getPkey(),
                 (contentSrc==null || contentSrc.length()==0)?null:contentSrc
             );
         } finally {
@@ -4399,7 +4399,7 @@ final public class SimpleAOClient {
             DisableLog dl=connector.disableLogs.get(bu.addDisableLog(disableReason));
             for(Package pk : bu.getPackages()) if(pk.disable_log==-1) disablePackage(dl, pk);
             bu.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
@@ -4424,7 +4424,7 @@ final public class SimpleAOClient {
             Package pk=getPackage(name);
             DisableLog dl=connector.disableLogs.get(pk.getBusiness().addDisableLog(disableReason));
             disablePackage(dl, pk);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4494,7 +4494,7 @@ final public class SimpleAOClient {
             HttpdSharedTomcat hst=getHttpdSharedTomcat(aoServer, name);
             DisableLog dl=connector.disableLogs.get(hst.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
             hst.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4523,7 +4523,7 @@ final public class SimpleAOClient {
             if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
             DisableLog dl=connector.disableLogs.get(ep.getPackage().getBusiness().addDisableLog(disableReason));
             ep.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4553,7 +4553,7 @@ final public class SimpleAOClient {
             HttpdSite hs=getHttpdSite(aoServer, name);
             DisableLog dl=connector.disableLogs.get(hs.getPackage().getBusiness().addDisableLog(disableReason));
             disableHttpdSite(dl, hs);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);        }
     }
@@ -4590,7 +4590,7 @@ final public class SimpleAOClient {
             if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
             DisableLog dl=connector.disableLogs.get(hsb.getHttpdSite().getPackage().getBusiness().addDisableLog(disableReason));
             hsb.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4620,7 +4620,7 @@ final public class SimpleAOClient {
             EmailList el=getEmailList(aoServer, path);
             DisableLog dl=connector.disableLogs.get(el.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
             el.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4649,7 +4649,7 @@ final public class SimpleAOClient {
             if(ssr==null) throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
             DisableLog dl=connector.disableLogs.get(ssr.getPackage().getBusiness().addDisableLog(disableReason));
             ssr.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4677,7 +4677,7 @@ final public class SimpleAOClient {
             Username un=getUsername(username);
             DisableLog dl=connector.disableLogs.get(un.getPackage().getBusiness().addDisableLog(disableReason));
             disableUsername(dl, un);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4725,7 +4725,7 @@ final public class SimpleAOClient {
             InterBaseUser iu=getInterBaseUser(username);
             DisableLog dl=connector.disableLogs.get(iu.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
             disableInterBaseUser(dl, iu);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4764,7 +4764,7 @@ final public class SimpleAOClient {
             InterBaseServerUser isu=getInterBaseServerUser(aoServer, username);
             DisableLog dl=connector.disableLogs.get(isu.getInterBaseUser().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
             isu.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4792,7 +4792,7 @@ final public class SimpleAOClient {
             LinuxAccount la=getLinuxAccount(username);
             DisableLog dl=connector.disableLogs.get(la.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
             disableLinuxAccount(dl, la);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4835,7 +4835,7 @@ final public class SimpleAOClient {
             LinuxServerAccount lsa=getLinuxServerAccount(aoServer, username);
             DisableLog dl=connector.disableLogs.get(lsa.getLinuxAccount().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
             disableLinuxServerAccount(dl, lsa);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4884,7 +4884,7 @@ final public class SimpleAOClient {
                 )
             ;
             cr.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4912,7 +4912,7 @@ final public class SimpleAOClient {
             MySQLUser mu=getMySQLUser(username);
             DisableLog dl=connector.disableLogs.get(mu.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
             disableMySQLUser(dl, mu);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4952,7 +4952,7 @@ final public class SimpleAOClient {
             MySQLServerUser msu=getMySQLServerUser(aoServer, mysqlServer, username);
             DisableLog dl=connector.disableLogs.get(msu.getMySQLUser().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
             msu.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4982,7 +4982,7 @@ final public class SimpleAOClient {
             if(pu==null) throw new IllegalArgumentException("Unable to find PostgresUser: "+username);
             DisableLog dl=connector.disableLogs.get(un.getPackage().getBusiness().addDisableLog(disableReason));
             disablePostgresUser(dl, pu);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -5033,7 +5033,7 @@ final public class SimpleAOClient {
                 )
             ;
             psu.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -5063,7 +5063,7 @@ final public class SimpleAOClient {
             if(ba==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
             DisableLog dl=connector.disableLogs.get(un.getPackage().getBusiness().addDisableLog(disableReason));
             ba.disable(dl);
-            return dl.getPKey();
+            return dl.getPkey();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

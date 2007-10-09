@@ -29,7 +29,7 @@ abstract class GlobalObjectIntegerKey<T extends GlobalObjectIntegerKey<T>> exten
 	;
     }
 
-    public int getPKey() {
+    public int getPkey() {
 	return pkey;
     }
 

@@ -71,7 +71,7 @@ final public class SendmailSmtpStat extends AOServObject<Integer,SendmailSmtpSta
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

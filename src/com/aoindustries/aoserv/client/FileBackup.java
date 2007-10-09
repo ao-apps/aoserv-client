@@ -143,7 +143,7 @@ public final class FileBackup extends AOServObject<Integer,FileBackup> implement
         return modify_time;
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

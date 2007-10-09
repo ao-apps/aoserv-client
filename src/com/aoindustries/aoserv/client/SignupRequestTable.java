@@ -142,7 +142,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
             out.writeCompressedInt(SchemaTable.TableID.SIGNUP_REQUESTS.ordinal());
             out.writeUTF(accounting);
             out.writeUTF(ip_address);
-            out.writeCompressedInt(package_definition.getPKey());
+            out.writeCompressedInt(package_definition.getPkey());
             out.writeUTF(business_name);
             out.writeUTF(business_phone);
             out.writeBoolean(business_fax!=null); if(business_fax!=null) out.writeUTF(business_fax);
@@ -171,7 +171,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
             out.writeBoolean(billing_use_monthly);
             out.writeBoolean(billing_pay_one_year);
             // Encrypted values
-            out.writeCompressedInt(recipient.getPKey());
+            out.writeCompressedInt(recipient.getPkey());
             out.writeUTF(ciphertext);
             // options
             int numOptions = options.size();

@@ -347,7 +347,7 @@ final public class FileBackupTable extends AOServTable<Integer,FileBackup> {
     }
 
     List<FileBackup> findHardLinks(Server server, FileBackupDevice device, long inode) {
-	return getObjectsNoProgress(AOServProtocol.CommandID.FIND_HARD_LINKS, server.pkey, device.getPKey(), inode);
+	return getObjectsNoProgress(AOServProtocol.CommandID.FIND_HARD_LINKS, server.pkey, device.getPkey(), inode);
     }
 
     List<FileBackup> getFileBackupVersions(Server server, String path) {

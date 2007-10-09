@@ -54,7 +54,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
     

@@ -71,7 +71,7 @@ final public class FileBackupDevice extends GlobalObject<Short,FileBackupDevice>
         return device;
     }
 
-    public short getPKey() {
+    public short getPkey() {
         return pkey;
     }
 

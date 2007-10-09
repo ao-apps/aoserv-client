@@ -61,7 +61,7 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
                 for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
                 out.writeBoolean(sharedTomcatName!=null);
                 if(sharedTomcatName!=null) out.writeUTF(sharedTomcatName);
-                out.writeCompressedInt(version==null?-1:version.getTechnologyVersion(connector).getPKey());
+                out.writeCompressedInt(version==null?-1:version.getTechnologyVersion(connector).getPkey());
                 out.writeBoolean(contentSrc!=null);
                 if (contentSrc!=null) out.writeUTF(contentSrc);
                 out.flush();

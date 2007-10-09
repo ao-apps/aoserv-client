@@ -60,7 +60,7 @@ final public class SRDiskMDStat extends ServerReportSection<SRDiskMDStat> {
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

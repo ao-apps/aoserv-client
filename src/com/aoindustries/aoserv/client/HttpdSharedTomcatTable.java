@@ -44,7 +44,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
                 out.writeCompressedInt(SchemaTable.TableID.HTTPD_SHARED_TOMCATS.ordinal());
                 out.writeUTF(name);
                 out.writeCompressedInt(aoServer.pkey);
-                out.writeCompressedInt(version.getTechnologyVersion(connector).getPKey());
+                out.writeCompressedInt(version.getTechnologyVersion(connector).getPkey());
                 out.writeUTF(lsa.username);
                 out.writeUTF(lsg.name);
                 out.writeBoolean(isSecure);

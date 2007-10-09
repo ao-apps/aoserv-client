@@ -136,7 +136,7 @@ final public class SRNetDevice extends ServerReportSection<SRNetDevice> {
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

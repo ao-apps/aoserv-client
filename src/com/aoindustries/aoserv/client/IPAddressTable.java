@@ -32,7 +32,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
     }
 
     IPAddress getIPAddress(NetDevice device, String ipAddress) {
-	int pkey=device.getPKey();
+	int pkey=device.getPkey();
 
 	List<IPAddress> cached = getRows();
 	int len = cached.size();

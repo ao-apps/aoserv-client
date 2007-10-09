@@ -26,7 +26,7 @@ final public class InboxAttributes implements Streamable {
 
     public InboxAttributes(AOServConnector connector, LinuxServerAccount lsa) {
         this.connector=connector;
-        this.linuxServerAccount=lsa.getPKey();
+        this.linuxServerAccount=lsa.getPkey();
     }
 
     public InboxAttributes(

@@ -817,7 +817,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
                     CompressedDataOutputStream out=connection.getOutputStream();
                     out.writeCompressedInt(AOServProtocol.CommandID.SET_AUTORESPONDER.ordinal());
                     out.writeCompressedInt(pkey);
-                    out.writeCompressedInt(from==null?-1:from.getPKey());
+                    out.writeCompressedInt(from==null?-1:from.getPkey());
                     out.writeBoolean(subject!=null);
                     if(subject!=null) out.writeUTF(subject);
                     out.writeBoolean(content!=null);

@@ -85,7 +85,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

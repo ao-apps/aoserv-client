@@ -43,7 +43,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
 	;
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
     

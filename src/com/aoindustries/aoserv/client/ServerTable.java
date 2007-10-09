@@ -47,10 +47,10 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
                 out.writeCompressedInt(AOServProtocol.CommandID.ADD_BACKUP_SERVER.ordinal());
                 out.writeUTF(hostname);
                 out.writeUTF(farm.getName());
-                out.writeCompressedInt(owner.getPKey());
+                out.writeCompressedInt(owner.getPkey());
                 out.writeUTF(description);
                 out.writeCompressedInt(backup_hour);
-                out.writeCompressedInt(os_version.getPKey());
+                out.writeCompressedInt(os_version.getPkey());
                 out.writeUTF(username);
                 out.writeUTF(password);
                 out.writeUTF(contact_phone);

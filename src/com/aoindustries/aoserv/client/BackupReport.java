@@ -70,7 +70,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

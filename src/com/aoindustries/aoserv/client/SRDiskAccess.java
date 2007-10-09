@@ -108,7 +108,7 @@ final public class SRDiskAccess extends ServerReportSection<SRDiskAccess> {
         }
     }
 
-    public int getPKey() {
+    public int getPkey() {
         return pkey;
     }
 

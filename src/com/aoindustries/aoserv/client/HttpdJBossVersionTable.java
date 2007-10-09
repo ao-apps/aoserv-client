@@ -36,7 +36,7 @@ final public class HttpdJBossVersionTable extends GlobalTableIntegerKey<HttpdJBo
             .technologyNames
             .get(HttpdJBossVersion.TECHNOLOGY_NAME)
             .getTechnologyVersion(connector, version, osv)
-            .getPKey()
+            .getPkey()
 	);
     }
 

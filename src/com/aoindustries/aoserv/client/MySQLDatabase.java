@@ -203,7 +203,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public String getJdbcDriver() {
-        int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPKey();
+        int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.MANDRAKE_10_1_I586 : return MANDRAKE_JDBC_DRIVER;
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DRIVER;
@@ -229,7 +229,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public String getJdbcDocumentationUrl() {
-        int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPKey();
+        int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.MANDRAKE_10_1_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
