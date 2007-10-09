@@ -110,7 +110,6 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
      * Gets the default card info for a credit card number.
      *
      * @deprecated  Please use <code>com.aoindustries.creditcards.CreditCard#maskCardNumber(String)</code> instead.
-     * @see         com.aoindustries.creditcards.CreditCard#maskCardNumber(String)
      */
     public static String getCardInfo(String cardNumber) {
         String nums = "";

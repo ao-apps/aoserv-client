@@ -4362,7 +4362,6 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if unable to find the <code>CreditCard</code>
      *
      * @see  CreditCard#declined
-     * @see  #declineTransaction
      * @see  Transaction
      * @see  CreditCard
      */
