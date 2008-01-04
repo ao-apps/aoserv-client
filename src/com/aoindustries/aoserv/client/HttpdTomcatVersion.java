@@ -34,15 +34,11 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
     public static final String TECHNOLOGY_NAME="jakarta-tomcat";
 
     public static final String
-        VERSION_3_1_PREFIX="3.1.",
-        VERSION_3_2_PREFIX="3.2.",
+        VERSION_3_1="3.1",
+        VERSION_3_2_4="3.2.4",
         VERSION_4_1_PREFIX="4.1.",
-        VERSION_5_5_PREFIX="5.5."
-    ;
-
-    public static final String
-        VERSION_4_PREFIX="4.",
-        VERSION_5_PREFIX="5."
+        VERSION_5_5_PREFIX="5.5.",
+        VERSION_6_0_PREFIX="6.0."
     ;
 
     public Object getColumn(int i) {
@@ -74,14 +70,42 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
         requires_mod_jk=result.getBoolean(3);
     }
 
+    /**
+     * @deprecated  Please check all uses of this, because it also returns <code>true</code> for Tomcat 5, which doesn't seem
+     *              to match the method name very well.
+     *
+     * @see  #isTomcat41(AOServConnector)
+     * @see  #isTomcat55(AOServConnector)
+     * @see  #isTomcat60(AOServConnector)
+     */
     public boolean isTomcat4(AOServConnector connector) {
         String version = getTechnologyVersion(connector).getVersion();
-        return version.startsWith(VERSION_4_PREFIX) || version.startsWith(VERSION_5_PREFIX);
+        return version.startsWith("4.") || version.startsWith("5.");
     }
 
-    public boolean isTomcat55(AOServConnector connector) {
+    public boolean isTomcat3_1(AOServConnector connector) {
+        String version = getTechnologyVersion(connector).getVersion();
+        return version.equals(VERSION_3_1);
+    }
+
+    public boolean isTomcat3_2_4(AOServConnector connector) {
+        String version = getTechnologyVersion(connector).getVersion();
+        return version.equals(VERSION_3_2_4);
+    }
+
+    public boolean isTomcat4_1_X(AOServConnector connector) {
+        String version = getTechnologyVersion(connector).getVersion();
+        return version.startsWith(VERSION_4_1_PREFIX);
+    }
+
+    public boolean isTomcat5_5_X(AOServConnector connector) {
         String version = getTechnologyVersion(connector).getVersion();
         return version.startsWith(VERSION_5_5_PREFIX);
+    }
+
+    public boolean isTomcat6_0_X(AOServConnector connector) {
+        String version = getTechnologyVersion(connector).getVersion();
+        return version.startsWith(VERSION_6_0_PREFIX);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
