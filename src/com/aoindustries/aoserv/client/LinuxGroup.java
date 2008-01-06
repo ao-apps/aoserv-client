@@ -44,6 +44,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         HTTPD="httpd",
         MAIL="mail",
         MAILONLY="mailonly",
+        NAMED="named",
         NOGROUP="nogroup",
         POSTGRES="postgres",
         PROFTPD_JAILED="proftpd_jailed",
