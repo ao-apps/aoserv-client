@@ -198,7 +198,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
                 + "                                3600    ; refresh\n"
                 + "                                600     ; retry\n"
                 + "                                1814400 ; expiry\n"
-                + "                                1800    ; minimum\n"
+                + "                                300     ; minimum\n"
                 + "                                )\n");
 	int len=records.size();
 	for(int c=0;c<len;c++) {
@@ -212,7 +212,9 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
                 out.print(s);
                 count=Math.max(1, 24-s.length());
             } else {
-                count=24;
+                String s=String.valueOf(ttl);
+                out.print(s);
+                count=Math.max(1, 24-s.length());
             }
             for(int d=0;d<count;d++) out.print(' ');
             out.print("IN   ");
