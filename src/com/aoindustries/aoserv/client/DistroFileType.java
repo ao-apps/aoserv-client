@@ -29,6 +29,7 @@ final public class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
     public static final String
         CONFIG="config",
         NO_RECURSE="no_recurse",
+        PRELINK="prelink",
         SYSTEM="system",
         USER="user"
     ;
