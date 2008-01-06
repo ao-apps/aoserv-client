@@ -32,6 +32,7 @@ final public class Architecture extends GlobalObjectStringKey<Architecture> {
         I486="i486",
         I586="i586",
         I686="i686",
+        I686_AND_X86_64="i686,x86_64",
         M68K="m68k",
         MIPS="mips",
         PPC="ppc",

@@ -25,6 +25,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
     static final int COLUMN_NAME=0;
 
     public static final String
+        CENTOS="centos",
         DEBIAN="debian",
         GENTOO="gentoo",
         MANDRAKE="mandrake",
