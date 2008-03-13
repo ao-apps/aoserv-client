@@ -43,7 +43,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
      */
     public static final String
         REDHAT_JDBC_DRIVER="com.mysql.jdbc.Driver",
-        MANDRAKE_JDBC_DRIVER="com.mysql.jdbc.Driver"
+        MANDRAKE_JDBC_DRIVER="com.mysql.jdbc.Driver",
+        CENTOS_JDBC_DRIVER="com.mysql.jdbc.Driver"
     ;
     
     /**
@@ -52,7 +53,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
      */
     public static final String
         REDHAT_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
-        MANDRAKE_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html"
+        MANDRAKE_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
+        CENTOS_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html"
     ;
 
     /**
@@ -208,6 +210,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             case OperatingSystemVersion.MANDRAKE_10_1_I586 : return MANDRAKE_JDBC_DRIVER;
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DRIVER;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
+            case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: return CENTOS_JDBC_DRIVER;
             default : throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
         }
     }
@@ -234,6 +237,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             case OperatingSystemVersion.MANDRAKE_10_1_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DOCUMENTATION_URL;
+            case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 : return CENTOS_JDBC_DOCUMENTATION_URL;
             default : throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
         }
     }
