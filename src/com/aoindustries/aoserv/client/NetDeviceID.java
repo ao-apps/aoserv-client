@@ -25,6 +25,7 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
     static final int COLUMN_NAME=0;
 
     public static final String
+        BOND0="bond0",
         LO="lo",
         ETH0="eth0",
         ETH1="eth1",

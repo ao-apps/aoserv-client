@@ -443,7 +443,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         REACTIVATE_CREDIT_CARD,
         SET_CREDIT_CARD_USE_MONTHLY,
         CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
-        TRANSACTION_HELD
+        TRANSACTION_HELD,
+        GET_NET_DEVICE_BONDING_REPORT
     }
 
     /**

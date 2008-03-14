@@ -37,6 +37,8 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     public static final String DEFAULT_OPERATING_SYSTEM_VERSION=VERSION_2006_0;
 
     public static final int
+        CENTOS_5DOM0_X86_64 = 63,
+        CENTOS_5DOM0_I686 = 64,
         CENTOS_5_I686_AND_X86_64 = 67,
         //GENTOO_1_4_I686=5,
         //MANDRAKE_9_2_I586=12,

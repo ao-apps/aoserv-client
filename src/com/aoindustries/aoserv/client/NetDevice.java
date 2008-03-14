@@ -176,4 +176,13 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
             out.writeLong(max_bit_rate);
         }
     }
+
+    /**
+     * Gets the bonding report from <code>/proc/net/bonding/[p]bond#</code>
+     * or <code>null</code> if not a bonded device.
+     */
+    public String getBondingReport() {
+        if(!device_id.equals(NetDeviceID.BOND0)) return null;
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
+    }
 }
