@@ -34,6 +34,15 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 	super(connector, LinuxGroupAccount.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(LinuxGroupAccount.COLUMN_GROUP_NAME_name, ASCENDING),
+        new OrderBy(LinuxGroupAccount.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addLinuxGroupAccount(
 	LinuxGroup groupNameObject,
 	LinuxAccount usernameObject

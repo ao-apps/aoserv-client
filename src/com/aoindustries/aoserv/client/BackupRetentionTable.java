@@ -22,6 +22,14 @@ final public class BackupRetentionTable extends GlobalTable<Short,BackupRetentio
 	super(connector, BackupRetention.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BackupRetention.COLUMN_DAYS_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public BackupRetention get(Object days) {
         return get((Short)days);
     }

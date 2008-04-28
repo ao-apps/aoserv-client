@@ -83,6 +83,13 @@ abstract public class AOServConnector {
     final String daemonServer;
     
     final ErrorHandler errorHandler;
+    
+    /**
+     * Gets the error handler for this connector.
+     */
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
 
     protected final String password;
 
@@ -106,8 +113,6 @@ abstract public class AOServConnector {
 
     public final AOSHCommandTable aoshCommands;
     public final ArchitectureTable architectures;
-    public final BackupDataTable backupDatas;
-    public final BackupLevelTable backupLevels;
     public final BackupPartitionTable backupPartitions;
     public final BackupReportTable backupReports;
     public final BackupRetentionTable backupRetentions;
@@ -170,11 +175,7 @@ abstract public class AOServConnector {
     public final FailoverMySQLReplicationTable failoverMySQLReplications;
     public FailoverMySQLReplicationTable getFailoverMySQLReplications() {return failoverMySQLReplications;}
 
-    public final FileBackupTable fileBackups;
-    public final FileBackupDeviceTable fileBackupDevices;
-    public final FileBackupRootTable fileBackupRoots;
     public final FileBackupSettingTable fileBackupSettings;
-    public final FileBackupStatTable fileBackupStats;
     public final FTPGuestUserTable ftpGuestUsers;
     public final HttpdBindTable httpdBinds;
     public final HttpdJBossSiteTable httpdJBossSites;
@@ -199,12 +200,6 @@ abstract public class AOServConnector {
     public final HttpdTomcatStdSiteTable httpdTomcatStdSites;
     public final HttpdTomcatVersionTable httpdTomcatVersions;
     public final HttpdWorkerTable httpdWorkers;
-    public final InterBaseBackupTable interBaseBackups;
-    public final InterBaseDatabaseTable interBaseDatabases;
-    public final InterBaseDBGroupTable interBaseDBGroups;
-    public final InterBaseReservedWordTable interBaseReservedWords;
-    public final InterBaseServerUserTable interBaseServerUsers;
-    public final InterBaseUserTable interBaseUsers;
     public final IPAddressTable ipAddresses;
     public final LinuxAccAddressTable linuxAccAddresses;
     public final LinuxAccountTypeTable linuxAccountTypes;
@@ -226,7 +221,6 @@ abstract public class AOServConnector {
     public final MasterServerTable masterServers;
     public final MasterUserTable masterUsers;
     public final MonthlyChargeTable monthlyCharges;
-    public final MySQLBackupTable mysqlBackups;
     public final MySQLDatabaseTable mysqlDatabases;
     public final MySQLDBUserTable mysqlDBUsers;
     public final MySQLReservedWordTable mysqlReservedWords;
@@ -254,8 +248,6 @@ abstract public class AOServConnector {
     public PackageTable getPackages() {return packages;}
 
     public final PaymentTypeTable paymentTypes;
-    public final PhoneNumberTable phoneNumbers;
-    public final PostgresBackupTable postgresBackups;
     public final PostgresDatabaseTable postgresDatabases;
     public final PostgresEncodingTable postgresEncodings;
     public final PostgresReservedWordTable postgresReservedWords;
@@ -273,9 +265,7 @@ abstract public class AOServConnector {
     public final SchemaForeignKeyTable schemaForeignKeys;
     public final SchemaTableTable schemaTables;
     public final SchemaTypeTable schemaTypes;
-    public final SendmailSmtpStatTable sendmailSmtpStats;
     public final ServerFarmTable serverFarms;
-    public final ServerReportTable serverReports;
     public final ServerTable servers;
     public final ShellTable shells;
 
@@ -286,25 +276,6 @@ abstract public class AOServConnector {
     public SignupRequestTable getSignupRequests() {return signupRequests;}
 
     public final SpamEmailMessageTable spamEmailMessages;
-    public final SRCpuTable srCpu;
-    public final SRDbMySQLTable srDbMySQL;
-    public final SRDbPostgresTable srDbPostgres;
-    public final SRDiskAccessTable srDiskAccess;
-    public final SRDiskMDStatTable srDiskMDStat;
-    public final SRDiskSpaceTable srDiskSpace;
-    public final SRKernelTable srKernel;
-    public final SRLoadTable srLoad;
-    public final SRMemoryTable srMemory;
-    public final SRNetDeviceTable srNetDevice;
-    public final SRNetICMPTable srNetICMP;
-    public final SRNetIPTable srNetIP;
-    public final SRNetTCPTable srNetTCP;
-    public final SRNetUDPTable srNetUDP;
-    public final SRNumUsersTable srNumUsers;
-    public final SRPagingTable srPaging;
-    public final SRProcessesTable srProcesses;
-    public final SRSwapRateTable srSwapRate;
-    public final SRSwapSizeTable srSwapSize;
     public final SystemEmailAliasTable systemEmailAliases;
     public final TechnologyTable technologies;
     public final TechnologyClassTable technologyClasses;
@@ -366,8 +337,6 @@ abstract public class AOServConnector {
                 aoservPermissions=new AOServPermissionTable(this),
                 aoshCommands=new AOSHCommandTable(this),
                 architectures=new ArchitectureTable(this),
-                backupDatas=new BackupDataTable(this),
-                backupLevels=new BackupLevelTable(this),
                 backupPartitions=new BackupPartitionTable(this),
                 backupReports=new BackupReportTable(this),
                 backupRetentions=new BackupRetentionTable(this),
@@ -414,11 +383,7 @@ abstract public class AOServConnector {
                 failoverFileReplications=new FailoverFileReplicationTable(this),
                 failoverFileSchedules=new FailoverFileScheduleTable(this),
                 failoverMySQLReplications=new FailoverMySQLReplicationTable(this),
-                fileBackups=new FileBackupTable(this),
-                fileBackupDevices=new FileBackupDeviceTable(this),
-                fileBackupRoots=new FileBackupRootTable(this),
                 fileBackupSettings=new FileBackupSettingTable(this),
-                fileBackupStats=new FileBackupStatTable(this),
                 ftpGuestUsers=new FTPGuestUserTable(this),
                 httpdBinds=new HttpdBindTable(this),
                 httpdJBossSites=new HttpdJBossSiteTable(this),
@@ -440,12 +405,6 @@ abstract public class AOServConnector {
                 httpdTomcatStdSites=new HttpdTomcatStdSiteTable(this),
                 httpdTomcatVersions=new HttpdTomcatVersionTable(this),
                 httpdWorkers=new HttpdWorkerTable(this),
-                interBaseBackups=new InterBaseBackupTable(this),
-                interBaseDatabases=new InterBaseDatabaseTable(this),
-                interBaseDBGroups=new InterBaseDBGroupTable(this),
-                interBaseReservedWords=new InterBaseReservedWordTable(this),
-                interBaseServerUsers=new InterBaseServerUserTable(this),
-                interBaseUsers=new InterBaseUserTable(this),
                 ipAddresses=new IPAddressTable(this),
                 linuxAccAddresses=new LinuxAccAddressTable(this),
                 linuxAccountTypes=new LinuxAccountTypeTable(this),
@@ -467,7 +426,6 @@ abstract public class AOServConnector {
                 masterServers=new MasterServerTable(this),
                 masterUsers=new MasterUserTable(this),
                 monthlyCharges=new MonthlyChargeTable(this),
-                mysqlBackups=new MySQLBackupTable(this),
                 mysqlDatabases=new MySQLDatabaseTable(this),
                 mysqlDBUsers=new MySQLDBUserTable(this),
                 mysqlReservedWords=new MySQLReservedWordTable(this),
@@ -489,8 +447,6 @@ abstract public class AOServConnector {
                 packageDefinitions=new PackageDefinitionTable(this),
                 packages=new PackageTable(this),
                 paymentTypes=new PaymentTypeTable(this),
-                phoneNumbers=new PhoneNumberTable(this),
-                postgresBackups=new PostgresBackupTable(this),
                 postgresDatabases=new PostgresDatabaseTable(this),
                 postgresEncodings=new PostgresEncodingTable(this),
                 postgresReservedWords=new PostgresReservedWordTable(this),
@@ -505,33 +461,12 @@ abstract public class AOServConnector {
                 schemaForeignKeys=new SchemaForeignKeyTable(this),
                 schemaTables=new SchemaTableTable(this),
                 schemaTypes=new SchemaTypeTable(this),
-                sendmailSmtpStats=new SendmailSmtpStatTable(this),
                 serverFarms=new ServerFarmTable(this),
-                serverReports=new ServerReportTable(this),
                 servers=new ServerTable(this),
                 shells=new ShellTable(this),
                 signupRequestOptions=new SignupRequestOptionTable(this),
                 signupRequests=new SignupRequestTable(this),
                 spamEmailMessages=new SpamEmailMessageTable(this),
-                srCpu=new SRCpuTable(this),
-                srDbMySQL=new SRDbMySQLTable(this),
-                srDbPostgres=new SRDbPostgresTable(this),
-                srDiskAccess=new SRDiskAccessTable(this),
-                srDiskMDStat=new SRDiskMDStatTable(this),
-                srDiskSpace=new SRDiskSpaceTable(this),
-                srKernel=new SRKernelTable(this),
-                srLoad=new SRLoadTable(this),
-                srMemory=new SRMemoryTable(this),
-                srNetDevice=new SRNetDeviceTable(this),
-                srNetICMP=new SRNetICMPTable(this),
-                srNetIP=new SRNetIPTable(this),
-                srNetTCP=new SRNetTCPTable(this),
-                srNetUDP=new SRNetUDPTable(this),
-                srNumUsers=new SRNumUsersTable(this),
-                srPaging=new SRPagingTable(this),
-                srProcesses=new SRProcessesTable(this),
-                srSwapRate=new SRSwapRateTable(this),
-                srSwapSize=new SRSwapSizeTable(this),
                 systemEmailAliases=new SystemEmailAliasTable(this),
                 technologies=new TechnologyTable(this),
                 technologyClasses=new TechnologyClassTable(this),
@@ -553,6 +488,22 @@ abstract public class AOServConnector {
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
+    }
+
+    /**
+     * Uses equivilence equality like <code>Object.equals</code>.  Two
+     * connectors are considered equal only if they refer to the same
+     * object.
+     */
+    final public boolean equals(Object O) {
+        return super.equals(O);
+    }
+    
+    /**
+     * Uses equivilence hashCode like <code>Object.hashCode()</code>.
+     */
+    final public int hashCode() {
+        return super.hashCode();
     }
 
     /**
@@ -882,8 +833,14 @@ abstract public class AOServConnector {
         }
     }
 
-    public void invalidateTable(int tableID, String server) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "invalidateTable(int,String)", null);
+    /**
+     * Manually invalidates the system caches.
+     * 
+     * @param tableID the table ID
+     * @param server the pkey of the server or <code>-1</code> for all servers
+     */
+    public void invalidateTable(int tableID, int server) {
+        Profiler.startProfile(Profiler.IO, AOServConnector.class, "invalidateTable(int,int)", null);
         try {
             try {
                 IntList tableList;
@@ -892,8 +849,7 @@ abstract public class AOServConnector {
                     CompressedDataOutputStream out=connection.getOutputStream();
                     out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
                     out.writeCompressedInt(tableID);
-                    out.writeBoolean(server!=null);
-                    if(server!=null) out.writeUTF(server);
+                    out.writeCompressedInt(server);
                     out.flush();
 
                     CompressedDataInputStream in=connection.getInputStream();

@@ -22,6 +22,16 @@ final public class MasterServerTable extends CachedTableIntegerKey<MasterServer>
 	super(connector, MasterServer.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MasterServer.COLUMN_USERNAME_name, ASCENDING),
+        new OrderBy(MasterServer.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(MasterServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public MasterServer get(Object pkey) {
 	return getUniqueRow(MasterServer.COLUMN_PKEY, pkey);
     }

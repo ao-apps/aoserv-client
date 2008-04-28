@@ -9,7 +9,6 @@ import com.aoindustries.util.StandardErrorHandler;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +16,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import junit.framework.Test;
@@ -40,7 +40,6 @@ public class MySQLTest extends TestCase {
     private List<MySQLServerUser> mysqlServerUsers=new ArrayList<MySQLServerUser>();
     private Map<MySQLServerUser,String> mysqlServerUserPasswords=new HashMap<MySQLServerUser,String>();
     private List<MySQLDatabase> mysqlDatabases=new ArrayList<MySQLDatabase>();
-    private Map<MySQLDatabase,MySQLBackup> mysqlBackups=new HashMap<MySQLDatabase,MySQLBackup>();
     private Map<MySQLDatabase,Integer> dumpSizes=new HashMap<MySQLDatabase,Integer>();
 
     public MySQLTest(String testName) {
@@ -52,7 +51,6 @@ public class MySQLTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        for(MySQLBackup mb : mysqlBackups.values()) mb.remove();
         for(MySQLDatabase md : mysqlDatabases) md.remove();
         for(MySQLServerUser msu : mysqlServerUsers) msu.remove();
         if(mysqlUser!=null) mysqlUser.remove();
@@ -81,8 +79,6 @@ public class MySQLTest extends TestCase {
         enableMySQLServerUsers();
         selectCount();
         dumpMySQLDatabases();
-        backupMySQLDatabases();
-        getMySQLBackups();
     }
 
     /**
@@ -110,7 +106,7 @@ public class MySQLTest extends TestCase {
                 +(char)('0'+random.nextInt(10))
                 +(char)('0'+random.nextInt(10))
             ;
-            if(conn.usernames.isUsernameAvailable(temp)) randomUsername=temp;
+            if(conn.usernames.isUsernameAvailable(temp, Locale.getDefault())) randomUsername=temp;
         }
         System.out.println(randomUsername);
         
@@ -392,42 +388,5 @@ public class MySQLTest extends TestCase {
             dumpSizes.put(md, length);
         }
         System.out.println(" Done");
-    }
-
-    /**
-     * Test backup.
-     */
-    private void backupMySQLDatabases() throws SQLException {
-        /** TODO Disabled until new backup system completed
-        System.out.print("Backing-up MySQLDatabases:");
-        for(MySQLDatabase md : mysqlDatabases) {
-            int pkey=md.backup();
-            System.out.print(" "+pkey);
-            mysqlBackups.put(md, conn.mysqlBackups.get(pkey));
-        }
-        System.out.println(" Done");
-         */
-    }
-
-    /**
-     * Gets backup data.
-     */
-    private void getMySQLBackups() throws SQLException {
-        /** TODO Disabled until new backup system completed
-        System.out.print("Testing MySQL backup retrieval: ");
-        for(MySQLDatabase md : mysqlDatabases) {
-            System.out.print('.');
-            int expectedSize=dumpSizes.get(md);
-            MySQLBackup backup=mysqlBackups.get(md);
-            assertNotNull(backup);
-            ByteArrayOutputStream bout=new ByteArrayOutputStream();
-            PrintWriter writer=new PrintWriter(bout);
-            backup.dump(writer);
-            writer.flush();
-            int length=bout.toByteArray().length;
-            assertEquals(expectedSize, length);
-        }
-        System.out.println(" Done");
-         */
     }
 }

@@ -48,7 +48,8 @@ public class ObjectTypesTest extends TestCase {
         System.out.println("E = Empty Table, Tests Not Performed");
         System.out.println("N = All Null, Tests Not Performed");
         System.out.println("U = Unsupported Operation");
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) {
+        int numTables = SchemaTable.TableID.values().length;
+        for(int c=0;c<numTables;c++) {
             AOServTable table=conn.getTable(c);
             String tableName=table.getTableName();
             System.out.print("    "+tableName+": ");

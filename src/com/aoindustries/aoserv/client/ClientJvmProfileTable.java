@@ -23,6 +23,16 @@ final public class ClientJvmProfileTable extends AOServTable<String,ClientJvmPro
 	super(connector, ClientJvmProfile.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(ClientJvmProfile.COLUMN_CLASSNAME_name, ASCENDING),
+        new OrderBy(ClientJvmProfile.COLUMN_METHOD_NAME_name, ASCENDING),
+        new OrderBy(ClientJvmProfile.COLUMN_PARAMETER_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public ClientJvmProfile get(Object pkey) {
         return get((String)pkey);
     }

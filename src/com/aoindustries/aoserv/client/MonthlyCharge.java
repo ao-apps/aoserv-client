@@ -29,6 +29,10 @@ import java.sql.*;
 final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_PACKAGE_name = "package";
+    static final String COLUMN_TYPE_name = "type";
+    static final String COLUMN_CREATED_name = "created";
 
     String accounting;
     String packageName;

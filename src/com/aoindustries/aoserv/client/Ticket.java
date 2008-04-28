@@ -26,10 +26,11 @@ import java.util.*;
  */
 final public class Ticket extends AOServObject<Integer,Ticket> implements SingleTableObject<Integer,Ticket> {
 
+    static final int COLUMN_PKEY=0;
+    static final String COLUMN_PKEY_name = "pkey";
+
     protected AOServTable<Integer,Ticket> table;
     public static final long NO_DEADLINE=-1;
-
-    static final int COLUMN_PKEY=0;
 
     int pkey;
     String accounting;

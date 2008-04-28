@@ -32,6 +32,8 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
         COLUMN_PKEY=0,
         COLUMN_HTTPD_SITE_BIND=1
     ;
+    static final String COLUMN_HOSTNAME_name = "hostname";
+    static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
 
     int httpd_site_bind;
     private String hostname;
@@ -124,7 +126,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 
     public boolean isTestURL() {
         HttpdSite hs=getHttpdSiteBind().getHttpdSite();
-        return hostname.equals(hs.getSiteName()+'.'+hs.getAOServer().getServer().getHostname());
+        return hostname.equals(hs.getSiteName()+'.'+hs.getAOServer().getHostname());
     }
 
     public void read(CompressedDataInputStream in) throws IOException {

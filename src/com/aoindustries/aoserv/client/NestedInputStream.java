@@ -33,6 +33,7 @@ public final class NestedInputStream extends InputStream {
         this.in=in;
     }
 
+    @Override
     synchronized public int available() {
         return bufferRead-bufferFilled;
     }
@@ -57,6 +58,7 @@ public final class NestedInputStream extends InputStream {
         }
     }
 
+    @Override
     synchronized public void close() throws IOException {
         if(!isDone) {
             // Read the rest of the underlying stream
@@ -89,6 +91,7 @@ public final class NestedInputStream extends InputStream {
         return ((int)buffer[bufferRead++])&0xff;
     }
     
+    @Override
     synchronized public int read(byte[] b, int off, int len) throws IOException {
         if(isDone) return -1;
         loadNextBlock();
@@ -100,6 +103,7 @@ public final class NestedInputStream extends InputStream {
         return bufferLeft;
     }
 
+    @Override
     synchronized public long skip(long n) throws IOException {
         if(isDone) return -1;
         loadNextBlock();
@@ -110,6 +114,7 @@ public final class NestedInputStream extends InputStream {
         return bufferLeft;
     }
     
+    @Override
     public void finalize() throws Throwable {
         if(buffer!=null) {
             BufferManager.release(buffer);

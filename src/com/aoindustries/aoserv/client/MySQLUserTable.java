@@ -23,6 +23,14 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         super(connector, MySQLUser.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MySQLUser.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addMySQLUser(String username) {
         connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,

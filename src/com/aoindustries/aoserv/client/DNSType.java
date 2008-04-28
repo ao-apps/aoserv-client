@@ -25,6 +25,7 @@ import java.util.*;
 final public class DNSType extends GlobalObjectStringKey<DNSType> {
 
     static final int COLUMN_TYPE=0;
+    static final String COLUMN_DESCRIPTION_name = "description";
 
     /**
      * The possible <code>DNSType</code>s.

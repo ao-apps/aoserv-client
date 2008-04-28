@@ -24,6 +24,14 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
         super(connector, BusinessAdministrator.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BusinessAdministrator.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addBusinessAdministrator(
         Username username,
         String name,

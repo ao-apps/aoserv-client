@@ -30,6 +30,7 @@ import java.sql.*;
 final public class DNSTLD extends GlobalObjectStringKey<DNSTLD> {
 
     static final int COLUMN_DOMAIN=0;
+    static final String COLUMN_DOMAIN_name = "domain";
 
     private String description;
 

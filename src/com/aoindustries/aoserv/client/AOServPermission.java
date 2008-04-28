@@ -22,6 +22,7 @@ import java.util.Locale;
 final public class AOServPermission extends GlobalObjectStringKey<AOServPermission> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_SORT_ORDER_name = "sort_order";
 
     /**
      * The possible permissions.
@@ -40,8 +41,6 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         add_credit_card,
         delete_credit_card,
         edit_credit_card,
-        // interbase_server_users
-        set_interbase_server_user_password,
         // linux_server_accounts
         set_linux_server_account_password,
         // mysql_server_users

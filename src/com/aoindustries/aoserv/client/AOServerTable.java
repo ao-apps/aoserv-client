@@ -23,12 +23,26 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
 	super(connector, AOServer.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public AOServer get(Object pkey) {
-	return getUniqueRow(AOServer.COLUMN_SERVER, pkey);
+        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+        else if(pkey instanceof String) return get((String)pkey);
+        else throw new IllegalArgumentException("Must be an Integer or a String");
     }
 
     public AOServer get(int pkey) {
 	return getUniqueRow(AOServer.COLUMN_SERVER, pkey);
+    }
+
+    public AOServer get(String hostname) {
+	return getUniqueRow(AOServer.COLUMN_HOSTNAME, hostname);
     }
 
     AOServer getAOServerByDaemonNetBind(NetBind nb) {
@@ -96,13 +110,6 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.RESTART_INTERBASE)) {
-            if(AOSH.checkParamCount(AOSHCommand.RESTART_INTERBASE, args, 1, err)) {
-                connector.simpleAOClient.restartInterBase(
-                    args[1]
-                );
-            }
-            return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.RESTART_XFS)) {
             if(AOSH.checkParamCount(AOSHCommand.RESTART_XFS, args, 1, err)) {
                 connector.simpleAOClient.restartXfs(
@@ -131,13 +138,6 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.START_INTERBASE)) {
-            if(AOSH.checkParamCount(AOSHCommand.START_INTERBASE, args, 1, err)) {
-                connector.simpleAOClient.startInterBase(
-                    args[1]
-                );
-            }
-            return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.START_XFS)) {
             if(AOSH.checkParamCount(AOSHCommand.START_XFS, args, 1, err)) {
                 connector.simpleAOClient.startXfs(
@@ -162,13 +162,6 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_CRON)) {
             if(AOSH.checkParamCount(AOSHCommand.STOP_CRON, args, 1, err)) {
                 connector.simpleAOClient.stopCron(
-                    args[1]
-                );
-            }
-            return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_INTERBASE)) {
-            if(AOSH.checkParamCount(AOSHCommand.STOP_INTERBASE, args, 1, err)) {
-                connector.simpleAOClient.stopInterBase(
                     args[1]
                 );
             }

@@ -25,6 +25,7 @@ import java.sql.*;
 final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPServer> {
 
     static final int COLUMN_NET_BIND=0;
+    static final String COLUMN_NET_BIND_name = "net_bind";
 
     private String root;
     private String logfile;

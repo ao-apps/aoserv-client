@@ -22,6 +22,14 @@ final public class NetDeviceIDTable extends GlobalTableStringKey<NetDeviceID> {
 	super(connector, NetDeviceID.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(NetDeviceID.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public NetDeviceID get(Object pkey) {
 	return getUniqueRow(NetDeviceID.COLUMN_NAME, pkey);
     }

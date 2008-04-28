@@ -29,6 +29,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         COLUMN_NAME=0,
         COLUMN_PACKAGE=1
     ;
+    static final String COLUMN_NAME_name = "name";
 
     /**
      * Some commonly used system and application groups.

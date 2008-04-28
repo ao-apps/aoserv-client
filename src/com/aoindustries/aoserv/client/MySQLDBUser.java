@@ -28,11 +28,13 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     static final int
         COLUMN_PKEY=0,
         COLUMN_MYSQL_DATABASE=1,
-        COLUMN_MYSQL_USER=2
+        COLUMN_MYSQL_SERVER_USER=2
     ;
+    static final String COLUMN_MYSQL_DATABASE_name = "mysql_database";
+    static final String COLUMN_MYSQL_SERVER_USER_name = "mysql_server_user";
 
     int mysql_database;
-    int mysql_user;
+    int mysql_server_user;
 
     private boolean
         select_priv,
@@ -126,7 +128,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         switch(i) {
             case COLUMN_PKEY: return pkey;
             case COLUMN_MYSQL_DATABASE: return mysql_database;
-            case COLUMN_MYSQL_USER: return mysql_user;
+            case COLUMN_MYSQL_SERVER_USER: return mysql_server_user;
             case 3: return select_priv;
             case 4: return insert_priv;
             case 5: return update_priv;
@@ -155,7 +157,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 
     public MySQLServerUser getMySQLServerUser() {
         // May be null due to filtering or a recently removed table
-	return table.connector.mysqlServerUsers.get(mysql_user);
+	return table.connector.mysqlServerUsers.get(mysql_server_user);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -165,7 +167,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     void initImpl(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	mysql_database=result.getInt(2);
-	mysql_user=result.getInt(3);
+	mysql_server_user=result.getInt(3);
 	select_priv=result.getBoolean(4);
 	insert_priv=result.getBoolean(5);
 	update_priv=result.getBoolean(6);
@@ -188,7 +190,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
 	mysql_database=in.readCompressedInt();
-	mysql_user=in.readCompressedInt();
+	mysql_server_user=in.readCompressedInt();
 	select_priv=in.readBoolean();
 	insert_priv=in.readBoolean();
 	update_priv=in.readBoolean();
@@ -226,7 +228,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(mysql_database);
-	out.writeCompressedInt(mysql_user);
+	out.writeCompressedInt(mysql_server_user);
 	out.writeBoolean(select_priv);
 	out.writeBoolean(insert_priv);
 	out.writeBoolean(update_priv);

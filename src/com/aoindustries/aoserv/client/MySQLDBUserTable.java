@@ -25,6 +25,17 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 	super(connector, MySQLDBUser.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(MySQLDBUser.COLUMN_MYSQL_SERVER_USER_name+'.'+MySQLServerUser.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addMySQLDBUser(
 	MySQLDatabase md,
 	MySQLServerUser msu,
@@ -111,7 +122,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 	int size=cached.size();
 	for(int c=0;c<size;c++) {
             MySQLDBUser mdu=cached.get(c);
-            if(mdu.mysql_user==msuPKey) return mdu;
+            if(mdu.mysql_server_user==msuPKey) return mdu;
 	}
 	return null;
     }
@@ -132,7 +143,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
     }
 
     List<MySQLDBUser> getMySQLDBUsers(MySQLServerUser msu) {
-        return getIndexedRows(MySQLDBUser.COLUMN_MYSQL_USER, msu.pkey);
+        return getIndexedRows(MySQLDBUser.COLUMN_MYSQL_SERVER_USER, msu.pkey);
     }
 
     List<MySQLDBUser> getMySQLDBUsers(MySQLDatabase md) {

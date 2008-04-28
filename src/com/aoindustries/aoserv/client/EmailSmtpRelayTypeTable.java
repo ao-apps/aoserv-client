@@ -22,6 +22,14 @@ final public class EmailSmtpRelayTypeTable extends GlobalTableStringKey<EmailSmt
 	super(connector, EmailSmtpRelayType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailSmtpRelayType.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public EmailSmtpRelayType get(Object pkey) {
 	return getUniqueRow(EmailSmtpRelayType.COLUMN_NAME, pkey);
     }

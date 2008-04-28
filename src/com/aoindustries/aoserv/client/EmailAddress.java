@@ -34,6 +34,8 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         COLUMN_PKEY=0,
         COLUMN_DOMAIN=2
     ;
+    static final String COLUMN_DOMAIN_name = "domain";
+    static final String COLUMN_ADDRESS_name = "address";
 
     String address;
     int domain;
@@ -105,16 +107,16 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         return table.connector.emailPipeAddresses.getEmailPipeAddress(this, pipe);
     }
 
-    public List<LinuxAccount> getLinuxAccounts() {
-	return table.connector.linuxAccAddresses.getLinuxAccounts(this);
+    public List<LinuxServerAccount> getLinuxServerAccounts() {
+	return table.connector.linuxAccAddresses.getLinuxServerAccounts(this);
     }
 
     public List<LinuxAccAddress> getLinuxAccAddresses() {
 	return table.connector.linuxAccAddresses.getLinuxAccAddresses(this);
     }
 
-    public LinuxAccAddress getLinuxAccAddress(LinuxAccount la) {
-        return table.connector.linuxAccAddresses.getLinuxAccAddress(this, la);
+    public LinuxAccAddress getLinuxAccAddress(LinuxServerAccount lsa) {
+        return table.connector.linuxAccAddresses.getLinuxAccAddress(this, lsa);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -198,7 +200,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
                 || ml.listname_approval_add==pkey
             ) {
                 EmailDomain ed=ml.getMajordomoServer().getDomain();
-                reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getServer().getHostname(), ml));
+                reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
             }
         }
         
@@ -209,7 +211,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
                 || ms.majordomo_owner_add==pkey
             ) {
                 EmailDomain ed=ms.getDomain();
-                reasons.add(new CannotRemoveReason("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getServer().getHostname()));
+                reasons.add(new CannotRemoveReason("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname()));
             }
         }
         

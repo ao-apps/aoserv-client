@@ -28,6 +28,8 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         COLUMN_PKEY=0,
         COLUMN_ACCOUNTING=1
     ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_TIME_name = "time";
 
     String accounting;
     private long time;
@@ -61,7 +63,8 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     private boolean billing_use_monthly;
     private boolean billing_pay_one_year;
     private String encrypted_data;
-    private int encryption_key;
+    private int encryption_from;
+    private int encryption_recipient;
     private String completed_by;
     private long completed_time;
 
@@ -112,9 +115,10 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
             case 30: return billing_use_monthly;
             case 31: return billing_pay_one_year;
             case 32: return encrypted_data;
-            case 33: return encryption_key;
-            case 34: return completed_by;
-            case 35: return completed_time;
+            case 33: return encryption_from;
+            case 34: return encryption_recipient;
+            case 35: return completed_by;
+            case 36: return completed_time;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -158,7 +162,8 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         billing_use_monthly=result.getBoolean(pos++);
         billing_pay_one_year=result.getBoolean(pos++);
         encrypted_data=result.getString(pos++);
-        encryption_key=result.getInt(pos++);
+        encryption_from=result.getInt(pos++);
+        encryption_recipient=result.getInt(pos++);
         completed_by=result.getString(pos++);
         Timestamp T = result.getTimestamp(pos++);
         completed_time = T==null ? -1 : T.getTime();
@@ -198,7 +203,8 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         billing_use_monthly=in.readBoolean();
         billing_pay_one_year=in.readBoolean();
         encrypted_data=in.readUTF();
-        encryption_key=in.readCompressedInt();
+        encryption_from=in.readCompressedInt();
+        encryption_recipient=in.readCompressedInt();
         completed_by=StringUtility.intern(in.readNullUTF());
         completed_time=in.readLong();
     }
@@ -237,7 +243,8 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         out.writeBoolean(billing_use_monthly);
         out.writeBoolean(billing_pay_one_year);
         out.writeUTF(encrypted_data);
-        out.writeCompressedInt(encryption_key);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) out.writeCompressedInt(encryption_from);
+        out.writeCompressedInt(encryption_recipient); // Used to be called encryption_key
         out.writeNullUTF(completed_by);
         out.writeLong(completed_time);
     }
@@ -370,10 +377,16 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         return billing_pay_one_year;
     }
 
-    public EncryptionKey getEncryptionKey() {
-        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_key);
-        if(ek == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_key));
+    public EncryptionKey getEncryptionFrom() {
+        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_from);
+        if(ek == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_from));
         return ek;
+    }
+
+    public EncryptionKey getEncryptionRecipient() {
+        EncryptionKey er = table.connector.encryptionKeys.get(encryption_recipient);
+        if(er == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_recipient));
+        return er;
     }
 
     public BusinessAdministrator getCompletedBy() {
@@ -445,10 +458,10 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
             billing_city=null;
             billing_state=null;
             billing_zip=null;
-            
+
             // Perform the decryption
-            String decrypted = getEncryptionKey().decrypt(encrypted_data, passphrase);
-            
+            String decrypted = getEncryptionRecipient().decrypt(encrypted_data, passphrase);
+
             // Parse
             List<String> lines = StringUtility.splitLines(decrypted);
             

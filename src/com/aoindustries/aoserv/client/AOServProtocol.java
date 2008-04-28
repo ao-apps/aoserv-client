@@ -20,6 +20,7 @@ import java.sql.*;
 public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> {
 
     static final int COLUMN_VERSION=0;
+    static final String COLUMN_CREATED_name="created";
 
     /**
      * The current version of the client/server protocol.
@@ -85,7 +86,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_27="1.27",
         VERSION_1_28="1.28",
         VERSION_1_29="1.29",
-        CURRENT_VERSION=VERSION_1_29
+        VERSION_1_30="1.30",
+        VERSION_1_31="1.31",
+        CURRENT_VERSION=VERSION_1_31
     ;
 
     /**
@@ -156,7 +159,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
                 VERSION_1_26,
                 VERSION_1_27,
                 VERSION_1_28,
-                VERSION_1_29
+                VERSION_1_29,
+                VERSION_1_30,
+                VERSION_1_31
             };
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -439,12 +444,16 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_MYSQL_SLAVE_STATUS,
         GET_MYSQL_MASTER_STATUS,
         UPDATE_CREDIT_CARD,
-        UPDATE_CREDIT_CARD_CARD_INFO,
+        UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION,
         REACTIVATE_CREDIT_CARD,
         SET_CREDIT_CARD_USE_MONTHLY,
         CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
         TRANSACTION_HELD,
-        GET_NET_DEVICE_BONDING_REPORT
+        GET_NET_DEVICE_BONDING_REPORT,
+        GET_AO_SERVER_3WARE_RAID_REPORT,
+        GET_AO_SERVER_MD_RAID_REPORT,
+        GET_AO_SERVER_DRBD_REPORT,
+        UPDATE_CREDIT_CARD_EXPIRATION
     }
 
     /**

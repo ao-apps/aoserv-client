@@ -22,6 +22,14 @@ public final class PackageCategoryTable extends GlobalTableStringKey<PackageCate
 	super(connector, PackageCategory.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PackageCategory.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public PackageCategory get(Object pkey) {
 	return getUniqueRow(PackageCategory.COLUMN_NAME, pkey);
     }

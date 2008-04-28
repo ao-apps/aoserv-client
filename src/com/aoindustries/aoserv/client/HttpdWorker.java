@@ -30,6 +30,8 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
         COLUMN_NET_BIND=2,
         COLUMN_TOMCAT_SITE=3
     ;
+    static final String COLUMN_NET_BIND_name = "net_bind";
+    static final String COLUMN_CODE_name = "code";
 
     /**
      * Any attempt to use this port for workers causes Apache to not start.

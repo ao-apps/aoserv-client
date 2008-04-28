@@ -23,6 +23,16 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	super(connector, MySQLDatabase.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MySQLDatabase.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addMySQLDatabase(
         String name,
         MySQLServer mysqlServer,
@@ -82,19 +92,6 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.BACKUP_MYSQL_DATABASE)) {
-            if(AOSH.checkParamCount(AOSHCommand.BACKUP_MYSQL_DATABASE, args, 3, err)) {
-                try {
-                    int pkey=connector.simpleAOClient.backupMySQLDatabase(args[1], args[2], args[3]);
-                    out.println(pkey);
-                    out.flush();
-                } catch(IllegalArgumentException iae) {
-                    err.print("aosh: "+AOSHCommand.BACKUP_MYSQL_DATABASE+": ");
-                    err.println(iae.getMessage());
-                    err.flush();
-                }
-            }
-            return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_DATABASE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_DATABASE_NAME, args, 1, err)) {
                 try {
@@ -141,16 +138,6 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_DATABASE, args, 3, err)) {
                 connector.simpleAOClient.removeMySQLDatabase(args[1], args[2], args[3]);
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_MYSQL_DATABASE_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_MYSQL_DATABASE_BACKUP_RETENTION, args, 4, err)) {
-                connector.simpleAOClient.setMySQLDatabaseBackupRetention(
-                    args[1],
-                    args[2],
-                    args[3],
-                    AOSH.parseShort(args[4], "backup_retention")
-                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_MYSQL_DATABASE_REBUILD)) {

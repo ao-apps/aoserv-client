@@ -18,12 +18,21 @@ final public class CreditCardProcessorTable extends CachedTableStringKey<CreditC
 	super(connector, CreditCardProcessor.class);
     }
 
-    public CreditCardProcessor get(Object pkey) {
-	return getUniqueRow(CreditCardProcessor.COLUMN_PKEY, pkey);
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(CreditCardProcessor.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(CreditCardProcessor.COLUMN_PROVIDER_ID_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
-    public CreditCardProcessor get(String pkey) {
-	return getUniqueRow(CreditCardProcessor.COLUMN_PKEY, pkey);
+    public CreditCardProcessor get(Object providerId) {
+	return getUniqueRow(CreditCardProcessor.COLUMN_PROVIDER_ID, providerId);
+    }
+
+    public CreditCardProcessor get(String providerId) {
+	return getUniqueRow(CreditCardProcessor.COLUMN_PROVIDER_ID, providerId);
     }
 
     List<CreditCardProcessor> getCreditCardProcessors(Business business) {

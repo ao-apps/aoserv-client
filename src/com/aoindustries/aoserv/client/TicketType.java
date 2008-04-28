@@ -22,6 +22,7 @@ import java.sql.*;
 final public class TicketType extends GlobalObjectStringKey<TicketType> {
 
     static final int COLUMN_TYPE=0;
+    static final String COLUMN_TYPE_name = "type";
 
     private String description;
     boolean client_view;

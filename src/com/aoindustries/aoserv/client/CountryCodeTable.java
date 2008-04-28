@@ -22,6 +22,14 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 	super(connector, CountryCode.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(CountryCode.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public CountryCode get(Object code) {
 	return getUniqueRow(CountryCode.COLUMN_CODE, code);
     }

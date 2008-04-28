@@ -25,6 +25,7 @@ import java.util.*;
 final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> implements PasswordProtected, Removable, Disablable {
 
     static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
 
     /**
      * Some commonly used system and application account usernames.
@@ -55,15 +56,6 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     private String shell;
     private long created;
     int disable_log;
-
-    public int addEmailAddress(EmailAddress address) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "addEmailAddress(EmailAddress)", null);
-        try {
-            return table.connector.linuxAccAddresses.addLinuxAccAddress(address, this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
 
     public void addFTPGuestUser() {
         Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "addFTPGuestUser()", null);
@@ -188,15 +180,6 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
             DisableLog obj=table.connector.disableLogs.get(disable_log);
             if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
             return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public List<EmailAddress> getEmailAddresses() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "getEmailAddresses()", null);
-        try {
-            return table.connector.linuxAccAddresses.getEmailAddresses(this);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

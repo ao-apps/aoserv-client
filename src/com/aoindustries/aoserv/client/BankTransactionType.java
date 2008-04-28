@@ -20,6 +20,7 @@ import java.sql.*;
 final public class BankTransactionType extends CachedObjectStringKey<BankTransactionType> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_DISPLAY_name = "display";
 
     private String
         display,

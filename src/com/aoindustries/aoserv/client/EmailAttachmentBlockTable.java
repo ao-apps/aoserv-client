@@ -23,6 +23,16 @@ public final class EmailAttachmentBlockTable extends CachedTableIntegerKey<Email
 	super(connector, EmailAttachmentBlock.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailAttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+LinuxServerAccount.COLUMN_USERNAME_name, ASCENDING),
+        new OrderBy(EmailAttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+LinuxServerAccount.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(EmailAttachmentBlock.COLUMN_EXTENSION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public EmailAttachmentBlock get(Object pkey) {
 	return getUniqueRow(EmailAttachmentBlock.COLUMN_PKEY, pkey);
     }

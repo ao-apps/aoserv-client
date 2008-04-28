@@ -28,6 +28,7 @@ import java.util.List;
 final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSite> {
 
     static final int COLUMN_HTTPD_SITE=0;
+    static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
     private int version;
     private boolean use_apache;

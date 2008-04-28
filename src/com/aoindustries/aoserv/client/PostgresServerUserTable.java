@@ -23,6 +23,16 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
         super(connector, PostgresServerUser.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PostgresServerUser.COLUMN_USERNAME_name, ASCENDING),
+        new OrderBy(PostgresServerUser.COLUMN_POSTGRES_SERVER_name+'.'+PostgresServer.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(PostgresServerUser.COLUMN_POSTGRES_SERVER_name+'.'+PostgresServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addPostgresServerUser(String username, PostgresServer postgresServer) {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,

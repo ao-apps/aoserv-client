@@ -25,6 +25,15 @@ final public class BusinessAdministratorPermissionTable extends CachedTableInteg
 	super(connector, BusinessAdministratorPermission.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BusinessAdministratorPermission.COLUMN_USERNAME_name, ASCENDING),
+        new OrderBy(BusinessAdministratorPermission.COLUMN_PERMISSION_name+'.'+AOServPermission.COLUMN_SORT_ORDER_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public BusinessAdministratorPermission get(Object pkey) {
 	return getUniqueRow(BusinessAdministratorPermission.COLUMN_PKEY, pkey);
     }

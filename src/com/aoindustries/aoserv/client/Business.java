@@ -25,12 +25,13 @@ import java.util.*;
  */
 final public class Business extends CachedObjectStringKey<Business> implements Disablable {
 
+    static final int COLUMN_ACCOUNTING=0;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+
     /**
      * The maximum depth of the business tree.
      */
     public static final int MAXIMUM_BUSINESS_TREE_DEPTH=7;
-
-    static final int COLUMN_ACCOUNTING=0;
 
     /**
      * The minimum payment for auto-enabling accounts, in pennies.
@@ -93,10 +94,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public int addBusinessServer(
-	Server server,
-        boolean can_configure_backup
+	Server server
     ) {
-	return table.connector.businessServers.addBusinessServer(this, server, can_configure_backup);
+	return table.connector.businessServers.addBusinessServer(this, server);
     }
 
     public int addCreditCard(
@@ -118,7 +118,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         String postalCode,
         CountryCode countryCode,
         String principalName,
-        String description
+        String description,
+        String cardNumber,
+        byte expirationMonth,
+        short expirationYear
     ) {
 	return table.connector.creditCards.addCreditCard(
             processor,
@@ -140,7 +143,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             postalCode,
             countryCode,
             principalName,
-            description
+            description,
+            cardNumber,
+            expirationMonth,
+            expirationYear
 	);
     }
 
@@ -715,10 +721,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public void move(AOServer from, AOServer to, TerminalWriter out) {
         try {
-            if(from.equals(to)) throw new SQLException("Cannot move from AOServer "+from.getServer().getHostname()+" to AOServer "+to.getServer().getHostname()+": same AOServer");
+            if(from.equals(to)) throw new SQLException("Cannot move from AOServer "+from.getHostname()+" to AOServer "+to.getHostname()+": same AOServer");
 
             BusinessServer fromBusinessServer=getBusinessServer(from.getServer());
-            if(fromBusinessServer==null) throw new SQLException("Unable to find BusinessServer for Business="+pkey+" and Server="+from.getServer().getHostname());
+            if(fromBusinessServer==null) throw new SQLException("Unable to find BusinessServer for Business="+pkey+" and Server="+from.getHostname());
 
             // Grant the Business access to the other server if it does not already have access
             if(out!=null) {
@@ -731,10 +737,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             if(toBusinessServer==null) {
                 if(out!=null) {
                     out.print("    ");
-                    out.println(to.getServer().getHostname());
+                    out.println(to.getHostname());
                     out.flush();
                 }
-                addBusinessServer(to.getServer(), fromBusinessServer.canConfigureBackup());
+                addBusinessServer(to.getServer());
             }
 
             // Add the LinuxServerGroups
@@ -763,7 +769,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                         out.print("    ");
                         out.print(lsg.name);
                         out.print(" to ");
-                        out.println(to.getServer().getHostname());
+                        out.println(to.getHostname());
                         out.flush();
                     }
                     lsg.getLinuxGroup().addLinuxServerGroup(to);
@@ -798,7 +804,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                         out.print("    ");
                         out.print(lsa.username);
                         out.print(" to ");
-                        out.println(to.getServer().getHostname());
+                        out.println(to.getHostname());
                         out.flush();
                     }
                     lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
@@ -811,7 +817,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                 out.println("Waiting for Linux Account rebuild");
                 out.attributesOff();
                 out.print("    ");
-                out.println(to.getServer().hostname);
+                out.println(to.getHostname());
                 out.flush();
             }
             to.waitForLinuxAccountRebuild();
@@ -830,7 +836,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                         out.print("    ");
                         out.print(lsa.username);
                         out.print(" to ");
-                        out.print(to.getServer().hostname);
+                        out.print(to.getHostname());
                         out.print(": ");
                         out.flush();
                     }
@@ -857,7 +863,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                         out.print("    ");
                         out.print(lsa.username);
                         out.print(" to ");
-                        out.print(to.getServer().hostname);
+                        out.print(to.getHostname());
                         out.print(": ");
                         out.flush();
                     }
@@ -885,7 +891,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                         out.print("    ");
                         out.print(lsa.username);
                         out.print(" to ");
-                        out.println(to.getServer().hostname);
+                        out.println(to.getHostname());
                         out.flush();
                     }
 
@@ -932,7 +938,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                     out.print("    ");
                     out.print(lsa.username);
                     out.print(" on ");
-                    out.println(from.getServer().getHostname());
+                    out.println(from.getHostname());
                     out.flush();
                 }
                 lsa.remove();
@@ -951,7 +957,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                     out.print("    ");
                     out.print(lsg.name);
                     out.print(" on ");
-                    out.println(from.getServer().getHostname());
+                    out.println(from.getHostname());
                     out.flush();
                 }
                 lsg.remove();
@@ -963,7 +969,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                 out.println("Removing Business Privileges");
                 out.attributesOff();
                 out.print("    ");
-                out.println(from.getServer().getHostname());
+                out.println(from.getHostname());
                 out.flush();
             }
             fromBusinessServer.remove();

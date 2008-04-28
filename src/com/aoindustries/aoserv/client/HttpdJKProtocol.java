@@ -27,6 +27,7 @@ import java.sql.*;
 final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol> {
 
     static final int COLUMN_PROTOCOL=0;
+    static final String COLUMN_PROTOCOL_name = "protocol";
 
     public static final String
         AJP12="ajp12",

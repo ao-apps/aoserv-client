@@ -21,9 +21,10 @@ import java.util.List;
  */
 final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> {
 
-    public static final String MYSQL="MySQL";
-
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
+
+    public static final String MYSQL="MySQL";
 
     private String image_filename;
     private int image_width;

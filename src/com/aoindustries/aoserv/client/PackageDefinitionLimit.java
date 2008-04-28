@@ -28,6 +28,8 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         COLUMN_PKEY=0,
         COLUMN_PACKAGE_DEFINITION=1
     ;
+    static final String COLUMN_PKEY_name = "pkey";
+    static final String COLUMN_PACKAGE_DEFINITION_name = "package_definition";
 
     /**
      * Indicates a particular value is unlimited.

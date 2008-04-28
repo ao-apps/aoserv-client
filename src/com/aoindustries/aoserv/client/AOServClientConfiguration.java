@@ -32,8 +32,10 @@ final public class AOServClientConfiguration {
                 synchronized (AOServClientConfiguration.class) {
 		    Properties newProps = new Properties();
                     if (props == null) {
-                        InputStream in = new BufferedInputStream(AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties"));
+                        InputStream in = AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties");
+                        if(in==null) throw new IOException("Unable to find configuration: aoserv-client.properties");
                         try {
+                            in = new BufferedInputStream(in);
                             newProps.load(in);
                         } finally {
                             in.close();

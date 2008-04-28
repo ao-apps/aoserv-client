@@ -23,6 +23,7 @@ import java.sql.*;
 final public class NetProtocol extends GlobalObjectStringKey<NetProtocol> {
 
     static final int COLUMN_PROTOCOL=0;
+    static final String COLUMN_PROTOCOL_name = "protocol";
 
     public static final String
         RAW="raw",

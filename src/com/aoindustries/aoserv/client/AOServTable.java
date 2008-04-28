@@ -28,16 +28,6 @@ import java.util.*;
  */
 abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<K,V>, Iterable<V>, Table<V> {
 
-    /**
-     * Indicates ascending sort.
-     */
-    public static final boolean ASCENDING=true;
-    
-    /**
-     * Indicates descending sort.
-     */
-    public static final boolean DESCENDING=false;
-
     final AOServConnector connector;
     //final SimpleAOClient client;
     final Class<V> clazz;
@@ -153,16 +143,19 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         return connector;
     }
 
+    /*
+     * Commented-out because I'm not sure if this handles the references like ao_server.server.farm.name
+     *  - Dan 2008-04-18
     final public SchemaColumn[] getDefaultSortSchemaColumns() {
         Profiler.startProfile(Profiler.UNKNOWN, AOServTable.class, "getDefaultSortSchemaColumns()", null);
         try {
-            String[] sortColumns=getDefaultSortColumns();
-            if(sortColumns==null) return null;
-            int len=sortColumns.length;
+            OrderBy[] orderBys=getDefaultOrderBy();
+            if(orderBys==null) return null;
+            int len=orderBys.length;
             SchemaTable schemaTable=connector.schemaTables.get(getTableID());
             SchemaColumn[] schemaColumns=new SchemaColumn[len];
             for(int c=0;c<len;c++) {
-                String columnName=sortColumns[c];
+                String columnName=orderBys[c].getExpression();
                 SchemaColumn col=schemaTable.getSchemaColumn(connector, columnName);
                 if(col==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+columnName+" on "+schemaTable.getName()));
                 schemaColumns[c]=col;
@@ -171,6 +164,40 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
+    }*/
+
+    /**
+     * Indicates ascending sort.
+     */
+    public static final boolean ASCENDING=true;
+
+    /**
+     * Indicates descending sort.
+     */
+    public static final boolean DESCENDING=false;
+
+    static class OrderBy {
+        final private String expression;
+        final private boolean order;
+        
+        OrderBy(String expression, boolean order) {
+            this.expression = expression;
+            this.order = order;
+        }
+        
+        /**
+         * Gets the column name(s) that is used for sorting, may be a complex expression (currently supports things like ao_server.server.farm.name)
+         */
+        String getExpression() {
+            return expression;
+        }
+        
+        /**
+         * Gets the ASCENDING or DESCENDING order.
+         */
+        boolean getOrder() {
+            return order;
+        }
     }
 
     /**
@@ -178,62 +205,16 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      *
      * @return  <code>null</code> if the sorting is performed by the server or the array of column names
      */
-    final public String[] getDefaultSortColumns() {
-        return getDefaultSortColumnsImpl();
-    }
-    private String[] defaultSortColumns;
-    synchronized protected String[] getDefaultSortColumnsImpl() {
-        if(defaultSortColumns==null) {
-            String defaultOrderBy=getTableSchema().getDefaultOrderBy();
-            if(defaultOrderBy==null) return null;
-            String[] columns=StringUtility.splitString(defaultOrderBy, ',');
-            String[] sortColumns=new String[columns.length];
-            for(int c=0;c<columns.length;c++) {
-                String column=columns[c].toLowerCase();
-                if(column.endsWith(" desc")) column=column.substring(0, column.length()-5);
-                else if(column.endsWith(" asc")) column=column.substring(0, column.length()-4);
-                sortColumns[c]=column.trim();
-            }
-            defaultSortColumns=sortColumns;
-        }
-        return defaultSortColumns;
-    }
+    abstract OrderBy[] getDefaultOrderBy();
 
-    /**
-     * Gets the default sort orders for this table.
-     *
-     * @return  <code>null</code> if the sorting is performed by the server or an array of booleans, true meaning ascending
-     *
-     * @see  #ASCENDING
-     * @see  #DESCENDING
-     */
-    final public boolean[] getDefaultSortOrders() {
-        return getDefaultSortOrdersImpl();
-    }
-
-    private boolean[] defaultSortOrders;
-    synchronized protected boolean[] getDefaultSortOrdersImpl() {
-        if(defaultSortOrders==null) {
-            String defaultOrderBy=getTableSchema().getDefaultOrderBy();
-            if(defaultOrderBy==null) return null;
-            String[] columns=StringUtility.splitString(defaultOrderBy, ',');
-            boolean[] sortOrders=new boolean[columns.length];
-            for(int c=0;c<columns.length;c++) {
-                sortOrders[c]=columns[c].trim().toLowerCase().endsWith(" desc") ? DESCENDING : ASCENDING;
-            }
-            defaultSortOrders=sortOrders;
-        }
-        return defaultSortOrders;
-    }
-
-    final public SQLExpression[] getDefaultSortSQLExpressions() {
+    final public SQLExpression[] getDefaultOrderBySQLExpressions() {
         Profiler.startProfile(Profiler.UNKNOWN, AOServTable.class, "getDefaultSortSQLExpressions()", null);
         try {
-            String[] columns=getDefaultSortColumns();
-            if(columns==null) return null;
-            int len=columns.length;
+            OrderBy[] orderBys=getDefaultOrderBy();
+            if(orderBys==null) return null;
+            int len=orderBys.length;
             SQLExpression[] exprs=new SQLExpression[len];
-            for(int c=0;c<len;c++) exprs[c]=getSQLExpression(columns[c]);
+            for(int c=0;c<len;c++) exprs[c]=getSQLExpression(orderBys[c].getExpression());
             return exprs;
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
@@ -540,9 +521,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         Profiler.startProfile(Profiler.FAST, AOServTable.class, "sortIfNeeded(List<V>)", null);
         try {
             // Get the details for the sorting
-            SQLExpression[] sortExpressions=getDefaultSortSQLExpressions();
+            SQLExpression[] sortExpressions=getDefaultOrderBySQLExpressions();
             if(sortExpressions!=null) {
-                boolean[] sortOrders=getDefaultSortOrders();
+                OrderBy[] orderBys=getDefaultOrderBy();
+                boolean[] sortOrders = new boolean[orderBys.length];
+                for(int c=0;c<orderBys.length;c++) {
+                    sortOrders[c] = orderBys[c].getOrder();
+                }
                 connector.schemaTypes.sort(list, sortExpressions, sortOrders);
             }
         } finally {

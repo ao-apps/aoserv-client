@@ -22,6 +22,15 @@ final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 	super(connector, HttpdServer.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(HttpdServer.COLUMN_NUMBER_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public HttpdServer get(Object pkey) {
 	return getUniqueRow(HttpdServer.COLUMN_PKEY, pkey);
     }

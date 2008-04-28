@@ -25,12 +25,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         COLUMN_PKEY=0,
         COLUMN_LINUX_SERVER_ACCOUNT=2
     ;
-
-    /**
-     * The default number of days to keep backups.
-     */
-    public static final short DEFAULT_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL;
-    public static final short DEFAULT_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION;
+    static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
+    static final String COLUMN_PATH_name = "path";
 
     /**
      * The default permissions for a CVS repository.
@@ -43,8 +39,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         DEFAULT_MODE,
         0755,
         0775,
-        2770,
-        3770
+        02770,
+        03770
     };
 
     public static long[] getValidModes() {
@@ -81,8 +77,6 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
     int linux_server_group;
     private long mode;
     private long created;
-    private short backup_level;
-    private short backup_retention;
     int disable_log;
 
     public boolean canDisable() {
@@ -103,28 +97,6 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
-    public BackupLevel getBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, CvsRepository.class, "getBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, CvsRepository.class, "getBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
@@ -133,9 +105,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
             case 3: return Integer.valueOf(linux_server_group);
             case 4: return Long.valueOf(mode);
             case 5: return new java.sql.Date(created);
-            case 6: return Short.valueOf(backup_level);
-            case 7: return Short.valueOf(backup_retention);
-            case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 6: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -182,9 +152,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         linux_server_group=result.getInt(4);
         mode=result.getLong(5);
         created=result.getTimestamp(6).getTime();
-        backup_level=result.getShort(7);
-        backup_retention=result.getShort(8);
-        disable_log=result.getInt(9);
+        disable_log=result.getInt(7);
         if(result.wasNull()) disable_log=-1;
     }
 
@@ -195,8 +163,6 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         linux_server_group=in.readCompressedInt();
         mode=in.readLong();
         created=in.readLong();
-        backup_level=in.readShort();
-        backup_retention=in.readShort();
         disable_log=in.readCompressedInt();
     }
 
@@ -206,15 +172,6 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 
     public void remove() {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
-    }
-
-    public void setBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, CvsRepository.class, "setBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
     }
 
     public void setMode(long mode) {
@@ -228,8 +185,10 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         out.writeCompressedInt(linux_server_group);
         out.writeLong(mode);
         out.writeLong(created);
-        out.writeShort(backup_level);
-        out.writeShort(backup_retention);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+        }
         out.writeCompressedInt(disable_log);
     }
 }

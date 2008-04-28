@@ -21,8 +21,18 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 	super(connector, BusinessServer.class);
     }
 
-    int addBusinessServer(Business business, Server server, boolean can_configure_backup) {
-	return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey, can_configure_backup);
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BusinessServer.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
+    int addBusinessServer(Business business, Server server) {
+	return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey);
     }
 
     public BusinessServer get(Object pkey) {
@@ -81,11 +91,10 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_SERVER)) {
-            if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_SERVER, args, 3, err)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_SERVER, args, 2, err)) {
                 int pkey=connector.simpleAOClient.addBusinessServer(
                     args[1],
-                    args[2],
-                    AOSH.parseBoolean(args[3], "can_configure_backup")
+                    args[2]
                 );
                 out.println(pkey);
                 out.flush();

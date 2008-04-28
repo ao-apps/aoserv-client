@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -23,6 +22,15 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
 
     BusinessProfileTable(AOServConnector connector) {
 	super(connector, BusinessProfile.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BusinessProfile.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(BusinessProfile.COLUMN_PRIORITY_name, DESCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
     int addBusinessProfile(

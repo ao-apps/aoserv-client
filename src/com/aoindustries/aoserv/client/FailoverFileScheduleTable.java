@@ -23,6 +23,19 @@ final public class FailoverFileScheduleTable extends CachedTableIntegerKey<Failo
 	super(connector, FailoverFileSchedule.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(FailoverFileSchedule.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(FailoverFileSchedule.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(FailoverFileSchedule.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(FailoverFileSchedule.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING),
+        new OrderBy(FailoverFileSchedule.COLUMN_HOUR_name, ASCENDING),
+        new OrderBy(FailoverFileSchedule.COLUMN_MINUTE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     List<FailoverFileSchedule> getFailoverFileSchedules(FailoverFileReplication replication) {
         return getIndexedRows(FailoverFileSchedule.COLUMN_REPLICATION, replication.pkey);
     }

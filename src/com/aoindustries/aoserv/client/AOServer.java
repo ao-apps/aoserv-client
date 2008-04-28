@@ -26,38 +26,17 @@ import java.util.Map;
 final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     static final int COLUMN_SERVER=0;
+    static final int COLUMN_HOSTNAME=1;
+    static final String COLUMN_HOSTNAME_name = "hostname";
 
-    private int
-        num_cpu,
-        cpu_speed,
-        ram,
-        rack,
-        disk
-    ;
-
-    private String wildcard_https;
-
-    private boolean
-        is_interbase,
-        is_dns
-    ;
-    private boolean is_router;
-    private String iptables_name;
+    private String hostname;
     int daemon_bind;
     private String daemon_key;
     private int pool_size;
     private int distro_hour;
     private long last_distro_time;
     int failover_server;
-    private int server_report_delay;
-    private int server_report_interval;
-    private boolean is_qmail;
     private String daemon_device_id;
-    private String xeroscape_name;
-    private int value;
-    private boolean monitoring_enabled;
-    private String emailmon_password;
-    private String ftpmon_password;
     int daemon_connect_bind;
     private String time_zone;
     int jilter_bind;
@@ -236,10 +215,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return table.connector.backupPartitions.getBackupPartitions(this);
     }
 
-    public BackupPartition getBackupPartitionForDevice(String device) {
-        return table.connector.backupPartitions.getBackupPartitionForDevice(this, device);
-    }
-
     public BackupPartition getBackupPartitionForPath(String path) {
         return table.connector.backupPartitions.getBackupPartitionForPath(this, path);
     }
@@ -251,43 +226,22 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_SERVER: return Integer.valueOf(pkey);
-            case 1: return Integer.valueOf(num_cpu);
-            case 2: return Integer.valueOf(cpu_speed);
-            case 3: return Integer.valueOf(ram);
-            case 4: return rack==-1?null:Integer.valueOf(rack);
-            case 5: return Integer.valueOf(disk);
-            case 6: return wildcard_https;
-            case 7: return is_interbase;
-            case 8: return is_dns;
-            case 9: return is_router;
-            case 10: return iptables_name;
-            case 11: return daemon_bind==-1?null:Integer.valueOf(daemon_bind);
-            case 12: return daemon_key;
-            case 13: return Integer.valueOf(pool_size);
-            case 14: return Integer.valueOf(distro_hour);
-            case 15: return last_distro_time==-1?null:new Date(last_distro_time);
-            case 16: return failover_server==-1?null:Integer.valueOf(failover_server);
-            case 17: return Integer.valueOf(server_report_delay);
-            case 18: return Integer.valueOf(server_report_interval);
-            case 19: return is_qmail;
-            case 20: return daemon_device_id;
-            case 21: return xeroscape_name;
-            case 22: return Integer.valueOf(value);
-            case 23: return monitoring_enabled;
-            case 24: return emailmon_password;
-            case 25: return ftpmon_password;
-            case 26: return daemon_connect_bind==-1?null:Integer.valueOf(daemon_connect_bind);
-            case 27: return time_zone;
-            case 28: return jilter_bind;
-            case 29: return restrict_outbound_email;
-            case 30: return daemon_connect_address;
-            case 31: return failover_batch_size;
+            case COLUMN_HOSTNAME: return hostname;
+            case 2: return daemon_bind==-1?null:Integer.valueOf(daemon_bind);
+            case 3: return daemon_key;
+            case 4: return Integer.valueOf(pool_size);
+            case 5: return Integer.valueOf(distro_hour);
+            case 6: return last_distro_time==-1?null:new Date(last_distro_time);
+            case 7: return failover_server==-1?null:Integer.valueOf(failover_server);
+            case 8: return daemon_device_id;
+            case 9: return daemon_connect_bind==-1?null:Integer.valueOf(daemon_connect_bind);
+            case 10: return time_zone;
+            case 11: return jilter_bind;
+            case 12: return restrict_outbound_email;
+            case 13: return daemon_connect_address;
+            case 14: return failover_batch_size;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
-    }
-
-    public int getCPUSpeed() {
-	return cpu_speed;
     }
 
     public CvsRepository getCvsRepository(String path) {
@@ -296,6 +250,13 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     public List<CvsRepository> getCvsRepositories() {
         return table.connector.cvsRepositories.getCvsRepositories(this);
+    }
+
+    /**
+     * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
+     */
+    public String getHostname() {
+        return hostname;
     }
 
     /**
@@ -356,14 +317,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return ndi;
     }
 
-    public String generateInterBaseDBGroupName(String template_base, String template_added) {
-        return table.connector.interBaseDBGroups.generateInterBaseDBGroupName(
-            this,
-            template_base,
-            template_added
-        );
-    }
-
     public IPAddress getDaemonIPAddress() {
         NetBind nb=getDaemonBind();
         if(nb==null) throw new WrappedException(new SQLException("Unable to find daemon NetBind for AOServer: "+pkey));
@@ -381,10 +334,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     public String getDaemonKey() {
 	return daemon_key;
-    }
-
-    public int getDisk() {
-	return disk;
     }
 
     public int getDistroHour() {
@@ -437,13 +386,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.emailSmtpRelays.getEmailSmtpRelays(this);
     }
 
-    /**
-     * Gets the list of all replications coming from this server.
-     */
-    public List<FailoverFileReplication> getFailoverFileReplications() {
-        return table.connector.failoverFileReplications.getFailoverFileReplications(this);
-    }
-
     public AOServer getFailoverServer() throws SQLException {
         if(failover_server==-1) return null;
         AOServer se=table.connector.aoServers.get(failover_server);
@@ -475,36 +417,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.httpdSites.getHttpdSites(this);
     }
 
-    public List<InterBaseBackup> getInterBaseBackups() {
-	return table.connector.interBaseBackups.getInterBaseBackups(this);
-    }
-
-    public List<InterBaseDatabase> getInterBaseDatabases() {
-	return table.connector.interBaseDatabases.getInterBaseDatabases(this);
-    }
-
-    public InterBaseDBGroup getInterBaseDBGroup(String name) {
-        return table.connector.interBaseDBGroups.getInterBaseDBGroup(this, name);
-    }
-
-    public List<InterBaseDBGroup> getInterBaseDBGroups() {
-        return table.connector.interBaseDBGroups.getInterBaseDBGroups(this);
-    }
-
-    public InterBaseServerUser getInterBaseServerUser(String username) {
-	return table.connector.interBaseServerUsers.getInterBaseServerUser(username, this);
-    }
-
-    public List<InterBaseServerUser> getInterBaseServerUsers() {
-	return table.connector.interBaseServerUsers.getInterBaseServerUsers(this);
-    }
-
     public List<IPAddress> getIPAddresses() {
 	return table.connector.ipAddresses.getIPAddresses(this);
-    }
-
-    public String getIPTablesName() {
-	return iptables_name;
     }
 
     public long getLastDistroTime() {
@@ -688,10 +602,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.netDevices.getNetDevices(this);
     }
 
-    public int getNumCPU() {
-	return num_cpu;
-    }
-
     public int getPoolSize() {
 	return pool_size;
     }
@@ -743,50 +653,18 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.privateFTPServers.getPrivateFTPServers(this);
     }
 
-    public int getRack() {
-	return rack;
-    }
-
-    public int getRAM() {
-	return ram;
-    }
-
     public Server getServer() {
         Server se=table.connector.servers.get(pkey);
         if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+pkey));
         return se;
     }
 
-    public int getServerReportDelay() {
-        return server_report_delay;
-    }
-    
-    public int getServerReportInterval() {
-        return server_report_interval;
-    }
-    
     public List<SystemEmailAlias> getSystemEmailAliases() {
 	return table.connector.systemEmailAliases.getSystemEmailAliases(this);
     }
     
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.AO_SERVERS;
-    }
-
-    public String getXeroscapeName() {
-        return xeroscape_name;
-    }
-    
-    public int getValue() {
-        return value;
-    }
-    
-    public String getWildcardHTTPS() {
-	return wildcard_https;
-    }
-
-    public boolean isDNS() {
-	return is_dns;
     }
 
     public boolean isEmailDomainAvailable(String domain) {
@@ -797,26 +675,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.linuxServerAccounts.isHomeUsed(this, directory);
     }
 
-    public boolean isInterBase() {
-        return is_interbase;
-    }
-
-    public boolean isInterBaseDBGroupNameAvailable(String name) {
-        return table.connector.interBaseDBGroups.isInterBaseDBGroupNameAvailable(this, name);
-    }
-
-    public boolean isMonitoringEnabled() {
-        return monitoring_enabled;
-    }
-    
-    public String getEmailmonPassword() {
-        return emailmon_password;
-    }
-    
-    public String getFtpmonPassword() {
-        return ftpmon_password;
-    }
-
     public boolean isMySQLServerNameAvailable(String name) {
 	return table.connector.mysqlServers.isMySQLServerNameAvailable(name, this);
     }
@@ -825,81 +683,39 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.postgresServers.isPostgresServerNameAvailable(name, this);
     }
 
-    public boolean isQmail() {
-        return is_qmail;
-    }
-
-    public boolean isRouter() {
-	return is_router;
-    }
-
     void initImpl(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-	num_cpu=result.getInt(2);
-	cpu_speed=result.getInt(3);
-	ram = result.getInt(4);
-	rack = result.getInt(5);
-        if(result.wasNull()) rack=-1;
-	disk = result.getInt(6);
-	wildcard_https = result.getString(7);
-        is_interbase=result.getBoolean(8);
-	is_dns=result.getBoolean(9);
-	is_router=result.getBoolean(10);
-	iptables_name=result.getString(11);
-	daemon_bind=result.getInt(12);
+        int pos = 1;
+        pkey=result.getInt(pos++);
+        hostname=result.getString(pos++);
+	daemon_bind=result.getInt(pos++);
 	if(result.wasNull()) daemon_bind=-1;
-	daemon_key=result.getString(13);
-	pool_size=result.getInt(14);
-        distro_hour=result.getInt(15);
-        Timestamp T=result.getTimestamp(16);
+	daemon_key=result.getString(pos++);
+	pool_size=result.getInt(pos++);
+        distro_hour=result.getInt(pos++);
+        Timestamp T=result.getTimestamp(pos++);
         last_distro_time=T==null?-1:T.getTime();
-        failover_server=result.getInt(17);
+        failover_server=result.getInt(pos++);
         if(result.wasNull()) failover_server=-1;
-        server_report_delay=result.getInt(18);
-        server_report_interval=result.getInt(19);
-        is_qmail=result.getBoolean(20);
-        daemon_device_id=result.getString(21);
-        xeroscape_name=result.getString(22);
-        value=SQLUtility.getPennies(result.getString(23));
-        monitoring_enabled=result.getBoolean(24);
-        emailmon_password=result.getString(25);
-        ftpmon_password=result.getString(26);
-        daemon_connect_bind=result.getInt(27);
-        time_zone=result.getString(28);
-        jilter_bind=result.getInt(29);
+        daemon_device_id=result.getString(pos++);
+        daemon_connect_bind=result.getInt(pos++);
+        time_zone=result.getString(pos++);
+        jilter_bind=result.getInt(pos++);
         if(result.wasNull()) jilter_bind=-1;
-        restrict_outbound_email=result.getBoolean(30);
-        daemon_connect_address=result.getString(31);
-        failover_batch_size=result.getInt(32);
+        restrict_outbound_email=result.getBoolean(pos++);
+        daemon_connect_address=result.getString(pos++);
+        failover_batch_size=result.getInt(pos++);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	num_cpu=in.readCompressedInt();
-	cpu_speed=in.readCompressedInt();
-	ram=in.readCompressedInt();
-	rack=in.readCompressedInt();
-	disk=in.readCompressedInt();
-	wildcard_https=in.readNullUTF();
-        is_interbase=in.readBoolean();
-	is_dns=in.readBoolean();
-	is_router=in.readBoolean();
-	iptables_name=in.readUTF();
+        hostname=in.readUTF();
 	daemon_bind=in.readCompressedInt();
 	daemon_key=in.readUTF();
 	pool_size=in.readCompressedInt();
         distro_hour=in.readCompressedInt();
         last_distro_time=in.readLong();
         failover_server=in.readCompressedInt();
-        server_report_delay=in.readCompressedInt();
-        server_report_interval=in.readCompressedInt();
-        is_qmail=in.readBoolean();
         daemon_device_id=StringUtility.intern(in.readNullUTF());
-        xeroscape_name=in.readNullUTF();
-        value=in.readCompressedInt();
-        monitoring_enabled=in.readBoolean();
-        emailmon_password=in.readNullUTF();
-        ftpmon_password=in.readNullUTF();
         daemon_connect_bind=in.readCompressedInt();
         time_zone=in.readUTF().intern();
         jilter_bind=in.readCompressedInt();
@@ -908,28 +724,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         failover_batch_size=in.readCompressedInt();
     }
 
-    public void removeExpiredInterBaseBackups() {
-        table.connector.interBaseBackups.removeExpiredInterBaseBackups(this);
-    }
-
-    public void removeExpiredMySQLBackups() {
-        table.connector.mysqlBackups.removeExpiredMySQLBackups(this);
-    }
-
-    public void removeExpiredPostgresBackups() {
-        table.connector.postgresBackups.removeExpiredPostgresBackups(this);
-    }
-
     public void restartApache() {
         table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_APACHE, pkey);
     }
 
     public void restartCron() {
         table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_CRON, pkey);
-    }
-
-    public void restartInterBase() {
-        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_INTERBASE, pkey);
     }
 
     public void restartXfs() {
@@ -965,10 +765,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         table.connector.distroFiles.startDistro(this, includeUser);
     }
 
-    public void startInterBase() {
-        table.connector.requestUpdate(AOServProtocol.CommandID.START_INTERBASE, pkey);
-    }
-
     public void startXfs() {
         table.connector.requestUpdate(AOServProtocol.CommandID.START_XFS, pkey);
     }
@@ -985,10 +781,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_CRON, pkey);
     }
 
-    public void stopInterBase() {
-        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_INTERBASE, pkey);
-    }
-
     public void stopXfs() {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_XFS, pkey);
     }
@@ -998,15 +790,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     protected String toStringImpl() {
-        return getServer().getHostname();
+        return hostname;
     }
 
     public void waitForHttpdSiteRebuild() {
 	table.connector.httpdSites.waitForRebuild(this);
-    }
-
-    public void waitForInterBaseRebuild() {
-	table.connector.interBaseUsers.waitForRebuild(this);
     }
 
     public void waitForLinuxAccountRebuild() {
@@ -1043,36 +831,47 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
-	out.writeCompressedInt(num_cpu);
-	out.writeCompressedInt(cpu_speed);
-	out.writeCompressedInt(ram);
-	out.writeCompressedInt(rack);
-	out.writeCompressedInt(disk);
-	out.writeNullUTF(wildcard_https);
-        out.writeBoolean(is_interbase);
-	out.writeBoolean(is_dns);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeCompressedInt(1);
+            out.writeCompressedInt(2000);
+            out.writeCompressedInt(1024);
+            out.writeCompressedInt(2);
+            out.writeCompressedInt(240);
+            out.writeNullUTF(null);
+            out.writeBoolean(false);
+            out.writeBoolean(false);
+        }
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)<0) out.writeBoolean(true);
-	out.writeBoolean(is_router);
-	out.writeUTF(iptables_name);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeBoolean(false);
+            out.writeUTF("AOServer #"+pkey);
+        }
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+            out.writeUTF(hostname);
+        }
 	out.writeCompressedInt(daemon_bind);
 	out.writeUTF(daemon_key);
 	out.writeCompressedInt(pool_size);
         out.writeCompressedInt(distro_hour);
         out.writeLong(last_distro_time);
         out.writeCompressedInt(failover_server);
-        out.writeCompressedInt(server_report_delay);
-        out.writeCompressedInt(server_report_interval);
-        out.writeBoolean(is_qmail);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeCompressedInt(60*1000);
+            out.writeCompressedInt(5*60*1000);
+            out.writeBoolean(false);
+        }
         out.writeNullUTF(daemon_device_id);
-        out.writeNullUTF(xeroscape_name);
-        out.writeCompressedInt(value);
-        out.writeBoolean(monitoring_enabled);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) {
-            out.writeNullUTF(emailmon_password);
-            out.writeNullUTF(ftpmon_password);
-        } else if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) {
-            out.writeUTF(emailmon_password==null?AOServProtocol.FILTERED:emailmon_password);
-            out.writeUTF(ftpmon_password==null?AOServProtocol.FILTERED:ftpmon_password);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeNullUTF(null);
+            out.writeCompressedInt(1200*100);
+            out.writeBoolean(true);
+            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) {
+                out.writeNullUTF(null);
+                out.writeNullUTF(null);
+            } else if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) {
+                out.writeUTF(AOServProtocol.FILTERED);
+                out.writeUTF(AOServProtocol.FILTERED);
+            }
         }
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_2)>=0) out.writeUTF(time_zone);
@@ -1081,4 +880,26 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_11)>=0) out.writeNullUTF(daemon_connect_address);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
     }
+
+    /**
+     * Gets the 3ware RAID report.
+     */
+    public String get3wareRaidReport() {
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_3WARE_RAID_REPORT, pkey);
+    }
+
+    /**
+     * Gets the MD RAID report.
+     */
+    public String getMdRaidReport() {
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
+    }
+
+    /**
+     * Gets the DRBD report.
+     */
+    public String getDrbdReport() {
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey);
+    }
+
 }

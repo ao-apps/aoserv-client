@@ -24,6 +24,7 @@ import java.util.*;
 final public class PostgresUser extends CachedObjectStringKey<PostgresUser> implements Removable, PasswordProtected, Disablable {
 
     static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
 
     /**
      * The maximum length of a PostgreSQL username.

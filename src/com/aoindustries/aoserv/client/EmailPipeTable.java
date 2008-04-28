@@ -23,6 +23,15 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 	super(connector, EmailPipe.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailPipe.COLUMN_PATH_name, ASCENDING),
+        new OrderBy(EmailPipe.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addEmailPipe(AOServer ao, String path, Package packageObject) {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,

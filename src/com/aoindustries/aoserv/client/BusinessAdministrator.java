@@ -27,6 +27,7 @@ import java.util.*;
 final public class BusinessAdministrator extends CachedObjectStringKey<BusinessAdministrator> implements PasswordProtected, Removable, Disablable {
 
     static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
 
     /**
      * Value representing no password.

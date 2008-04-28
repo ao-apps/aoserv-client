@@ -22,6 +22,14 @@ final public class LinuxAccountTypeTable extends GlobalTableStringKey<LinuxAccou
 	super(connector, LinuxAccountType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(LinuxAccountType.COLUMN_DESCRIPTION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public LinuxAccountType get(Object pkey) {
 	return getUniqueRow(LinuxAccountType.COLUMN_NAME, pkey);
     }

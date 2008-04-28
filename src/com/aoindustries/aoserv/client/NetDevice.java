@@ -27,6 +27,8 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=1
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_DEVICE_ID_name = "device_id";
 
     int ao_server;
     String device_id;
@@ -154,7 +156,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     }
 
     String toStringImpl() {
-        return getAOServer().getServer().hostname+'|'+device_id;
+        return getAOServer().getHostname()+'|'+device_id;
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

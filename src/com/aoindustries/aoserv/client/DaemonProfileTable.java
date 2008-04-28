@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.profiler.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -22,6 +21,17 @@ final public class DaemonProfileTable extends AOServTable<Object,DaemonProfile> 
 
     DaemonProfileTable(AOServConnector connector) {
 	super(connector, DaemonProfile.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(DaemonProfile.COLUMN_SERVER_name, ASCENDING),
+        new OrderBy(DaemonProfile.COLUMN_CLASSNAME_name, ASCENDING),
+        new OrderBy(DaemonProfile.COLUMN_METHOD_NAME_name, ASCENDING),
+        new OrderBy(DaemonProfile.COLUMN_PARAMETER_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
     public List<DaemonProfile> getRows() {

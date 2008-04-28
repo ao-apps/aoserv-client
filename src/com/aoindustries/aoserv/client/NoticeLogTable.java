@@ -24,6 +24,15 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	super(connector, NoticeLog.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
+        new OrderBy(NoticeLog.COLUMN_PKEY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addNoticeLog(
 	String accounting,
 	String billingContact,

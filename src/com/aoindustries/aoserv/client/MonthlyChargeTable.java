@@ -23,6 +23,17 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         super(connector, MonthlyCharge.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MonthlyCharge.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(MonthlyCharge.COLUMN_PACKAGE_name, ASCENDING),
+        new OrderBy(MonthlyCharge.COLUMN_TYPE_name, ASCENDING),
+        new OrderBy(MonthlyCharge.COLUMN_CREATED_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public MonthlyCharge get(Object pkey) {
 	return getUniqueRow(MonthlyCharge.COLUMN_PKEY, pkey);
     }

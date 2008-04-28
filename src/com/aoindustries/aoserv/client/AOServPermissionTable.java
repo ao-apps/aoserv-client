@@ -21,6 +21,14 @@ final public class AOServPermissionTable extends GlobalTableStringKey<AOServPerm
 	super(connector, AOServPermission.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(AOServPermission.COLUMN_SORT_ORDER_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public AOServPermission get(Object name) {
         return getUniqueRow(AOServPermission.COLUMN_NAME, name);
     }

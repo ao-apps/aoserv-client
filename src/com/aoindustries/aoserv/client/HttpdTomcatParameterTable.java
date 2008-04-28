@@ -24,6 +24,21 @@ import java.util.List;
  */
 final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<HttpdTomcatParameter> {
 
+    HttpdTomcatParameterTable(AOServConnector connector) {
+	super(connector, HttpdTomcatParameter.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdTomcatParameter.COLUMN_TOMCAT_CONTEXT_name+'.'+HttpdTomcatContext.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+        new OrderBy(HttpdTomcatParameter.COLUMN_TOMCAT_CONTEXT_name+'.'+HttpdTomcatContext.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(HttpdTomcatParameter.COLUMN_TOMCAT_CONTEXT_name+'.'+HttpdTomcatContext.COLUMN_PATH_name, ASCENDING),
+        new OrderBy(HttpdTomcatParameter.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addHttpdTomcatParameter(
         HttpdTomcatContext htc,
         String name,
@@ -40,10 +55,6 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
             override,
             description==null ? "" : description
         );
-    }
-
-    HttpdTomcatParameterTable(AOServConnector connector) {
-	super(connector, HttpdTomcatParameter.class);
     }
 
     public HttpdTomcatParameter get(Object pkey) {

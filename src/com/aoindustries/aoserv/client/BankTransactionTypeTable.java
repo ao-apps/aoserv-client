@@ -22,6 +22,14 @@ final public class BankTransactionTypeTable extends CachedTableStringKey<BankTra
 	super(connector, BankTransactionType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BankTransactionType.COLUMN_DISPLAY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public BankTransactionType get(Object name) {
 	return getUniqueRow(BankTransactionType.COLUMN_NAME, name);
     }

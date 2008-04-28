@@ -25,6 +25,7 @@ import java.sql.*;
 final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcatStdSite> {
 
     static final int COLUMN_TOMCAT_SITE=0;
+    static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
     public static final String DEFAULT_TOMCAT_VERSION_PREFIX=HttpdTomcatVersion.VERSION_4_1_PREFIX;
 

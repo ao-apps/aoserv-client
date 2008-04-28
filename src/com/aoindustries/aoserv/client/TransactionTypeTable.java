@@ -22,6 +22,14 @@ public final class TransactionTypeTable extends GlobalTableStringKey<Transaction
 	super(connector, TransactionType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(TransactionType.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.TRANSACTION_TYPES;
     }

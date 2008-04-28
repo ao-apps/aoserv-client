@@ -24,6 +24,16 @@ final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
 	super(connector, WhoisHistory.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(WhoisHistory.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(WhoisHistory.COLUMN_ZONE_name, ASCENDING),
+        new OrderBy(WhoisHistory.COLUMN_TIME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public WhoisHistory get(Object pkey) {
 	return getUniqueRow(WhoisHistory.COLUMN_PKEY, pkey);
     }

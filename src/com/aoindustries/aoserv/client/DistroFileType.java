@@ -19,7 +19,8 @@ import java.sql.*;
  */
 final public class DistroFileType extends GlobalObjectStringKey<DistroFileType> {
 
-    public static final int COLUMN_TYPE=0;
+    static final int COLUMN_TYPE=0;
+    static final String COLUMN_TYPE_name = "type";
 
     private String description;
 

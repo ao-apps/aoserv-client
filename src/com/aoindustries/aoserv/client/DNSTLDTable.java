@@ -22,6 +22,14 @@ final public class DNSTLDTable extends GlobalTableStringKey<DNSTLD> {
 	super(connector, DNSTLD.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(DNSTLD.COLUMN_DOMAIN_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public DNSTLD get(Object pkey) {
 	return getUniqueRow(DNSTLD.COLUMN_DOMAIN, pkey);
     }

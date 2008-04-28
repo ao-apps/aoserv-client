@@ -25,6 +25,7 @@ import java.sql.*;
 final public class USState extends GlobalObjectStringKey<USState> {
 
     static final int COLUMN_CODE=0;
+    static final String COLUMN_NAME_name = "name";
 
     private String name;
 

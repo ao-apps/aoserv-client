@@ -28,6 +28,15 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	super(connector, Transaction.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Transaction.COLUMN_TIME_name+"::"+SchemaType.DATE_name, ASCENDING),
+        new OrderBy(Transaction.COLUMN_TRANSID_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addTransaction(
         Business business,
         Business sourceBusiness,

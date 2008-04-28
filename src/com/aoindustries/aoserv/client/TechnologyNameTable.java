@@ -19,6 +19,14 @@ final public class TechnologyNameTable extends GlobalTableStringKey<TechnologyNa
 	super(connector, TechnologyName.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(TechnologyName.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.TECHNOLOGY_NAMES;
     }

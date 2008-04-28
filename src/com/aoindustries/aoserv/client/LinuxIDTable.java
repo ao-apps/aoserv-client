@@ -49,6 +49,12 @@ final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
 	super(connector, LinuxID.class);
     }
 
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return null;
+    }
+
+    @Override
     public LinuxID get(Object id) {
         return get(((Integer)id).intValue());
     }
@@ -58,19 +64,23 @@ final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
         return null;
     }
 
+    @Override
     public List<LinuxID> getRows() {
         return ids;
     }
 
+    @Override
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.LINUX_IDS;
     }
 
+    @Override
     protected LinuxID getUniqueRowImpl(int col, Object value) {
         if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
         return get(value);
     }
 
+    @Override
     public boolean isLoaded() {
 	return true;
     }

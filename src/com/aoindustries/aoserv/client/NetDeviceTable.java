@@ -22,6 +22,15 @@ final public class NetDeviceTable extends CachedTableIntegerKey<NetDevice> {
 	super(connector, NetDevice.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(NetDevice.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public NetDevice get(Object pkey) {
 	return getUniqueRow(NetDevice.COLUMN_PKEY, pkey);
     }

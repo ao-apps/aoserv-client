@@ -26,6 +26,8 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         COLUMN_REPLICATION=1,
         COLUMN_MYSQL_SERVER=2
     ;
+    static final String COLUMN_REPLICATION_name = "replication";
+    static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
 
     int replication;
     private int mysql_server;

@@ -26,6 +26,14 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
 	super(connector, Ticket.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Ticket.COLUMN_PKEY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addTicket(
 	Business business,
 	BusinessAdministrator businessAdministratorObj,

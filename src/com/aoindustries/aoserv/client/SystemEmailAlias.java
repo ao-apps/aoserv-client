@@ -26,6 +26,8 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=1
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_ADDRESS_name = "address";
 
     int ao_server;
     private String address;

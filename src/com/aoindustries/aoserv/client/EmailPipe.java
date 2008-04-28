@@ -30,6 +30,8 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
         COLUMN_AO_SERVER=1,
         COLUMN_PACKAGE=3
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_PATH_name = "path";
 
     int ao_server;
     private String path;
@@ -125,6 +127,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 	);
     }
 
+    @Override
     String toStringImpl() {
 	return ao_server+':'+path;
     }

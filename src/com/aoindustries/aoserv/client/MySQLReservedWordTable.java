@@ -22,6 +22,14 @@ final public class MySQLReservedWordTable extends GlobalTableStringKey<MySQLRese
 	super(connector, MySQLReservedWord.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MySQLReservedWord.COLUMN_WORD_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public MySQLReservedWord get(Object pkey) {
 	return getUniqueRow(MySQLReservedWord.COLUMN_WORD, pkey);
     }

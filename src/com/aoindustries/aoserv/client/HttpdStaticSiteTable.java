@@ -22,6 +22,15 @@ final public class HttpdStaticSiteTable extends CachedTableIntegerKey<HttpdStati
 	super(connector, HttpdStaticSite.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdStaticSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+        new OrderBy(HttpdStaticSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public HttpdStaticSite get(Object pkey) {
 	return getUniqueRow(HttpdStaticSite.COLUMN_HTTPD_SITE, pkey);
     }

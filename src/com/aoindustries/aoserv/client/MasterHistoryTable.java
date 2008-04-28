@@ -24,6 +24,11 @@ final public class MasterHistoryTable extends AOServTable<Long,MasterHistory> {
 	super(connector, MasterHistory.class);
     }
 
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return null;
+    }
+
     public MasterHistory get(Object commandID) {
         return get((Long)commandID);
     }

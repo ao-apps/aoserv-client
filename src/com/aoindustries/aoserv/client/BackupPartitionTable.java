@@ -23,6 +23,15 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 	super(connector, BackupPartition.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BackupPartition.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(BackupPartition.COLUMN_PATH_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public BackupPartition get(Object pkey) {
         return get(((Integer)pkey).intValue());
     }
@@ -33,17 +42,6 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 
     List<BackupPartition> getBackupPartitions(AOServer ao) {
         return getIndexedRows(BackupPartition.COLUMN_AO_SERVER, ao.pkey);
-    }
-
-    BackupPartition getBackupPartitionForDevice(AOServer ao, String device) {
-        // Use index first
-        List<BackupPartition> cached=getBackupPartitions(ao);
-	int size=cached.size();
-        for(int c=0;c<size;c++) {
-            BackupPartition bp=cached.get(c);
-            if(bp.device.equals(device)) return bp;
-        }
-	return null;
     }
 
     BackupPartition getBackupPartitionForPath(AOServer ao, String path) {

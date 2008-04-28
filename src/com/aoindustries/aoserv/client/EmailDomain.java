@@ -35,6 +35,8 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         COLUMN_AO_SERVER=2,
         COLUMN_PACKAGE=3
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_DOMAIN_name = "domain";
 
     String domain;
     int ao_server;
@@ -148,7 +150,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         MajordomoServer ms=getMajordomoServer();
         if(ms!=null) {
             EmailDomain ed=ms.getDomain();
-            reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getServer().getHostname(), ms));
+            reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
         }
 
         for(EmailAddress ea : getEmailAddresses()) reasons.addAll(ea.getCannotRemoveReasons());

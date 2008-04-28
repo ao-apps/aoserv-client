@@ -23,6 +23,7 @@ import java.sql.*;
 final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> {
 
     static final int COLUMN_PRIORITY=0;
+    static final String COLUMN_PRIORITY_name = "priority";
 
     /**
      * The possible ticket priorities.

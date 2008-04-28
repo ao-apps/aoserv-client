@@ -27,6 +27,9 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         COLUMN_PKEY=0,
         COLUMN_PACKAGE=1
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_HOST_name = "host";
+    static final String COLUMN_PACKAGE_name = "package";
 
     public static final long NO_EXPIRATION=-1;
 
@@ -193,7 +196,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     }
 
     protected String toStringImpl() {
-        return packageName+" "+getType().getVerb()+" from "+host+" to "+getAOServer().getServer().getHostname();
+        return packageName+" "+getType().getVerb()+" from "+host+" to "+getAOServer().getHostname();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

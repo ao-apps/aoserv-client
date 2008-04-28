@@ -25,6 +25,8 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
         COLUMN_PKEY=0,
         COLUMN_USERNAME=1
     ;
+    static final String COLUMN_USERNAME_name = "username";
+    static final String COLUMN_PERMISSION_name = "permission";
 
     String username;
     String permission;

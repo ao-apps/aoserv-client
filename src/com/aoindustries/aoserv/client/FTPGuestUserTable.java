@@ -23,6 +23,14 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
 	super(connector, FTPGuestUser.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(FTPGuestUser.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addFTPGuestUser(String username) {
 	connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,

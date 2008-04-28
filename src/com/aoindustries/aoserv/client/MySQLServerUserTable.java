@@ -25,6 +25,16 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
 	super(connector, MySQLServerUser.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MySQLServerUser.COLUMN_USERNAME_name, ASCENDING),
+        new OrderBy(MySQLServerUser.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MySQLServerUser.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addMySQLServerUser(String username, MySQLServer mysqlServer, String host) {
         try {
             int pkey;

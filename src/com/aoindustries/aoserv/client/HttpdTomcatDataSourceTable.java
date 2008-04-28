@@ -20,6 +20,21 @@ import java.util.List;
  */
 final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<HttpdTomcatDataSource> {
 
+    HttpdTomcatDataSourceTable(AOServConnector connector) {
+	super(connector, HttpdTomcatDataSource.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdTomcatDataSource.COLUMN_TOMCAT_CONTEXT_name+'.'+HttpdTomcatContext.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+        new OrderBy(HttpdTomcatDataSource.COLUMN_TOMCAT_CONTEXT_name+'.'+HttpdTomcatContext.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(HttpdTomcatDataSource.COLUMN_TOMCAT_CONTEXT_name+'.'+HttpdTomcatContext.COLUMN_PATH_name, ASCENDING),
+        new OrderBy(HttpdTomcatDataSource.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addHttpdTomcatDataSource(
         HttpdTomcatContext htc,
         String name,
@@ -46,10 +61,6 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
             maxWait,
             validationQuery==null ? "" : validationQuery
         );
-    }
-
-    HttpdTomcatDataSourceTable(AOServConnector connector) {
-	super(connector, HttpdTomcatDataSource.class);
     }
 
     public HttpdTomcatDataSource get(Object pkey) {

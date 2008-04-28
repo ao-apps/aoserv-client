@@ -24,6 +24,11 @@ final public class MasterProcessTable extends AOServTable<Long,MasterProcess> {
 	super(connector, MasterProcess.class);
     }
 
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return null;
+    }
+
     public MasterProcess get(Object pid) {
         return get((Long)pid);
     }

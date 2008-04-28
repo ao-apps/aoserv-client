@@ -25,6 +25,15 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	super(connector, HttpdSharedTomcat.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdSharedTomcat.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(HttpdSharedTomcat.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addHttpdSharedTomcat(
 	String name,
         AOServer aoServer,
@@ -196,39 +205,12 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
                 connector.simpleAOClient.removeHttpdSharedTomcat(args[1], args[2]);
             }
             return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_CONFIG_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_CONFIG_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSharedTomcatConfigBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
-                );
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_FILE_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_FILE_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSharedTomcatFileBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
-                );
-            }
-            return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, args, 3, err)) {
                 connector.simpleAOClient.setHttpdSharedTomcatIsManual(
                     args[1],
                     args[2],
                     AOSH.parseBoolean(args[3], "is_manual")
-                );
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_LOG_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_LOG_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSharedTomcatLogBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
                 );
             }
             return true;

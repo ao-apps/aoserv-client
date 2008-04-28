@@ -25,6 +25,15 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 	super(connector, LinuxServerGroup.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(LinuxServerGroup.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(LinuxServerGroup.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addLinuxServerGroup(LinuxGroup linuxGroup, AOServer aoServer) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerGroupTable.class, "addLinuxServerGroup(LinuxGroup,AOServer)", null);
         try {

@@ -23,6 +23,7 @@ import java.sql.*;
 final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implements Comparable<NetDeviceID> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     public static final String
         BOND0="bond0",

@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A <code>CreditCard</code> stores credit card information.
@@ -29,6 +31,54 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         COLUMN_PROCESSOR_ID=1,
         COLUMN_ACCOUNTING=2
     ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_CREATED_name = "created";
+
+    /**
+     * Randomizes a value by adding a random number of random characters between each character of the original String.
+     * The original string must be only comprised of 0-9, space, -, and /
+     * 
+     * @see  #derandomize(String)
+     */
+    static String randomize(String original) {
+        Random random = AOServConnector.getRandom();
+        StringBuilder randomized = new StringBuilder();
+        for(int c=0, len=original.length(); c<=len; c++) {
+            int randChars = random.nextInt(20);
+            for(int d=0;d<randChars;d++) {
+                int randVal = random.nextInt(256-32-10-3); // Skipping 0-31, 32 (space), 45 (-), 47 (/), 48-57 (0-9)
+                // Offset past the first 33
+                randVal += 33;
+                // Offset past the -
+                if(randVal>=45) randVal++;
+                // Offset past the / and 0-9
+                if(randVal>=47) randVal += 11;
+                randomized.append((char)randVal);
+            }
+            if(c<len) randomized.append(original.charAt(c));
+        }
+        return randomized.toString();
+    }
+
+    /**
+     * Derandomizes a value be stripping out all characters that are not 0-9, space, -, or /
+     * 
+     * @see  #randomize(String)
+     */
+    static String derandomize(String randomized) {
+        // Strip all characters except 0-9, space, and -
+        StringBuilder stripped = new StringBuilder(randomized.length());
+        for(int c=0, len=randomized.length();c<len;c++) {
+            char ch = randomized.charAt(c);
+            if(
+                (ch>='0' && ch<='9')
+                || ch==' '
+                || ch=='-'
+                || ch=='/'
+            ) stripped.append(ch);
+        }
+        return stripped.toString();
+    }
 
     private String processorId;
     String accounting;
@@ -56,6 +106,19 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     private long deactivatedOn;
     private String deactivateReason;
     private String description;
+    private String encrypted_card_number;
+    private int encryption_card_number_from;
+    private int encryption_card_number_recipient;
+    private String encrypted_expiration;
+    private int encryption_expiration_from;
+    private int encryption_expiration_recipient;
+
+    // These are not pulled from the database, but are decrypted by GPG
+    transient private String decryptCardNumberPassphrase;
+    transient private String card_number;
+    transient private String decryptExpirationPassphrase;
+    transient private byte expiration_month;
+    transient private short expiration_year;
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
         return Collections.emptyList();
@@ -153,6 +216,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             case 24: return deactivatedOn==-1?null:new java.sql.Date(deactivatedOn);
             case 25: return deactivateReason;
             case 26: return description;
+            case 27: return encrypted_card_number;
+            case 28: return encryption_card_number_from;
+            case 29: return encryption_card_number_recipient;
+            case 30: return encrypted_expiration;
+            case 31: return encryption_expiration_from;
+            case 32: return encryption_expiration_recipient;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -206,9 +275,9 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     public CountryCode getCountryCode() {
-        CountryCode countryCode = table.connector.countryCodes.get(this.countryCode);
-        if (countryCode == null) throw new WrappedException(new SQLException("Unable to find CountryCode: " + this.countryCode));
-        return countryCode;
+        CountryCode countryCodeObj = table.connector.countryCodes.get(this.countryCode);
+        if (countryCodeObj == null) throw new WrappedException(new SQLException("Unable to find CountryCode: " + this.countryCode));
+        return countryCodeObj;
     }
 
     public long getCreated() {
@@ -242,6 +311,34 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
     public String getDescription() {
 	return description;
+    }
+
+    public EncryptionKey getEncryptionCardNumberFrom() {
+        if(encryption_card_number_from==-1) return null;
+        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_card_number_from);
+        if(ek == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_card_number_from));
+        return ek;
+    }
+
+    public EncryptionKey getEncryptionCardNumberRecipient() {
+        if(encryption_card_number_recipient==-1) return null;
+        EncryptionKey er = table.connector.encryptionKeys.get(encryption_card_number_recipient);
+        if(er == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_card_number_recipient));
+        return er;
+    }
+
+    public EncryptionKey getEncryptionExpirationFrom() {
+        if(encryption_expiration_from==-1) return null;
+        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_expiration_from);
+        if(ek == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_expiration_from));
+        return ek;
+    }
+
+    public EncryptionKey getEncryptionExpirationRecipient() {
+        if(encryption_expiration_recipient==-1) return null;
+        EncryptionKey er = table.connector.encryptionKeys.get(encryption_expiration_recipient);
+        if(er == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_expiration_recipient));
+        return er;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -278,6 +375,16 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	deactivatedOn = time == null ? -1 : time.getTime();
 	deactivateReason = result.getString(pos++);
 	description = result.getString(pos++);
+        encrypted_card_number = result.getString(pos++);
+        encryption_card_number_from = result.getInt(pos++);
+        if(result.wasNull()) encryption_card_number_from = -1;
+        encryption_card_number_recipient = result.getInt(pos++);
+        if(result.wasNull()) encryption_card_number_recipient = -1;
+        encrypted_expiration = result.getString(pos++);
+        encryption_expiration_from = result.getInt(pos++);
+        if(result.wasNull()) encryption_expiration_from = -1;
+        encryption_expiration_recipient = result.getInt(pos++);
+        if(result.wasNull()) encryption_expiration_recipient = -1;
     }
 
     public boolean getIsActive() {
@@ -312,12 +419,19 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	deactivatedOn=in.readLong();
 	deactivateReason=in.readNullUTF();
 	description=in.readNullUTF();
+        encrypted_card_number=in.readNullUTF();
+        encryption_card_number_from=in.readCompressedInt();
+        encryption_card_number_recipient=in.readCompressedInt();
+        encrypted_expiration=in.readNullUTF();
+        encryption_expiration_from=in.readCompressedInt();
+        encryption_expiration_recipient=in.readCompressedInt();
     }
 
     public void remove() {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
     }
 
+    @Override
     String toStringImpl() {
 	return cardInfo;
     }
@@ -368,6 +482,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	out.writeNullUTF(deactivateReason);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
 	out.writeNullUTF(description);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+            out.writeNullUTF(encrypted_card_number);
+            out.writeCompressedInt(encryption_card_number_from);
+            out.writeCompressedInt(encryption_card_number_recipient);
+            out.writeNullUTF(encrypted_expiration);
+            out.writeCompressedInt(encryption_expiration_from);
+            out.writeCompressedInt(encryption_expiration_recipient);
+        }
     }
     
     /**
@@ -410,16 +532,82 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     /**
-     * Updates the credit card info (masked card number).
+     * Updates the credit card number and expiration, including the masked card number.
+     * Encrypts the data if the processors has been configured to store card encrypted
+     * in the master database.
      */
-    public void updateCardInfo(
-        String cardInfo
-    ) {
-	table.connector.requestUpdateIL(
-            AOServProtocol.CommandID.UPDATE_CREDIT_CARD_CARD_INFO,
-            pkey,
-            cardInfo
-        );
+    public void updateCardNumberAndExpiration(
+        String maskedCardNumber,
+        String cardNumber,
+        byte expirationMonth,
+        short expirationYear
+    ) throws IOException, SQLException {
+        CreditCardProcessor processor = getCreditCardProcessor();
+        EncryptionKey encryptionFrom = processor.getEncryptionFrom();
+        EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
+        String encryptedCardNumber;
+        String encryptedExpiration;
+        if(encryptionFrom!=null && encryptionRecipient!=null) {
+            // Encrypt the card number and expiration
+            encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, randomize(cardNumber));
+            encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
+        } else {
+            encryptedCardNumber = null;
+            encryptedExpiration = null;
+        }
+
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION.ordinal());
+            out.writeCompressedInt(pkey);
+            out.writeUTF(maskedCardNumber);
+            out.writeNullUTF(encryptedCardNumber);
+            out.writeNullUTF(encryptedExpiration);
+            out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
+            out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unknown response code: "+code);
+            }
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
+        }
+        table.connector.tablesUpdated(invalidateList);
+    }
+
+    /**
+     * Updates the credit card expiration.  Encrypts the data if the processors
+     * has been configured to store card encrypted in the master database.
+     */
+    public void updateCardExpiration(
+        byte expirationMonth,
+        short expirationYear
+    ) throws IOException {
+        CreditCardProcessor processor = getCreditCardProcessor();
+        EncryptionKey encryptionFrom = processor.getEncryptionFrom();
+        EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
+        if(encryptionFrom!=null && encryptionRecipient!=null) {
+            // Encrypt the expiration
+            String encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
+            table.connector.requestUpdateIL(
+                AOServProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
+                pkey,
+                encryptedExpiration,
+                encryptionFrom.getPkey(),
+                encryptionRecipient.getPkey()
+            );
+        }
     }
 
     /**
@@ -430,5 +618,69 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             AOServProtocol.CommandID.REACTIVATE_CREDIT_CARD,
             pkey
         );
+    }
+
+    /**
+     * Gets the card number or <code>null</code> if not stored.
+     */
+    synchronized public String getCardNumber(String passphrase) throws IOException {
+        // If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
+        if(decryptCardNumberPassphrase==null || !passphrase.equals(decryptCardNumberPassphrase)) {
+            // Clear first just in case there is a problem in part of the decryption
+            decryptCardNumberPassphrase=null;
+            card_number=null;
+
+            if(encrypted_card_number!=null) {
+                // Perform the decryption
+                card_number = derandomize(getEncryptionCardNumberRecipient().decrypt(encrypted_card_number, passphrase));
+            }
+            decryptCardNumberPassphrase=passphrase;
+        }
+        return card_number;
+    }
+
+    synchronized private void decryptExpiration(String passphrase) throws IOException {
+        // If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
+        if(decryptExpirationPassphrase==null || !passphrase.equals(decryptExpirationPassphrase)) {
+            // Clear first just in case there is a problem in part of the decryption
+            decryptExpirationPassphrase=null;
+            expiration_month=-1;
+            expiration_year=-1;
+
+            if(encrypted_expiration!=null) {
+                // Perform the decryption
+                String decrypted = getEncryptionExpirationRecipient().decrypt(encrypted_expiration, passphrase);
+                // Strip all characters except 0-9, and /
+                StringBuilder stripped = new StringBuilder(decrypted.length());
+                for(int c=0, len=decrypted.length();c<len;c++) {
+                    char ch = decrypted.charAt(c);
+                    if(
+                        (ch>='0' && ch<='0')
+                        || ch=='/'
+                    ) stripped.append(ch);
+                }
+                int pos = stripped.indexOf("/");
+                if(pos==-1) throw new IOException("Unable to find /");
+                expiration_month = Byte.parseByte(stripped.substring(0, pos));
+                expiration_year = Short.parseShort(stripped.substring(pos+1));
+            }
+            decryptExpirationPassphrase=passphrase;
+        }
+    }
+
+    /**
+     * Gets the expiration month or <code>-1</code> if not stored.
+     */
+    synchronized public byte getExpirationMonth(String passphrase) throws IOException {
+        decryptExpiration(passphrase);
+        return expiration_month;
+    }
+
+    /**
+     * Gets the expiration year or <code>-1</code> if not stored.
+     */
+    synchronized public short getExpirationYear(String passphrase) throws IOException {
+        decryptExpiration(passphrase);
+        return expiration_year;
     }
 }

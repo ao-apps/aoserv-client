@@ -22,6 +22,14 @@ final public class BankAccountTable extends CachedTableStringKey<BankAccount> {
 	super(connector, BankAccount.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BankAccount.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public BankAccount get(Object name) {
 	return getUniqueRow(BankAccount.COLUMN_NAME, name);
     }

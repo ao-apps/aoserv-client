@@ -23,6 +23,16 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 	super(connector, IPAddress.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+        new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public IPAddress get(Object pkey) {
 	return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
     }

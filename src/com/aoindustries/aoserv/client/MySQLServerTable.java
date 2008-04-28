@@ -24,6 +24,15 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 	super(connector, MySQLServer.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MySQLServer.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addMySQLServer(
         String name,
         AOServer aoServer,

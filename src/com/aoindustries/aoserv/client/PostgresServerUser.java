@@ -30,6 +30,8 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         COLUMN_USERNAME=1,
         COLUMN_POSTGRES_SERVER=2
     ;
+    static final String COLUMN_USERNAME_name = "username";
+    static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
 
     String username;
     int postgres_server;
@@ -131,7 +133,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         
         for(PostgresDatabase pd : getPostgresDatabases()) {
             PostgresServer ps=pd.getPostgresServer();
-            reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ps.getAOServer().getServer().getHostname(), pd));
+            reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), pd));
         }
         
         return reasons;

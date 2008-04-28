@@ -22,6 +22,14 @@ final public class DNSForbiddenZoneTable extends GlobalTableStringKey<DNSForbidd
 	super(connector, DNSForbiddenZone.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(DNSForbiddenZone.COLUMN_ZONE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public DNSForbiddenZone get(Object pkey) {
 	return getUniqueRow(DNSForbiddenZone.COLUMN_ZONE, pkey);
     }

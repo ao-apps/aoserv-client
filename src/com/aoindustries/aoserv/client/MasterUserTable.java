@@ -22,6 +22,14 @@ final public class MasterUserTable extends CachedTableStringKey<MasterUser> {
 	super(connector, MasterUser.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MasterUser.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public MasterUser get(Object pkey) {
 	return getUniqueRow(MasterUser.COLUMN_USERNAME, pkey);
     }

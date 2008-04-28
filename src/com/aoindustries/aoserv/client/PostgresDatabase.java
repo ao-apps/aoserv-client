@@ -32,12 +32,8 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         COLUMN_POSTGRES_SERVER=2,
         COLUMN_DATDBA=3
     ;
-
-    /**
-     * The default number of days to keep backups.
-     */
-    public static final short DEFAULT_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL;
-    public static final short DEFAULT_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
 
     /**
      * The classname of the JDBC driver used for the <code>PostgresDatabase</code>.
@@ -50,7 +46,6 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     public static final String
         AOINDUSTRIES="aoindustries",
         AOSERV="aoserv",
-        AOSERV_BACKUP="aoserv_backup",
         AOWEB="aoweb",
         TEMPLATE0="template0",
         TEMPLATE1="template1"
@@ -69,19 +64,10 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     private int encoding;
     private boolean is_template;
     private boolean allow_conn;
-    private short backup_level;
-    private short backup_retention;
     private boolean enable_postgis;
 
     public boolean allowsConnections() {
 	return allow_conn;
-    }
-
-    public int backup() {
-	return table.connector.requestIntQueryIL(
-            AOServProtocol.CommandID.BACKUP_POSTGRES_DATABASE,
-            pkey
-	);
     }
 
     public void dump(PrintWriter out) {
@@ -130,18 +116,6 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         }
     }
 
-    public BackupLevel getBackupLevel() {
-        BackupLevel bl=table.connector.backupLevels.get(backup_level);
-        if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+backup_level));
-        return bl;
-    }
-
-    public BackupRetention getBackupRetention() {
-        BackupRetention br=table.connector.backupRetentions.get(backup_retention);
-        if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+backup_retention));
-        return br;
-    }
-
     /**
      * Indicates that PostGIS should be enabled for this database.
      */
@@ -158,9 +132,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
             case 4: return encoding;
             case 5: return is_template;
             case 6: return allow_conn;
-            case 7: return backup_level;
-            case 8: return backup_retention;
-            case 9: return enable_postgis;
+            case 7: return enable_postgis;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -181,7 +153,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
             "jdbc:postgresql://"
             + (ipOnly
                ?ao.getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
-               :ao.getServer().getHostname()
+               :ao.getHostname()
             )
             + ':'
             + getPostgresServer().getNetBind().getPort().getPort()
@@ -223,9 +195,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	encoding=result.getInt(5);
 	is_template=result.getBoolean(6);
 	allow_conn=result.getBoolean(7);
-        backup_level=result.getShort(8);
-        backup_retention=result.getShort(9);
-        enable_postgis=result.getBoolean(10);
+        enable_postgis=result.getBoolean(8);
     }
 
     public boolean isTemplate() {
@@ -240,8 +210,6 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	encoding=in.readCompressedInt();
 	is_template=in.readBoolean();
 	allow_conn=in.readBoolean();
-        backup_level=in.readShort();
-        backup_retention=in.readShort();
         enable_postgis=in.readBoolean();
     }
 
@@ -249,14 +217,13 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         
         PostgresServer ps=getPostgresServer();
-        if(!allow_conn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getServer().getHostname(), this));
-        if(is_template) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getServer().getHostname(), this));
+        if(!allow_conn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+        if(is_template) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
         if(
             name.equals(AOINDUSTRIES)
             || name.equals(AOSERV)
-            || name.equals(AOSERV_BACKUP)
             || name.equals(AOWEB)
-        ) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getServer().getHostname(), this));
+        ) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
 
         return reasons;
     }
@@ -267,10 +234,6 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
             SchemaTable.TableID.POSTGRES_DATABASES,
             pkey
 	);
-    }
-
-    public void setBackupRetention(short days) {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.POSTGRES_DATABASES, pkey);
     }
 
     String toStringImpl() {
@@ -285,8 +248,10 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	out.writeCompressedInt(encoding);
 	out.writeBoolean(is_template);
 	out.writeBoolean(allow_conn);
-        out.writeShort(backup_level);
-        out.writeShort(backup_retention);
+        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+        }
         if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_27)>=0) out.writeBoolean(enable_postgis);
     }
 }

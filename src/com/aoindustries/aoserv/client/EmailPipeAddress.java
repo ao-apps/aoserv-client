@@ -30,6 +30,8 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
         COLUMN_PKEY=0,
         COLUMN_EMAIL_ADDRESS=1
     ;
+    static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
+    static final String COLUMN_EMAIL_PIPE_name = "email_pipe";
 
     int email_address;
     int email_pipe;
@@ -79,7 +81,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
                 || ml.getListRequestPipeAddress().pkey==pkey
             ) {
                 EmailDomain ed=ml.getMajordomoServer().getDomain();
-                reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getServer().getHostname(), ml));
+                reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
             }
         }
 
@@ -87,7 +89,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
         for(MajordomoServer ms : table.connector.majordomoServers.getRows()) {
             if(ms.getMajordomoPipeAddress().pkey==pkey) {
                 EmailDomain ed=ms.getDomain();
-                reasons.add(new CannotRemoveReason("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getServer().getHostname()));
+                reasons.add(new CannotRemoveReason("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname()));
             }
         }
         

@@ -25,6 +25,16 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 	super(connector, HttpdTomcatContext.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdTomcatContext.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+        new OrderBy(HttpdTomcatContext.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(HttpdTomcatContext.COLUMN_PATH_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addHttpdTomcatContext(
         HttpdTomcatSite hts,
         String className,

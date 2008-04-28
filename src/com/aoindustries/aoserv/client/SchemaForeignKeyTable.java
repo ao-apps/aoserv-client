@@ -28,46 +28,21 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
         super(connector, SchemaForeignKey.class);
     }
 
-    private static final String[] sortColumns={"pkey"};
-    protected String[] getDefaultSortColumnsImpl() {
-        return sortColumns;
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(SchemaForeignKey.COLUMN_PKEY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
-    private static final boolean[] sortOrders={ASCENDING};
-    protected boolean[] getDefaultSortOrdersImpl() {
-        return sortOrders;
-    }
-
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(SchemaForeignKeyTable.class) {
             tableKeys.clear();
             referencesHash.clear();
             referencedByHash.clear();
-        }
-    }
-
-    List<SchemaForeignKey> getDataverseBridges(SchemaTable table, boolean matchBothWays) {
-        Profiler.startProfile(Profiler.UNKNOWN, SchemaForeignKeyTable.class, "getDataverseBridges(SchemaTable,boolean)", null);
-        try {
-            String name=table.name;
-
-            List<SchemaForeignKey> cached=getRows();
-            List<SchemaForeignKey> matches=new ArrayList<SchemaForeignKey>();
-            int size=cached.size();
-            for(int c=0;c<size;c++) {
-                SchemaForeignKey key=cached.get(c);
-                if(
-                    key.is_bridge
-                    && (
-                        key.getKeyColumn(connector).table_name.equals(name)
-                        || (matchBothWays && key.getForeignColumn(connector).table_name.equals(name))
-                    )
-                ) matches.add(key);
-            }
-            return matches;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
     }
 
@@ -79,8 +54,8 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
         return getUniqueRow(SchemaForeignKey.COLUMN_PKEY, pkey);
     }
 
-    List<SchemaForeignKey> getSchemaForeignKeys(SchemaTable table, boolean matchBothWays) {
-        Profiler.startProfile(Profiler.UNKNOWN, SchemaForeignKeyTable.class, "getSchemaForeignKeys(SchemaTable,boolean)", null);
+    List<SchemaForeignKey> getSchemaForeignKeys(SchemaTable table) {
+        Profiler.startProfile(Profiler.UNKNOWN, SchemaForeignKeyTable.class, "getSchemaForeignKeys(SchemaTable)", null);
         try {
             synchronized(SchemaForeignKeyTable.class) {
                 if(tableKeys.isEmpty()) {

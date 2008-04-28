@@ -22,8 +22,16 @@ final public class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCate
 	super(connector, ExpenseCategory.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(ExpenseCategory.COLUMN_EXPENSE_CODE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public ExpenseCategory get(Object pkey) {
-	return getUniqueRow(ExpenseCategory.COLUMN_CODE, pkey);
+	return getUniqueRow(ExpenseCategory.COLUMN_EXPENSE_CODE, pkey);
     }
 
     public SchemaTable.TableID getTableID() {

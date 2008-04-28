@@ -24,6 +24,7 @@ import java.sql.*;
 final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSite> {
 
     static final int COLUMN_HTTPD_SITE=0;
+    static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
     public Object getColumn(int i) {
 	if(i==COLUMN_HTTPD_SITE) return Integer.valueOf(pkey);

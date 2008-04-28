@@ -23,6 +23,17 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
 	super(connector, EmailListAddress.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailListAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
+        new OrderBy(EmailListAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(EmailListAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_ADDRESS_name, ASCENDING),
+        new OrderBy(EmailListAddress.COLUMN_EMAIL_LIST_name+'.'+EmailList.COLUMN_PATH_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addEmailListAddress(EmailAddress emailAddressObject, EmailList emailListObject) {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,

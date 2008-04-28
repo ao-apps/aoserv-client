@@ -20,6 +20,9 @@ import java.sql.*;
  */
 final public class BankTransaction extends AOServObject<Integer,BankTransaction> implements SingleTableObject<Integer,BankTransaction> {
 
+    static final String COLUMN_TIME_name = "time";
+    static final String COLUMN_TRANSID_name = "transid";
+
     protected AOServTable<Integer,BankTransaction> table;
     private long time;
     private int transID;

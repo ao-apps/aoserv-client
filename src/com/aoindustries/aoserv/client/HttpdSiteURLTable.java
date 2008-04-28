@@ -24,6 +24,20 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
 	super(connector, HttpdSiteURL.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdSiteURL.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(HttpdSiteURL.COLUMN_HTTPD_SITE_BIND_name+'.'+HttpdSiteBind.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+        new OrderBy(HttpdSiteURL.COLUMN_HTTPD_SITE_BIND_name+'.'+HttpdSiteBind.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(HttpdSiteURL.COLUMN_HTTPD_SITE_BIND_name+'.'+HttpdSiteBind.COLUMN_HTTPD_BIND_name+'.'+HttpdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+        new OrderBy(HttpdSiteURL.COLUMN_HTTPD_SITE_BIND_name+'.'+HttpdSiteBind.COLUMN_HTTPD_BIND_name+'.'+HttpdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
+        new OrderBy(HttpdSiteURL.COLUMN_HTTPD_SITE_BIND_name+'.'+HttpdSiteBind.COLUMN_HTTPD_BIND_name+'.'+HttpdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING),
+        new OrderBy(HttpdSiteURL.COLUMN_HTTPD_SITE_BIND_name+'.'+HttpdSiteBind.COLUMN_HTTPD_BIND_name+'.'+HttpdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_NET_PROTOCOL_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addHttpdSiteURL(HttpdSiteBind hsb, String hostname) {
         return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
     }

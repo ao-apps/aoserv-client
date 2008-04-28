@@ -27,6 +27,9 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
         COLUMN_PKEY=0,
         COLUMN_POSTGRES_VERSION=2
     ;
+    static final String COLUMN_ENCODING_name = "encoding";
+    static final String COLUMN_POSTGRES_VERSION_name = "postgres_version";
+    static final String COLUMN_PKEY_name = "pkey";
 
     /**
      * The supported encodings.

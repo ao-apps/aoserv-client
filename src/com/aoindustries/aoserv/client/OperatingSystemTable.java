@@ -25,6 +25,14 @@ final public class OperatingSystemTable extends GlobalTableStringKey<OperatingSy
 	super(connector, OperatingSystem.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(OperatingSystem.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public OperatingSystem get(Object pkey) {
 	return getUniqueRow(OperatingSystem.COLUMN_NAME, pkey);
     }

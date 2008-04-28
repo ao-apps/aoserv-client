@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -27,11 +26,10 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_LINUX_ACCOUNT=2
+        COLUMN_LINUX_SERVER_ACCOUNT=2
     ;
-
-    public static final short DEFAULT_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL;
-    public static final short DEFAULT_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION;
+    static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
+    static final String COLUMN_PATH_name = "path";
 
     /**
      * The directory that email lists are normally contained in.
@@ -44,19 +42,12 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     public static final int MAX_NAME_LENGTH=64;
 
     String path;
-    int linux_account;
-    int linux_group;
-    private short backup_level;
-    private short backup_retention;
+    int linux_server_account;
+    int linux_server_group;
     int disable_log;
 
     public int addEmailAddress(EmailAddress address) {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "addEmailAddress(EmailAddress)", null);
-        try {
-            return table.connector.emailListAddresses.addEmailListAddress(address, this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.emailListAddresses.addEmailListAddress(address, this);
     }
 
     public boolean canDisable() {
@@ -64,36 +55,21 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
     
     public boolean canEnable() {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "canEnable()", null);
-        try {
-            DisableLog dl=getDisableLog();
-            if(dl==null) return false;
-            else return
-                dl.canEnable()
-                && getLinuxServerGroup().getLinuxGroup().getPackage().disable_log==-1
-                && getLinuxServerAccount().disable_log==-1
-            ;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        DisableLog dl=getDisableLog();
+        if(dl==null) return false;
+        else return
+            dl.canEnable()
+            && getLinuxServerGroup().getLinuxGroup().getPackage().disable_log==-1
+            && getLinuxServerAccount().disable_log==-1
+        ;
     }
 
     public void disable(DisableLog dl) {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "disable(DisableLog)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
     }
     
     public void enable() {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "enable()", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
     }
 
     /**
@@ -101,12 +77,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
      * The list is obtained from a file on the server that hosts the list.
      */
     public String getAddressList() {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "getAddressList()", null);
-        try {
-            return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
     }
 
     /**
@@ -114,126 +85,62 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
      * of non-blank lines.
      */
     public int getAddressListCount() {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "getAddressListCount()", null);
-        try {
-            String list=getAddressList();
-            String[] lines=StringUtility.splitString(list, '\n');
-            int count=0;
-            for(int c=0;c<lines.length;c++) {
-                if(lines[c].trim().length()>0) count++;
-            }
-            return count;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        String list=getAddressList();
+        String[] lines=StringUtility.splitString(list, '\n');
+        int count=0;
+        for(int c=0;c<lines.length;c++) {
+            if(lines[c].trim().length()>0) count++;
         }
-    }
-
-    public BackupLevel getBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return count;
     }
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_PKEY: return Integer.valueOf(pkey);
-                case 1: return path;
-                case COLUMN_LINUX_ACCOUNT: return Integer.valueOf(linux_account);
-                case 3: return Integer.valueOf(linux_group);
-                case 4: return Short.valueOf(backup_level);
-                case 5: return Short.valueOf(backup_retention);
-                case 6: return disable_log==-1?null:Integer.valueOf(disable_log);
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return path;
+            case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
+            case 3: return Integer.valueOf(linux_server_group);
+            case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
     public DisableLog getDisableLog() {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getDisableLog()", null);
-        try {
-            if(disable_log==-1) return null;
-            DisableLog obj=table.connector.disableLogs.get(disable_log);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        return obj;
     }
 
     public List<EmailAddress> getEmailAddresses() {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getEmailAddresses()", null);
-        try {
-            return table.connector.emailListAddresses.getEmailAddresses(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.emailListAddresses.getEmailAddresses(this);
     }
 
     public List<EmailListAddress> getEmailListAddresses() {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getEmailListAddresses()", null);
-        try {
-            return table.connector.emailListAddresses.getEmailListAddresses(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.emailListAddresses.getEmailListAddresses(this);
     }
 
     public LinuxServerAccount getLinuxServerAccount() {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getLinuxServerAccount()", null);
-        try {
-            LinuxServerAccount linuxAccountObject = table.connector.linuxServerAccounts.get(linux_account);
-            if (linuxAccountObject == null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: " + linux_account));
-            return linuxAccountObject;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        LinuxServerAccount linuxServerAccountObject = table.connector.linuxServerAccounts.get(linux_server_account);
+        if (linuxServerAccountObject == null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: " + linux_server_account));
+        return linuxServerAccountObject;
     }
 
     public LinuxServerGroup getLinuxServerGroup() {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getLinuxServerGroup()", null);
-        try {
-            LinuxServerGroup linuxGroupObject = table.connector.linuxServerGroups.get(linux_group);
-            if (linuxGroupObject == null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: " + linux_group));
-            return linuxGroupObject;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        LinuxServerGroup linuxServerGroupObject = table.connector.linuxServerGroups.get(linux_server_group);
+        if (linuxServerGroupObject == null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: " + linux_server_group));
+        return linuxServerGroupObject;
     }
 
     /**
      * Gets the full path that should be used for normal email lists.
      */
     public static String getListPath(String name) {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "getListPath(String)", null);
-        try {
-            if(name.length()>1) {
-                char ch=name.charAt(0);
-                if(ch>='A' && ch<='Z') ch+=32;
-                return LIST_DIRECTORY+'/'+ch+'/'+name;
-            } else return LIST_DIRECTORY+"//";
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(name.length()>1) {
+            char ch=name.charAt(0);
+            if(ch>='A' && ch<='Z') ch+=32;
+            return LIST_DIRECTORY+'/'+ch+'/'+name;
+        } else return LIST_DIRECTORY+"//";
     }
 
     public MajordomoList getMajordomoList() {
@@ -249,67 +156,48 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, EmailList.class, "initImpl(ResultSet)", null);
-        try {
-            pkey = result.getInt(1);
-            path = result.getString(2);
-            linux_account = result.getInt(3);
-            linux_group = result.getInt(4);
-            backup_level = result.getShort(5);
-            backup_retention = result.getShort(6);
-            disable_log=result.getInt(7);
-            if(result.wasNull()) disable_log=-1;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        pkey = result.getInt(1);
+        path = result.getString(2);
+        linux_server_account = result.getInt(3);
+        linux_server_group = result.getInt(4);
+        disable_log=result.getInt(5);
+        if(result.wasNull()) disable_log=-1;
     }
 
     /**
      * Checks the validity of a list name.
      */
     public static boolean isValidRegularPath(String path) {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "isValidRegularPath(String)", null);
-        try {
-            // Must start with LIST_DIRECTORY
-            if(path==null) return false;
-            if(!path.startsWith(LIST_DIRECTORY+'/')) return false;
-            path=path.substring(LIST_DIRECTORY.length()+1);
-            if(path.length()<2) return false;
-            char firstChar=path.charAt(0);
-            if(path.charAt(1)!='/') return false;
-            path=path.substring(2);
-            int len = path.length();
-            if (len < 1 || len > MAX_NAME_LENGTH) return false;
-            for (int c = 0; c < len; c++) {
-                char ch = path.charAt(c);
-                if (c == 0) {
-                    if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z')) return false;
-                    // First character must match with the name
-                    if(ch>='A' && ch<='Z') ch+=32;
-                    if(ch!=firstChar) return false;
-                } else {
-                    if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && ch != '.' && ch != '-' && ch != '_') return false;
-                }
+        // Must start with LIST_DIRECTORY
+        if(path==null) return false;
+        if(!path.startsWith(LIST_DIRECTORY+'/')) return false;
+        path=path.substring(LIST_DIRECTORY.length()+1);
+        if(path.length()<2) return false;
+        char firstChar=path.charAt(0);
+        if(path.charAt(1)!='/') return false;
+        path=path.substring(2);
+        int len = path.length();
+        if (len < 1 || len > MAX_NAME_LENGTH) return false;
+        for (int c = 0; c < len; c++) {
+            char ch = path.charAt(c);
+            if (c == 0) {
+                if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z')) return false;
+                // First character must match with the name
+                if(ch>='A' && ch<='Z') ch+=32;
+                if(ch!=firstChar) return false;
+            } else {
+                if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && ch != '.' && ch != '-' && ch != '_') return false;
             }
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
+        return true;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, EmailList.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readCompressedInt();
-            path=in.readUTF();
-            linux_account=in.readCompressedInt();
-            linux_group=in.readCompressedInt();
-            backup_level=in.readShort();
-            backup_retention=in.readShort();
-            disable_log=in.readCompressedInt();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readCompressedInt();
+        path=in.readUTF();
+        linux_server_account=in.readCompressedInt();
+        linux_server_group=in.readCompressedInt();
+        disable_log=in.readCompressedInt();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -317,48 +205,26 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     public void remove() {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "remove()", null);
-        try {
-            table.connector.requestUpdateIL(
-                AOServProtocol.CommandID.REMOVE,
-                SchemaTable.TableID.EMAIL_LISTS,
-                pkey
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.REMOVE,
+            SchemaTable.TableID.EMAIL_LISTS,
+            pkey
+        );
     }
 
     public void setAddressList(String addresses) {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "setAddressList(String)", null);
-        try {
-            table.connector.requestUpdate(AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    public void setBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, EmailList.class, "setBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.EMAIL_LISTS, pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdate(AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, EmailList.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeCompressedInt(pkey);
-            out.writeUTF(path);
-            out.writeCompressedInt(linux_account);
-            out.writeCompressedInt(linux_group);
-            out.writeShort(backup_level);
-            out.writeShort(backup_retention);
-            out.writeCompressedInt(disable_log);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(path);
+        out.writeCompressedInt(linux_server_account);
+        out.writeCompressedInt(linux_server_group);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
         }
+        out.writeCompressedInt(disable_log);
     }
 }

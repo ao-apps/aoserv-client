@@ -24,6 +24,7 @@ import java.sql.*;
 public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKey<EmailSpamAssassinIntegrationMode> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_SORT_ORDER_name = "sort_order";
 
     public static final String
         NONE="none",

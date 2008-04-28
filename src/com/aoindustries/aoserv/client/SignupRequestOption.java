@@ -25,6 +25,8 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
         COLUMN_PKEY=0,
         COLUMN_REQUEST=1
     ;
+    static final String COLUMN_REQUEST_name = "request";
+    static final String COLUMN_NAME_name = "name";
 
     int request;
     private String name;

@@ -23,6 +23,15 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	super(connector, HttpdSite.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+        new OrderBy(HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public String generateSiteName(String template) {
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SITE_NAME, template);
     }
@@ -173,48 +182,12 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
                 connector.simpleAOClient.setHttpdSiteServerAdmin(args[1], args[2], args[3]);
             }
             return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_CONFIG_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_CONFIG_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSiteConfigBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
-                );
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_FILE_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_FILE_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSiteFileBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
-                );
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_FTP_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_FTP_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSiteFtpBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
-                );
-            }
-            return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_IS_MANUAL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_IS_MANUAL, args, 3, err)) {
                 connector.simpleAOClient.setHttpdSiteIsManual(
                     args[1],
                     args[2],
                     AOSH.parseBoolean(args[3], "is_manual")
-                );
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_LOG_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_LOG_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSiteLogBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
                 );
             }
             return true;

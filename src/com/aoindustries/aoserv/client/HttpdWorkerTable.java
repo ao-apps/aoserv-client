@@ -22,6 +22,15 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 	super(connector, HttpdWorker.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdWorker.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(HttpdWorker.COLUMN_CODE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public HttpdWorker get(Object pkey) {
 	return getUniqueRow(HttpdWorker.COLUMN_PKEY, pkey);
     }

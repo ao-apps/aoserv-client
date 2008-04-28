@@ -22,6 +22,14 @@ final public class USStateTable extends GlobalTableStringKey<USState> {
 	super(connector, USState.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(USState.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.US_STATES;
     }

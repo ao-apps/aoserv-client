@@ -26,6 +26,7 @@ import java.sql.*;
 final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVersion> {
 
     static final int COLUMN_VERSION=0;
+    static final String COLUMN_VERSION_name = "version";
 
     private int tomcatVersion;
     private String templateDir;

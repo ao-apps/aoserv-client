@@ -22,6 +22,14 @@ final public class HttpdJKCodeTable extends GlobalTableStringKey<HttpdJKCode> {
 	super(connector, HttpdJKCode.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdJKCode.COLUMN_CODE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public HttpdJKCode get(Object pkey) {
 	return getUniqueRow(HttpdJKCode.COLUMN_CODE, pkey);
     }

@@ -50,7 +50,8 @@ public class GetIndexedRowTest extends TestCase {
         System.out.println("Testing all indexed rows:");
         System.out.println("+ means supported");
         System.out.println("- means unsupported");
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) {
+        int numTables = SchemaTable.TableID.values().length;
+        for(int c=0;c<numTables;c++) {
             AOServTable table=conn.getTable(c);
             String tableName=table.getTableName();
             System.out.print("    "+tableName+": ");

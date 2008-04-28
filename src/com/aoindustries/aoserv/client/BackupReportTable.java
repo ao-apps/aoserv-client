@@ -1,21 +1,16 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2003-2007 by AO Industries, Inc.,
+ * Copyright 2003-2008 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see BackupReport
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -23,6 +18,17 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 
     BackupReportTable(AOServConnector connector) {
 	super(connector, BackupReport.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BackupReport.COLUMN_DATE_name, DESCENDING),
+        new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(BackupReport.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
     public BackupReport get(Object pkey) {
@@ -34,37 +40,27 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
     }
 
     List<BackupReport> getBackupReports(Package pk) {
-        Profiler.startProfile(Profiler.UNKNOWN, BackupReportTable.class, "getBackupReports(Package)", null);
-        try {
-            int pkPKey=pk.pkey;
-            List<BackupReport> cached=getRows();
-            int size=cached.size();
-            List<BackupReport> matches=new ArrayList<BackupReport>(size);
-            for(int c=0;c<size;c++) {
-                BackupReport br=cached.get(c);
-                if(br.packageNum==pkPKey) matches.add(br);
-            }
-            return matches;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        int pkPKey=pk.pkey;
+        List<BackupReport> cached=getRows();
+        int size=cached.size();
+        List<BackupReport> matches=new ArrayList<BackupReport>(size);
+        for(int c=0;c<size;c++) {
+            BackupReport br=cached.get(c);
+            if(br.packageNum==pkPKey) matches.add(br);
         }
+        return matches;
     }
 
     List<BackupReport> getBackupReports(Server se) {
-        Profiler.startProfile(Profiler.UNKNOWN, BackupReportTable.class, "getBackupReports(Server)", null);
-        try {
-            int sePKey=se.pkey;
-            List<BackupReport> cached=getRows();
-            int size=cached.size();
-            List<BackupReport> matches=new ArrayList<BackupReport>(size);
-            for(int c=0;c<size;c++) {
-                BackupReport br=cached.get(c);
-                if(br.server==sePKey) matches.add(br);
-            }
-            return matches;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        int sePKey=se.pkey;
+        List<BackupReport> cached=getRows();
+        int size=cached.size();
+        List<BackupReport> matches=new ArrayList<BackupReport>(size);
+        for(int c=0;c<size;c++) {
+            BackupReport br=cached.get(c);
+            if(br.server==sePKey) matches.add(br);
         }
+        return matches;
     }
 
     public List<BackupReport> getRows() {

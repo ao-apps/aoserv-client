@@ -23,6 +23,11 @@ import java.util.*;
 public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefinition> implements Removable {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_CATEGORY_name = "category";
+    static final String COLUMN_MONTHLY_RATE_name = "monthly_rate";
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_VERSION_name = "version";
 
     String accounting;
     String category;

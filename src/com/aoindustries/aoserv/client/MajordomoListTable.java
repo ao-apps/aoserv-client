@@ -20,10 +20,18 @@ import java.util.*;
  */
 final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoList> {
 
-    public static final int DEFAULT_BACKUP_RETENTION=EmailList.DEFAULT_BACKUP_RETENTION;
-
     MajordomoListTable(AOServConnector connector) {
 	super(connector, MajordomoList.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MajordomoList.COLUMN_MAJORDOMO_SERVER_name+'.'+MajordomoServer.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
+        new OrderBy(MajordomoList.COLUMN_MAJORDOMO_SERVER_name+'.'+MajordomoServer.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MajordomoList.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
     int addMajordomoList(

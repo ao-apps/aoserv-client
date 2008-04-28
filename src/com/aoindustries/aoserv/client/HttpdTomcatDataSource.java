@@ -29,6 +29,8 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         COLUMN_PKEY=0,
         COLUMN_TOMCAT_CONTEXT=1
     ;
+    static final String COLUMN_TOMCAT_CONTEXT_name = "tomcat_context";
+    static final String COLUMN_NAME_name = "name";
 
     int tomcat_context;
     String name;

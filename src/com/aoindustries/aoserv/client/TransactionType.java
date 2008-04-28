@@ -28,6 +28,7 @@ import java.sql.*;
 public final class TransactionType extends GlobalObjectStringKey<TransactionType> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     public static final String
         HTTPD="httpd",

@@ -29,6 +29,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         COLUMN_ZONE=0,
         COLUMN_PACKAGE=2
     ;
+    static final String COLUMN_ZONE_name= "zone";
     
     public static final int DEFAULT_TTL = 43200;
 

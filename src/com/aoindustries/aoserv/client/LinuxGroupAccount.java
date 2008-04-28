@@ -30,6 +30,8 @@ import java.util.*;
 final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAccount> implements Removable {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_GROUP_NAME_name = "group_name";
+    static final String COLUMN_USERNAME_name = "username";
 
     /**
      * The maximum number of groups allowed for one account.

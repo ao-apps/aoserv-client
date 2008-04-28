@@ -22,10 +22,20 @@ final public class MajordomoVersionTable extends GlobalTableStringKey<MajordomoV
 	super(connector, MajordomoVersion.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MajordomoVersion.COLUMN_VERSION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
+    @Override
     public MajordomoVersion get(Object pkey) {
 	return getUniqueRow(MajordomoVersion.COLUMN_VERSION, pkey);
     }
 
+    @Override
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.MAJORDOMO_VERSIONS;
     }

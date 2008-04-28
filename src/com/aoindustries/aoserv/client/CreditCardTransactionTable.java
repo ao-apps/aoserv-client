@@ -25,6 +25,16 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
 	super(connector, CreditCardTransaction.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(CreditCardTransaction.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(CreditCardTransaction.COLUMN_AUTHORIZATION_TIME_name, ASCENDING),
+        new OrderBy(CreditCardTransaction.COLUMN_PKEY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addCreditCardTransaction(
         CreditCardProcessor processor,
         Business business,

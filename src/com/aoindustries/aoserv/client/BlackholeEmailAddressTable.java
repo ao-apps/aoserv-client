@@ -23,6 +23,16 @@ final public class BlackholeEmailAddressTable extends CachedTableIntegerKey<Blac
 	super(connector, BlackholeEmailAddress.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BlackholeEmailAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
+        new OrderBy(BlackholeEmailAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(BlackholeEmailAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_ADDRESS_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public BlackholeEmailAddress get(Object address) {
         return get(((Integer)address).intValue());
     }

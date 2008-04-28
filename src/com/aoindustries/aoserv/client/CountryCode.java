@@ -22,6 +22,7 @@ import java.sql.*;
 final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 
     static final int COLUMN_CODE=0;
+    static final String COLUMN_NAME_name = "name";
 
     /**
      * <code>CountryCode</code>s used as constants.

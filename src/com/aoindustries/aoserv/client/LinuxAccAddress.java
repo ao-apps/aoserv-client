@@ -31,16 +31,19 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_EMAIL_ADDRESS=1
+        COLUMN_EMAIL_ADDRESS=1,
+        COLUMN_LINUX_SERVER_ACCOUNT=2
     ;
+    static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
+    static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
 
     int email_address;
-    String linux_account;
+    int linux_server_account;
 
     public Object getColumn(int i) {
         if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
 	if(i==COLUMN_EMAIL_ADDRESS) return Integer.valueOf(email_address);
-	if(i==2) return linux_account;
+	if(i==COLUMN_LINUX_SERVER_ACCOUNT) return Integer.valueOf(linux_server_account);
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
@@ -50,14 +53,10 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
 	return emailAddressObject;
     }
 
-    public LinuxAccount getLinuxAccount() {
-	Username username=table.connector.usernames.get(linux_account);
-        // Username might have been filtered
-        if(username==null) return null;
-        // But if the username is available, so should be the LinuxAccount
-	LinuxAccount linuxAccountObject = username.getLinuxAccount();
-	if (linuxAccountObject == null) throw new WrappedException(new SQLException("Unable to find LinuxAccount: " + linux_account));
-	return linuxAccountObject;
+    public LinuxServerAccount getLinuxServerAccount() {
+	LinuxServerAccount lsa = table.connector.linuxServerAccounts.get(linux_server_account);
+	if(lsa == null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: " + linux_server_account));
+	return lsa;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -67,13 +66,13 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
     void initImpl(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
 	email_address=result.getInt(2);
-	linux_account=result.getString(3);
+	linux_server_account=result.getInt(3);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
 	email_address=in.readCompressedInt();
-	linux_account=in.readUTF().intern();
+	linux_server_account=in.readCompressedInt();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -89,12 +88,16 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
     }
 
     String toStringImpl() {
-        return getEmailAddress().toString()+"->"+linux_account;
+        return getEmailAddress().toString()+"->"+getLinuxServerAccount().toString();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeCompressedInt(email_address);
-	out.writeUTF(linux_account);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeUTF("TODO: Convert somehow"); // linux_account
+        } else {
+            out.writeCompressedInt(linux_server_account);
+        }
     }
 }

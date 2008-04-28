@@ -37,6 +37,15 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
 	super(connector, TechnologyVersion.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(TechnologyVersion.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(TechnologyVersion.COLUMN_VERSION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public void clearCache() {
         super.clearCache();
         synchronized(TechnologyVersionTable.class) {

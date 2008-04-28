@@ -25,6 +25,8 @@ import java.util.List;
 final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersion> {
 
     static final int COLUMN_VERSION=0;
+    static final String COLUMN_MINOR_VERSION_name = "minor_version";
+    static final String COLUMN_VERSION_name = "version";
 
     private String minorVersion;
     private int postgisVersion;

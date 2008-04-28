@@ -21,6 +21,7 @@ import java.sql.*;
 public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect> {
 
     static final int COLUMN_NET_BIND=0;
+    static final String COLUMN_NET_BIND_name = "net_bind";
 
     private int cps;
     private int cps_overload_sleep_time;

@@ -16,6 +16,16 @@ final public class SignupRequestOptionTable extends CachedTableIntegerKey<Signup
 	super(connector, SignupRequestOption.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(SignupRequestOption.COLUMN_REQUEST_name+'.'+SignupRequest.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(SignupRequestOption.COLUMN_REQUEST_name+'.'+SignupRequest.COLUMN_TIME_name, ASCENDING),
+        new OrderBy(SignupRequestOption.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SignupRequestOption get(Object pkey) {
 	return getUniqueRow(SignupRequestOption.COLUMN_PKEY, pkey);
     }

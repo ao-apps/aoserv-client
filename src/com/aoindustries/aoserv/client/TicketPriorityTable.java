@@ -19,6 +19,14 @@ final public class TicketPriorityTable extends GlobalTableStringKey<TicketPriori
 	super(connector, TicketPriority.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(TicketPriority.COLUMN_PRIORITY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.TICKET_PRIORITIES;
     }

@@ -28,6 +28,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
         COLUMN_TOMCAT_SITE=0,
         COLUMN_HTTPD_SHARED_TOMCAT=1
     ;
+    static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
     private int pkey;
 

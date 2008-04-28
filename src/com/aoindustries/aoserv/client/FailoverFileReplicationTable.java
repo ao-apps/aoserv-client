@@ -23,17 +23,20 @@ final public class FailoverFileReplicationTable extends CachedTableIntegerKey<Fa
 	super(connector, FailoverFileReplication.class);
     }
 
-    List<FailoverFileReplication> getFailoverFileReplications(AOServer from_ao_server) {
-        int aoPKey=from_ao_server.pkey;
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING)
+    };
 
-        List<FailoverFileReplication> cached=getRows();
-	int len=cached.size();
-        List<FailoverFileReplication> matches=new ArrayList<FailoverFileReplication>(len);
-	for (int c = 0; c < len; c++) {
-            FailoverFileReplication ffr=cached.get(c);
-            if(ffr.from_server==aoPKey) matches.add(ffr);
-	}
-        return matches;
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
+    List<FailoverFileReplication> getFailoverFileReplications(Server server) {
+        return getIndexedRows(FailoverFileReplication.COLUMN_SERVER, server.pkey);
     }
 
     public FailoverFileReplication get(Object pkey) {

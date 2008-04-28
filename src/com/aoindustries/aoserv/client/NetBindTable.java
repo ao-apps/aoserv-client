@@ -25,6 +25,18 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
         super(connector, NetBind.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(NetBind.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_PORT_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_NET_PROTOCOL_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addNetBind(
         AOServer ao,
         Package pk,

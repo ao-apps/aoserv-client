@@ -30,6 +30,10 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         COLUMN_AO_SERVER=2,
         COLUMN_IP_ADDRESS=3
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_IP_ADDRESS_name = "ip_address";
+    static final String COLUMN_PORT_name = "port";
+    static final String COLUMN_NET_PROTOCOL_name = "net_protocol";
 
     String packageName;
     int ao_server;
@@ -320,61 +324,61 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
             if(
                 pkey==ao.daemon_bind
                 || pkey==ao.daemon_connect_bind
-            ) reasons.add(new CannotRemoveReason<AOServer>("Used as aoserv-daemon port for server: "+ao.getServer().getHostname(), ao));
-            if(pkey==ao.jilter_bind) reasons.add(new CannotRemoveReason<AOServer>("Used as aoserv-daemon jilter port for server: "+ao.getServer().getHostname(), ao));
+            ) reasons.add(new CannotRemoveReason<AOServer>("Used as aoserv-daemon port for server: "+ao.getHostname(), ao));
+            if(pkey==ao.jilter_bind) reasons.add(new CannotRemoveReason<AOServer>("Used as aoserv-daemon jilter port for server: "+ao.getHostname(), ao));
         }
 
         // httpd_binds
         for(HttpdBind hb : conn.httpdBinds.getRows()) {
             if(equals(hb.getNetBind())) {
                 HttpdServer hs=hb.getHttpdServer();
-                reasons.add(new CannotRemoveReason<HttpdBind>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getServer().getHostname(), hb));
+                reasons.add(new CannotRemoveReason<HttpdBind>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hb));
             }
         }
 
         // httpd_jboss_sites
         for(HttpdJBossSite hjb : conn.httpdJBossSites.getRows()) {
             HttpdSite hs=hjb.getHttpdTomcatSite().getHttpdSite();
-            if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getServer().getHostname(), hjb));
-            if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getServer().getHostname(), hjb));
-            if(equals(hjb.getRmiBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as RMI port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getServer().getHostname(), hjb));
-            if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getServer().getHostname(), hjb));
-            if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getServer().getHostname(), hjb));
+            if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+            if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+            if(equals(hjb.getRmiBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as RMI port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+            if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+            if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
         }
         
         // httpd_shared_tomcats
         for(HttpdSharedTomcat hst : conn.httpdSharedTomcats.getRows()) {
-            if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getServer().getHostname(), hst));
+            if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
         }
         
         // httpd_tomcat_std_sites
         for(HttpdTomcatStdSite hts : conn.httpdTomcatStdSites.getRows()) {
             HttpdSite hs=hts.getHttpdTomcatSite().getHttpdSite();
-            if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdTomcatStdSite>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getServer().getHostname(), hts));
+            if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdTomcatStdSite>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
         }
 
         // httpd_workers
         for(HttpdWorker hw : conn.httpdWorkers.getRows()) {
             if(equals(hw.getNetBind())) {
                 HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
-                if(hst!=null) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getServer().getHostname(), hst));
+                if(hst!=null) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
                 
                 HttpdTomcatSite hts=hw.getHttpdTomcatSite();
                 if(hts!=null) {
                     HttpdSite hs=hts.getHttpdSite();
-                    reasons.add(new CannotRemoveReason<HttpdTomcatSite>("Used as mod_jk worker for Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getServer().getHostname(), hts));
+                    reasons.add(new CannotRemoveReason<HttpdTomcatSite>("Used as mod_jk worker for Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
                 }
             }
         }
         
         // mysql_servers
         for(MySQLServer ms : conn.mysqlServers.getRows()) {
-            if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<MySQLServer>("Used for MySQL server "+ms.getName()+" on "+ms.getAOServer().getServer().getHostname(), ms));
+            if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<MySQLServer>("Used for MySQL server "+ms.getName()+" on "+ms.getAOServer().getHostname(), ms));
         }
 
         // postgres_servers
         for(PostgresServer ps : conn.postgresServers.getRows()) {
-            if(equals(ps.getNetBind())) reasons.add(new CannotRemoveReason<PostgresServer>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getAOServer().getServer().getHostname(), ps));
+            if(equals(ps.getNetBind())) reasons.add(new CannotRemoveReason<PostgresServer>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getAOServer().getHostname(), ps));
         }
 
         return reasons;

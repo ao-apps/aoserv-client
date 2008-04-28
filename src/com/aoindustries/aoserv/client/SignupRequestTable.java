@@ -24,6 +24,15 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
 	super(connector, SignupRequest.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(SignupRequest.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(SignupRequest.COLUMN_TIME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SignupRequest get(Object pkey) {
 	return getUniqueRow(SignupRequest.COLUMN_PKEY, pkey);
     }
@@ -37,7 +46,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
     }
     
     /**
-     * Encrypts the signup request details and adds to the master database.  The first encryption key flagged to use for signup_signer is used as the signer
+     * Encrypts the signup request details and adds to the master database.  The first encryption key flagged to use for signup_from is used as the from
      * and the first key flagged to use as signup_recipient as the recipient.
      */
     public int addSignupRequest(
@@ -104,18 +113,18 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
         if(billing_zip==null) throw new NullPointerException("billing_zip is null");
         if(billing_zip.indexOf('\n')!=-1) throw new IllegalArgumentException("billing_zip may not contain '\n'");
 
-        // Find the signer and recipient keys
-        EncryptionKey signer = null;
+        // Find the from and recipient keys
+        EncryptionKey from = null;
         EncryptionKey recipient = null;
         String accounting = business.getAccounting();
         for(EncryptionKey encryptionKey : connector.getEncryptionKeys().getRows()) {
             if(encryptionKey.accounting.equals(accounting)) {
-                if(signer==null && encryptionKey.getSignupSigner()) signer = encryptionKey;
+                if(from==null && encryptionKey.getSignupFrom()) from = encryptionKey;
                 if(recipient==null && encryptionKey.getSignupRecipient()) recipient = encryptionKey;
-                if(signer!=null && recipient!=null) break;
+                if(from!=null && recipient!=null) break;
             }
         }
-        if(signer==null) throw new SQLException("Unable to find signup signer for accounting="+accounting);
+        if(from==null) throw new SQLException("Unable to find signup from for accounting="+accounting);
         if(recipient==null) throw new SQLException("Unable to find signup recipient for accounting="+accounting);
 
         // Encrypt the message
@@ -130,7 +139,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
             + billing_state + "\n"
             + billing_zip + "\n"
         ;
-        String ciphertext = signer.encrypt(recipient, plaintext);
+        String ciphertext = from.encrypt(recipient, plaintext);
 
         // Send the request to the master server
         IntList invalidateList;
@@ -171,6 +180,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
             out.writeBoolean(billing_use_monthly);
             out.writeBoolean(billing_pay_one_year);
             // Encrypted values
+            out.writeCompressedInt(from.getPkey());
             out.writeCompressedInt(recipient.getPkey());
             out.writeUTF(ciphertext);
             // options

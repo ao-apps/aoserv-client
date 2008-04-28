@@ -35,26 +35,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         COLUMN_ACCOUNTING=2,
         COLUMN_PACKAGE_DEFINITION=3
     ;
-
-    /**
-     * The default daily SMTP limit for a new package.
-     */
-    public static final int DEFAULT_DAILY_SMTP_IN_LIMIT=256;
-    
-    /**
-     * The default daily SMTP bandwidth for a new package.
-     */
-    public static final long DEFAULT_DAILY_SMTP_IN_BANDWIDTH_LIMIT=64*1024*1024;
-
-    /**
-     * The default daily SMTP limit for a new package.
-     */
-    public static final int DEFAULT_DAILY_SMTP_OUT_LIMIT=256;
-    
-    /**
-     * The default daily SMTP bandwidth for a new package.
-     */
-    public static final long DEFAULT_DAILY_SMTP_OUT_BANDWIDTH_LIMIT=64*1024*1024;
+    static final String COLUMN_NAME_name = "name";
 
     /**
      * The default inbound email burst before rate limiting.
@@ -91,10 +72,6 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     int package_definition;
     private long created;
     private String created_by;
-    private int daily_smtp_in_limit;
-    private long daily_smtp_in_bandwidth_limit;
-    private int daily_smtp_out_limit;
-    private long daily_smtp_out_bandwidth_limit;
     int disable_log;
     private int email_in_burst;
     private float email_in_rate;
@@ -117,10 +94,6 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 
     public void addLinuxGroup(String name, String type) {
 	table.connector.linuxGroups.addLinuxGroup(name, this, type);
-    }
-
-    public int addSendmailSmtpStat(long date, AOServer ao, int in_count, long in_bandwidth, int out_count, long out_bandwidth) {
-        return table.connector.sendmailSmtpStats.addSendmailSmtpStat(this, date, ao, in_count, in_bandwidth, out_count, out_bandwidth);
     }
 
     public void addUsername(String username) {
@@ -175,17 +148,13 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
             case COLUMN_PACKAGE_DEFINITION: return Integer.valueOf(package_definition);
             case 4: return new java.sql.Date(created);
             case 5: return created_by;
-            case 6: return Integer.valueOf(daily_smtp_in_limit);
-            case 7: return Long.valueOf(daily_smtp_in_bandwidth_limit);
-            case 8: return Integer.valueOf(daily_smtp_out_limit);
-            case 9: return Long.valueOf(daily_smtp_out_bandwidth_limit);
-            case 10: return disable_log==-1?null:Integer.valueOf(disable_log);
-            case 11: return email_in_burst==-1 ? null : Integer.valueOf(email_in_burst);
-            case 12: return Float.isNaN(email_in_rate) ? null : Float.valueOf(email_in_rate);
-            case 13: return email_out_burst==-1 ? null : Integer.valueOf(email_out_burst);
-            case 14: return Float.isNaN(email_out_rate) ? null : Float.valueOf(email_out_rate);
-            case 15: return email_relay_burst==-1 ? null : Integer.valueOf(email_relay_burst);
-            case 16: return Float.isNaN(email_relay_rate) ? null : Float.valueOf(email_relay_rate);
+            case 6: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 7: return email_in_burst==-1 ? null : Integer.valueOf(email_in_burst);
+            case 8: return Float.isNaN(email_in_rate) ? null : Float.valueOf(email_in_rate);
+            case 9: return email_out_burst==-1 ? null : Integer.valueOf(email_out_burst);
+            case 10: return Float.isNaN(email_out_rate) ? null : Float.valueOf(email_out_rate);
+            case 11: return email_relay_burst==-1 ? null : Integer.valueOf(email_relay_burst);
+            case 12: return Float.isNaN(email_relay_rate) ? null : Float.valueOf(email_relay_rate);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -202,22 +171,6 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 
     public List<CvsRepository> getCvsRepositories() {
 	return table.connector.cvsRepositories.getCvsRepositories(this);
-    }
-
-    public int getDailySmtpInLimit() {
-        return daily_smtp_in_limit;
-    }
-
-    public long getDailySmtpInBandwidthLimit() {
-        return daily_smtp_in_bandwidth_limit;
-    }
-
-    public int getDailySmtpOutLimit() {
-        return daily_smtp_out_limit;
-    }
-
-    public long getDailySmtpOutBandwidthLimit() {
-        return daily_smtp_out_bandwidth_limit;
     }
 
     public DisableLog getDisableLog() {
@@ -349,16 +302,20 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return table.connector.postgresUsers.getPostgresUsers(this);
     }
 
+    public Server getServer(String name) {
+	return table.connector.servers.getServer(this, name);
+    }
+
+    public List<Server> getServers() {
+	return table.connector.servers.getServers(this);
+    }
+
     public List<EmailDomain> getEmailDomains() {
 	return table.connector.emailDomains.getEmailDomains(this);
     }
 
     public List<EmailSmtpRelay> getEmailSmtpRelays() {
 	return table.connector.emailSmtpRelays.getEmailSmtpRelays(this);
-    }
-
-    public List<SendmailSmtpStat> getSendmailSmtpStats() {
-	return table.connector.sendmailSmtpStats.getSendmailSmtpStats(this);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -378,10 +335,6 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	Timestamp temp5 = result.getTimestamp(pos++);
 	created = temp5 == null ? -1 : temp5.getTime();
 	created_by = result.getString(pos++);
-        daily_smtp_in_limit=result.getInt(pos++);
-        daily_smtp_in_bandwidth_limit=result.getLong(pos++);
-        daily_smtp_out_limit=result.getInt(pos++);
-        daily_smtp_out_bandwidth_limit=result.getLong(pos++);
         disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log = -1;
         email_in_burst=result.getInt(pos++);
@@ -409,10 +362,6 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         package_definition=in.readCompressedInt();
 	created=in.readLong();
 	created_by=in.readUTF().intern();
-        daily_smtp_in_limit=in.readCompressedInt();
-        daily_smtp_in_bandwidth_limit=in.readLong();
-        daily_smtp_out_limit=in.readCompressedInt();
-        daily_smtp_out_bandwidth_limit=in.readLong();
         disable_log=in.readCompressedInt();
         email_in_burst=in.readCompressedInt();
         email_in_rate=in.readFloat();
@@ -441,10 +390,12 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
             out.writeCompressedInt(-1);
             out.writeCompressedInt(100);
         }
-        out.writeCompressedInt(daily_smtp_in_limit);
-        out.writeLong(daily_smtp_in_bandwidth_limit);
-        out.writeCompressedInt(daily_smtp_out_limit);
-        out.writeLong(daily_smtp_out_bandwidth_limit);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeCompressedInt(256);
+            out.writeLong(64*1024*1024);
+            out.writeCompressedInt(256);
+            out.writeLong(64*1024*1024);
+        }
         out.writeCompressedInt(disable_log);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_24)>=0) {
             out.writeCompressedInt(email_in_burst);

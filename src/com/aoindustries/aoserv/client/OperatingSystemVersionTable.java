@@ -25,6 +25,14 @@ final public class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
 	super(connector, OperatingSystemVersion.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(OperatingSystemVersion.COLUMN_SORT_ORDER_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     OperatingSystemVersion getOperatingSystemVersion(OperatingSystem os, String version, Architecture architecture) {
         Profiler.startProfile(Profiler.FAST, OperatingSystemVersionTable.class, "getOperatingSystemVersion(OperatingSystem,String,Architecture)", null);
         try {

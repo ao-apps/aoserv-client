@@ -28,6 +28,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
         COLUMN_PKEY=0,
         COLUMN_EMAIL_RELAY=1
     ;
+    static final String COLUMN_PKEY_name = "pkey";
 
     protected AOServTable<Integer,SpamEmailMessage> table;
 

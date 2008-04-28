@@ -27,6 +27,8 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         COLUMN_EMAIL_LIST=0,
         COLUMN_MAJORDOMO_SERVER=1
     ;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_MAJORDOMO_SERVER_name = "majordomo_server";
 
     /**
      * The maximum length of an email list name.

@@ -41,11 +41,8 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
         super(connector, SchemaColumn.class);
     }
 
-    protected String[] getDefaultSortColumnsImpl() {
-        return null;
-    }
-
-    protected boolean[] getDefaultSortOrdersImpl() {
+    @Override
+    OrderBy[] getDefaultOrderBy() {
         return null;
     }
 

@@ -19,6 +19,14 @@ final public class TicketStatusTable extends GlobalTableStringKey<TicketStatus> 
 	super(connector, TicketStatus.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(TicketStatus.COLUMN_STATUS_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.TICKET_STATI;
     }

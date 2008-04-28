@@ -24,6 +24,16 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
 	super(connector, EmailAddress.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
+        new OrderBy(EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(EmailAddress.COLUMN_ADDRESS_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addEmailAddress(String address, EmailDomain domainObject) {
 	if (!EmailAddress.isValidFormat(address)) throw new WrappedException(new SQLException("Invalid email address: " + address));
 	return connector.requestIntQueryIL(

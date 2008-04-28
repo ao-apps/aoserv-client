@@ -22,6 +22,11 @@ import java.sql.*;
  */
 final public class DaemonProfile extends AOServObject<Object,DaemonProfile> implements SingleTableObject<Object,DaemonProfile> {
 
+    static final String COLUMN_SERVER_name= "server";
+    static final String COLUMN_CLASSNAME_name= "classname";
+    static final String COLUMN_METHOD_NAME_name= "method_name";
+    static final String COLUMN_PARAMETER_name= "parameter";
+    
     public static DaemonProfile getDaemonProfile(String server, MethodProfile profile) {
         Object param1=profile.getParameter1();
         return new DaemonProfile(

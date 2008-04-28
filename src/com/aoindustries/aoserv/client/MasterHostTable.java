@@ -22,6 +22,15 @@ final public class MasterHostTable extends CachedTableIntegerKey<MasterHost> {
 	super(connector, MasterHost.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MasterHost.COLUMN_USERNAME_name, ASCENDING),
+        new OrderBy(MasterHost.COLUMN_HOST_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public MasterHost get(Object pkey) {
 	return getUniqueRow(MasterHost.COLUMN_PKEY, pkey);
     }

@@ -23,6 +23,7 @@ import java.sql.*;
 final public class OperatingSystemVersion extends GlobalObjectIntegerKey<OperatingSystemVersion> {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_SORT_ORDER_name = "sort_order";
 
     public static final String
         //VERSION_1_4="1.4",

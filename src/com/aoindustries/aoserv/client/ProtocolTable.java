@@ -19,6 +19,15 @@ final public class ProtocolTable extends GlobalTableStringKey<Protocol> {
 	super(connector, Protocol.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Protocol.COLUMN_PORT_name, ASCENDING),
+        new OrderBy(Protocol.COLUMN_NET_PROTOCOL_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public Protocol get(Object pkey) {
 	return getUniqueRow(Protocol.COLUMN_PROTOCOL, pkey);
     }

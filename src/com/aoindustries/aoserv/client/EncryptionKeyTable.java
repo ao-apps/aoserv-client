@@ -19,6 +19,15 @@ final public class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKe
 	super(connector, EncryptionKey.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EncryptionKey.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(EncryptionKey.COLUMN_ID_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public EncryptionKey get(Object pkey) {
 	return getUniqueRow(EncryptionKey.COLUMN_PKEY, pkey);
     }

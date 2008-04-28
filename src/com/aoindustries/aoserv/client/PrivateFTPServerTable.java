@@ -21,6 +21,18 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
 	super(connector, PrivateFTPServer.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING),
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_NET_PROTOCOL_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public PrivateFTPServer get(Object pkey) {
 	return getUniqueRow(PrivateFTPServer.COLUMN_NET_BIND, pkey);
     }

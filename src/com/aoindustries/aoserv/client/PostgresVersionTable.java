@@ -19,6 +19,14 @@ final public class PostgresVersionTable extends GlobalTableIntegerKey<PostgresVe
 	super(connector, PostgresVersion.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PostgresVersion.COLUMN_VERSION_name+'.'+TechnologyVersion.COLUMN_VERSION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public PostgresVersion get(Object pkey) {
 	return getUniqueRow(PostgresVersion.COLUMN_VERSION, pkey);
     }

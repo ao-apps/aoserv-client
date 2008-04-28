@@ -21,6 +21,7 @@ import java.sql.*;
 final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
 
     static final int COLUMN_TYPE=0;
+    static final String COLUMN_TYPE_name = "type";
 
     private String description;
 

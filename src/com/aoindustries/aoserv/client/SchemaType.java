@@ -64,6 +64,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         ZIP=29,
         ZONE=30
     ;
+    static final String DATE_name = "date";
 
     private String type;
 

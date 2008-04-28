@@ -28,6 +28,8 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
         COLUMN_PKEY=0,
         COLUMN_ACCOUNTING=2
     ;
+    static final String COLUMN_PKEY_name = "pkey";
+    static final String COLUMN_CREATE_TIME_name = "create_time";
 
     public static final int NO_TRANSACTION=-1;
 

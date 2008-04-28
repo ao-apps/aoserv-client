@@ -30,6 +30,8 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
         COLUMN_PKEY=0,
         COLUMN_EMAIL_ADDRESS=1
     ;
+    static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
+    static final String COLUMN_DESTINATION_name = "destination";
 
     int email_address;
     String destination;

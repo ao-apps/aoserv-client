@@ -28,6 +28,15 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 	super(connector, LinuxServerAccount.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(LinuxServerAccount.COLUMN_USERNAME_name, ASCENDING),
+        new OrderBy(LinuxServerAccount.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addLinuxServerAccount(LinuxAccount linuxAccount, AOServer aoServer, String home) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxServerAccountTable.class, "addLinuxServerAccount(LinuxAccount,AOServer,String)", null);
         try {
@@ -148,12 +157,12 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
                     }
                 }
             }
-            if(badPasswordLSA!=null) throw new BadPasswordException("The password does not match the password for the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getAOServer().getServer().getHostname()+"\" server.");
+            if(badPasswordLSA!=null) throw new BadPasswordException("The password does not match the password for the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getAOServer().getHostname()+"\" server.");
             if(disabledLSA!=null) {
                 DisableLog dl=disabledLSA.getDisableLog();
                 String reason=dl==null?null:dl.getDisableReason();
-                if(reason==null) throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getServer().getHostname()+"\" server has been disabled for an unspecified reason.");
-                else throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getServer().getHostname()+"\" server has been disabled for the following reason: "+reason);
+                if(reason==null) throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getHostname()+"\" server has been disabled for an unspecified reason.");
+                else throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getHostname()+"\" server has been disabled for the following reason: "+reason);
             }
             return null;
         } finally {
@@ -183,19 +192,16 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
                     AOServer ao=ed.getAOServer();
                     EmailAddress ea=ed.getEmailAddress(address);
                     if(ea!=null) {
-                        List<LinuxAccount> las=ea.getLinuxAccounts();
-                        int lasLen=las.size();
-                        for(int d=0;d<lasLen;d++) {
-                            LinuxAccount la=las.get(d);
-                            LinuxServerAccount lsa=la.getLinuxServerAccount(ao);
-                            if(lsa!=null) {
-                                if(lsa.disable_log!=-1) {
-                                    if(disabledLSA==null) disabledLSA=lsa;
-                                } else {
-                                    if(lsa.passwordMatches(password)) return lsa;
-                                    else {
-                                        if(badPasswordLSA==null) badPasswordLSA=lsa;
-                                    }
+                        List<LinuxServerAccount> lsas=ea.getLinuxServerAccounts();
+                        int lsasLen=lsas.size();
+                        for(int d=0;d<lsasLen;d++) {
+                            LinuxServerAccount lsa=lsas.get(d);
+                            if(lsa.disable_log!=-1) {
+                                if(disabledLSA==null) disabledLSA=lsa;
+                            } else {
+                                if(lsa.passwordMatches(password)) return lsa;
+                                else {
+                                    if(badPasswordLSA==null) badPasswordLSA=lsa;
                                 }
                             }
                         }
@@ -203,12 +209,12 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
                 }
             }
 
-            if(badPasswordLSA!=null) throw new BadPasswordException("The \""+address+"@"+domain+"\" address resolves to the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getAOServer().getServer().getHostname()+"\" server, but the password does not match.");
+            if(badPasswordLSA!=null) throw new BadPasswordException("The \""+address+"@"+domain+"\" address resolves to the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getAOServer().getHostname()+"\" server, but the password does not match.");
             if(disabledLSA!=null) {
                 DisableLog dl=disabledLSA.getDisableLog();
                 String reason=dl==null?null:dl.getDisableReason();
-                if(reason==null) throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getServer().getHostname()+"\" server, but the account has been disabled for an unspecified reason.");
-                else throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getServer().getHostname()+"\" server, but the account has been disabled for the following reason: "+reason);
+                if(reason==null) throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getHostname()+"\" server, but the account has been disabled for an unspecified reason.");
+                else throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getHostname()+"\" server, but the account has been disabled for the following reason: "+reason);
             }
             return null;
         } finally {
@@ -432,33 +438,6 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
                         args[1],
                         args[2],
                         args[3]
-                    );
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_CRON_BACKUP_RETENTION)) {
-                if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_CRON_BACKUP_RETENTION, args, 3, err)) {
-                    connector.simpleAOClient.setLinuxServerAccountCronBackupRetention(
-                        args[1],
-                        args[2],
-                        AOSH.parseShort(args[3], "backup_retention")
-                    );
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_HOME_BACKUP_RETENTION)) {
-                if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_HOME_BACKUP_RETENTION, args, 3, err)) {
-                    connector.simpleAOClient.setLinuxServerAccountHomeBackupRetention(
-                        args[1],
-                        args[2],
-                        AOSH.parseShort(args[3], "backup_retention")
-                    );
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_INBOX_BACKUP_RETENTION)) {
-                if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_INBOX_BACKUP_RETENTION, args, 3, err)) {
-                    connector.simpleAOClient.setLinuxServerAccountInboxBackupRetention(
-                        args[1],
-                        args[2],
-                        AOSH.parseShort(args[3], "backup_retention")
                     );
                 }
                 return true;

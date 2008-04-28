@@ -27,6 +27,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         COLUMN_PKEY=0,
         COLUMN_HTTPD_SITE=1
     ;
+    static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
     private static String validateNonQuoteAscii(String s, String label) {
         // Is only comprised of space through ~ (ASCII), not including "

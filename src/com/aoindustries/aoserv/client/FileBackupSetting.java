@@ -22,99 +22,59 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_SERVER=1
+        COLUMN_REPLICATION=1
     ;
+    static final String COLUMN_REPLICATION_name = "replication";
+    static final String COLUMN_PATH_name = "path";
 
-    int server;
+    int replication;
     String path;
-    private int package_num;
-    short backup_level;
-    private short backup_retention;
-    boolean recurse;
+    private boolean backup_enabled;
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
-        List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        Server se=getServer();
-        if(
-            !table
-                .connector
-                .getThisBusinessAdministrator()
-                .getUsername()
-                .getPackage()
-                .getBusiness()
-                .getBusinessServer(se)
-                .canConfigureBackup()
-        ) reasons.add(new CannotRemoveReason<Server>("Not allowed to configure backup settings on "+se.getHostname(), se));
-        return reasons;
+        return Collections.emptyList();
     }
 
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_SERVER: return Integer.valueOf(server);
+            case COLUMN_REPLICATION: return Integer.valueOf(replication);
             case 2: return path;
-            case 3: return Integer.valueOf(package_num);
-            case 4: return Short.valueOf(backup_level);
-            case 5: return Short.valueOf(backup_retention);
-            case 6: return recurse?Boolean.TRUE:Boolean.FALSE;
+            case 3: return backup_enabled;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
-    public Server getServer() {
-        Server se=table.connector.servers.get(server);
-        if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
-        return se;
+    public FailoverFileReplication getReplication() {
+        FailoverFileReplication ffr = table.connector.failoverFileReplications.get(replication);
+        if(ffr==null) throw new WrappedException(new SQLException("Unable to find FailoverFileReplication: "+replication));
+        return ffr;
     }
 
     public String getPath() {
         return path;
     }
     
-    public Package getPackage() {
-        Package pk=table.connector.packages.get(package_num);
-        if(pk==null) throw new WrappedException(new SQLException("Unable to find Package: "+package_num));
-        return pk;
+    public boolean getBackupEnabled() {
+        return backup_enabled;
     }
     
-    public BackupLevel getBackupLevel() {
-        BackupLevel bl=table.connector.backupLevels.get(backup_level);
-        if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+backup_level));
-        return bl;
-    }
-
-    public BackupRetention getBackupRetention() {
-        BackupRetention br=table.connector.backupRetentions.get(backup_retention);
-        if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+backup_retention));
-        return br;
-    }
-    
-    public boolean isRecursible() {
-        return recurse;
-    }
-
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.FILE_BACKUP_SETTINGS;
     }
 
     void initImpl(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
-        server=result.getInt(2);
+        replication=result.getInt(2);
         path=result.getString(3);
-        package_num=result.getInt(4);
-        backup_level=result.getShort(5);
-        backup_retention=result.getShort(6);
-        recurse=result.getBoolean(7);
+        backup_enabled = result.getBoolean(4);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-        server=in.readCompressedInt();
+        replication=in.readCompressedInt();
         path=in.readUTF();
-        package_num=in.readCompressedInt();
-        backup_level=in.readShort();
-        backup_retention=in.readShort();
-        recurse=in.readBoolean();
+        backup_enabled = in.readBoolean();
     }
 
     public void remove() {
@@ -127,29 +87,31 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
 
     public void setSettings(
         String path,
-        Package packageObj,
-        BackupLevel backupLevel,
-        BackupRetention backupRetention,
-        boolean recurse
+        boolean backupEnabled
     ) {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
             pkey,
             path,
-            packageObj.pkey,
-            backupLevel.level,
-            backupRetention.days,
-            recurse
+            backupEnabled
         );
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeCompressedInt(server);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+            out.writeCompressedInt(replication);
+        } else {
+            out.writeCompressedInt(-1); // server
+        }
         out.writeUTF(path);
-        out.writeCompressedInt(package_num);
-        out.writeShort(backup_level);
-        out.writeShort(backup_retention);
-        out.writeBoolean(recurse);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+            out.writeBoolean(backup_enabled);
+        } else {
+            out.writeCompressedInt(308); // package (hard-coded AOINDUSTRIES)
+            out.writeShort(backup_enabled ? 1 : 0); // backup_level
+            out.writeShort(7); // backup_retention
+            out.writeBoolean(backup_enabled); // recurse
+        }
     }
 }

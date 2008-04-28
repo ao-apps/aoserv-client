@@ -22,6 +22,14 @@ final public class DNSTypeTable extends GlobalTableStringKey<DNSType> {
 	super(connector, DNSType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(DNSType.COLUMN_DESCRIPTION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public DNSType get(Object pkey) {
 	return getUniqueRow(DNSType.COLUMN_TYPE, pkey);
     }

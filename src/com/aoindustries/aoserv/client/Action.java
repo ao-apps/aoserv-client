@@ -25,6 +25,10 @@ import java.sql.*;
  */
 final public class Action extends AOServObject<Integer,Action> implements SingleTableObject<Integer,Action> {
 
+    static final String COLUMN_TICKET_ID_name = "table_id";
+    static final String COLUMN_TIME_name = "time";
+    static final String COLUMN_PKEY_name = "pkey";
+
     private int pkey;
     private int ticket_id;
     private String administrator;

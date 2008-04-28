@@ -24,12 +24,13 @@ import java.sql.*;
  */
 final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersion> {
 
+    static final int COLUMN_VERSION=0;
+    static final String COLUMN_VERSION_name = "version";
+
     /**
      * The default Majordomo version.
      */
     public static final String DEFAULT_VERSION="1.94.5";
-
-    static final int COLUMN_VERSION=0;
 
     private long created;
 

@@ -1,14 +1,17 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2003-2007 by AO Industries, Inc.,
+ * Copyright 2003-2008 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>BackupReport</code> is generated once per day per package and per server.  This information
@@ -22,6 +25,9 @@ import java.sql.*;
 final public class BackupReport extends AOServObject<Integer,BackupReport> implements SingleTableObject<Integer,BackupReport> {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_DATE_name = "date";
+    static final String COLUMN_SERVER_name = "server";
+    static final String COLUMN_PACKAGE_name = "package";
 
     /**
      * The hour of the day (in master server time zone) that backup reports will be created.
@@ -34,21 +40,20 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
     public static final int BACKUP_REPORT_MINUTE=15;
 
     /**
-     * The maximum number of days that reports will be maintained.  This is roughly one year.
+     * The maximum number of days that reports will be maintained.  This is roughly 5 years.
      */
-    public static final int MAX_REPORT_AGE=366;
+    public static final int MAX_REPORT_AGE=2*366+3*365; // Assumes worst-case of two leap years in 5-year span.
 
     private int pkey;
     int server;
     int packageNum;
     private long date;
     private int file_count;
-    private long uncompressed_size;
-    private long compressed_size;
     private long disk_size;
 
     protected AOServTable<Integer,BackupReport> table;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof BackupReport
@@ -63,9 +68,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
             case 2: return Integer.valueOf(packageNum);
             case 3: return new Date(date);
             case 4: return Integer.valueOf(file_count);
-            case 5: return Long.valueOf(uncompressed_size);
-            case 6: return Long.valueOf(compressed_size);
-            case 7: return Long.valueOf(disk_size);
+            case 5: return Long.valueOf(disk_size);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -94,14 +97,6 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
         return file_count;
     }
     
-    public long getUncompressedSize() {
-        return uncompressed_size;
-    }
-    
-    public long getCompressedSize() {
-        return compressed_size;
-    }
-    
     public long getDiskSize() {
         return disk_size;
     }
@@ -118,6 +113,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	return SchemaTable.TableID.BACKUP_REPORTS;
     }
 
+    @Override
     int hashCodeImpl() {
 	return pkey;
     }
@@ -128,9 +124,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
         packageNum=result.getInt(3);
         date=result.getDate(4).getTime();
         file_count=result.getInt(5);
-        uncompressed_size=result.getLong(6);
-        compressed_size=result.getLong(7);
-        disk_size=result.getLong(8);
+        disk_size=result.getLong(6);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -139,8 +133,6 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
         packageNum=in.readCompressedInt();
         date=in.readLong();
         file_count=in.readInt();
-        uncompressed_size=in.readLong();
-        compressed_size=in.readLong();
         disk_size=in.readLong();
     }
 
@@ -155,8 +147,10 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
         out.writeCompressedInt(packageNum);
         out.writeLong(date);
         out.writeInt(file_count);
-        out.writeLong(uncompressed_size);
-        out.writeLong(compressed_size);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeLong(0); // uncompressed_size
+            out.writeLong(0); // compressed_size
+        }
         out.writeLong(disk_size);
     }
 }

@@ -21,6 +21,9 @@ import java.sql.*;
 final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_TIME_name = "time";
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_PKEY_name = "pkey";
 
     private long time;
     private String accounting;

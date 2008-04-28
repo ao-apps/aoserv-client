@@ -29,25 +29,21 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         COLUMN_ACCOUNTING=1,
         COLUMN_SERVER=2
     ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_SERVER_name = "server";
 
     String accounting;
     int server;
     boolean is_default;
     private boolean
-        can_configure_backup,
         can_control_apache,
         can_control_cron,
-        can_control_interbase,
         can_control_mysql,
         can_control_postgresql,
         can_control_xfs,
         can_control_xvfb
     ;
     
-    public boolean canConfigureBackup() {
-        return can_configure_backup;
-    }
-
     public boolean canControlApache() {
         return can_control_apache;
     }
@@ -56,10 +52,6 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         return can_control_cron;
     }
 
-    public boolean canControlInterBase() {
-        return can_control_interbase;
-    }
-    
     public boolean canControlMySQL() {
         return can_control_mysql;
     }
@@ -88,14 +80,12 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
             case COLUMN_ACCOUNTING: return accounting;
             case COLUMN_SERVER: return Integer.valueOf(server);
             case 3: return is_default?Boolean.TRUE:Boolean.FALSE;
-            case 4: return can_configure_backup?Boolean.TRUE:Boolean.FALSE;
-            case 5: return can_control_apache?Boolean.TRUE:Boolean.FALSE;
-            case 6: return can_control_cron?Boolean.TRUE:Boolean.FALSE;
-            case 7: return can_control_interbase?Boolean.TRUE:Boolean.FALSE;
-            case 8: return can_control_mysql?Boolean.TRUE:Boolean.FALSE;
-            case 9: return can_control_postgresql?Boolean.TRUE:Boolean.FALSE;
-            case 10: return can_control_xfs?Boolean.TRUE:Boolean.FALSE;
-            case 11: return can_control_xvfb?Boolean.TRUE:Boolean.FALSE;
+            case 4: return can_control_apache?Boolean.TRUE:Boolean.FALSE;
+            case 5: return can_control_cron?Boolean.TRUE:Boolean.FALSE;
+            case 6: return can_control_mysql?Boolean.TRUE:Boolean.FALSE;
+            case 7: return can_control_postgresql?Boolean.TRUE:Boolean.FALSE;
+            case 8: return can_control_xfs?Boolean.TRUE:Boolean.FALSE;
+            case 9: return can_control_xvfb?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -115,14 +105,12 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 	accounting=result.getString(2);
 	server=result.getInt(3);
 	is_default=result.getBoolean(4);
-        can_configure_backup=result.getBoolean(5);
-        can_control_apache=result.getBoolean(6);
-        can_control_cron=result.getBoolean(7);
-        can_control_interbase=result.getBoolean(8);
-        can_control_mysql=result.getBoolean(9);
-        can_control_postgresql=result.getBoolean(10);
-        can_control_xfs=result.getBoolean(11);
-        can_control_xvfb=result.getBoolean(12);
+        can_control_apache=result.getBoolean(5);
+        can_control_cron=result.getBoolean(6);
+        can_control_mysql=result.getBoolean(7);
+        can_control_postgresql=result.getBoolean(8);
+        can_control_xfs=result.getBoolean(9);
+        can_control_xvfb=result.getBoolean(10);
     }
 
     public boolean isDefault() {
@@ -134,10 +122,8 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 	accounting=in.readUTF().intern();
 	server=in.readCompressedInt();
 	is_default=in.readBoolean();
-        can_configure_backup=in.readBoolean();
         can_control_apache=in.readBoolean();
         can_control_cron=in.readBoolean();
-        can_control_interbase=in.readBoolean();
         can_control_mysql=in.readBoolean();
         can_control_postgresql=in.readBoolean();
         can_control_xfs=in.readBoolean();
@@ -163,7 +149,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         for(int c=0;c<bus.size();c++) {
             if(bu.isBusinessOrParentOf(bus.get(c))) {
                 Business bu2=bus.get(c);
-                if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<Business>("Child business "+bu2.getAccounting()+" still has access to "+se.getHostname(), bu2));
+                if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<Business>("Child business "+bu2.getAccounting()+" still has access to "+se, bu2));
                 List<Package> pks=bu2.getPackages();
                 for(int d=0;d<pks.size();d++) {
                     Package pk=pks.get(d);
@@ -171,12 +157,12 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                     if(ao!=null) {
                         // email_pipes
                         for(EmailPipe ep : pk.getEmailPipes()) {
-                            if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailPipe>("Used by email pipe '"+ep.getPath()+"' on "+se.getHostname(), ep));
+                            if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailPipe>("Used by email pipe '"+ep.getPath()+"' on "+ao.getHostname(), ep));
                         }
 
                         // httpd_sites
                         for(HttpdSite hs : pk.getHttpdSites()) {
-                            if(hs.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+hs.getInstallDirectory()+" on "+se.getHostname(), hs));
+                            if(hs.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
                         }
 
                         // ip_addresses
@@ -185,7 +171,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                             if(
                                 nd!=null
                                 && ao.equals(nd.getAOServer())
-                            ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.getHostname(), ia));
+                            ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+ao.getHostname(), ia));
                         }
 
                         for(Username un : pk.getUsernames()) {
@@ -193,7 +179,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                             LinuxAccount la=un.getLinuxAccount();
                             if(la!=null) {
                                 LinuxServerAccount lsa=la.getLinuxServerAccount(ao);
-                                if(lsa!=null) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Used by Linux account "+un.getUsername()+" on "+se.getHostname(), lsa));
+                                if(lsa!=null) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Used by Linux account "+un.getUsername()+" on "+ao.getHostname(), lsa));
                             }
 
                             // mysql_server_users
@@ -201,7 +187,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                             if(mu!=null) {
                                 for(MySQLServer ms : ao.getMySQLServers()) {
                                     MySQLServerUser msu=mu.getMySQLServerUser(ms);
-                                    if(msu!=null) reasons.add(new CannotRemoveReason<MySQLServerUser>("Used by MySQL user "+un.getUsername()+" on "+ms.getName()+" on "+se.getHostname(), msu));
+                                    if(msu!=null) reasons.add(new CannotRemoveReason<MySQLServerUser>("Used by MySQL user "+un.getUsername()+" on "+ms.getName()+" on "+ao.getHostname(), msu));
                                 }
                             }
 
@@ -210,7 +196,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                             if(pu!=null) {
                                 for(PostgresServer ps : ao.getPostgresServers()) {
                                     PostgresServerUser psu=pu.getPostgresServerUser(ps);
-                                    if(psu!=null) reasons.add(new CannotRemoveReason<PostgresServerUser>("Used by PostgreSQL user "+un.getUsername()+" on "+ps.getName()+" on "+se.getHostname(), psu));
+                                    if(psu!=null) reasons.add(new CannotRemoveReason<PostgresServerUser>("Used by PostgreSQL user "+un.getUsername()+" on "+ps.getName()+" on "+ao.getHostname(), psu));
                                 }
                             }
                         }
@@ -218,25 +204,25 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                         for(LinuxGroup lg : pk.getLinuxGroups()) {
                             // linux_server_groups
                             LinuxServerGroup lsg=lg.getLinuxServerGroup(ao);
-                            if(lsg!=null) reasons.add(new CannotRemoveReason<LinuxServerGroup>("Used by Linux group "+lg.getName()+" on "+se.getHostname(), lsg));
+                            if(lsg!=null) reasons.add(new CannotRemoveReason<LinuxServerGroup>("Used by Linux group "+lg.getName()+" on "+ao.getHostname(), lsg));
                         }
 
                         // mysql_databases
                         for(MySQLDatabase md : pk.getMySQLDatabases()) {
                             MySQLServer ms=md.getMySQLServer();
-                            if(ms.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+se.getHostname(), md));
+                            if(ms.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
                         }
 
                         // net_binds
                         for(NetBind nb : pk.getNetBinds()) {
                             if(nb.getAOServer().equals(ao)) {
                                 String details=nb.getDetails();
-                                if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.getHostname(), nb));
+                                if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+ao.getHostname(), nb));
                                 else {
                                     IPAddress ia=nb.getIPAddress();
                                     NetDevice nd=ia.getNetDevice();
-                                    if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.getHostname(), nb));
-                                    else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.getHostname(), nb));
+                                    if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+ao.getHostname(), nb));
+                                    else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+ao.getHostname(), nb));
                                 }
                             }
                         }
@@ -244,12 +230,12 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                         // postgres_databases
                         for(PostgresDatabase pd : pk.getPostgresDatabases()) {
                             PostgresServer ps=pd.getPostgresServer();
-                            if(ps.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+se.getHostname(), pd));
+                            if(ps.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
                         }
 
                         // email_domains
                         for(EmailDomain ed : pk.getEmailDomains()) {
-                            if(ed.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailDomain>("Used by email domain "+ed.getDomain()+" on "+se.getHostname(), ed));
+                            if(ed.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailDomain>("Used by email domain "+ed.getDomain()+" on "+ao.getHostname(), ed));
                         }
 
                         // email_smtp_relays
@@ -276,10 +262,10 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 	out.writeUTF(accounting);
 	out.writeCompressedInt(server);
 	out.writeBoolean(is_default);
-        out.writeBoolean(can_configure_backup);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup
         out.writeBoolean(can_control_apache);
         out.writeBoolean(can_control_cron);
-        out.writeBoolean(can_control_interbase);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeBoolean(false); // can_control_interbase
         out.writeBoolean(can_control_mysql);
         out.writeBoolean(can_control_postgresql);
         out.writeBoolean(can_control_xfs);

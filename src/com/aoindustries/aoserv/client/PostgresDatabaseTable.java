@@ -23,6 +23,16 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	super(connector, PostgresDatabase.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PostgresDatabase.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(PostgresDatabase.COLUMN_POSTGRES_SERVER_name+'.'+PostgresServer.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(PostgresDatabase.COLUMN_POSTGRES_SERVER_name+'.'+PostgresServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addPostgresDatabase(
         String name,
         PostgresServer postgresServer,
@@ -101,19 +111,6 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.BACKUP_POSTGRES_DATABASE)) {
-            if(AOSH.checkParamCount(AOSHCommand.BACKUP_POSTGRES_DATABASE, args, 3, err)) {
-                try {
-                    int pkey=connector.simpleAOClient.backupPostgresDatabase(args[1], args[2], args[3]);
-                    out.println(pkey);
-                    out.flush();
-                } catch(IllegalArgumentException iae) {
-                    err.print("aosh: "+AOSHCommand.BACKUP_POSTGRES_DATABASE+": ");
-                    err.println(iae.getMessage());
-                    err.flush();
-                }
-            }
-            return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_POSTGRES_DATABASE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_POSTGRES_DATABASE_NAME, args, 1, err)) {
                 try {
@@ -166,16 +163,6 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_POSTGRES_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_POSTGRES_DATABASE, args, 3, err)) {
                 connector.simpleAOClient.removePostgresDatabase(args[1], args[2], args[3]);
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_POSTGRES_DATABASE_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_POSTGRES_DATABASE_BACKUP_RETENTION, args, 4, err)) {
-                connector.simpleAOClient.setPostgresDatabaseBackupRetention(
-                    args[1],
-                    args[2],
-                    args[3],
-                    AOSH.parseShort(args[4], "backup_retention")
-                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_POSTGRES_DATABASE_REBUILD)) {

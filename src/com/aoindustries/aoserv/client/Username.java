@@ -18,7 +18,6 @@ import java.util.*;
  * account types.
  *
  * @see  BusinessAdministrator
- * @see  InterBaseUser
  * @see  LinuxAccount
  * @see  MySQLUser
  * @see  PostgresUser
@@ -33,6 +32,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         COLUMN_USERNAME=0,
         COLUMN_PACKAGE=1
     ;
+    static final String COLUMN_USERNAME_name = "username";
 
     public static final int MAX_LENGTH=255;
 
@@ -74,10 +74,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
             country,
             zip
 	);
-    }
-
-    public void addInterBaseUser(String firstName, String middleName, String lastName) {
-        table.connector.interBaseUsers.addInterBaseUser(this, firstName, middleName, lastName);
     }
 
     public void addLinuxAccount(
@@ -126,8 +122,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         List<PasswordProtected> pps=new ArrayList<PasswordProtected>();
 	BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null) pps.add(ba);
-	InterBaseUser iu=getInterBaseUser();
-	if(iu!=null) pps.add(iu);
         LinuxAccount la=getLinuxAccount();
 	if(la!=null) pps.add(la);
 	MySQLUser mu=getMySQLUser();
@@ -139,8 +133,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
     public boolean canDisable() {
         if(disable_log!=-1) return false;
-        InterBaseUser iu=getInterBaseUser();
-        if(iu!=null && iu.disable_log==-1) return false;
         LinuxAccount la=getLinuxAccount();
         if(la!=null && la.disable_log==-1) return false;
         MySQLUser mu=getMySQLUser();
@@ -166,12 +158,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
             if(PasswordChecker.hasResults(userLocale, results)) return results;
 	}
 
-	InterBaseUser iu=getInterBaseUser();
-	if(iu!=null) {
-            PasswordChecker.Result[] results=iu.checkPassword(userLocale, password);
-            if(PasswordChecker.hasResults(userLocale, results)) return results;
-	}
-
         LinuxAccount la=getLinuxAccount();
 	if(la!=null) {
             PasswordChecker.Result[] results=la.checkPassword(userLocale, password);
@@ -193,41 +179,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         return PasswordChecker.getAllGoodResults(userLocale);
     }
 
-    /*
-    public String checkPasswordDescribe(String password) {
-	BusinessAdministrator ba=getBusinessAdministrator();
-	if(ba!=null) {
-            String results=ba.checkPasswordDescribe(password);
-            if(results!=null) return results;
-	}
-
-	InterBaseUser iu=getInterBaseUser();
-	if(iu!=null) {
-            String results=iu.checkPasswordDescribe(password);
-            if(results!=null) return results;
-	}
-
-        LinuxAccount la=getLinuxAccount();
-	if(la!=null) {
-            String results=la.checkPasswordDescribe(password);
-            if(results!=null) return results;
-	}
-
-	MySQLUser mu=getMySQLUser();
-	if(mu!=null) {
-            String results=mu.checkPasswordDescribe(password);
-            if(results!=null) return results;
-	}
-
-	PostgresUser pu=getPostgresUser();
-	if(pu!=null) {
-		String results=pu.checkPasswordDescribe(password);
-		if(results!=null) return results;
-	}
-
-	return null;
-    }
-*/
     public void disable(DisableLog dl) {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
     }
@@ -254,10 +205,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         DisableLog obj=table.connector.disableLogs.get(disable_log);
         if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
         return obj;
-    }
-
-    public InterBaseUser getInterBaseUser() {
-	return table.connector.interBaseUsers.get(pkey);
     }
 
     public LinuxAccount getLinuxAccount() {
@@ -306,8 +253,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
     public boolean isUsed() {
 	return
-            getInterBaseUser()!=null
-            || getLinuxAccount()!=null
+            getLinuxAccount()!=null
             || getBusinessAdministrator()!=null
             || getMySQLUser()!=null
             || getPostgresUser()!=null
@@ -375,8 +321,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     public List<CannotRemoveReason> getCannotRemoveReasons() {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        InterBaseUser iu=getInterBaseUser();
-        if(iu!=null) reasons.add(new CannotRemoveReason<InterBaseUser>("Used by InterBase user: "+iu.getUsername().getUsername(), iu));
         LinuxAccount la=getLinuxAccount();
         if(la!=null) reasons.add(new CannotRemoveReason<LinuxAccount>("Used by Linux account: "+la.getUsername().getUsername(), la));
         BusinessAdministrator ba=getBusinessAdministrator();
@@ -401,9 +345,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null) ba.setPassword(password);
 
-	InterBaseUser iu=getInterBaseUser();
-	if(iu!=null) iu.setPassword(password);
-
         LinuxAccount la=getLinuxAccount();
 	if(la!=null) la.setPassword(password);
 
@@ -420,9 +361,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null && !ba.canSetPassword()) return false;
 
-	InterBaseUser iu=getInterBaseUser();
-	if(iu!=null && !iu.canSetPassword()) return false;
-
         LinuxAccount la=getLinuxAccount();
 	if(la!=null && !la.canSetPassword()) return false;
 
@@ -432,7 +370,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	PostgresUser pu=getPostgresUser();
 	if(pu!=null && !pu.canSetPassword()) return false;
         
-        return ba!=null || iu!=null || la!=null || mu!=null || pu!=null;
+        return ba!=null || la!=null || mu!=null || pu!=null;
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {

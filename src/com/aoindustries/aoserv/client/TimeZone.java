@@ -22,6 +22,7 @@ import java.sql.SQLException;
 final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     public Object getColumn(int i) {
         switch(i) {

@@ -21,6 +21,14 @@ final public class TicketTypeTable extends GlobalTableStringKey<TicketType> {
 	super(connector, TicketType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(TicketType.COLUMN_TYPE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public TicketType get(Object pkey) {
 	return getUniqueRow(TicketType.COLUMN_TYPE, pkey);
     }

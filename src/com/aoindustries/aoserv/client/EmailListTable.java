@@ -23,6 +23,15 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 	super(connector, EmailList.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailList.COLUMN_PATH_name, ASCENDING),
+        new OrderBy(EmailList.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+LinuxServerAccount.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public int addEmailList(
 	String path,
 	LinuxServerAccount linuxAccountObject,
@@ -80,7 +89,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
     }
 
     List<EmailList> getEmailLists(LinuxServerAccount lsa) {
-        return getIndexedRows(EmailList.COLUMN_LINUX_ACCOUNT, lsa.pkey);
+        return getIndexedRows(EmailList.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 
     EmailList getEmailList(AOServer ao, String path) {
@@ -165,15 +174,6 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_EMAIL_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_EMAIL_LIST, args, 3, err)) {
                 connector.simpleAOClient.setEmailListAddressList(args[1], args[2], args[3]);
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_EMAIL_LIST_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_EMAIL_LIST_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setEmailListBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
-                );
             }
             return true;
         }

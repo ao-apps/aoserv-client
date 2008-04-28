@@ -29,6 +29,7 @@ import java.sql.*;
 final public class LinuxGroupType extends GlobalObjectStringKey<LinuxGroupType> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_DESCRIPTION_name = "description";
 
     private String description;
 

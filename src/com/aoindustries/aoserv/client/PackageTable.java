@@ -24,6 +24,14 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	super(connector, Package.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Package.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addPackage(
 	String name,
 	Business business,

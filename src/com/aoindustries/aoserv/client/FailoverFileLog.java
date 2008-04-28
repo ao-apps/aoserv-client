@@ -21,6 +21,9 @@ import java.sql.*;
  */
 final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog> implements SingleTableObject<Integer,FailoverFileLog> {
 
+    static final String COLUMN_REPLICATION_name = "replication";
+    static final String COLUMN_END_TIME_name = "end_time";
+
     protected AOServTable<Integer,FailoverFileLog> table;
 
     private int pkey;

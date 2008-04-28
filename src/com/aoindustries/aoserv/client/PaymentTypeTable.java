@@ -23,6 +23,14 @@ final public class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
 	super(connector, PaymentType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PaymentType.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public PaymentType get(Object pkey) {
 	return getUniqueRow(PaymentType.COLUMN_NAME, pkey);
     }

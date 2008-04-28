@@ -26,6 +26,8 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         COLUMN_PKEY=0,
         COLUMN_HTTPD_SITE=1
     ;
+    static final String COLUMN_HTTPD_SITE_name = "httpd_site";
+    static final String COLUMN_HTTPD_BIND_name = "httpd_bind";
 
     int httpd_site;
     private int httpd_bind;

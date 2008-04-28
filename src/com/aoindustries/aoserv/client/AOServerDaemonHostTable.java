@@ -22,6 +22,15 @@ public final class AOServerDaemonHostTable extends CachedTableIntegerKey<AOServe
 	super(connector, AOServerDaemonHost.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(AOServerDaemonHost.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(AOServerDaemonHost.COLUMN_HOST_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public AOServerDaemonHost get(Object pkey) {
 	return getUniqueRow(AOServerDaemonHost.COLUMN_PKEY, pkey);
     }

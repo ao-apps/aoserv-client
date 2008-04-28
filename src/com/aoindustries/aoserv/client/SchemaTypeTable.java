@@ -24,14 +24,12 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
 	super(connector, SchemaType.class);
     }
 
-    protected String[] getDefaultSortColumnsImpl() {
+    @Override
+    OrderBy[] getDefaultOrderBy() {
         return null;
     }
 
-    protected boolean[] getDefaultSortOrdersImpl() {
-        return null;
-    }
-
+    @Override
     protected int getMaxConnectionsPerThread() {
         return 2;
     }

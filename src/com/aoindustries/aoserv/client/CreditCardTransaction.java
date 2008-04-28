@@ -27,6 +27,9 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         COLUMN_PKEY = 0,
         COLUMN_PROCESSOR_ID = 1
     ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_AUTHORIZATION_TIME_name = "authorization_time";
+    static final String COLUMN_PKEY_name = "pkey";
 
     private String processorId;
     String accounting;

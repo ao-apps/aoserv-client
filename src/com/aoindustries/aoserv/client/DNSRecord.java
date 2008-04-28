@@ -28,6 +28,11 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
         COLUMN_PKEY=0,
         COLUMN_ZONE=1
     ;
+    static final String COLUMN_ZONE_name = "zone";
+    static final String COLUMN_DOMAIN_name = "domain";
+    static final String COLUMN_TYPE_name = "type";
+    static final String COLUMN_MX_PRIORITY_name = "mx_priority";
+    static final String COLUMN_DESTINATION_name = "destination";
 
     public static final int NO_MX_PRIORITY=-1;
     public static final int NO_TTL=-1;

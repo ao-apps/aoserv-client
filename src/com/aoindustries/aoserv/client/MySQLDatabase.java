@@ -31,12 +31,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         COLUMN_MYSQL_SERVER=2,
         COLUMN_PACKAGE=3
     ;
-
-    /**
-     * The default number of days to keep backups.
-     */
-    public static final short DEFAULT_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL;
-    public static final short DEFAULT_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
 
     /**
      * The classname of the JDBC driver used for the <code>MySQLDatabase</code>.
@@ -75,8 +71,6 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     String name;
     int mysql_server;
     String packageName;
-    private short backup_level;
-    private short backup_retention;
 
     public int addMySQLServerUser(
 	MySQLServerUser msu,
@@ -114,13 +108,6 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             canCreateRoutine,
             canAlterRoutine,
             canExecute
-	);
-    }
-
-    public int backup() {
-	return table.connector.requestIntQueryIL(
-            AOServProtocol.CommandID.BACKUP_MYSQL_DATABASE,
-            pkey
 	);
     }
 
@@ -170,36 +157,12 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         }
     }
 
-    public BackupLevel getBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, MySQLDatabase.class, "getBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, MySQLDatabase.class, "getBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return name;
             case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
             case COLUMN_PACKAGE: return packageName;
-            case 4: return Short.valueOf(backup_level);
-            case 5: return Short.valueOf(backup_retention);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -222,7 +185,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             "jdbc:mysql://"
             + (ipOnly
                ?ao.getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
-	       :ao.getServer().getHostname()
+	       :ao.getHostname()
             )
             + ":"
             + ms.getNetBind().getPort().getPort()
@@ -279,8 +242,6 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	name=result.getString(2);
 	mysql_server=result.getInt(3);
 	packageName=result.getString(4);
-        backup_level=result.getShort(5);
-        backup_retention=result.getShort(6);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -288,8 +249,6 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	name=in.readUTF();
 	mysql_server=in.readCompressedInt();
 	packageName=in.readUTF().intern();
-        backup_level=in.readShort();
-        backup_retention=in.readShort();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -307,10 +266,6 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	);
     }
 
-    public void setBackupRetention(short days) {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.MYSQL_DATABASES, pkey);
-    }
-
     String toStringImpl() {
 	return name;
     }
@@ -321,7 +276,9 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)<0) out.writeCompressedInt(-1);
         else out.writeCompressedInt(mysql_server);
 	out.writeUTF(packageName);
-        out.writeShort(backup_level);
-        out.writeShort(backup_retention);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+        }
     }
 }

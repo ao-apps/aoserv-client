@@ -24,6 +24,15 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 	super(connector, MajordomoServer.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
+        new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addMajordomoServer(
         EmailDomain emailDomain,
         LinuxServerAccount linuxServerAccount,
@@ -94,15 +103,6 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
                     connector.simpleAOClient.removeMajordomoServer(
                         args[1],
                         args[2]
-                    );
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_SERVER_BACKUP_RETENTION)) {
-                if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_SERVER_BACKUP_RETENTION, args, 3, err)) {
-                    connector.simpleAOClient.setMajordomoServerBackupRetention(
-                        args[1],
-                        args[2],
-                        AOSH.parseShort(args[3], "backup_retention")
                     );
                 }
                 return true;

@@ -28,6 +28,8 @@ import java.sql.*;
 final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_USERNAME_name = "username";
+    static final String COLUMN_SERVER_name = "server";
 
     private String username;
     private int server;

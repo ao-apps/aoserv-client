@@ -22,6 +22,14 @@ final public class NetProtocolTable extends GlobalTableStringKey<NetProtocol> {
 	super(connector, NetProtocol.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(NetProtocol.COLUMN_PROTOCOL_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public NetProtocol get(Object pkey) {
 	return getUniqueRow(NetProtocol.COLUMN_PROTOCOL, pkey);
     }

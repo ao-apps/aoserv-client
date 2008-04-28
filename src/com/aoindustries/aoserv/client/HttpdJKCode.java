@@ -24,6 +24,7 @@ import java.sql.*;
 final public class HttpdJKCode extends GlobalObjectStringKey<HttpdJKCode> {
 
     static final int COLUMN_CODE=0;
+    static final String COLUMN_CODE_name = "code";
 
     public String getCode() {
 	return pkey;

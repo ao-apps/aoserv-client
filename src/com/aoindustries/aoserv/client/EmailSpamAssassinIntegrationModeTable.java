@@ -23,6 +23,14 @@ public final class EmailSpamAssassinIntegrationModeTable extends GlobalTableStri
 	super(connector, EmailSpamAssassinIntegrationMode.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailSpamAssassinIntegrationMode.COLUMN_SORT_ORDER_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public EmailSpamAssassinIntegrationMode get(Object pkey) {
 	return getUniqueRow(EmailSpamAssassinIntegrationMode.COLUMN_NAME, pkey);
     }

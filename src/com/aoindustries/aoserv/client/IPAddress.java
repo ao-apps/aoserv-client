@@ -37,6 +37,8 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         COLUMN_NET_DEVICE=2,
         COLUMN_PACKAGE=5
     ;
+    static final String COLUMN_IP_ADDRESS_name = "ip_address";
+    static final String COLUMN_NET_DEVICE_name = "net_device";
 
     public static final String
         LOOPBACK_IP="127.0.0.1",
@@ -59,6 +61,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     private boolean available;
     private boolean isOverflow;
     private boolean isDHCP;
+    private boolean pingMonitorEnabled;
 
     public Object getColumn(int i) {
         switch(i) {
@@ -72,6 +75,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             case 7: return available?Boolean.TRUE:Boolean.FALSE;
             case 8: return isOverflow?Boolean.TRUE:Boolean.FALSE;
             case 9: return isDHCP?Boolean.TRUE:Boolean.FALSE;
+            case 10: return pingMonitorEnabled ? Boolean.TRUE : Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -166,6 +170,10 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return isDHCP;
     }
 
+    public boolean isPingMonitorEnabled() {
+        return pingMonitorEnabled;
+    }
+
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.IP_ADDRESSES;
     }
@@ -182,6 +190,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         available = result.getBoolean(8);
         isOverflow = result.getBoolean(9);
         isDHCP = result.getBoolean(10);
+        pingMonitorEnabled = result.getBoolean(11);
     }
 
     public boolean isAlias() {
@@ -245,6 +254,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         available=in.readBoolean();
         isOverflow=in.readBoolean();
         isDHCP=in.readBoolean();
+        pingMonitorEnabled = in.readBoolean();
     }
 
     /**
@@ -280,5 +290,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         out.writeBoolean(available);
         out.writeBoolean(isOverflow);
         out.writeBoolean(isDHCP);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)>=-0) out.writeBoolean(pingMonitorEnabled);
     }
 }

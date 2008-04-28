@@ -23,66 +23,22 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=1
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_PATH_name = "path";
 
     int ao_server;
-    String device;
     String path;
-    private long minimum_free_space;
-    private long desired_free_space;
     private boolean enabled;
-    private int fill_order;
+    private boolean quota_enabled;
 
-    public IntsAndLongs getBackupDataPKeys(boolean hasDataOnly) {
-        try {
-            IntList pkeys=new SortedIntArrayList();
-            LongArrayList sizes=new LongArrayList();
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.GET_BACKUP_DATAS_FOR_BACKUP_PARTITION.ordinal());
-                out.writeCompressedInt(pkey);
-                out.writeBoolean(hasDataOnly);
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    int lastpkey=0;
-                    int pkey;
-                    while((pkey=in.readCompressedInt())!=-1) {
-                        lastpkey+=pkey;
-                        // This works because the rows are sorted by the database
-                        pkeys.add(lastpkey);
-                        sizes.add(in.readLong());
-                    }
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
-            }
-            return new IntsAndLongs(pkeys, sizes);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
+    @Override
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
-            case 2: return device;
-            case 3: return path;
-            case 4: return Long.valueOf(minimum_free_space);
-            case 5: return Long.valueOf(desired_free_space);
-            case 6: return enabled?Boolean.TRUE:Boolean.FALSE;
-            case 7: return Integer.valueOf(fill_order);
+            case 2: return path;
+            case 3: return enabled;
+            case 4: return quota_enabled;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -101,35 +57,27 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
         return ao;
     }
 
-    public String getDevice() {
-        return device;
-    }
-    
     public String getPath() {
         return path;
     }
     
-    public long getMinimumFreeSpace() {
-        return minimum_free_space;
-    }
-    
-    public long getDesiredFreeSpace() {
-        return desired_free_space;
-    }
-
+    @Override
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.BACKUP_PARTITIONS;
     }
 
+    @Override
+    String toStringImpl() {
+        return getAOServer().getHostname()+":"+path;
+    }
+
+    @Override
     void initImpl(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         ao_server=result.getInt(2);
-        device=result.getString(3);
-        path=result.getString(4);
-        minimum_free_space=result.getLong(5);
-        desired_free_space=result.getLong(6);
-        enabled=result.getBoolean(7);
-        fill_order=result.getInt(8);
+        path=result.getString(3);
+        enabled=result.getBoolean(4);
+        quota_enabled=result.getBoolean(5);
     }
 
     public boolean isEnabled() {
@@ -137,31 +85,43 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     }
     
     /**
-     * Backup partitions with the lowest fill order are used first.
+     * When quota is enabled, all replications/backups into the partition must have quota_gid set.
+     * When quota is disabled, all replications/backups into the partition must have quota_gid not set.
+     * This generally means that ao_servers, which backup full Unix permissions, will be backed-up to non-quota partitions,
+     * while other backups (such as from Windows) will go to quota-enabled partitions for billing purposes.
+     * 
+     * @return the enabled flag
      */
-    public int getFillOrder() {
-        return fill_order;
+    public boolean isQuotaEnabled() {
+        return quota_enabled;
     }
 
+    @Override
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         ao_server=in.readCompressedInt();
-        device=in.readUTF().intern();
         path=in.readUTF().intern();
-        minimum_free_space=in.readLong();
-        desired_free_space=in.readLong();
         enabled=in.readBoolean();
-        fill_order=in.readCompressedInt();
+        quota_enabled=in.readBoolean();
     }
 
+    @Override
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(ao_server);
-        out.writeUTF(device);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeUTF(path);
         out.writeUTF(path);
-        out.writeLong(minimum_free_space);
-        out.writeLong(desired_free_space);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeLong((long)512*1024*1024); // min free space
+            out.writeLong((long)1024*1024*1024); // desired free space
+        }
         out.writeBoolean(enabled);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_117)>=0) out.writeCompressedInt(fill_order);
+        if(
+            AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_117)>=0
+            && AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0
+        ) {
+            out.writeCompressedInt(1); // fill_order
+        }
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) out.writeBoolean(quota_enabled);
     }
 }

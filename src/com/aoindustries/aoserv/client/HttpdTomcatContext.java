@@ -26,6 +26,8 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         COLUMN_PKEY=0,
         COLUMN_TOMCAT_SITE=1
     ;
+    static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
+    static final String COLUMN_PATH_name = "path";
 
     /**
      * These are the default values for a new site.

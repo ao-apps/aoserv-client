@@ -111,7 +111,7 @@ final public class SimpleAOClient {
     }
 
     private AOServer getAOServer(String hostname) throws IllegalArgumentException {
-        AOServer ao=getServer(hostname).getAOServer();
+        AOServer ao=connector.aoServers.get(hostname);
         if(ao==null) throw new IllegalArgumentException("Server is not an AOServer: "+hostname);
         return ao;
     }
@@ -194,28 +194,6 @@ final public class SimpleAOClient {
         }
     }
             
-    private InterBaseServerUser getInterBaseServerUser(String aoServer, String username) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getInterBaseServerUser(String,String)", null);
-        try {
-            InterBaseServerUser isu=getAOServer(aoServer).getInterBaseServerUser(username);
-            if(isu==null) throw new IllegalArgumentException("Unable to find InterBaseServerUser: "+username+" on "+aoServer);
-            return isu;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    private InterBaseUser getInterBaseUser(String username) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getInterBaseUser(String)", null);
-        try {
-            InterBaseUser iu=getUsername(username).getInterBaseUser();
-            if(iu==null) throw new IllegalArgumentException("Unable to find InterBaseUser: "+username);
-            return iu;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
     private IPAddress getIPAddress(String aoServer, String netDevice, String ipAddress) throws IllegalArgumentException {
         IPAddress ia=getNetDevice(aoServer, netDevice).getIPAddress(ipAddress);
         if(ia==null) throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress+" on "+netDevice+" on "+aoServer);
@@ -402,9 +380,9 @@ final public class SimpleAOClient {
         }
     }
 
-    private Server getServer(String hostname) throws IllegalArgumentException {
-        Server se=connector.servers.get(hostname);
-        if(se==null) throw new IllegalArgumentException("Unable to find Server: "+hostname);
+    private Server getServer(String server) throws IllegalArgumentException {
+        Server se=connector.servers.get(server);
+        if(se==null) throw new IllegalArgumentException("Unable to find Server: "+server);
         return se;
     }
 
@@ -654,7 +632,6 @@ final public class SimpleAOClient {
      *
      * @param  accounting  the accounting code of the business
      * @param  server  the hostname of the server
-     * @param  can_configure_backup  allows the business to configure the backup system for the server
      *
      * @return  the pkey of the new <code>BusinessServer</code>
      *
@@ -669,12 +646,11 @@ final public class SimpleAOClient {
      */
     public int addBusinessServer(
         String accounting,
-        String server,
-        boolean can_configure_backup
+        String server
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addBusinessServer(String,String,boolean)", null);
         try {
-            return getBusiness(accounting).addBusinessServer(getServer(server), can_configure_backup);
+            return getBusiness(accounting).addBusinessServer(getServer(server));
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -1032,7 +1008,7 @@ final public class SimpleAOClient {
             if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+ep);
             AOServer ao=ep.getAOServer();
             EmailDomain sd=ao.getEmailDomain(domain);
-            if(sd==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getServer().hostname);
+            if(sd==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getHostname());
             EmailAddress ea=sd.getEmailAddress(address);
             boolean added=false;
             if(ea==null) {
@@ -1051,75 +1027,34 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Adds a <code>FileBackupDevice</code> to the system.
+     * Adds a <code>FileBackupSetting</code> to a <code>FailoverFileReplication</code>.
      *
-     * @param  device  the device number
-     * @param  canBackup  indicates that the backup system may backup data on this type of device
-     * @param  description  a description of the device
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data
-     *					integrity violation occurs
-     *
-     * @return  the pkey of the newly created <code>FileBackupDevice</code>
-     *
-     * @see  FileBackupDeviceTable#addFileBackupDevice
-     * @see  FileBackupDevice
-     */
-    public short addFileBackupDevice(
-        long device,
-        boolean canBackup,
-        String description
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addFileBackupDevice(long,boolean,String)", null);
-        try {
-            return connector.fileBackupDevices.addFileBackupDevice(device, canBackup, description);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Adds a <code>FileBackupSetting</code> to a <code>Server</code>.
-     *
-     * @param  server  the hostname of the server
+     * @param  replication  the pkey of the FailoverFileReplication
      * @param  path  the path that is being configured
-     * @param  packageName  the name of the package that files will be stored under
-     * @param  backupLevel  the number of backup copies to keep
-     * @param  backupRetention  the number of days to keep backup data
-     * @param  recurse  if <code>true</code>, the backup system will recurse into directories starting with this path
+     * @param  backupEnabled  the enabled flag for the prefix
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data
      *					integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>Package</code>, <code>BackupLevel</code>
-     *                                  or <code>BackupRetention</code>.
+     * @exception  IllegalArgumentException  if unable to find the <code>FailoverFileReplication</code>, or <code>Package</code>
      *
      * @return  the pkey of the newly created <code>FileBackupSetting</code>
      *
-     * @see  Server#addFileBackupSetting
+     * @see  FailoverFileReplication#addFileBackupSetting
      * @see  FileBackupSetting
      */
     public int addFileBackupSetting(
-        String server,
+        int replication,
         String path,
-        String packageName,
-        short backupLevel,
-        short backupRetention,
-        boolean recurse
+        boolean backupEnabled
     ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addFileBackupSetting(String,String,String,short,short,boolean)", null);
+        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addFileBackupSetting(int,String,boolean)", null);
         try {
-            BackupLevel bl=connector.backupLevels.get(backupLevel);
-            if(bl==null) throw new IllegalArgumentException("Unable to find BackupLevel: "+backupLevel);
-            BackupRetention br=connector.backupRetentions.get(backupRetention);
-            if(br==null) throw new IllegalArgumentException("Unable to find BackupRetention: "+backupRetention);
-            return getServer(server).addFileBackupSetting(
+            FailoverFileReplication ffr = getConnector().failoverFileReplications.get(replication);
+            if(ffr==null) throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
+            return ffr.addFileBackupSetting(
                 path,
-                getPackage(packageName),
-                bl,
-                br,
-                recurse
+                backupEnabled
             );
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -1657,147 +1592,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Adds a new <code>InterBaseDatabase</code> to the system.
-     * <p>
-     * Because updates the the InterBase configurations are batched, the database may not be immediately
-     * created in the InterBase system.  To ensure the database is ready for use, call <code>waitForInterBaseRebuild</code>.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  dbGroup  the name of the <code>InterBaseDBGroup</code>.
-     * @param  name  the name of the new database
-     * @param  datdba  the username of the database administrator
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data
-     *					integrity violation occurs
-     * @exception  IllegalArgumentException  if the database name is not valid or unable to
-     *					find the <code>Server</code>, <code>InterBaseDBGroup</code>,
-     *					or <code>InterBaseServerUser</code>
-     *
-     * @see  InterBaseDBGroup#addInterBaseDatabase
-     * @see  #checkInterBaseDatabaseName
-     * @see  #addInterBaseUser
-     * @see  #addInterBaseServerUser
-     * @see  #removeInterBaseDatabase
-     * @see  #waitForInterBaseRebuild
-     */
-    public int addInterBaseDatabase(
-        String aoServer,
-        String dbGroup,
-        String name,
-        String datdba
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addInterBaseDatabase(String,String,String,String)", null);
-        try {
-            AOServer ao=getAOServer(aoServer);
-            InterBaseDBGroup idg=ao.getInterBaseDBGroup(dbGroup);
-            if(idg==null) throw new IllegalArgumentException("Unable to find InterBaseDBGroup: "+dbGroup+" on "+aoServer);
-            checkInterBaseDatabaseName(name);
-            return idg.addInterBaseDatabase(name, getInterBaseServerUser(aoServer, datdba));
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Adds a new <code>InterBaseDBGroup</code> to the system.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  dbGroup  the name of the <code>InterBaseDBGroup</code>
-     * @param  linuxGroup  the name of the <code>LinuxGroup</code> that is granted
-     *                     filesystem-level access to the database contents.
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data
-     *					integrity violation occurs
-     * @exception  IllegalArgumentException  if the database name is not valid or unable to
-     *					find the <code>Server</code> or <code>LinuxServerGroup</code>
-     *
-     * @see  InterBaseDBGroupTable#addInterBaseDBGroup
-     * @see  #checkInterBaseDBGroupName
-     * @see  #removeInterBaseDBGroup
-     */
-    public int addInterBaseDBGroup(
-        String aoServer,
-        String dbGroup,
-        String linuxGroup
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addInterBaseDBGroup(String,String,String)", null);
-        try {
-            return connector.interBaseDBGroups.addInterBaseDBGroup(
-                dbGroup,
-                getLinuxServerGroup(aoServer, linuxGroup)
-            );
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Grants an <code>InterBaseUser</code> access to a <code>Server</code> by adding an
-     * <code>InterBaseServerUser</code>.
-     *
-     * @param  username  the username of the <code>InterBaseUser</code>
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data
-     *					integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>InterBaseUser</code> or
-     *					<code>AOServer</code>
-     *
-     * @see  InterBaseUser#addInterBaseServerUser
-     * @see  #addInterBaseUser
-     */
-    public int addInterBaseServerUser(
-        String username,
-        String aoServer
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addInterBaseServerUser(String,String)", null);
-        try {
-            return getInterBaseUser(username).addInterBaseServerUser(getAOServer(aoServer));
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Adds an <code>InterBaseUser</code> to the system.  An <code>InterBaseUser</code> does not
-     * exist on any <code>Server</code>, it merely indicates that a <code>Username</code>
-     * will be used for accessing an <code>InterBaseDatabase</code>.
-     *
-     * @param  username  the <code>Username</code> that will be used for accessing InterBase
-     * @param  firstName  the first name of the user
-     * @param  middleName  the middle name of the user
-     * @param  lastName  the last name of the user
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data
-     *					integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
-     *
-     * @see  Username#addInterBaseUser
-     * @see  #addUsername
-     * @see  #addInterBaseServerUser
-     * @see  InterBaseUser
-     */
-    public void addInterBaseUser(
-        String username,
-        String firstName,
-        String middleName,
-        String lastName
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addInterBaseUser()", null);
-        try {
-            Username un=getUsername(username);
-            checkInterBaseUsername(username);
-            un.addInterBaseUser(firstName, middleName, lastName);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Adds an <code>EmailAddress</code> to a <code>LinuxAccount</code>.  Not all
      * <code>LinuxAccount</code>s may be used as an email inbox.  The <code>LinuxAccountType</code>
      * of the account determines which accounts may store email.  When email is allowed for the account,
@@ -1831,7 +1625,7 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addLinuxAccAddress(String,String,String,String)", null);
         try {
             EmailDomain sd=getEmailDomain(aoServer, domain);
-            LinuxAccount la=getLinuxAccount(username);
+            LinuxServerAccount lsa=getLinuxServerAccount(aoServer, username);
             EmailAddress ea=sd.getEmailAddress(address);
             boolean added;
             if(ea==null) {
@@ -1839,7 +1633,7 @@ final public class SimpleAOClient {
                 added=true;
             } else added=false;
             try {
-                return la.addEmailAddress(ea);
+                return lsa.addEmailAddress(ea);
             } catch(RuntimeException err) {
                 if(added && !ea.isUsed()) ea.remove();
                 throw err;
@@ -2661,44 +2455,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Adds to the SMTP statistics for a package.  Statistics are maintained on a per-package and
-     * per-day basis.
-     *
-     * @param  packageName    the name of the <code>Package</code> that has sent the emails
-     * @param  date           the date the emails were sent
-     * @param  aoServer       the hostname of the server handling the email
-     * @param  in_count       the number of emails received
-     * @param  in_bandwidth   the amount of bandwidth consumes while receiving the emails
-     * @param  out_count      the number of emails sent
-     * @param  out_bandwidth  the amount of bandwidth consumes while sending the emails
-     *
-     * @return  the pkey of the <code>SendmailSmtpStat</code> that was created or updated
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to the <code>Package</code> or <code>Server</code>
-     *
-     * @see  Package#addSendmailSmtpStat
-     */
-    public int addSendmailSmtpStat(
-        String packageName,
-        long date,
-        String aoServer,
-        int in_count,
-        long in_bandwidth,
-        int out_count,
-        long out_bandwidth
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addSendmailSmtpStat(String,int,String,int,long,int,long)", null);
-        try {
-            return getPackage(packageName).addSendmailSmtpStat(date, getAOServer(aoServer), in_count, in_bandwidth, out_count, out_bandwidth);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Adds a <code>SpamEmailMessage</code>.
      *
      * @return  the pkey of the <code>SpamEmailMessage</code> that was created
@@ -2969,34 +2725,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Determines if an <code>InterBaseUser</code> currently has passwords set.
-     *
-     * @param  username  the username of the user
-     *
-     * @return  an <code>int</code> containing <code>PasswordProtected.NONE</code>,
-     *          <code>PasswordProtected.SOME</code>, or <code>PasswordProtected.ALL</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if the <code>InterBaseUser</code> is not found
-     *
-     * @see  InterBaseUser#arePasswordsSet
-     * @see  #setInterBaseUserPassword
-     * @see  InterBaseUser
-     * @see  PasswordProtected
-     */
-    public int areInterBaseUserPasswordsSet(
-        String username
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "areInterBaseUserPasswordsSet(String)", null);
-        try {
-            return getInterBaseUser(username).arePasswordsSet();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Determines if a <code>LinuxAccount</code> currently has passwords set.
      *
      * @param  username  the username of the account
@@ -3103,114 +2831,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "areUsernamePasswordsSet(String)", null);
         try {
             return getUsername(username).arePasswordsSet();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Dumps and compresses an <code>InterBaseDatabase</code> onto a backup server.  The backup copy may
-     * be retrieved with the <code>getInterBaseBackup</code> method.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  dbGroup  the name of the database group
-     * @param  name  the name of the database
-     *
-     * @return  the <code>pkey</code> of the newly created <code>InterBaseBackup</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *                                  violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
-     *                                  <code>InterBaseDBGroup</code>, or <code>InterBaseDatabase</code>.
-     *
-     * @see  InterBaseDatabase#backup
-     * @see  #addInterBaseDatabase
-     * @see  InterBaseDatabase
-     * @see  #getInterBaseBackup(int,Writer)
-     */
-    public int backupInterBaseDatabase(
-        String aoServer,
-        String dbGroup,
-        String name
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "backupInterBaseDatabase(String,String,String)", null);
-        try {
-            AOServer ao=getAOServer(aoServer);
-            InterBaseDBGroup idg=ao.getInterBaseDBGroup(dbGroup);
-            if(idg==null) throw new IllegalArgumentException("Unable to find InterBaseDBGroup: "+dbGroup+" on "+aoServer);
-            InterBaseDatabase id=idg.getInterBaseDatabase(name);
-            if(id==null) throw new IllegalArgumentException("Unable to find InterBaseDatabase: "+name+" in "+dbGroup+" on "+aoServer);
-            return id.backup();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Dumps and compresses a <code>MySQLDatabase</code> onto a backup server.  The backup copy may
-     * be retrieved with the <code>getMySQLBackup</code> method.
-     *
-     * @param  name  the name of the database
-     * @param  aoServer  the server the database is hosted on
-     *
-     * @return  the <code>pkey</code> of the newly created <code>MySQLBackup</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
-     *					<code>MySQLDatabase</code>
-     *
-     * @see  MySQLDatabase#backup
-     * @see  #addMySQLDatabase
-     * @see  MySQLDatabase
-     * @see  #getMySQLBackup(int,Writer)
-     */
-    public int backupMySQLDatabase(
-        String name,
-        String mysqlServer,
-        String aoServer
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "backupMySQLDatabase(String,String,String)", null);
-        try {
-            AOServer ao=getAOServer(aoServer);
-            MySQLDatabase md=getMySQLDatabase(aoServer, mysqlServer, name);
-            return md.backup();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Dumps and compresses a <code>PostgresDatabase</code> onto a backup server.  The backup copy may
-     * be retrieved with the <code>getPostgresBackup</code> methods.
-     *
-     * @param  name  the name of the database
-     * @param  postgresServer  the name of the PostgreSQL server
-     * @param  aoServer  the server the database is hosted on
-     *
-     * @return  the <code>pkey</code> of the newly created <code>PostgresBackup</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
-     *					<code>PostgresDatabase</code>
-     *
-     * @see  PostgresDatabase#backup
-     * @see  #addPostgresDatabase
-     * @see  PostgresDatabase
-     * @see  #getPostgresBackup(int,Writer)
-     */
-    public int backupPostgresDatabase(
-        String name,
-        String postgresServer,
-        String aoServer
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "backupPostgresDatabase(String,String,String)", null);
-        try {
-            return getPostgresDatabase(aoServer, postgresServer, name).backup();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -3650,98 +3270,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkEmailListPath(String)", null);
         try {
             if(!EmailList.isValidRegularPath(path)) throw new IllegalArgumentException("Invalid EmailList path: "+path);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Checks the format of an InterBase database name.
-     *
-     * @param  name  the name that will be used to create a new database
-     *
-     * @exception  IllegalArgumentException  if the database name is not allowed
-     *
-     * @see  InterBaseDatabaseTable#isValidDatabaseName
-     * @see  #addInterBaseDatabase
-     */
-    public void checkInterBaseDatabaseName(
-        String name
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkInterBaseDatabaseName(String)", null);
-        try {
-            if(!connector.interBaseDatabases.isValidDatabaseName(name)) throw new IllegalArgumentException("Invalid InterBase database name: "+name);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Checks the format of an InterBase database group name.
-     *
-     * @param  name  the name that will be used to create a new database group
-     *
-     * @exception  IllegalArgumentException  if the database name is not allowed
-     *
-     * @see  InterBaseDBGroupTable#isValidDBGroupName
-     * @see  #addInterBaseDBGroup
-     */
-    public void checkInterBaseDBGroupName(
-        String name
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkInterBaseDBGroupName(String)", null);
-        try {
-            if(connector.interBaseDBGroups.isValidDBGroupName(name)) throw new IllegalArgumentException("Invalid InterBase database group name: "+name);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Checks the strength of a password that will be used for
-     * an <code>InterBaseServerUser</code>.
-     *
-     * @param  username  the username of the <code>InterBaseServerUser</code> whos
-     *					password will be set
-     * @param  password  the new password
-     *
-     * @return  a description of why the password is weak or <code>null</code>
-     *          if all checks succeed
-     *
-     * @exception  IOException  if unable to load the dictionary resource
-     *
-     * @see  #setInterBaseUserPassword
-     * @see  #setInterBaseServerUserPassword
-     * @see  InterBaseUser#checkPassword
-     */
-    public static PasswordChecker.Result[] checkInterBasePassword(
-        String username,
-        String password
-    ) throws IOException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkInterBasePassword(String,String)", null);
-        try {
-            return InterBaseUser.checkPassword(Locale.getDefault(), username, password);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Checks the format of a username that will be used for an <code>InterBaseUser</code>.
-     *
-     * @param  username  the username
-     *
-     * @exception  IllegalArgumentException  if the username is not in a valid format
-     *
-     * @see  InterBaseUser#isValidUsername
-     * @see  #addInterBaseUser
-     */
-    public static void checkInterBaseUsername(
-        String username
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "checkInterBaseUsername(String)", null);
-        try {
-            if(!InterBaseUser.isValidUsername(username)) throw new IllegalArgumentException("Invalid InterBaseUser username: "+username);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -4685,9 +4213,6 @@ final public class SimpleAOClient {
     private void disableUsername(DisableLog dl, Username un) {
         Profiler.startProfile(Profiler.UNKNOWN, SimpleAOClient.class, "disableUsername(DisableLog,Username)", null);
         try {
-            InterBaseUser iu=un.getInterBaseUser();
-            if(iu!=null && iu.disable_log==-1) disableInterBaseUser(dl, iu);
-
             LinuxAccount la=un.getLinuxAccount();
             if(la!=null && la.disable_log==-1) disableLinuxAccount(dl, la);
 
@@ -4700,73 +4225,6 @@ final public class SimpleAOClient {
             un.disable(dl);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    /**
-     * Disables an <code>InterBaseUser</code>.
-     *
-     * @param  username  the username to disable
-     * @param  disableReason  the reason the account is being disabled
-     *
-     * @return  the pkey of the new <code>DisableLog</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or <code>InterBaseUser</code>
-     */
-    public int disableInterBaseUser(
-        String username,
-        String disableReason
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "disableInterBaseUser(String,String)", null);
-        try {
-            InterBaseUser iu=getInterBaseUser(username);
-            DisableLog dl=connector.disableLogs.get(iu.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
-            disableInterBaseUser(dl, iu);
-            return dl.getPkey();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-    private void disableInterBaseUser(DisableLog dl, InterBaseUser iu) {
-        Profiler.startProfile(Profiler.UNKNOWN, SimpleAOClient.class, "disableInterBaseUser(DisableLog,InterBaseUser)", null);
-        try {
-            for(InterBaseServerUser isu : iu.getInterBaseServerUsers()) if(isu.disable_log==-1) isu.disable(dl);
-            iu.disable(dl);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    /**
-     * Disables an <code>InterBaseServerUser</code>.
-     *
-     * @param  username  the username to disable
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  disableReason  the reason the account is being disabled
-     *
-     * @return  the pkey of the new <code>DisableLog</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>InterBaseUser</code>
-     */
-    public int disableInterBaseServerUser(
-        String username,
-        String aoServer,
-        String disableReason
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "disableInterBaseServerUser(String,String,String)", null);
-        try {
-            InterBaseServerUser isu=getInterBaseServerUser(aoServer, username);
-            DisableLog dl=connector.disableLogs.get(isu.getInterBaseUser().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
-            isu.disable(dl);
-            return dl.getPkey();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 
@@ -5126,7 +4584,6 @@ final public class SimpleAOClient {
             for(EmailSmtpRelay ssr : pk.getEmailSmtpRelays()) if(ssr.disable_log==dl.pkey) ssr.enable();
 
             // Various accounts
-            List<AOServer> interbaseServers=new SortedArrayList<AOServer>();
             List<AOServer> linuxAccountServers=new SortedArrayList<AOServer>();
             List<AOServer> mysqlServers=new SortedArrayList<AOServer>();
             List<AOServer> postgresServers=new SortedArrayList<AOServer>();
@@ -5134,7 +4591,6 @@ final public class SimpleAOClient {
                 if(un.disable_log==dl.pkey) enableUsername(
                     dl,
                     un,
-                    interbaseServers,
                     linuxAccountServers,
                     mysqlServers,
                     postgresServers
@@ -5142,9 +4598,6 @@ final public class SimpleAOClient {
             }
 
             // Wait for rebuilds
-            for(int c=0;c<interbaseServers.size();c++) {
-                interbaseServers.get(c).waitForInterBaseRebuild();
-            }
             for(int c=0;c<linuxAccountServers.size();c++) {
                 linuxAccountServers.get(c).waitForLinuxAccountRebuild();
             }
@@ -5344,7 +4797,7 @@ final public class SimpleAOClient {
             Username un=getUsername(username);
             DisableLog dl=un.getDisableLog();
             if(dl==null) throw new IllegalArgumentException("Username not disabled: "+username);
-            enableUsername(dl, un, null, null, null, null);
+            enableUsername(dl, un, null, null, null);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -5352,20 +4805,16 @@ final public class SimpleAOClient {
     private void enableUsername(
         DisableLog dl,
         Username un,
-        List<AOServer> interbaseServers,
         List<AOServer> linuxAccountServers,
         List<AOServer> mysqlServers,
         List<AOServer> postgresServers
     ) {
-        Profiler.startProfile(Profiler.UNKNOWN, SimpleAOClient.class, "enableUsername(DisableLog,Username,List<AOServer>,List<AOServer>,List<AOServer>,List<AOServer>)", null);
+        Profiler.startProfile(Profiler.UNKNOWN, SimpleAOClient.class, "enableUsername(DisableLog,Username,List<AOServer>,List<AOServer>,List<AOServer>)", null);
         try {
             un.enable();
 
             BusinessAdministrator ba=un.getBusinessAdministrator();
             if(ba!=null && ba.disable_log==dl.pkey) ba.enable();
-
-            InterBaseUser iu=un.getInterBaseUser();
-            if(iu!=null && iu.disable_log==dl.pkey) enableInterBaseUser(dl, iu, interbaseServers);
 
             LinuxAccount la=un.getLinuxAccount();
             if(la!=null && la.disable_log==dl.pkey) enableLinuxAccount(dl, la, linuxAccountServers);
@@ -5377,74 +4826,6 @@ final public class SimpleAOClient {
             if(pu!=null && pu.disable_log==dl.pkey) enablePostgresUser(dl, pu, postgresServers);
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    /**
-     * Enables an <code>InterBaseUser</code>.
-     *
-     * @param  username  the username to enable
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or <code>InterBaseUser</code>
-     */
-    public void enableInterBaseUser(
-        String username
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "enableInterBaseUser(String)", null);
-        try {
-            InterBaseUser iu=getInterBaseUser(username);
-            DisableLog dl=iu.getDisableLog();
-            if(dl==null) throw new IllegalArgumentException("InterBaseUser not disabled: "+username);
-            enableInterBaseUser(dl, iu, null);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-    private void enableInterBaseUser(DisableLog dl, InterBaseUser iu, List<AOServer> interbaseServers) {
-        Profiler.startProfile(Profiler.UNKNOWN, SimpleAOClient.class, "enableInterBaseUser(DisableLog,InterBaseUser,List<AOServer>)", null);
-        try {
-            iu.enable();
-
-            for(InterBaseServerUser isu : iu.getInterBaseServerUsers()) {
-                if(isu.disable_log==dl.pkey) {
-                    isu.enable();
-                    if(interbaseServers!=null) {
-                        AOServer ao=isu.getAOServer();
-                        if(!interbaseServers.contains(ao)) interbaseServers.add(ao);
-                    }
-                }
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    /**
-     * Enables an <code>InterBaseServerUser</code>.
-     *
-     * @param  username  the username to enable
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>InterBaseUser</code>
-     */
-    public void enableInterBaseServerUser(
-        String username,
-        String aoServer
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "enableInterBaseServerUser(String,String)", null);
-        try {
-            InterBaseServerUser isu=getInterBaseServerUser(aoServer, username);
-            DisableLog dl=isu.getDisableLog();
-            if(dl==null) throw new IllegalArgumentException("InterBaseServerUser not disabled: "+username+" on "+aoServer);
-            isu.enable();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 
@@ -5718,43 +5099,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Dumps the contents of an <code>InterBaseDatabase</code> to a <code>Writer</code>.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  dbGroup  the name of the <code>InterBaseDBGroup</code>
-     * @param  name  the name of the <code>IntMySQLDatabase</code>
-     * @param  out  the <code>Writer</code> to dump to
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
-     *					<code>InterBaseDBGroup</code>, or <code>InterBaseDatabase</code>
-     *
-     * @see  InterBaseDatabase#dump
-     * @see  InterBaseDatabase
-     * @see  #addInterBaseDatabase
-     */
-    public void dumpInterBaseDatabase(
-        String aoServer,
-        String dbGroup,
-        String name,
-        Writer out
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "dumpInterBaseDatabase(String,String,String,Writer)", null);
-        try {
-            AOServer ao=getAOServer(aoServer);
-            InterBaseDBGroup idg=ao.getInterBaseDBGroup(dbGroup);
-            if(idg==null) throw new IllegalArgumentException("Unable to find InterBaseDBGroup: "+dbGroup+" on "+aoServer);
-            InterBaseDatabase id=idg.getInterBaseDatabase(name);
-            if(id==null) throw new IllegalArgumentException("Unable to find InterBaseDatabase: "+name+" in "+dbGroup+" on "+aoServer);
-            id.dump(out);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Dumps the contents of a <code>MySQLDatabase</code> to a <code>Writer</code>.
      *
      * @param  name  the name of the <code>MySQLDatabase</code>
@@ -5770,7 +5114,6 @@ final public class SimpleAOClient {
      * @see  MySQLDatabase#dump
      * @see  MySQLDatabase
      * @see  #backupMySQLDatabase
-     * @see  #getMySQLBackup
      */
     public void dumpMySQLDatabase(
         String name,
@@ -5803,7 +5146,6 @@ final public class SimpleAOClient {
      * @see  PostgresDatabase#dump
      * @see  PostgresDatabase
      * @see  #backupPostgresDatabase
-     * @see  #getPostgresBackup
      */
     public void dumpPostgresDatabase(
         String name,
@@ -5839,74 +5181,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "generateAccountingCode(String)", null);
         try {
             return connector.businesses.generateAccountingCode(accountingTemplate);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Generates a unique InterBase database name.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  dbGroup  the database group the database will be part of
-     * @param  template_base  the beginning part of the template, such as <code>"AO"</code>
-     * @param  template_added  the part of the template added between the <code>template_base</code> and
-     *					the generated number, such as <code>"_"</code>
-     *
-     * @return  the available database name
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code>
-     *                                  or <code>InterBaseDBGroup</code>
-     *
-     * @see  InterBaseDBGroup#generateInterBaseDatabaseName
-     * @see  #addInterBaseDatabase
-     * @see  InterBaseDatabase
-     */
-    public String generateInterBaseDatabaseName(
-        String aoServer,
-        String dbGroup,
-        String template_base,
-        String template_added
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "generateInterBaseDatabaseName(String,String,String,String)", null);
-        try {
-            AOServer ao=getAOServer(aoServer);
-            InterBaseDBGroup idg=ao.getInterBaseDBGroup(dbGroup);
-            if(idg==null) throw new IllegalArgumentException("Unable to find InterBaseDBGroup: "+dbGroup+" on "+aoServer);
-            return idg.generateInterBaseDatabaseName(template_base, template_added);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Generates a unique InterBase database name.
-     *
-     * @param  aoServer  the server the database is going on
-     * @param  template_base  the beginning part of the template, such as <code>"AO"</code>
-     * @param  template_added  the part of the template added between the <code>template_base</code> and
-     *					the generated number, such as <code>"_"</code>
-     *
-     * @return  the available database name
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>
-     *
-     * @see  AOServer#generateInterBaseDBGroupName
-     * @see  #addInterBaseDBGroup
-     * @see  InterBaseDBGroup
-     */
-    public String generateInterBaseDBGroupName(
-        String aoServer,
-        String template_base,
-        String template_added
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "generateInterBaseDBGroupName(String,String,String)", null);
-        try {
-            return getAOServer(aoServer).generateInterBaseDBGroupName(template_base, template_added);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -6090,84 +5364,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Gets the contents of a <code>BackupData</code>.
-     *
-     * @param  pkey  the <code>pkey</code> of the backup to retrieve
-     * @param  out  the <code>PrintWriter</code> to write the backup to
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <cdoe>BackupData</code>
-     *
-     * @see  BackupData#dump
-     */
-    public void getBackupData(
-        int pkey,
-        PrintWriter out
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getBackupData(int,PrintWriter)", null);
-        try {
-            BackupData bd=connector.backupDatas.get(pkey);
-            if(bd==null) throw new IllegalArgumentException("Unable to find BackupData: "+pkey);
-            bd.dump(out);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Gets the total size of a <code>BackupPartition</code>.
-     *
-     * @param  aoServer  the hostname of the server
-     * @param  path  the path of the <code>BackupPartition</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <cdoe>BackupPartition</code>
-     *
-     * @see  BackupPartition#getDiskTotalSize
-     */
-    public long getBackupPartitionTotalSize(
-        String aoServer,
-        String path
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getBackupPartitionTotalSize(String,String)", null);
-        try {
-            BackupPartition bp=getAOServer(aoServer).getBackupPartitionForPath(path);
-            if(bp==null) throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+aoServer);
-            return bp.getDiskTotalSize();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Gets the used size of a <code>BackupPartition</code>.
-     *
-     * @param  aoServer  the hostname of the server
-     * @param  path  the path of the <code>BackupPartition</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <cdoe>BackupPartition</code>
-     *
-     * @see  BackupPartition#getDiskUsedSize
-     */
-    public long getBackupPartitionUsedSize(
-        String aoServer,
-        String path
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getBackupPartitionUsedSize(String,String)", null);
-        try {
-            BackupPartition bp=getAOServer(aoServer).getBackupPartitionForPath(path);
-            if(bp==null) throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+aoServer);
-            return bp.getDiskUsedSize();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Gets the <code>AOServConnector</code> used for communication with the server.
      */
     public AOServConnector getConnector() {
@@ -6233,26 +5429,52 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Gets the contents of a <code>FileBackup</code>.
+     * Gets the total size of a <code>BackupPartition</code>.
      *
-     * @param  pkey  the <code>pkey</code> of the file backup to retrieve
-     * @param  out  the <code>PrintWriter</code> to write the backup to
+     * @param  aoServer  the hostname of the server
+     * @param  path  the path of the <code>BackupPartition</code>
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <cdoe>BackupData</code>
+     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <cdoe>BackupPartition</code>
      *
-     * @see  FileBackup#dump
+     * @see  BackupPartition#getDiskTotalSize
      */
-    public void getFileBackup(
-        int pkey,
-        PrintWriter out
+    public long getBackupPartitionTotalSize(
+        String aoServer,
+        String path
     ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getFileBackup(int,PrintWriter)", null);
+        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getBackupPartitionTotalSize(String,String)", null);
         try {
-            FileBackup fb=connector.fileBackups.get(pkey);
-            if(fb==null) throw new IllegalArgumentException("Unable to find FileBackup: "+pkey);
-            fb.dump(out);
+            BackupPartition bp=getAOServer(aoServer).getBackupPartitionForPath(path);
+            if(bp==null) throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+aoServer);
+            return bp.getDiskTotalSize();
+        } finally {
+            Profiler.endProfile(Profiler.FAST);
+        }
+    }
+
+    /**
+     * Gets the used size of a <code>BackupPartition</code>.
+     *
+     * @param  aoServer  the hostname of the server
+     * @param  path  the path of the <code>BackupPartition</code>
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <cdoe>BackupPartition</code>
+     *
+     * @see  BackupPartition#getDiskUsedSize
+     */
+    public long getBackupPartitionUsedSize(
+        String aoServer,
+        String path
+    ) throws IllegalArgumentException {
+        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getBackupPartitionUsedSize(String,String)", null);
+        try {
+            BackupPartition bp=getAOServer(aoServer).getBackupPartitionForPath(path);
+            if(bp==null) throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+aoServer);
+            return bp.getDiskUsedSize();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -6303,35 +5525,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getImapFolderSizes(String,String,String[])", null);
         try {
             return getLinuxServerAccount(aoServer, username).getImapFolderSizes(folderNames);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Gets the contents of an <code>InterBaseBackup</code>.
-     *
-     * @param  pkey  the <code>pkey</code> of the backup to retrieve
-     * @param  out  the <code>Writer</code> to write the backup to
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <cdoe>InterBaseBackup</code>
-     *
-     * @see  InterBaseBackup#getDatabaseBackup
-     * @see  #backupInterBaseDatabase
-     * @see  InterBaseDatabase
-     * @see  InterBaseBackup
-     */
-    public void getInterBaseBackup(
-        int pkey,
-        Writer out
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getInterBaseBackup(int,Writer)", null);
-        try {
-            InterBaseBackup ib=connector.interBaseBackups.get(pkey);
-            if(ib==null) throw new IllegalArgumentException("Unable to find InterBaseBackup: "+pkey);
-            ib.getDatabaseBackup(out, true);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -6466,66 +5659,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Gets the contents of a <code>MySQLBackup</code>.
-     *
-     * @param  pkey  the <code>pkey</code> of the backup to retrieve
-     * @param  out  the <code>Writer</code> to write the backup to
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <cdoe>MySQLBackup</code>
-     *
-     * @see  MySQLBackup#getDatabaseBackup
-     * @see  #backupMySQLDatabase
-     * @see  #dumpMySQLDatabase(String,String,String,Writer)
-     * @see  MySQLDatabase
-     * @see  MySQLBackup
-     */
-    public void getMySQLBackup(
-        int pkey,
-        Writer out
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getMySQLBackup(int,Writer)", null);
-        try {
-            MySQLBackup mb=connector.mysqlBackups.get(pkey);
-            if(mb==null) throw new IllegalArgumentException("Unable to find MySQLBackup: "+pkey);
-            mb.getDatabaseBackup(out, true);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Gets the contents of a <code>PostgresBackup</code>.
-     *
-     * @param  pkey  the <code>pkey</code> of the backup to retrieve
-     * @param  out  the <code>Writer</code> to write the backup to
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <cdoe>PostgresBackup</code>
-     *
-     * @see  PostgresBackup#getDatabaseBackup
-     * @see  #backupPostgresDatabase
-     * @see  #dumpPostgresDatabase
-     * @see  PostgresDatabase
-     * @see  PostgresBackup
-     */
-    public void getPostgresBackup(
-        int pkey,
-        Writer out
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "getPostgresBackup(int,Writer)", null);
-        try {
-            PostgresBackup pb=connector.postgresBackups.get(pkey);
-            if(pb==null) throw new IllegalArgumentException("Unable to find PostgresBackup: "+pkey);
-            pb.getDatabaseBackup(out, true);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Gets the name of the root <code>Business</code> in the tree of <code>Business</code>es.
      *
      * @return  the accounting code of the root <code>Business</code>
@@ -6618,7 +5751,7 @@ final public class SimpleAOClient {
      * based on the table to be reevaluated.
      *
      * @param  tableID  the ID of the <code>AOServTable</code> to invalidate
-     * @param  server  the server that should be invalidated or <code>null</code> for none
+     * @param  server  the server that should be invalidated or <code>null or ""</code> for none, accepts ao_servers.hostname, servers.package||'/'||servers.name, or servers.pkey
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data integrity
@@ -6635,8 +5768,14 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "invalidate(int,String)", null);
         try {
             if(tableID<0 || tableID>=numTables) throw new IllegalArgumentException("Invalid table ID: "+tableID);
+            Server se;
             if(server!=null && server.length()==0) server=null;
-            connector.invalidateTable(tableID, server);
+            if(server==null) se=null;
+            else {
+                se = connector.servers.get(server);
+                if(se==null) throw new IllegalArgumentException("Unable to find Server: "+server);
+            }
+            connector.invalidateTable(tableID, se==null ? -1 : se.pkey);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -6720,97 +5859,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "isDNSZoneAvailable(String)", null);
         try {
             return connector.dnsZones.isDNSZoneAvailable(zone);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Determines if an <code>InterBaseDatabase</code> name is available on the specified
-     * <code>Server</code> and database group.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  dbGroup  the name of the database group
-     * @param  name  the name of the database
-     *
-     * @return  <code>true</code> if the <code>InterBaseDatabase</code> is available
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if the database name is invalid or unable
-     *					to find the <code>Server</code>
-     *
-     * @see  InterBaseDBGroup#isInterBaseDatabaseNameAvailable
-     * @see  #checkInterBaseDatabaseName
-     */
-    public boolean isInterBaseDatabaseNameAvailable(
-        String aoServer,
-        String dbGroup,
-        String name
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "isInterBaseDatabaseNameAvailable(String,String,String)", null);
-        try {
-            AOServer ao=getAOServer(aoServer);
-            InterBaseDBGroup idg=ao.getInterBaseDBGroup(dbGroup);
-            if(idg==null) throw new IllegalArgumentException("Unable to find InterBaseDBGroup: "+dbGroup+" on "+aoServer);
-            return idg.isInterBaseDatabaseNameAvailable(name);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Determines if an <code>InterBaseDBGroup/code> name is available on the specified
-     * <code>Server</code>.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  name  the name of the database
-     *
-     * @return  <code>true</code> if the <code>InterBaseDBGroup</code> name is available
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if the database group name is invalid or unable
-     *					to find the <code>AOServer</code>
-     *
-     * @see  AOServer#isInterBaseDBGroupNameAvailable
-     * @see  #checkInterBaseDBGroupName
-     */
-    public boolean isInterBaseDBGroupNameAvailable(
-        String aoServer,
-        String name
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "isInterBaseDBGroupNameAvailable(String,String)", null);
-        try {
-            return getAOServer(aoServer).isInterBaseDBGroupNameAvailable(name);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Determines if an <code>InterBaseServerUser</code> currently has a password set.
-     *
-     * @param  username  the username of the account
-     * @param  aoServer  the server the account is hosted on
-     *
-     * @return  if the <code>InterBaseServerUser</code> has a password set
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if the <code>InterBaseServerUser</code> is not found
-     *
-     * @see  InterBaseServerUser#arePasswordsSet
-     * @see  #setInterBaseServerUserPassword
-     * @see  InterBaseServerUser
-     */
-    public boolean isInterBaseServerUserPasswordSet(
-        String username,
-        String aoServer
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "isInterBaseServerUserPasswordSet(String,String)", null);
-        try {
-            return getInterBaseServerUser(aoServer, username).arePasswordsSet()==PasswordProtected.ALL;
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -7838,38 +6886,13 @@ final public class SimpleAOClient {
             if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pipe);
             AOServer ao=ep.getAOServer();
             EmailDomain sd=ao.getEmailDomain(domain);
-            if(sd==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getServer().hostname);
+            if(sd==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getHostname());
             EmailAddress addr=connector.emailAddresses.getEmailAddress(address, sd);
-            if(addr==null) throw new IllegalArgumentException("Unable to find EmailAddress: "+address+'@'+domain+" on "+ao.getServer().hostname);
+            if(addr==null) throw new IllegalArgumentException("Unable to find EmailAddress: "+address+'@'+domain+" on "+ao.getHostname());
             EmailPipeAddress epa=addr.getEmailPipeAddress(ep);
             if(epa==null) throw new IllegalArgumentException("Unable to find EmailPipeAddress: "+address+'@'+domain+"->"+ep);
             epa.remove();
             if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Removes a <code>FileBackup</code> from the backup systems.
-     *
-     * @param  pkey  the <code>pkey</code> of the <code>FileBackup</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>FileBackup</code>
-     *
-     * @see  FileBackup#remove
-     */
-    public void removeFileBackup(
-        int pkey
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeFileBackup(int)", null);
-        try {
-            FileBackup fb=connector.fileBackups.get(pkey);
-            if(fb==null) throw new IllegalArgumentException("Unable to find FileBackup: "+pkey);
-            fb.remove();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -8055,160 +7078,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Removes an <code>InterBaseBackup</code> from the backup systems.
-     *
-     * @param  pkey  the <code>pkey</code> of the <code>InterBaseBackup</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>InterBaseBackup</code>
-     *
-     * @see  InterBaseBackup#remove
-     * @see  #backupInterBaseDatabase
-     */
-    public void removeInterBaseBackup(
-        int pkey
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeInterBaseBackup(int)", null);
-        try {
-            InterBaseBackup ib=connector.interBaseBackups.get(pkey);
-            if(ib==null) throw new IllegalArgumentException("Unable to find InterBaseBackup: "+pkey);
-            ib.remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Removes an <code>InterBaseDatabase</code> from the system.  The data is not
-     * dumped or backed-up during the removal, if a backup is desired, use
-     * <code>backupInterBaseDatabase</code> or <code>dumpInterBaseDatabase</code>.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  dbGroup  the name of the database group
-     * @param  name  the name of the database
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
-     *					<code>InterBaseDBGroup</code>, or <code>InterBaseDatabase</code>
-     *
-     * @see  InterBaseDatabase#remove
-     * @see  #addInterBaseDatabase
-     * @see  #backupInterBaseDatabase
-     * @see  #dumpInterBaseDatabase
-     */
-    public void removeInterBaseDatabase(
-        String aoServer,
-        String dbGroup,
-        String name
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeInterBaseDatabase(String,String,String)", null);
-        try {
-            Server se=getServer(aoServer);
-            AOServer ao=se.getAOServer();
-            if(ao==null) throw new IllegalArgumentException("Server is not an AOServer: "+aoServer);
-            InterBaseDBGroup idg=ao.getInterBaseDBGroup(dbGroup);
-            if(idg==null) throw new IllegalArgumentException("Unable to find InterBaseDBGroup: "+dbGroup+" on "+aoServer);
-            InterBaseDatabase id=idg.getInterBaseDatabase(name);
-            if(id==null) throw new IllegalArgumentException("Unable to find InterBaseDatabase: "+name+" in "+dbGroup+" on "+aoServer);
-            id.remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Removes an <code>InterBaseDBGroup</code> and all of its associated <code>InterBaseDatabase</code>s
-     * from the system.  The data is not dumped or backed-up during the removal, if a backup is desired,
-     * use <code>backupInterBaseDatabase</code> or <code>dumpInterBaseDatabase</code>.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  dbGroup  the name of the database group
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
-     *					<code>InterBaseDBGroup</code>
-     *
-     * @see  InterBaseDBGroup#remove
-     * @see  #addInterBaseDBGroup
-     * @see  #backupInterBaseDatabase
-     * @see  #dumpInterBaseDatabase
-     */
-    public void removeInterBaseDBGroup(
-        String aoServer,
-        String dbGroup
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeInterBaseDBGroup(String,String)", null);
-        try {
-            AOServer ao=getAOServer(aoServer);
-            InterBaseDBGroup idg=ao.getInterBaseDBGroup(dbGroup);
-            if(idg==null) throw new IllegalArgumentException("Unable to find InterBaseDBGroup: "+dbGroup+" on "+aoServer);
-            idg.remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Removes an <code>InterBaseServerUser</code> from a the system..  The <code>InterBaseServerUser</code> is
-     * no longer allowed to access the <code>Server</code>.
-     *
-     * @param  username  the username of the <code>InterBaseServerUser</code>
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
-     *					<code>InterBaseServerUser</code>
-     *
-     * @see  InterBaseServerUser#remove
-     * @see  #addInterBaseServerUser
-     */
-    public void removeInterBaseServerUser(
-        String username,
-        String aoServer
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeInterBaseServerUser(String,String)", null);
-        try {
-            getInterBaseServerUser(aoServer, username).remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Removes an <code>InterBaseUser</code> from a the system..  All of the associated
-     * <code>InterBaseServerUser</code>s are also removed.
-     *
-     * @param  username  the username of the <code>InterBaseUser</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>InterBaseUser</code>
-     *
-     * @see  InterBaseUser#remove
-     * @see  #addInterBaseUser
-     * @see  #removeInterBaseServerUser
-     */
-    public void removeInterBaseUser(
-        String username
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeInterBaseUser(String)", null);
-        try {
-            getInterBaseUser(username).remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Removes a <code>LinuxAccAddress</code> from the system.
      *
      * @param  address  the part of the email address before the <code>@</code>
@@ -8234,8 +7103,8 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeLinuxAccAddress(String,String,String,String)", null);
         try {
             EmailAddress addr=getEmailAddress(aoServer, domain, address);
-            LinuxAccount la=getLinuxAccount(username);
-            LinuxAccAddress laa=addr.getLinuxAccAddress(la);
+            LinuxServerAccount lsa=getLinuxServerAccount(aoServer, username);
+            LinuxAccAddress laa=addr.getLinuxAccAddress(lsa);
             if(laa==null) throw new IllegalArgumentException("Unable to find LinuxAccAddress: "+address+'@'+domain+"->"+username+" on "+aoServer);
             laa.remove();
             if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
@@ -8374,32 +7243,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeLinuxServerGroup(String,String)", null);
         try {
             getLinuxServerGroup(aoServer, group).remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Removes a <code>MySQLBackup</code> from the backup systems.
-     *
-     * @param  pkey  the <code>pkey</code> of the <code>MySQLBackup</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>MySQLBackup</code>
-     *
-     * @see  MySQLBackup#remove
-     * @see  #backupMySQLDatabase
-     */
-    public void removeMySQLBackup(
-        int pkey
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeMySQLBackup(int)", null);
-        try {
-            MySQLBackup mb=connector.mysqlBackups.get(pkey);
-            if(mb==null) throw new IllegalArgumentException("Unable to find MySQLBackup: "+pkey);
-            mb.remove();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -8554,32 +7397,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Removes a <code>PostgresBackup</code> from the backup systems.
-     *
-     * @param  pkey  the <code>pkey</code> of the <code>PostgresBackup</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>PostgresBackup</code>
-     *
-     * @see  PostgresBackup#remove
-     * @see  #backupPostgresDatabase
-     */
-    public void removePostgresBackup(
-        int pkey
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removePostgresBackup(int)", null);
-        try {
-            PostgresBackup pb=connector.postgresBackups.get(pkey);
-            if(pb==null) throw new IllegalArgumentException("Unable to find PostgresBackup: "+pkey);
-            pb.remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Removes a <code>PostgresDatabase</code> from the system.  All data is removed
      * from the PostgreSQL server.  The data is not dumped or backed-up during
      * the removal, if a backup is desired, use <code>backupPostgresDatabase</code>
@@ -8726,26 +7543,27 @@ final public class SimpleAOClient {
     /**
      * Removes a <code>FileBackupSetting</code> from the system.
      *
-     * @param  server  the hostname of the <code>Server</code>
+     * @param  replication  the pkey of the <code>FailoverFileReplication</code>
      * @param  path  the path of the setting
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data integrity
      *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>FileBackupSetting</code>
+     * @exception  IllegalArgumentException  if unable to find the <code>FailoverFileReplication</code> or <code>FileBackupSetting</code>
      *
      * @see  FileBackupSetting#remove
      * @see  #addFileBackupSetting
      */
     public void removeFileBackupSetting(
-        String server,
+        int replication,
         String path
     ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeFileBackupSetting(String,String)", null);
+        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "removeFileBackupSetting(int,String)", null);
         try {
-            Server se=getServer(server);
-            FileBackupSetting fbs=se.getFileBackupSetting(path);
-            if(fbs==null) throw new IllegalArgumentException("Unable to find FileBackupSetting: "+path+" on "+server);
+            FailoverFileReplication ffr = getConnector().failoverFileReplications.get(replication);
+            if(ffr==null) throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
+            FileBackupSetting fbs=ffr.getFileBackupSetting(path);
+            if(fbs==null) throw new IllegalArgumentException("Unable to find FileBackupSetting: "+path+" on "+replication);
             fbs.remove();
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -8841,26 +7659,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "restartCron(String)", null);
         try {
             getAOServer(aoServer).restartCron();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Restarts the InterBase database server.
-     *
-     * @param  aoServer       the public hostname of the <code>AOServer</code>
-     *
-     * @exception  IOException  if not able to communicate with the server
-     * @exception  SQLException  if not able to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
-     *
-     * @see  AOServer#restartInterBase
-     */
-    public void restartInterBase(String aoServer) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "restartInterBase(String)", null);
-        try {
-            getAOServer(aoServer).restartInterBase();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -8993,7 +7791,7 @@ final public class SimpleAOClient {
             }
             if(subject!=null && subject.length()==0) subject=null;
             if(content!=null && content.length()==0) content=null;
-            LinuxAccAddress laa=ea.getLinuxAccAddress(lsa.getLinuxAccount());
+            LinuxAccAddress laa=ea.getLinuxAccAddress(lsa);
             if(laa==null) throw new IllegalArgumentException("Unable to find LinuxAccAddress: "+address+" on "+aoServer);
             lsa.setAutoresponder(laa, subject, content, enabled);
         } finally {
@@ -9143,36 +7941,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Sets the file backup retention for a <code>CvsRepository</code>
-     *
-     * @param  aoServer  the hostname of the <code>Server</code>
-     * @param  path  the path of the CVS repository
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>CvsRepository</code>
-     *
-     * @see  CvsRepository#setBackupRetention
-     * @see  #addCvsRepository
-     */
-    public void setCvsRepositoryBackupRetention(
-        String aoServer,
-        String path,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setCvsRepositoryBackupRetention(String,String,short)", null);
-        try {
-            AOServer ao=getAOServer(aoServer);
-            CvsRepository cr=ao.getCvsRepository(path);
-            if(cr==null) throw new IllegalArgumentException("Unable to find CvsRepository: "+path+" on "+aoServer);
-            cr.setBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Sets the permissions for a CVS repository directory.
      *
      * @param  aoServer  the server the repository exists on
@@ -9266,125 +8034,34 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Sets the backup retention for an <code>EmailList</code>
-     *
-     * @param  path  the path of the list
-     * @param  aoServer  the hostname of the <code>Server</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>EmailList</code>
-     *
-     * @see  EmailList#setBackupRetention
-     * @see  #addEmailList
-     */
-    public void setEmailListBackupRetention(
-        String path,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setEmailListBackupRetention(String,String,short)", null);
-        try {
-            getEmailList(aoServer, path).setBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Sets the settings contained by one <code>FileBackupSetting</code>
      *
-     * @param  server  the hostname of the <code>Server</code>
+     * @param  replication  the hostname of the <code>FailoverFileReplication</code>
      * @param  path  the path of the setting
-     * @param  packageName  the package that will own the backup files
-     * @param  backupLevel  the number of backup copies to keep
-     * @param  backupRetention  the number of days to keep the copies
-     * @param  recurse  allow the server to scan these directories recursively
+     * @param  backupEnabled  the enabled flag for the prefix
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>FileBackupSetting</code>, <code>Package</code>,
-     *                                          <code>BackupLevel</code>, or <code>BackupRetention</code>.
+     * @exception  IllegalArgumentException  if unable to find the <code>FailoverFileReplication</code> or <code>FileBackupSetting</code>
      *
      * @see  FileBackupSetting#setSettings
      * @see  #addFileBackupSetting
      */
     public void setFileBackupSetting(
-        String server,
+        int replication,
         String path,
-        String packageName,
-        short backupLevel,
-        short backupRetention,
-        boolean recurse
+        boolean backupEnabled
     ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setFileBackupSetting(String,String,String,short,short,boolean)", null);
+        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setFileBackupSetting(int,String,boolean)", null);
         try {
-            FileBackupSetting fbs=getServer(server).getFileBackupSetting(path);
-            if(fbs==null) throw new IllegalArgumentException("Unable to find FileBackupSetting: "+path+" on "+server);
-            BackupLevel bl=connector.backupLevels.get(backupLevel);
-            if(bl==null) throw new IllegalArgumentException("Unable to find BackupLevel: "+backupLevel);
-            BackupRetention br=connector.backupRetentions.get(backupRetention);
-            if(br==null) throw new IllegalArgumentException("Unable to find BackupRetention: "+backupRetention);
+            FailoverFileReplication ffr = getConnector().failoverFileReplications.get(replication);
+            if(ffr==null) throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
+            FileBackupSetting fbs=ffr.getFileBackupSetting(path);
+            if(fbs==null) throw new IllegalArgumentException("Unable to find FileBackupSetting: "+path+" on "+replication);
             fbs.setSettings(
                 path,
-                getPackage(packageName),
-                bl,
-                br,
-                recurse
+                backupEnabled
             );
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the config backup retention for a <code>HttpdSharedTomcat</code>
-     *
-     * @param  name  the name of the shared Tomcat
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
-     *
-     * @see  HttpdSharedTomcat#setConfigBackupRetention
-     */
-    public void setHttpdSharedTomcatConfigBackupRetention(
-        String name,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSharedTomcatConfigBackupRetention(String,String,short)", null);
-        try {
-            getHttpdSharedTomcat(aoServer, name).setConfigBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the file backup retention for a <code>HttpdSharedTomcat</code>
-     *
-     * @param  name  the name of the shared Tomcat
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
-     *
-     * @see  HttpdSharedTomcat#setFileBackupRetention
-     */
-    public void setHttpdSharedTomcatFileBackupRetention(
-        String name,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSharedTomcatFileBackupRetention(String,String,short)", null);
-        try {
-            getHttpdSharedTomcat(aoServer, name).setFileBackupRetention(days);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -9411,32 +8088,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSharedTomcatIsManual(String,String,boolean)", null);
         try {
             getHttpdSharedTomcat(aoServer, name).setIsManual(isManual);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the log file backup retention for a <code>HttpdSharedTomcat</code>
-     *
-     * @param  name  the name of the shared Tomcat
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
-     *
-     * @see  HttpdSharedTomcat#setLogBackupRetention
-     */
-    public void setHttpdSharedTomcatLogBackupRetention(
-        String name,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSharedTomcatLogBackupRetention(String,String,short)", null);
-        try {
-            getHttpdSharedTomcat(aoServer, name).setLogBackupRetention(days);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -9495,84 +8146,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Sets the config backup retention for a <code>HttpdSite</code>
-     *
-     * @param  siteName  the name of the site
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
-     *
-     * @see  HttpdSite#setConfigBackupRetention
-     */
-    public void setHttpdSiteConfigBackupRetention(
-        String siteName,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSiteConfigBackupRetention(String,String,short)", null);
-        try {
-            getHttpdSite(aoServer, siteName).setConfigBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the file backup retention for a <code>HttpdSite</code>
-     *
-     * @param  siteName  the name of the site
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
-     *
-     * @see  HttpdSite#setFileBackupRetention
-     */
-    public void setHttpdSiteFileBackupRetention(
-        String siteName,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSiteFileBackupRetention(String,String,short)", null);
-        try {
-            getHttpdSite(aoServer, siteName).setFileBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the FTP backup retention for a <code>HttpdSite</code>
-     *
-     * @param  siteName  the name of the site
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
-     *
-     * @see  HttpdSite#setFtpBackupRetention
-     */
-    public void setHttpdSiteFtpBackupRetention(
-        String siteName,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSiteFtpBackupRetention(String,String,short)", null);
-        try {
-            getHttpdSite(aoServer, siteName).setFtpBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Sets the <code>is_manual</code> flag for a <code>HttpdSite</code>
      *
      * @param  siteName  the name of the site
@@ -9593,32 +8166,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSiteIsManual(String,String,boolean)", null);
         try {
             getHttpdSite(aoServer, siteName).setIsManual(isManual);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the log file backup retention for a <code>HttpdSite</code>
-     *
-     * @param  siteName  the name of the site
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
-     *
-     * @see  HttpdSite#setLogBackupRetention
-     */
-    public void setHttpdSiteLogBackupRetention(
-        String siteName,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setHttpdSiteLogBackupRetention(String,String,short)", null);
-        try {
-            getHttpdSite(aoServer, siteName).setLogBackupRetention(days);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -9699,60 +8246,6 @@ final public class SimpleAOClient {
                 debug,
                 workDir
             );
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the password for a <code>InterBaseServerUser</code>.
-     *
-     * @param  username  the username of the <code>InterBaseServerUser</code>
-     * @param  aoServer  the hostname of the <code>Server</code>
-     * @param  password  the new password
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>InterBaseUser</code>,
-     *					<code>Server</code>, or <code>InterBaseServerUser</code>
-     *
-     * @see  InterBaseServerUser#setPassword
-     */
-    public void setInterBaseServerUserPassword(
-        String username,
-        String aoServer,
-        String password
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setInterBaseServerUserPassword(String,String,String)", null);
-        try {
-            getInterBaseServerUser(aoServer, username).setPassword(password==null || password.length()==0?null:password);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the password for an <code>InterBaseUser</code> by settings the password for
-     * all of its <code>InterBaseServerUser</code>s.
-     *
-     * @param  username  the username of the <code>InterBaseUser</code>
-     * @param  password  the new password
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>InterBaseUser</code>
-     *
-     * @see  InterBaseUser#setPassword
-     */
-    public void setInterBaseUserPassword(
-        String username,
-        String password
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setInterBaseUserPassword(String,String)", null);
-        try {
-            getInterBaseUser(username).setPassword(password==null || password.length()==0?null:password);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -10014,87 +8507,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Sets the backup retention for cron tables for a <code>LinuxServerAccount</code>.
-     *
-     * @param  username  the username of the <code>LinuxServerAccount</code>
-     * @param  aoServer  the hostname of the <code>Server</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>LinuxServerAccount</code>
-     *
-     * @see  LinuxServerAccount#setCronBackupRetention
-     * @see  #addLinuxServerAccount
-     */
-    public void setLinuxServerAccountCronBackupRetention(
-        String username,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setLinuxServerAccountCronBackupRetention(String,String,short)", null);
-        try {
-            getLinuxServerAccount(aoServer, username).setCronBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the backup retention for the home directory for a <code>LinuxServerAccount</code>.
-     *
-     * @param  username  the username of the <code>LinuxServerAccount</code>
-     * @param  aoServer  the hostname of the <code>Server</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>LinuxServerAccount</code>
-     *
-     * @see  LinuxServerAccount#setHomeBackupRetention
-     * @see  #addLinuxServerAccount
-     */
-    public void setLinuxServerAccountHomeBackupRetention(
-        String username,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setLinuxServerAccountHomeBackupRetention(String,String,short)", null);
-        try {
-            getLinuxServerAccount(aoServer, username).setHomeBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the backup retention for a <code>LinuxServerAccount</code>'s email inbox.
-     *
-     * @param  username  the username of the <code>LinuxServerAccount</code>
-     * @param  aoServer  the hostname of the <code>Server</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>LinuxServerAccount</code>
-     *
-     * @see  LinuxServerAccount#setInboxBackupRetention
-     * @see  #addLinuxServerAccount
-     */
-    public void setLinuxServerAccountInboxBackupRetention(
-        String username,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setLinuxServerAccountInboxBackupRetention(String,String,short)", null);
-        try {
-            getLinuxServerAccount(aoServer, username).setInboxBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Sets the password for a <code>LinuxServerAccount</code>.
      *
      * @param  username  the username of the <code>LinuxServerAccount</code>
@@ -10337,64 +8749,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Sets the backup retention for a <code>MajordomoServer</code>
-     *
-     * @param  domain  the domain of the server
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>EmailDomain</code>, or <code>MajordomoServer</code>
-     *
-     * @see  MajordomoServer#setBackupRetention
-     * @see  #addMajordomoServer
-     */
-    public void setMajordomoServerBackupRetention(
-        String domain,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setMajordomoServerBackupRetention(String,String,short)", null);
-        try {
-            EmailDomain ed=getEmailDomain(aoServer, domain);
-            MajordomoServer ms=ed.getMajordomoServer();
-            if(ms==null) throw new IllegalArgumentException("Unable to find MajordomoServer: "+domain+" on "+aoServer);
-            ms.setBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the backup retention for a <code>MySQLDatabase</code>
-     *
-     * @param  databaseName  the name of the database
-     * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>MySQLDatabase</code>
-     *
-     * @see  MySQLDatabase#setBackupRetention
-     * @see  #addMySQLDatabase
-     */
-    public void setMySQLDatabaseBackupRetention(
-        String databaseName,
-        String mysqlServer,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setMySQLDatabaseBackupRetention(String,String,String,short)", null);
-        try {
-            getMySQLDatabase(aoServer, mysqlServer, databaseName).setBackupRetention(days);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Sets the password for a <code>MySQLServerUser</code>.
      *
      * @param  username  the username of the <code>MySQLServerUser</code>
@@ -10492,35 +8846,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setNetBindMonitoringEnabled(int,boolean)", null);
         try {
             getNetBind(pkey).setMonitoringEnabled(enabled);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Sets the backup retention for a <code>PostgresDatabase</code>
-     *
-     * @param  databaseName  the name of the database
-     * @param  postgresServer  the name of the PostgreSQL server
-     * @param  aoServer  the hostname of the <code>Server</code>
-     * @param  days  the new number of days, <code>0</code> causes the data to not be backed-up
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>PostgresServer</code>, or <code>PostgresDatabase</code>
-     *
-     * @see  PostgresDatabase#setBackupRetention
-     * @see  #addPostgresDatabase
-     */
-    public void setPostgresDatabaseBackupRetention(
-        String databaseName,
-        String postgresServer,
-        String aoServer,
-        short days
-    ) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setPostgresDatabaseBackupRetention(String,String,String,short)", null);
-        try {
-            getPostgresDatabase(aoServer, postgresServer, databaseName).setBackupRetention(days);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -10723,26 +9048,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Starts the InterBase database if it is not already running.
-     *
-     * @param  aoServer       the public hostname of the <code>AOServer</code>
-     *
-     * @exception  IOException  if not able to communicate with the server
-     * @exception  SQLException  if not able to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
-     *
-     * @see  AOServer#startInterBase
-     */
-    public void startInterBase(String aoServer) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "startInterBase(String)", null);
-        try {
-            getAOServer(aoServer).startInterBase();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
      * Starts and/or restarts the Tomcat or JBoss Java VM for the provided site.
      *
      * @param  siteName  the name of the site, which is the directory name under <code>/www/</code>
@@ -10887,26 +9192,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "stopCron(String)", null);
         try {
             getAOServer(aoServer).stopCron();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Stops the InterBase database server if it is running.
-     *
-     * @param  aoServer       the public hostname of the <code>AOServer</code>
-     *
-     * @exception  IOException  if not able to communicate with the server
-     * @exception  SQLException  if not able to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
-     *
-     * @see  AOServer#stopInterBase
-     */
-    public void stopInterBase(String aoServer) throws IllegalArgumentException {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "stopInterBase(String)", null);
-        try {
-            getAOServer(aoServer).stopInterBase();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -11124,26 +9409,6 @@ final public class SimpleAOClient {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "waitForHttpdSiteRebuild(String)", null);
         try {
             getAOServer(aoServer).waitForHttpdSiteRebuild();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Waits for any processing or pending updates of the InterBase configurations to complete.
-     *
-     * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
-     *
-     * @exception  IOException  if not able to communicate with the server
-     * @exception  SQLException  if not able to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
-     *
-     * @see  AOServer#waitForInterBaseRebuild
-     */
-    public void waitForInterBaseRebuild(String aoServer) {
-        Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "waitForInterBaseRebuild(String)", null);
-        try {
-            getAOServer(aoServer).waitForInterBaseRebuild();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

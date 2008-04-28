@@ -23,6 +23,7 @@ import java.sql.*;
 public final class PackageCategory extends GlobalObjectStringKey<PackageCategory> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     public static final String
         AOSERV="aoserv",

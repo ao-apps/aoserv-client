@@ -22,6 +22,14 @@ final public class HttpdTomcatVersionTable extends GlobalTableIntegerKey<HttpdTo
 	super(connector, HttpdTomcatVersion.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdTomcatVersion.COLUMN_VERSION_name+'.'+TechnologyVersion.COLUMN_VERSION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public HttpdTomcatVersion get(Object pkey) {
 	return getUniqueRow(HttpdTomcatVersion.COLUMN_VERSION, pkey);
     }

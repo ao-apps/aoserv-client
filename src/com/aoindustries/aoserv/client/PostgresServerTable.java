@@ -23,6 +23,15 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 	super(connector, PostgresServer.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PostgresServer.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(PostgresServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addPostgresServer(
         String name,
         AOServer aoServer,

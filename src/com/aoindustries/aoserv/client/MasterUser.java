@@ -28,6 +28,7 @@ import java.sql.*;
 final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 
     static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
 
     private boolean
         is_active,

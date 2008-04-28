@@ -25,6 +25,16 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 	super(connector, EmailSmtpRelay.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailSmtpRelay.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(EmailSmtpRelay.COLUMN_HOST_name, ASCENDING),
+        new OrderBy(EmailSmtpRelay.COLUMN_PACKAGE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addEmailSmtpRelay(Package pack, AOServer aoServer, String host, EmailSmtpRelayType type, long duration) {
         try {
             int pkey;

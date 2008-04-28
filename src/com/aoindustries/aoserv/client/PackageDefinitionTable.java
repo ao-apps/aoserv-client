@@ -25,6 +25,18 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	super(connector, PackageDefinition.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
+        new OrderBy(PackageDefinition.COLUMN_MONTHLY_RATE_name, ASCENDING),
+        new OrderBy(PackageDefinition.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(PackageDefinition.COLUMN_VERSION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addPackageDefinition(
         Business business,
         PackageCategory category,

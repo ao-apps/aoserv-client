@@ -24,6 +24,14 @@ public final class EmailAttachmentTypeTable extends GlobalTableStringKey<EmailAt
 	super(connector, EmailAttachmentType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailAttachmentType.COLUMN_EXTENSION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public EmailAttachmentType get(Object pkey) {
 	return getUniqueRow(EmailAttachmentType.COLUMN_EXTENSION, pkey);
     }

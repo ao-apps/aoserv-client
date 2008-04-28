@@ -22,11 +22,11 @@ import java.util.*;
  */
 final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile> {
 
-    public static final int
-        COLUMN_PKEY=0,
-        COLUMN_OPERATING_SYSTEM_VERSION=1,
-        COLUMN_PATH=2
-    ;
+    static final int COLUMN_PKEY=0;
+    public static final int COLUMN_OPERATING_SYSTEM_VERSION=1;
+    public static final int COLUMN_PATH=2;
+    static final String COLUMN_PATH_name = "path";
+    static final String COLUMN_OPERATING_SYSTEM_VERSION_name= "operating_system_version";
 
     static final int
         MAX_PATH_LENGTH=178,

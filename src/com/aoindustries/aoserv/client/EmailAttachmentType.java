@@ -22,6 +22,7 @@ import java.sql.*;
 public final class EmailAttachmentType extends GlobalObjectStringKey<EmailAttachmentType> {
 
     static final int COLUMN_EXTENSION=0;
+    static final String COLUMN_EXTENSION_name = "extension";
 
     private String description;
     private boolean is_default_block;

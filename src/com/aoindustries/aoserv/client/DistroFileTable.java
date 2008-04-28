@@ -24,6 +24,15 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 	super(connector, DistroFile.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(DistroFile.COLUMN_PATH_name, ASCENDING),
+        new OrderBy(DistroFile.COLUMN_OPERATING_SYSTEM_VERSION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public DistroFile get(Object pkey) {
         return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
     }

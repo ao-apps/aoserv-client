@@ -19,6 +19,14 @@ final public class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
 	super(connector, ServerFarm.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(ServerFarm.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public ServerFarm get(Object name) {
 	return getUniqueRow(ServerFarm.COLUMN_NAME, name);
     }

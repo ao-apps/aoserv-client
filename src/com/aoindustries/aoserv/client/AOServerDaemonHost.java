@@ -26,6 +26,8 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=1
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_HOST_name = "host";
 
     int aoServer;
     private String host;

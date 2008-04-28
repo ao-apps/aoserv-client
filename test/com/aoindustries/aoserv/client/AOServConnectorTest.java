@@ -160,8 +160,9 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testGetTable() {
         System.out.println("Testing getTable and getTables");
-        AOServTable[] tables=new AOServTable[SchemaTable.NUM_TABLES];
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) {
+        int numTables = SchemaTable.TableID.values().length;
+        AOServTable[] tables=new AOServTable[numTables];
+        for(int c=0;c<numTables;c++) {
             AOServTable table=tables[c]=conn.getTable(c);
             // Make sure index matches table ID
             assertEquals("AOServConnector.tables["+c+"] and AOServTable("+table.getClass().getName()+".getTableID()="+table.getTableID(), table.getTableID(), c);
@@ -172,6 +173,6 @@ public class AOServConnectorTest extends TestCase {
         }
         AOServTable[] allTables=conn.getTables();
         assertEquals(tables.length, allTables.length);
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) assertSame(tables[c], allTables[c]);
+        for(int c=0;c<numTables;c++) assertSame(tables[c], allTables[c]);
     }
 }

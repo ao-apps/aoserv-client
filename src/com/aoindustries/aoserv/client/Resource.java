@@ -24,6 +24,7 @@ import java.sql.*;
 final public class Resource extends GlobalObjectStringKey<Resource> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     public static final String
         AOSERV_DAEMON="aoserv_daemon",

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.profiler.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -22,6 +21,11 @@ final public class MasterServerStatTable extends AOServTable<String,MasterServer
 
     MasterServerStatTable(AOServConnector connector) {
 	super(connector, MasterServerStat.class);
+    }
+
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return null;
     }
 
     public MasterServerStat get(Object name) {

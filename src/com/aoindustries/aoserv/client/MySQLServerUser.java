@@ -29,6 +29,14 @@ import java.util.*;
  */
 final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUser> implements Removable, PasswordProtected, Disablable {
 
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_USERNAME=1,
+        COLUMN_MYSQL_SERVER=2
+    ;
+    static final String COLUMN_USERNAME_name = "username";
+    static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
+
     public static final int
         UNLIMITED_QUESTIONS=0,
         DEFAULT_MAX_QUESTIONS=UNLIMITED_QUESTIONS
@@ -57,12 +65,6 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     public static final String
         ANY_HOST="%",
         ANY_LOCAL_HOST=null
-    ;
-
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_USERNAME=1,
-        COLUMN_MYSQL_SERVER=2
     ;
 
     String username;

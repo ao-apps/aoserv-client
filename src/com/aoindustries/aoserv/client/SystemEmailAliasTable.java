@@ -22,6 +22,15 @@ final public class SystemEmailAliasTable extends CachedTableIntegerKey<SystemEma
 	super(connector, SystemEmailAlias.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(SystemEmailAlias.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(SystemEmailAlias.COLUMN_ADDRESS_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     List<SystemEmailAlias> getSystemEmailAliases(AOServer ao) {
         return getIndexedRows(SystemEmailAlias.COLUMN_AO_SERVER, ao.pkey);
     }

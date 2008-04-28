@@ -28,6 +28,7 @@ import java.util.List;
 final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> implements Removable {
 
     static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
 
     public Object getColumn(int i) {
         if(i==COLUMN_USERNAME) return pkey;

@@ -24,6 +24,14 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
         super(connector, PostgresUser.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PostgresUser.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addPostgresUser(String username) {
         connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,

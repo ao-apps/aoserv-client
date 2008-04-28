@@ -29,6 +29,8 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
         COLUMN_PKEY=0,
         COLUMN_LINUX_SERVER_ACCOUNT=1
     ;
+    static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
+    static final String COLUMN_EXTENSION_name = "extension";
 
     int linux_server_account;
     String extension;

@@ -34,6 +34,8 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         COLUMN_PKEY=0,
         COLUMN_ACCOUNTING=1
     ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_ID_name = "id";
 
     /*
      * Test call
@@ -155,10 +157,8 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 
     String accounting;
     private String id;
-    private boolean signup_signer;
+    private boolean signup_from;
     private boolean signup_recipient;
-    private boolean credit_card_signer;
-    private boolean credit_card_recipient;
 
     public Business getBusiness() {
 	Business accountingObject = table.connector.businesses.get(accounting);
@@ -171,10 +171,8 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ACCOUNTING: return accounting;
             case 2: return id;
-            case 3: return signup_signer;
+            case 3: return signup_from;
             case 4: return signup_recipient;
-            case 5: return credit_card_signer;
-            case 6: return credit_card_recipient;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -187,10 +185,10 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
     }
 
     /**
-     * Indicates this key may be used as the signer for signup request encryption.
+     * Indicates this key may be used as the from (signer) for signup request encryption.
      */
-    public boolean getSignupSigner() {
-        return signup_signer;
+    public boolean getSignupFrom() {
+        return signup_from;
     }
     
     /**
@@ -198,20 +196,6 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
      */
     public boolean getSignupRecipient() {
         return signup_recipient;
-    }
-
-    /**
-     * Indicates this key may be used as the signer for encrypting credit cards.
-     */
-    public boolean getCreditCardSigner() {
-        return credit_card_signer;
-    }
-    
-    /**
-     * Indicates this key may be used as the recipient for encrypted credit cards.
-     */
-    public boolean getCreditCardRecipient() {
-        return credit_card_recipient;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -222,30 +206,29 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         pkey = result.getInt(1);
 	accounting = result.getString(2);
         id = result.getString(3);
-        signup_signer = result.getBoolean(4);
+        signup_from = result.getBoolean(4);
         signup_recipient = result.getBoolean(5);
-        credit_card_signer = result.getBoolean(6);
-        credit_card_recipient = result.getBoolean(7);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
 	accounting=in.readUTF().intern();
         id = in.readUTF();
-        signup_signer=in.readBoolean();
+        signup_from=in.readBoolean();
         signup_recipient=in.readBoolean();
-        credit_card_signer=in.readBoolean();
-        credit_card_recipient=in.readBoolean();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeUTF(accounting);
         out.writeUTF(id);
-        out.writeBoolean(signup_signer);
+        out.writeBoolean(signup_from); // Used to be signup_signer
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_25)>=0) out.writeBoolean(signup_recipient);
-        out.writeBoolean(credit_card_signer);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_25)>=0) out.writeBoolean(credit_card_recipient);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_signer
+        if(
+            AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_25)>=0
+            && AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0
+        ) out.writeBoolean(false); // credit_card_recipient
     }
     
     /**

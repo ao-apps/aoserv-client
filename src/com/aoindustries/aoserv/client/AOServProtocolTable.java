@@ -24,6 +24,14 @@ final public class AOServProtocolTable extends GlobalTableStringKey<AOServProtoc
 	super(connector, AOServProtocol.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(AOServProtocol.COLUMN_CREATED_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public AOServProtocol get(Object version) {
         return getUniqueRow(AOServProtocol.COLUMN_VERSION, version);
     }

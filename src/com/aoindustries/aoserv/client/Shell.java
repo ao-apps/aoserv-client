@@ -24,6 +24,7 @@ import java.sql.*;
 final public class Shell extends GlobalObjectStringKey<Shell> {
 
     static final int COLUMN_PATH=0;
+    static final String COLUMN_PATH_name = "path";
 
     public static final String
         ASH="/bin/ash",

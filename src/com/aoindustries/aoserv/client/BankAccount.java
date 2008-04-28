@@ -21,6 +21,7 @@ import java.util.List;
 final public class BankAccount extends CachedObjectStringKey<BankAccount> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     private String display, bank;
 

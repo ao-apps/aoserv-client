@@ -49,7 +49,8 @@ public class GetUniqueRowTest extends TestCase {
     public void testGetUniqueRows() {
         System.out.println("Testing all unique rows:");
         Map<Object,AOServObject> uniqueMap=new HashMap<Object,AOServObject>();
-        for(int c=0;c<SchemaTable.NUM_TABLES;c++) {
+        int numTables = SchemaTable.TableID.values().length;
+        for(int c=0;c<numTables;c++) {
             AOServTable table=conn.getTable(c);
             System.out.print("    "+table.getTableName()+": ");
             List<AOServObject> rows=new ArrayList<AOServObject>();

@@ -22,6 +22,7 @@ import java.sql.*;
 final public class PostgresReservedWord extends GlobalObjectStringKey<PostgresReservedWord> {
 
     static final int COLUMN_WORD=0;
+    static final String COLUMN_WORD_name = "word";
 
     public Object getColumn(int i) {
 	if(i==COLUMN_WORD) return pkey;

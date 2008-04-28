@@ -24,6 +24,14 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
 	super(connector, SpamEmailMessage.class);
     }
     
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(SpamEmailMessage.COLUMN_PKEY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addSpamEmailMessage(EmailSmtpRelay esr, String message) {
         return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,

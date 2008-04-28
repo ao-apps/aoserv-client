@@ -24,6 +24,16 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 	super(connector, DisableLog.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(DisableLog.COLUMN_TIME_name, ASCENDING),
+        new OrderBy(DisableLog.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(DisableLog.COLUMN_PKEY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addDisableLog(
         Business bu,
         String disableReason

@@ -22,6 +22,14 @@ final public class HttpdJKProtocolTable extends GlobalTableStringKey<HttpdJKProt
 	super(connector, HttpdJKProtocol.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdJKProtocol.COLUMN_PROTOCOL_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public HttpdJKProtocol get(Object pkey) {
 	return getUniqueRow(HttpdJKProtocol.COLUMN_PROTOCOL, pkey);
     }

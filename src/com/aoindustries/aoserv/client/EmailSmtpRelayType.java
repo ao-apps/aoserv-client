@@ -23,6 +23,7 @@ import java.sql.*;
 final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRelayType> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     /**
      * The different relay types.

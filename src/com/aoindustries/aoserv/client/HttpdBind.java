@@ -29,6 +29,7 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
         COLUMN_NET_BIND=0,
         COLUMN_HTTPD_SERVER=1
     ;
+    static final String COLUMN_NET_BIND_name = "net_bind";
     
     int httpd_server;
 

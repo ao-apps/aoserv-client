@@ -22,6 +22,14 @@ final public class LinuxGroupTypeTable extends GlobalTableStringKey<LinuxGroupTy
 	super(connector, LinuxGroupType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(LinuxGroupType.COLUMN_DESCRIPTION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public LinuxGroupType get(Object pkey) {
 	return getUniqueRow(LinuxGroupType.COLUMN_NAME, pkey);
     }

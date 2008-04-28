@@ -29,6 +29,14 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
 	super(connector, AOSHCommand.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(AOSHCommand.COLUMN_COMMAND_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     List<AOSHCommand> getAOSHCommands(SchemaTable table) {
         Profiler.startProfile(Profiler.UNKNOWN, AOSHCommandTable.class, "getAOSHCommands(SchemaTable)", null);
         try {

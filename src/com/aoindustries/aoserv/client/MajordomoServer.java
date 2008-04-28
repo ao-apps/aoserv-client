@@ -29,12 +29,7 @@ import java.util.List;
 final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServer> implements Removable {
 
     static final int COLUMN_DOMAIN=0;
-
-    /**
-     * The default number of days to keep backups.
-     */
-    public static final short DEFAULT_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL;
-    public static final short DEFAULT_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION;
+    static final String COLUMN_DOMAIN_name = "domain";
 
     /**
      * The directory that stores the majordomo servers.
@@ -60,8 +55,6 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     int majordomo_pipe_address;
     int owner_majordomo_add;
     int majordomo_owner_add;
-    private short backup_level;
-    private short backup_retention;
 
     public int addMajordomoList(
         String listName
@@ -73,28 +66,6 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
         return Collections.emptyList();
     }
 
-    public BackupLevel getBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, MajordomoServer.class, "getBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, MajordomoServer.class, "getBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_DOMAIN: return Integer.valueOf(pkey);
@@ -104,8 +75,6 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
             case 4: return Integer.valueOf(majordomo_pipe_address);
             case 5: return Integer.valueOf(owner_majordomo_add);
             case 6: return Integer.valueOf(majordomo_owner_add);
-            case 7: return Short.valueOf(backup_level);
-            case 8: return Short.valueOf(backup_retention);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -172,8 +141,6 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	majordomo_pipe_address=result.getInt(5);
 	owner_majordomo_add=result.getInt(6);
 	majordomo_owner_add=result.getInt(7);
-        backup_level=result.getShort(8);
-        backup_retention=result.getShort(9);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -184,8 +151,6 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	majordomo_pipe_address=in.readCompressedInt();
 	owner_majordomo_add=in.readCompressedInt();
 	majordomo_owner_add=in.readCompressedInt();
-        backup_level=in.readShort();
-        backup_retention=in.readShort();
     }
 
     public void remove() {
@@ -196,15 +161,6 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	);
     }
 
-    public void setBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, MajordomoServer.class, "setBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.MAJORDOMO_SERVERS, pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
     public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(linux_server_account);
@@ -213,7 +169,9 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	out.writeCompressedInt(majordomo_pipe_address);
 	out.writeCompressedInt(owner_majordomo_add);
 	out.writeCompressedInt(majordomo_owner_add);
-        out.writeShort(backup_level);
-        out.writeShort(backup_retention);
+        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+        }
     }
 }

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.profiler.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -22,6 +21,16 @@ final public class MasterServerProfileTable extends AOServTable<String,MasterSer
 
     MasterServerProfileTable(AOServConnector connector) {
 	super(connector, MasterServerProfile.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(MasterServerProfile.COLUMN_CLASSNAME_name, ASCENDING),
+        new OrderBy(MasterServerProfile.COLUMN_METHOD_NAME_name, ASCENDING),
+        new OrderBy(MasterServerProfile.COLUMN_PARAMETER_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
     public MasterServerProfile get(Object key) {

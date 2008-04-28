@@ -23,6 +23,7 @@ import java.sql.*;
 final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> {
 
     static final int COLUMN_STATUS=0;
+    static final String COLUMN_STATUS_name = "status";
 
     /**
      * The different ticket statuses.

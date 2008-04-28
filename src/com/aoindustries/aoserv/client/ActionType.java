@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.profiler.*;
-import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 
@@ -25,6 +24,7 @@ import java.sql.*;
 final public class ActionType extends GlobalObjectStringKey<ActionType> {
 
     static final int COLUMN_TYPE=0;
+    static final String COLUMN_DESCRIPTION_name = "description";
 
     private String description;
 
@@ -49,6 +49,7 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
         WORK_ENTRY="WK"
     ;
 
+    @Override
     public Object getColumn(int i) {
         Profiler.startProfile(Profiler.FAST, ActionType.class, "getColValueImpl(int)", null);
         try {

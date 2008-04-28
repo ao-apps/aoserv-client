@@ -27,6 +27,14 @@ final public class ActionTypeTable extends GlobalTableStringKey<ActionType> {
 	super(connector, ActionType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(ActionType.COLUMN_DESCRIPTION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public ActionType get(Object type) {
         return getUniqueRow(ActionType.COLUMN_TYPE, type);
     }

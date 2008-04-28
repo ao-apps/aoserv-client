@@ -28,7 +28,8 @@ import java.util.List;
  */
 final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountType> {
 
-    public static final int COLUMN_NAME=0;
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_DESCRIPTION_name = "description";
 
     private String description;
     private boolean is_email;

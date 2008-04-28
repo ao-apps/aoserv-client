@@ -27,36 +27,20 @@ import java.util.*;
  */
 final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedTomcat> implements Disablable, Removable {
 
-    /**
-     * The directory that www groups are stored in.
-     */
-    public static final String WWW_GROUP_DIR="/wwwgroup";
-
     static final int
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=2,
         COLUMN_LINUX_SERVER_ACCOUNT=4,
-        COLUMN_CONFIG_BACKUP_LEVEL=8,
-        COLUMN_CONFIG_BACKUP_RETENTION=9,
-        COLUMN_FILE_BACKUP_LEVEL=10,
-        COLUMN_FILE_BACKUP_RETENTION=11,
-        COLUMN_LOG_BACKUP_LEVEL=12,
-        COLUMN_LOG_BACKUP_RETENTION=13,
-        COLUMN_TOMCAT4_WORKER=15,
-        COLUMN_TOMCAT4_SHUTDOWN_PORT=16
+        COLUMN_TOMCAT4_WORKER=9,
+        COLUMN_TOMCAT4_SHUTDOWN_PORT=10
     ;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_AO_SERVER_name = "ao_server";
 
     /**
-     * The default number of days to keep backups.
+     * The directory that www groups are stored in.
      */
-    public static final short
-        DEFAULT_CONFIG_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL,
-        DEFAULT_CONFIG_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION,
-        DEFAULT_FILE_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL,
-        DEFAULT_FILE_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION,
-        DEFAULT_LOG_BACKUP_LEVEL=1,
-        DEFAULT_LOG_BACKUP_RETENTION=1
-    ;
+    public static final String WWW_GROUP_DIR="/wwwgroup";
 
     /**
      * The maximum number of sites allowed in one <code>HttpdSharedTomcat</code>.
@@ -76,14 +60,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     int linux_server_group;
     private boolean isSecure;
     private boolean isOverflow;
-    private short
-        config_backup_level,
-        config_backup_retention,
-        file_backup_level,
-        file_backup_retention,
-        log_backup_level,
-        log_backup_retention
-    ;
     int disable_log;
     int tomcat4_worker;
     int tomcat4_shutdown_port;
@@ -109,7 +85,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
         for(HttpdTomcatSharedSite htss : getHttpdTomcatSharedSites()) {
             HttpdSite hs=htss.getHttpdTomcatSite().getHttpdSite();
-            reasons.add(new CannotRemoveReason<HttpdTomcatSharedSite>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getAOServer().getServer().getHostname(), htss));
+            reasons.add(new CannotRemoveReason<HttpdTomcatSharedSite>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), htss));
         }
 
         return reasons;
@@ -123,76 +99,10 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
-    public BackupLevel getConfigBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, HttpdSharedTomcat.class, "getConfigBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(config_backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+config_backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getConfigBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, HttpdSharedTomcat.class, "getConfigBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(config_backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+config_backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupLevel getFileBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, HttpdSharedTomcat.class, "getFileBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(file_backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+file_backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getFileBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, HttpdSharedTomcat.class, "getFileBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(file_backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+file_backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
     public String getInstallDirectory() {
         Profiler.startProfile(Profiler.FAST, HttpdSharedTomcat.class, "getInstallDirectory()", null);
         try {
             return WWW_GROUP_DIR+'/'+name;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupLevel getLogBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, HttpdSharedTomcat.class, "getLogBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(log_backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+log_backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getLogBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, HttpdSharedTomcat.class, "getLogBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(log_backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+log_backup_retention));
-            return br;
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -208,17 +118,11 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
             case 5: return Integer.valueOf(linux_server_group);
             case 6: return isSecure?Boolean.TRUE:Boolean.FALSE;
             case 7: return isOverflow?Boolean.TRUE:Boolean.FALSE;
-            case COLUMN_CONFIG_BACKUP_LEVEL: return Short.valueOf(config_backup_level);
-            case COLUMN_CONFIG_BACKUP_RETENTION: return Short.valueOf(config_backup_retention);
-            case COLUMN_FILE_BACKUP_LEVEL: return Short.valueOf(file_backup_level);
-            case COLUMN_FILE_BACKUP_RETENTION: return Short.valueOf(file_backup_retention);
-            case COLUMN_LOG_BACKUP_LEVEL: return Short.valueOf(log_backup_level);
-            case COLUMN_LOG_BACKUP_RETENTION: return Short.valueOf(log_backup_retention);
-            case 14: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
             case COLUMN_TOMCAT4_WORKER: return tomcat4_worker==-1?null:Integer.valueOf(tomcat4_worker);
             case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:Integer.valueOf(tomcat4_shutdown_port);
-            case 17: return tomcat4_shutdown_key;
-            case 18: return isManual?Boolean.TRUE:Boolean.FALSE;
+            case 11: return tomcat4_shutdown_key;
+            case 12: return isManual?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -285,28 +189,23 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     void initImpl(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        name=result.getString(2);
-        ao_server=result.getInt(3);
-        version=result.getInt(4);
-        linux_server_account=result.getInt(5);
-        linux_server_group=result.getInt(6);
-        isSecure = result.getBoolean(7);
-        isOverflow = result.getBoolean(8);
-        config_backup_level=result.getShort(9);
-        config_backup_retention=result.getShort(10);
-        file_backup_level=result.getShort(11);
-        file_backup_retention=result.getShort(12);
-        log_backup_level=result.getShort(13);
-        log_backup_retention=result.getShort(14);
-        disable_log=result.getInt(15);
+        int pos = 1;
+        pkey=result.getInt(pos++);
+        name=result.getString(pos++);
+        ao_server=result.getInt(pos++);
+        version=result.getInt(pos++);
+        linux_server_account=result.getInt(pos++);
+        linux_server_group=result.getInt(pos++);
+        isSecure = result.getBoolean(pos++);
+        isOverflow = result.getBoolean(pos++);
+        disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log=-1;
-        tomcat4_worker=result.getInt(16);
+        tomcat4_worker=result.getInt(pos++);
         if(result.wasNull()) tomcat4_worker=-1;
-        tomcat4_shutdown_port=result.getInt(17);
+        tomcat4_shutdown_port=result.getInt(pos++);
         if(result.wasNull()) tomcat4_shutdown_port=-1;
-        tomcat4_shutdown_key=result.getString(18);
-        isManual=result.getBoolean(19);
+        tomcat4_shutdown_key=result.getString(pos++);
+        isManual=result.getBoolean(pos++);
     }
 
     public boolean isManual() {
@@ -356,12 +255,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         linux_server_group=in.readCompressedInt();
         isSecure = in.readBoolean();
         isOverflow = in.readBoolean();
-        config_backup_level=in.readShort();
-        config_backup_retention=in.readShort();
-        file_backup_level=in.readShort();
-        file_backup_retention=in.readShort();
-        log_backup_level=in.readShort();
-        log_backup_retention=in.readShort();
         disable_log=in.readCompressedInt();
         tomcat4_worker=in.readCompressedInt();
         tomcat4_shutdown_port=in.readCompressedInt();
@@ -373,24 +266,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
-    public void setConfigBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSharedTomcat.class, "setConfigBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey, COLUMN_CONFIG_BACKUP_RETENTION);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    public void setFileBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSharedTomcat.class, "setFileBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey, COLUMN_FILE_BACKUP_RETENTION);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
     public void setIsManual(boolean isManual) {
         Profiler.startProfile(Profiler.UNKNOWN, HttpdSharedTomcat.class, "setIsManual(boolean)", null);
         try {
@@ -400,17 +275,8 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         }
     }
 
-    public void setLogBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSharedTomcat.class, "setLogBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey, COLUMN_LOG_BACKUP_RETENTION);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
     String toStringImpl() {
-        return name+" on "+getAOServer().getServer().getHostname();
+        return name+" on "+getAOServer().getHostname();
     }
 
     public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
@@ -422,12 +288,14 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         out.writeCompressedInt(linux_server_group);
         out.writeBoolean(isSecure);
         out.writeBoolean(isOverflow);
-        out.writeShort(config_backup_level);
-        out.writeShort(config_backup_retention);
-        out.writeShort(file_backup_level);
-        out.writeShort(file_backup_retention);
-        out.writeShort(log_backup_level);
-        out.writeShort(log_backup_retention);
+        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+            out.writeShort(0);
+            out.writeShort(7);
+            out.writeShort(0);
+            out.writeShort(7);
+        }
         out.writeCompressedInt(disable_log);
         out.writeCompressedInt(tomcat4_worker);
         out.writeCompressedInt(tomcat4_shutdown_port);

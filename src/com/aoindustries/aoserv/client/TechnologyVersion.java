@@ -23,6 +23,8 @@ import java.sql.*;
 final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVersion> {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_VERSION_name = "version";
+    static final String COLUMN_NAME_name = "name";
 
     String name, version;
     long updated;

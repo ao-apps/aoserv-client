@@ -25,6 +25,15 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	super(connector, CvsRepository.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(CvsRepository.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+LinuxServerAccount.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(CvsRepository.COLUMN_PATH_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addCvsRepository(
         AOServer ao,
         String path,
@@ -167,15 +176,6 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
                 connector.simpleAOClient.removeCvsRepository(
                     args[1],
                     args[2]
-                );
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_CVS_REPOSITORY_BACKUP_RETENTION)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_CVS_REPOSITORY_BACKUP_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setCvsRepositoryBackupRetention(
-                    args[1],
-                    args[2],
-                    AOSH.parseShort(args[3], "backup_retention")
                 );
             }
             return true;

@@ -23,12 +23,23 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 	super(connector, LinuxAccAddress.class);
     }
 
-    int addLinuxAccAddress(EmailAddress emailAddressObject, LinuxAccount linuxAccountObject) {
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(LinuxAccAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
+        new OrderBy(LinuxAccAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(LinuxAccAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_ADDRESS_name, ASCENDING),
+        new OrderBy(LinuxAccAddress.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+LinuxServerAccount.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
+    int addLinuxAccAddress(EmailAddress emailAddressObject, LinuxServerAccount lsa) {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_ACC_ADDRESSES,
             emailAddressObject.pkey,
-            linuxAccountObject.pkey
+            lsa.pkey
 	);
     }
 
@@ -40,65 +51,30 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 	return getUniqueRow(LinuxAccAddress.COLUMN_PKEY, pkey);
     }
 
-    List<EmailAddress> getEmailAddresses(LinuxAccount linuxAccount) {
-	List<LinuxAccAddress> cached = getRows();
-	int len = cached.size();
-        List<EmailAddress> matches=new ArrayList<EmailAddress>(len);
-	for (int c = 0; c < len; c++) {
-            LinuxAccAddress acc = cached.get(c);
-            LinuxAccount la=acc.getLinuxAccount();
-            // la may be null when data filtered
-            if(la!=null && la.equals(linuxAccount)) matches.add(acc.getEmailAddress());
-	}
-	return matches;
-    }
-
     List<EmailAddress> getEmailAddresses(LinuxServerAccount lsa) {
-        LinuxAccount la=lsa.getLinuxAccount();
-        int aoPKey=lsa.ao_server;
-
-	List<LinuxAccAddress> cached = getRows();
+        // Start with the index
+	List<LinuxAccAddress> cached = getLinuxAccAddresses(lsa);
 	int len = cached.size();
         List<EmailAddress> matches=new ArrayList<EmailAddress>(len);
 	for (int c = 0; c < len; c++) {
             LinuxAccAddress acc=cached.get(c);
-            LinuxAccount accLA=acc.getLinuxAccount();
-            // la may be null when data filtered
-            if(accLA!=null && accLA.equals(la)) {
-                EmailAddress accEA=acc.getEmailAddress();
-                if(accEA.getDomain().ao_server==aoPKey) matches.add(accEA);
-            }
+            matches.add(acc.getEmailAddress());
 	}
 	return matches;
     }
 
     List<LinuxAccAddress> getLinuxAccAddresses(LinuxServerAccount lsa) {
-        LinuxAccount la=lsa.getLinuxAccount();
-        int aoPKey=lsa.ao_server;
-
-	List<LinuxAccAddress> cached = getRows();
-	int len = cached.size();
-        List<LinuxAccAddress> matches=new ArrayList<LinuxAccAddress>(len);
-	for (int c = 0; c < len; c++) {
-            LinuxAccAddress acc=cached.get(c);
-            LinuxAccount accLA=acc.getLinuxAccount();
-            // la may be null when data filtered
-            if(accLA!=null && accLA.equals(la)) {
-                EmailAddress accEA=acc.getEmailAddress();
-                if(accEA.getDomain().ao_server==aoPKey) matches.add(acc);
-            }
-	}
-	return matches;
+        return getIndexedRows(LinuxAccAddress.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 
-    public LinuxAccAddress getLinuxAccAddress(EmailAddress ea, LinuxAccount la) {
+    public LinuxAccAddress getLinuxAccAddress(EmailAddress ea, LinuxServerAccount lsa) {
         int pkey=ea.pkey;
-        String username=la.pkey;
+        int lsaPKey=lsa.pkey;
         List<LinuxAccAddress> cached=getRows();
         int size=cached.size();
         for(int c=0;c<size;c++) {
             LinuxAccAddress laa=cached.get(c);
-            if(laa.email_address==pkey && laa.linux_account.equals(username)) return laa;
+            if(laa.email_address==pkey && laa.linux_server_account==lsaPKey) return laa;
         }
         return null;
     }
@@ -115,16 +91,16 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 	return matches;
     }
 
-    List<LinuxAccount> getLinuxAccounts(EmailAddress address) {
+    List<LinuxServerAccount> getLinuxServerAccounts(EmailAddress address) {
         int pkey=address.pkey;
 	List<LinuxAccAddress> cached = getRows();
 	int len = cached.size();
-        List<LinuxAccount> matches=new ArrayList<LinuxAccount>(len);
+        List<LinuxServerAccount> matches=new ArrayList<LinuxServerAccount>(len);
 	for (int c = 0; c < len; c++) {
             LinuxAccAddress acc = cached.get(c);
             if (acc.email_address==pkey) {
-                LinuxAccount la=acc.getLinuxAccount();
-                if(la!=null) matches.add(la);
+                LinuxServerAccount lsa=acc.getLinuxServerAccount();
+                if(lsa!=null) matches.add(lsa);
             }
 	}
 	return matches;

@@ -22,6 +22,14 @@ final public class NoticeTypeTable extends GlobalTableStringKey<NoticeType> {
 	super(connector, NoticeType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(NoticeType.COLUMN_TYPE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public NoticeType get(Object pkey) {
 	return getUniqueRow(NoticeType.COLUMN_TYPE, pkey);
     }

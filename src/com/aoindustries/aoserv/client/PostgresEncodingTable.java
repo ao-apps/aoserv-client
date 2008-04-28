@@ -20,6 +20,16 @@ final public class PostgresEncodingTable extends GlobalTableIntegerKey<PostgresE
 	super(connector, PostgresEncoding.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PostgresEncoding.COLUMN_ENCODING_name, ASCENDING),
+        new OrderBy(PostgresEncoding.COLUMN_POSTGRES_VERSION_name+'.'+PostgresVersion.COLUMN_MINOR_VERSION_name, ASCENDING),
+        new OrderBy(PostgresEncoding.COLUMN_PKEY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public PostgresEncoding get(Object pkey) {
 	return getUniqueRow(PostgresEncoding.COLUMN_PKEY, pkey);
     }

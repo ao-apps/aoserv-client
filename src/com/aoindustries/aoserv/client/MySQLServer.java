@@ -35,6 +35,8 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         COLUMN_NET_BIND=5,
         COLUMN_PACKAGE=6
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_NAME_name = "name";
 
     /**
      * The supported versions of MySQL.
@@ -123,10 +125,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
     public String getName() {
 	return name;
-    }
-
-    public List<MySQLBackup> getMySQLBackups() {
-	return table.connector.mysqlBackups.getMySQLBackups(this);
     }
 
     /**
@@ -246,7 +244,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     String toStringImpl() {
-        return name+" on "+getAOServer().getServer().hostname;
+        return name+" on "+getAOServer().getHostname();
     }
 
     public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {

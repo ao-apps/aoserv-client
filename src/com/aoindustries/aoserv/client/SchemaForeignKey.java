@@ -25,13 +25,12 @@ import java.sql.*;
 final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeignKey> {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_PKEY_name = "pkey";
 
     int
         key_column,
         foreign_column
     ;
-    boolean is_bridge;
-    private int tied_bridge;
     private String since_version;
     private String last_version;
 
@@ -42,10 +41,8 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
                 case COLUMN_PKEY: return Integer.valueOf(pkey);
                 case 1: return Integer.valueOf(key_column);
                 case 2: return Integer.valueOf(foreign_column);
-                case 3: return is_bridge?Boolean.TRUE:Boolean.FALSE;
-                case 4: return tied_bridge==-1?null:Integer.valueOf(tied_bridge);
-                case 5: return since_version;
-                case 6: return last_version;
+                case 3: return since_version;
+                case 4: return last_version;
                 default: throw new IllegalArgumentException("Invalid index: "+i);
             }
         } finally {
@@ -79,18 +76,6 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
         return SchemaTable.TableID.SCHEMA_FOREIGN_KEYS;
     }
 
-    public SchemaForeignKey getTiedBridge(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, SchemaForeignKey.class, "getTiesBridge(AOServConnector)", null);
-        try {
-            if(tied_bridge==-1) return null;
-            SchemaForeignKey obj=connector.schemaForeignKeys.get(tied_bridge);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaForeignKey: "+tied_bridge));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
     public String getSinceVersion() {
         return since_version;
     }
@@ -105,18 +90,11 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
             pkey = result.getInt(1);
             key_column = result.getInt(2);
             foreign_column = result.getInt(3);
-            is_bridge = result.getBoolean(4);
-            tied_bridge = result.getInt(5);
-            if(result.wasNull()) tied_bridge=-1;
-            since_version=result.getString(6);
-            last_version=result.getString(7);
+            since_version=result.getString(4);
+            last_version=result.getString(5);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
-    }
-
-    public boolean isBridge() {
-        return is_bridge;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -125,8 +103,6 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
             pkey = in.readCompressedInt();
             key_column = in.readCompressedInt();
             foreign_column = in.readCompressedInt();
-            is_bridge = in.readBoolean();
-            tied_bridge = in.readCompressedInt();
             since_version=in.readUTF().intern();
             last_version=StringUtility.intern(in.readNullUTF());
         } finally {
@@ -140,8 +116,10 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
             out.writeCompressedInt(pkey);
             out.writeCompressedInt(key_column);
             out.writeCompressedInt(foreign_column);
-            out.writeBoolean(is_bridge);
-            out.writeCompressedInt(tied_bridge);
+            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+                out.writeBoolean(false); // is_bridge
+                out.writeCompressedInt(-1); // tied_bridge
+            }
             if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
             if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
         } finally {

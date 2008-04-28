@@ -25,6 +25,15 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	super(connector, Server.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(Server.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public int addBackupServer(
         String hostname,
         ServerFarm farm,
@@ -87,17 +96,57 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         else throw new IllegalArgumentException("Must be an Integer or a String");
     }
 
-    public Server get(int pkey) {
-	return getUniqueRow(Server.COLUMN_PKEY, pkey);
+    /**
+     * Gets a <code>Server</code> based on its hostname, package/name, or pkey.
+     * This is compatible with the output of <code>Server.toString()</code>.
+     * Accepts either a hostname (for ao_servers), package/name, or pkey.
+     *
+     * @return  the <code>Server</code> or <code>null</code> if not found
+     *
+     * @see  Server#toString
+     */
+    public Server get(String server) {
+        // Is it the exact hostname of an ao_server?
+        AOServer aoServer = connector.aoServers.get(server);
+        if(aoServer!=null) return aoServer.getServer();
+
+        // Is if a package/name combo?
+        int slashPos = server.indexOf('/');
+        if(slashPos!=-1) {
+            String packageName = server.substring(0, slashPos);
+            String name = server.substring(slashPos+1);
+            Package pk = connector.packages.get(packageName);
+            if(pk==null) return null;
+            return pk.getServer(name);
+        }
+
+        // Is it an exact server pkey
+        try {
+            int pkey = Integer.parseInt(server);
+            return connector.servers.get(pkey);
+        } catch(NumberFormatException err) {
+            return null;
+        }
     }
 
-    public Server get(String hostname) {
-	return getUniqueRow(Server.COLUMN_HOSTNAME, hostname);
+    public Server get(int pkey) {
+	return getUniqueRow(Server.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.SERVERS;
     }
+
+    Server getServer(Package pk, String name) {
+        // Use index first
+	for(Server se : getServers(pk)) if(se.getName().equals(name)) return se;
+	return null;
+    }
+
+    List<Server> getServers(Package pk) {
+        return getIndexedRows(Server.COLUMN_PACKAGE, pk.pkey);
+    }
+
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];

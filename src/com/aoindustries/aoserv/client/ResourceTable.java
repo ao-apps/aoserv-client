@@ -19,6 +19,14 @@ final public class ResourceTable extends GlobalTableStringKey<Resource> {
 	super(connector, Resource.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Resource.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public Resource get(Object pkey) {
 	return getUniqueRow(Resource.COLUMN_NAME, pkey);
     }

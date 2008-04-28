@@ -24,6 +24,8 @@ import java.sql.*;
 final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 
     static final int COLUMN_PKEY=0;
+    static final String COLUMN_USERNAME_name = "username";
+    static final String COLUMN_HOST_name = "host";
 
     private String username;
     private String host;

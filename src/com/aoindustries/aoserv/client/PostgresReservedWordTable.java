@@ -19,6 +19,14 @@ final public class PostgresReservedWordTable extends GlobalTableStringKey<Postgr
 	super(connector, PostgresReservedWord.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(PostgresReservedWord.COLUMN_WORD_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public PostgresReservedWord get(Object pkey) {
 	return getUniqueRow(PostgresReservedWord.COLUMN_WORD, pkey);
     }

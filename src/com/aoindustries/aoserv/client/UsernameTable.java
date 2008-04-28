@@ -24,6 +24,14 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
         super(connector, Username.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Username.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addUsername(Package packageObject, String username) {
 	connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,

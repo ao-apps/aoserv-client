@@ -22,6 +22,10 @@ import java.sql.*;
  */
 final public class MasterServerProfile extends AOServObject<String,MasterServerProfile> implements SingleTableObject<String,MasterServerProfile> {
 
+    static final String COLUMN_CLASSNAME_name = "classname";
+    static final String COLUMN_METHOD_NAME_name = "method_name";
+    static final String COLUMN_PARAMETER_name = "parameter";
+    
     public static MasterServerProfile getMasterServerProfile(MethodProfile profile) {
         Object param1=profile.getParameter1();
         return new MasterServerProfile(

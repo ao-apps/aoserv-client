@@ -27,6 +27,7 @@ import java.util.List;
 final public class BlackholeEmailAddress extends CachedObjectIntegerKey<BlackholeEmailAddress> implements Removable {
 
     static final int COLUMN_EMAIL_ADDRESS=0;
+    static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 
     public Object getColumn(int i) {
 	if(i==COLUMN_EMAIL_ADDRESS) return Integer.valueOf(pkey);

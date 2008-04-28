@@ -33,6 +33,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         COLUMN_AO_SERVER=1,
         COLUMN_PACKAGE=10
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_NUMBER_name = "number";
 
     /**
      * The highest recommended number of sites to bind in one server.

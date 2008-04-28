@@ -25,6 +25,14 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         super(connector, LinuxAccount.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(LinuxAccount.COLUMN_USERNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addLinuxAccount(
 	Username usernameObject,
         String primaryGroup,

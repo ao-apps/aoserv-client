@@ -31,6 +31,8 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
         COLUMN_EMAIL_ADDRESS=1,
         COLUMN_EMAIL_LIST=2
     ;
+    static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
+    static final String COLUMN_EMAIL_LIST_name = "email_list";
 
     int email_address;
     int email_list;
@@ -79,7 +81,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
         for(MajordomoList ml : table.connector.majordomoLists.getRows()) {
             if(ml.getListListAddress().pkey==pkey) {
                 EmailDomain ed=ml.getMajordomoServer().getDomain();
-                reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getServer().getHostname(), ml));
+                reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
             }
         }
 

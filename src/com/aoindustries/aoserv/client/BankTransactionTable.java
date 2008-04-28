@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.profiler.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -22,6 +21,15 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 
     BankTransactionTable(AOServConnector connector) {
 	super(connector, BankTransaction.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(BankTransaction.COLUMN_TIME_name+"::"+SchemaType.DATE_name, ASCENDING),
+        new OrderBy(BankTransaction.COLUMN_TRANSID_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
     public BankTransaction get(Object transid) {

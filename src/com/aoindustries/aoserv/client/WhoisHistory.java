@@ -25,6 +25,9 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
         COLUMN_PKEY=0,
         COLUMN_ACCOUNTING=2
     ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_ZONE_name = "zone";
+    static final String COLUMN_TIME_name = "time";
 
     private long time;
     String accounting;

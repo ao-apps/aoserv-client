@@ -37,8 +37,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         AOSERV_PROTOCOLS,
         AOSH_COMMANDS,
         ARCHITECTURES,
-        BACKUP_DATA,
-        BACKUP_LEVELS,
         BACKUP_PARTITIONS,
         BACKUP_REPORTS,
         BACKUP_RETENTIONS,
@@ -85,11 +83,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         FAILOVER_FILE_REPLICATIONS,
         FAILOVER_FILE_SCHEDULE,
         FAILOVER_MYSQL_REPLICATIONS,
-        FILE_BACKUPS,
-        FILE_BACKUP_DEVICES,
-        FILE_BACKUP_ROOTS,
         FILE_BACKUP_SETTINGS,
-        FILE_BACKUP_STATS,
         FTP_GUEST_USERS,
         HTTPD_BINDS,
         HTTPD_JBOSS_SITES,
@@ -111,12 +105,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         HTTPD_TOMCAT_STD_SITES,
         HTTPD_TOMCAT_VERSIONS,
         HTTPD_WORKERS,
-        INTERBASE_BACKUPS,
-        INTERBASE_DATABASES,
-        INTERBASE_DB_GROUPS,
-        INTERBASE_RESERVED_WORDS,
-        INTERBASE_SERVER_USERS,
-        INTERBASE_USERS,
         IP_ADDRESSES,
         LINUX_ACC_ADDRESSES,
         LINUX_ACCOUNT_TYPES,
@@ -138,7 +126,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         MASTER_SERVERS,
         MASTER_USERS,
         MONTHLY_CHARGES,
-        MYSQL_BACKUPS,
         MYSQL_DATABASES,
         MYSQL_DB_USERS,
         MYSQL_RESERVED_WORDS,
@@ -161,7 +148,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         PACKAGES,
         PAYMENT_TYPES,
         PHONE_NUMBERS,
-        POSTGRES_BACKUPS,
         POSTGRES_DATABASES,
         POSTGRES_ENCODINGS,
         POSTGRES_RESERVED_WORDS,
@@ -176,33 +162,12 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         SCHEMA_FOREIGN_KEYS,
         SCHEMA_TABLES,
         SCHEMA_TYPES,
-        SENDMAIL_SMTP_STATS,
         SERVER_FARMS,
-        SERVER_REPORTS,
         SERVERS,
         SHELLS,
         SIGNUP_REQUEST_OPTIONS,
         SIGNUP_REQUESTS,
         SPAM_EMAIL_MESSAGES,
-        SR_CPU,
-        SR_DB_MYSQL,
-        SR_DB_POSTGRES,
-        SR_DISK_ACCESS,
-        SR_DISK_MDSTAT,
-        SR_DISK_SPACE,
-        SR_KERNEL,
-        SR_LOAD,
-        SR_MEMORY,
-        SR_NET_DEVICES,
-        SR_NET_ICMP,
-        SR_NET_IP,
-        SR_NET_TCP,
-        SR_NET_UDP,
-        SR_NUM_USERS,
-        SR_PAGING,
-        SR_PROCESSES,
-        SR_SWAP_RATE,
-        SR_SWAP_SIZE,
         SYSTEM_EMAIL_ALIASES,
         TECHNOLOGIES,
         TECHNOLOGY_CLASSES,
@@ -224,10 +189,8 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
     String display;
     private boolean is_public;
     private String description;
-    private String dataverse_editor;
     private String since_version;
     private String last_version;
-    private String default_order_by;
 
     private static final String[] descColumns={
         "column", "type", "null", "unique", "references", "referenced_by", "description"
@@ -246,20 +209,16 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         String display,
         boolean is_public,
         String description,
-        String dataverse_editor,
         String since_version,
-        String last_version,
-        String default_order_by
+        String last_version
     ) {
         this.name=name;
         this.pkey=table_id;
         this.display=display;
         this.is_public=is_public;
         this.description=description;
-        this.dataverse_editor=dataverse_editor;
         this.since_version=since_version;
         this.last_version=last_version;
-        this.default_order_by=default_order_by;
     }
 
     public AOServTable<?,? extends AOServObject> getAOServTable(AOServConnector connector) {
@@ -284,28 +243,13 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
                 case 2: return display;
                 case 3: return is_public?Boolean.TRUE:Boolean.FALSE;
                 case 4: return description;
-                case 5: return dataverse_editor;
-                case 6: return since_version;
-                case 7: return last_version;
-                case 8: return default_order_by;
+                case 5: return since_version;
+                case 6: return last_version;
                 default: throw new IllegalArgumentException("Invalid index: "+i);
             }
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
-    }
-
-    public List<SchemaForeignKey> getDataverseBridges(AOServConnector connector, boolean notDraconian) {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getDataverseBridges(AOServConnector,boolean)", null);
-        try {
-            return connector.schemaForeignKeys.getDataverseBridges(this, notDraconian);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public String getDataverseEditor() {
-        return dataverse_editor;
     }
 
     public String getSinceVersion() {
@@ -316,10 +260,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         return last_version;
     }
     
-    public String getDefaultOrderBy() {
-        return default_order_by;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -332,6 +272,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         return name;
     }
 
+    @Override
     String toStringImpl() {
         return name;
     }
@@ -363,10 +304,10 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         }
     }
 
-    public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector connector, boolean matchBothWays) {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getSchemaForeignKeys(AOServConnector,boolean)", null);
+    public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector connector) {
+        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getSchemaForeignKeys(AOServConnector)", null);
         try {
-            return connector.schemaForeignKeys.getSchemaForeignKeys(this, matchBothWays);
+            return connector.schemaForeignKeys.getSchemaForeignKeys(this);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -388,10 +329,8 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
             display=result.getString(3);
             is_public=result.getBoolean(4);
             description=result.getString(5);
-            dataverse_editor=result.getString(6);
-            since_version=result.getString(7);
-            last_version=result.getString(8);
-            default_order_by=result.getString(9);
+            since_version=result.getString(6);
+            last_version=result.getString(7);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -489,10 +428,8 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
             display=in.readUTF();
             is_public=in.readBoolean();
             description=in.readUTF();
-            dataverse_editor=in.readNullUTF();
             since_version=in.readUTF().intern();
             last_version=StringUtility.intern(in.readNullUTF());
-            default_order_by=in.readNullUTF();
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -506,10 +443,13 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
             out.writeUTF(display);
             out.writeBoolean(is_public);
             out.writeUTF(description);
-            out.writeNullUTF(dataverse_editor);
+            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeNullUTF(null); // dataverse_editor
             if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
             if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) out.writeNullUTF(default_order_by);
+            if(
+                AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0
+                && AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0
+            ) out.writeNullUTF(null); // default_order_by
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

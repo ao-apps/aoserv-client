@@ -19,10 +19,11 @@ import java.sql.*;
  */
 final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory> {
 
-    static final int COLUMN_CODE=0;
+    static final int COLUMN_EXPENSE_CODE=0;
+    static final String COLUMN_EXPENSE_CODE_name = "expense_code";
 
     public Object getColumn(int i) {
-	if(i==COLUMN_CODE) return pkey;
+	if(i==COLUMN_EXPENSE_CODE) return pkey;
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 

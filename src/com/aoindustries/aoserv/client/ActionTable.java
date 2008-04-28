@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.profiler.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -23,6 +22,16 @@ final public class ActionTable extends AOServTable<Integer,Action> {
 
     ActionTable(AOServConnector connector) {
 	super(connector, Action.class);
+    }
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Action.COLUMN_TICKET_ID_name, ASCENDING),
+        new OrderBy(Action.COLUMN_TIME_name, ASCENDING),
+        new OrderBy(Action.COLUMN_PKEY_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
     public Action get(Object pkey) {

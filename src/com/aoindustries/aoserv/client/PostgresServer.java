@@ -34,6 +34,8 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         COLUMN_AO_SERVER=2,
         COLUMN_NET_BIND=5
     ;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_AO_SERVER_name = "ao_server";
 
     /**
      * The directory that contains the PostgreSQL data files.
@@ -110,10 +112,6 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 
     public String getName() {
 	return name;
-    }
-
-    public List<PostgresBackup> getPostgresBackups() {
-	return table.connector.postgresBackups.getPostgresBackups(this);
     }
 
     public PostgresVersion getPostgresVersion() {
@@ -219,7 +217,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     String toStringImpl() {
-        return name+" on "+getAOServer().getServer().hostname;
+        return name+" on "+getAOServer().getHostname();
     }
 
     public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {

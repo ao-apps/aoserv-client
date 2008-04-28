@@ -20,9 +20,11 @@ import java.sql.SQLException;
 final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardProcessor> {
 
     static final int
-        COLUMN_PKEY=0,
+        COLUMN_PROVIDER_ID=0,
         COLUMN_ACCOUNTING=1
     ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_PROVIDER_ID_name = "provider_id";
 
     private String accounting;
     private String className;
@@ -33,6 +35,8 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
     private boolean enabled;
     private int weight;
     private String description;
+    private int encryption_from;
+    private int encryption_recipient;
 
     public Business getBusiness() {
         Business business = table.connector.businesses.get(accounting);
@@ -42,7 +46,7 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
 
     public Object getColumn(int i) {
         switch(i) {
-            case COLUMN_PKEY: return pkey;
+            case COLUMN_PROVIDER_ID: return pkey;
             case COLUMN_ACCOUNTING: return accounting;
             case 2: return className;
             case 3: return param1;
@@ -52,6 +56,8 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
             case 7: return enabled;
             case 8: return weight;
             case 9: return description;
+            case 10: return encryption_from;
+            case 11: return encryption_recipient;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -91,6 +97,28 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
     public String getDescription() {
 	return description;
     }
+    
+    /**
+     * Gets the key used for encrypting the card in storage or <code>null</code>
+     * if the card is not stored in the database.
+     */
+    public EncryptionKey getEncryptionFrom() {
+        if(encryption_from==-1) return null;
+        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_from);
+        if(ek==null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_from));
+        return ek;
+    }
+
+    /**
+     * Gets the key used for encrypting the card in storage or <code>null</code>
+     * if the card is not stored in the database.
+     */
+    public EncryptionKey getEncryptionRecipient() {
+        if(encryption_recipient==-1) return null;
+        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_recipient);
+        if(ek==null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_recipient));
+        return ek;
+    }
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.CREDIT_CARD_PROCESSORS;
@@ -108,6 +136,10 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
         enabled = result.getBoolean(pos++);
         weight = result.getInt(pos++);
 	description = result.getString(pos++);
+        encryption_from = result.getInt(pos++);
+        if(result.wasNull()) encryption_from = -1;
+        encryption_recipient = result.getInt(pos++);
+        if(result.wasNull()) encryption_recipient = -1;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -120,7 +152,9 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
         param4 = in.readNullUTF();
         enabled = in.readBoolean();
         weight = in.readCompressedInt();
-	description=in.readNullUTF();
+	description = in.readNullUTF();
+        encryption_from = in.readCompressedInt();
+        encryption_recipient = in.readCompressedInt();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
@@ -134,5 +168,9 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
         out.writeBoolean(enabled);
         out.writeCompressedInt(weight);
         out.writeNullUTF(description);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+            out.writeCompressedInt(encryption_from);
+            out.writeCompressedInt(encryption_recipient);
+        }
     }
 }

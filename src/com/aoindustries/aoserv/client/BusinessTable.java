@@ -27,6 +27,14 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 	super(connector, Business.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Business.COLUMN_ACCOUNTING_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addBusiness(
 	String accounting,
 	String contractNumber,
@@ -47,7 +55,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
                 out.writeUTF(accounting);
                 out.writeBoolean(contractNumber!=null);
                 if(contractNumber!=null) out.writeUTF(contractNumber);
-                out.writeUTF(defaultServer.hostname);
+                out.writeCompressedInt(defaultServer.pkey);
                 out.writeUTF(parent);
                 out.writeBoolean(canAddBackupServers);
                 out.writeBoolean(canAddBusinesses);

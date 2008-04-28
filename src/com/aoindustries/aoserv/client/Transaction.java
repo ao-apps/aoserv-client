@@ -29,6 +29,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
         COLUMN_TRANSID=1,
         COLUMN_ACCOUNTING=2
     ;
+    static final String COLUMN_TIME_name = "time";
+    static final String COLUMN_TRANSID_name = "transid";
 
     protected AOServTable<Integer,Transaction> table;
 

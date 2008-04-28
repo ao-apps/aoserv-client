@@ -24,6 +24,15 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	super(connector, EmailDomain.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
+        new OrderBy(EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addEmailDomain(String domain, AOServer ao, Package packageObject) {
 	if (!EmailDomain.isValidFormat(domain)) throw new WrappedException(new SQLException("Invalid domain format: " + domain));
 	return connector.requestIntQueryIL(

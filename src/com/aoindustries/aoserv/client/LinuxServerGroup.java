@@ -32,6 +32,8 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         COLUMN_NAME=1,
         COLUMN_AO_SERVER=2
     ;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_AO_SERVER_name = "ao_server";
 
     String name;
     int ao_server;
@@ -128,39 +130,35 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
             AOServer ao=getAOServer();
 
             for(CvsRepository cr : ao.getCvsRepositories()) {
-                if(cr.linux_server_group==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getServer().getHostname(), cr));
+                if(cr.linux_server_group==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
             }
 
             for(EmailList el : table.connector.emailLists.getRows()) {
-                if(el.linux_group==pkey) reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getServer().getHostname(), el));
+                if(el.linux_server_group==pkey) reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
             }
 
             for(HttpdServer hs : ao.getHttpdServers()) {
-                if(hs.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdServer>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getServer().getHostname(), hs));
+                if(hs.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdServer>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hs));
             }
 
             for(HttpdSharedTomcat hst : ao.getHttpdSharedTomcats()) {
-                if(hst.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getServer().getHostname(), hst));
+                if(hst.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
             }
 
             // httpd_sites
             for(HttpdSite site : ao.getHttpdSites()) {
-                if(site.linuxGroup.equals(name)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getServer().getHostname(), site));
-            }
-
-            for(InterBaseDBGroup idg : table.connector.interBaseDBGroups.getRows()) {
-                if(idg.linux_server_group==pkey) reasons.add(new CannotRemoveReason<InterBaseDBGroup>("Used by InterBase DB Group "+idg.getPath()+" on "+idg.getLinuxServerGroup().getAOServer().getServer().getHostname(), idg));
+                if(site.linuxGroup.equals(name)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
             }
 
             for(MajordomoServer ms : ao.getMajordomoServers()) {
                 if(ms.linux_server_group==pkey) {
                     EmailDomain ed=ms.getDomain();
-                    reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getServer().getHostname(), ms));
+                    reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
                 }
             }
 
             for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
-                if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getServer().getHostname(), pfs));
+                if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
             }
 
             return reasons;

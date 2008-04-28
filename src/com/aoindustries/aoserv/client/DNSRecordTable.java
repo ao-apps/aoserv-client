@@ -23,6 +23,18 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 	super(connector, DNSRecord.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(DNSRecord.COLUMN_ZONE_name, ASCENDING),
+        new OrderBy(DNSRecord.COLUMN_DOMAIN_name, ASCENDING),
+        new OrderBy(DNSRecord.COLUMN_TYPE_name, ASCENDING),
+        new OrderBy(DNSRecord.COLUMN_MX_PRIORITY_name, ASCENDING),
+        new OrderBy(DNSRecord.COLUMN_DESTINATION_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addDNSRecord(
 	DNSZone zone,
 	String domain,

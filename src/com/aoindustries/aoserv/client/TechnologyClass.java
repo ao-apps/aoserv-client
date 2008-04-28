@@ -23,6 +23,7 @@ import java.sql.*;
 final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     /**
      * The possible <code>TechnologyClass</code>es.

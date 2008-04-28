@@ -22,6 +22,14 @@ final public class DistroFileTypeTable extends GlobalTableStringKey<DistroFileTy
 	super(connector, DistroFileType.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(DistroFileType.COLUMN_TYPE_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public DistroFileType get(Object type) {
 	return getUniqueRow(DistroFileType.COLUMN_TYPE, type);
     }

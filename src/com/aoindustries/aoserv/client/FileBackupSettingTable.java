@@ -24,16 +24,25 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
 	super(connector, FileBackupSetting.class);
     }
 
-    int addFileBackupSetting(Server se, String path, Package packageObj, BackupLevel backupLevel, BackupRetention backupRetention, boolean recurse) {
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(FileBackupSetting.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(FileBackupSetting.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(FileBackupSetting.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(FileBackupSetting.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING),
+        new OrderBy(FileBackupSetting.COLUMN_PATH_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
+    int addFileBackupSetting(FailoverFileReplication replication, String path, boolean backupEnabled) {
         return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.FILE_BACKUP_SETTINGS,
-            se.pkey,
+            replication.pkey,
             path,
-            packageObj.pkey,
-            backupLevel.level,
-            backupRetention.days,
-            recurse
+            backupEnabled
         );
     }
 
@@ -45,58 +54,32 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
 	return getUniqueRow(FileBackupSetting.COLUMN_PKEY, pkey);
     }
 
-    FileBackupSetting getFileBackupSetting(Server se, String path) {
+    FileBackupSetting getFileBackupSetting(FailoverFileReplication ffr, String path) {
         // Use index first
-	for(FileBackupSetting fbs : getFileBackupSettings(se)) if(fbs.path.equals(path)) return fbs;
+	for(FileBackupSetting fbs : getFileBackupSettings(ffr)) if(fbs.path.equals(path)) return fbs;
 	return null;
     }
 
-    List<FileBackupSetting> getFileBackupSettings(Server se) {
-        return getIndexedRows(FileBackupSetting.COLUMN_SERVER, se.pkey);
-    }
-
-    List<String> getFileBackupSettingWarnings(Server se) {
-        int sePKey=se.pkey;
-
-        List<FileBackupSetting> cached=getRows();
-	int size=cached.size();
-        List<String> matches=new ArrayList<String>();
-        for(int c=0;c<size;c++) {
-            FileBackupSetting fbs=cached.get(c);
-            if(fbs.server==sePKey && !fbs.recurse) {
-                String fbsPath=fbs.getPath();
-                // Find those that are being blocked by this non-recursive entry
-                for(int d=0;d<size;d++) {
-                    if(c!=d) {
-                        FileBackupSetting otherFBS=cached.get(d);
-                        if(otherFBS.server==sePKey && otherFBS.backup_level>BackupLevel.DO_NOT_BACKUP && otherFBS.getPath().startsWith(fbsPath)) {
-                            matches.add("No-recurse configuration for '"+fbsPath+"' will cause '"+otherFBS.getPath()+"' to not be backed-up.");
-                        }
-                    }
-                }
-            }
-        }
-	return matches;
+    List<FileBackupSetting> getFileBackupSettings(FailoverFileReplication ffr) {
+        return getIndexedRows(FileBackupSetting.COLUMN_REPLICATION, ffr.pkey);
     }
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.FILE_BACKUP_SETTINGS;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
         Profiler.startProfile(Profiler.UNKNOWN, FileBackupSettingTable.class, "handleCommand(String[],InputStream,TerminalWriter,TerminalWriter,boolean)", null);
         try {
             String command=args[0];
             if(command.equalsIgnoreCase(AOSHCommand.ADD_FILE_BACKUP_SETTING)) {
-                if(AOSH.checkParamCount(AOSHCommand.ADD_FILE_BACKUP_SETTING, args, 6, err)) {
+                if(AOSH.checkParamCount(AOSHCommand.ADD_FILE_BACKUP_SETTING, args, 3, err)) {
                     out.println(
                         connector.simpleAOClient.addFileBackupSetting(
-                            args[1],
+                            AOSH.parseInt(args[1], "replication"),
                             args[2],
-                            args[3],
-                            AOSH.parseShort(args[4], "backup_level"),
-                            AOSH.parseShort(args[5], "backup_retention"),
-                            AOSH.parseBoolean(args[6], "recurse")
+                            AOSH.parseBoolean(args[3], "backup_enabled")
                         )
                     );
                     out.flush();
@@ -105,20 +88,17 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
             } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_FILE_BACKUP_SETTING)) {
                 if(AOSH.checkParamCount(AOSHCommand.REMOVE_FILE_BACKUP_SETTING, args, 2, err)) {
                     connector.simpleAOClient.removeFileBackupSetting(
-                        args[1],
+                        AOSH.parseInt(args[1], "replication"),
                         args[2]
                     );
                 }
                 return true;
             } else if(command.equalsIgnoreCase(AOSHCommand.SET_FILE_BACKUP_SETTING)) {
-                if(AOSH.checkParamCount(AOSHCommand.SET_FILE_BACKUP_SETTING, args, 6, err)) {
+                if(AOSH.checkParamCount(AOSHCommand.SET_FILE_BACKUP_SETTING, args, 3, err)) {
                     connector.simpleAOClient.setFileBackupSetting(
-                        args[1],
+                        AOSH.parseInt(args[1], "replication"),
                         args[2],
-                        args[3],
-                        AOSH.parseShort(args[4], "backup_level"),
-                        AOSH.parseShort(args[5], "backup_retention"),
-                        AOSH.parseBoolean(args[6], "recurse")
+                        AOSH.parseBoolean(args[3], "backup_enabled")
                     );
                 }
                 return true;

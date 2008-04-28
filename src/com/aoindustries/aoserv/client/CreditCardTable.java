@@ -26,6 +26,15 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	super(connector, CreditCard.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(CreditCard.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(CreditCard.COLUMN_CREATED_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     int addCreditCard(
         CreditCardProcessor processor,
 	Business business,
@@ -46,10 +55,32 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
         String postalCode,
         CountryCode countryCode,
         String principalName,
-        String description
+        String description,
+        // Encrypted values
+        String card_number,
+        byte expiration_month,
+        short expiration_year
     ) {
         try {
+            // Validate the encrypted parameters
+            if(card_number==null) throw new NullPointerException("billing_card_number is null");
+            if(card_number.indexOf('\n')!=-1) throw new IllegalArgumentException("billing_card_number may not contain '\n'");
+
             if(!connector.isSecure()) throw new IOException("Credit cards may only be added when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+
+            // Encrypt if currently configured to
+            EncryptionKey encryptionFrom = processor.getEncryptionFrom();
+            EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
+            String encryptedCardNumber;
+            String encryptedExpiration;
+            if(encryptionFrom!=null && encryptionRecipient!=null) {
+                // Encrypt the card number and expiration
+                encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, CreditCard.randomize(card_number));
+                encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, CreditCard.randomize(expiration_month+"/"+expiration_year));
+            } else {
+                encryptedCardNumber = null;
+                encryptedExpiration = null;
+            }
 
             int pkey;
             IntList invalidateList;
@@ -78,6 +109,10 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
                 out.writeUTF(countryCode.pkey);
                 out.writeNullUTF(principalName);
                 out.writeNullUTF(description);
+                out.writeNullUTF(encryptedCardNumber);
+                out.writeNullUTF(encryptedExpiration);
+                out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
+                out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
                 out.flush();
 
                 CompressedDataInputStream in=connection.getInputStream();
@@ -140,6 +175,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	return SchemaTable.TableID.CREDIT_CARDS;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.DECLINE_CREDIT_CARD)) {

@@ -20,6 +20,15 @@ final public class TechnologyTable extends GlobalTableIntegerKey<Technology> {
 	super(connector, Technology.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(Technology.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(Technology.COLUMN_CLASS_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.TECHNOLOGIES;
     }

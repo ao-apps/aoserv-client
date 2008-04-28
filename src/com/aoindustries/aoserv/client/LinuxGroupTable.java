@@ -25,6 +25,14 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 	super(connector, LinuxGroup.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(LinuxGroup.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     void addLinuxGroup(String name, Package packageObject, String type) {
         Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupTable.class, "addLinuxGroup(String,Package)", null);
         try {

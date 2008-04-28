@@ -12,6 +12,7 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
+import javax.swing.SwingUtilities;
 
 /**
  * A <code>TCPConnector</code> provides the connection between
@@ -168,6 +169,12 @@ public class TCPConnector extends AOServConnector {
     }
 
     final AOServConnection getConnection(int maxConnections) throws IOException {
+        if(SwingUtilities.isEventDispatchThread()) {
+            errorHandler.reportWarning(
+                new RuntimeException(ApplicationResourcesAccessor.getMessage(Locale.getDefault(), "TCPConnector.getConnection.isEventDispatchThread")),
+                null
+            );
+        }
         startCacheMonitor();
 	return pool.getConnection(maxConnections);
     }

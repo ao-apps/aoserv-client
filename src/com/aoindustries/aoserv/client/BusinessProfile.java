@@ -24,6 +24,8 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
         COLUMN_PKEY=0,
         COLUMN_ACCOUNTING=1
     ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_PRIORITY_name = "priority";
 
     String accounting;
     private int priority;

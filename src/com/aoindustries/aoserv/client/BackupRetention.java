@@ -20,8 +20,9 @@ import java.sql.*;
 final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
 
     static final int COLUMN_DAYS=0;
+    static final String COLUMN_DAYS_name = "days";
 
-    public static final short DEFAULT_BACKUP_RETENTION=7;
+    // public static final short DEFAULT_BACKUP_RETENTION=7;
 
     short days;
     private String display;

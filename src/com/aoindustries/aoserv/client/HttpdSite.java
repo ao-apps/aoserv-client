@@ -41,30 +41,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     static final int
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=1,
-        COLUMN_PACKAGE=4,
-        COLUMN_CONFIG_BACKUP_LEVEL=9,
-        COLUMN_CONFIG_BACKUP_RETENTION=10,
-        COLUMN_FILE_BACKUP_LEVEL=11,
-        COLUMN_FILE_BACKUP_RETENTION=12,
-        COLUMN_FTP_BACKUP_LEVEL=13,
-        COLUMN_FTP_BACKUP_RETENTION=14,
-        COLUMN_LOG_BACKUP_LEVEL=15,
-        COLUMN_LOG_BACKUP_RETENTION=16
+        COLUMN_PACKAGE=4
     ;
-
-    /**
-     * The default number of days to keep backups.
-     */
-    public static final short
-        DEFAULT_CONFIG_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL,
-        DEFAULT_CONFIG_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION,
-        DEFAULT_FILE_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL,
-        DEFAULT_FILE_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION,
-        DEFAULT_FTP_BACKUP_LEVEL=BackupLevel.DEFAULT_BACKUP_LEVEL,
-        DEFAULT_FTP_BACKUP_RETENTION=BackupRetention.DEFAULT_BACKUP_RETENTION,
-        DEFAULT_LOG_BACKUP_LEVEL=1,
-        DEFAULT_LOG_BACKUP_RETENTION=1
-    ;
+    static final String COLUMN_SITE_NAME_name = "site_name";
+    static final String COLUMN_AO_SERVER_name = "ao_server";
 
     public static final int MAX_SITE_NAME_LENGTH=255;
 
@@ -84,16 +64,6 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     private String
         serverAdmin,
         contentSrc
-    ;
-    private short
-        config_backup_level,
-        config_backup_retention,
-        file_backup_level,
-        file_backup_retention,
-        ftp_backup_level,
-        ftp_backup_retention,
-        log_backup_level,
-        log_backup_retention
     ;
     int disable_log;
     private boolean isManual;
@@ -146,98 +116,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
-    public BackupLevel getConfigBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getConfigBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(config_backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+config_backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getConfigBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getConfigBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(config_backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+config_backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupLevel getFileBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getFileBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(file_backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+file_backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getFileBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getFileBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(file_backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+file_backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupLevel getFtpBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getFtpBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(ftp_backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+ftp_backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getFtpBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getFtpBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(ftp_backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+ftp_backup_retention));
-            return br;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
     public String getInstallDirectory() {
         Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getInstallDirectory()", null);
         try {
             return WWW_DIRECTORY+'/'+site_name;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupLevel getLogBackupLevel() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getLogBackupLevel()", null);
-        try {
-            BackupLevel bl=table.connector.backupLevels.get(log_backup_level);
-            if(bl==null) throw new WrappedException(new SQLException("Unable to find BackupLevel: "+log_backup_level));
-            return bl;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    public BackupRetention getLogBackupRetention() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getLogBackupRetention()", null);
-        try {
-            BackupRetention br=table.connector.backupRetentions.get(log_backup_retention);
-            if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+log_backup_retention));
-            return br;
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -254,17 +136,9 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
             case 6: return linuxGroup;
             case 7: return serverAdmin;
             case 8: return contentSrc;
-            case COLUMN_CONFIG_BACKUP_LEVEL: return Short.valueOf(config_backup_level);
-            case COLUMN_CONFIG_BACKUP_RETENTION: return Short.valueOf(config_backup_retention);
-            case COLUMN_FILE_BACKUP_LEVEL: return Short.valueOf(file_backup_level);
-            case COLUMN_FILE_BACKUP_RETENTION: return Short.valueOf(file_backup_retention);
-            case COLUMN_FTP_BACKUP_LEVEL: return Short.valueOf(ftp_backup_level);
-            case COLUMN_FTP_BACKUP_RETENTION: return Short.valueOf(ftp_backup_retention);
-            case COLUMN_LOG_BACKUP_LEVEL: return Short.valueOf(log_backup_level);
-            case COLUMN_LOG_BACKUP_RETENTION: return Short.valueOf(log_backup_retention);
-            case 17: return disable_log==-1?null:Integer.valueOf(disable_log);
-            case 18: return isManual?Boolean.TRUE:Boolean.FALSE;
-            case 19: return awstatsSkipFiles;
+            case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 10: return isManual?Boolean.TRUE:Boolean.FALSE;
+            case 11: return awstatsSkipFiles;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -367,27 +241,20 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     //}
 
     void initImpl(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        ao_server=result.getInt(2);
-        site_name=result.getString(3);
-        list_first=result.getBoolean(4);
-        packageName=result.getString(5);
-        linuxAccount=result.getString(6);
-        linuxGroup=result.getString(7);
-        serverAdmin=result.getString(8);
-        contentSrc=result.getString(9);
-        config_backup_level=result.getShort(10);
-        config_backup_retention=result.getShort(11);
-        file_backup_level=result.getShort(12);
-        file_backup_retention=result.getShort(13);
-        ftp_backup_level=result.getShort(14);
-        ftp_backup_retention=result.getShort(15);
-        log_backup_level=result.getShort(16);
-        log_backup_retention=result.getShort(17);
-        disable_log=result.getInt(18);
+        int pos = 1;
+        pkey=result.getInt(pos++);
+        ao_server=result.getInt(pos++);
+        site_name=result.getString(pos++);
+        list_first=result.getBoolean(pos++);
+        packageName=result.getString(pos++);
+        linuxAccount=result.getString(pos++);
+        linuxGroup=result.getString(pos++);
+        serverAdmin=result.getString(pos++);
+        contentSrc=result.getString(pos++);
+        disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log=-1;
-        isManual=result.getBoolean(19);
-        awstatsSkipFiles=result.getString(20);
+        isManual=result.getBoolean(pos++);
+        awstatsSkipFiles=result.getString(pos++);
     }
 
     public boolean isManual() {
@@ -449,14 +316,6 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         linuxGroup=in.readUTF().intern();
         serverAdmin=in.readUTF();
         contentSrc=in.readNullUTF();
-        config_backup_level=in.readShort();
-        config_backup_retention=in.readShort();
-        file_backup_level=in.readShort();
-        file_backup_retention=in.readShort();
-        ftp_backup_level=in.readShort();
-        ftp_backup_retention=in.readShort();
-        log_backup_level=in.readShort();
-        log_backup_retention=in.readShort();
         disable_log=in.readCompressedInt();
         isManual=in.readBoolean();
         awstatsSkipFiles=in.readNullUTF();
@@ -464,33 +323,6 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
     public void remove() {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
-    }
-
-    public void setConfigBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setConfigBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SITES, pkey, COLUMN_CONFIG_BACKUP_RETENTION);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    public void setFileBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setFileBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SITES, pkey, COLUMN_FILE_BACKUP_RETENTION);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    public void setFtpBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setFtpBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SITES, pkey, COLUMN_FTP_BACKUP_RETENTION);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
     }
 
     public void setIsManual(boolean isManual) {
@@ -502,21 +334,12 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         }
     }
 
-    public void setLogBackupRetention(short days) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setLogBackupRetention(short)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BACKUP_RETENTION, days, SchemaTable.TableID.HTTPD_SITES, pkey, COLUMN_LOG_BACKUP_RETENTION);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
     public void setServerAdmin(String address) {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
     }
 
     String toStringImpl() {
-        return site_name+" on "+getAOServer().getServer().getHostname();
+        return site_name+" on "+getAOServer().getHostname();
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
@@ -529,14 +352,16 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         out.writeUTF(linuxGroup);
         out.writeUTF(serverAdmin);
         out.writeNullUTF(contentSrc);
-        out.writeShort(config_backup_level);
-        out.writeShort(config_backup_retention);
-        out.writeShort(file_backup_level);
-        out.writeShort(file_backup_retention);
-        out.writeShort(ftp_backup_level);
-        out.writeShort(ftp_backup_retention);
-        out.writeShort(log_backup_level);
-        out.writeShort(log_backup_retention);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+            out.writeShort(0);
+            out.writeShort(7);
+            out.writeShort(0);
+            out.writeShort(7);
+            out.writeShort(0);
+            out.writeShort(7);
+        }
         out.writeCompressedInt(disable_log);
         out.writeBoolean(isManual);
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_129)>=0) out.writeNullUTF(awstatsSkipFiles);

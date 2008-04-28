@@ -22,6 +22,7 @@ import java.sql.*;
 final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 
     static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
     /**
      * The system supported payment types, not all of which can

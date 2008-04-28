@@ -21,6 +21,14 @@ final public class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
 	super(connector, TimeZone.class);
     }
 
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(TimeZone.COLUMN_NAME_name, ASCENDING)
+    };
+    @Override
+    OrderBy[] getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.TIME_ZONES;
     }
