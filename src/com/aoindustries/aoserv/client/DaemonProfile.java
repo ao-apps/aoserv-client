@@ -22,15 +22,15 @@ import java.sql.*;
  */
 final public class DaemonProfile extends AOServObject<Object,DaemonProfile> implements SingleTableObject<Object,DaemonProfile> {
 
-    static final String COLUMN_SERVER_name= "server";
+    static final String COLUMN_AO_SERVER_name= "ao_server";
     static final String COLUMN_CLASSNAME_name= "classname";
     static final String COLUMN_METHOD_NAME_name= "method_name";
     static final String COLUMN_PARAMETER_name= "parameter";
     
-    public static DaemonProfile getDaemonProfile(String server, MethodProfile profile) {
+    public static DaemonProfile getDaemonProfile(String ao_server, MethodProfile profile) {
         Object param1=profile.getParameter1();
         return new DaemonProfile(
-            server,
+            ao_server,
             profile.getLevel(),
             profile.getProfiledClass().getName(),
             profile.getMethodName(),
@@ -42,7 +42,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
         );
     }
 
-    private String server;
+    private String ao_server;
     private int level;
     private String classname;
     private String method_name;
@@ -57,7 +57,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
     }
 
     public DaemonProfile(
-        String server,
+        String ao_server,
         int level,
         String classname,
 	String method_name,
@@ -67,7 +67,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
 	long min_time,
 	long max_time
     ) {
-        this.server=server;
+        this.ao_server=ao_server;
         this.level=level;
         this.classname=classname;
 	this.method_name=method_name;
@@ -88,7 +88,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
 
     public Object getColumn(int i) {
         switch(i) {
-            case 0: return server;
+            case 0: return ao_server;
             case 1: return Integer.valueOf(level);
             case 2: return classname;
             case 3: return method_name;
@@ -121,10 +121,10 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
 	return parameter==null?method_name:(method_name+':'+parameter);
     }
 
-    public Server getServer() {
-        Server se=table.connector.servers.get(server);
-        if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
-        return se;
+    public AOServer getAOServer() {
+        AOServer ao=table.connector.aoServers.get(ao_server);
+        if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+        return ao;
     }
 
     final public AOServTable<Object,DaemonProfile> getTable() {
@@ -148,7 +148,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        server=in.readUTF().intern();
+        ao_server=in.readUTF().intern();
         level=in.readCompressedInt();
         classname=in.readUTF();
 	method_name=in.readUTF();
@@ -165,7 +165,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
-        out.writeUTF(server);
+        out.writeUTF(ao_server);
         out.writeCompressedInt(level);
         out.writeUTF(classname);
 	out.writeUTF(method_name);

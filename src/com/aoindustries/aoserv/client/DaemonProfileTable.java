@@ -24,7 +24,7 @@ final public class DaemonProfileTable extends AOServTable<Object,DaemonProfile> 
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(DaemonProfile.COLUMN_SERVER_name, ASCENDING),
+        new OrderBy(DaemonProfile.COLUMN_AO_SERVER_name, ASCENDING),
         new OrderBy(DaemonProfile.COLUMN_CLASSNAME_name, ASCENDING),
         new OrderBy(DaemonProfile.COLUMN_METHOD_NAME_name, ASCENDING),
         new OrderBy(DaemonProfile.COLUMN_PARAMETER_name, ASCENDING)
