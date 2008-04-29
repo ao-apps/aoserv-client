@@ -132,14 +132,14 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      * directory under /usr/mysql/X.X[-max|-source]
      */
     public String getMinorVersion() {
-        String version=getVersion().getVersion();
-        int pos=version.indexOf('.');
-        if(pos==-1) return version;
-        int pos2=version.indexOf('.', pos+1);
-        if(pos2==-1) return version;
-        String S = version.substring(0, pos2);
-        if(version.endsWith("-max")) return S+"-max";
-        if(version.endsWith("-source")) return S+"-source";
+        String techVersion=getVersion().getVersion();
+        int pos=techVersion.indexOf('.');
+        if(pos==-1) return techVersion;
+        int pos2=techVersion.indexOf('.', pos+1);
+        if(pos2==-1) return techVersion;
+        String S = techVersion.substring(0, pos2);
+        if(techVersion.endsWith("-max")) return S+"-max";
+        if(techVersion.endsWith("-source")) return S+"-source";
         return S;
     }
 
@@ -243,6 +243,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_MYSQL, pkey);
     }
 
+    @Override
     String toStringImpl() {
         return name+" on "+getAOServer().getHostname();
     }

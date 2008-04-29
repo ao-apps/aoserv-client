@@ -22,19 +22,38 @@ import java.util.*;
  * @author  AO Industries, Inc.
  */
 public class AOServConnectorTest extends TestCase {
-    
-    private AOServConnector conn;
+
+    static final String REGULAR_USER_USERNAME="testuser";
+    static final String REGULAR_USER_PASSWORD="T3st1234";
+
+    /**
+     * Gets the list of connectors to be used during testing.  This represents the three different
+     * filter modes.  Regular user (testuser), unrestritected master (aoweb_app), and a single server
+     * (mandriva20060_svr).
+     */
+    static List<AOServConnector> getTestConnectors() throws IOException {
+        ErrorHandler errorHandler = new StandardErrorHandler();
+        List<AOServConnector> conns = new ArrayList<AOServConnector>();
+        conns.add(AOServConnector.getConnector("aoweb_app", "changeme", errorHandler));
+        conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD, errorHandler));
+        conns.add(AOServConnector.getConnector("mandriva20060_svr", "Ogrol3Veve5", errorHandler));
+        return conns;
+    }
+
+    private List<AOServConnector> conns;
 
     public AOServConnectorTest(String testName) {
         super(testName);
     }
 
+    @Override
     protected void setUp() throws Exception {
-        conn=AOServConnector.getConnector(new StandardErrorHandler());
+        conns = getTestConnectors();
     }
 
+    @Override
     protected void tearDown() throws Exception {
-        conn=null;
+        conns = null;
     }
 
     public static Test suite() {
@@ -48,7 +67,11 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testClearCaches() {
         System.out.println("Testing clearCaches");
-        for(int c=0;c<1000;c++) conn.clearCaches();
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            for(int c=0;c<1000;c++) conn.clearCaches();
+        }
     }
 
     /**
@@ -56,7 +79,11 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testExecuteCommand() {
         System.out.println("Testing executeCommand");
-        assertEquals("aoweb_app\n", conn.executeCommand(new String[] {"whoami"}));
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            assertEquals(username+"\n", conn.executeCommand(new String[] {"whoami"}));
+        }
     }
 
     /**
@@ -64,8 +91,21 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testGetConnectorID() {
         System.out.println("Testing getConnectorID");
-        long connectorID=conn.getConnectorID();
-        assertEquals(connectorID, conn.getConnectorID());
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            long connectorID=conn.getConnectorID();
+            for(AOServConnector conn2 : conns) {
+                long connectorID2 = conn2.getConnectorID();
+                if(conn==conn2) {
+                    // Must have same connector ID
+                    assertEquals(connectorID, connectorID2);
+                } else {
+                    // Must have different connector ID
+                    assertTrue(connectorID!=connectorID2);
+                }
+            }
+        }
     }
 
     /**
@@ -73,7 +113,11 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testGetHostname() {
         System.out.println("Testing getHostname");
-        assertEquals("192.168.1.129", conn.getHostname());
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            assertEquals("192.168.1.129", conn.getHostname());
+        }
     }
 
     /**
@@ -81,7 +125,11 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testGetPort() {
         System.out.println("Testing getPort");
-        assertEquals(4582, conn.getPort());
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            assertEquals(4582, conn.getPort());
+        }
     }
 
     /**
@@ -89,7 +137,11 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testGetProtocol() {
         System.out.println("Testing getProtocol");
-        assertEquals(NetProtocol.TCP, conn.getProtocol());
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            assertEquals(NetProtocol.TCP, conn.getProtocol());
+        }
     }
 
     /**
@@ -97,28 +149,32 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testGetRandom() {
         System.out.println("Testing getRandom");
-        final int NUM_BYTES=1000000;
-        final int CHECKPOINTS=100000;
-        final int MAX_DEVIATION_PERCENT=10;
-        final int MINIMUM=NUM_BYTES/256*(100-MAX_DEVIATION_PERCENT)/100;
-        final int MAXIMUM=NUM_BYTES/256*(100+MAX_DEVIATION_PERCENT)/100;
-        Random random=conn.getRandom();
-        assertNotNull(random);
-        int[] counts=new int[256];
-        byte[] byteArray=new byte[1];
-        for(int c=0;c<NUM_BYTES;) {
-            random.nextBytes(byteArray);
-            byte randByte=byteArray[0];
-            counts[((int)randByte)&255]++;
-            c++;
-            if((c%CHECKPOINTS)==0) System.out.println("Completed "+c+" of "+NUM_BYTES);
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            final int NUM_BYTES=1000000;
+            final int CHECKPOINTS=100000;
+            final int MAX_DEVIATION_PERCENT=10;
+            final int MINIMUM=NUM_BYTES/256*(100-MAX_DEVIATION_PERCENT)/100;
+            final int MAXIMUM=NUM_BYTES/256*(100+MAX_DEVIATION_PERCENT)/100;
+            Random random=conn.getRandom();
+            assertNotNull(random);
+            int[] counts=new int[256];
+            byte[] byteArray=new byte[1];
+            for(int c=0;c<NUM_BYTES;) {
+                random.nextBytes(byteArray);
+                byte randByte=byteArray[0];
+                counts[((int)randByte)&255]++;
+                c++;
+                if((c%CHECKPOINTS)==0) System.out.println("        Completed "+c+" of "+NUM_BYTES);
+            }
+            System.out.print("        Analyzing distribution for more than "+MAX_DEVIATION_PERCENT+"% devation: ");
+            for(int c=0;c<256;c++) {
+                int count=counts[c];
+                if(count<MINIMUM || count>MAXIMUM) fail("Random distribution deviation greater than "+MAX_DEVIATION_PERCENT+"% for value "+c+".  Acceptable range "+MINIMUM+" to "+MAXIMUM+", got "+count);
+            }
+            System.out.println("        OK");
         }
-        System.out.print("Analyzing distribution for more than "+MAX_DEVIATION_PERCENT+"% devation: ");
-        for(int c=0;c<256;c++) {
-            int count=counts[c];
-            if(count<MINIMUM || count>MAXIMUM) fail("Random distribution deviation greater than "+MAX_DEVIATION_PERCENT+"% for value "+c+".  Acceptable range "+MINIMUM+" to "+MAXIMUM+", got "+count);
-        }
-        System.out.println("OK");
     }
 
     /**
@@ -126,7 +182,11 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testIsSecure() {
         System.out.println("Testing isSecure");
-        assertTrue(conn.isSecure());
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            assertTrue(conn.isSecure());
+        }
     }
 
     /**
@@ -134,14 +194,18 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testPing() {
         System.out.print("Testing ping: ");
-        int totalTime=0;
-        for(int c=0;c<50;c++) {
-            int latency=conn.ping();
-            if(latency>5000) fail("ping latency > 5000ms: "+latency);
-            totalTime+=latency;
-            System.out.print('.');
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            int totalTime=0;
+            for(int c=0;c<50;c++) {
+                int latency=conn.ping();
+                if(latency>5000) fail("ping latency > 5000ms: "+latency);
+                totalTime+=latency;
+                System.out.print('.');
+            }
+            System.out.println("        Average: "+(totalTime/50)+"ms");
         }
-        System.out.println(" Average: "+(totalTime/50)+"ms");
     }
 
     /**
@@ -149,41 +213,49 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testGetConnection() throws IOException {
         System.out.println("Testing getConnection and releaseConnection");
-        for(int c=0;c<1000;c++) {
-            AOServConnection connection=conn.getConnection(1);
-            conn.releaseConnection(connection);
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            for(int c=0;c<1000;c++) {
+                AOServConnection connection=conn.getConnection(1);
+                conn.releaseConnection(connection);
+            }
         }
     }
-    
+
     /**
      * Test the ability to get each table from the connector by table ID.  Also makes sure each table is a unique instance.
      */
     public void testGetTable() {
         System.out.println("Testing getTable and getTables");
-        int numTables = SchemaTable.TableID.values().length;
-        AOServTable[] tables=new AOServTable[numTables];
-        for(int c=0;c<numTables;c++) {
-            AOServTable table=tables[c]=conn.getTable(c);
-            // Make sure index matches table ID
-            // AOServClient version 1.30 had a bug where two tables were swapped
-            if(
-                AOServProtocol.CURRENT_VERSION.equals(AOServProtocol.VERSION_1_30)
-                && (
-                    c==SchemaTable.TableID.AOSERV_PERMISSIONS.ordinal()
-                    || c==SchemaTable.TableID.AOSERV_PROTOCOLS.ordinal()
-                )
-            ) {
-                System.out.println("Skipping version 1.30 bug where aoserv_protocols and aoserv_permissions were swapped in AOServConnector table array");
-            } else {
-                assertEquals("AOServConnector.tables["+c+"] and AOServTable("+table.getClass().getName()+").getTableID()="+table.getTableID(), table.getTableID().ordinal(), c);
+        for(AOServConnector conn : conns) {
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            int numTables = SchemaTable.TableID.values().length;
+            AOServTable[] tables=new AOServTable[numTables];
+            for(int c=0;c<numTables;c++) {
+                AOServTable table=tables[c]=conn.getTable(c);
+                // Make sure index matches table ID
+                // AOServClient version 1.30 had a bug where two tables were swapped
+                if(
+                    AOServProtocol.CURRENT_VERSION.equals(AOServProtocol.VERSION_1_30)
+                    && (
+                        c==SchemaTable.TableID.AOSERV_PERMISSIONS.ordinal()
+                        || c==SchemaTable.TableID.AOSERV_PROTOCOLS.ordinal()
+                    )
+                ) {
+                    System.out.println("        Skipping version 1.30 bug where aoserv_protocols and aoserv_permissions were swapped in AOServConnector table array");
+                } else {
+                    assertEquals("AOServConnector.tables["+c+"] and AOServTable("+table.getClass().getName()+").getTableID()="+table.getTableID(), table.getTableID().ordinal(), c);
+                }
+                if(c>0) {
+                    // Make sure not a duplicate
+                    for(int d=0;d<c;d++) assertNotSame(table, tables[d]);
+                }
             }
-            if(c>0) {
-                // Make sure not a duplicate
-                for(int d=0;d<c;d++) assertNotSame(table, tables[d]);
-            }
+            AOServTable[] allTables=conn.getTables();
+            assertEquals(tables.length, allTables.length);
+            for(int c=0;c<numTables;c++) assertSame(tables[c], allTables[c]);
         }
-        AOServTable[] allTables=conn.getTables();
-        assertEquals(tables.length, allTables.length);
-        for(int c=0;c<numTables;c++) assertSame(tables[c], allTables[c]);
     }
 }

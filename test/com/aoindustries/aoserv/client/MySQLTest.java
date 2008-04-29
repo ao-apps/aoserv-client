@@ -27,7 +27,6 @@ import junit.framework.TestSuite;
  * Tests all of the functions related to MySQL.
  *
  * TODO: Test UJIS (japanese) character set (SAKURA)
- * TODO: Test BDB tables (DXS)
  *
  * @author  AO Industries, Inc.
  */
@@ -48,7 +47,7 @@ public class MySQLTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conn=AOServConnector.getConnector(new StandardErrorHandler());
+        conn=AOServConnector.getConnector(AOServConnectorTest.REGULAR_USER_USERNAME, AOServConnectorTest.REGULAR_USER_PASSWORD, new StandardErrorHandler());
     }
 
     @Override
