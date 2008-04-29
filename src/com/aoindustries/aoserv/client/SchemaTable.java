@@ -147,7 +147,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         PACKAGE_DEFINITIONS,
         PACKAGES,
         PAYMENT_TYPES,
-        PHONE_NUMBERS,
         POSTGRES_DATABASES,
         POSTGRES_ENCODINGS,
         POSTGRES_RESERVED_WORDS,

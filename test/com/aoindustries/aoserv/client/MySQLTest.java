@@ -46,10 +46,12 @@ public class MySQLTest extends TestCase {
         super(testName);
     }
 
+    @Override
     protected void setUp() throws Exception {
         conn=AOServConnector.getConnector(new StandardErrorHandler());
     }
 
+    @Override
     protected void tearDown() throws Exception {
         for(MySQLDatabase md : mysqlDatabases) md.remove();
         for(MySQLServerUser msu : mysqlServerUsers) msu.remove();
@@ -133,7 +135,7 @@ public class MySQLTest extends TestCase {
             System.out.println("Done");
         }
     }
-    
+
     /**
      * Tests the password setting and related functions
      */

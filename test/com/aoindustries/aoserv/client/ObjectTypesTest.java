@@ -25,10 +25,12 @@ public class ObjectTypesTest extends TestCase {
         super(testName);
     }
 
+    @Override
     protected void setUp() throws Exception {
         conn=AOServConnector.getConnector(new StandardErrorHandler());
     }
 
+    @Override
     protected void tearDown() throws Exception {
         conn=null;
     }

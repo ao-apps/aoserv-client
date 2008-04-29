@@ -67,12 +67,19 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
         // Resource constants used later
         final Resource httpdResource=connector.resources.get(Resource.HTTPD);
+        if(httpdResource==null) throw new AssertionError("httpdResource is null");
         final Resource javavmResource=connector.resources.get(Resource.JAVAVM);
+        if(javavmResource==null) throw new AssertionError("javavmResource is null");
         final Resource ipResource=connector.resources.get(Resource.IP);
+        if(ipResource==null) throw new AssertionError("ipResource is null");
         final Resource mysqlReplicationResource=connector.resources.get(Resource.MYSQL_REPLICATION);
+        if(mysqlReplicationResource==null) throw new AssertionError("mysqlReplicationResource is null");
         final Resource popResource=connector.resources.get(Resource.POP);
+        if(popResource==null) throw new AssertionError("popResource is null");
         final Resource siteResource=connector.resources.get(Resource.SITE);
+        if(siteResource==null) throw new AssertionError("siteResource is null");
         final Resource userResource=connector.resources.get(Resource.USER);
+        if(userResource==null) throw new AssertionError("userResource is null");
 
         // Preprocess resources counts
         Map<Package,Integer> popsPerPackage=new HashMap<Package,Integer>();

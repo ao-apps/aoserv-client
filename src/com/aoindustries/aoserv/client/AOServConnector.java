@@ -106,10 +106,10 @@ abstract public class AOServConnector {
     public final AOServerTable aoServers;
     public AOServerTable getAoServers() {return aoServers;}
 
-    public final AOServProtocolTable aoservProtocols;
-
     public final AOServPermissionTable aoservPermissions;
     public AOServPermissionTable getAoservPermissions() {return aoservPermissions;}
+
+    public final AOServProtocolTable aoservProtocols;
 
     public final AOSHCommandTable aoshCommands;
     public final ArchitectureTable architectures;
@@ -333,8 +333,8 @@ abstract public class AOServConnector {
                 actions=new ActionTable(this),
                 aoServerDaemonHosts=new AOServerDaemonHostTable(this),
                 aoServers=new AOServerTable(this),
-                aoservProtocols=new AOServProtocolTable(this),
                 aoservPermissions=new AOServPermissionTable(this),
+                aoservProtocols=new AOServProtocolTable(this),
                 aoshCommands=new AOSHCommandTable(this),
                 architectures=new ArchitectureTable(this),
                 backupPartitions=new BackupPartitionTable(this),

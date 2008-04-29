@@ -54,6 +54,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
         return SchemaTable.TableID.SCHEMA_TABLES;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
         Profiler.startProfile(Profiler.UNKNOWN, SchemaTableTable.class, "handleCommand(String[],InputStream,TerminalWriter,TerminalWriter,boolean)", null);
         try {

@@ -29,10 +29,12 @@ public class GetTableSizesTest extends TestCase {
         super(testName);
     }
 
+    @Override
     protected void setUp() throws Exception {
         conn=AOServConnector.getConnector(new StandardErrorHandler());
     }
 
+    @Override
     protected void tearDown() throws Exception {
         conn=null;
     }
@@ -52,7 +54,7 @@ public class GetTableSizesTest extends TestCase {
         int numTables = SchemaTable.TableID.values().length;
         int[][] counts=new int[PASSES][numTables];
         for(int d=0;d<PASSES;d++) {
-            System.out.print("Pass "+(d+1)+" of "+PASSES+": ");
+            System.out.print((d<9?"Pass  ":"Pass ")+(d+1)+" of "+PASSES+": ");
             for(int c=0;c<numTables;c++) {
                 System.out.print('.');
                 AOServTable table=conn.getTable(c);

@@ -51,6 +51,8 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
     }
 
     PackageDefinitionLimit getPackageDefinitionLimit(PackageDefinition packageDefinition, Resource resource) {
+        if(packageDefinition==null) throw new AssertionError("packageDefinition is null");
+        if(resource==null) throw new AssertionError("resource is null");
         String resourceName=resource.pkey;
         // Use the index first
         for(PackageDefinitionLimit limit : getPackageDefinitionLimits(packageDefinition)) if(limit.resource.equals(resourceName)) return limit;

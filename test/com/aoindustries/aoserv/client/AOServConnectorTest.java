@@ -165,7 +165,18 @@ public class AOServConnectorTest extends TestCase {
         for(int c=0;c<numTables;c++) {
             AOServTable table=tables[c]=conn.getTable(c);
             // Make sure index matches table ID
-            assertEquals("AOServConnector.tables["+c+"] and AOServTable("+table.getClass().getName()+".getTableID()="+table.getTableID(), table.getTableID(), c);
+            // AOServClient version 1.30 had a bug where two tables were swapped
+            if(
+                AOServProtocol.CURRENT_VERSION.equals(AOServProtocol.VERSION_1_30)
+                && (
+                    c==SchemaTable.TableID.AOSERV_PERMISSIONS.ordinal()
+                    || c==SchemaTable.TableID.AOSERV_PROTOCOLS.ordinal()
+                )
+            ) {
+                System.out.println("Skipping version 1.30 bug where aoserv_protocols and aoserv_permissions were swapped in AOServConnector table array");
+            } else {
+                assertEquals("AOServConnector.tables["+c+"] and AOServTable("+table.getClass().getName()+").getTableID()="+table.getTableID(), table.getTableID().ordinal(), c);
+            }
             if(c>0) {
                 // Make sure not a duplicate
                 for(int d=0;d<c;d++) assertNotSame(table, tables[d]);

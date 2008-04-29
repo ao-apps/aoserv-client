@@ -80,6 +80,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     }
 
     public PackageDefinitionLimit getLimit(Resource resource) {
+        if(resource==null) throw new AssertionError("resource is null");
         return table.connector.packageDefinitionLimits.getPackageDefinitionLimit(this, resource);
     }
 
