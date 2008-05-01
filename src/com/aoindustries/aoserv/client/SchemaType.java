@@ -10,6 +10,7 @@ import com.aoindustries.profiler.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
@@ -27,6 +28,7 @@ import java.util.*;
 final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 
     static final int COLUMN_TYPE=0;
+    static final String DATE_name = "date";
 
     /**
      * The different types of values.
@@ -62,9 +64,15 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         URL=27,
         USERNAME=28,
         ZIP=29,
-        ZONE=30
+        ZONE=30,
+        BIG_DECIMAL=31
     ;
-    static final String DATE_name = "date";
+
+    private static final BigDecimal
+        bigDecimalNegativeOne = BigDecimal.valueOf(-1),
+        bigDecimal100 = BigDecimal.valueOf(100),
+        bigDecimal1000 = BigDecimal.valueOf(1000)
+    ;
 
     private String type;
 
@@ -94,6 +102,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                 case OCTAL_LONG:
                 case PKEY:
                 case SHORT:
+                case BIG_DECIMAL:
                     return true;
                 default:
                     return false;
@@ -107,48 +116,50 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
      * Casts one type of object to another.  These casts are allowed:
      *
      * <pre>
-     *             A                                            I        O
-     *             C                 D  D                       P     O  C
-     *             C                 E  E              H     I  _     C  T                             U
-     *             O  B        C     C  C              O     N  A     T  A  P                          S
-     *          T  U  O        O     I  I  D           S     T  D     A  L  A                 S        E
-     *          O  N  O        U     M  M  O  E     F  T     E  D     L  _  C        P  S  S  T        R
-     *             T  L  B  C  N  D  A  A  U  M  F  L  N     R  R  L  _  L  K  P  P  H  H  T  R  T     N     Z
-     *             I  E  Y  I  T  A  L  L  B  A  K  O  A  I  V  E  O  I  O  A  K  A  O  O  A  I  I  U  A  Z  O
-     *             N  A  T  T  R  T  _  _  L  I  E  A  M  N  A  S  N  N  N  G  E  T  N  R  T  N  M  R  M  I  N
-     *    FROM     G  N  E  Y  Y  E  2  3  E  L  Y  T  E  T  L  S  G  T  G  E  Y  H  E  T  E  G  E  L  E  P  E
+     *                                                                                                           B
+     *              A                                            I        O                                      I
+     *              C                 D  D                       P     O  C                                      G
+     *              C                 E  E              H     I  _     C  T                             U        _
+     *              O  B        C     C  C              O     N  A     T  A  P                          S        D
+     *           T  U  O        O     I  I  D           S     T  D     A  L  A                 S        E        E
+     *           O  N  O        U     M  M  O  E     F  T     E  D     L  _  C        P  S  S  T        R        C
+     *              T  L  B  C  N  D  A  A  U  M  F  L  N     R  R  L  _  L  K  P  P  H  H  T  R  T     N     Z  I
+     *              I  E  Y  I  T  A  L  L  B  A  K  O  A  I  V  E  O  I  O  A  K  A  O  O  A  I  I  U  A  Z  O  M
+     *              N  A  T  T  R  T  _  _  L  I  E  A  M  N  A  S  N  N  N  G  E  T  N  R  T  N  M  R  M  I  N  A
+     *     FROM     G  N  E  Y  Y  E  2  3  E  L  Y  T  E  T  L  S  G  T  G  E  Y  H  E  T  E  G  E  L  E  P  E  L
      *
-     * ACCOUNTING  X                                                        X                 X
-     *    BOOLEAN     X  X           X  X  X        X     X        X  X  X              X     X
-     *       BYTE     X  X           X  X  X        X     X  X     X  X  X              X     X
-     *       CITY           X                                                                 X
-     *    COUNTRY              X                                                              X
-     *       DATE                 X  X  X  X        X     X        X  X  X              X     X  X
-     *  DECIMAL_2     X  X           X  X  X        X     X  X     X  X  X              X     X
-     *  DECIMAL_3     X  X           X  X  X        X     X  X     X  X  X              X     X
-     *     DOUBLE     X  X           X  X  X        X     X  X     X  X  X              X     X
-     *      EMAIL                             X        X  X     X     X                       X     X  X     X
-     *       FKEY                                X        X           X        X              X
-     *      FLOAT     X  X           X  X  X        X     X  X     X  X  X              X     X
-     *   HOSTNAME                                      X  X     X     X                       X              X
-     *        INT     X  X        X  X  X  X     X  X  X  X  X  X  X  X  X     X        X     X              X
-     *   INTERVAL        X           X  X  X        X     X  X     X  X  X              X     X
-     * IP_ADDRESS                                      X  X     X     X                       X              X
-     *       LONG     X  X        X  X  X  X        X     X  X     X  X  X              X     X  X
-     *  OCTAL_INT     X  X        X  X  X  X     X  X  X  X  X  X  X  X  X     X        X     X              X
-     * OCTAL_LONG     X  X        X  X  X  X        X     X  X     X  X  X              X     X  X
-     *    PACKAGE  X                                                        X                 X
-     *       PKEY                                X        X           X        X              X
-     *       PATH                                                                 X           X
-     *      PHONE                                                                    X        X
-     *      SHORT     X  X        X  X  X  X        X     X  X     X  X  X              X     X
-     *      STATE                                                                          X  X
-     *     STRING  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X
-     *       TIME                 X                                X     X                    X  X
-     *        URL                                      X  X     X     X           X           X     X        X
-     *   USERNAME                                                                             X        X
-     *        ZIP                                                                             X           X
-     *       ZONE                                      X  X     X     X                       X              X
+     *  ACCOUNTING  X                                                        X                 X
+     *     BOOLEAN     X  X           X  X  X        X     X        X  X  X              X     X                 X
+     *        BYTE     X  X           X  X  X        X     X  X     X  X  X              X     X                 X
+     *        CITY           X                                                                 X
+     *     COUNTRY              X                                                              X
+     *        DATE                 X  X  X  X        X     X        X  X  X              X     X  X              X
+     *   DECIMAL_2     X  X           X  X  X        X     X  X     X  X  X              X     X                 X
+     *   DECIMAL_3     X  X           X  X  X        X     X  X     X  X  X              X     X                 X
+     *      DOUBLE     X  X           X  X  X        X     X  X     X  X  X              X     X                 X
+     *       EMAIL                             X        X  X     X     X                       X     X  X     X
+     *        FKEY                                X        X           X        X              X
+     *       FLOAT     X  X           X  X  X        X     X  X     X  X  X              X     X                 X
+     *    HOSTNAME                                      X  X     X     X                       X              X
+     *         INT     X  X        X  X  X  X     X  X  X  X  X  X  X  X  X     X        X     X              X  X
+     *    INTERVAL        X           X  X  X        X     X  X     X  X  X              X     X                 X
+     *  IP_ADDRESS                                      X  X     X     X                       X              X
+     *        LONG     X  X        X  X  X  X        X     X  X     X  X  X              X     X  X              X
+     *   OCTAL_INT     X  X        X  X  X  X     X  X  X  X  X  X  X  X  X     X        X     X              X  X
+     *  OCTAL_LONG     X  X        X  X  X  X        X     X  X     X  X  X              X     X  X              X
+     *     PACKAGE  X                                                        X                 X
+     *        PKEY                                X        X           X        X              X
+     *        PATH                                                                 X           X
+     *       PHONE                                                                    X        X
+     *       SHORT     X  X        X  X  X  X        X     X  X     X  X  X              X     X                 X
+     *       STATE                                                                          X  X
+     *      STRING  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X  X
+     *        TIME                 X                                X     X                    X  X
+     *         URL                                      X  X     X     X           X           X     X        X
+     *    USERNAME                                                                             X        X
+     *         ZIP                                                                             X           X
+     *        ZONE                                      X  X     X     X                       X              X
+     * BIG_DECIMAL     X  X           X  X  X        X     X  X     X  X  X              X     X                 X
      * </pre>
      */
     public Object cast(AOServConnector conn, Object value, SchemaType castToType) {
@@ -179,6 +190,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case OCTAL_LONG: return value==null?null:Long.valueOf(bvalue?(long)-1:0);
                                 case SHORT: return value==null?null:Short.valueOf(bvalue?(short)-1:0);
                                 case STRING: return value==null?null:bvalue?"true":"false";
+                                case BIG_DECIMAL: return value==null?null:bvalue?bigDecimalNegativeOne:BigDecimal.ZERO;
                             }
                         }
                         break;
@@ -199,6 +211,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case OCTAL_LONG: return value==null?null:Long.valueOf(bvalue);
                                 case SHORT: return value==null?null:Short.valueOf(bvalue);
                                 case STRING: return value==null?null:value.toString();
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(bvalue);
                             }
                         }
                         break;
@@ -230,6 +243,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case SHORT: return value==null?null:Short.valueOf((short)(SQLUtility.getDaysFromMillis(tvalue)));
                                 case STRING: return value==null?null:SQLUtility.getDate(tvalue);
                                 case TIME: return value==null?null:new java.sql.Date(SQLUtility.roundToDay(tvalue));
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(SQLUtility.getDaysFromMillis(tvalue));
                             }
                         }
                         break;
@@ -250,6 +264,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case OCTAL_LONG: return value==null?null:Long.valueOf(ivalue/100);
                                 case SHORT: return value==null?null:Short.valueOf((short)(ivalue/100));
                                 case STRING: return value;
+                                case BIG_DECIMAL: return value==null?null:new BigDecimal(SQLUtility.getDecimal(ivalue));
                             }
                         }
                         break;
@@ -270,6 +285,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case OCTAL_LONG: return value==null?null:Long.valueOf(ivalue/1000);
                                 case SHORT: return value==null?null:Short.valueOf((short)(ivalue/1000));
                                 case STRING: return value;
+                                case BIG_DECIMAL: return value==null?null:new BigDecimal(SQLUtility.getDecimal(ivalue));
                             }
                         }
                         break;
@@ -290,6 +306,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case OCTAL_LONG: return value==null?null:Long.valueOf((long)dvalue);
                                 case SHORT: return value==null?null:Short.valueOf((short)dvalue);
                                 case STRING: return value==null?null:value.toString();
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(dvalue);
                             }
                         }
                         break;
@@ -332,6 +349,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case OCTAL_LONG: return value==null?null:Long.valueOf((long)fvalue);
                                 case SHORT: return value==null?null:Short.valueOf((short)fvalue);
                                 case STRING: return value==null?null:value.toString();
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(fvalue);
                             }
                         }
                         break;
@@ -368,6 +386,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case SHORT: return value==null?null:Short.valueOf((short)ivalue);
                                 case STRING: return value==null?null:value.toString();
                                 case ZONE: return value==null?null:getZoneForHostname(conn, getHostnameForIPAddress(IPAddress.getIPAddressForInt(ivalue)));
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(ivalue);
                             }
                         }
                         break;
@@ -387,6 +406,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case OCTAL_LONG: return value;
                                 case SHORT: return value==null?null:Short.valueOf((short)lvalue);
                                 case STRING: return value==null?null:value.toString();
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(lvalue);
                             }
                         }
                         break;
@@ -419,6 +439,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case SHORT: return value==null?null:Short.valueOf((short)lvalue);
                                 case STRING: return value==null?null:value.toString();
                                 case TIME: return value==null?null:new java.sql.Date(lvalue);
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(lvalue);
                             }
                         }
                         break;
@@ -445,6 +466,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case SHORT: return value==null?null:Short.valueOf((short)ivalue);
                                 case STRING: return value==null?null:Integer.toOctalString(ivalue);
                                 case ZONE: return value==null?null:getZoneForHostname(conn, getHostnameForIPAddress(IPAddress.getIPAddressForInt(ivalue)));
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(ivalue);
                             }
                         }
                         break;
@@ -467,6 +489,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case SHORT: return value==null?null:Short.valueOf((short)lvalue);
                                 case STRING: return value==null?null:value.toString();
                                 case TIME: return value==null?null:new java.sql.Date(lvalue);
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(lvalue);
                             }
                         }
                         break;
@@ -516,6 +539,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                                 case OCTAL_LONG: return value==null?null:Long.valueOf(svalue);
                                 case SHORT: return value;
                                 case STRING: return value==null?null:value.toString();
+                                case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(svalue);
                             }
                         }
                         break;
@@ -571,6 +595,27 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                             case OCTAL_INT: return value==null?null:Integer.valueOf(IPAddress.getIntForIPAddress(getIPAddressForHostname((String)value)));
                             case STRING: return value;
                             case ZONE: return value;
+                        }
+                        break;
+                    case BIG_DECIMAL:
+                        {
+                            BigDecimal bvalue = (BigDecimal)value;
+                            switch(castToType.getNum()) {
+                                case BOOLEAN: return value==null?null:bvalue.compareTo(BigDecimal.ZERO)!=0?Boolean.TRUE:Boolean.FALSE;
+                                case BYTE: return value==null?null:bvalue.byteValue();
+                                case DECIMAL_2: return value==null?null:bvalue.multiply(bigDecimal100).intValue();
+                                case DECIMAL_3: return value==null?null:bvalue.multiply(bigDecimal1000).intValue();
+                                case DOUBLE: return value==null?null:bvalue.doubleValue();
+                                case FLOAT: return value==null?null:bvalue.floatValue();
+                                case INT: return value==null?null:bvalue.intValue();
+                                case INTERVAL: return value==null?null:bvalue.longValue();
+                                case LONG: return value==null?null:bvalue.longValue();
+                                case OCTAL_INT: return value==null?null:bvalue.intValue();
+                                case OCTAL_LONG: return value==null?null:bvalue.longValue();
+                                case SHORT: return value==null?null:bvalue.shortValue();
+                                case STRING: return value==null?null:bvalue.toString();
+                                case BIG_DECIMAL: return value;
+                            }
                         }
                         break;
                 }
@@ -721,6 +766,8 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                             return ((Short)value1).compareTo((Short)value2);
                         case TIME:
                             return ((java.sql.Date)value1).compareTo((java.sql.Date)value2);
+                        case BIG_DECIMAL:
+                            return ((BigDecimal)value1).compareTo((BigDecimal)value2);
                         default: throw new IllegalArgumentException("Unknown type: "+type);
                     }
                 }
@@ -831,6 +878,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         return pkey;
     }
 
+    @Override
     String toStringImpl() {
         return type;
     }
@@ -878,6 +926,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                 case USERNAME: return (String)value;
                 case ZIP: return (String)value;
                 case ZONE: return (String)value;
+                case BIG_DECIMAL: return ((BigDecimal)value).toString();
                 default: throw new IllegalArgumentException("Unknown SchemaType: "+type);
             }
         } finally {
@@ -885,6 +934,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         }
     }
 
+    @Override
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.SCHEMA_TYPES;
     }
@@ -893,6 +943,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         return type;
     }
 
+    @Override
     void initImpl(ResultSet result) throws SQLException {
         Profiler.startProfile(Profiler.FAST, SchemaType.class, "initImpl(ResultSet)", null);
         try {
@@ -970,6 +1021,8 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
                     return Short.valueOf(S);
                 case TIME:
                     return new java.sql.Date(SQLUtility.getDateTime(S).getTime());
+                case BIG_DECIMAL:
+                    return new BigDecimal(S);
                 default: throw new IllegalArgumentException("Unknown SchemaType: "+type);
             }
         } finally {
@@ -977,6 +1030,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         }
     }
 
+    @Override
     public void read(CompressedDataInputStream in) throws IOException {
         Profiler.startProfile(Profiler.IO, SchemaType.class, "read(CompressedDataInputStream)", null);
         try {
@@ -987,6 +1041,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         }
     }
 
+    @Override
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         Profiler.startProfile(Profiler.IO, SchemaType.class, "write(CompressedDataOutputStream,String)", null);
         try {
@@ -997,6 +1052,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         }
     }
     
+    /*
     private static java.sql.Date getDate(java.sql.Date date) {
         Profiler.startProfile(Profiler.UNKNOWN, SchemaType.class, "getDate(Date)", null);
         try {
@@ -1010,5 +1066,5 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
-    }
+    }*/
 }
