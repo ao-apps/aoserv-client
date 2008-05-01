@@ -56,6 +56,10 @@ public class GetUniqueRowTest extends TestCase {
             Map<Object,AOServObject> uniqueMap=new HashMap<Object,AOServObject>();
             int numTables = SchemaTable.TableID.values().length;
             for(int c=0;c<numTables;c++) {
+                // Excluded for testing speed
+                if(
+                    c==SchemaTable.TableID.DISTRO_FILES.ordinal()
+                ) continue;
                 AOServTable table=conn.getTable(c);
                 System.out.print("        "+table.getTableName()+": ");
                 List<AOServObject> rows=new ArrayList<AOServObject>();

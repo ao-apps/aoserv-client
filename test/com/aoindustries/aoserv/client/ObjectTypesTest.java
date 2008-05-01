@@ -4,8 +4,7 @@ package com.aoindustries.aoserv.client;
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-
-import com.aoindustries.util.StandardErrorHandler;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 import junit.framework.Test;
@@ -55,6 +54,11 @@ public class ObjectTypesTest extends TestCase {
             String connUsername = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+connUsername);
             for(int c=0;c<numTables;c++) {
+                // Excluded for testing speed
+                if(
+                    c==SchemaTable.TableID.DISTRO_FILES.ordinal()
+                    || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+                ) continue;
                 AOServTable table=conn.getTable(c);
                 String tableName=table.getTableName();
                 System.out.print("        "+tableName+": ");
@@ -105,6 +109,7 @@ public class ObjectTypesTest extends TestCase {
                                         case SchemaType.USERNAME: {expectedType=String.class; String username=(String)value; break;}
                                         case SchemaType.ZIP: {expectedType=String.class; String zip=(String)value; break;}
                                         case SchemaType.ZONE: {expectedType=String.class; String zone=(String)value; break;}
+                                        case SchemaType.BIG_DECIMAL: {expectedType=BigDecimal.class; BigDecimal bigDecimal=(BigDecimal)value; break;}
                                         default: fail("Unexpected SchemaType id: "+typeNum);
                                     }
                                     String string=type.getString(value);

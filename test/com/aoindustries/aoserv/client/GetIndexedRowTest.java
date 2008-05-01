@@ -29,10 +29,12 @@ public class GetIndexedRowTest extends TestCase {
         super(testName);
     }
 
+    @Override
     protected void setUp() throws Exception {
         conns = AOServConnectorTest.getTestConnectors();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         conns = null;
     }
@@ -55,6 +57,12 @@ public class GetIndexedRowTest extends TestCase {
             System.out.println("    "+username);
             int numTables = SchemaTable.TableID.values().length;
             for(int c=0;c<numTables;c++) {
+                // Excluded for testing speed
+                if(
+                    c==SchemaTable.TableID.DISTRO_FILES.ordinal()
+                    || c==SchemaTable.TableID.TRANSACTIONS.ordinal()
+                    || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+                ) continue;
                 AOServTable table=conn.getTable(c);
                 String tableName=table.getTableName();
                 System.out.print("        "+tableName+": ");
