@@ -56,8 +56,8 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
             case 7: return enabled;
             case 8: return weight;
             case 9: return description;
-            case 10: return encryption_from;
-            case 11: return encryption_recipient;
+            case 10: return encryption_from==-1 ? null : Integer.valueOf(encryption_from);
+            case 11: return encryption_recipient==-1 ? null : Integer.valueOf(encryption_recipient);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }

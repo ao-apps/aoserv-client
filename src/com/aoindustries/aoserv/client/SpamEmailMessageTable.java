@@ -74,7 +74,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
             else return Collections.singletonList(sem);
         }
         if(col==SpamEmailMessage.COLUMN_EMAIL_RELAY) return getSpamEmailMessages(((Integer)value).intValue());
-        throw new IllegalArgumentException("Not an indexed column: "+col);
+        throw new UnsupportedOperationException("Not an indexed column: "+col);
     }
 
     protected SpamEmailMessage getUniqueRowImpl(int col, Object value) {

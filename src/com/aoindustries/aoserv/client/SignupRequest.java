@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -84,7 +85,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ACCOUNTING: return accounting;
-            case 2: return time;
+            case 2: return new Date(time);
             case 3: return ip_address;
             case 4: return package_definition;
             case 5: return business_name;
@@ -118,7 +119,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
             case 33: return encryption_from;
             case 34: return encryption_recipient;
             case 35: return completed_by;
-            case 36: return completed_time;
+            case 36: return new Date(completed_time);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }

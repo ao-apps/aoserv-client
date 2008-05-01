@@ -42,6 +42,12 @@ final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
 	return getUniqueRow(WhoisHistory.COLUMN_PKEY, pkey);
     }
 
+    @Override
+    public List<WhoisHistory> getIndexedRows(int col, Object value) {
+        if(col==WhoisHistory.COLUMN_WHOIS_OUTPUT) throw new UnsupportedOperationException("getIndexedRows not supported for whois_history.whois_output");
+        return super.getIndexedRows(col, value);
+    }
+
     List<WhoisHistory> getWhoisHistory(Business bu) {
         return getIndexedRows(WhoisHistory.COLUMN_ACCOUNTING, bu.pkey);
     }

@@ -5,11 +5,13 @@ package com.aoindustries.aoserv.client;
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Every <code>SpamEmailMessage</code> that causes an IP address
@@ -37,6 +39,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
     private long time;
     private String message;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof SpamEmailMessage
@@ -62,32 +65,38 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
         return message;
     }
 
+    @Override
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return Integer.valueOf(email_relay);
-            case 2: return Long.valueOf(time);
+            case 2: return new Date(time);
             case 3: return message;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
+    @Override
     public Integer getKey() {
 	return pkey;
     }
 
+    @Override
     final public AOServTable<Integer,SpamEmailMessage> getTable() {
 	return table;
     }
 
+    @Override
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.SPAM_EMAIL_MESSAGES;
     }
 
+    @Override
     int hashCodeImpl() {
 	return pkey;
     }
 
+    @Override
     void initImpl(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         email_relay=result.getInt(2);
@@ -95,6 +104,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
         message=result.getString(4);
     }
 
+    @Override
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         email_relay=in.readCompressedInt();
@@ -102,11 +112,13 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
         message=in.readUTF();
     }
 
+    @Override
     public void setTable(AOServTable<Integer,SpamEmailMessage> table) {
 	if(this.table!=null) throw new IllegalStateException("table already set");
 	this.table=table;
     }
 
+    @Override
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(email_relay);

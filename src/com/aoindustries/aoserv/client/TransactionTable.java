@@ -95,6 +95,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         }
     }
 
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(this) {
@@ -165,6 +166,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
+    @Override
     final public List<Transaction> getIndexedRows(int col, Object value) {
         if(col==Transaction.COLUMN_TRANSID) {
             Transaction tr=get(value);
@@ -172,7 +174,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
             else return Collections.singletonList(tr);
         }
         if(col==Transaction.COLUMN_ACCOUNTING) return getTransactions((String)value);
-        throw new IllegalArgumentException("Not an indexed column: "+col);
+        throw new UnsupportedOperationException("Not an indexed column: "+col);
     }
 
     protected Transaction getUniqueRowImpl(int col, Object value) {
@@ -180,6 +182,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         return get(value);
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_TRANSACTION)) {

@@ -23,7 +23,8 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=2
+        COLUMN_ACCOUNTING=2,
+        COLUMN_WHOIS_OUTPUT=4
     ;
     static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_ZONE_name = "zone";
@@ -44,7 +45,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
             case 1: return new java.sql.Date(time);
             case COLUMN_ACCOUNTING: return accounting;
             case 3: return zone;
-            case 4: {
+            case COLUMN_WHOIS_OUTPUT: {
                 //try {
                     return getWhoisOutput();
                 //} catch(IOException err) {
