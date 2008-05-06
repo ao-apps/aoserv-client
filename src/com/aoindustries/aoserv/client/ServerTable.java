@@ -90,6 +90,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         }
     }
 
+    @Override
     public Server get(Object pkey) {
         if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
         else if(pkey instanceof String) return get((String)pkey);
@@ -147,7 +148,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         return getIndexedRows(Server.COLUMN_PACKAGE, pk.pkey);
     }
 
-
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BACKUP_SERVER)) {
