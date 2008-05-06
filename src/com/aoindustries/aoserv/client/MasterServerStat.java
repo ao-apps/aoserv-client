@@ -22,11 +22,9 @@ import java.sql.*;
 final public class MasterServerStat extends AOServObject<String,MasterServerStat> implements SingleTableObject<String,MasterServerStat> {
 
     public static final String
-        BYTE_ARRAY_CACHE_CONCURRENCY="byte_array_cache_concurrency",
-        BYTE_ARRAY_CACHE_SIZE="byte_array_cache_size",
+        BYTE_ARRAY_CACHE_CREATES="byte_array_cache_creates",
         BYTE_ARRAY_CACHE_USES="byte_array_cache_uses",
-        CHAR_ARRAY_CACHE_CONCURRENCY="char_array_cache_concurrency",
-        CHAR_ARRAY_CACHE_SIZE="char_array_cache_size",
+        CHAR_ARRAY_CACHE_CREATES="char_array_cache_creates",
         CHAR_ARRAY_CACHE_USES="char_array_cache_uses",
         DAEMON_CONCURRENCY="daemon_concurrency",
         DAEMON_CONNECTIONS="daemon_connections",
