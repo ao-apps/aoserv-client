@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.profiler.Profiler;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,5 +51,28 @@ final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeUTF(pkey);
+    }
+ 
+    private java.util.TimeZone timeZone;
+
+    /**
+     * Gets the Java TimeZone for this TimeZone.
+     * 
+     * Not synchronized because double initialization is acceptable.
+     */
+    public java.util.TimeZone getTimeZone() {
+        if(timeZone==null) {
+            String[] ids = java.util.TimeZone.getAvailableIDs();
+            boolean found = false;
+            for(String id : ids) {
+                if(id.equals(pkey)) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) throw new IllegalArgumentException("TimeZone not found: "+pkey);
+            timeZone = java.util.TimeZone.getTimeZone(pkey);
+        }
+        return timeZone;
     }
 }
