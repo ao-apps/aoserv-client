@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.IntList;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -50,5 +51,39 @@ final public class FailoverFileScheduleTable extends CachedTableIntegerKey<Failo
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.FAILOVER_FILE_SCHEDULE;
+    }
+    
+    void setFailoverFileSchedules(FailoverFileReplication ffr, List<Short> hours, List<Short> minutes) throws IOException, SQLException {
+        if(hours.size()!=minutes.size()) throw new IllegalArgumentException("hours.size()!=minutes.size(): "+hours.size()+"!="+minutes.size());
+
+        // Create the new profile
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES.ordinal());
+            int size = hours.size();
+            out.writeCompressedInt(size);
+            for(int c=0;c<size;c++) {
+                out.writeShort(hours.get(c));
+                out.writeShort(minutes.get(c));
+            }
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
+            }
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+        connector.tablesUpdated(invalidateList);
     }
 }

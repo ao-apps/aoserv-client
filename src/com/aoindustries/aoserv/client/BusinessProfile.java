@@ -166,6 +166,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	return isPrivate;
     }
 
+    /*
     private static String makeEmailList(String[] addresses) {
 	StringBuilder SB=new StringBuilder();
 	int len=addresses.length;
@@ -174,7 +175,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
             SB.append(addresses[c]);
 	}
 	return SB.toString();
-    }
+    }*/
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();

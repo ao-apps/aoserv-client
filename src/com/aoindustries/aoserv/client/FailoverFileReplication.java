@@ -44,6 +44,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         return max_bit_rate;
     }
 
+    public void setBitRate(int bitRate) {
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
+    }
+
     public int getBlockSize() {
         return BufferManager.BUFFER_SIZE;
     }
@@ -220,5 +224,9 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 
     public List<FileBackupSetting> getFileBackupSettings() {
         return table.connector.fileBackupSettings.getFileBackupSettings(this);
+    }
+    
+    public void setFailoverFileSchedules(List<Short> hours, List<Short> minutes) throws IOException, SQLException {
+        table.connector.failoverFileSchedules.setFailoverFileSchedules(this, hours, minutes);
     }
 }
