@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.profiler.*;
+import com.aoindustries.util.IntList;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -107,5 +108,39 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
         }
+    }
+
+    void setFileBackupSettings(FailoverFileReplication ffr, List<String> paths, List<Boolean> backupEnableds) throws IOException, SQLException {
+        if(paths.size()!=backupEnableds.size()) throw new IllegalArgumentException("paths.size()!=backupEnableds.size(): "+paths.size()+"!="+backupEnableds.size());
+
+        // Create the new profile
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE.ordinal());
+            int size = paths.size();
+            out.writeCompressedInt(size);
+            for(int c=0;c<size;c++) {
+                out.writeUTF(paths.get(c));
+                out.writeBoolean(backupEnableds.get(c));
+            }
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
+            }
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+        connector.tablesUpdated(invalidateList);
     }
 }

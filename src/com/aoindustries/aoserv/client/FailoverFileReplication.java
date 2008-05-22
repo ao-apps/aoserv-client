@@ -229,4 +229,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     public void setFailoverFileSchedules(List<Short> hours, List<Short> minutes) throws IOException, SQLException {
         table.connector.failoverFileSchedules.setFailoverFileSchedules(this, hours, minutes);
     }
+
+    public void setFileBackupSettings(List<String> paths, List<Boolean> backupEnableds) throws IOException, SQLException {
+        table.connector.fileBackupSettings.setFileBackupSettings(this, paths, backupEnableds);
+    }
 }

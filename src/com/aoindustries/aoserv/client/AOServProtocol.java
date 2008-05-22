@@ -455,7 +455,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_AO_SERVER_DRBD_REPORT,
         UPDATE_CREDIT_CARD_EXPIRATION,
         SET_FAILOVER_FILE_REPLICATION_BIT_RATE,
-        SET_FAILOVER_FILE_SCHEDULES
+        SET_FAILOVER_FILE_SCHEDULES,
+        SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE
     }
 
     /**
