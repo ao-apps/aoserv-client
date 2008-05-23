@@ -119,6 +119,7 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
         try {
             CompressedDataOutputStream out=connection.getOutputStream();
             out.writeCompressedInt(AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE.ordinal());
+            out.writeCompressedInt(ffr.getPkey());
             int size = paths.size();
             out.writeCompressedInt(size);
             for(int c=0;c<size;c++) {

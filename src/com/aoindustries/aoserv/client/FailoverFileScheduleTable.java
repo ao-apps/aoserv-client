@@ -62,6 +62,7 @@ final public class FailoverFileScheduleTable extends CachedTableIntegerKey<Failo
         try {
             CompressedDataOutputStream out=connection.getOutputStream();
             out.writeCompressedInt(AOServProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES.ordinal());
+            out.writeCompressedInt(ffr.getPkey());
             int size = hours.size();
             out.writeCompressedInt(size);
             for(int c=0;c<size;c++) {
