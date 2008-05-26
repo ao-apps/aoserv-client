@@ -30,6 +30,8 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
     public enum Permission {
         // business_administrators
         set_business_administrator_password,
+        // businesses
+        cancel_business,
         // credit_card_processors
         get_credit_card_processors,
         // credit_card_transactions
