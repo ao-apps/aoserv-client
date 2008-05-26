@@ -664,10 +664,26 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return SchemaTable.TableID.BUSINESSES;
     }
 
+    /**
+     * Gets the total monthly rate or <code>-1</code> if unavailable.
+     */
     public int getTotalMonthlyRate() {
 	int sum = 0;
-	for (Package pack : getPackages()) sum += pack.getPackageDefinition().getMonthlyRate();
+	for (Package pack : getPackages()) {
+            int monthlyRate = pack.getPackageDefinition().getMonthlyRate();
+            if(monthlyRate==-1) return -1;
+            sum += monthlyRate;
+        }
 	return sum;
+    }
+    
+    /**
+     * Gets the total monthly rate as a <code>String</code> in US dollars of <code>null</code> if unavailable.
+     */
+    public String getTotalMonthlyRateString() {
+        int rate=getTotalMonthlyRate();
+        if(rate==-1) return null;
+        return SQLUtility.getDecimal(rate);
     }
 
     public List<Transaction> getTransactions() {
