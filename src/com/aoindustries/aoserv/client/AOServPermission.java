@@ -36,6 +36,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         get_credit_card_processors,
         // credit_card_transactions
         add_credit_card_transaction,
+        credit_card_transaction_authorize_completed,
         credit_card_transaction_sale_completed,
         get_credit_card_transactions,
         // credit_cards

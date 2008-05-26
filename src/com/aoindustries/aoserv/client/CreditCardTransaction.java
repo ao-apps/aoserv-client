@@ -988,4 +988,70 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         }
         table.connector.tablesUpdated(invalidateList);
     }
+
+    /**
+     * Called when an authorization has been completed.
+     */
+    public void authorizeCompleted(
+        String authorizationCommunicationResult,
+        String authorizationProviderErrorCode,
+        String authorizationErrorCode,
+        String authorizationProviderErrorMessage,
+        String authorizationProviderUniqueId,
+        String providerApprovalResult,
+        String approvalResult,
+        String providerDeclineReason,
+        String declineReason,
+        String providerReviewReason,
+        String reviewReason,
+        String providerCvvResult,
+        String cvvResult,
+        String providerAvsResult,
+        String avsResult,
+        String approvalCode,
+        String status
+    ) throws IOException, SQLException {
+        if(!table.connector.isSecure()) throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+table.connector.getProtocol()+" protocol, which is not secure.");
+
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED.ordinal());
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(authorizationCommunicationResult);
+            out.writeNullUTF(authorizationProviderErrorCode);
+            out.writeNullUTF(authorizationErrorCode);
+            out.writeNullUTF(authorizationProviderErrorMessage);
+            out.writeNullUTF(authorizationProviderUniqueId);
+            out.writeNullUTF(providerApprovalResult);
+            out.writeNullUTF(approvalResult);
+            out.writeNullUTF(providerDeclineReason);
+            out.writeNullUTF(declineReason);
+            out.writeNullUTF(providerReviewReason);
+            out.writeNullUTF(reviewReason);
+            out.writeNullUTF(providerCvvResult);
+            out.writeNullUTF(cvvResult);
+            out.writeNullUTF(providerAvsResult);
+            out.writeNullUTF(avsResult);
+            out.writeNullUTF(approvalCode);
+            out.writeNullUTF(status);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unknown response code: "+code);
+            }
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
+        }
+        table.connector.tablesUpdated(invalidateList);
+    }
 }
