@@ -5249,7 +5249,7 @@ final public class SimpleAOClient {
     public String generatePassword() {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "generatePassword()", null);
         try {
-            return connector.linuxAccounts.generatePassword();
+            return LinuxAccountTable.generatePassword();
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
