@@ -30,7 +30,7 @@ final public class ClientJvmProfile extends AOServObject<String,ClientJvmProfile
         Object param1=profile.getParameter1();
         return new ClientJvmProfile(
             profile.getLevel(),
-            profile.getProfiledClass().getName(),
+            profile.getProfiledClassName(),
             profile.getMethodName(),
             param1==null?null:param1.toString(),
             profile.getUseCount(),

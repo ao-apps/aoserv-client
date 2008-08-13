@@ -41,6 +41,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     private int operating_system_version;
     private int packageId;
     private String name;
+    private boolean monitoring_enabled;
 
     public void addBusiness(
         String accounting,
@@ -79,6 +80,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
             case 3: return operating_system_version==-1 ? null : Integer.valueOf(operating_system_version);
             case COLUMN_PACKAGE: return packageId;
             case 5: return name;
+            case 6: return monitoring_enabled;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -99,6 +101,10 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isMonitoringEnabled() {
+        return monitoring_enabled;
     }
 
     public ServerFarm getServerFarm() {
@@ -123,6 +129,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         if(result.wasNull()) operating_system_version = -1;
         packageId = result.getInt(5);
         name = result.getString(6);
+        monitoring_enabled = result.getBoolean(7);
     }
 
     @Override
@@ -133,6 +140,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         operating_system_version=in.readCompressedInt();
         packageId = in.readCompressedInt();
         name = in.readUTF();
+        monitoring_enabled = in.readBoolean();
     }
 
     @Override
@@ -182,6 +190,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
             out.writeCompressedInt(packageId);
             out.writeUTF(name);
+        }
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_32)>=0) {
+            out.writeBoolean(monitoring_enabled);
         }
     }
 

@@ -38,11 +38,11 @@ final public class ClientJvmProfileTable extends AOServTable<String,ClientJvmPro
     }
 
     public List<ClientJvmProfile> getRows() {
-        MethodProfile[] mps=Profiler.getMethodProfiles();
-        int len=mps.length;
+        List<MethodProfile> mps=Profiler.getMethodProfiles();
+        int len=mps.size();
         List<ClientJvmProfile> cjps=new ArrayList<ClientJvmProfile>(len);
         for(int c=0;c<len;c++) {
-            cjps.add(ClientJvmProfile.getClientJvmProfile(mps[c]));
+            cjps.add(ClientJvmProfile.getClientJvmProfile(mps.get(c)));
         }
         sortIfNeeded(cjps);
         return cjps;

@@ -30,7 +30,7 @@ final public class MasterServerProfile extends AOServObject<String,MasterServerP
         Object param1=profile.getParameter1();
         return new MasterServerProfile(
             profile.getLevel(),
-            profile.getProfiledClass().getName(),
+            profile.getProfiledClassName(),
             profile.getMethodName(),
             param1==null?null:param1.toString(),
             profile.getUseCount(),

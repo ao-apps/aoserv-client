@@ -32,7 +32,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
         return new DaemonProfile(
             ao_server,
             profile.getLevel(),
-            profile.getProfiledClass().getName(),
+            profile.getProfiledClassName(),
             profile.getMethodName(),
             param1==null?null:param1.toString(),
             profile.getUseCount(),
