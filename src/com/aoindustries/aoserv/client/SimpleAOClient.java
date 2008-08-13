@@ -1610,7 +1610,7 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if unable to find the <code>EmailDomain</code> or
      *                                       <code>LinuxAccount</code>
      *
-     * @see  LinuxAccount#addEmailAddress
+     * @see  LinuxServerAccount#addEmailAddress
      * @see  LinuxAccAddress
      * @see  #addLinuxAccount
      * @see  #addEmailDomain
@@ -5113,7 +5113,6 @@ final public class SimpleAOClient {
      *
      * @see  MySQLDatabase#dump
      * @see  MySQLDatabase
-     * @see  #backupMySQLDatabase
      */
     public void dumpMySQLDatabase(
         String name,
@@ -5145,7 +5144,6 @@ final public class SimpleAOClient {
      *
      * @see  PostgresDatabase#dump
      * @see  PostgresDatabase
-     * @see  #backupPostgresDatabase
      */
     public void dumpPostgresDatabase(
         String name,
@@ -7252,8 +7250,7 @@ final public class SimpleAOClient {
      * Removes a <code>MySQLDatabase</code> from the system.  All related
      * <code>MySQLDBUser</code>s are also removed, and all data is removed
      * from the MySQL server.  The data is not dumped or backed-up during
-     * the removal, if a backup is desired, use <code>backupMySQLDatabase</code>
-     * or <code>dumpMySQLDatabase</code>.
+     * the removal, if a backup is desired, use <code>dumpMySQLDatabase</code>.
      *
      * @param  name  the name of the database
      * @param  aoServer  the server the database is hosted on
@@ -7266,7 +7263,6 @@ final public class SimpleAOClient {
      *
      * @see  MySQLDatabase#remove
      * @see  #addMySQLDatabase
-     * @see  #backupMySQLDatabase
      * @see  #dumpMySQLDatabase
      */
     public void removeMySQLDatabase(
@@ -7399,8 +7395,7 @@ final public class SimpleAOClient {
     /**
      * Removes a <code>PostgresDatabase</code> from the system.  All data is removed
      * from the PostgreSQL server.  The data is not dumped or backed-up during
-     * the removal, if a backup is desired, use <code>backupPostgresDatabase</code>
-     * or <code>dumpPostgresDatabase</code>.
+     * the removal, if a backup is desired, use <code>dumpPostgresDatabase</code>.
      *
      * @param  name  the name of the database
      * @param  postgresServer  the name of the PostgreSQL server
@@ -7414,7 +7409,6 @@ final public class SimpleAOClient {
      *
      * @see  PostgresDatabase#remove
      * @see  #addPostgresDatabase
-     * @see  #backupPostgresDatabase
      * @see  #dumpPostgresDatabase
      */
     public void removePostgresDatabase(
