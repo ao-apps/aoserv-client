@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2007 by AO Industries, Inc.,
+ * Copyright 2001-2008 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -227,7 +227,21 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
                 out.print(mx);
                 out.print(' ');
             }
-            out.print(record.destination);
+            if(record.type.equals(DNSType.TXT)) {
+                // Double-quote TXT types and filter " and anything < (space) or > (char)127 from the destination
+                out.print('"');
+                for(int d=0, dlen=record.destination.length(); d<dlen; d++) {
+                    char ch = record.destination.charAt(d);
+                    if(
+                        ch!='"'
+                        && ch>=' '
+                        && ch<=(char)0x7f
+                    ) out.print(ch);
+                }
+                out.print('"');
+            } else {
+                out.print(record.destination);
+            }
             out.print('\n');
 	}
     }

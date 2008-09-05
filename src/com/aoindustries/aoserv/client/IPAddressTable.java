@@ -25,7 +25,8 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 
     private static final OrderBy[] defaultOrderBy = {
         new OrderBy(IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-        new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
     };
     @Override
@@ -75,15 +76,15 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
         return getIndexedRows(IPAddress.COLUMN_PACKAGE, pack.name);
     }
 
-    List<IPAddress> getIPAddresses(AOServer ao) {
-        int aoPKey=ao.pkey;
+    List<IPAddress> getIPAddresses(Server se) {
+        int sePKey=se.pkey;
 
 	List<IPAddress> cached = getRows();
 	int len = cached.size();
         List<IPAddress> matches=new ArrayList<IPAddress>(len);
 	for (int c = 0; c < len; c++) {
             IPAddress address=cached.get(c);
-            if(address.net_device==-1 || address.getNetDevice().ao_server==aoPKey) matches.add(address);
+            if(address.net_device==-1 || address.getNetDevice().server==sePKey) matches.add(address);
 	}
 	return matches;
     }

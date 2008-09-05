@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2007 by AO Industries, Inc.,
+ * Copyright 2001-2008 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -27,16 +27,16 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     static final int
         COLUMN_PKEY=0,
         COLUMN_PACKAGE=1,
-        COLUMN_AO_SERVER=2,
+        COLUMN_SERVER=2,
         COLUMN_IP_ADDRESS=3
     ;
-    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_SERVER_name = "server";
     static final String COLUMN_IP_ADDRESS_name = "ip_address";
     static final String COLUMN_PORT_name = "port";
     static final String COLUMN_NET_PROTOCOL_name = "net_protocol";
 
     String packageName;
-    int ao_server;
+    int server;
     int ip_address;
     int port;
     String net_protocol;
@@ -54,7 +54,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_PACKAGE: return packageName;
-            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
+            case COLUMN_SERVER: return Integer.valueOf(server);
             case COLUMN_IP_ADDRESS: return Integer.valueOf(ip_address);
             case 4: return Integer.valueOf(port);
             case 5: return net_protocol;
@@ -273,9 +273,9 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return obj;
     }
 
-    public AOServer getAOServer() {
-        AOServer obj=table.connector.aoServers.get(ao_server);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+    public Server getServer() {
+        Server obj=table.connector.servers.get(server);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
         return obj;
     }
 
@@ -286,7 +286,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     void initImpl(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         packageName=result.getString(2);
-        ao_server=result.getInt(3);
+        server=result.getInt(3);
         ip_address=result.getInt(4);
         port=result.getInt(5);
         net_protocol=result.getString(6);
@@ -302,7 +302,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         packageName=in.readUTF().intern();
-        ao_server=in.readCompressedInt();
+        server=in.readCompressedInt();
         ip_address=in.readCompressedInt();
         port=in.readCompressedInt();
         net_protocol=in.readUTF().intern();
@@ -411,7 +411,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     public void write(CompressedDataOutputStream out, String version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(packageName);
-        out.writeCompressedInt(ao_server);
+        out.writeCompressedInt(server);
         out.writeCompressedInt(ip_address);
         out.writeCompressedInt(port);
         out.writeUTF(net_protocol);

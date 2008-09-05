@@ -194,9 +194,9 @@ final public class SimpleAOClient {
         }
     }
             
-    private IPAddress getIPAddress(String aoServer, String netDevice, String ipAddress) throws IllegalArgumentException {
-        IPAddress ia=getNetDevice(aoServer, netDevice).getIPAddress(ipAddress);
-        if(ia==null) throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress+" on "+netDevice+" on "+aoServer);
+    private IPAddress getIPAddress(String server, String netDevice, String ipAddress) throws IllegalArgumentException {
+        IPAddress ia=getNetDevice(server, netDevice).getIPAddress(ipAddress);
+        if(ia==null) throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress+" on "+netDevice+" on "+server);
         return ia;
     }
 
@@ -290,9 +290,9 @@ final public class SimpleAOClient {
         }
     }
 
-    private NetDevice getNetDevice(String aoServer, String netDevice) throws IllegalArgumentException {
-        NetDevice nd=getAOServer(aoServer).getNetDevice(netDevice);
-        if(nd==null) throw new IllegalArgumentException("Unable to find NetDevice: "+netDevice+" on "+aoServer);
+    private NetDevice getNetDevice(String server, String netDevice) throws IllegalArgumentException {
+        NetDevice nd=getServer(server).getNetDevice(netDevice);
+        if(nd==null) throw new IllegalArgumentException("Unable to find NetDevice: "+netDevice+" on "+server);
         return nd;
     }
 
@@ -2117,10 +2117,10 @@ final public class SimpleAOClient {
      * @exception  SQLException  if unable to access the database
      * @exception  IllegalArgumentException  if unable to find a referenced object.
      *
-     * @see  AOServer#addNetBind
+     * @see  Server#addNetBind
      */
     public int addNetBind(
-        String aoServer,
+        String server,
         String packageName,
         String ipAddress,
         String net_device,
@@ -2132,14 +2132,14 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "addNetBind(String,String,String,String,int,String,String,boolean,boolean)", null);
         try {
-            IPAddress ia=getIPAddress(aoServer, net_device, ipAddress);
+            IPAddress ia=getIPAddress(server, net_device, ipAddress);
             NetPort netPortObj=connector.netPorts.get(netPort);
             if(netPortObj==null) throw new IllegalArgumentException("Unable to find NetPort: "+netPort);
             NetProtocol netProt=connector.netProtocols.get(netProtocol);
             if(netProt==null) throw new IllegalArgumentException("Unable to find NetProtocol: "+netProtocol);
             Protocol appProt=connector.protocols.get(appProtocol);
             if(appProt==null) throw new IllegalArgumentException("Unable to find Protocol: "+appProtocol);
-            return getAOServer(aoServer).addNetBind(
+            return getServer(server).addNetBind(
                 getPackage(packageName),
                 ia,
                 netPortObj,
@@ -5878,10 +5878,10 @@ final public class SimpleAOClient {
      */
     public boolean isIPAddressUsed(
         String ipAddress,
-        String aoServer,
+        String server,
         String net_device
     ) throws IllegalArgumentException {
-        return getIPAddress(aoServer, net_device, ipAddress).isUsed();
+        return getIPAddress(server, net_device, ipAddress).isUsed();
     }
 
     /**
@@ -6350,7 +6350,7 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Moves an <code>IPAddress</code> from one <code>AOServer</code> to another.
+     * Moves an <code>IPAddress</code> from one <code>Server</code> to another.
      *
      * @param  ip_address  the IP address to move
      * @param  to_server  the destination server
@@ -6358,7 +6358,7 @@ final public class SimpleAOClient {
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database
      * @exception  IllegalArgumentException  if unable to find the <code>IPAddress</code> or
-     *					the <code>AOServer</code>
+     *					the <code>Server</code>
      *
      * @see  IPAddress#moveTo
      */
@@ -6368,7 +6368,7 @@ final public class SimpleAOClient {
         String from_net_device,
         String to_server
     ) throws IllegalArgumentException {
-        getIPAddress(from_server, from_net_device, ip_address).moveTo(getAOServer(to_server));
+        getIPAddress(from_server, from_net_device, ip_address).moveTo(getServer(to_server));
     }
 
     /**
@@ -8262,14 +8262,14 @@ final public class SimpleAOClient {
      */
     public void setIPAddressHostname(
         String ipAddress,
-        String aoServer,
+        String server,
         String net_device,
         String hostname
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setIPAddressHostname(String,String,String,String)", null);
         try {
             if(!EmailDomain.isValidFormat(hostname)) throw new IllegalArgumentException("Invalid hostname: "+hostname);
-            getIPAddress(aoServer, net_device, ipAddress).setHostname(hostname);
+            getIPAddress(server, net_device, ipAddress).setHostname(hostname);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -8323,13 +8323,13 @@ final public class SimpleAOClient {
      */
     public void setIPAddressPackage(
         String ipAddress,
-        String aoServer,
+        String server,
         String net_device,
         String newPackage
     ) throws IllegalArgumentException {
         Profiler.startProfile(Profiler.FAST, SimpleAOClient.class, "setIPAddressPackage(String,String,String,String)", null);
         try {
-            getIPAddress(aoServer, net_device, ipAddress).setPackage(getPackage(newPackage));
+            getIPAddress(server, net_device, ipAddress).setPackage(getPackage(newPackage));
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

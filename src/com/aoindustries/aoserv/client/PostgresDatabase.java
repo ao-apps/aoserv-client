@@ -152,7 +152,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         return
             "jdbc:postgresql://"
             + (ipOnly
-               ?ao.getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
+               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
                :ao.getHostname()
             )
             + ':'

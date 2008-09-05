@@ -25,12 +25,12 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=1
+        COLUMN_SERVER=1
     ;
-    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_SERVER_name = "server";
     static final String COLUMN_DEVICE_ID_name = "device_id";
 
-    int ao_server;
+    int server;
     String device_id;
     private String description;
     private String delete_route;
@@ -44,7 +44,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
+            case COLUMN_SERVER: return Integer.valueOf(server);
             case 2: return device_id;
             case 3: return description;
             case 4: return delete_route;
@@ -111,15 +111,15 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
             IPAddress ip=ips.get(c);
             if(!ip.isAlias()) matches.add(ip);
 	}
-        if(matches.isEmpty()) throw new WrappedException(new SQLException("Unable to find primary IPAddress for NetDevice: "+device_id+" on "+ao_server));
-        if(matches.size()>1) throw new WrappedException(new SQLException("Found more than one primary IPAddress for NetDevice: "+device_id+" on "+ao_server));
+        if(matches.isEmpty()) throw new WrappedException(new SQLException("Unable to find primary IPAddress for NetDevice: "+device_id+" on "+server));
+        if(matches.size()>1) throw new WrappedException(new SQLException("Found more than one primary IPAddress for NetDevice: "+device_id+" on "+server));
         return matches.get(0);
     }
 
-    public AOServer getAOServer() {
-	AOServer ao=table.connector.aoServers.get(ao_server);
-	if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
-	return ao;
+    public Server getServer() {
+	Server se=table.connector.servers.get(server);
+	if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
+	return se;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -128,7 +128,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
     void initImpl(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
-	ao_server=result.getInt(2);
+	server=result.getInt(2);
 	device_id=result.getString(3);
 	description=result.getString(4);
 	delete_route=result.getString(5);
@@ -143,7 +143,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	ao_server=in.readCompressedInt();
+	server=in.readCompressedInt();
 	device_id=in.readUTF().intern();
 	description=in.readUTF();
 	delete_route=StringUtility.intern(in.readNullUTF());
@@ -155,13 +155,14 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
         max_bit_rate=in.readLong();
     }
 
+    @Override
     String toStringImpl() {
-        return getAOServer().getHostname()+'|'+device_id;
+        return getServer().toString()+'|'+device_id;
     }
 
     public void write(CompressedDataOutputStream out, String version) throws IOException {
 	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(ao_server);
+	out.writeCompressedInt(server);
 	out.writeUTF(device_id);
 	out.writeUTF(description);
 	out.writeNullUTF(delete_route);

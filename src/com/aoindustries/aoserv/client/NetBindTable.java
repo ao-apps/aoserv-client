@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2007 by AO Industries, Inc.,
+ * Copyright 2001-2008 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -26,7 +26,8 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(NetBind.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_PORT_name, ASCENDING),
@@ -38,7 +39,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
     }
 
     int addNetBind(
-        AOServer ao,
+        Server se,
         Package pk,
         IPAddress ia,
         NetPort netPort,
@@ -55,7 +56,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
                 CompressedDataOutputStream out=connection.getOutputStream();
                 out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                 out.writeCompressedInt(SchemaTable.TableID.NET_BINDS.ordinal());
-                out.writeCompressedInt(ao.pkey);
+                out.writeCompressedInt(se.pkey);
                 out.writeUTF(pk.name);
                 out.writeCompressedInt(ia.pkey);
                 out.writeCompressedInt(netPort.port);
@@ -118,15 +119,15 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	return matches;
     }
 
-    List<NetBind> getNetBinds(AOServer ao) {
-        return getIndexedRows(NetBind.COLUMN_AO_SERVER, ao.pkey);
+    List<NetBind> getNetBinds(Server se) {
+        return getIndexedRows(NetBind.COLUMN_SERVER, se.pkey);
     }
 
-    List<NetBind> getNetBinds(AOServer ao, IPAddress ip) {
+    List<NetBind> getNetBinds(Server se, IPAddress ip) {
 	int ipAddress=ip.pkey;
 
         // Use the index first
-	List<NetBind> cached=getNetBinds(ao);
+	List<NetBind> cached=getNetBinds(se);
 	int size=cached.size();
         List<NetBind> matches=new ArrayList<NetBind>(size);
 	for(int c=0;c<size;c++) {
@@ -137,12 +138,12 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
     }
 
     NetBind getNetBind(
-        AOServer ao,
+        Server se,
         IPAddress ip,
         NetPort netPort,
         NetProtocol netProtocol
     ) {
-        int aoPKey=ao.pkey;
+        int sePKey=se.pkey;
         int port=netPort.getPort();
         String netProt=netProtocol.getProtocol();
 
@@ -152,7 +153,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	for(int c=0;c<size;c++) {
             NetBind nb=cached.get(c);
             if(
-                nb.ao_server==aoPKey
+                nb.server==sePKey
                 && nb.port==port
                 && nb.net_protocol.equals(netProt)
             ) return nb;
@@ -160,11 +161,11 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	return null;
     }
 
-    List<NetBind> getNetBinds(AOServer ao, Protocol protocol) {
+    List<NetBind> getNetBinds(Server se, Protocol protocol) {
 	String prot=protocol.pkey;
 
         // Use the index first
-	List<NetBind> cached=getNetBinds(ao);
+	List<NetBind> cached=getNetBinds(se);
 	int size=cached.size();
         List<NetBind> matches=new ArrayList<NetBind>(size);
 	for(int c=0;c<size;c++) {

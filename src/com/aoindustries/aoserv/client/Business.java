@@ -933,7 +933,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                 ) {
                     out.print("    ");
                     out.println(ip);
-                    ip.moveTo(to);
+                    ip.moveTo(to.getServer());
                 }
             }
 

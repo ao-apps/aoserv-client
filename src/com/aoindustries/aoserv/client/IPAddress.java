@@ -62,6 +62,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     private boolean isOverflow;
     private boolean isDHCP;
     private boolean pingMonitorEnabled;
+    private String externalIpAddress;
 
     public Object getColumn(int i) {
         switch(i) {
@@ -76,6 +77,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             case 8: return isOverflow?Boolean.TRUE:Boolean.FALSE;
             case 9: return isDHCP?Boolean.TRUE:Boolean.FALSE;
             case 10: return pingMonitorEnabled ? Boolean.TRUE : Boolean.FALSE;
+            case 11: return externalIpAddress;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -174,6 +176,14 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return pingMonitorEnabled;
     }
 
+    /**
+     * Gets the external IP address, if different than ip_address.
+     * @return
+     */
+    public String getExternalIpAddress() {
+        return externalIpAddress;
+    }
+
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.IP_ADDRESSES;
     }
@@ -191,6 +201,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         isOverflow = result.getBoolean(9);
         isDHCP = result.getBoolean(10);
         pingMonitorEnabled = result.getBoolean(11);
+        externalIpAddress = result.getString(12);
     }
 
     public boolean isAlias() {
@@ -226,7 +237,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return true;
     }
 
-    public boolean isPrivate() {
+    public static boolean isPrivate(String ip_address) {
         for(int c=0;c<privateNetworks.length;c++) {
             String pvt=privateNetworks[c];
             int len=pvt.length();
@@ -235,12 +246,16 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return false;
     }
 
+    public boolean isPrivate() {
+        return isPrivate(ip_address);
+    }
+
     public boolean isWildcard() {
         return WILDCARD_IP.equals(ip_address);
     }
 
-    public void moveTo(AOServer aoServer) {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.MOVE_IP_ADDRESS, ip_address, aoServer.pkey);
+    public void moveTo(Server server) {
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.MOVE_IP_ADDRESS, ip_address, server.pkey);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -255,6 +270,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         isOverflow=in.readBoolean();
         isDHCP=in.readBoolean();
         pingMonitorEnabled = in.readBoolean();
+        externalIpAddress = in.readNullUTF();
     }
 
     /**
@@ -290,6 +306,14 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         out.writeBoolean(available);
         out.writeBoolean(isOverflow);
         out.writeBoolean(isDHCP);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)>=-0) out.writeBoolean(pingMonitorEnabled);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
+        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_34)>=0) out.writeNullUTF(externalIpAddress);
     }
+
+    /*
+    @Override
+    String toStringImpl() {
+        if(externalIpAddress==null) return ip_address;
+        else return ip_address+'@'+externalIpAddress;
+    }*/
 }

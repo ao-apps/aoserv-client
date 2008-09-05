@@ -64,6 +64,27 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         );
     }
 
+    public int addNetBind(
+        Package pk,
+        IPAddress ia,
+        NetPort netPort,
+        NetProtocol netProtocol,
+        Protocol appProtocol,
+        boolean openFirewall,
+        boolean monitoringEnabled
+    ) {
+        return table.connector.netBinds.addNetBind(
+            this,
+            pk,
+            ia,
+            netPort,
+            netProtocol,
+            appProtocol,
+            openFirewall,
+            monitoringEnabled
+        );
+    }
+
     public AOServer getAOServer() {
         return table.connector.aoServers.get(pkey);
     }
@@ -201,5 +222,48 @@ final public class Server extends CachedObjectIntegerKey<Server> {
      */
     public List<FailoverFileReplication> getFailoverFileReplications() {
         return table.connector.failoverFileReplications.getFailoverFileReplications(this);
+    }
+
+    public NetBind getNetBind(
+        IPAddress ipAddress,
+        NetPort port,
+        NetProtocol netProtocol
+    ) {
+        return table.connector.netBinds.getNetBind(this, ipAddress, port, netProtocol);
+    }
+
+    public List<NetBind> getNetBinds() {
+	return table.connector.netBinds.getNetBinds(this);
+    }
+
+    public List<NetBind> getNetBinds(IPAddress ipAddress) {
+	return table.connector.netBinds.getNetBinds(this, ipAddress);
+    }
+
+    public List<NetBind> getNetBinds(Protocol protocol) {
+	return table.connector.netBinds.getNetBinds(this, protocol);
+    }
+
+    public NetDevice getNetDevice(String deviceID) {
+	return table.connector.netDevices.getNetDevice(this, deviceID);
+    }
+
+    public List<NetDevice> getNetDevices() {
+	return table.connector.netDevices.getNetDevices(this);
+    }
+
+    public List<IPAddress> getIPAddresses() {
+	return table.connector.ipAddresses.getIPAddresses(this);
+    }
+
+    public IPAddress getAvailableIPAddress() {
+	for(IPAddress ip : getIPAddresses()) {
+            if(
+                ip.isAvailable()
+                && ip.isAlias()
+                && !ip.getNetDevice().getNetDeviceID().isLoopback()
+            ) return ip;
+	}
+	return null;
     }
 }

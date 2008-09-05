@@ -23,7 +23,8 @@ final public class NetDeviceTable extends CachedTableIntegerKey<NetDevice> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(NetDevice.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
     };
     @Override
@@ -39,13 +40,13 @@ final public class NetDeviceTable extends CachedTableIntegerKey<NetDevice> {
 	return getUniqueRow(NetDevice.COLUMN_PKEY, pkey);
     }
 
-    List<NetDevice> getNetDevices(AOServer ao) {
-        return getIndexedRows(NetDevice.COLUMN_AO_SERVER, ao.pkey);
+    List<NetDevice> getNetDevices(Server se) {
+        return getIndexedRows(NetDevice.COLUMN_SERVER, se.pkey);
     }
 
-    NetDevice getNetDevice(AOServer ao, String deviceID) {
+    NetDevice getNetDevice(Server se, String deviceID) {
         // Use the index first
-	List<NetDevice> cached=getNetDevices(ao);
+	List<NetDevice> cached=getNetDevices(se);
 	int size=cached.size();
 	for(int c=0;c<size;c++) {
             NetDevice dev=cached.get(c);

@@ -184,7 +184,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         return
             "jdbc:mysql://"
             + (ipOnly
-               ?ao.getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
+               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
 	       :ao.getHostname()
             )
             + ":"

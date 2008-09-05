@@ -22,7 +22,8 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
         new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
         new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING),
@@ -49,7 +50,7 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
         List<PrivateFTPServer> matches=new ArrayList<PrivateFTPServer>(size);
 	for(int c=0;c<size;c++) {
             PrivateFTPServer obj=cached.get(c);
-            if(obj.getNetBind().ao_server==aoPKey) matches.add(obj);
+            if(obj.getNetBind().server==aoPKey) matches.add(obj);
 	}
 	return matches;
     }
@@ -63,7 +64,7 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
             PrivateFTPServer obj=cached.get(c);
             if(
                 obj.getRoot().equals(path)
-                && obj.getNetBind().ao_server==aoPKey
+                && obj.getNetBind().server==aoPKey
             ) return obj;
 	}
         return null;

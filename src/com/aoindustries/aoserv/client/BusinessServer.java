@@ -154,6 +154,29 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                 for(int d=0;d<pks.size();d++) {
                     Package pk=pks.get(d);
 
+                    // net_binds
+                    for(NetBind nb : pk.getNetBinds()) {
+                        if(nb.getServer().equals(se)) {
+                            String details=nb.getDetails();
+                            if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toString(), nb));
+                            else {
+                                IPAddress ia=nb.getIPAddress();
+                                NetDevice nd=ia.getNetDevice();
+                                if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toString(), nb));
+                                else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toString(), nb));
+                            }
+                        }
+                    }
+
+                    // ip_addresses
+                    for(IPAddress ia : pk.getIPAddresses()) {
+                        NetDevice nd=ia.getNetDevice();
+                        if(
+                            nd!=null
+                            && se.equals(nd.getServer())
+                        ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toString(), ia));
+                    }
+
                     if(ao!=null) {
                         // email_pipes
                         for(EmailPipe ep : pk.getEmailPipes()) {
@@ -163,15 +186,6 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                         // httpd_sites
                         for(HttpdSite hs : pk.getHttpdSites()) {
                             if(hs.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
-                        }
-
-                        // ip_addresses
-                        for(IPAddress ia : pk.getIPAddresses()) {
-                            NetDevice nd=ia.getNetDevice();
-                            if(
-                                nd!=null
-                                && ao.equals(nd.getAOServer())
-                            ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+ao.getHostname(), ia));
                         }
 
                         for(Username un : pk.getUsernames()) {
@@ -211,20 +225,6 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                         for(MySQLDatabase md : pk.getMySQLDatabases()) {
                             MySQLServer ms=md.getMySQLServer();
                             if(ms.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
-                        }
-
-                        // net_binds
-                        for(NetBind nb : pk.getNetBinds()) {
-                            if(nb.getAOServer().equals(ao)) {
-                                String details=nb.getDetails();
-                                if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+ao.getHostname(), nb));
-                                else {
-                                    IPAddress ia=nb.getIPAddress();
-                                    NetDevice nd=ia.getNetDevice();
-                                    if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+ao.getHostname(), nb));
-                                    else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+ao.getHostname(), nb));
-                                }
-                            }
                         }
 
                         // postgres_databases
