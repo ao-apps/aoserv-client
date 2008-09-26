@@ -178,7 +178,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 
     /**
      * Gets the external IP address, if different than ip_address.
-     * @return
      */
     public String getExternalIpAddress() {
         return externalIpAddress;
