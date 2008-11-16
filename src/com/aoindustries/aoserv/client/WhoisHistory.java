@@ -96,7 +96,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	return SchemaTable.TableID.WHOIS_HISTORY;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getInt(1);
         time = result.getTimestamp(2).getTime();
         accounting = result.getString(3);
@@ -116,7 +116,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	return pkey+"|"+accounting+'|'+zone+'|'+new java.sql.Date(time);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
         out.writeLong(time);
         out.writeUTF(accounting);

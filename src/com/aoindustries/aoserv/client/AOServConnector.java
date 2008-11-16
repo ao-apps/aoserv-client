@@ -9,7 +9,6 @@ import com.aoindustries.io.ChainWriter;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
-import com.aoindustries.profiler.Profiler;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.ErrorHandler;
 import com.aoindustries.util.IntArrayList;
@@ -20,6 +19,8 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -40,7 +41,7 @@ abstract public class AOServConnector {
      */
     public static final long MASTER_ENTROPY_POOL_SIZE=(long)64*1024*1024;
 
-    private static final String[] profileTitles={
+    /*private static final String[] profileTitles={
         "Method",
         "Parameter",
         "Use Count",
@@ -48,7 +49,7 @@ abstract public class AOServConnector {
         "Min Time",
         "Avg Time",
         "Max Time"
-    };
+    };*/
 
     /**
      * @see  #getConnectorID()
@@ -144,6 +145,10 @@ abstract public class AOServConnector {
     public final CvsRepositoryTable cvsRepositories;
     public final DaemonProfileTable daemonProfiles;
     public final DisableLogTable disableLogs;
+    
+    public final DiskTypeTable diskTypes;
+    public DiskTypeTable getDiskTypes() {return diskTypes;}
+
     public final DistroFileTypeTable distroFileTypes;
     public final DistroFileTable distroFiles;
     public final DNSForbiddenZoneTable dnsForbiddenZones;
@@ -248,6 +253,10 @@ abstract public class AOServConnector {
     public PackageTable getPackages() {return packages;}
 
     public final PaymentTypeTable paymentTypes;
+    
+    public final PhysicalServerTable physicalServers;
+    public PhysicalServerTable getPhysicalServers() {return physicalServers;}
+
     public final PostgresDatabaseTable postgresDatabases;
     public final PostgresEncodingTable postgresEncodings;
     public final PostgresReservedWordTable postgresReservedWords;
@@ -259,7 +268,18 @@ abstract public class AOServConnector {
     public final PostgresUserTable postgresUsers;
     public final PostgresVersionTable postgresVersions;
     public final PrivateFTPServerTable privateFTPServers;
+
+    public final ProcessorTypeTable processorTypes;
+    public ProcessorTypeTable getProcessorTypes() {return processorTypes;}
+    
     public final ProtocolTable protocols;
+    
+    public final RackTable racks;
+    public RackTable getRacks() {return racks;}
+
+    public final RaidTypeTable raidTypes;
+    public RaidTypeTable getRaidTypes() {return raidTypes;}
+
     public final ResourceTable resources;
     public final SchemaColumnTable schemaColumns;
     public final SchemaForeignKeyTable schemaForeignKeys;
@@ -291,6 +311,12 @@ abstract public class AOServConnector {
     public final USStateTable usStates;
     public final UsernameTable usernames;
 
+    public final VirtualDiskTable virtualDisks;
+    public VirtualDiskTable getVirtualDisks() {return virtualDisks;}
+
+    public final VirtualServerTable virtualServers;
+    public VirtualServerTable getVirtualServers() {return virtualServers;}
+
     public final WhoisHistoryTable whoisHistory;
     public WhoisHistoryTable getWhoisHistory() {return whoisHistory;}
 
@@ -298,13 +324,13 @@ abstract public class AOServConnector {
     public SimpleAOClient getSimpleAOClient() {return simpleAOClient;}
 
     /**
-     * The tables are placed in this array as they are created.
-     * This array is aligned with the table identifiers in
+     * The tables are placed in this list in the constructor.
+     * This list is aligned with the table identifiers in
      * <code>SchemaTable</code>.
      *
      * @see  SchemaTable
      */
-    final AOServTable[] tables;
+    final List<AOServTable> tables;
 
     protected AOServConnector(
         String hostname,
@@ -316,178 +342,181 @@ abstract public class AOServConnector {
         String daemonServer,
         ErrorHandler errorHandler
     ) throws IOException {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "<init>(String,String,int,String,String,String,String,ErrorHandler)", null);
-        try {
-            this.hostname=hostname;
-            this.local_ip=local_ip;
-            this.port=port;
-            this.connectAs=connectAs;
-            this.authenticateAs=authenticateAs;
-            this.password=password;
-            this.daemonServer=daemonServer;
-            this.errorHandler=errorHandler;
+        this.hostname=hostname;
+        this.local_ip=local_ip;
+        this.port=port;
+        this.connectAs=connectAs;
+        this.authenticateAs=authenticateAs;
+        this.password=password;
+        this.daemonServer=daemonServer;
+        this.errorHandler=errorHandler;
 
-            // These must match the table IDs in SchemaTable
-            tables=new AOServTable[] {
-                actionTypes=new ActionTypeTable(this),
-                actions=new ActionTable(this),
-                aoServerDaemonHosts=new AOServerDaemonHostTable(this),
-                aoServers=new AOServerTable(this),
-                aoservPermissions=new AOServPermissionTable(this),
-                aoservProtocols=new AOServProtocolTable(this),
-                aoshCommands=new AOSHCommandTable(this),
-                architectures=new ArchitectureTable(this),
-                backupPartitions=new BackupPartitionTable(this),
-                backupReports=new BackupReportTable(this),
-                backupRetentions=new BackupRetentionTable(this),
-                bankAccounts=new BankAccountTable(this),
-                bankTransactionTypes=new BankTransactionTypeTable(this),
-                bankTransactions=new BankTransactionTable(this),
-                banks=new BankTable(this),
-                blackholeEmailAddresses=new BlackholeEmailAddressTable(this),
-                businessAdministrators=new BusinessAdministratorTable(this),
-                businessAdministratorPermissions=new BusinessAdministratorPermissionTable(this),
-                businessProfiles=new BusinessProfileTable(this),
-                businesses=new BusinessTable(this),
-                businessServers=new BusinessServerTable(this),
-                clientJvmProfiles=new ClientJvmProfileTable(this),
-                countryCodes=new CountryCodeTable(this),
-                creditCardProcessors=new CreditCardProcessorTable(this),
-                creditCardTransactions=new CreditCardTransactionTable(this),
-                creditCards=new CreditCardTable(this),
-                cvsRepositories=new CvsRepositoryTable(this),
-                daemonProfiles=new DaemonProfileTable(this),
-                disableLogs=new DisableLogTable(this),
-                distroFileTypes=new DistroFileTypeTable(this),
-                distroFiles=new DistroFileTable(this),
-                dnsForbiddenZones=new DNSForbiddenZoneTable(this),
-                dnsRecords=new DNSRecordTable(this),
-                dnsTLDs=new DNSTLDTable(this),
-                dnsTypes=new DNSTypeTable(this),
-                dnsZones=new DNSZoneTable(this),
-                emailAddresses=new EmailAddressTable(this),
-                emailAttachmentBlocks=new EmailAttachmentBlockTable(this),
-                emailAttachmentTypes=new EmailAttachmentTypeTable(this),
-                emailDomains=new EmailDomainTable(this),
-                emailForwardings=new EmailForwardingTable(this),
-                emailListAddresses=new EmailListAddressTable(this),
-                emailLists=new EmailListTable(this),
-                emailPipeAddresses=new EmailPipeAddressTable(this),
-                emailPipes=new EmailPipeTable(this),
-                emailSmtpRelayTypes=new EmailSmtpRelayTypeTable(this),
-                emailSmtpRelays=new EmailSmtpRelayTable(this),
-                emailSpamAssassinIntegrationModes=new EmailSpamAssassinIntegrationModeTable(this),
-                encryptionKeys=new EncryptionKeyTable(this),
-                expenseCategories=new ExpenseCategoryTable(this),
-                failoverFileLogs=new FailoverFileLogTable(this),
-                failoverFileReplications=new FailoverFileReplicationTable(this),
-                failoverFileSchedules=new FailoverFileScheduleTable(this),
-                failoverMySQLReplications=new FailoverMySQLReplicationTable(this),
-                fileBackupSettings=new FileBackupSettingTable(this),
-                ftpGuestUsers=new FTPGuestUserTable(this),
-                httpdBinds=new HttpdBindTable(this),
-                httpdJBossSites=new HttpdJBossSiteTable(this),
-                httpdJBossVersions=new HttpdJBossVersionTable(this),
-                httpdJKCodes=new HttpdJKCodeTable(this),
-                httpdJKProtocols=new HttpdJKProtocolTable(this),
-                httpdServers=new HttpdServerTable(this),
-                httpdSharedTomcats=new HttpdSharedTomcatTable(this),
-                httpdSiteAuthenticatedLocationTable=new HttpdSiteAuthenticatedLocationTable(this),
-                httpdSiteBinds=new HttpdSiteBindTable(this),
-                httpdSiteURLs=new HttpdSiteURLTable(this),
-                httpdSites=new HttpdSiteTable(this),
-                httpdStaticSites=new HttpdStaticSiteTable(this),
-                httpdTomcatContexts=new HttpdTomcatContextTable(this),
-                httpdTomcatDataSources=new HttpdTomcatDataSourceTable(this),
-                httpdTomcatParameters=new HttpdTomcatParameterTable(this),
-                httpdTomcatSites=new HttpdTomcatSiteTable(this),
-                httpdTomcatSharedSites=new HttpdTomcatSharedSiteTable(this),
-                httpdTomcatStdSites=new HttpdTomcatStdSiteTable(this),
-                httpdTomcatVersions=new HttpdTomcatVersionTable(this),
-                httpdWorkers=new HttpdWorkerTable(this),
-                ipAddresses=new IPAddressTable(this),
-                linuxAccAddresses=new LinuxAccAddressTable(this),
-                linuxAccountTypes=new LinuxAccountTypeTable(this),
-                linuxAccounts=new LinuxAccountTable(this),
-                linuxGroupAccounts=new LinuxGroupAccountTable(this),
-                linuxGroupTypes=new LinuxGroupTypeTable(this),
-                linuxGroups=new LinuxGroupTable(this),
-                linuxIDs=new LinuxIDTable(this),
-                linuxServerAccounts=new LinuxServerAccountTable(this),
-                linuxServerGroups=new LinuxServerGroupTable(this),
-                majordomoLists=new MajordomoListTable(this),
-                majordomoServers=new MajordomoServerTable(this),
-                majordomoVersions=new MajordomoVersionTable(this),
-                masterHistory=new MasterHistoryTable(this),
-                masterHosts=new MasterHostTable(this),
-                masterProcesses=new MasterProcessTable(this),
-                masterServerProfiles=new MasterServerProfileTable(this),
-                masterServerStats=new MasterServerStatTable(this),
-                masterServers=new MasterServerTable(this),
-                masterUsers=new MasterUserTable(this),
-                monthlyCharges=new MonthlyChargeTable(this),
-                mysqlDatabases=new MySQLDatabaseTable(this),
-                mysqlDBUsers=new MySQLDBUserTable(this),
-                mysqlReservedWords=new MySQLReservedWordTable(this),
-                mysqlServerUsers=new MySQLServerUserTable(this),
-                mysqlServers=new MySQLServerTable(this),
-                mysqlUsers=new MySQLUserTable(this),
-                netBinds=new NetBindTable(this),
-                netDeviceIDs=new NetDeviceIDTable(this),
-                netDevices=new NetDeviceTable(this),
-                netPorts=new NetPortTable(this),
-                netProtocols=new NetProtocolTable(this),
-                netTcpRedirects=new NetTcpRedirectTable(this),
-                noticeLogs=new NoticeLogTable(this),
-                noticeTypes=new NoticeTypeTable(this),
-                operatingSystemVersions=new OperatingSystemVersionTable(this),
-                operatingSystems=new OperatingSystemTable(this),
-                packageCategories=new PackageCategoryTable(this),
-                packageDefinitionLimits=new PackageDefinitionLimitTable(this),
-                packageDefinitions=new PackageDefinitionTable(this),
-                packages=new PackageTable(this),
-                paymentTypes=new PaymentTypeTable(this),
-                postgresDatabases=new PostgresDatabaseTable(this),
-                postgresEncodings=new PostgresEncodingTable(this),
-                postgresReservedWords=new PostgresReservedWordTable(this),
-                postgresServerUsers=new PostgresServerUserTable(this),
-                postgresServers=new PostgresServerTable(this),
-                postgresUsers=new PostgresUserTable(this),
-                postgresVersions=new PostgresVersionTable(this),
-                privateFTPServers=new PrivateFTPServerTable(this),
-                protocols=new ProtocolTable(this),
-                resources=new ResourceTable(this),
-                schemaColumns=new SchemaColumnTable(this),
-                schemaForeignKeys=new SchemaForeignKeyTable(this),
-                schemaTables=new SchemaTableTable(this),
-                schemaTypes=new SchemaTypeTable(this),
-                serverFarms=new ServerFarmTable(this),
-                servers=new ServerTable(this),
-                shells=new ShellTable(this),
-                signupRequestOptions=new SignupRequestOptionTable(this),
-                signupRequests=new SignupRequestTable(this),
-                spamEmailMessages=new SpamEmailMessageTable(this),
-                systemEmailAliases=new SystemEmailAliasTable(this),
-                technologies=new TechnologyTable(this),
-                technologyClasses=new TechnologyClassTable(this),
-                technologyNames=new TechnologyNameTable(this),
-                technologyVersions=new TechnologyVersionTable(this),
-                ticketPriorities=new TicketPriorityTable(this),
-                ticketStatuses=new TicketStatusTable(this),
-                ticketTypes=new TicketTypeTable(this),
-                tickets=new TicketTable(this),
-                timeZones=new TimeZoneTable(this),
-                transactionTypes=new TransactionTypeTable(this),
-                transactions=new TransactionTable(this),
-                usStates=new USStateTable(this),
-                usernames=new UsernameTable(this),
-                whoisHistory=new WhoisHistoryTable(this)
-            };
+        // These must match the table IDs in SchemaTable
+        ArrayList<AOServTable> newTables = new ArrayList<AOServTable>();
+        newTables.add(actionTypes=new ActionTypeTable(this));
+        newTables.add(actions=new ActionTable(this));
+        newTables.add(aoServerDaemonHosts=new AOServerDaemonHostTable(this));
+        newTables.add(aoServers=new AOServerTable(this));
+        newTables.add(aoservPermissions=new AOServPermissionTable(this));
+        newTables.add(aoservProtocols=new AOServProtocolTable(this));
+        newTables.add(aoshCommands=new AOSHCommandTable(this));
+        newTables.add(architectures=new ArchitectureTable(this));
+        newTables.add(backupPartitions=new BackupPartitionTable(this));
+        newTables.add(backupReports=new BackupReportTable(this));
+        newTables.add(backupRetentions=new BackupRetentionTable(this));
+        newTables.add(bankAccounts=new BankAccountTable(this));
+        newTables.add(bankTransactionTypes=new BankTransactionTypeTable(this));
+        newTables.add(bankTransactions=new BankTransactionTable(this));
+        newTables.add(banks=new BankTable(this));
+        newTables.add(blackholeEmailAddresses=new BlackholeEmailAddressTable(this));
+        newTables.add(businessAdministrators=new BusinessAdministratorTable(this));
+        newTables.add(businessAdministratorPermissions=new BusinessAdministratorPermissionTable(this));
+        newTables.add(businessProfiles=new BusinessProfileTable(this));
+        newTables.add(businesses=new BusinessTable(this));
+        newTables.add(businessServers=new BusinessServerTable(this));
+        newTables.add(clientJvmProfiles=new ClientJvmProfileTable(this));
+        newTables.add(countryCodes=new CountryCodeTable(this));
+        newTables.add(creditCardProcessors=new CreditCardProcessorTable(this));
+        newTables.add(creditCardTransactions=new CreditCardTransactionTable(this));
+        newTables.add(creditCards=new CreditCardTable(this));
+        newTables.add(cvsRepositories=new CvsRepositoryTable(this));
+        newTables.add(daemonProfiles=new DaemonProfileTable(this));
+        newTables.add(disableLogs=new DisableLogTable(this));
+        newTables.add(diskTypes=new DiskTypeTable(this));
+        newTables.add(distroFileTypes=new DistroFileTypeTable(this));
+        newTables.add(distroFiles=new DistroFileTable(this));
+        newTables.add(dnsForbiddenZones=new DNSForbiddenZoneTable(this));
+        newTables.add(dnsRecords=new DNSRecordTable(this));
+        newTables.add(dnsTLDs=new DNSTLDTable(this));
+        newTables.add(dnsTypes=new DNSTypeTable(this));
+        newTables.add(dnsZones=new DNSZoneTable(this));
+        newTables.add(emailAddresses=new EmailAddressTable(this));
+        newTables.add(emailAttachmentBlocks=new EmailAttachmentBlockTable(this));
+        newTables.add(emailAttachmentTypes=new EmailAttachmentTypeTable(this));
+        newTables.add(emailDomains=new EmailDomainTable(this));
+        newTables.add(emailForwardings=new EmailForwardingTable(this));
+        newTables.add(emailListAddresses=new EmailListAddressTable(this));
+        newTables.add(emailLists=new EmailListTable(this));
+        newTables.add(emailPipeAddresses=new EmailPipeAddressTable(this));
+        newTables.add(emailPipes=new EmailPipeTable(this));
+        newTables.add(emailSmtpRelayTypes=new EmailSmtpRelayTypeTable(this));
+        newTables.add(emailSmtpRelays=new EmailSmtpRelayTable(this));
+        newTables.add(emailSpamAssassinIntegrationModes=new EmailSpamAssassinIntegrationModeTable(this));
+        newTables.add(encryptionKeys=new EncryptionKeyTable(this));
+        newTables.add(expenseCategories=new ExpenseCategoryTable(this));
+        newTables.add(failoverFileLogs=new FailoverFileLogTable(this));
+        newTables.add(failoverFileReplications=new FailoverFileReplicationTable(this));
+        newTables.add(failoverFileSchedules=new FailoverFileScheduleTable(this));
+        newTables.add(failoverMySQLReplications=new FailoverMySQLReplicationTable(this));
+        newTables.add(fileBackupSettings=new FileBackupSettingTable(this));
+        newTables.add(ftpGuestUsers=new FTPGuestUserTable(this));
+        newTables.add(httpdBinds=new HttpdBindTable(this));
+        newTables.add(httpdJBossSites=new HttpdJBossSiteTable(this));
+        newTables.add(httpdJBossVersions=new HttpdJBossVersionTable(this));
+        newTables.add(httpdJKCodes=new HttpdJKCodeTable(this));
+        newTables.add(httpdJKProtocols=new HttpdJKProtocolTable(this));
+        newTables.add(httpdServers=new HttpdServerTable(this));
+        newTables.add(httpdSharedTomcats=new HttpdSharedTomcatTable(this));
+        newTables.add(httpdSiteAuthenticatedLocationTable=new HttpdSiteAuthenticatedLocationTable(this));
+        newTables.add(httpdSiteBinds=new HttpdSiteBindTable(this));
+        newTables.add(httpdSiteURLs=new HttpdSiteURLTable(this));
+        newTables.add(httpdSites=new HttpdSiteTable(this));
+        newTables.add(httpdStaticSites=new HttpdStaticSiteTable(this));
+        newTables.add(httpdTomcatContexts=new HttpdTomcatContextTable(this));
+        newTables.add(httpdTomcatDataSources=new HttpdTomcatDataSourceTable(this));
+        newTables.add(httpdTomcatParameters=new HttpdTomcatParameterTable(this));
+        newTables.add(httpdTomcatSites=new HttpdTomcatSiteTable(this));
+        newTables.add(httpdTomcatSharedSites=new HttpdTomcatSharedSiteTable(this));
+        newTables.add(httpdTomcatStdSites=new HttpdTomcatStdSiteTable(this));
+        newTables.add(httpdTomcatVersions=new HttpdTomcatVersionTable(this));
+        newTables.add(httpdWorkers=new HttpdWorkerTable(this));
+        newTables.add(ipAddresses=new IPAddressTable(this));
+        newTables.add(linuxAccAddresses=new LinuxAccAddressTable(this));
+        newTables.add(linuxAccountTypes=new LinuxAccountTypeTable(this));
+        newTables.add(linuxAccounts=new LinuxAccountTable(this));
+        newTables.add(linuxGroupAccounts=new LinuxGroupAccountTable(this));
+        newTables.add(linuxGroupTypes=new LinuxGroupTypeTable(this));
+        newTables.add(linuxGroups=new LinuxGroupTable(this));
+        newTables.add(linuxIDs=new LinuxIDTable(this));
+        newTables.add(linuxServerAccounts=new LinuxServerAccountTable(this));
+        newTables.add(linuxServerGroups=new LinuxServerGroupTable(this));
+        newTables.add(majordomoLists=new MajordomoListTable(this));
+        newTables.add(majordomoServers=new MajordomoServerTable(this));
+        newTables.add(majordomoVersions=new MajordomoVersionTable(this));
+        newTables.add(masterHistory=new MasterHistoryTable(this));
+        newTables.add(masterHosts=new MasterHostTable(this));
+        newTables.add(masterProcesses=new MasterProcessTable(this));
+        newTables.add(masterServerProfiles=new MasterServerProfileTable(this));
+        newTables.add(masterServerStats=new MasterServerStatTable(this));
+        newTables.add(masterServers=new MasterServerTable(this));
+        newTables.add(masterUsers=new MasterUserTable(this));
+        newTables.add(monthlyCharges=new MonthlyChargeTable(this));
+        newTables.add(mysqlDatabases=new MySQLDatabaseTable(this));
+        newTables.add(mysqlDBUsers=new MySQLDBUserTable(this));
+        newTables.add(mysqlReservedWords=new MySQLReservedWordTable(this));
+        newTables.add(mysqlServerUsers=new MySQLServerUserTable(this));
+        newTables.add(mysqlServers=new MySQLServerTable(this));
+        newTables.add(mysqlUsers=new MySQLUserTable(this));
+        newTables.add(netBinds=new NetBindTable(this));
+        newTables.add(netDeviceIDs=new NetDeviceIDTable(this));
+        newTables.add(netDevices=new NetDeviceTable(this));
+        newTables.add(netPorts=new NetPortTable(this));
+        newTables.add(netProtocols=new NetProtocolTable(this));
+        newTables.add(netTcpRedirects=new NetTcpRedirectTable(this));
+        newTables.add(noticeLogs=new NoticeLogTable(this));
+        newTables.add(noticeTypes=new NoticeTypeTable(this));
+        newTables.add(operatingSystemVersions=new OperatingSystemVersionTable(this));
+        newTables.add(operatingSystems=new OperatingSystemTable(this));
+        newTables.add(packageCategories=new PackageCategoryTable(this));
+        newTables.add(packageDefinitionLimits=new PackageDefinitionLimitTable(this));
+        newTables.add(packageDefinitions=new PackageDefinitionTable(this));
+        newTables.add(packages=new PackageTable(this));
+        newTables.add(paymentTypes=new PaymentTypeTable(this));
+        newTables.add(physicalServers=new PhysicalServerTable(this));
+        newTables.add(postgresDatabases=new PostgresDatabaseTable(this));
+        newTables.add(postgresEncodings=new PostgresEncodingTable(this));
+        newTables.add(postgresReservedWords=new PostgresReservedWordTable(this));
+        newTables.add(postgresServerUsers=new PostgresServerUserTable(this));
+        newTables.add(postgresServers=new PostgresServerTable(this));
+        newTables.add(postgresUsers=new PostgresUserTable(this));
+        newTables.add(postgresVersions=new PostgresVersionTable(this));
+        newTables.add(privateFTPServers=new PrivateFTPServerTable(this));
+        newTables.add(processorTypes=new ProcessorTypeTable(this));
+        newTables.add(protocols=new ProtocolTable(this));
+        newTables.add(racks=new RackTable(this));
+        newTables.add(raidTypes=new RaidTypeTable(this));
+        newTables.add(resources=new ResourceTable(this));
+        newTables.add(schemaColumns=new SchemaColumnTable(this));
+        newTables.add(schemaForeignKeys=new SchemaForeignKeyTable(this));
+        newTables.add(schemaTables=new SchemaTableTable(this));
+        newTables.add(schemaTypes=new SchemaTypeTable(this));
+        newTables.add(serverFarms=new ServerFarmTable(this));
+        newTables.add(servers=new ServerTable(this));
+        newTables.add(shells=new ShellTable(this));
+        newTables.add(signupRequestOptions=new SignupRequestOptionTable(this));
+        newTables.add(signupRequests=new SignupRequestTable(this));
+        newTables.add(spamEmailMessages=new SpamEmailMessageTable(this));
+        newTables.add(systemEmailAliases=new SystemEmailAliasTable(this));
+        newTables.add(technologies=new TechnologyTable(this));
+        newTables.add(technologyClasses=new TechnologyClassTable(this));
+        newTables.add(technologyNames=new TechnologyNameTable(this));
+        newTables.add(technologyVersions=new TechnologyVersionTable(this));
+        newTables.add(ticketPriorities=new TicketPriorityTable(this));
+        newTables.add(ticketStatuses=new TicketStatusTable(this));
+        newTables.add(ticketTypes=new TicketTypeTable(this));
+        newTables.add(tickets=new TicketTable(this));
+        newTables.add(timeZones=new TimeZoneTable(this));
+        newTables.add(transactionTypes=new TransactionTypeTable(this));
+        newTables.add(transactions=new TransactionTable(this));
+        newTables.add(usStates=new USStateTable(this));
+        newTables.add(usernames=new UsernameTable(this));
+        newTables.add(virtualDisks=new VirtualDiskTable(this));
+        newTables.add(virtualServers=new VirtualServerTable(this));
+        newTables.add(whoisHistory=new WhoisHistoryTable(this));
+        newTables.trimToSize();
+        tables = Collections.unmodifiableList(newTables);
 
-            simpleAOClient=new SimpleAOClient(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        simpleAOClient=new SimpleAOClient(this);
     }
 
     /**
@@ -495,6 +524,7 @@ abstract public class AOServConnector {
      * connectors are considered equal only if they refer to the same
      * object.
      */
+    @Override
     final public boolean equals(Object O) {
         return super.equals(O);
     }
@@ -502,6 +532,7 @@ abstract public class AOServConnector {
     /**
      * Uses equivilence hashCode like <code>Object.hashCode()</code>.
      */
+    @Override
     final public int hashCode() {
         return super.hashCode();
     }
@@ -510,14 +541,7 @@ abstract public class AOServConnector {
      * Clears all caches used by this connector.
      */
     public void clearCaches() {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "clearCaches()", null);
-        try {
-            for(int c=0;c<tables.length;c++) {
-                tables[c].clearCache();
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        for(AOServTable table : tables) table.clearCache();
     }
 
     /**
@@ -592,21 +616,16 @@ abstract public class AOServConnector {
      * @exception  IOException  if no connection can be established
      */
     public static AOServConnector getConnector(ErrorHandler errorHandler) throws IOException {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "getConnector(ErrorHandler)", null);
-        try {
-            String username=AOServClientConfiguration.getUsername();
-            String daemonServer=AOServClientConfiguration.getDaemonServer();
-            if(daemonServer==null || daemonServer.length()==0) daemonServer=null;
-            return getConnector(
-                username,
-                username,
-                AOServClientConfiguration.getPassword(),
-                daemonServer,
-                errorHandler
-            );
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        String username=AOServClientConfiguration.getUsername();
+        String daemonServer=AOServClientConfiguration.getDaemonServer();
+        if(daemonServer==null || daemonServer.length()==0) daemonServer=null;
+        return getConnector(
+            username,
+            username,
+            AOServClientConfiguration.getPassword(),
+            daemonServer,
+            errorHandler
+        );
     }
 
     /**
@@ -663,59 +682,54 @@ abstract public class AOServConnector {
      * @exception  IOException  if no connection can be established
      */
     public static AOServConnector getConnector(String connectAs, String authenticateAs, String password, String daemonServer, ErrorHandler errorHandler) throws IOException {
-        Profiler.startProfile(Profiler.UNKNOWN, AOServConnector.class, "getConnector(String,String,String,String,ErrorHandler)", null);
-        try {
-            List<String> protocols=AOServClientConfiguration.getProtocols();
-            int size=protocols.size();
-            for(int c=0;c<size;c++) {
-                String protocol=protocols.get(c);
-                try {
-                    AOServConnector connector;
-                    if(TCPConnector.PROTOCOL.equals(protocol)) {
-                        connector=TCPConnector.getTCPConnector(
-                            AOServClientConfiguration.getTcpHostname(),
-                            AOServClientConfiguration.getTcpLocalIp(),
-                            AOServClientConfiguration.getTcpPort(),
-                            connectAs,
-                            authenticateAs,
-                            password,
-                            daemonServer,
-                            AOServClientConfiguration.getTcpConnectionPoolSize(),
-                            AOServClientConfiguration.getTcpConnectionMaxAge(),
-                            errorHandler
-                        );
-                    } else if(SSLConnector.PROTOCOL.equals(protocol)) {
-                        connector=SSLConnector.getSSLConnector(
-                            AOServClientConfiguration.getSslHostname(),
-                            AOServClientConfiguration.getSslLocalIp(),
-                            AOServClientConfiguration.getSslPort(),
-                            connectAs,
-                            authenticateAs,
-                            password,
-                            daemonServer,
-                            AOServClientConfiguration.getSslConnectionPoolSize(),
-                            AOServClientConfiguration.getSslConnectionMaxAge(),
-                            AOServClientConfiguration.getSslTruststorePath(),
-                            AOServClientConfiguration.getSslTruststorePassword(),
-                            errorHandler
-                        );
-                    /*
-                    } else if("http".equals(protocol)) {
-                        connector=new HTTPConnector();
-                    } else if("https".equals(protocol)) {
-                        connector=new HTTPSConnector();
-                    */
-                    } else throw new IOException("Unknown protocol in aoserv.client.protocols: "+protocol);
+        List<String> protocols=AOServClientConfiguration.getProtocols();
+        int size=protocols.size();
+        for(int c=0;c<size;c++) {
+            String protocol=protocols.get(c);
+            try {
+                AOServConnector connector;
+                if(TCPConnector.PROTOCOL.equals(protocol)) {
+                    connector=TCPConnector.getTCPConnector(
+                        AOServClientConfiguration.getTcpHostname(),
+                        AOServClientConfiguration.getTcpLocalIp(),
+                        AOServClientConfiguration.getTcpPort(),
+                        connectAs,
+                        authenticateAs,
+                        password,
+                        daemonServer,
+                        AOServClientConfiguration.getTcpConnectionPoolSize(),
+                        AOServClientConfiguration.getTcpConnectionMaxAge(),
+                        errorHandler
+                    );
+                } else if(SSLConnector.PROTOCOL.equals(protocol)) {
+                    connector=SSLConnector.getSSLConnector(
+                        AOServClientConfiguration.getSslHostname(),
+                        AOServClientConfiguration.getSslLocalIp(),
+                        AOServClientConfiguration.getSslPort(),
+                        connectAs,
+                        authenticateAs,
+                        password,
+                        daemonServer,
+                        AOServClientConfiguration.getSslConnectionPoolSize(),
+                        AOServClientConfiguration.getSslConnectionMaxAge(),
+                        AOServClientConfiguration.getSslTruststorePath(),
+                        AOServClientConfiguration.getSslTruststorePassword(),
+                        errorHandler
+                    );
+                /*
+                } else if("http".equals(protocol)) {
+                    connector=new HTTPConnector();
+                } else if("https".equals(protocol)) {
+                    connector=new HTTPSConnector();
+                */
+                } else throw new IOException("Unknown protocol in aoserv.client.protocols: "+protocol);
 
-                    return connector;
-                } catch(IOException err) {
-                    errorHandler.reportError(err, null);
-                }
+                return connector;
+            } catch(IOException err) {
+                errorHandler.reportError(err, null);
             }
-            throw new IOException("Unable to connect using any of the available protocols.");
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
+        throw new IOException("Unable to connect using any of the available protocols.");
     }
 
     /**
@@ -759,19 +773,14 @@ abstract public class AOServConnector {
 
     private static Random random;
     public static Random getRandom() {
-        Profiler.startProfile(Profiler.UNKNOWN, AOServConnector.class, "getRandom()", null);
-        try {
-	    synchronized(AOServConnector.class) {
-                String algorithm="SHA1PRNG";
-		try {
-		    if(random==null) random=SecureRandom.getInstance(algorithm);
-		    return random;
-		} catch(NoSuchAlgorithmException err) {
-		    throw new WrappedException(err, new Object[] {"algorithm="+algorithm});
-		}
-	    }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        synchronized(AOServConnector.class) {
+            String algorithm="SHA1PRNG";
+            try {
+                if(random==null) random=SecureRandom.getInstance(algorithm);
+                return random;
+            } catch(NoSuchAlgorithmException err) {
+                throw new WrappedException(err, new Object[] {"algorithm="+algorithm});
+            }
         }
     }
 
@@ -789,22 +798,20 @@ abstract public class AOServConnector {
      */
     @SuppressWarnings({"unchecked"})
     final public AOServTable<?,? extends AOServObject> getTable(int tableID) throws IllegalArgumentException {
-        if(tableID>=0 && tableID<tables.length) return tables[tableID];
+        if(tableID>=0 && tableID<tables.size()) return tables.get(tableID);
         throw new IllegalArgumentException("Table not found for ID="+tableID);
     }
 
     /**
-     * Gets all of the tables in the system.
+     * Gets an unmodifiable list of all of the tables in the system.
      *
-     * @return  an <code>AOServTable[]</code> containing all the tables.  Each
+     * @return  a <code>List<AOServTable></code> containing all the tables.  Each
      *          table is at an index corresponding to its unique ID.
      *
      * @see  #getTable(int)
      * @see  SchemaTable
      */
-    final public AOServTable[] getTables() {
-        AOServTable[] tables=new AOServTable[this.tables.length];
-        System.arraycopy(this.tables, 0, tables, 0, tables.length);
+    final public List<AOServTable> getTables() {
         return tables;
     }
 
@@ -823,14 +830,9 @@ abstract public class AOServConnector {
      *                           found
      */
     final public BusinessAdministrator getThisBusinessAdministrator() {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "getThisBusinessAdministrator()", null);
-        try {
-            BusinessAdministrator obj=businessAdministrators.get(connectAs);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: "+connectAs));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        BusinessAdministrator obj=businessAdministrators.get(connectAs);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: "+connectAs));
+        return obj;
     }
 
     /**
@@ -840,55 +842,45 @@ abstract public class AOServConnector {
      * @param server the pkey of the server or <code>-1</code> for all servers
      */
     public void invalidateTable(int tableID, int server) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "invalidateTable(int,int)", null);
         try {
+            IntList tableList;
+            AOServConnection connection=getConnection();
             try {
-                IntList tableList;
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
-                    out.writeCompressedInt(tableID);
-                    out.writeCompressedInt(server);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
+                out.writeCompressedInt(tableID);
+                out.writeCompressedInt(server);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) tableList=readInvalidateList(in);
-                    else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unknown response code: "+code);
-                    }
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) tableList=readInvalidateList(in);
+                else {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unknown response code: "+code);
                 }
-                tablesUpdated(tableList);
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+            tablesUpdated(tableList);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     static IntList readInvalidateList(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "readInvalidateList(CompressedDataInputStream)", null);
-        try {
-            IntArrayList tableList=null;
-            int tableID;
-            while((tableID=in.readCompressedInt())!=-1) {
-                if(tableList==null) tableList=new IntArrayList();
-                tableList.add(tableID);
-            }
-            return tableList;
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        IntArrayList tableList=null;
+        int tableID;
+        while((tableID=in.readCompressedInt())!=-1) {
+            if(tableList==null) tableList=new IntArrayList();
+            tableList.add(tableID);
         }
+        return tableList;
     }
 
     /**
@@ -910,16 +902,11 @@ abstract public class AOServConnector {
      * @return  the connection latency in milliseconds
      */
     final public int ping() {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "ping()", null);
-        try {
-            long startTime=System.currentTimeMillis();
-            requestUpdate(AOServProtocol.CommandID.PING);
-            long timeSpan=System.currentTimeMillis()-startTime;
-            if(timeSpan>Integer.MAX_VALUE) return Integer.MAX_VALUE;
-            return (int)timeSpan;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        long startTime=System.currentTimeMillis();
+        requestUpdate(AOServProtocol.CommandID.PING);
+        long timeSpan=System.currentTimeMillis()-startTime;
+        if(timeSpan>Integer.MAX_VALUE) return Integer.MAX_VALUE;
+        return (int)timeSpan;
     }
 
     abstract public void printConnectionStatsHTML(ChainWriter out) throws IOException;
@@ -939,12 +926,7 @@ abstract public class AOServConnector {
     abstract void releaseConnection(AOServConnection connection) throws IOException;
 
     final public void removeFromAllTables(TableListener listener) {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "removeFromAllTables(TableListener)", null);
-        try {
-            for(int c=0;c<tables.length;c++) tables[c].removeTableListener(listener);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        for(AOServTable table : tables) table.removeTableListener(listener);
     }
 
     static void writeParams(Object[] params, CompressedDataOutputStream out) throws IOException {
@@ -963,339 +945,289 @@ abstract public class AOServConnector {
                 out.writeCompressedInt(bytes.length);
                 out.write(bytes, 0, bytes.length);
             }
-            else if(param instanceof Streamable) ((Streamable)param).write(out, AOServProtocol.CURRENT_VERSION);
+            else if(param instanceof Streamable) ((Streamable)param).write(out, AOServProtocol.Version.CURRENT_VERSION.getVersion());
             else throw new IOException("Unknown class for param: "+param.getClass().getName());
         }
     }
 
     final boolean requestBooleanQuery(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestBooleanQuery(AOServProtocol.CommandID,...)", null);
         try {
+            AOServConnection connection=getConnection();
             try {
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) return in.readBoolean();
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
-                }
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) return in.readBoolean();
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     final int requestIntQuery(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestIntQuery(AOServProtocol.CommandID,...)", null);
         try {
+            AOServConnection connection=getConnection();
             try {
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) return in.readCompressedInt();
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
-                }
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) return in.readCompressedInt();
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     final int requestIntQueryIL(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestIntQueryIL(AOServProtocol.CommandID,...)", null);
         try {
+            int result;
+            IntList invalidateList;
+            AOServConnection connection=getConnection();
             try {
-                int result;
-                IntList invalidateList;
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) {
-                        result=in.readCompressedInt();
-                        invalidateList=readInvalidateList(in);
-                    } else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) {
+                    result=in.readCompressedInt();
+                    invalidateList=readInvalidateList(in);
+                } else {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
                 }
-                tablesUpdated(invalidateList);
-                return result;
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+            tablesUpdated(invalidateList);
+            return result;
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     final long requestLongQuery(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestLongQuery(AOServProtocol.CommandID,...)", null);
         try {
+            AOServConnection connection=getConnection();
             try {
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) return in.readLong();
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
-                }
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) return in.readLong();
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     final short requestShortQuery(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestShortQuery(AOServProtocol.CommandID,...)", null);
         try {
+            AOServConnection connection=getConnection();
             try {
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) return in.readShort();
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
-                }
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) return in.readShort();
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     final short requestShortQueryIL(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestShortQueryIL(AOServProtocol.CommandID,...)", null);
         try {
+            short result;
+            IntList invalidateList;
+            AOServConnection connection=getConnection();
             try {
-                short result;
-                IntList invalidateList;
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) {
-                        result=in.readShort();
-                        invalidateList=readInvalidateList(in);
-                    } else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) {
+                    result=in.readShort();
+                    invalidateList=readInvalidateList(in);
+                } else {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
                 }
-                tablesUpdated(invalidateList);
-                return result;
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+            tablesUpdated(invalidateList);
+            return result;
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     final String requestStringQuery(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestStringQuery(AOServProtocol.CommandID,...)", null);
         try {
+            AOServConnection connection=getConnection();
             try {
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) return in.readUTF();
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
-                }
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) return in.readUTF();
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     final void requestUpdate(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestUpdate(AOServProtocol.CommandID,...)", null);
         try {
+            AOServConnection connection=getConnection();
             try {
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, in);
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
-                }
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, in);
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     final void requestUpdateIL(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "requestUpdateIL(AOServProtocol.CommandID,Object...)", null);
         try {
+            IntList invalidateList;
+            AOServConnection connection=getConnection();
             try {
-                IntList invalidateList;
-                AOServConnection connection=getConnection();
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) invalidateList=readInvalidateList(in);
-                    else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    releaseConnection(connection);
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) invalidateList=readInvalidateList(in);
+                else {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
                 }
-                tablesUpdated(invalidateList);
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+            tablesUpdated(invalidateList);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
     
     public abstract AOServConnector switchUsers(String username) throws IOException;
 
     protected final void tablesUpdated(IntList invalidateList) {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "tablesUpdated(IntList)", null);
-        try {
-            if(invalidateList!=null) {
-                int size=invalidateList.size();
+        if(invalidateList!=null) {
+            int size=invalidateList.size();
 
-                // Clear the caches
-                for(int c=0;c<size;c++) {
-                    int tableID=invalidateList.getInt(c);
-                    tables[tableID].clearCache();
-                }
-
-                // Then send the events
-                for(int c=0;c<size;c++) {
-                    int tableID=invalidateList.getInt(c);
-                    tables[tableID].tableUpdated();
-                }
+            // Clear the caches
+            for(int c=0;c<size;c++) {
+                int tableID=invalidateList.getInt(c);
+                tables.get(tableID).clearCache();
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+
+            // Then send the events
+            for(int c=0;c<size;c++) {
+                int tableID=invalidateList.getInt(c);
+                tables.get(tableID).tableUpdated();
+            }
         }
     }
 
@@ -1307,119 +1239,12 @@ abstract public class AOServConnector {
      * @exception  IOException  if unable to contact the server
      */
     public final void testConnect() {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "testConnection()", null);
         try {
-            try {
-                synchronized(testConnectLock) {
-                    AOServConnection conn=getConnection();
-                    try {
-                        CompressedDataOutputStream out=conn.getOutputStream();
-                        out.writeCompressedInt(AOServProtocol.CommandID.TEST_CONNECTION.ordinal());
-                        out.flush();
-
-                        CompressedDataInputStream in=conn.getInputStream();
-                        int code=in.readByte();
-                        if(code!=AOServProtocol.DONE) {
-                            AOServProtocol.checkResult(code, in);
-                            throw new IOException("Unexpected response code: "+code);
-                        }
-                    } catch(IOException err) {
-                        conn.close();
-                        throw err;
-                    } finally {
-                        releaseConnection(conn);
-                    }
-                }
-            } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
-    }
-
-    final public String toString() {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "toString()", null);
-        try {
-            return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&local_ip="+local_ip+"&port="+port+"&connectAs="+connectAs+"&authenticateAs="+authenticateAs;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-    
-    /**
-     * Is notified when a table listener is being added.
-     */
-    void addingTableListener() {
-    }
-    
-    /**
-     * Gets some entropy from the master server, returns the number of bytes actually obtained.
-     */
-    public int getMasterEntropy(byte[] buff, int numBytes) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "getMasterEntropy(byte[],int)", null);
-        try {
-            try {
+            synchronized(testConnectLock) {
                 AOServConnection conn=getConnection();
                 try {
                     CompressedDataOutputStream out=conn.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.CommandID.GET_MASTER_ENTROPY.ordinal());
-                    out.writeCompressedInt(numBytes);
-                    out.flush();
-
-                    CompressedDataInputStream in=conn.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) {
-                        int numObtained=in.readCompressedInt();
-                        for(int c=0;c<numObtained;c++) buff[c]=in.readByte();
-                        return numObtained;
-                    } else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                } catch(IOException err) {
-                    conn.close();
-                    throw err;
-                } finally {
-                    releaseConnection(conn);
-                }
-            } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
-    }
-
-    /**
-     * Gets the amount of entropy needed by the master server in bytes.
-     */
-    public long getMasterEntropyNeeded() {
-        Profiler.startProfile(Profiler.FAST, AOServConnector.class, "getMasterEntropyNeeded()", null);
-        try {
-            return requestLongQuery(AOServProtocol.CommandID.GET_MASTER_ENTROPY_NEEDED);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-
-    /**
-     * Adds some entropy to the master server.
-     */
-    public void addMasterEntropy(byte[] buff, int numBytes) {
-        Profiler.startProfile(Profiler.IO, AOServConnector.class, "addMasterEntropy(byte[],int)", null);
-        try {
-            try {
-                AOServConnection conn=getConnection();
-                try {
-                    CompressedDataOutputStream out=conn.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.CommandID.ADD_MASTER_ENTROPY.ordinal());
-                    out.writeCompressedInt(numBytes);
-                    for(int c=0;c<numBytes;c++) out.writeByte(buff[c]);
+                    out.writeCompressedInt(AOServProtocol.CommandID.TEST_CONNECTION.ordinal());
                     out.flush();
 
                     CompressedDataInputStream in=conn.getInputStream();
@@ -1434,13 +1259,96 @@ abstract public class AOServConnector {
                 } finally {
                     releaseConnection(conn);
                 }
-            } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    @Override
+    final public String toString() {
+        return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&local_ip="+local_ip+"&port="+port+"&connectAs="+connectAs+"&authenticateAs="+authenticateAs;
+    }
+    
+    /**
+     * Is notified when a table listener is being added.
+     */
+    void addingTableListener() {
+    }
+    
+    /**
+     * Gets some entropy from the master server, returns the number of bytes actually obtained.
+     */
+    public int getMasterEntropy(byte[] buff, int numBytes) {
+        try {
+            AOServConnection conn=getConnection();
+            try {
+                CompressedDataOutputStream out=conn.getOutputStream();
+                out.writeCompressedInt(AOServProtocol.CommandID.GET_MASTER_ENTROPY.ordinal());
+                out.writeCompressedInt(numBytes);
+                out.flush();
+
+                CompressedDataInputStream in=conn.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.DONE) {
+                    int numObtained=in.readCompressedInt();
+                    for(int c=0;c<numObtained;c++) buff[c]=in.readByte();
+                    return numObtained;
+                } else {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
+                }
+            } catch(IOException err) {
+                conn.close();
+                throw err;
+            } finally {
+                releaseConnection(conn);
+            }
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    /**
+     * Gets the amount of entropy needed by the master server in bytes.
+     */
+    public long getMasterEntropyNeeded() {
+        return requestLongQuery(AOServProtocol.CommandID.GET_MASTER_ENTROPY_NEEDED);
+    }
+
+    /**
+     * Adds some entropy to the master server.
+     */
+    public void addMasterEntropy(byte[] buff, int numBytes) {
+        try {
+            AOServConnection conn=getConnection();
+            try {
+                CompressedDataOutputStream out=conn.getOutputStream();
+                out.writeCompressedInt(AOServProtocol.CommandID.ADD_MASTER_ENTROPY.ordinal());
+                out.writeCompressedInt(numBytes);
+                for(int c=0;c<numBytes;c++) out.writeByte(buff[c]);
+                out.flush();
+
+                CompressedDataInputStream in=conn.getInputStream();
+                int code=in.readByte();
+                if(code!=AOServProtocol.DONE) {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
+                }
+            } catch(IOException err) {
+                conn.close();
+                throw err;
+            } finally {
+                releaseConnection(conn);
+            }
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 }

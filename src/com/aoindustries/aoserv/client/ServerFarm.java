@@ -61,7 +61,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     }
 
     @Override
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	description = result.getString(2);
         owner = result.getInt(3);
@@ -82,15 +82,15 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     }
 
     @Override
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(description);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeUTF("192.168.0.0/16");
             out.writeBoolean(false);
             out.writeUTF("mob");
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_102)>=0) out.writeCompressedInt(owner);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeCompressedInt(owner);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
     }
 }

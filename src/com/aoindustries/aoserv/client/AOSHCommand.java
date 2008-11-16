@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.profiler.Profiler;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
@@ -351,19 +350,14 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
     private String last_version;
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, AOSHCommand.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_COMMAND: return pkey;
-                case 1: return table_name;
-                case 2: return short_desc;
-                case 3: return syntax;
-                case 4: return since_version;
-                case 5: return last_version;
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_COMMAND: return pkey;
+            case 1: return table_name;
+            case 2: return short_desc;
+            case 3: return syntax;
+            case 4: return since_version;
+            case 5: return last_version;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -372,15 +366,10 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
     }
 
     public SchemaTable getSchemaTable(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, AOSHCommand.class, "getSchemaTable(AOServConnector)", null);
-        try {
-            if(table_name==null) return null;
-            SchemaTable obj=connector.schemaTables.get(table_name);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaTable: "+table_name));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(table_name==null) return null;
+        SchemaTable obj=connector.schemaTables.get(table_name);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaTable: "+table_name));
+        return obj;
     }
 
     public String getShortDesc() {
@@ -403,103 +392,78 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         return SchemaTable.TableID.AOSH_COMMANDS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, AOSHCommand.class, "initImpl(ResultSet)", null);
-        try {
-            pkey=result.getString(1);
-            table_name=result.getString(2);
-            short_desc=result.getString(3);
-            syntax=result.getString(4);
-            since_version=result.getString(5);
-            last_version=result.getString(6);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getString(1);
+        table_name=result.getString(2);
+        short_desc=result.getString(3);
+        syntax=result.getString(4);
+        since_version=result.getString(5);
+        last_version=result.getString(6);
     }
 
     public void printCommandHelp(TerminalWriter out) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOSHCommand.class, "printCommandHelp(TerminalWriter)", null);
-        try {
-            out.println();
-            out.boldOn();
-            out.println("NAME");
-            out.attributesOff();
-            out.print("       "); out.print(pkey); out.print(" - "); printNoHTML(out, short_desc); out.println();
-            out.println();
-            out.boldOn();
-            out.println("SYNOPSIS");
-            out.attributesOff();
-            out.print("       "); out.print(pkey); if(syntax.length()>0) out.print(' '); printNoHTML(out, syntax); out.println();
-            out.println();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        out.println();
+        out.boldOn();
+        out.println("NAME");
+        out.attributesOff();
+        out.print("       "); out.print(pkey); out.print(" - "); printNoHTML(out, short_desc); out.println();
+        out.println();
+        out.boldOn();
+        out.println("SYNOPSIS");
+        out.attributesOff();
+        out.print("       "); out.print(pkey); if(syntax.length()>0) out.print(' '); printNoHTML(out, syntax); out.println();
+        out.println();
     }
 
     public static void printNoHTML(TerminalWriter out, String S) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSHCommand.class, "printNoHTML(TerminalWriter,String)", null);
-        try {
-            if(S==null) out.print("null");
-            else {
-                int len=S.length();
-                int pos=0;
-                while(pos<len) {
-                    char ch;
-                    if((ch=S.charAt(pos++))=='<') {
-                        if((ch=S.charAt(pos++))=='/') {
-                            if(
-                                (ch=S.charAt(pos++))=='b'
-                                || ch=='B'
-                            ) out.print('"');
-                            else if(
-                                ch=='i'
-                                || ch=='I'
-                            ) out.print('>');
-                            pos++;
-                        } else {
-                            if(
-                                ch=='b'
-                                || ch=='B'
-                            ) out.print('"');
-                            else if(
-                                ch=='i'
-                                || ch=='I'
-                            ) out.print('<');
-                            pos++;
-                        }
-                    } else out.print(ch);
-                }
+        if(S==null) out.print("null");
+        else {
+            int len=S.length();
+            int pos=0;
+            while(pos<len) {
+                char ch;
+                if((ch=S.charAt(pos++))=='<') {
+                    if((ch=S.charAt(pos++))=='/') {
+                        if(
+                            (ch=S.charAt(pos++))=='b'
+                            || ch=='B'
+                        ) out.print('"');
+                        else if(
+                            ch=='i'
+                            || ch=='I'
+                        ) out.print('>');
+                        pos++;
+                    } else {
+                        if(
+                            ch=='b'
+                            || ch=='B'
+                        ) out.print('"');
+                        else if(
+                            ch=='i'
+                            || ch=='I'
+                        ) out.print('<');
+                        pos++;
+                    }
+                } else out.print(ch);
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOSHCommand.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readUTF().intern();
-            table_name=StringUtility.intern(in.readNullUTF());
-            short_desc=in.readUTF();
-            syntax=in.readUTF();
-            since_version=in.readUTF().intern();
-            last_version=StringUtility.intern(in.readNullUTF());
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readUTF().intern();
+        table_name=StringUtility.intern(in.readNullUTF());
+        short_desc=in.readUTF();
+        syntax=in.readUTF();
+        since_version=in.readUTF().intern();
+        last_version=StringUtility.intern(in.readNullUTF());
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOSHCommand.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeUTF(pkey);
-            out.writeNullUTF(table_name);
-            out.writeUTF(short_desc);
-            out.writeUTF(syntax);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_102)>=0) out.writeNullUTF(last_version);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeNullUTF(table_name);
+        out.writeUTF(short_desc);
+        out.writeUTF(syntax);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeNullUTF(last_version);
     }
 }

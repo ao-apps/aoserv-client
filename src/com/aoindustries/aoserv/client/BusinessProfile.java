@@ -140,7 +140,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	return zip;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getInt(1);
 	accounting = result.getString(2);
 	priority = result.getInt(3);
@@ -207,7 +207,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	return name + " ("+priority+')';
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(accounting);
 	out.writeCompressedInt(priority);

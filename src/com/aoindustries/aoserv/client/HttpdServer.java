@@ -152,7 +152,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	return SchemaTable.TableID.HTTPD_SERVERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	ao_server=result.getInt(2);
 	number=result.getInt(3);
@@ -195,26 +195,26 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	return "httpd"+number;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(ao_server);
 	out.writeCompressedInt(number);
 	out.writeBoolean(can_add_sites);
         out.writeBoolean(is_mod_jk);
         out.writeCompressedInt(max_binds);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_102)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) {
             out.writeCompressedInt(linux_server_account);
             out.writeCompressedInt(linux_server_group);
             out.writeCompressedInt(mod_php_version);
             out.writeBoolean(use_suexec);
             out.writeCompressedInt(packageNum);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
+            if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
             out.writeBoolean(is_shared);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_103)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) {
             out.writeBoolean(use_mod_perl);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_130)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)>=0) {
             out.writeCompressedInt(timeout);
         }
     }

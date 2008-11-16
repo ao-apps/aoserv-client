@@ -53,7 +53,7 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
 	return SchemaTable.TableID.NET_DEVICE_IDS;
     }
 
-    void initImpl(ResultSet results) throws SQLException {
+    public void init(ResultSet results) throws SQLException {
 	pkey=results.getString(1);
 	is_loopback=results.getBoolean(2);
     }
@@ -67,7 +67,7 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
 	is_loopback=in.readBoolean();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeBoolean(is_loopback);
     }

@@ -374,7 +374,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         return obj;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos=1;
         pkey=result.getInt(pos++);
         username=result.getString(pos++);
@@ -600,13 +600,13 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         return username+" on "+getAOServer().getHostname();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(username);
         out.writeCompressedInt(ao_server);
         out.writeCompressedInt(uid);
         out.writeUTF(home);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);
             out.writeShort(0);
@@ -623,11 +623,11 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         out.writeLong(created);
         out.writeBoolean(use_inbox);
         out.writeCompressedInt(trash_email_retention);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_120)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_120)>=0) {
             out.writeCompressedInt(junk_email_retention);
             out.writeUTF(sa_integration_mode);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_124)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_124)>=0) {
             out.writeFloat(sa_required_score);
         }
     }

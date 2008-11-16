@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
@@ -134,7 +133,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	return SchemaTable.TableID.HTTPD_SITE_BINDS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	httpd_site=result.getInt(2);
 	httpd_bind=result.getInt(3);
@@ -172,21 +171,11 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public void setIsManual(boolean isManual) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSiteBind.class, "setIsManual(boolean)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
     }
 
     public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSiteBind.class, "setRedirectToPrimaryHostname(boolean)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
     }
 
     public void setPredisableConfig(String config) {
@@ -228,7 +217,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         return site.toString()+'|'+bind.toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(httpd_site);
 	out.writeCompressedInt(httpd_bind);
@@ -239,6 +228,6 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         out.writeCompressedInt(disable_log);
         out.writeNullUTF(predisable_config);
         out.writeBoolean(isManual);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_19)>=0) out.writeBoolean(redirect_to_primary_hostname);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_19)>=0) out.writeBoolean(redirect_to_primary_hostname);
     }
 }

@@ -85,7 +85,7 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 	return pkey;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getString(1);
 	description=result.getString(2);
 	is_mx=result.getBoolean(3);
@@ -111,7 +111,7 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 	return description;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(description);
 	out.writeBoolean(is_mx);

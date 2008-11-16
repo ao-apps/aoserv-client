@@ -321,7 +321,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return transid;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
 	time = result.getTimestamp(pos++).getTime();
 	transid = result.getInt(pos++);
@@ -388,7 +388,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeLong(time);
 	out.writeCompressedInt(transid);
 	out.writeCompressedUTF(accounting, 0);
@@ -400,15 +400,15 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	out.writeCompressedInt(rate);
 	out.writeNullUTF(payment_type);
 	out.writeNullUTF(payment_info);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)<0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
             out.writeNullUTF(null);
         } else {
             out.writeNullUTF(processor);
             out.writeCompressedInt(creditCardTransaction);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_128)<0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)<0) {
             out.writeCompressedInt(-1);
-        } else if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)<0) {
+        } else if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
             out.writeNullUTF(null);
         }
 	out.writeByte(payment_confirmed);

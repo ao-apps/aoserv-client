@@ -143,7 +143,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         return SchemaTable.TableID.HTTPD_TOMCAT_SITES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         version=result.getInt(2);
         use_apache=result.getBoolean(3);
@@ -217,7 +217,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         return use_apache;
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(version);
         out.writeBoolean(use_apache);

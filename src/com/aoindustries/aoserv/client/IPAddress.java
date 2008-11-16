@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
@@ -97,51 +96,41 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     }
 
     public static int getIntForIPAddress(String ipAddress) {
-        Profiler.startProfile(Profiler.UNKNOWN, IPAddress.class, "getIntForIPAddress(String)", null);
-        try {
-            // There must be four octets with . between
-            String[] octets=StringUtility.splitString(ipAddress, '.');
-            if(octets.length!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+        // There must be four octets with . between
+        String[] octets=StringUtility.splitString(ipAddress, '.');
+        if(octets.length!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
 
-            // Each octet should be from 1 to 3 digits, all numbers
-            // and should have a value between 0 and 255 inclusive
-            for(int c=0;c<4;c++) {
-                String tet=octets[c];
-                int tetLen=tet.length();
-                if(tetLen<1 || tetLen>3) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
-                for(int d=0;d<tetLen;d++) {
-                    char ch=tet.charAt(d);
-                    if(ch<'0' || ch>'9') throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
-                }
-                int val=Integer.parseInt(tet);
-                if(val<0 || val>255) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+        // Each octet should be from 1 to 3 digits, all numbers
+        // and should have a value between 0 and 255 inclusive
+        for(int c=0;c<4;c++) {
+            String tet=octets[c];
+            int tetLen=tet.length();
+            if(tetLen<1 || tetLen>3) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+            for(int d=0;d<tetLen;d++) {
+                char ch=tet.charAt(d);
+                if(ch<'0' || ch>'9') throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
             }
-            return
-                (Integer.parseInt(octets[0])<<24)
-                | (Integer.parseInt(octets[1])<<16)
-                | (Integer.parseInt(octets[2])<<8)
-                | (Integer.parseInt(octets[3])&255)
-            ;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+            int val=Integer.parseInt(tet);
+            if(val<0 || val>255) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
         }
+        return
+            (Integer.parseInt(octets[0])<<24)
+            | (Integer.parseInt(octets[1])<<16)
+            | (Integer.parseInt(octets[2])<<8)
+            | (Integer.parseInt(octets[3])&255)
+        ;
     }
 
     public static String getIPAddressForInt(int i) {
-        Profiler.startProfile(Profiler.FAST, IPAddress.class, "getIPAddressForInt(int)", null);
-        try {
-            return
-                ((i>>>24)&255)
-                +"."
-                +((i>>>16)&255)
-                +"."
-                +((i>>>8)&255)
-                +"."
-                +(i&255)
-            ;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return
+            ((i>>>24)&255)
+            +"."
+            +((i>>>16)&255)
+            +"."
+            +((i>>>8)&255)
+            +"."
+            +(i&255)
+        ;
     }
 
     public String getIPAddress() {
@@ -187,7 +176,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return SchemaTable.TableID.IP_ADDRESSES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
         ip_address = result.getString(2);
         net_device = result.getInt(3);
@@ -293,20 +282,20 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(ip_address);
         out.writeCompressedInt(net_device);
         out.writeBoolean(is_alias);
         out.writeUTF(hostname);
         out.writeUTF(packageName);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_122)<=0) out.writeCompressedInt(0);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(0);
         out.writeLong(created);
         out.writeBoolean(available);
         out.writeBoolean(isOverflow);
         out.writeBoolean(isDHCP);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_34)>=0) out.writeNullUTF(externalIpAddress);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(externalIpAddress);
     }
 
     /*

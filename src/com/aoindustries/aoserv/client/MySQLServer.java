@@ -207,7 +207,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	return SchemaTable.TableID.MYSQL_SERVERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	name=result.getString(2);
 	ao_server=result.getInt(3);
@@ -248,14 +248,14 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return name+" on "+getAOServer().getHostname();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(name);
 	out.writeCompressedInt(ao_server);
 	out.writeCompressedInt(version);
         out.writeCompressedInt(max_connections);
         out.writeCompressedInt(net_bind);
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_28)>=0) out.writeUTF(packageName);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0) out.writeUTF(packageName);
     }
 
     final public static class MasterStatus {

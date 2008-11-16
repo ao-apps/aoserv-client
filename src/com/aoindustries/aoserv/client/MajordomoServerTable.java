@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -39,19 +38,14 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         LinuxServerGroup linuxServerGroup,
         MajordomoVersion majordomoVersion
     ) {
-        Profiler.startProfile(Profiler.UNKNOWN, MajordomoServerTable.class, "addMajordomoServer(EmailDomain,LinuxServerAccount,LinuxServerGroup,MajordomoVersion)", null);
-        try {
-            connector.requestUpdateIL(
-                AOServProtocol.CommandID.ADD,
-                SchemaTable.TableID.MAJORDOMO_SERVERS,
-                emailDomain.pkey,
-                linuxServerAccount.pkey,
-                linuxServerGroup.pkey,
-                majordomoVersion.pkey
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        connector.requestUpdateIL(
+            AOServProtocol.CommandID.ADD,
+            SchemaTable.TableID.MAJORDOMO_SERVERS,
+            emailDomain.pkey,
+            linuxServerAccount.pkey,
+            linuxServerGroup.pkey,
+            majordomoVersion.pkey
+        );
     }
 
     public MajordomoServer get(Object pkey) {
@@ -63,20 +57,15 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
     }
 
     List<MajordomoServer> getMajordomoServers(AOServer ao) {
-        Profiler.startProfile(Profiler.UNKNOWN, MajordomoServerTable.class, "getMajordomoServers(AOServer)", null);
-        try {
-            int aoPKey=ao.pkey;
-            List<MajordomoServer> cached=getRows();
-            int size=cached.size();
-            List<MajordomoServer> matches=new ArrayList<MajordomoServer>(size);
-            for(int c=0;c<size;c++) {
-                MajordomoServer ms=cached.get(c);
-                if(ms.getDomain().ao_server==aoPKey) matches.add(ms);
-            }
-            return matches;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        int aoPKey=ao.pkey;
+        List<MajordomoServer> cached=getRows();
+        int size=cached.size();
+        List<MajordomoServer> matches=new ArrayList<MajordomoServer>(size);
+        for(int c=0;c<size;c++) {
+            MajordomoServer ms=cached.get(c);
+            if(ms.getDomain().ao_server==aoPKey) matches.add(ms);
         }
+        return matches;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -84,32 +73,27 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
-        Profiler.startProfile(Profiler.UNKNOWN, MajordomoServerTable.class, "handleCommand(String[],InputStream,TerminalWriter,TerminalWriter,boolean)", null);
-        try {
-            String command=args[0];
-            if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_SERVER)) {
-                if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_SERVER, args, 5, err)) {
-                    connector.simpleAOClient.addMajordomoServer(
-                        args[1],
-                        args[2],
-                        args[3],
-                        args[4],
-                        args[5]
-                    );
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MAJORDOMO_SERVER)) {
-                if(AOSH.checkParamCount(AOSHCommand.REMOVE_MAJORDOMO_SERVER, args, 2, err)) {
-                    connector.simpleAOClient.removeMajordomoServer(
-                        args[1],
-                        args[2]
-                    );
-                }
-                return true;
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_SERVER)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_SERVER, args, 5, err)) {
+                connector.simpleAOClient.addMajordomoServer(
+                    args[1],
+                    args[2],
+                    args[3],
+                    args[4],
+                    args[5]
+                );
             }
-            return false;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MAJORDOMO_SERVER)) {
+            if(AOSH.checkParamCount(AOSHCommand.REMOVE_MAJORDOMO_SERVER, args, 2, err)) {
+                connector.simpleAOClient.removeMajordomoServer(
+                    args[1],
+                    args[2]
+                );
+            }
+            return true;
         }
+        return false;
     }
 }

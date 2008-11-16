@@ -5,16 +5,15 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 
-import junit.framework.*;
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.table.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.security.*;
-import java.util.*;
+import com.aoindustries.util.ErrorHandler;
+import com.aoindustries.util.StandardErrorHandler;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests various aspects of the AOServConnector class.
@@ -149,6 +148,7 @@ public class AOServConnectorTest extends TestCase {
      */
     public void testGetRandom() {
         System.out.println("Testing getRandom");
+        Random random=AOServConnector.getRandom();
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
@@ -157,7 +157,6 @@ public class AOServConnectorTest extends TestCase {
             final int MAX_DEVIATION_PERCENT=10;
             final int MINIMUM=NUM_BYTES/256*(100-MAX_DEVIATION_PERCENT)/100;
             final int MAXIMUM=NUM_BYTES/256*(100+MAX_DEVIATION_PERCENT)/100;
-            Random random=conn.getRandom();
             assertNotNull(random);
             int[] counts=new int[256];
             byte[] byteArray=new byte[1];
@@ -238,7 +237,7 @@ public class AOServConnectorTest extends TestCase {
                 // Make sure index matches table ID
                 // AOServClient version 1.30 had a bug where two tables were swapped
                 if(
-                    AOServProtocol.CURRENT_VERSION.equals(AOServProtocol.VERSION_1_30)
+                    AOServProtocol.Version.CURRENT_VERSION==AOServProtocol.Version.VERSION_1_30
                     && (
                         c==SchemaTable.TableID.AOSERV_PERMISSIONS.ordinal()
                         || c==SchemaTable.TableID.AOSERV_PROTOCOLS.ordinal()
@@ -253,9 +252,9 @@ public class AOServConnectorTest extends TestCase {
                     for(int d=0;d<c;d++) assertNotSame(table, tables[d]);
                 }
             }
-            AOServTable[] allTables=conn.getTables();
-            assertEquals(tables.length, allTables.length);
-            for(int c=0;c<numTables;c++) assertSame(tables[c], allTables[c]);
+            List<AOServTable> allTables=conn.getTables();
+            assertEquals(tables.length, allTables.size());
+            for(int c=0;c<numTables;c++) assertSame(tables[c], allTables.get(c));
         }
     }
 }

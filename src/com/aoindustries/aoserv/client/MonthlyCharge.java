@@ -139,7 +139,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
         return typeObject;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getInt(1);
         accounting = result.getString(2);
 	packageName = result.getString(3);
@@ -173,7 +173,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	return packageName+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
         out.writeUTF(accounting);
 	out.writeUTF(packageName);

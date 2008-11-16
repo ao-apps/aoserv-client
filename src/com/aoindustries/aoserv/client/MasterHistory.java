@@ -159,7 +159,7 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
 	return SchemaTable.TableID.MASTER_HISTORY;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
@@ -182,7 +182,7 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
 	this.table=table;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeLong(command_id);
         out.writeLong(process_id);
         out.writeLong(connector_id);

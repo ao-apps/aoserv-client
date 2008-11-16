@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,21 +33,16 @@ final public class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
     }
 
     OperatingSystemVersion getOperatingSystemVersion(OperatingSystem os, String version, Architecture architecture) {
-        Profiler.startProfile(Profiler.FAST, OperatingSystemVersionTable.class, "getOperatingSystemVersion(OperatingSystem,String,Architecture)", null);
-        try {
-            String name=os.pkey;
-            String arch=architecture.pkey;
-            for(OperatingSystemVersion osv : getRows()) {
-                if(
-                    osv.version_name.equals(name)
-                    && osv.version_number.equals(version)
-                    && osv.architecture.equals(arch)
-                ) return osv;
-            }
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        String name=os.pkey;
+        String arch=architecture.pkey;
+        for(OperatingSystemVersion osv : getRows()) {
+            if(
+                osv.version_name.equals(name)
+                && osv.version_number.equals(version)
+                && osv.architecture.equals(arch)
+            ) return osv;
         }
+        return null;
     }
 
     public OperatingSystemVersion get(Object pkey) {

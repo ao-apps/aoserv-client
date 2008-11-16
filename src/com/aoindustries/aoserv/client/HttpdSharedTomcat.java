@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
@@ -100,12 +99,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public String getInstallDirectory() {
-        Profiler.startProfile(Profiler.FAST, HttpdSharedTomcat.class, "getInstallDirectory()", null);
-        try {
-            return WWW_GROUP_DIR+'/'+name;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return WWW_GROUP_DIR+'/'+name;
     }
 
     public Object getColumn(int i) {
@@ -188,7 +182,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return nb;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey=result.getInt(pos++);
         name=result.getString(pos++);
@@ -267,19 +261,14 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public void setIsManual(boolean isManual) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSharedTomcat.class, "setIsManual(boolean)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
     }
 
     String toStringImpl() {
         return name+" on "+getAOServer().getHostname();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(name);
         out.writeCompressedInt(ao_server);
@@ -288,7 +277,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         out.writeCompressedInt(linux_server_group);
         out.writeBoolean(isSecure);
         out.writeBoolean(isOverflow);
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_30)<=0) {
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);
             out.writeShort(0);

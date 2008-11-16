@@ -116,7 +116,7 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 	return value;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
@@ -131,7 +131,7 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 	this.table=table;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(name);
 	out.writeBoolean(value!=null); if(value!=null) out.writeUTF(value);
 	out.writeUTF(description);

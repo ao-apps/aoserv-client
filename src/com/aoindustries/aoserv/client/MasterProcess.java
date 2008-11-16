@@ -218,7 +218,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 	return SchemaTable.TableID.MASTER_PROCESSES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
@@ -303,7 +303,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         return getCommand();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeLong(process_id);
         out.writeLong(connector_id);
         out.writeNullUTF(authenticated_user);
@@ -311,7 +311,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         out.writeCompressedInt(daemon_server);
         out.writeUTF(host);
         out.writeUTF(protocol);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
         out.writeBoolean(is_secure);
         out.writeLong(connect_time);
         out.writeLong(use_count);

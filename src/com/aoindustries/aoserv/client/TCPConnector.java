@@ -39,6 +39,7 @@ public class TCPConnector extends AOServConnector {
             start();
         }
 
+        @Override
         public void run() {
             try {
                 TCPConnector.this.testConnect();
@@ -63,7 +64,7 @@ public class TCPConnector extends AOServConnector {
                                         boolean foundListener=false;
                                         if(tables!=null) {
                                             for(int c=0;c<numTables;c++) {
-                                                AOServTable table=tables[c];
+                                                AOServTable table=tables.get(c);
                                                 if(table!=null) {
                                                     List listeners=table.tableListeners;
                                                     if(listeners!=null && listeners.size()>0) {
@@ -302,6 +303,7 @@ public class TCPConnector extends AOServConnector {
     /**
      * Start the CacheMonitor when a new table listener is added.
      */
+    @Override
     void addingTableListener() {
         startCacheMonitor();
     }

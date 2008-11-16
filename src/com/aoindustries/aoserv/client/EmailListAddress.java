@@ -62,7 +62,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
 	return SchemaTable.TableID.EMAIL_LIST_ADDRESSES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
 	email_address=result.getInt(2);
 	email_list=result.getInt(3);
@@ -100,7 +100,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
         return getEmailAddress().toString()+"->"+getEmailList().getPath();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeCompressedInt(email_address);
 	out.writeCompressedInt(email_list);

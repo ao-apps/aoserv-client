@@ -57,7 +57,7 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 	return SchemaTable.TableID.HTTPD_BINDS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	httpd_server=result.getInt(2);
     }
@@ -73,7 +73,7 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
         return server.toString()+'|'+bind.toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(httpd_server);
     }

@@ -1,17 +1,16 @@
 package com.aoindustries.aoserv.client;
 
+/*
+ * Copyright 2007-2008 by AO Industries, Inc.,
+ * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
+ * All rights reserved.
+ */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
-
-/*
- * Copyright 2007-2008 by AO Industries, Inc.,
- * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
- * All rights reserved.
- */
 
 /**
  * @see  SignupRequest

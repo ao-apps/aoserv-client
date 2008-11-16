@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 
@@ -51,15 +50,10 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
 
     @Override
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, ActionType.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_TYPE: return pkey;
-                case 1: return description;
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_TYPE: return pkey;
+            case 1: return description;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -75,37 +69,23 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
         return pkey;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, ActionType.class, "initImpl(ResultSet)", null);
-        try {
-            pkey = result.getString(1);
-            description = result.getString(2);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        description = result.getString(2);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, ActionType.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readUTF().intern();
-            description=in.readUTF();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readUTF().intern();
+        description=in.readUTF();
     }
 
+    @Override
     String toStringImpl() {
         return description;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, ActionType.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeUTF(pkey);
-            out.writeUTF(description);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(description);
     }
 }

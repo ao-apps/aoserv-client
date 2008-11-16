@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -187,7 +186,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	return SchemaTable.TableID.POSTGRES_DATABASES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	name=result.getString(2);
 	postgres_server=result.getInt(3);
@@ -240,7 +239,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	return name;
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(name);
 	out.writeCompressedInt(postgres_server);
@@ -248,10 +247,10 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	out.writeCompressedInt(encoding);
 	out.writeBoolean(is_template);
 	out.writeBoolean(allow_conn);
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_30)<=0) {
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);
         }
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_27)>=0) out.writeBoolean(enable_postgis);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_27)>=0) out.writeBoolean(enable_postgis);
     }
 }

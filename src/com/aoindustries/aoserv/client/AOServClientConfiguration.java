@@ -6,10 +6,12 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.AOPool;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * The default client configuration is stored in a properties resource named
@@ -26,28 +28,23 @@ final public class AOServClientConfiguration {
     private static Properties props;
 
     private static String getProperty(String name) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOServClientConfiguration.class, "getProperty(String)", null);
-        try {
-            if (props == null) {
-                synchronized (AOServClientConfiguration.class) {
-		    Properties newProps = new Properties();
-                    if (props == null) {
-                        InputStream in = AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties");
-                        if(in==null) throw new IOException("Unable to find configuration: aoserv-client.properties");
-                        try {
-                            in = new BufferedInputStream(in);
-                            newProps.load(in);
-                        } finally {
-                            in.close();
-                        }
-                        props = newProps;
+        if (props == null) {
+            synchronized (AOServClientConfiguration.class) {
+                Properties newProps = new Properties();
+                if (props == null) {
+                    InputStream in = AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties");
+                    if(in==null) throw new IOException("Unable to find configuration: aoserv-client.properties");
+                    try {
+                        in = new BufferedInputStream(in);
+                        newProps.load(in);
+                    } finally {
+                        in.close();
                     }
+                    props = newProps;
                 }
             }
-            return props.getProperty(name);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
         }
+        return props.getProperty(name);
     }
 
     /**

@@ -97,7 +97,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
         return SchemaTable.TableID.PRIVATE_FTP_SERVERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
         root = result.getString(2);
         logfile = result.getString(3);
@@ -125,14 +125,14 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
         return hostname;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_113)<0) throw new IOException("PrivateFTPServer on AOServProtocol version less than "+AOServProtocol.VERSION_1_0_A_113+" is no longer supported.  Please upgrade your AOServ Client software packages.");
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_113)<0) throw new IOException("PrivateFTPServer on AOServProtocol version less than "+AOServProtocol.Version.VERSION_1_0_A_113.getVersion()+" is no longer supported.  Please upgrade your AOServ Client software packages.");
         out.writeCompressedInt(pkey);
         out.writeUTF(root);
         out.writeUTF(logfile);
         out.writeUTF(hostname);
         out.writeUTF(email);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
         out.writeLong(created);
         out.writeCompressedInt(pub_linux_server_account);
         out.writeCompressedInt(pub_linux_server_group);

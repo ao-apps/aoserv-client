@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -41,27 +40,17 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     long created;
 
     public List<LinuxServerAccount> getAlternateLinuxServerAccounts() {
-        Profiler.startProfile(Profiler.FAST, LinuxServerGroup.class, "getAlternateLinuxServerAccounts()", null);
-        try {
-            return table.connector.linuxServerAccounts.getAlternateLinuxServerAccounts(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.linuxServerAccounts.getAlternateLinuxServerAccounts(this);
     }
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, LinuxServerGroup.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_PKEY: return Integer.valueOf(pkey);
-                case COLUMN_NAME: return name;
-                case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
-                case 3: return Integer.valueOf(gid);
-                case 4: return new java.sql.Date(created);
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_NAME: return name;
+            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
+            case 3: return Integer.valueOf(gid);
+            case 4: return new java.sql.Date(created);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -82,118 +71,88 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     }
 
     public AOServer getAOServer() {
-        Profiler.startProfile(Profiler.FAST, LinuxServerGroup.class, "getAOServer()", null);
-        try {
-            AOServer ao=table.connector.aoServers.get(ao_server);
-            if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
-            return ao;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        AOServer ao=table.connector.aoServers.get(ao_server);
+        if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+        return ao;
     }
 
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.LINUX_SERVER_GROUPS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, LinuxServerGroup.class, "initImpl(ResultSet)", null);
-        try {
-            pkey = result.getInt(1);
-            name = result.getString(2);
-            ao_server = result.getInt(3);
-            gid = result.getInt(4);
-            created = result.getTimestamp(5).getTime();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getInt(1);
+        name = result.getString(2);
+        ao_server = result.getInt(3);
+        gid = result.getInt(4);
+        created = result.getTimestamp(5).getTime();
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, LinuxServerGroup.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readCompressedInt();
-            name=in.readUTF().intern();
-            ao_server=in.readCompressedInt();
-            gid=in.readCompressedInt();
-            created=in.readLong();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readCompressedInt();
+        name=in.readUTF().intern();
+        ao_server=in.readCompressedInt();
+        gid=in.readCompressedInt();
+        created=in.readLong();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxServerGroup.class, "getCannotRemoveReasons()", null);
-        try {
-            List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+        List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-            AOServer ao=getAOServer();
+        AOServer ao=getAOServer();
 
-            for(CvsRepository cr : ao.getCvsRepositories()) {
-                if(cr.linux_server_group==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
-            }
-
-            for(EmailList el : table.connector.emailLists.getRows()) {
-                if(el.linux_server_group==pkey) reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
-            }
-
-            for(HttpdServer hs : ao.getHttpdServers()) {
-                if(hs.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdServer>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hs));
-            }
-
-            for(HttpdSharedTomcat hst : ao.getHttpdSharedTomcats()) {
-                if(hst.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
-            }
-
-            // httpd_sites
-            for(HttpdSite site : ao.getHttpdSites()) {
-                if(site.linuxGroup.equals(name)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
-            }
-
-            for(MajordomoServer ms : ao.getMajordomoServers()) {
-                if(ms.linux_server_group==pkey) {
-                    EmailDomain ed=ms.getDomain();
-                    reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
-                }
-            }
-
-            for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
-                if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
-            }
-
-            return reasons;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        for(CvsRepository cr : ao.getCvsRepositories()) {
+            if(cr.linux_server_group==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
         }
+
+        for(EmailList el : table.connector.emailLists.getRows()) {
+            if(el.linux_server_group==pkey) reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
+        }
+
+        for(HttpdServer hs : ao.getHttpdServers()) {
+            if(hs.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdServer>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hs));
+        }
+
+        for(HttpdSharedTomcat hst : ao.getHttpdSharedTomcats()) {
+            if(hst.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+        }
+
+        // httpd_sites
+        for(HttpdSite site : ao.getHttpdSites()) {
+            if(site.linuxGroup.equals(name)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
+        }
+
+        for(MajordomoServer ms : ao.getMajordomoServers()) {
+            if(ms.linux_server_group==pkey) {
+                EmailDomain ed=ms.getDomain();
+                reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
+            }
+        }
+
+        for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
+            if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
+        }
+
+        return reasons;
     }
 
     public void remove() {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxServerGroup.class, "remove()", null);
-        try {
-            table.connector.requestUpdateIL(
-                AOServProtocol.CommandID.REMOVE,
-                SchemaTable.TableID.LINUX_SERVER_GROUPS,
-                pkey
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.REMOVE,
+            SchemaTable.TableID.LINUX_SERVER_GROUPS,
+            pkey
+        );
     }
 
     String toStringImpl() {
         return name;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, LinuxServerGroup.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeCompressedInt(pkey);
-            out.writeUTF(name);
-            out.writeCompressedInt(ao_server);
-            out.writeCompressedInt(gid);
-            out.writeLong(created);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(name);
+        out.writeCompressedInt(ao_server);
+        out.writeCompressedInt(gid);
+        out.writeLong(created);
     }
 }

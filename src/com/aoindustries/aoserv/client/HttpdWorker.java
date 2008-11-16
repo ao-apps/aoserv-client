@@ -85,7 +85,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
 	return SchemaTable.TableID.HTTPD_WORKERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	code=result.getString(2);
 	net_bind=result.getInt(3);
@@ -104,7 +104,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
 	return pkey+"|"+code;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(code);
 	out.writeCompressedInt(net_bind);

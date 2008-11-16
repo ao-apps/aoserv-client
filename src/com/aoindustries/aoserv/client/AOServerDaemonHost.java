@@ -55,7 +55,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 	return SchemaTable.TableID.AO_SERVER_DAEMON_HOSTS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	aoServer=result.getInt(2);
 	host=result.getString(3);
@@ -71,7 +71,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 	return aoServer+'|'+host;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(aoServer);
 	out.writeUTF(host);

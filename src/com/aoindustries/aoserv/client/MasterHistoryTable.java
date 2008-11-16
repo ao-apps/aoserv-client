@@ -5,11 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  MasterHistory
@@ -30,7 +27,7 @@ final public class MasterHistoryTable extends AOServTable<Long,MasterHistory> {
     }
 
     public MasterHistory get(Object commandID) {
-        return get((Long)commandID);
+        return get(((Long)commandID).longValue());
     }
 
     public MasterHistory get(long commandID) {

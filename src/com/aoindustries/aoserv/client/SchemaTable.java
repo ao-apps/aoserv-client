@@ -5,13 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.StringUtility;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * A <code>Resource</code> wraps all the data for an entry in the resource table.
@@ -58,6 +60,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         CVS_REPOSITORIES,
         DAEMON_PROFILE,
         DISABLE_LOG,
+        DISK_TYPES,
         DISTRO_FILE_TYPES,
         DISTRO_FILES,
         DNS_FORBIDDEN_ZONES,
@@ -147,6 +150,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         PACKAGE_DEFINITIONS,
         PACKAGES,
         PAYMENT_TYPES,
+        PHYSICAL_SERVERS,
         POSTGRES_DATABASES,
         POSTGRES_ENCODINGS,
         POSTGRES_RESERVED_WORDS,
@@ -155,7 +159,10 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         POSTGRES_USERS,
         POSTGRES_VERSIONS,
         PRIVATE_FTP_SERVERS,
+        PROCESSOR_TYPES,
         PROTOCOLS,
+        RACKS,
+        RAID_TYPES,
         RESOURCES,
         SCHEMA_COLUMNS,
         SCHEMA_FOREIGN_KEYS,
@@ -181,6 +188,8 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         TRANSACTIONS,
         US_STATES,
         USERNAMES,
+        VIRTUAL_DISKS,
+        VIRTUAL_SERVERS,
         WHOIS_HISTORY
     }
 
@@ -225,29 +234,19 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
     }
 
     public List<AOSHCommand> getAOSHCommands(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getAOSHCommands(AOServConnector)", null);
-        try {
-            return connector.aoshCommands.getAOSHCommands(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return connector.aoshCommands.getAOSHCommands(this);
     }
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_NAME: return name;
-                case 1: return Integer.valueOf(pkey);
-                case 2: return display;
-                case 3: return is_public?Boolean.TRUE:Boolean.FALSE;
-                case 4: return description;
-                case 5: return since_version;
-                case 6: return last_version;
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_NAME: return name;
+            case 1: return Integer.valueOf(pkey);
+            case 2: return display;
+            case 3: return is_public?Boolean.TRUE:Boolean.FALSE;
+            case 4: return description;
+            case 5: return since_version;
+            case 6: return last_version;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -277,39 +276,19 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
     }
 
     public SchemaColumn getSchemaColumn(AOServConnector connector, String name) {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getSchemaColumn(AOServConnector,String)", null);
-        try {
-            return connector.schemaColumns.getSchemaColumn(this, name);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return connector.schemaColumns.getSchemaColumn(this, name);
     }
 
     public SchemaColumn getSchemaColumn(AOServConnector connector, int index) {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getSchemaColumn(AOServConnector,int)", null);
-        try {
-            return connector.schemaColumns.getSchemaColumn(this, index);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return connector.schemaColumns.getSchemaColumn(this, index);
     }
 
     public List<SchemaColumn> getSchemaColumns(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getSchemaColumns(AOServConnector)", null);
-        try {
-            return connector.schemaColumns.getSchemaColumns(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return connector.schemaColumns.getSchemaColumns(this);
     }
 
     public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "getSchemaForeignKeys(AOServConnector)", null);
-        try {
-            return connector.schemaForeignKeys.getSchemaForeignKeys(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return connector.schemaForeignKeys.getSchemaForeignKeys(this);
     }
 
     public TableID getTableID() {
@@ -320,19 +299,14 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         return pkey;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, SchemaTable.class, "initImpl(ResultSet)", null);
-        try {
-            name=result.getString(1);
-            pkey=result.getInt(2);
-            display=result.getString(3);
-            is_public=result.getBoolean(4);
-            description=result.getString(5);
-            since_version=result.getString(6);
-            last_version=result.getString(7);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        name=result.getString(1);
+        pkey=result.getInt(2);
+        display=result.getString(3);
+        is_public=result.getBoolean(4);
+        description=result.getString(5);
+        since_version=result.getString(6);
+        last_version=result.getString(7);
     }
 
     public boolean isPublic() {
@@ -340,117 +314,102 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
     }
 
     public void printDescription(AOServConnector connector, TerminalWriter out, boolean isInteractive) throws IOException {
-        Profiler.startProfile(Profiler.IO, SchemaTable.class, "printDescription(AOServConnector,TerminalWriter,boolean)", null);
-        try {
+        out.println();
+        out.boldOn();
+        out.print("TABLE NAME");
+        out.attributesOff();
+        out.println();
+        out.print("       ");
+        out.println(name);
+        if(description!=null && description.length()>0) {
             out.println();
             out.boldOn();
-            out.print("TABLE NAME");
+            out.print("DESCRIPTION");
             out.attributesOff();
             out.println();
             out.print("       ");
-            out.println(name);
-            if(description!=null && description.length()>0) {
-                out.println();
-                out.boldOn();
-                out.print("DESCRIPTION");
-                out.attributesOff();
-                out.println();
-                out.print("       ");
-                out.println(description);
-            }
-            out.println();
-            out.boldOn();
-            out.print("COLUMNS");
-            out.attributesOff();
-            out.println();
-            out.println();
-
-            // Get the list of columns
-            List<SchemaColumn> columns=getSchemaColumns(connector);
-            int len=columns.size();
-
-            // Build the Object[] of values
-            Object[] values=new Object[len*7];
-            int pos=0;
-            for(int c=0;c<len;c++) {
-                SchemaColumn column=columns.get(c);
-                values[pos++]=column.column_name;
-                values[pos++]=column.getSchemaType(connector).getType();
-                values[pos++]=column.isNullable()?"true":"false";
-                values[pos++]=column.isUnique()?"true":"false";
-                List<SchemaForeignKey> fkeys=column.getReferences(connector);
-                if(!fkeys.isEmpty()) {
-                    StringBuilder SB=new StringBuilder();
-                    for(int d=0;d<fkeys.size();d++) {
-                        SchemaForeignKey key=fkeys.get(d);
-                        if(d>0) SB.append('\n');
-                        SchemaColumn other=key.getForeignColumn(connector);
-                        SB
-                            .append(other.getSchemaTable(connector).getName())
-                            .append('.')
-                            .append(other.column_name)
-                        ;
-                    }
-                    values[pos++]=SB.toString();
-                } else values[pos++]=null;
-
-                fkeys=column.getReferencedBy(connector);
-                if(!fkeys.isEmpty()) {
-                    StringBuilder SB=new StringBuilder();
-                    for(int d=0;d<fkeys.size();d++) {
-                        SchemaForeignKey key=fkeys.get(d);
-                        if(d>0) SB.append('\n');
-                        SchemaColumn other=key.getKeyColumn(connector);
-                        SB
-                            .append(other.getSchemaTable(connector).getName())
-                            .append('.')
-                            .append(other.column_name)
-                        ;
-                    }
-                    values[pos++]=SB.toString();
-                } else values[pos++]=null;
-                values[pos++]=column.getDescription();
-            }
-
-            // Display the results
-            SQLUtility.printTable(descColumns, values, out, isInteractive, descRightAligns);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+            out.println(description);
         }
+        out.println();
+        out.boldOn();
+        out.print("COLUMNS");
+        out.attributesOff();
+        out.println();
+        out.println();
+
+        // Get the list of columns
+        List<SchemaColumn> columns=getSchemaColumns(connector);
+        int len=columns.size();
+
+        // Build the Object[] of values
+        Object[] values=new Object[len*7];
+        int pos=0;
+        for(int c=0;c<len;c++) {
+            SchemaColumn column=columns.get(c);
+            values[pos++]=column.column_name;
+            values[pos++]=column.getSchemaType(connector).getType();
+            values[pos++]=column.isNullable()?"true":"false";
+            values[pos++]=column.isUnique()?"true":"false";
+            List<SchemaForeignKey> fkeys=column.getReferences(connector);
+            if(!fkeys.isEmpty()) {
+                StringBuilder SB=new StringBuilder();
+                for(int d=0;d<fkeys.size();d++) {
+                    SchemaForeignKey key=fkeys.get(d);
+                    if(d>0) SB.append('\n');
+                    SchemaColumn other=key.getForeignColumn(connector);
+                    SB
+                        .append(other.getSchemaTable(connector).getName())
+                        .append('.')
+                        .append(other.column_name)
+                    ;
+                }
+                values[pos++]=SB.toString();
+            } else values[pos++]=null;
+
+            fkeys=column.getReferencedBy(connector);
+            if(!fkeys.isEmpty()) {
+                StringBuilder SB=new StringBuilder();
+                for(int d=0;d<fkeys.size();d++) {
+                    SchemaForeignKey key=fkeys.get(d);
+                    if(d>0) SB.append('\n');
+                    SchemaColumn other=key.getKeyColumn(connector);
+                    SB
+                        .append(other.getSchemaTable(connector).getName())
+                        .append('.')
+                        .append(other.column_name)
+                    ;
+                }
+                values[pos++]=SB.toString();
+            } else values[pos++]=null;
+            values[pos++]=column.getDescription();
+        }
+
+        // Display the results
+        SQLUtility.printTable(descColumns, values, out, isInteractive, descRightAligns);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, SchemaTable.class, "read(CompressedDataInputStream)", null);
-        try {
-            name=in.readUTF().intern();
-            pkey=in.readCompressedInt();
-            display=in.readUTF();
-            is_public=in.readBoolean();
-            description=in.readUTF();
-            since_version=in.readUTF().intern();
-            last_version=StringUtility.intern(in.readNullUTF());
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        name=in.readUTF().intern();
+        pkey=in.readCompressedInt();
+        display=in.readUTF();
+        is_public=in.readBoolean();
+        description=in.readUTF();
+        since_version=in.readUTF().intern();
+        last_version=StringUtility.intern(in.readNullUTF());
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, SchemaTable.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeUTF(name);
-            out.writeCompressedInt(pkey);
-            out.writeUTF(display);
-            out.writeBoolean(is_public);
-            out.writeUTF(description);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeNullUTF(null); // dataverse_editor
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
-            if(
-                AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0
-                && AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0
-            ) out.writeNullUTF(null); // default_order_by
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(name);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(display);
+        out.writeBoolean(is_public);
+        out.writeUTF(description);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeNullUTF(null); // dataverse_editor
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
+        if(
+            version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0
+            && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
+        ) out.writeNullUTF(null); // default_order_by
     }
 }

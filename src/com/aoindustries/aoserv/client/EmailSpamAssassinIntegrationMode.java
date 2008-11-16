@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -38,16 +37,11 @@ public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKe
     private int sort_order;
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, EmailSpamAssassinIntegrationMode.class, "getColValueImpl()", null);
-        try {
-            switch(i) {
-                case COLUMN_NAME: return pkey;
-                case 1: return display;
-                case 2: return Integer.valueOf(sort_order);
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case 1: return display;
+            case 2: return Integer.valueOf(sort_order);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -67,36 +61,21 @@ public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKe
         return SchemaTable.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
     }
 
-    void initImpl(ResultSet results) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, EmailSpamAssassinIntegrationMode.class, "initImpl(ResultSet)", null);
-        try {
-            pkey=results.getString(1);
-            display=results.getString(2);
-            sort_order=results.getInt(3);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet results) throws SQLException {
+        pkey=results.getString(1);
+        display=results.getString(2);
+        sort_order=results.getInt(3);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, EmailSpamAssassinIntegrationMode.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readUTF().intern();
-            display=in.readUTF();
-            sort_order=in.readCompressedInt();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readUTF().intern();
+        display=in.readUTF();
+        sort_order=in.readCompressedInt();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, EmailSpamAssassinIntegrationMode.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeUTF(pkey);
-            out.writeUTF(display);
-            out.writeCompressedInt(sort_order);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(display);
+        out.writeCompressedInt(sort_order);
     }
 }

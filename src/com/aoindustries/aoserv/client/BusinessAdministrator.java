@@ -399,7 +399,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return false;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	password = result.getString(2).trim();
         name = result.getString(3);
@@ -562,7 +562,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         }
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(password);
 	out.writeUTF(name);
@@ -583,7 +583,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	out.writeNullUTF(country);
 	out.writeNullUTF(zip);
         out.writeCompressedInt(disable_log);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_118)>=0) out.writeBoolean(can_switch_users);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)>=0) out.writeBoolean(can_switch_users);
     }
 
     /**

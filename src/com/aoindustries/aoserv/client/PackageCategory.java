@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -40,15 +39,10 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
     private String display;
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, PackageCategory.class, "getColValueImpl()", null);
-        try {
-            switch(i) {
-                case COLUMN_NAME: return pkey;
-                case 1: return display;
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case 1: return display;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -64,37 +58,22 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
         return SchemaTable.TableID.PACKAGE_CATEGORIES;
     }
 
-    void initImpl(ResultSet results) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, PackageCategory.class, "initImpl(ResultSet)", null);
-        try {
-            pkey=results.getString(1);
-            display=results.getString(2);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet results) throws SQLException {
+        pkey=results.getString(1);
+        display=results.getString(2);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, PackageCategory.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readUTF().intern();
-            display=in.readUTF();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readUTF().intern();
+        display=in.readUTF();
     }
 
     String toStringImpl() {
         return display;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, PackageCategory.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeUTF(pkey);
-            out.writeUTF(display);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(display);
     }
 }

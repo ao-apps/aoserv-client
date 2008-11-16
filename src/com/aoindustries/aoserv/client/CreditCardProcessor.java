@@ -124,7 +124,7 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
 	return SchemaTable.TableID.CREDIT_CARD_PROCESSORS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
 	pkey = result.getString(pos++);
 	accounting = result.getString(pos++);
@@ -157,7 +157,7 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
         encryption_recipient = in.readCompressedInt();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(accounting);
         out.writeUTF(className);
@@ -168,7 +168,7 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
         out.writeBoolean(enabled);
         out.writeCompressedInt(weight);
         out.writeNullUTF(description);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
             out.writeCompressedInt(encryption_from);
             out.writeCompressedInt(encryption_recipient);
         }

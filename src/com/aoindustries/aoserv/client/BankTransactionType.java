@@ -55,7 +55,7 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
 	return SchemaTable.TableID.BANK_TRANSACTION_TYPES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	display = result.getString(2);
 	description = result.getString(3);
@@ -77,7 +77,7 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
 	return display;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(display);
 	out.writeUTF(description);

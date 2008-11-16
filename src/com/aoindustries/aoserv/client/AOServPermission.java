@@ -102,7 +102,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         return pkey;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey = result.getString(1);
         sort_order = result.getShort(2);
     }
@@ -116,7 +116,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         return pkey;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
         out.writeShort(sort_order);
     }

@@ -173,7 +173,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	return SchemaTable.TableID.MYSQL_SERVER_USERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	username=result.getString(2);
 	mysql_server=result.getInt(3);
@@ -283,20 +283,20 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         return username+" on "+getMySQLServer().toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(username);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)<0) out.writeCompressedInt(-1);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
         else out.writeCompressedInt(mysql_server);
 	out.writeNullUTF(host);
         out.writeCompressedInt(disable_log);
         out.writeNullUTF(predisable_password);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {
             out.writeCompressedInt(max_questions);
             out.writeCompressedInt(max_updates);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_111)>=0) out.writeCompressedInt(max_connections);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) out.writeCompressedInt(max_user_connections);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) out.writeCompressedInt(max_connections);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) out.writeCompressedInt(max_user_connections);
     }
 
     public boolean canSetPassword() {

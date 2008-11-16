@@ -130,7 +130,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 	return SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	httpd_site=result.getInt(2);
         path=result.getString(3);
@@ -181,7 +181,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         return site.toString()+':'+path;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(httpd_site);
         out.writeCompressedUTF(path, 0);

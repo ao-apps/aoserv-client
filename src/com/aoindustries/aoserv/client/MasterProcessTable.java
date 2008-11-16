@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
@@ -30,7 +29,7 @@ final public class MasterProcessTable extends AOServTable<Long,MasterProcess> {
     }
 
     public MasterProcess get(Object pid) {
-        return get((Long)pid);
+        return get(((Long)pid).longValue());
     }
 
     public MasterProcess get(long pid) {

@@ -96,7 +96,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	return obj;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	create_time=result.getTimestamp(2).getTime();
 	accounting=result.getString(3);
@@ -123,7 +123,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	return pkey+"|"+accounting+'|'+SQLUtility.getDecimal(balance)+'|'+notice_type;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeLong(create_time);
 	out.writeUTF(accounting);

@@ -52,7 +52,7 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 	return pkey;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getString(1);
 	created=result.getTimestamp(2).getTime();
     }
@@ -62,7 +62,7 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 	created=in.readLong();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeUTF(pkey);
 	out.writeLong(created);
     }

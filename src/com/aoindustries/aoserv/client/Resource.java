@@ -94,7 +94,7 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	return per_unit;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	singular_display_unit = result.getString(2);
 	plural_display_unit = result.getString(3);
@@ -114,10 +114,10 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	return description;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(singular_display_unit);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_123)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0) {
             out.writeUTF(plural_display_unit);
             out.writeUTF(per_unit);
         }

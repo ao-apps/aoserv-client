@@ -41,7 +41,7 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
 	return SchemaTable.TableID.HTTPD_STATIC_SITES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
     }
 
@@ -53,7 +53,7 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
         return getHttpdSite().toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
     }
 }

@@ -5,11 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>SchemaForeignKey</code> represents when a column in one
@@ -35,41 +37,26 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
     private String last_version;
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, SchemaForeignKey.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_PKEY: return Integer.valueOf(pkey);
-                case 1: return Integer.valueOf(key_column);
-                case 2: return Integer.valueOf(foreign_column);
-                case 3: return since_version;
-                case 4: return last_version;
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return Integer.valueOf(key_column);
+            case 2: return Integer.valueOf(foreign_column);
+            case 3: return since_version;
+            case 4: return last_version;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
     public SchemaColumn getForeignColumn(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, SchemaForeignKey.class, "getForeignColumn(AOServConnector)", null);
-        try {
-            SchemaColumn obj=connector.schemaColumns.get(foreign_column);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+foreign_column));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        SchemaColumn obj=connector.schemaColumns.get(foreign_column);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+foreign_column));
+        return obj;
     }
 
     public SchemaColumn getKeyColumn(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, SchemaForeignKey.class, "getKeyColumn(AOServConnector)", null);
-        try {
-            SchemaColumn obj=connector.schemaColumns.get(key_column);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+key_column));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        SchemaColumn obj=connector.schemaColumns.get(key_column);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+key_column));
+        return obj;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -84,46 +71,31 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
         return last_version;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, SchemaForeignKey.class, "initImpl(ResultSet)", null);
-        try {
-            pkey = result.getInt(1);
-            key_column = result.getInt(2);
-            foreign_column = result.getInt(3);
-            since_version=result.getString(4);
-            last_version=result.getString(5);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getInt(1);
+        key_column = result.getInt(2);
+        foreign_column = result.getInt(3);
+        since_version=result.getString(4);
+        last_version=result.getString(5);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, SchemaForeignKey.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey = in.readCompressedInt();
-            key_column = in.readCompressedInt();
-            foreign_column = in.readCompressedInt();
-            since_version=in.readUTF().intern();
-            last_version=StringUtility.intern(in.readNullUTF());
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey = in.readCompressedInt();
+        key_column = in.readCompressedInt();
+        foreign_column = in.readCompressedInt();
+        since_version=in.readUTF().intern();
+        last_version=StringUtility.intern(in.readNullUTF());
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, SchemaForeignKey.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeCompressedInt(pkey);
-            out.writeCompressedInt(key_column);
-            out.writeCompressedInt(foreign_column);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
-                out.writeBoolean(false); // is_bridge
-                out.writeCompressedInt(-1); // tied_bridge
-            }
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(key_column);
+        out.writeCompressedInt(foreign_column);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+            out.writeBoolean(false); // is_bridge
+            out.writeCompressedInt(-1); // tied_bridge
         }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
     }
 }

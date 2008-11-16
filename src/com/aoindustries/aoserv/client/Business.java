@@ -996,7 +996,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         }
     }
 
-     void initImpl(ResultSet result) throws SQLException {
+     public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	contractVersion = result.getString(2);
 	created = result.getTimestamp(3).getTime();
@@ -1036,17 +1036,17 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
 	out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
 	out.writeLong(created);
 	out.writeLong(canceled);
 	out.writeNullUTF(cancelReason);
         out.writeNullUTF(parent);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
 	out.writeBoolean(can_add_businesses);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_103)>=0) out.writeBoolean(can_see_prices);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) out.writeBoolean(can_see_prices);
         out.writeCompressedInt(disable_log);
         out.writeNullUTF(do_not_disable_reason);
         out.writeBoolean(auto_enable);

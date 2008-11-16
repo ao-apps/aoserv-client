@@ -52,7 +52,7 @@ public final class EmailAttachmentType extends GlobalObjectStringKey<EmailAttach
 	return SchemaTable.TableID.EMAIL_ATTACHMENT_TYPES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getString(1);
         description=result.getString(2);
         is_default_block=result.getBoolean(3);
@@ -64,7 +64,7 @@ public final class EmailAttachmentType extends GlobalObjectStringKey<EmailAttach
         is_default_block=in.readBoolean();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
         out.writeUTF(description);
         out.writeBoolean(is_default_block);

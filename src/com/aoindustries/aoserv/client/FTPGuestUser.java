@@ -45,7 +45,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
 	return SchemaTable.TableID.FTP_GUEST_USERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
     }
 
@@ -65,7 +65,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
 	);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
     }
 }

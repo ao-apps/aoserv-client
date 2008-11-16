@@ -110,7 +110,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
 	return SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         tomcat_context=result.getInt(2);
         name=result.getString(3);
@@ -168,7 +168,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         );
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(tomcat_context);
         out.writeUTF(name);

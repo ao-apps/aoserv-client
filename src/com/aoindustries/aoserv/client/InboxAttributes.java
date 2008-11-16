@@ -66,7 +66,16 @@ final public class InboxAttributes implements Streamable {
         lastModified=in.readLong();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    /**
+     * @deprecated  This is maintained only for compatibility with the <code>Streamable</code> interface.
+     * 
+     * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
+     */
+    final public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+        write(out, AOServProtocol.Version.getVersion(protocolVersion));
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
         out.writeLong(systemTime);
         out.writeLong(fileSize);
         out.writeLong(lastModified);

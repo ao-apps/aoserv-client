@@ -40,7 +40,12 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     private String broadcast;
     private String mac_address;
     private long max_bit_rate;
+    private long monitoring_bit_rate_low;
+    private long monitoring_bit_rate_medium;
+    private long monitoring_bit_rate_high;
+    private long monitoring_bit_rate_critical;
 
+    @Override
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
@@ -54,6 +59,10 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
             case 8: return broadcast;
             case 9: return mac_address;
             case 10: return max_bit_rate==-1 ? null : Long.valueOf(max_bit_rate);
+            case 11: return monitoring_bit_rate_low==-1 ? null : Long.valueOf(monitoring_bit_rate_low);
+            case 12: return monitoring_bit_rate_medium==-1 ? null : Long.valueOf(monitoring_bit_rate_medium);
+            case 13: return monitoring_bit_rate_high==-1 ? null : Long.valueOf(monitoring_bit_rate_high);
+            case 14: return monitoring_bit_rate_critical==-1 ? null : Long.valueOf(monitoring_bit_rate_critical);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -100,8 +109,45 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
         return mac_address;
     }
     
+    /**
+     * Gets the maximum bit rate this interface can support or <code>-1</code>
+     * if unknown.
+     */
     public long getMaxBitRate() {
         return max_bit_rate;
+    }
+
+    /**
+     * Gets the 5-minute average that is considered a low-priority alert or
+     * <code>-1</code> if no alert allowed at this level.
+     */
+    public long getMonitoringBitRateLow() {
+        return monitoring_bit_rate_low;
+    }
+
+    /**
+     * Gets the 5-minute average that is considered a medium-priority alert or
+     * <code>-1</code> if no alert allowed at this level.
+     */
+    public long getMonitoringBitRateMedium() {
+        return monitoring_bit_rate_medium;
+    }
+
+    /**
+     * Gets the 5-minute average that is considered a high-priority alert or
+     * <code>-1</code> if no alert allowed at this level.
+     */
+    public long getMonitoringBitRateHigh() {
+        return monitoring_bit_rate_high;
+    }
+
+    /**
+     * Gets the 5-minute average that is considered a critical-priority alert or
+     * <code>-1</code> if no alert allowed at this level.  This is the level
+     * that will alert people 24x7.
+     */
+    public long getMonitoringBitRateCritical() {
+        return monitoring_bit_rate_critical;
     }
 
     public IPAddress getPrimaryIPAddress() {
@@ -122,25 +168,37 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	return se;
     }
 
+    @Override
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.NET_DEVICES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	server=result.getInt(2);
-	device_id=result.getString(3);
-	description=result.getString(4);
-	delete_route=result.getString(5);
-	gateway=result.getString(6);
-	netmask=result.getString(7);
-        network=result.getString(8);
-        broadcast=result.getString(9);
-        mac_address=result.getString(10);
-        max_bit_rate=result.getLong(11);
+    @Override
+    public void init(ResultSet result) throws SQLException {
+        int pos = 1;
+	pkey=result.getInt(pos++);
+	server=result.getInt(pos++);
+	device_id=result.getString(pos++);
+	description=result.getString(pos++);
+	delete_route=result.getString(pos++);
+	gateway=result.getString(pos++);
+	netmask=result.getString(pos++);
+        network=result.getString(pos++);
+        broadcast=result.getString(pos++);
+        mac_address=result.getString(pos++);
+        max_bit_rate=result.getLong(pos++);
         if(result.wasNull()) max_bit_rate=-1;
+        monitoring_bit_rate_low = result.getLong(pos++);
+        if(result.wasNull()) monitoring_bit_rate_low = -1;
+        monitoring_bit_rate_medium = result.getLong(pos++);
+        if(result.wasNull()) monitoring_bit_rate_medium = -1;
+        monitoring_bit_rate_high = result.getLong(pos++);
+        if(result.wasNull()) monitoring_bit_rate_high = -1;
+        monitoring_bit_rate_critical = result.getLong(pos++);
+        if(result.wasNull()) monitoring_bit_rate_critical = -1;
     }
 
+    @Override
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
 	server=in.readCompressedInt();
@@ -153,6 +211,10 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
         broadcast=StringUtility.intern(in.readNullUTF());
         mac_address=in.readNullUTF();
         max_bit_rate=in.readLong();
+        monitoring_bit_rate_low = in.readLong();
+        monitoring_bit_rate_medium = in.readLong();
+        monitoring_bit_rate_high = in.readLong();
+        monitoring_bit_rate_critical = in.readLong();
     }
 
     @Override
@@ -160,7 +222,8 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
         return getServer().toString()+'|'+device_id;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    @Override
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(server);
 	out.writeUTF(device_id);
@@ -168,15 +231,21 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	out.writeNullUTF(delete_route);
 	out.writeNullUTF(gateway);
 	out.writeUTF(netmask);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_112)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_112)>=0) {
             out.writeNullUTF(network);
             out.writeNullUTF(broadcast);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_128)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)>=0) {
             out.writeNullUTF(mac_address);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_2)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) {
             out.writeLong(max_bit_rate);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
+            out.writeLong(monitoring_bit_rate_low);
+            out.writeLong(monitoring_bit_rate_medium);
+            out.writeLong(monitoring_bit_rate_high);
+            out.writeLong(monitoring_bit_rate_critical);
         }
     }
 
@@ -185,7 +254,15 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
      * or <code>null</code> if not a bonded device.
      */
     public String getBondingReport() {
-        if(!device_id.equals(NetDeviceID.BOND0)) return null;
+        if(!device_id.startsWith("bond")) return null;
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
+    }
+    
+    /**
+     * Gets the report from <code>/sys/class/net/<i>device</i>/statistics/...</code>
+     * or <code>null</code> if not an AOServer.
+     */
+    public String getStatisticsReport() {
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_NET_DEVICE_STATISTICS_REPORT, pkey);
     }
 }

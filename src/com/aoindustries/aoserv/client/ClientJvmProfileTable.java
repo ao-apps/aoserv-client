@@ -5,7 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
+import com.aoindustries.profiler.MethodProfile;
+import com.aoindustries.profiler.Profiler;
 import java.io.*;
 import java.sql.*;
 import java.util.*;

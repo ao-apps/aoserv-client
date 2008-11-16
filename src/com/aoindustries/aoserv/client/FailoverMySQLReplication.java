@@ -57,7 +57,7 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 	return SchemaTable.TableID.FAILOVER_MYSQL_REPLICATIONS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         replication=result.getInt(2);
         mysql_server=result.getInt(3);
@@ -73,7 +73,7 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         return getMySQLServer().getName()+", "+getFailoverFileReplication().toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(replication);
         out.writeCompressedInt(mysql_server);

@@ -109,7 +109,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 	return SchemaTable.TableID.POSTGRES_SERVER_USERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	username=result.getString(2);
 	postgres_server=result.getInt(3);
@@ -216,11 +216,11 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         return username+" on "+getPostgresServer().toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(username);
 	out.writeCompressedInt(postgres_server);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_130)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)<=0) {
             out.writeCompressedInt(-1);
         }
         out.writeCompressedInt(disable_log);

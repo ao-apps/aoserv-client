@@ -37,7 +37,7 @@ final public class MySQLReservedWord extends GlobalObjectStringKey<MySQLReserved
 	return pkey;
     }
 
-    void initImpl(ResultSet results) throws SQLException {
+    public void init(ResultSet results) throws SQLException {
 	pkey=results.getString(1);
     }
 
@@ -45,7 +45,7 @@ final public class MySQLReservedWord extends GlobalObjectStringKey<MySQLReserved
 	pkey=in.readUTF();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
     }
 }

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -145,7 +144,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	return SchemaTable.TableID.CVS_REPOSITORIES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         path=result.getString(2);
         linux_server_account=result.getInt(3);
@@ -178,14 +177,14 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(path);
         out.writeCompressedInt(linux_server_account);
         out.writeCompressedInt(linux_server_group);
         out.writeLong(mode);
         out.writeLong(created);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);
         }

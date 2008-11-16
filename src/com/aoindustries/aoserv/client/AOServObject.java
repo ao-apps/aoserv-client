@@ -5,11 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.table.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.Streamable;
+import com.aoindustries.table.Row;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,83 +33,64 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
     }
 
     final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Profiler.startProfile(Profiler.FAST, AOServObject.class, "compareTo(AOServConnector,AOServObject,SQLExpression[],boolean[])", null);
-        try {
-            int len=sortExpressions.length;
-            for(int c=0;c<len;c++) {
-                SQLExpression expr=sortExpressions[c];
-                SchemaType type=expr.getType();
-                int diff=type.compareTo(
-                    expr.getValue(conn, this),
-                    expr.getValue(conn, other)
-                );
-                if(diff!=0) return sortOrders[c]?diff:-diff;
-            }
-            return 0;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        int len=sortExpressions.length;
+        for(int c=0;c<len;c++) {
+            SQLExpression expr=sortExpressions[c];
+            SchemaType type=expr.getType();
+            int diff=type.compareTo(
+                expr.getValue(conn, this),
+                expr.getValue(conn, other)
+            );
+            if(diff!=0) return sortOrders[c]?diff:-diff;
         }
+        return 0;
     }
 
     final public int compareTo(AOServConnector conn, Comparable value, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Profiler.startProfile(Profiler.FAST, AOServObject.class, "compareTo(AOServConnector,Comparable,SQLExpression[],boolean[])", null);
-        try {
-            int len=sortExpressions.length;
-            for(int c=0;c<len;c++) {
-                SQLExpression expr=sortExpressions[c];
-                SchemaType type=expr.getType();
-                int diff=type.compareTo(
-                    expr.getValue(conn, this),
-                    value
-                );
-                if(diff!=0) return sortOrders[c]?diff:-diff;
-            }
-            return 0;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        int len=sortExpressions.length;
+        for(int c=0;c<len;c++) {
+            SQLExpression expr=sortExpressions[c];
+            SchemaType type=expr.getType();
+            int diff=type.compareTo(
+                expr.getValue(conn, this),
+                value
+            );
+            if(diff!=0) return sortOrders[c]?diff:-diff;
         }
+        return 0;
     }
 
     final public int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Profiler.startProfile(Profiler.FAST, AOServObject.class, "compareTo(AOServConnector,Object[],SQLExpression[],boolean[])", null);
-        try {
-            int len=sortExpressions.length;
-            if(len!=OA.length) throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length="+len+", OA.length="+OA.length);
+        int len=sortExpressions.length;
+        if(len!=OA.length) throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length="+len+", OA.length="+OA.length);
 
-            for(int c=0;c<len;c++) {
-                SQLExpression expr=sortExpressions[c];
-                SchemaType type=expr.getType();
-                int diff=type.compareTo(
-                    expr.getValue(conn, this),
-                    OA[c]
-                );
-                if(diff!=0) return sortOrders[c]?diff:-diff;
-            }
-            return 0;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        for(int c=0;c<len;c++) {
+            SQLExpression expr=sortExpressions[c];
+            SchemaType type=expr.getType();
+            int diff=type.compareTo(
+                expr.getValue(conn, this),
+                OA[c]
+            );
+            if(diff!=0) return sortOrders[c]?diff:-diff;
         }
+        return 0;
     }
 
+    @Override
     final public boolean equals(Object O) {
         return O==null?false:equalsImpl(O);
     }
 
     boolean equalsImpl(Object O) {
-        Profiler.startProfile(Profiler.FAST, AOServObject.class, "equalsImpl(Object)", null);
-        try {
-            Class class1=getClass();
-            Class class2=O.getClass();
-            if(class1==class2) {
-                K pkey1=getKey();
-                Object pkey2=((AOServObject)O).getKey();
-                if(pkey1==null || pkey2==null) throw new NullPointerException("No primary key available.");
-                return pkey1.equals(pkey2);
-            }
-            return false;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        Class class1=getClass();
+        Class class2=O.getClass();
+        if(class1==class2) {
+            K pkey1=getKey();
+            Object pkey2=((AOServObject)O).getKey();
+            if(pkey1==null || pkey2==null) throw new NullPointerException("No primary key available.");
+            return pkey1.equals(pkey2);
         }
+        return false;
     }
 
     abstract public Object getColumn(int i);
@@ -129,27 +112,19 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
     public abstract SchemaTable.TableID getTableID();
 
-    final protected int getTableIDImpl() {
-        throw new RuntimeException("TODO: Delete this method");
-    }
-
     final public SchemaTable getTableSchema(AOServConnector connector) {
         return connector.schemaTables.get(getTableID());
     }
 
+    @Override
     final public int hashCode() {
         return hashCodeImpl();
     }
 
     int hashCodeImpl() {
-        Profiler.startProfile(Profiler.FAST, AOServObject.class, "hashCodeImpl()", null);
-        try {
-            K pkey=getKey();
-            if(pkey==null) throw new NullPointerException("No primary key available.");
-            return pkey.hashCode();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        K pkey=getKey();
+        if(pkey==null) throw new NullPointerException("No primary key available.");
+        return pkey.hashCode();
     }
 
     /**
@@ -158,37 +133,29 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
      * @param  results  the <code>ResultSet</code> containing the row
      *                  to copy into this object
      */
-    final public void init(ResultSet results) throws SQLException {
-        initImpl(results);
-    }
-
-    /**
-     * Initializes this object from the raw database contents.  This method
-     * is not public with the init(ResultSet) public accessor to keep the
-     * documentation name space clean.
-     *
-     * @param  results  the <code>ResultSet</code> containing the row
-     *                  to copy into this object
-     */
-    abstract void initImpl(ResultSet results) throws SQLException;
-
+    public abstract void init(ResultSet results) throws SQLException;
 
     public abstract void read(CompressedDataInputStream in) throws IOException;
 
+    @Override
     final public String toString() {
         return toStringImpl();
     }
 
     String toStringImpl() {
-        Profiler.startProfile(Profiler.FAST, AOServObject.class, "toStringImpl()", null);
-        try {
-            K pkey=getKey();
-            if(pkey==null) return super.toString();
-            return pkey.toString();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        K pkey=getKey();
+        if(pkey==null) return super.toString();
+        return pkey.toString();
     }
 
-    public abstract void write(CompressedDataOutputStream out, String version) throws IOException;
+    /**
+     * @deprecated  This is maintained only for compatibility with the <code>Streamable</code> interface.
+     * 
+     * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
+     */
+    final public void write(CompressedDataOutputStream out, String version) throws IOException {
+        write(out, AOServProtocol.Version.getVersion(version));
+    }
+
+    public abstract void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
 }

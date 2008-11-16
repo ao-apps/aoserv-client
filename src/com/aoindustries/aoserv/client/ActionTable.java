@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -43,21 +42,11 @@ final public class ActionTable extends AOServTable<Integer,Action> {
     }
 
     List<Action> getActions(Ticket ticket) {
-        Profiler.startProfile(Profiler.IO, ActionTable.class, "getActions(Ticket)", null);
-        try {
-            return getObjects(AOServProtocol.CommandID.GET_ACTIONS_TICKET, ticket.pkey);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        return getObjects(AOServProtocol.CommandID.GET_ACTIONS_TICKET, ticket.pkey);
     }
 
     List<Action> getActions(BusinessAdministrator ba) {
-        Profiler.startProfile(Profiler.IO, ActionTable.class, "getActions(BusinessAdministrator)", null);
-        try {
-            return getObjects(AOServProtocol.CommandID.GET_ACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        return getObjects(AOServProtocol.CommandID.GET_ACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
     public int getCachedRowCount() {

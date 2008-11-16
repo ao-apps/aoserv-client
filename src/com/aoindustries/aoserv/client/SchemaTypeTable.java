@@ -5,11 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.sort.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.util.sort.AutoSort;
+import java.util.List;
 
 /**
  * @see  SchemaType
@@ -53,34 +50,24 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
     }
 
     public <T extends AOServObject> void sort(T[] list, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Profiler.startProfile(Profiler.UNKNOWN, SchemaTypeTable.class, "sort(<T extends AOServObject>[],SQLExpression[],boolean[])", null);
-        try {
-            AutoSort.sortStatic(
-                list,
-                new SQLComparator<T>(
-                    connector,
-                    sortExpressions,
-                    sortOrders
-                )
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        AutoSort.sortStatic(
+            list,
+            new SQLComparator<T>(
+                connector,
+                sortExpressions,
+                sortOrders
+            )
+        );
     }
 
     public <T extends AOServObject> void sort(List<T> list, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Profiler.startProfile(Profiler.FAST, SchemaTypeTable.class, "sort(List<T extends AOServObject>,SQLExpression[],boolean[])", null);
-        try {
-            AutoSort.sortStatic(
-                list,
-                new SQLComparator<T>(
-                    connector,
-                    sortExpressions,
-                    sortOrders
-                )
-            );
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        AutoSort.sortStatic(
+            list,
+            new SQLComparator<T>(
+                connector,
+                sortExpressions,
+                sortOrders
+            )
+        );
     }
 }

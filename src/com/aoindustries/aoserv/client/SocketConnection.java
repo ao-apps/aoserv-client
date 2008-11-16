@@ -48,7 +48,7 @@ final public class SocketConnection extends AOServConnection {
 	isClosed=false;
 	out=new CompressedDataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
-	out.writeUTF(AOServProtocol.CURRENT_VERSION);
+	out.writeUTF(AOServProtocol.Version.CURRENT_VERSION.getVersion());
         out.writeBoolean(connector.daemonServer!=null);
         if(connector.daemonServer!=null) out.writeUTF(connector.daemonServer);
 	out.writeUTF(connector.connectAs);

@@ -644,7 +644,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 	return SchemaTable.TableID.CREDIT_CARD_TRANSACTIONS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
 	pkey = result.getInt(pos++);
         processorId = result.getString(pos++);
@@ -823,7 +823,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         status = in.readUTF().intern();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
         out.writeUTF(processorId);
         out.writeUTF(accounting);

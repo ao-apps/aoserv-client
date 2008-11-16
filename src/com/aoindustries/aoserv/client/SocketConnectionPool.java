@@ -78,48 +78,44 @@ final public class SocketConnectionPool extends AOPool {
 
     protected void printConnectionStats(ChainWriter out) throws IOException {
         // Create statistics on the caches
-        int totalTables=numTables;
         int totalLoaded=0;
         int totalCaches=0;
         int totalActive=0;
         int totalHashed=0;
         int totalIndexed=0;
         int totalRows=0;
-        for(int c=0;c<totalTables;c++) {
-            AOServTable table=connector.tables[c];
-            if(table!=null) {
-                totalLoaded++;
-                if(table instanceof CachedTable) {
-                    totalCaches++;
-                    int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-                    CachedTable cached=(CachedTable)table;
-                    if(cached.isLoaded()) {
-                        totalActive++;
-                        for(int d=0;d<columnCount;d++) {
-                            if(cached.isHashed(d)) totalHashed++;
-                            if(cached.isIndexed(d)) totalIndexed++;
-                        }
-                        totalRows+=cached.size();
+        for(AOServTable table : connector.tables) {
+            totalLoaded++;
+            if(table instanceof CachedTable) {
+                totalCaches++;
+                int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
+                CachedTable cached=(CachedTable)table;
+                if(cached.isLoaded()) {
+                    totalActive++;
+                    for(int d=0;d<columnCount;d++) {
+                        if(cached.isHashed(d)) totalHashed++;
+                        if(cached.isIndexed(d)) totalIndexed++;
                     }
-                } else if(table instanceof GlobalTable) {
-                    totalCaches++;
-                    int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-                    GlobalTable global=(GlobalTable)table;
-                    if(global.isLoaded()) {
-                        totalActive++;
-                        for(int d=0;d<columnCount;d++) {
-                            if(global.isHashed(d)) totalHashed++;
-                            if(global.isIndexed(d)) totalIndexed++;
-                        }
-                        totalRows+=global.size();
+                    totalRows+=cached.size();
+                }
+            } else if(table instanceof GlobalTable) {
+                totalCaches++;
+                int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
+                GlobalTable global=(GlobalTable)table;
+                if(global.isLoaded()) {
+                    totalActive++;
+                    for(int d=0;d<columnCount;d++) {
+                        if(global.isHashed(d)) totalHashed++;
+                        if(global.isIndexed(d)) totalIndexed++;
                     }
+                    totalRows+=global.size();
                 }
             }
         }
 
         // Show the table statistics
         out.print("  <TR><TH colspan=2><FONT size=+1>AOServ Tables</FONT></TH></TR>\n"
-                + "  <TR><TD>Total Tables:</TD><TD>").print(totalTables).print("</TD></TR>\n"
+                + "  <TR><TD>Total Tables:</TD><TD>").print(numTables).print("</TD></TR>\n"
                 + "  <TR><TD>Loaded:</TD><TD>").print(totalLoaded).print("</TD></TR>\n"
                 + "  <TR><TD>Caches:</TD><TD>").print(totalCaches).print("</TD></TR>\n"
                 + "  <TR><TD>Active:</TD><TD>").print(totalActive).print("</TD></TR>\n"

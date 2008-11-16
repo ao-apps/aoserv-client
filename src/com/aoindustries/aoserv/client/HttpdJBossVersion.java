@@ -65,7 +65,7 @@ final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVe
 	return templateDir;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	tomcatVersion=result.getInt(2);
 	templateDir=result.getString(3);
@@ -77,7 +77,7 @@ final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVe
 	templateDir=in.readUTF();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(tomcatVersion);
 	out.writeUTF(templateDir);

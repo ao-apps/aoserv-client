@@ -5,10 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
 import java.util.List;
 
 /**
@@ -34,18 +30,13 @@ final public class SQLColumnJoin extends SQLExpression {
         SchemaColumn keyColumn,
         SchemaColumn valueColumn
     ) {
-        Profiler.startProfile(Profiler.FAST, SQLColumnJoin.class, "<init>(AOServConnector,SQLExpression,SchemaColumn,SchemaColumn)", null);
-        try {
-            this.expression=expression;
-            this.keyColumn=keyColumn;
-            this.keyIndex=keyColumn.getIndex();
-            this.valueColumn=valueColumn;
-            this.type=valueColumn.getSchemaType(conn);
-            this.table=keyColumn.getSchemaTable(conn).getAOServTable(conn);
-            this.valueIndex=valueColumn.getIndex();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        this.expression=expression;
+        this.keyColumn=keyColumn;
+        this.keyIndex=keyColumn.getIndex();
+        this.valueColumn=valueColumn;
+        this.type=valueColumn.getSchemaType(conn);
+        this.table=keyColumn.getSchemaTable(conn).getAOServTable(conn);
+        this.valueIndex=valueColumn.getIndex();
     }
 
     public String getColumnName() {
@@ -53,31 +44,22 @@ final public class SQLColumnJoin extends SQLExpression {
     }
 
     public Object getValue(AOServConnector conn, AOServObject obj) {
-        Profiler.startProfile(Profiler.FAST, SQLColumnJoin.class, "getValue(AOServConnector,AOServObject)", null);
-        try {
-            Object keyValue=expression.getValue(conn, obj);
-            if(keyValue!=null) {
-                AOServObject row=table.getUniqueRow(keyIndex, keyValue);
-                if(row!=null) return row.getColumn(valueIndex);
-            }
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        Object keyValue=expression.getValue(conn, obj);
+        if(keyValue!=null) {
+            AOServObject row=table.getUniqueRow(keyIndex, keyValue);
+            if(row!=null) return row.getColumn(valueIndex);
         }
+        return null;
     }
 
     public SchemaType getType() {
         return type;
     }
 
+    @Override
     public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) {
-        Profiler.startProfile(Profiler.FAST, SQLColumnJoin.class, "getReferencedTables(AOServConnector,List<SchemaTable>)", null);
-        try {
-            expression.getReferencedTables(conn, tables);
-            SchemaTable table=keyColumn.getSchemaTable(conn);
-            if(!tables.contains(table)) tables.add(table);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        expression.getReferencedTables(conn, tables);
+        SchemaTable table=keyColumn.getSchemaTable(conn);
+        if(!tables.contains(table)) tables.add(table);
     }
 }

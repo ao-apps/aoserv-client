@@ -61,7 +61,7 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
 	return SchemaTable.TableID.SYSTEM_EMAIL_ALIASES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getInt(1);
 	ao_server = result.getInt(2);
 	address = result.getString(3);
@@ -75,7 +75,7 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
 	destination=in.readUTF().intern();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(ao_server);
 	out.writeUTF(address);

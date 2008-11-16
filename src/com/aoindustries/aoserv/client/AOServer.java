@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
@@ -43,6 +42,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     private boolean restrict_outbound_email;
     private String daemon_connect_address;
     private int failover_batch_size;
+    private float monitoring_load_low;
+    private float monitoring_load_medium;
+    private float monitoring_load_high;
+    private float monitoring_load_critical;
 
     public int addCvsRepository(
         String path,
@@ -208,6 +211,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             case 12: return restrict_outbound_email;
             case 13: return daemon_connect_address;
             case 14: return failover_batch_size;
+            case 15: return Float.isNaN(monitoring_load_low) ? null : Float.valueOf(monitoring_load_low);
+            case 16: return Float.isNaN(monitoring_load_medium) ? null : Float.valueOf(monitoring_load_medium);
+            case 17: return Float.isNaN(monitoring_load_high) ? null : Float.valueOf(monitoring_load_high);
+            case 18: return Float.isNaN(monitoring_load_critical) ? null : Float.valueOf(monitoring_load_critical);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -277,6 +284,39 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      */
     public int getFailoverBatchSize() {
         return failover_batch_size;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a low-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    public float getMonitoringLoadLow() {
+        return monitoring_load_low;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a medium-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    public float getMonitoringLoadMedium() {
+        return monitoring_load_medium;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a high-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    public float getMonitoringLoadHigh() {
+        return monitoring_load_high;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a critical-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.  This is the level
+     * that will alert people 24x7.
+     */
+    public float getMonitoringLoadCritical() {
+        return monitoring_load_critical;
     }
 
     public NetDeviceID getDaemonDeviceID() {
@@ -512,26 +552,21 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public MySQLServer getPreferredMySQLServer() {
-        Profiler.startProfile(Profiler.UNKNOWN, AOServer.class, "getPreferredMySQLServer()", null);
-        try {
-            // Look for the most-preferred version that has an instance on the server
-            List<MySQLServer> pss=getMySQLServers();
-            String[] preferredVersions=MySQLServer.getPreferredVersions();
-            for(int c=0;c<preferredVersions.length;c++) {
-                String version=preferredVersions[c];
-                for(int d=0;d<pss.size();d++) {
-                    MySQLServer ps=pss.get(d);
-                    if(ps.getVersion().getVersion().equals(version)) {
-                        return ps;
-                    }
+        // Look for the most-preferred version that has an instance on the server
+        List<MySQLServer> pss=getMySQLServers();
+        String[] preferredVersions=MySQLServer.getPreferredVersions();
+        for(int c=0;c<preferredVersions.length;c++) {
+            String version=preferredVersions[c];
+            for(int d=0;d<pss.size();d++) {
+                MySQLServer ps=pss.get(d);
+                if(ps.getVersion().getVersion().equals(version)) {
+                    return ps;
                 }
             }
-
-            // Default to first available server if no preferred ones round
-            return pss.isEmpty()?null:pss.get(0);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
+
+        // Default to first available server if no preferred ones round
+        return pss.isEmpty()?null:pss.get(0);
     }
 
     public List<AOServer> getNestedAOServers() {
@@ -551,26 +586,21 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public PostgresServer getPreferredPostgresServer() {
-        Profiler.startProfile(Profiler.UNKNOWN, AOServer.class, "getPreferredPostgresServer()", null);
-        try {
-            // Look for the most-preferred version that has an instance on the server
-            List<PostgresServer> pss=getPostgresServers();
-            String[] preferredMinorVersions=PostgresVersion.getPreferredMinorVersions();
-            for(int c=0;c<preferredMinorVersions.length;c++) {
-                String version=preferredMinorVersions[c];
-                for(int d=0;d<pss.size();d++) {
-                    PostgresServer ps=pss.get(d);
-                    if(ps.getPostgresVersion().getMinorVersion().equals(version)) {
-                        return ps;
-                    }
+        // Look for the most-preferred version that has an instance on the server
+        List<PostgresServer> pss=getPostgresServers();
+        String[] preferredMinorVersions=PostgresVersion.getPreferredMinorVersions();
+        for(int c=0;c<preferredMinorVersions.length;c++) {
+            String version=preferredMinorVersions[c];
+            for(int d=0;d<pss.size();d++) {
+                PostgresServer ps=pss.get(d);
+                if(ps.getPostgresVersion().getMinorVersion().equals(version)) {
+                    return ps;
                 }
             }
-
-            // Default to first available server if no preferred ones round
-            return pss.isEmpty()?null:pss.get(0);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
+
+        // Default to first available server if no preferred ones round
+        return pss.isEmpty()?null:pss.get(0);
     }
 
     public IPAddress getPrimaryIPAddress() {
@@ -619,7 +649,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.postgresServers.isPostgresServerNameAvailable(name, this);
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey=result.getInt(pos++);
         hostname=result.getString(pos++);
@@ -640,6 +670,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         restrict_outbound_email=result.getBoolean(pos++);
         daemon_connect_address=result.getString(pos++);
         failover_batch_size=result.getInt(pos++);
+        monitoring_load_low = result.getFloat(pos++);
+        if(result.wasNull()) monitoring_load_low = Float.NaN;
+        monitoring_load_medium = result.getFloat(pos++);
+        if(result.wasNull()) monitoring_load_medium = Float.NaN;
+        monitoring_load_high = result.getFloat(pos++);
+        if(result.wasNull()) monitoring_load_high = Float.NaN;
+        monitoring_load_critical = result.getFloat(pos++);
+        if(result.wasNull()) monitoring_load_critical = Float.NaN;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -658,6 +696,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         restrict_outbound_email=in.readBoolean();
         daemon_connect_address=StringUtility.intern(in.readNullUTF());
         failover_batch_size=in.readCompressedInt();
+        monitoring_load_low = in.readFloat();
+        monitoring_load_medium = in.readFloat();
+        monitoring_load_high = in.readFloat();
+        monitoring_load_critical = in.readFloat();
     }
 
     public void restartApache() {
@@ -725,6 +767,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_XVFB, pkey);
     }
 
+    @Override
     protected String toStringImpl() {
         return hostname;
     }
@@ -765,9 +808,9 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	table.connector.postgresUsers.waitForRebuild(this);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeCompressedInt(1);
             out.writeCompressedInt(2000);
             out.writeCompressedInt(1024);
@@ -777,12 +820,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             out.writeBoolean(false);
             out.writeBoolean(false);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)<0) out.writeBoolean(true);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeBoolean(true);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeBoolean(false);
             out.writeUTF("AOServer #"+pkey);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
             out.writeUTF(hostname);
         }
 	out.writeCompressedInt(daemon_bind);
@@ -791,30 +834,36 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         out.writeCompressedInt(distro_hour);
         out.writeLong(last_distro_time);
         out.writeCompressedInt(failover_server);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeCompressedInt(60*1000);
             out.writeCompressedInt(5*60*1000);
             out.writeBoolean(false);
         }
         out.writeNullUTF(daemon_device_id);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeNullUTF(null);
             out.writeCompressedInt(1200*100);
             out.writeBoolean(true);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) {
+            if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) {
                 out.writeNullUTF(null);
                 out.writeNullUTF(null);
-            } else if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) {
+            } else if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
                 out.writeUTF(AOServProtocol.FILTERED);
                 out.writeUTF(AOServProtocol.FILTERED);
             }
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_2)>=0) out.writeUTF(time_zone);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_11)>=0) out.writeNullUTF(daemon_connect_address);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(daemon_connect_address);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
+            out.writeFloat(monitoring_load_low);
+            out.writeFloat(monitoring_load_medium);
+            out.writeFloat(monitoring_load_high);
+            out.writeFloat(monitoring_load_critical);
+        }
     }
 
     /**
@@ -838,4 +887,31 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey);
     }
 
+    /**
+     * Gets the hard drive temperature report.
+     */
+    public String getHddTempReport() {
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_HDD_TEMP_REPORT, pkey);
+    }
+    
+    /**
+     * Gets the filesystem states report.
+     */
+    public String getFilesystemsCsvReport() {
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
+    }
+    
+    /**
+     * Gets the output of /proc/loadavg
+     */
+    public String getLoadAvgReport() {
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_LOADAVG_REPORT, pkey);
+    }
+    
+    /**
+     * Gets the output of /proc/meminfo
+     */
+    public String getMemInfoReport() {
+        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
+    }
 }

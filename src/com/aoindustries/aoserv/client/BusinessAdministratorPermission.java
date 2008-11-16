@@ -56,7 +56,7 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
 	return SchemaTable.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
         username=result.getString(2);
 	permission=result.getString(3);
@@ -67,7 +67,7 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
         username=in.readUTF().intern();
         permission=in.readUTF().intern();
     }
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(username);
 	out.writeUTF(permission);

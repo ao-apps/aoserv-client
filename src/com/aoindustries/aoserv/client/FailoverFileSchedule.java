@@ -67,7 +67,7 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
 	return SchemaTable.TableID.FAILOVER_FILE_SCHEDULE;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         replication=result.getInt(2);
         hour=result.getShort(3);
@@ -95,11 +95,11 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
         return SB.toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(replication);
         out.writeShort(hour);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) out.writeShort(minute);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeShort(minute);
         out.writeBoolean(enabled);
     }
 }

@@ -71,7 +71,7 @@ final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRel
         throw new WrappedException(new SQLException("Unknown value for name: "+pkey));
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getString(1);
 	sendmail_config=result.getString(2);
         qmail_config=result.getString(3);
@@ -83,7 +83,7 @@ final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRel
         qmail_config=in.readUTF();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(sendmail_config);
         out.writeUTF(qmail_config);

@@ -54,7 +54,7 @@ final public class Technology extends GlobalObjectIntegerKey<Technology> {
         return technologyName;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
         name = result.getString(2);
         clazz = result.getString(3);
@@ -66,8 +66,8 @@ final public class Technology extends GlobalObjectIntegerKey<Technology> {
 	clazz = in.readUTF().intern();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) out.writeCompressedInt(pkey);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) out.writeCompressedInt(pkey);
 	out.writeUTF(name);
 	out.writeUTF(clazz);
     }

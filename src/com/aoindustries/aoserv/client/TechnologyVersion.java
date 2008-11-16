@@ -77,7 +77,7 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 	return version;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getInt(1);
 	name = result.getString(2);
 	version = result.getString(3);
@@ -96,12 +96,12 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
         operating_system_version=in.readCompressedInt();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(name);
 	out.writeUTF(version);
 	out.writeLong(updated);
 	out.writeUTF(owner);
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_0_A_108)>=0) out.writeCompressedInt(operating_system_version);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeCompressedInt(operating_system_version);
     }
 }

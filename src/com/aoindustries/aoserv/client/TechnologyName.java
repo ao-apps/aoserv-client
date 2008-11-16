@@ -78,7 +78,7 @@ final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> 
 	return connector.technologyVersions.getTechnologyVersion(this, version, osv);
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	image_filename=result.getString(2);
 	image_width=result.getInt(3);
@@ -98,7 +98,7 @@ final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> 
 	home_page_url=in.readBoolean()?in.readUTF():null;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeBoolean(image_filename!=null); if(image_filename!=null) out.writeUTF(image_filename);
 	out.writeCompressedInt(image_width);

@@ -152,7 +152,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     @Override
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey=result.getInt(pos++);
         server=result.getInt(pos++);
@@ -192,26 +192,26 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     @Override
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(server);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeCompressedInt(149); // to_server (hard-coded xen2.mob.aoindustries.com)
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) out.writeCompressedInt(backup_partition);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_105)>=0) out.writeInt(max_bit_rate);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeLong(-1); // last_start_time
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_9)>=0) out.writeBoolean(use_compression);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_13)>=0) out.writeShort(retention);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_14)>=0) out.writeNullUTF(connect_address);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_22)>=0) out.writeNullUTF(connect_from);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_15)>=0) out.writeBoolean(enabled);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeCompressedInt(149); // to_server (hard-coded xen2.mob.aoindustries.com)
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(backup_partition);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0) out.writeInt(max_bit_rate);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeLong(-1); // last_start_time
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_9)>=0) out.writeBoolean(use_compression);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_13)>=0) out.writeShort(retention);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_14)>=0) out.writeNullUTF(connect_address);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_22)>=0) out.writeNullUTF(connect_from);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_15)>=0) out.writeBoolean(enabled);
         if(
-            AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_17)>=0
-            && AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0
+            version.compareTo(AOServProtocol.Version.VERSION_1_17)>=0
+            && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
         ) {
             out.writeUTF("/var/backup"); // to_path (hard-coded /var/backup like found on xen2.mob.aoindustries.com)
             out.writeBoolean(false); // chunk_always
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) out.writeCompressedInt(quota_gid);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(quota_gid);
     }
 
     public int addFileBackupSetting(String path, boolean backupEnabled) {

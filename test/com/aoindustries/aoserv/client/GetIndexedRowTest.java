@@ -5,16 +5,13 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 
-import junit.framework.*;
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.table.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.security.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests the aoserv-client object indexing algorithms for accuracy.

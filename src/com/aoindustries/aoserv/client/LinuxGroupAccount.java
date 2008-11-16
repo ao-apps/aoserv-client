@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -43,56 +42,36 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
     boolean is_primary;
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, LinuxGroupAccount.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_PKEY: return Integer.valueOf(pkey);
-                case 1: return group_name;
-                case 2: return username;
-                case 3: return is_primary?Boolean.TRUE:Boolean.FALSE;
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return group_name;
+            case 2: return username;
+            case 3: return is_primary?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
     public LinuxAccount getLinuxAccount() {
-        Profiler.startProfile(Profiler.FAST, LinuxGroupAccount.class, "getLinuxAccount()", null);
-        try {
-            LinuxAccount usernameObject = table.connector.usernames.get(username).getLinuxAccount();
-            if (usernameObject == null) throw new WrappedException(new SQLException("Unable to find LinuxAccount: " + username));
-            return usernameObject;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        LinuxAccount usernameObject = table.connector.usernames.get(username).getLinuxAccount();
+        if (usernameObject == null) throw new WrappedException(new SQLException("Unable to find LinuxAccount: " + username));
+        return usernameObject;
     }
 
     public LinuxGroup getLinuxGroup() {
-        Profiler.startProfile(Profiler.FAST, LinuxGroupAccount.class, "getLinuxGroup()", null);
-        try {
-            LinuxGroup groupNameObject = table.connector.linuxGroups.get(group_name);
-            if (groupNameObject == null) throw new WrappedException(new SQLException("Unable to find LinuxGroup: " + group_name));
-            return groupNameObject;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        LinuxGroup groupNameObject = table.connector.linuxGroups.get(group_name);
+        if (groupNameObject == null) throw new WrappedException(new SQLException("Unable to find LinuxGroup: " + group_name));
+        return groupNameObject;
     }
 
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.LINUX_GROUP_ACCOUNTS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, LinuxGroupAccount.class, "initImpl(ResultSet)", null);
-        try {
-            pkey = result.getInt(1);
-            group_name = result.getString(2);
-            username = result.getString(3);
-            is_primary = result.getBoolean(4);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getInt(1);
+        group_name = result.getString(2);
+        username = result.getString(3);
+        is_primary = result.getBoolean(4);
     }
 
     public boolean isPrimary() {
@@ -100,15 +79,10 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, LinuxGroupAccount.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readCompressedInt();
-            group_name=in.readUTF().intern();
-            username=in.readUTF().intern();
-            is_primary=in.readBoolean();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readCompressedInt();
+        group_name=in.readUTF().intern();
+        username=in.readUTF().intern();
+        is_primary=in.readBoolean();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -118,48 +92,28 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
     }
 
     public void remove() {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupAccount.class, "remove()", null);
-        try {
-            table.connector.requestUpdateIL(
-                AOServProtocol.CommandID.REMOVE,
-                SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
-                pkey
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.REMOVE,
+            SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
+            pkey
+        );
     }
 
     void setAsPrimary() {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxGroupAccount.class, "setAsPrimary()", null);
-        try {
-            table.connector.requestUpdateIL(
-                AOServProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
-                pkey
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
+            pkey
+        );
     }
 
     String toStringImpl() {
-        Profiler.startProfile(Profiler.FAST, LinuxGroupAccount.class, "toStringImpl()", null);
-        try {
-            return group_name+'|'+username+(is_primary?"|p":"|a");
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return group_name+'|'+username+(is_primary?"|p":"|a");
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, LinuxGroupAccount.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeCompressedInt(pkey);
-            out.writeUTF(group_name);
-            out.writeUTF(username);
-            out.writeBoolean(is_primary);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(group_name);
+        out.writeUTF(username);
+        out.writeBoolean(is_primary);
     }
 }

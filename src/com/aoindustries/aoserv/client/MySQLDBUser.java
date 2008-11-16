@@ -164,7 +164,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 	return SchemaTable.TableID.MYSQL_DB_USERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	mysql_database=result.getInt(2);
 	mysql_server_user=result.getInt(3);
@@ -225,7 +225,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 	);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(mysql_database);
 	out.writeCompressedInt(mysql_server_user);
@@ -239,11 +239,11 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 	out.writeBoolean(references_priv);
 	out.writeBoolean(index_priv);
 	out.writeBoolean(alter_priv);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_111)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) {
             out.writeBoolean(create_tmp_table_priv);
             out.writeBoolean(lock_tables_priv);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {
             out.writeBoolean(create_view_priv);
             out.writeBoolean(show_view_priv);
             out.writeBoolean(create_routine_priv);

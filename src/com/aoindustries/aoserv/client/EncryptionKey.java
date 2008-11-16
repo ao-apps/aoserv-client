@@ -202,7 +202,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	return SchemaTable.TableID.ENCRYPTION_KEYS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
 	accounting = result.getString(2);
         id = result.getString(3);
@@ -218,16 +218,16 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         signup_recipient=in.readBoolean();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeUTF(accounting);
         out.writeUTF(id);
         out.writeBoolean(signup_from); // Used to be signup_signer
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_25)>=0) out.writeBoolean(signup_recipient);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_signer
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_25)>=0) out.writeBoolean(signup_recipient);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_signer
         if(
-            AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_25)>=0
-            && AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0
+            version.compareTo(AOServProtocol.Version.VERSION_1_25)>=0
+            && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
         ) out.writeBoolean(false); // credit_card_recipient
     }
     

@@ -102,7 +102,7 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
 	return SchemaTable.TableID.POSTGRES_ENCODINGS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
 	encoding=result.getString(2);
         postgres_version=result.getInt(3);
@@ -114,7 +114,7 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
         postgres_version=in.readCompressedInt();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeUTF(encoding);
         out.writeCompressedInt(postgres_version);

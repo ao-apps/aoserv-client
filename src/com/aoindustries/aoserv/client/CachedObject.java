@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
 
 /**
  * A <code>CachedObject</code> is stored in
@@ -33,12 +32,7 @@ abstract public class CachedObject<K,T extends CachedObject<K,T>> extends AOServ
     }
 
     final public void setTable(AOServTable<K,T> table) {
-        Profiler.startProfile(Profiler.FAST, CachedObject.class, "setTable(AOServTable<K,T>)", null);
-        try {
-            if(this.table!=null) throw new IllegalStateException("table already set");
-            this.table=table;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 }

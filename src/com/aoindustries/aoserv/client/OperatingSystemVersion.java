@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -58,31 +57,21 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     private short sort_order;
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, OperatingSystemVersion.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_PKEY: return Integer.valueOf(pkey);
-                case 1: return operating_system;
-                case 2: return version_number;
-                case 3: return version_name;
-                case 4: return architecture;
-                case 5: return display;
-                case 6: return is_aoserv_daemon_supported?Boolean.TRUE:Boolean.FALSE;
-                case 7: return Short.valueOf(sort_order);
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return operating_system;
+            case 2: return version_number;
+            case 3: return version_name;
+            case 4: return architecture;
+            case 5: return display;
+            case 6: return is_aoserv_daemon_supported?Boolean.TRUE:Boolean.FALSE;
+            case 7: return Short.valueOf(sort_order);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
     public OperatingSystem getOperatingSystem(AOServConnector conn) {
-        Profiler.startProfile(Profiler.FAST, OperatingSystemVersion.class, "getOperatingSystem(AOServConnector)", null);
-        try {
-            return conn.operatingSystems.get(operating_system);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return conn.operatingSystems.get(operating_system);
     }
 
     public String getVersionNumber() {
@@ -94,14 +83,9 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     }
 
     public Architecture getArchitecture(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, OperatingSystemVersion.class, "getArchitecture(AOServConnector)", null);
-        try {
-            Architecture ar=connector.architectures.get(architecture);
-            if(ar==null) throw new WrappedException(new SQLException("Unable to find Architecture: "+architecture));
-            return ar;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        Architecture ar=connector.architectures.get(architecture);
+        if(ar==null) throw new WrappedException(new SQLException("Unable to find Architecture: "+architecture));
+        return ar;
     }
 
     public String getDisplay() {
@@ -120,55 +104,41 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         return SchemaTable.TableID.OPERATING_SYSTEM_VERSIONS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, OperatingSystem.class, "initImpl(ResultSet)", null);
-        try {
-            pkey=result.getInt(1);
-            operating_system=result.getString(2);
-            version_number=result.getString(3);
-            version_name=result.getString(4);
-            architecture=result.getString(5);
-            display=result.getString(6);
-            is_aoserv_daemon_supported=result.getBoolean(7);
-            sort_order=result.getShort(8);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        operating_system=result.getString(2);
+        version_number=result.getString(3);
+        version_name=result.getString(4);
+        architecture=result.getString(5);
+        display=result.getString(6);
+        is_aoserv_daemon_supported=result.getBoolean(7);
+        sort_order=result.getShort(8);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, OperatingSystemVersion.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readCompressedInt();
-            operating_system=in.readUTF().intern();
-            version_number=in.readUTF();
-            version_name=in.readUTF();
-            architecture=in.readUTF().intern();
-            display=in.readUTF();
-            is_aoserv_daemon_supported=in.readBoolean();
-            sort_order=in.readShort();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readCompressedInt();
+        operating_system=in.readUTF().intern();
+        version_number=in.readUTF();
+        version_name=in.readUTF();
+        architecture=in.readUTF().intern();
+        display=in.readUTF();
+        is_aoserv_daemon_supported=in.readBoolean();
+        sort_order=in.readShort();
     }
 
+    @Override
     String toStringImpl() {
         return display;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, OperatingSystemVersion.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeCompressedInt(pkey);
-            out.writeUTF(operating_system);
-            out.writeUTF(version_number);
-            out.writeUTF(version_name);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) out.writeUTF(architecture);
-            out.writeUTF(display);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_3)>=0) out.writeShort(sort_order);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(operating_system);
+        out.writeUTF(version_number);
+        out.writeUTF(version_name);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeUTF(architecture);
+        out.writeUTF(display);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_3)>=0) out.writeShort(sort_order);
     }
 }

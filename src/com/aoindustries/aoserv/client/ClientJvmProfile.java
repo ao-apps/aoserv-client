@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
+import com.aoindustries.profiler.MethodProfile;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -132,7 +132,7 @@ final public class ClientJvmProfile extends AOServObject<String,ClientJvmProfile
 	return use_count;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
@@ -145,7 +145,7 @@ final public class ClientJvmProfile extends AOServObject<String,ClientJvmProfile
 	this.table=table;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         throw new IOException("Should not be written to stream, should be generated.");
     }
 }

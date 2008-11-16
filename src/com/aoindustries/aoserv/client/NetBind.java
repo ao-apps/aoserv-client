@@ -283,7 +283,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return SchemaTable.TableID.NET_BINDS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         packageName=result.getString(2);
         server=result.getInt(3);
@@ -408,7 +408,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         );
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(packageName);
         out.writeCompressedInt(server);
@@ -417,7 +417,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         out.writeUTF(net_protocol);
         out.writeUTF(app_protocol);
         out.writeBoolean(open_firewall);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
             out.writeBoolean(monitoring_enabled);
         } else {
             out.writeCompressedInt(monitoring_enabled?300000:-1);

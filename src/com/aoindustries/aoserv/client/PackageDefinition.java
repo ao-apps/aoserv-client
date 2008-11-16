@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
@@ -188,7 +187,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	return SchemaTable.TableID.PACKAGE_DEFINITIONS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         accounting=result.getString(2);
         category=result.getString(3);
@@ -225,7 +224,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return display;
     }
 
-    public void write(CompressedDataOutputStream out, String aoservVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version aoservVersion) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(accounting);
         out.writeUTF(category);

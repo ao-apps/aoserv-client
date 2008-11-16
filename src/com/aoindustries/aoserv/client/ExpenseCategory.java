@@ -35,7 +35,7 @@ final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
 	return SchemaTable.TableID.EXPENSE_CATEGORIES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getString(1);
     }
 
@@ -43,7 +43,7 @@ final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
 	pkey=in.readUTF().intern();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
     }
 }

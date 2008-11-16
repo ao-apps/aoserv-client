@@ -345,7 +345,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	return SchemaTable.TableID.CREDIT_CARDS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
 	pkey = result.getInt(pos++);
         processorId = result.getString(pos++);
@@ -440,14 +440,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	return useMonthly;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) out.writeUTF(processorId);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeUTF(processorId);
 	out.writeUTF(accounting);
-	if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) out.writeCompressedInt(0);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) out.writeNullUTF(groupName);
+	if(version.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(0);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(groupName);
 	out.writeUTF(cardInfo);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) {
             out.writeCompressedInt(0);
             out.writeCompressedInt(0);
             out.writeCompressedInt(0);
@@ -457,7 +457,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             else out.writeCompressedInt(0);
             out.writeCompressedInt(0);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) {
             out.writeUTF(providerUniqueId);
             out.writeUTF(firstName);
             out.writeUTF(lastName);
@@ -475,14 +475,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         }
 	out.writeLong(created);
 	out.writeUTF(createdBy);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)>=0) out.writeNullUTF(principalName);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(principalName);
 	out.writeBoolean(useMonthly);
 	out.writeBoolean(isActive);
 	out.writeLong(deactivatedOn);
 	out.writeNullUTF(deactivateReason);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
 	out.writeNullUTF(description);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
             out.writeNullUTF(encrypted_card_number);
             out.writeCompressedInt(encryption_card_number_from);
             out.writeCompressedInt(encryption_card_number_recipient);

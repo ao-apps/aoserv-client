@@ -67,7 +67,10 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
         return null;
     }
 
-    public List<AOServer> getNestedAOServers(AOServer server) {
+    /**
+     * @see  AOServer#getNestedAOServers()
+     */
+    List<AOServer> getNestedAOServers(AOServer server) {
         int pkey=server.pkey;
         List<AOServer> servers=getRows();
         int size=servers.size();

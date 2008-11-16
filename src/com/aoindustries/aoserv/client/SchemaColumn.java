@@ -5,11 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -51,7 +53,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
         int index,
         String type,
         boolean is_nullable,
-        boolean is_unqiue,
+        boolean is_unique,
         boolean is_public,
         String description,
         String since_version,
@@ -75,24 +77,19 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
     }
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, SchemaColumn.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_PKEY: return Integer.valueOf(pkey);
-                case 1: return table_name;
-                case 2: return column_name;
-                case 3: return Integer.valueOf(index);
-                case 4: return type;
-                case 5: return is_nullable?Boolean.TRUE:Boolean.FALSE;
-                case 6: return is_unique?Boolean.TRUE:Boolean.FALSE;
-                case 7: return is_public?Boolean.TRUE:Boolean.FALSE;
-                case 8: return description;
-                case 9: return since_version;
-                case 10: return last_version;
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return table_name;
+            case 2: return column_name;
+            case 3: return Integer.valueOf(index);
+            case 4: return type;
+            case 5: return is_nullable?Boolean.TRUE:Boolean.FALSE;
+            case 6: return is_unique?Boolean.TRUE:Boolean.FALSE;
+            case 7: return is_public?Boolean.TRUE:Boolean.FALSE;
+            case 8: return description;
+            case 9: return since_version;
+            case 10: return last_version;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -121,14 +118,9 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
     }
 
     public SchemaTable getSchemaTable(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, SchemaColumn.class, "getSchemaTable(AOServConnector)", null);
-        try {
-            SchemaTable obj=connector.schemaTables.get(table_name);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaTable: "+table_name));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        SchemaTable obj=connector.schemaTables.get(table_name);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaTable: "+table_name));
+        return obj;
     }
 
     public String getSchemaTableName() {
@@ -136,14 +128,9 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
     }
 
     public SchemaType getSchemaType(AOServConnector connector) {
-        Profiler.startProfile(Profiler.FAST, SchemaColumn.class, "getSchemaType(AOServConnector)", null);
-        try {
-            SchemaType obj=connector.schemaTypes.get(type);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaType: "+type));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        SchemaType obj=connector.schemaTypes.get(type);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaType: "+type));
+        return obj;
     }
 
     public String getSchemaTypeName() {
@@ -154,23 +141,18 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
         return SchemaTable.TableID.SCHEMA_COLUMNS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, SchemaColumn.class, "initImpl(ResultSet)", null);
-        try {
-            pkey=result.getInt(1);
-            table_name=result.getString(2);
-            column_name=result.getString(3);
-            index=result.getInt(4);
-            type=result.getString(5);
-            is_nullable=result.getBoolean(6);
-            is_unique=result.getBoolean(7);
-            is_public=result.getBoolean(8);
-            description=result.getString(9);
-            since_version=result.getString(10);
-            last_version=result.getString(11);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        table_name=result.getString(2);
+        column_name=result.getString(3);
+        index=result.getInt(4);
+        type=result.getString(5);
+        is_nullable=result.getBoolean(6);
+        is_unique=result.getBoolean(7);
+        is_public=result.getBoolean(8);
+        description=result.getString(9);
+        since_version=result.getString(10);
+        last_version=result.getString(11);
     }
 
     public boolean isNullable() {
@@ -186,44 +168,35 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, SchemaColumn.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readCompressedInt();
-            table_name=in.readUTF().intern();
-            column_name=in.readUTF().intern();
-            index=in.readCompressedInt();
-            type=in.readUTF().intern();
-            is_nullable=in.readBoolean();
-            is_unique=in.readBoolean();
-            is_public=in.readBoolean();
-            description=in.readUTF();
-            since_version=in.readUTF().intern();
-            last_version=StringUtility.intern(in.readNullUTF());
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readCompressedInt();
+        table_name=in.readUTF().intern();
+        column_name=in.readUTF().intern();
+        index=in.readCompressedInt();
+        type=in.readUTF().intern();
+        is_nullable=in.readBoolean();
+        is_unique=in.readBoolean();
+        is_public=in.readBoolean();
+        description=in.readUTF();
+        since_version=in.readUTF().intern();
+        last_version=StringUtility.intern(in.readNullUTF());
     }
 
+    @Override
     String toStringImpl() {
         return table_name+'.'+column_name;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, SchemaColumn.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeCompressedInt(pkey);
-            out.writeUTF(table_name);
-            out.writeUTF(column_name);
-            out.writeCompressedInt(index);
-            out.writeUTF(type);
-            out.writeBoolean(is_nullable);
-            out.writeBoolean(is_unique);
-            out.writeBoolean(is_public);
-            out.writeUTF(description);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-            if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(table_name);
+        out.writeUTF(column_name);
+        out.writeCompressedInt(index);
+        out.writeUTF(type);
+        out.writeBoolean(is_nullable);
+        out.writeBoolean(is_unique);
+        out.writeBoolean(is_public);
+        out.writeUTF(description);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
     }
 }

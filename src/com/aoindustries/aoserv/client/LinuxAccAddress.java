@@ -63,7 +63,7 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
 	return SchemaTable.TableID.LINUX_ACC_ADDRESSES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
 	email_address=result.getInt(2);
 	linux_server_account=result.getInt(3);
@@ -91,10 +91,10 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
         return getEmailAddress().toString()+"->"+getLinuxServerAccount().toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeCompressedInt(email_address);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeUTF("TODO: Convert somehow"); // linux_account
         } else {
             out.writeCompressedInt(linux_server_account);

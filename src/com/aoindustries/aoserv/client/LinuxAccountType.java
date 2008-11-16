@@ -145,7 +145,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	return SchemaTable.TableID.LINUX_ACCOUNT_TYPES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	description = result.getString(2);
 	is_email = result.getBoolean(3);
@@ -182,7 +182,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	return description;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(description);
 	out.writeBoolean(is_email);

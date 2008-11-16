@@ -161,7 +161,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	return new String(bout.toByteArray());
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getString(1);
 	file=result.getString(2);
 	packageName=result.getString(3);
@@ -270,12 +270,12 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         this.ttl=ttl;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(file);
 	out.writeUTF(packageName);
 	out.writeUTF(hostmaster);
 	out.writeLong(serial);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);
     }
 }

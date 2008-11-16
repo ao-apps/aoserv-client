@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
@@ -87,7 +86,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	return SchemaTable.TableID.DISABLE_LOG;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         time=result.getTimestamp(2).getTime();
         accounting=result.getString(3);
@@ -103,7 +102,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         disable_reason=in.readNullUTF();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeLong(time);
         out.writeUTF(accounting);

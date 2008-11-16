@@ -108,7 +108,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         return SchemaTable.TableID.PROTOCOLS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey = result.getString(1);
         port = result.getInt(2);
         name = result.getString(3);
@@ -124,11 +124,11 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         net_protocol=in.readUTF().intern();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
         out.writeCompressedInt(port);
         out.writeUTF(name);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_105)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0) {
             out.writeBoolean(is_user_service);
             out.writeUTF(net_protocol);
         }

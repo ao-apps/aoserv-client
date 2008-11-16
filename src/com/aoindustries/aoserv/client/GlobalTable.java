@@ -5,9 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.Profiler;
 import com.aoindustries.util.WrappedException;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,8 +80,6 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 
     protected GlobalTable(AOServConnector connector, Class<V> clazz) {
 	super(connector, clazz);
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "<init>(AOServConnector,Class<V>)", null);
-        Profiler.endProfile(Profiler.FAST);
     }
 
     /**
@@ -91,129 +87,110 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      * table is not yet loaded.
      */
     public final int getGlobalRowCount() {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getGlobalRowCount()", null);
-        try {
-            List<GlobalObject<?,?>> objs;
-            synchronized(tableObjs) {
-                objs=tableObjs.get(getTableID().ordinal());
-            }
-            if(objs!=null) return objs.size();
-            return -1;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        List<GlobalObject<?,?>> objs;
+        synchronized(tableObjs) {
+            objs=tableObjs.get(getTableID().ordinal());
         }
+        if(objs!=null) return objs.size();
+        return -1;
     }
 
+    @Override
     @SuppressWarnings({"unchecked"})
     final public List<V> getIndexedRows(int col, Object value) {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getIndexedRows(int,Object)", null);
-        try {
-            SchemaTable.TableID tableID=getTableID();
-            synchronized(locks[tableID.ordinal()]) {
-                validateCache();
+        SchemaTable.TableID tableID=getTableID();
+        synchronized(locks[tableID.ordinal()]) {
+            validateCache();
 
-                BitSet tableLoadeds=indexLoadeds[tableID.ordinal()];
-                if(tableLoadeds==null) indexLoadeds[tableID.ordinal()]=tableLoadeds=new BitSet(col+1);
-                boolean isHashed=tableLoadeds.get(col);
+            BitSet tableLoadeds=indexLoadeds[tableID.ordinal()];
+            if(tableLoadeds==null) indexLoadeds[tableID.ordinal()]=tableLoadeds=new BitSet(col+1);
+            boolean isHashed=tableLoadeds.get(col);
 
-                List<Map<Object,List<GlobalObject<?,?>>>> tableValues;
-                synchronized(indexHashes) {
-                    tableValues = indexHashes.get(tableID.ordinal());
-                    if(tableValues==null) indexHashes.set(tableID.ordinal(), tableValues=new ArrayList<Map<Object,List<GlobalObject<?,?>>>>(col+1));
-                }
-                while(tableValues.size()<=col) tableValues.add(null);
-                Map<Object,List<GlobalObject<?,?>>> colIndexes=tableValues.get(col);
-                if(colIndexes==null) tableValues.set(col, colIndexes=new HashMap<Object,List<GlobalObject<?,?>>>());
-
-                if(!isHashed) {
-                    // Build the modifiable lists in a temporary Map
-                    Map<Object,List<GlobalObject<?,?>>> modifiableIndexes=new HashMap<Object,List<GlobalObject<?,?>>>();
-                    for(GlobalObject O : getRows()) {
-                        Object cvalue=O.getColumn(col);
-                        List<GlobalObject<?,?>> list=modifiableIndexes.get(cvalue);
-                        if(list==null) modifiableIndexes.put(cvalue, list=new ArrayList<GlobalObject<?,?>>());
-                        list.add(O);
-                    }
-                    // Wrap each of the newly-created indexes to be unmodifiable
-                    colIndexes.clear();
-                    Iterator<Object> keys=modifiableIndexes.keySet().iterator();
-                    while(keys.hasNext()) {
-                        Object key=keys.next();
-                        List<GlobalObject<?,?>> list=modifiableIndexes.get(key);
-                        colIndexes.put(key, Collections.unmodifiableList(list));
-                    }
-                    tableLoadeds.set(col);
-                }
-                // This returns unmodifable lists.
-                List<GlobalObject<?,?>> list=colIndexes.get(value);
-                if(list==null) return Collections.emptyList();
-                return (List)list;
+            List<Map<Object,List<GlobalObject<?,?>>>> tableValues;
+            synchronized(indexHashes) {
+                tableValues = indexHashes.get(tableID.ordinal());
+                if(tableValues==null) indexHashes.set(tableID.ordinal(), tableValues=new ArrayList<Map<Object,List<GlobalObject<?,?>>>>(col+1));
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            while(tableValues.size()<=col) tableValues.add(null);
+            Map<Object,List<GlobalObject<?,?>>> colIndexes=tableValues.get(col);
+            if(colIndexes==null) tableValues.set(col, colIndexes=new HashMap<Object,List<GlobalObject<?,?>>>());
+
+            if(!isHashed) {
+                // Build the modifiable lists in a temporary Map
+                Map<Object,List<GlobalObject<?,?>>> modifiableIndexes=new HashMap<Object,List<GlobalObject<?,?>>>();
+                for(GlobalObject O : getRows()) {
+                    Object cvalue=O.getColumn(col);
+                    List<GlobalObject<?,?>> list=modifiableIndexes.get(cvalue);
+                    if(list==null) modifiableIndexes.put(cvalue, list=new ArrayList<GlobalObject<?,?>>());
+                    list.add(O);
+                }
+                // Wrap each of the newly-created indexes to be unmodifiable
+                colIndexes.clear();
+                Iterator<Object> keys=modifiableIndexes.keySet().iterator();
+                while(keys.hasNext()) {
+                    Object key=keys.next();
+                    List<GlobalObject<?,?>> list=modifiableIndexes.get(key);
+                    colIndexes.put(key, Collections.unmodifiableList(list));
+                }
+                tableLoadeds.set(col);
+            }
+            // This returns unmodifable lists.
+            List<GlobalObject<?,?>> list=colIndexes.get(value);
+            if(list==null) return Collections.emptyList();
+            return (List)list;
         }
     }
 
     @SuppressWarnings({"unchecked"})
     final protected V getUniqueRowImpl(int col, Object value) {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getUniqueRowImpl(int,Object)", null);
-        try {
-            SchemaTable.TableID tableID=getTableID();
-            synchronized(locks[tableID.ordinal()]) {
-                validateCache();
+        SchemaTable.TableID tableID=getTableID();
+        synchronized(locks[tableID.ordinal()]) {
+            validateCache();
 
-                BitSet tableLoadeds=hashLoadeds[tableID.ordinal()];
-                if(tableLoadeds==null) hashLoadeds[tableID.ordinal()]=tableLoadeds=new BitSet(col+1);
-                boolean isHashed=tableLoadeds.get(col);
+            BitSet tableLoadeds=hashLoadeds[tableID.ordinal()];
+            if(tableLoadeds==null) hashLoadeds[tableID.ordinal()]=tableLoadeds=new BitSet(col+1);
+            boolean isHashed=tableLoadeds.get(col);
 
-                List<V> table=getRows();
-                int size=table.size();
+            List<V> table=getRows();
+            int size=table.size();
 
-                List<Map<Object,GlobalObject>> tableValues;
-                synchronized(tableHashes) {
-                    tableValues = tableHashes.get(tableID.ordinal());
-                    if(tableValues==null) tableHashes.set(tableID.ordinal(), tableValues=new ArrayList<Map<Object,GlobalObject>>(col+1));
-                }
-                while(tableValues.size()<=col) tableValues.add(null);
-                Map<Object,GlobalObject> colValues=tableValues.get(col);
-                if(colValues==null) tableValues.set(col, colValues=new HashMap<Object,GlobalObject>(size*13/9));
-
-                if(!isHashed) {
-                    colValues.clear();
-                    for(int c=0;c<size;c++) {
-                        GlobalObject O=table.get(c);
-                        Object cvalue=O.getColumn(col);
-                        if(cvalue!=null) {
-                            GlobalObject old=colValues.put(cvalue, O);
-                            if(old!=null) throw new WrappedException(new SQLException("Duplicate pkey entry for table "+getTableID()+" ("+getTableName()+"), column #"+col+": "+cvalue));
-                        }
-                    }
-
-                    tableLoadeds.set(col);
-                }
-
-                return (V)colValues.get(value);
+            List<Map<Object,GlobalObject>> tableValues;
+            synchronized(tableHashes) {
+                tableValues = tableHashes.get(tableID.ordinal());
+                if(tableValues==null) tableHashes.set(tableID.ordinal(), tableValues=new ArrayList<Map<Object,GlobalObject>>(col+1));
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            while(tableValues.size()<=col) tableValues.add(null);
+            Map<Object,GlobalObject> colValues=tableValues.get(col);
+            if(colValues==null) tableValues.set(col, colValues=new HashMap<Object,GlobalObject>(size*13/9));
+
+            if(!isHashed) {
+                colValues.clear();
+                for(int c=0;c<size;c++) {
+                    GlobalObject O=table.get(c);
+                    Object cvalue=O.getColumn(col);
+                    if(cvalue!=null) {
+                        GlobalObject old=colValues.put(cvalue, O);
+                        if(old!=null) throw new WrappedException(new SQLException("Duplicate pkey entry for table "+getTableID()+" ("+getTableName()+"), column #"+col+": "+cvalue));
+                    }
+                }
+
+                tableLoadeds.set(col);
+            }
+
+            return (V)colValues.get(value);
         }
     }
 
     @SuppressWarnings({"unchecked"})
     public final List<V> getRows() {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "getRows()", null);
-        try {
-            SchemaTable.TableID tableID = getTableID();
-            // We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
-            synchronized(locks[tableID.ordinal()]) {
-                validateCache();
-                synchronized(tableObjs) {
-                    List<GlobalObject<?,?>> objs=tableObjs.get(tableID.ordinal());
-                    return (List)objs;
-                }
+        SchemaTable.TableID tableID = getTableID();
+        // We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
+        synchronized(locks[tableID.ordinal()]) {
+            validateCache();
+            synchronized(tableObjs) {
+                List<GlobalObject<?,?>> objs=tableObjs.get(tableID.ordinal());
+                return (List)objs;
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 
@@ -221,47 +198,29 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      * Determines if the contents are currently hashed in a hashmap.
      */
     boolean isHashed(int column) {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "isHashed(int)", null);
-        try {
-            BitSet table=hashLoadeds[getTableID().ordinal()];
-            return table!=null && table.get(column);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        BitSet table=hashLoadeds[getTableID().ordinal()];
+        return table!=null && table.get(column);
     }
 
     /**
      * Determines if the contents are currently indexed.
      */
     boolean isIndexed(int column) {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "isIndexed(int)", null);
-        try {
-            BitSet table=indexLoadeds[getTableID().ordinal()];
-            return table!=null && table.get(column);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        BitSet table=indexLoadeds[getTableID().ordinal()];
+        return table!=null && table.get(column);
     }
 
+    @Override
     final public boolean isLoaded() {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "isLoaded()", null);
-        try {
-            return lastLoadeds[getTableID().ordinal()]!=-1;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return lastLoadeds[getTableID().ordinal()]!=-1;
     }
 
+    @Override
     public void clearCache() {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "clearCache()", null);
-        try {
-            super.clearCache();
-            SchemaTable.TableID tableID=getTableID();
-            synchronized(locks[tableID.ordinal()]) {
-                lastLoadeds[tableID.ordinal()]=-1;
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        super.clearCache();
+        SchemaTable.TableID tableID=getTableID();
+        synchronized(locks[tableID.ordinal()]) {
+            lastLoadeds[tableID.ordinal()]=-1;
         }
     }
 
@@ -270,26 +229,21 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      */
     @SuppressWarnings({"unchecked"})
     private void validateCache() {
-        Profiler.startProfile(Profiler.FAST, GlobalTable.class, "validateCache()", null);
-        try {
-            SchemaTable.TableID tableID=getTableID();
-            synchronized(locks[tableID.ordinal()]) {
-                long currentTime=System.currentTimeMillis();
-                long lastLoaded=lastLoadeds[tableID.ordinal()];
-                if(lastLoaded==-1) {
-                    List<GlobalObject<?,?>> list=(List)getObjects(AOServProtocol.CommandID.GET_TABLE, tableID.ordinal());
-                    synchronized(tableObjs) {
-                        tableObjs.set(tableID.ordinal(), Collections.unmodifiableList(list));
-                    }
-                    BitSet loaded=hashLoadeds[tableID.ordinal()];
-                    if(loaded!=null) loaded.clear();
-                    BitSet indexed=indexLoadeds[tableID.ordinal()];
-                    if(indexed!=null) indexed.clear();
-                    lastLoadeds[tableID.ordinal()]=currentTime;
+        SchemaTable.TableID tableID=getTableID();
+        synchronized(locks[tableID.ordinal()]) {
+            long currentTime=System.currentTimeMillis();
+            long lastLoaded=lastLoadeds[tableID.ordinal()];
+            if(lastLoaded==-1) {
+                List<GlobalObject<?,?>> list=(List)getObjects(AOServProtocol.CommandID.GET_TABLE, tableID.ordinal());
+                synchronized(tableObjs) {
+                    tableObjs.set(tableID.ordinal(), Collections.unmodifiableList(list));
                 }
+                BitSet loaded=hashLoadeds[tableID.ordinal()];
+                if(loaded!=null) loaded.clear();
+                BitSet indexed=indexLoadeds[tableID.ordinal()];
+                if(indexed!=null) indexed.clear();
+                lastLoadeds[tableID.ordinal()]=currentTime;
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 }

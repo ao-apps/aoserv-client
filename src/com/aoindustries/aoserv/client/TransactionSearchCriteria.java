@@ -274,7 +274,16 @@ final public class TransactionSearchCriteria implements Streamable {
 	return sortDescending;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    /**
+     * @deprecated  This is maintained only for compatibility with the <code>Streamable</code> interface.
+     * 
+     * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
+     */
+    final public void write(CompressedDataOutputStream out, String version) throws IOException {
+        write(out, AOServProtocol.Version.getVersion(version));
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeLong(after);
 	out.writeLong(before);
 	out.writeCompressedInt(transid);

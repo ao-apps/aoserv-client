@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
+import com.aoindustries.profiler.MethodProfile;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -143,7 +143,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
 	return use_count;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
@@ -164,7 +164,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
 	this.table=table;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(ao_server);
         out.writeCompressedInt(level);
         out.writeUTF(classname);

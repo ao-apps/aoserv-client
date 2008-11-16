@@ -139,7 +139,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	return SchemaTable.TableID.EMAIL_SMTP_RELAYS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	packageName=result.getString(2);
 	ao_server=result.getInt(3);
@@ -199,7 +199,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         return packageName+" "+getType().getVerb()+" from "+host+" to "+getAOServer().getHostname();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(packageName);
 	out.writeCompressedInt(ao_server);

@@ -181,7 +181,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         return table.connector.httpdTomcatParameters.getHttpdTomcatParameter(this, name);
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         tomcat_site=result.getInt(2);
         class_name=result.getString(3);
@@ -297,7 +297,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(tomcat_site);
         out.writeNullUTF(class_name);

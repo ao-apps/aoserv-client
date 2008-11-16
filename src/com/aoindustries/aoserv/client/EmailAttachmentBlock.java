@@ -60,7 +60,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
 	return SchemaTable.TableID.EMAIL_ATTACHMENT_BLOCKS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
 	linux_server_account=result.getInt(2);
 	extension=result.getString(3);
@@ -88,7 +88,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
         return getLinuxServerAccount().toString()+"->"+extension;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeCompressedInt(linux_server_account);
 	out.writeUTF(extension);

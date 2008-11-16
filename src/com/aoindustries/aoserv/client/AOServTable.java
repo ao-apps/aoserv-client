@@ -5,14 +5,25 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.table.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.Streamable;
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.table.Table;
+import com.aoindustries.table.TableListener;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * An <code>AOServTable</code> provides access to one
@@ -99,36 +110,26 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * and may potentially slow down the responsiveness of the server.
      */
     final public void addTableListener(TableListener listener, long batchTime) {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "addTableListener(TableListener,long)", null);
-        try {
-            if(batchTime<0) throw new IllegalArgumentException("batchTime<0: "+batchTime);
+        if(batchTime<0) throw new IllegalArgumentException("batchTime<0: "+batchTime);
 
-            synchronized(eventLock) {
-		if(tableListeners==null) {
-		    tableListeners=new ArrayList<TableListenerEntry>();
-                }
-                if(batchTime>0 && thread==null) thread=new TableEventThread(this);
-
-                tableListeners.add(new TableListenerEntry(listener, batchTime));
-
-                // Tell the thread to recalc its stuff
-                eventLock.notifyAll();
+        synchronized(eventLock) {
+            if(tableListeners==null) {
+                tableListeners=new ArrayList<TableListenerEntry>();
             }
+            if(batchTime>0 && thread==null) thread=new TableEventThread(this);
 
-            connector.addingTableListener();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            tableListeners.add(new TableListenerEntry(listener, batchTime));
+
+            // Tell the thread to recalc its stuff
+            eventLock.notifyAll();
         }
+
+        connector.addingTableListener();
     }
 
     final public void addTableLoadListener(TableLoadListener listener, Object param) {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "addTableLoadListener(TableLoadListener,Object)", null);
-        try {
-            synchronized(loadListeners) {
-                loadListeners.add(new TableLoadListenerEntry(listener, param));
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        synchronized(loadListeners) {
+            loadListeners.add(new TableLoadListenerEntry(listener, param));
         }
     }
 
@@ -147,23 +148,18 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * Commented-out because I'm not sure if this handles the references like ao_server.server.farm.name
      *  - Dan 2008-04-18
     final public SchemaColumn[] getDefaultSortSchemaColumns() {
-        Profiler.startProfile(Profiler.UNKNOWN, AOServTable.class, "getDefaultSortSchemaColumns()", null);
-        try {
-            OrderBy[] orderBys=getDefaultOrderBy();
-            if(orderBys==null) return null;
-            int len=orderBys.length;
-            SchemaTable schemaTable=connector.schemaTables.get(getTableID());
-            SchemaColumn[] schemaColumns=new SchemaColumn[len];
-            for(int c=0;c<len;c++) {
-                String columnName=orderBys[c].getExpression();
-                SchemaColumn col=schemaTable.getSchemaColumn(connector, columnName);
-                if(col==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+columnName+" on "+schemaTable.getName()));
-                schemaColumns[c]=col;
-            }
-            return schemaColumns;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        OrderBy[] orderBys=getDefaultOrderBy();
+        if(orderBys==null) return null;
+        int len=orderBys.length;
+        SchemaTable schemaTable=connector.schemaTables.get(getTableID());
+        SchemaColumn[] schemaColumns=new SchemaColumn[len];
+        for(int c=0;c<len;c++) {
+            String columnName=orderBys[c].getExpression();
+            SchemaColumn col=schemaTable.getSchemaColumn(connector, columnName);
+            if(col==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+columnName+" on "+schemaTable.getName()));
+            schemaColumns[c]=col;
         }
+        return schemaColumns;
     }*/
 
     /**
@@ -208,17 +204,12 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     abstract OrderBy[] getDefaultOrderBy();
 
     final public SQLExpression[] getDefaultOrderBySQLExpressions() {
-        Profiler.startProfile(Profiler.UNKNOWN, AOServTable.class, "getDefaultSortSQLExpressions()", null);
-        try {
-            OrderBy[] orderBys=getDefaultOrderBy();
-            if(orderBys==null) return null;
-            int len=orderBys.length;
-            SQLExpression[] exprs=new SQLExpression[len];
-            for(int c=0;c<len;c++) exprs[c]=getSQLExpression(orderBys[c].getExpression());
-            return exprs;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        OrderBy[] orderBys=getDefaultOrderBy();
+        if(orderBys==null) return null;
+        int len=orderBys.length;
+        SQLExpression[] exprs=new SQLExpression[len];
+        for(int c=0;c<len;c++) exprs[c]=getSQLExpression(orderBys[c].getExpression());
+        return exprs;
     }
 
     protected V getNewObject() throws IOException {
@@ -241,109 +232,94 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
 
     @SuppressWarnings({"unchecked"})
     protected V getObject(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObject(AOServProtocol.CommandID,...)", null);
         try {
+            AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
             try {
-                AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    AOServConnector.writeParams(params, out);
-                    out.flush();
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                AOServConnector.writeParams(params, out);
+                out.flush();
 
-                    CompressedDataInputStream in=connection.getInputStream();
-                    int code=in.readByte();
-                    if(code==AOServProtocol.NEXT) {
-                        V obj=getNewObject();
-                        obj.read(in);
-                        if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
-                        return obj;
-                    }
-                    AOServProtocol.checkResult(code, in);
-                    return null;
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    connector.releaseConnection(connection);
+                CompressedDataInputStream in=connection.getInputStream();
+                int code=in.readByte();
+                if(code==AOServProtocol.NEXT) {
+                    V obj=getNewObject();
+                    obj.read(in);
+                    if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
+                    return obj;
                 }
+                AOServProtocol.checkResult(code, in);
+                return null;
             } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+                connection.close();
+                throw err;
+            } finally {
+                connector.releaseConnection(connection);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
     protected List<V> getObjects(AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "getObjects(AOServProtocol.CommandID,...)", null);
-        try {
-            List<V> list=new ArrayList<V>();
-            getObjects(list, commID, params);
-            return list;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        List<V> list=new ArrayList<V>();
+        getObjects(list, commID, params);
+        return list;
     }
 
     protected void getObjects(List<V> list, AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObjects(List<V>,AOServProtocol.CommandID,...)", null);
         try {
-            try {
-                // Get a snapshot of all listeners
-                ProgressListener[] listeners=getProgressListeners();
-                int listenerCount=listeners==null?0:listeners.length;
-                int[] progressScales=null;
-                int[] lastProgresses=null;
-                if(listeners!=null) {
-                    progressScales=new int[listenerCount];
-                    for(int c=0;c<listenerCount;c++) progressScales[c]=listeners[c].getScale();
-                    lastProgresses=new int[listenerCount];
-                }
-                // Get a snapshot of all load listeners
-                TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
-                int loadCount=loadListeners==null?0:loadListeners.length;
-                // Start the progresses at zero
-                for(int c=0;c<listenerCount;c++) listeners[c].progressChanged(0, progressScales[c], this);
-                // Tell each load listener that we are starting
-                for(int c=0;c<loadCount;c++) {
-                    TableLoadListenerEntry entry=loadListeners[c];
-                    entry.param=entry.listener.tableLoadStarted(this, entry.param);
-                }
-
-                AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    out.writeBoolean(listeners!=null);
-                    AOServConnector.writeParams(params, out);
-                    out.flush();
-
-                    getObjects0(
-                        list,
-                        connection,
-                        listeners,
-                        progressScales,
-                        lastProgresses,
-                        loadListeners
-                    );
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    connector.releaseConnection(connection);
-                }
-
-                sortIfNeeded(list);
-            } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
+            // Get a snapshot of all listeners
+            ProgressListener[] listeners=getProgressListeners();
+            int listenerCount=listeners==null?0:listeners.length;
+            int[] progressScales=null;
+            int[] lastProgresses=null;
+            if(listeners!=null) {
+                progressScales=new int[listenerCount];
+                for(int c=0;c<listenerCount;c++) progressScales[c]=listeners[c].getScale();
+                lastProgresses=new int[listenerCount];
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+            // Get a snapshot of all load listeners
+            TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
+            int loadCount=loadListeners==null?0:loadListeners.length;
+            // Start the progresses at zero
+            for(int c=0;c<listenerCount;c++) listeners[c].progressChanged(0, progressScales[c], this);
+            // Tell each load listener that we are starting
+            for(int c=0;c<loadCount;c++) {
+                TableLoadListenerEntry entry=loadListeners[c];
+                entry.param=entry.listener.tableLoadStarted(this, entry.param);
+            }
+
+            AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
+            try {
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                out.writeBoolean(listeners!=null);
+                AOServConnector.writeParams(params, out);
+                out.flush();
+
+                getObjects0(
+                    list,
+                    connection,
+                    listeners,
+                    progressScales,
+                    lastProgresses,
+                    loadListeners
+                );
+            } catch(IOException err) {
+                connection.close();
+                throw err;
+            } finally {
+                connector.releaseConnection(connection);
+            }
+
+            sortIfNeeded(list);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
@@ -362,60 +338,55 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         int[] lastProgresses,
         TableLoadListenerEntry[] loadListeners
     ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObjects0(List<V>,AOServConnection,ProgressListener[],int[],int[],TableLoadListenerEntry[])", null);
-        try {
-            int listenerCount=listeners==null?0:listeners.length;
-            int loadCount=loadListeners==null?0:loadListeners.length;
+        int listenerCount=listeners==null?0:listeners.length;
+        int loadCount=loadListeners==null?0:loadListeners.length;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=listeners==null?AOServProtocol.NEXT:in.readByte();
-            if(code==AOServProtocol.NEXT) {
-                int size;
-                if(listeners==null) {
-                    size=0;
-                } else {
-                    size=in.readCompressedInt();
-                }
-                int objCount=0;
-                while((code=in.readByte())==AOServProtocol.NEXT) {
-                    V obj=getNewObject();
-                    obj.read(in);
-                    if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
+        CompressedDataInputStream in=connection.getInputStream();
+        int code=listeners==null?AOServProtocol.NEXT:in.readByte();
+        if(code==AOServProtocol.NEXT) {
+            int size;
+            if(listeners==null) {
+                size=0;
+            } else {
+                size=in.readCompressedInt();
+            }
+            int objCount=0;
+            while((code=in.readByte())==AOServProtocol.NEXT) {
+                V obj=getNewObject();
+                obj.read(in);
+                if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
 
-                    // Sort and add
-                    list.add(obj);
+                // Sort and add
+                list.add(obj);
 
-                    // Notify of progress changes
-                    objCount++;
-                    if(listeners!=null) {
-                        for(int c=0;c<listenerCount;c++) {
-                            int currentProgress=(int)(((long)objCount)*progressScales[c]/size);
-                            if(currentProgress!=lastProgresses[c]) listeners[c].progressChanged(lastProgresses[c]=currentProgress, progressScales[c], this);
-                        }
-                    }
-
-                    // Tell each load listener of the new object
-                    for(int c=0;c<loadCount;c++) {
-                        TableLoadListenerEntry entry=loadListeners[c];
-                        entry.param=entry.listener.tableRowLoaded(this, obj, objCount-1, entry.param);
+                // Notify of progress changes
+                objCount++;
+                if(listeners!=null) {
+                    for(int c=0;c<listenerCount;c++) {
+                        int currentProgress=(int)(((long)objCount)*progressScales[c]/size);
+                        if(currentProgress!=lastProgresses[c]) listeners[c].progressChanged(lastProgresses[c]=currentProgress, progressScales[c], this);
                     }
                 }
-                AOServProtocol.checkResult(code, in);
-                if(listenerCount>0 && size!=objCount) throw new IOException("Unexpected number of objects returned: expected="+size+", returned="+objCount);
-                // Show at final progress scale, just in case previous algorithm did not get the scale there.
-                for(int c=0;c<listenerCount;c++) if(lastProgresses[c]!=progressScales[c]) listeners[c].progressChanged(lastProgresses[c]=progressScales[c], progressScales[c], this);
 
-                // Tell each load listener that we are done
+                // Tell each load listener of the new object
                 for(int c=0;c<loadCount;c++) {
                     TableLoadListenerEntry entry=loadListeners[c];
-                    entry.param=entry.listener.tableLoadCompleted(this, entry.param);
+                    entry.param=entry.listener.tableRowLoaded(this, obj, objCount-1, entry.param);
                 }
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+            AOServProtocol.checkResult(code, in);
+            if(listenerCount>0 && size!=objCount) throw new IOException("Unexpected number of objects returned: expected="+size+", returned="+objCount);
+            // Show at final progress scale, just in case previous algorithm did not get the scale there.
+            for(int c=0;c<listenerCount;c++) if(lastProgresses[c]!=progressScales[c]) listeners[c].progressChanged(lastProgresses[c]=progressScales[c], progressScales[c], this);
+
+            // Tell each load listener that we are done
+            for(int c=0;c<loadCount;c++) {
+                TableLoadListenerEntry entry=loadListeners[c];
+                entry.param=entry.listener.tableLoadCompleted(this, entry.param);
+            }
+        } else {
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
         }
     }
 
@@ -426,44 +397,39 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     }
 
     protected void getObjectsNoProgress(List<V> list, AOServProtocol.CommandID commID, Object ... params) {
-        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObjectNoProgress(List<V>,AOServProtocol.CommandID,...)", null);
         try {
-            try {
-                // Get a snapshot of all load listeners
-                TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
-                int loadCount=loadListeners==null?0:loadListeners.length;
-                // Tell each load listener that we are starting
-                for(int c=0;c<loadCount;c++) {
-                    TableLoadListenerEntry entry=loadListeners[c];
-                    entry.param=entry.listener.tableLoadStarted(this, entry.param);
-                }
-
-                AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
-                try {
-                    CompressedDataOutputStream out=connection.getOutputStream();
-                    out.writeCompressedInt(commID.ordinal());
-                    AOServConnector.writeParams(params, out);
-                    out.flush();
-
-                    getObjectsNoProgress0(
-                        list,
-                        connection,
-                        loadListeners
-                    );
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    connector.releaseConnection(connection);
-                }
-
-                sortIfNeeded(list);
-            } catch(IOException err) {
-                System.err.println("Error trying to getObjects for table "+getTableID());
-                throw new WrappedException(err);
+            // Get a snapshot of all load listeners
+            TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
+            int loadCount=loadListeners==null?0:loadListeners.length;
+            // Tell each load listener that we are starting
+            for(int c=0;c<loadCount;c++) {
+                TableLoadListenerEntry entry=loadListeners[c];
+                entry.param=entry.listener.tableLoadStarted(this, entry.param);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+
+            AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
+            try {
+                CompressedDataOutputStream out=connection.getOutputStream();
+                out.writeCompressedInt(commID.ordinal());
+                AOServConnector.writeParams(params, out);
+                out.flush();
+
+                getObjectsNoProgress0(
+                    list,
+                    connection,
+                    loadListeners
+                );
+            } catch(IOException err) {
+                connection.close();
+                throw err;
+            } finally {
+                connector.releaseConnection(connection);
+            }
+
+            sortIfNeeded(list);
+        } catch(IOException err) {
+            System.err.println("Error trying to getObjects for table "+getTableID());
+            throw new WrappedException(err);
         }
     }
 
@@ -473,41 +439,36 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         AOServConnection connection,
         TableLoadListenerEntry[] loadListeners
     ) {
-        Profiler.startProfile(Profiler.IO, AOServTable.class, "getObjectsNoProgress0(List<V>,AOServConnection,TableLoadListenerEntry[])", null);
         try {
-            try {
-                int loadCount=loadListeners==null?0:loadListeners.length;
+            int loadCount=loadListeners==null?0:loadListeners.length;
 
-                // Load the data
-                CompressedDataInputStream in=connection.getInputStream();
-                int objCount=0;
-                int code;
-                while((code=in.readByte())==AOServProtocol.NEXT) {
-                    V obj=getNewObject();
-                    obj.read(in);
-                    if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
-                    list.add(obj);
+            // Load the data
+            CompressedDataInputStream in=connection.getInputStream();
+            int objCount=0;
+            int code;
+            while((code=in.readByte())==AOServProtocol.NEXT) {
+                V obj=getNewObject();
+                obj.read(in);
+                if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
+                list.add(obj);
 
-                    // Tell each load listener of the new object
-                    for(int c=0;c<loadCount;c++) {
-                        TableLoadListenerEntry entry=loadListeners[c];
-                        entry.param=entry.listener.tableRowLoaded(this, obj, objCount-1, entry.param);
-                    }
-                }
-                AOServProtocol.checkResult(code, in);
-
-                // Tell each load listener that we are done
+                // Tell each load listener of the new object
                 for(int c=0;c<loadCount;c++) {
                     TableLoadListenerEntry entry=loadListeners[c];
-                    entry.param=entry.listener.tableLoadCompleted(this, entry.param);
+                    entry.param=entry.listener.tableRowLoaded(this, obj, objCount-1, entry.param);
                 }
-            } catch(IOException err) {
-                throw new WrappedException(err);
-            } catch(SQLException err) {
-                throw new WrappedException(err);
             }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+            AOServProtocol.checkResult(code, in);
+
+            // Tell each load listener that we are done
+            for(int c=0;c<loadCount;c++) {
+                TableLoadListenerEntry entry=loadListeners[c];
+                entry.param=entry.listener.tableLoadCompleted(this, entry.param);
+            }
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
         }
     }
 
@@ -518,20 +479,15 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * @see  #getDefaultSortSQLExpressions()
      */
     protected void sortIfNeeded(List<V> list) {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "sortIfNeeded(List<V>)", null);
-        try {
-            // Get the details for the sorting
-            SQLExpression[] sortExpressions=getDefaultOrderBySQLExpressions();
-            if(sortExpressions!=null) {
-                OrderBy[] orderBys=getDefaultOrderBy();
-                boolean[] sortOrders = new boolean[orderBys.length];
-                for(int c=0;c<orderBys.length;c++) {
-                    sortOrders[c] = orderBys[c].getOrder();
-                }
-                connector.schemaTypes.sort(list, sortExpressions, sortOrders);
+        // Get the details for the sorting
+        SQLExpression[] sortExpressions=getDefaultOrderBySQLExpressions();
+        if(sortExpressions!=null) {
+            OrderBy[] orderBys=getDefaultOrderBy();
+            boolean[] sortOrders = new boolean[orderBys.length];
+            for(int c=0;c<orderBys.length;c++) {
+                sortOrders[c] = orderBys[c].getOrder();
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            connector.schemaTypes.sort(list, sortExpressions, sortOrders);
         }
     }
 
@@ -563,58 +519,53 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     abstract public List<V> getRows();
     
     final public SQLExpression getSQLExpression(String expr) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOServTable.class, "getSQLExpression(String)", null);
-        try {
-            int joinPos=expr.indexOf('.');
-            if(joinPos==-1) joinPos=expr.length();
-            int castPos=expr.indexOf("::");
-            if(castPos==-1) castPos=expr.length();
-            int columnNameEnd=Math.min(joinPos, castPos);
-            String columnName=expr.substring(0, columnNameEnd);
-            SchemaColumn lastColumn=getTableSchema().getSchemaColumn(connector, columnName);
-            if(lastColumn==null) throw new IllegalArgumentException("Unable to find column: "+getTableName()+'.'+columnName);
+        int joinPos=expr.indexOf('.');
+        if(joinPos==-1) joinPos=expr.length();
+        int castPos=expr.indexOf("::");
+        if(castPos==-1) castPos=expr.length();
+        int columnNameEnd=Math.min(joinPos, castPos);
+        String columnName=expr.substring(0, columnNameEnd);
+        SchemaColumn lastColumn=getTableSchema().getSchemaColumn(connector, columnName);
+        if(lastColumn==null) throw new IllegalArgumentException("Unable to find column: "+getTableName()+'.'+columnName);
 
-            SQLExpression sql=new SQLColumnValue(connector, lastColumn);
-            expr=expr.substring(columnNameEnd);
+        SQLExpression sql=new SQLColumnValue(connector, lastColumn);
+        expr=expr.substring(columnNameEnd);
 
-            while(expr.length()>0) {
-                if(expr.charAt(0)=='.') {
-                    List<SchemaForeignKey> keys=lastColumn.getReferences(connector);
-                    if(keys.size()!=1) throw new IllegalArgumentException("Column "+lastColumn.getSchemaTable(connector).getName()+'.'+lastColumn.column_name+" should reference precisely one column, references "+keys.size());
+        while(expr.length()>0) {
+            if(expr.charAt(0)=='.') {
+                List<SchemaForeignKey> keys=lastColumn.getReferences(connector);
+                if(keys.size()!=1) throw new IllegalArgumentException("Column "+lastColumn.getSchemaTable(connector).getName()+'.'+lastColumn.column_name+" should reference precisely one column, references "+keys.size());
 
-                    joinPos=expr.indexOf('.', 1);
-                    if(joinPos==-1) joinPos=expr.length();
-                    castPos=expr.indexOf("::", 1);
-                    if(castPos==-1) castPos=expr.length();
-                    int joinNameEnd=Math.min(joinPos, castPos);
-                    columnName=expr.substring(1, joinNameEnd);
-                    SchemaColumn keyColumn=keys.get(0).getForeignColumn(connector);
-                    SchemaTable valueTable=keyColumn.getSchemaTable(connector);
-                    SchemaColumn valueColumn=valueTable.getSchemaColumn(connector, columnName);
-                    if(valueColumn==null) throw new IllegalArgumentException("Unable to find column: "+valueTable.getName()+'.'+columnName+" referenced from "+getTableName());
+                joinPos=expr.indexOf('.', 1);
+                if(joinPos==-1) joinPos=expr.length();
+                castPos=expr.indexOf("::", 1);
+                if(castPos==-1) castPos=expr.length();
+                int joinNameEnd=Math.min(joinPos, castPos);
+                columnName=expr.substring(1, joinNameEnd);
+                SchemaColumn keyColumn=keys.get(0).getForeignColumn(connector);
+                SchemaTable valueTable=keyColumn.getSchemaTable(connector);
+                SchemaColumn valueColumn=valueTable.getSchemaColumn(connector, columnName);
+                if(valueColumn==null) throw new IllegalArgumentException("Unable to find column: "+valueTable.getName()+'.'+columnName+" referenced from "+getTableName());
 
-                    sql=new SQLColumnJoin(connector, sql, keyColumn, valueColumn);
-                    expr=expr.substring(joinNameEnd);
+                sql=new SQLColumnJoin(connector, sql, keyColumn, valueColumn);
+                expr=expr.substring(joinNameEnd);
 
-                    lastColumn=valueColumn;
-                } else if(expr.charAt(0)==':' && expr.length()>1 && expr.charAt(1)==':') {
-                    joinPos=expr.indexOf('.', 2);
-                    if(joinPos==-1) joinPos=expr.length();
-                    castPos=expr.indexOf("::", 2);
-                    if(castPos==-1) castPos=expr.length();
-                    int typeNameEnd=Math.min(joinPos, castPos);
-                    String typeName=expr.substring(2, typeNameEnd);
-                    SchemaType type=connector.schemaTypes.get(typeName);
-                    if(type==null) throw new IllegalArgumentException("Unable to find SchemaType: "+typeName);
+                lastColumn=valueColumn;
+            } else if(expr.charAt(0)==':' && expr.length()>1 && expr.charAt(1)==':') {
+                joinPos=expr.indexOf('.', 2);
+                if(joinPos==-1) joinPos=expr.length();
+                castPos=expr.indexOf("::", 2);
+                if(castPos==-1) castPos=expr.length();
+                int typeNameEnd=Math.min(joinPos, castPos);
+                String typeName=expr.substring(2, typeNameEnd);
+                SchemaType type=connector.schemaTypes.get(typeName);
+                if(type==null) throw new IllegalArgumentException("Unable to find SchemaType: "+typeName);
 
-                    sql=new SQLCast(sql, type);
-                    expr=expr.substring(typeNameEnd);
-                } else throw new IllegalArgumentException("Unable to parse: "+expr);
-            }
-            return sql;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+                sql=new SQLCast(sql, type);
+                expr=expr.substring(typeNameEnd);
+            } else throw new IllegalArgumentException("Unable to parse: "+expr);
         }
+        return sql;
     }
 
     /**
@@ -629,15 +580,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     public abstract SchemaTable.TableID getTableID();
 
     private TableLoadListenerEntry[] getTableLoadListeners() {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "getTableLoadListeners()", null);
-        try {
-            synchronized(loadListeners) {
-                int size=loadListeners.size();
-                if(size==0) return null;
-                return loadListeners.toArray(new TableLoadListenerEntry[size]);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        synchronized(loadListeners) {
+            int size=loadListeners.size();
+            if(size==0) return null;
+            return loadListeners.toArray(new TableLoadListenerEntry[size]);
         }
     }
 
@@ -703,39 +649,34 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * Prints the contents of this table.
      */
     final public void printTable(AOServConnector conn, PrintWriter out, boolean isInteractive) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOServTable.class, "printTable(AOServConnector,PrintWriter,boolean)", null);
-        try {
-            SchemaTable schemaTable=getTableSchema();
-            List<SchemaColumn> cols=schemaTable.getSchemaColumns(conn);
-            int numCols=cols.size();
-            String[] titles=new String[numCols];
-            SchemaType[] types=new SchemaType[numCols];
-            boolean[] alignRights=new boolean[numCols];
-            for(int c=0;c<numCols;c++) {
-                SchemaColumn col=cols.get(c);
-                titles[c]=col.getColumnName();
-                SchemaType type=types[c]=col.getSchemaType(conn);
-                alignRights[c]=type.alignRight();
-            }
+        SchemaTable schemaTable=getTableSchema();
+        List<SchemaColumn> cols=schemaTable.getSchemaColumns(conn);
+        int numCols=cols.size();
+        String[] titles=new String[numCols];
+        SchemaType[] types=new SchemaType[numCols];
+        boolean[] alignRights=new boolean[numCols];
+        for(int c=0;c<numCols;c++) {
+            SchemaColumn col=cols.get(c);
+            titles[c]=col.getColumnName();
+            SchemaType type=types[c]=col.getSchemaType(conn);
+            alignRights[c]=type.alignRight();
+        }
 
-            Object[] values;
-            synchronized(this) {
-                List<V> rows=getRows();
-                int numRows=rows.size();
-                values=new Object[numRows*numCols];
-                int pos=0;
-                for(int rowIndex=0;rowIndex<numRows;rowIndex++) {
-                    V row=rows.get(rowIndex);
-                    for(int colIndex=0;colIndex<numCols;colIndex++) {
-                        values[pos++]=types[colIndex].getString(row.getColumn(colIndex));
-                    }
+        Object[] values;
+        synchronized(this) {
+            List<V> rows=getRows();
+            int numRows=rows.size();
+            values=new Object[numRows*numCols];
+            int pos=0;
+            for(int rowIndex=0;rowIndex<numRows;rowIndex++) {
+                V row=rows.get(rowIndex);
+                for(int colIndex=0;colIndex<numCols;colIndex++) {
+                    values[pos++]=types[colIndex].getString(row.getColumn(colIndex));
                 }
             }
-
-            SQLUtility.printTable(titles, values, out, isInteractive, alignRights);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
+
+        SQLUtility.printTable(titles, values, out, isInteractive, alignRights);
     }
 
     /**
@@ -743,20 +684,15 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * objects being notified as this table is being loaded.
      */
     final public void removeProgressListener(ProgressListener listener) {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "removeProgressListener(ProgressListener)", null);
-        try {
-            synchronized(progressListeners) {
-                int size=progressListeners.size();
-                for(int c=0;c<size;c++) {
-                    Object O=progressListeners.get(c);
-                    if(O==listener) {
-                        progressListeners.remove(c);
-                        break;
-                    }
+        synchronized(progressListeners) {
+            int size=progressListeners.size();
+            for(int c=0;c<size;c++) {
+                Object O=progressListeners.get(c);
+                if(O==listener) {
+                    progressListeners.remove(c);
+                    break;
                 }
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 
@@ -765,40 +701,35 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * objects being notified when the data is updated.
      */
     final public void removeTableListener(TableListener listener) {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "removeTableListener(TableListener)", null);
-        try {
-            if(tableListeners!=null) {
-                synchronized(eventLock) {
-                    int size=tableListeners.size();
-                    for(int c=0;c<size;c++) {
-                        TableListenerEntry entry=tableListeners.get(c);
-                        if(entry.listener==listener) {
-                            tableListeners.remove(c);
-                            size--;
-                            if(entry.delay>0 && thread!=null) {
-                                // If all remaining listeners are immediate (delay 0), kill the thread
-                                boolean foundDelayed=false;
-                                for(int d=0;d<size;d++) {
-                                    TableListenerEntry tle=tableListeners.get(d);
-                                    if(tle.delay>0) {
-                                        foundDelayed=true;
-                                        break;
-                                    }
-                                }
-                                if(!foundDelayed) {
-                                    // The thread will terminate itself once the reference to it is removed
-                                    thread=null;
+        if(tableListeners!=null) {
+            synchronized(eventLock) {
+                int size=tableListeners.size();
+                for(int c=0;c<size;c++) {
+                    TableListenerEntry entry=tableListeners.get(c);
+                    if(entry.listener==listener) {
+                        tableListeners.remove(c);
+                        size--;
+                        if(entry.delay>0 && thread!=null) {
+                            // If all remaining listeners are immediate (delay 0), kill the thread
+                            boolean foundDelayed=false;
+                            for(int d=0;d<size;d++) {
+                                TableListenerEntry tle=tableListeners.get(d);
+                                if(tle.delay>0) {
+                                    foundDelayed=true;
+                                    break;
                                 }
                             }
-                            break;
+                            if(!foundDelayed) {
+                                // The thread will terminate itself once the reference to it is removed
+                                thread=null;
+                            }
                         }
+                        break;
                     }
-                    // Tell the thread to recalc its stuff
-                    eventLock.notifyAll();
                 }
+                // Tell the thread to recalc its stuff
+                eventLock.notifyAll();
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 
@@ -807,63 +738,48 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * objects being notified when the table is being loaded.
      */
     final public void removeTableLoadListener(TableLoadListener listener) {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "removeTableLoadListener(TableLoadListener)", null);
-        try {
-            synchronized(loadListeners) {
-                int size=loadListeners.size();
-                for(int c=0;c<size;c++) {
-                    TableLoadListenerEntry entry=(TableLoadListenerEntry)loadListeners.get(c);
-                    if(entry.listener==listener) {
-                        loadListeners.remove(c);
-                        break;
-                    }
+        synchronized(loadListeners) {
+            int size=loadListeners.size();
+            for(int c=0;c<size;c++) {
+                TableLoadListenerEntry entry=(TableLoadListenerEntry)loadListeners.get(c);
+                if(entry.listener==listener) {
+                    loadListeners.remove(c);
+                    break;
                 }
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 
     void tableUpdated() {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "tableUpdated()", null);
-        try {
-            // Notify all immediate listeners
+        // Notify all immediate listeners
+        if(tableListeners!=null) {
+            Iterator<TableListenerEntry> I=tableListeners.iterator();
+            while(I.hasNext()) {
+                TableListenerEntry entry=I.next();
+                if(entry.delay<=0) {
+                    entry.listener.tableUpdated(this);
+                }
+            }
+        }
+
+        long time=System.currentTimeMillis();
+
+        // Notify the batching thread of the update
+        synchronized(eventLock) {
             if(tableListeners!=null) {
-                Iterator<TableListenerEntry> I=tableListeners.iterator();
-                while(I.hasNext()) {
-                    TableListenerEntry entry=I.next();
-                    if(entry.delay<=0) {
-                        entry.listener.tableUpdated(this);
-                    }
+                int size=tableListeners.size();
+                for(int c=0;c<size;c++) {
+                    TableListenerEntry entry=tableListeners.get(c);
+                    if(entry.delay>0 && entry.delayStart==-1) entry.delayStart=time;
                 }
+                eventLock.notify();
             }
-
-            long time=System.currentTimeMillis();
-
-            // Notify the batching thread of the update
-            synchronized(eventLock) {
-                if(tableListeners!=null) {
-                    int size=tableListeners.size();
-                    for(int c=0;c<size;c++) {
-                        TableListenerEntry entry=tableListeners.get(c);
-                        if(entry.delay>0 && entry.delayStart==-1) entry.delayStart=time;
-                    }
-                    eventLock.notify();
-                }
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 
     @Override
     final public String toString() {
-        Profiler.startProfile(Profiler.FAST, AOServTable.class, "toString()", null);
-        try {
-            return getTableSchema().display;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getTableSchema().display;
     }
 
     // Iterable methods

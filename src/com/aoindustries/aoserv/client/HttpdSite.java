@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
@@ -117,12 +116,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public String getInstallDirectory() {
-        Profiler.startProfile(Profiler.FAST, HttpdSite.class, "getInstallDirectory()", null);
-        try {
-            return WWW_DIRECTORY+'/'+site_name;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return WWW_DIRECTORY+'/'+site_name;
     }
 
     public Object getColumn(int i) {
@@ -240,7 +234,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     //    table.connector.requestUpdate(AOServProtocol.INITIALIZE_HTTPD_SITE_PASSWD_FILE, pkey, username, UnixCrypt.crypt(username, password));
     //}
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey=result.getInt(pos++);
         ao_server=result.getInt(pos++);
@@ -326,12 +320,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public void setIsManual(boolean isManual) {
-        Profiler.startProfile(Profiler.UNKNOWN, HttpdSite.class, "setIsManual(boolean)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
     }
 
     public void setServerAdmin(String address) {
@@ -342,7 +331,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         return site_name+" on "+getAOServer().getHostname();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(ao_server);
         out.writeUTF(site_name);
@@ -352,7 +341,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         out.writeUTF(linuxGroup);
         out.writeUTF(serverAdmin);
         out.writeNullUTF(contentSrc);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);
             out.writeShort(0);
@@ -364,7 +353,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         }
         out.writeCompressedInt(disable_log);
         out.writeBoolean(isManual);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_129)>=0) out.writeNullUTF(awstatsSkipFiles);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_129)>=0) out.writeNullUTF(awstatsSkipFiles);
     }
 
     public void getAWStatsFile(String path, String queryString, OutputStream out) {

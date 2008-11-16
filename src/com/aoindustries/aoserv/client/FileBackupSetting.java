@@ -63,7 +63,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
 	return SchemaTable.TableID.FILE_BACKUP_SETTINGS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         replication=result.getInt(2);
         path=result.getString(3);
@@ -97,15 +97,15 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
         );
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
             out.writeCompressedInt(replication);
         } else {
             out.writeCompressedInt(-1); // server
         }
         out.writeUTF(path);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
             out.writeBoolean(backup_enabled);
         } else {
             out.writeCompressedInt(308); // package (hard-coded AOINDUSTRIES)

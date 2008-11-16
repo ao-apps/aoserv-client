@@ -155,7 +155,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         return SchemaTable.TableID.EMAIL_LISTS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
         path = result.getString(2);
         linux_server_account = result.getInt(3);
@@ -216,12 +216,12 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         table.connector.requestUpdate(AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(path);
         out.writeCompressedInt(linux_server_account);
         out.writeCompressedInt(linux_server_group);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);
         }

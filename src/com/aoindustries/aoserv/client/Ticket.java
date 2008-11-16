@@ -283,7 +283,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	return pkey;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getInt(1);
 	accounting = result.getString(2);
 	created_by = result.getString(3);
@@ -341,9 +341,9 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	return pkey+"|"+accounting+'|'+status;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_126)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_126)>=0) {
             out.writeNullUTF(accounting);
             out.writeNullUTF(created_by);
         } else {
@@ -351,7 +351,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
             out.writeUTF(created_by==null ? "":created_by);
         }
 	out.writeUTF(ticket_type);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_15)<0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_15)<0) {
             out.writeUTF(details);
         } else {
             // details workaround for readUTF 64k limit
@@ -363,14 +363,14 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	out.writeLong(close_date);
 	out.writeNullUTF(closed_by);
 	out.writeUTF(client_priority);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_10)<0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_10)<0) {
             out.writeUTF(admin_priority==null ? client_priority : admin_priority);
         } else {
             out.writeNullUTF(admin_priority);
         }
 	out.writeNullUTF(technology);
 	out.writeUTF(status);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_125)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)>=0) {
             out.writeNullUTF(assigned_to);
             out.writeUTF(contact_emails);
             out.writeUTF(contact_phone_numbers);

@@ -5,11 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @see  SchemaForeignKey
@@ -55,85 +55,65 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
     }
 
     List<SchemaForeignKey> getSchemaForeignKeys(SchemaTable table) {
-        Profiler.startProfile(Profiler.UNKNOWN, SchemaForeignKeyTable.class, "getSchemaForeignKeys(SchemaTable)", null);
-        try {
-            synchronized(SchemaForeignKeyTable.class) {
-                if(tableKeys.isEmpty()) {
-                    List<SchemaForeignKey> cached=getRows();
-                    int size=cached.size();
-                    for(int c=0;c<size;c++) {
-                        SchemaForeignKey key=cached.get(c);
-                        String tableName=key.getKeyColumn(connector).table_name;
-                        List<SchemaForeignKey> keys=tableKeys.get(tableName);
-                        if(keys==null) tableKeys.put(tableName, keys=new ArrayList<SchemaForeignKey>());
-                        keys.add(key);
-                    }
-                }
-                List<SchemaForeignKey> matches=tableKeys.get(table.getName());
-                if(matches!=null) return matches;
-                return Collections.emptyList();
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    private void rebuildReferenceHashes() {
-        Profiler.startProfile(Profiler.UNKNOWN, SchemaForeignKeyTable.class, "rebuildReferenceHashes()", null);
-        try {
-            if(
-                referencedByHash.isEmpty()
-                || referencesHash.isEmpty()
-            ) {
-                // All methods that call this are already synched
+        synchronized(SchemaForeignKeyTable.class) {
+            if(tableKeys.isEmpty()) {
                 List<SchemaForeignKey> cached=getRows();
                 int size=cached.size();
                 for(int c=0;c<size;c++) {
                     SchemaForeignKey key=cached.get(c);
-                    Integer keyColumnPKey=Integer.valueOf(key.key_column);
-                    Integer foreignColumnPKey=Integer.valueOf(key.foreign_column);
-
-                    // Referenced By
-                    List<SchemaForeignKey> referencedBy=referencedByHash.get(keyColumnPKey);
-                    if(referencedBy==null) referencedByHash.put(keyColumnPKey, referencedBy=new ArrayList<SchemaForeignKey>());
-                    referencedBy.add(key);
-
-                    // References
-                    List<SchemaForeignKey> references=referencesHash.get(foreignColumnPKey);
-                    if(references==null) referencesHash.put(foreignColumnPKey, references=new ArrayList<SchemaForeignKey>());
-                    references.add(key);
+                    String tableName=key.getKeyColumn(connector).table_name;
+                    List<SchemaForeignKey> keys=tableKeys.get(tableName);
+                    if(keys==null) tableKeys.put(tableName, keys=new ArrayList<SchemaForeignKey>());
+                    keys.add(key);
                 }
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+            List<SchemaForeignKey> matches=tableKeys.get(table.getName());
+            if(matches!=null) return matches;
+            return Collections.emptyList();
+        }
+    }
+
+    private void rebuildReferenceHashes() {
+        if(
+            referencedByHash.isEmpty()
+            || referencesHash.isEmpty()
+        ) {
+            // All methods that call this are already synched
+            List<SchemaForeignKey> cached=getRows();
+            int size=cached.size();
+            for(int c=0;c<size;c++) {
+                SchemaForeignKey key=cached.get(c);
+                Integer keyColumnPKey=Integer.valueOf(key.key_column);
+                Integer foreignColumnPKey=Integer.valueOf(key.foreign_column);
+
+                // Referenced By
+                List<SchemaForeignKey> referencedBy=referencedByHash.get(keyColumnPKey);
+                if(referencedBy==null) referencedByHash.put(keyColumnPKey, referencedBy=new ArrayList<SchemaForeignKey>());
+                referencedBy.add(key);
+
+                // References
+                List<SchemaForeignKey> references=referencesHash.get(foreignColumnPKey);
+                if(references==null) referencesHash.put(foreignColumnPKey, references=new ArrayList<SchemaForeignKey>());
+                references.add(key);
+            }
         }
     }
 
     List<SchemaForeignKey> getSchemaForeignKeysReferencedBy(SchemaColumn column) {
-        Profiler.startProfile(Profiler.UNKNOWN, SchemaForeignKeyTable.class, "getSchemaForeignKeysReferencedBy(SchemaColumn)", null);
-        try {
-            synchronized(SchemaForeignKeyTable.class) {
-                rebuildReferenceHashes();
-                List<SchemaForeignKey> matches=referencedByHash.get(Integer.valueOf(column.getPkey()));
-                if(matches!=null) return matches;
-                else return Collections.emptyList();
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        synchronized(SchemaForeignKeyTable.class) {
+            rebuildReferenceHashes();
+            List<SchemaForeignKey> matches=referencedByHash.get(Integer.valueOf(column.getPkey()));
+            if(matches!=null) return matches;
+            else return Collections.emptyList();
         }
     }
 
     List<SchemaForeignKey> getSchemaForeignKeysReferencing(SchemaColumn column) {
-        Profiler.startProfile(Profiler.UNKNOWN, SchemaForeignKeyTable.class, "getSchemaForeignKeysReferencing(SchemaColumn)", null);
-        try {
-            synchronized(SchemaForeignKeyTable.class) {
-                rebuildReferenceHashes();
-                List<SchemaForeignKey> matches=referencesHash.get(Integer.valueOf(column.getPkey()));
-                if(matches!=null) return matches;
-                else return Collections.emptyList();
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        synchronized(SchemaForeignKeyTable.class) {
+            rebuildReferenceHashes();
+            List<SchemaForeignKey> matches=referencesHash.get(Integer.valueOf(column.getPkey()));
+            if(matches!=null) return matches;
+            else return Collections.emptyList();
         }
     }
 

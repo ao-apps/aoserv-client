@@ -148,7 +148,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         return username;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getString(1);
         createdb=result.getBoolean(2);
         trace=result.getBoolean(3);
@@ -189,7 +189,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         for(PostgresServerUser user : getPostgresServerUsers()) if(user.canSetPassword()) user.setPassword(password);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
         out.writeBoolean(createdb);
         out.writeBoolean(trace);

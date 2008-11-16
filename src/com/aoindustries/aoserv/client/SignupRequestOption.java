@@ -46,7 +46,7 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
 	return SchemaTable.TableID.SIGNUP_REQUEST_OPTIONS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey = result.getInt(pos++);
         request = result.getInt(pos++);
@@ -61,7 +61,7 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
         value = in.readNullUTF();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(request);
         out.writeUTF(name);

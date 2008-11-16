@@ -5,10 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Constants used in communication between the client and server.
@@ -25,191 +32,108 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
     /**
      * The current version of the client/server protocol.
      */
-    public static final String
-        VERSION_1_0_A_100="1.0a100",
-        VERSION_1_0_A_101="1.0a101",
-        VERSION_1_0_A_102="1.0a102",
-        VERSION_1_0_A_103="1.0a103",
-        VERSION_1_0_A_104="1.0a104",
-        VERSION_1_0_A_105="1.0a105",
-        VERSION_1_0_A_106="1.0a106",
-        VERSION_1_0_A_107="1.0a107",
-        VERSION_1_0_A_108="1.0a108",
-        VERSION_1_0_A_109="1.0a109",
-        VERSION_1_0_A_110="1.0a110",
-        VERSION_1_0_A_111="1.0a111",
-        VERSION_1_0_A_112="1.0a112",
-        VERSION_1_0_A_113="1.0a113",
-        VERSION_1_0_A_114="1.0a114",
-        VERSION_1_0_A_115="1.0a115",
-        VERSION_1_0_A_116="1.0a116",
-        VERSION_1_0_A_117="1.0a117",
-        VERSION_1_0_A_118="1.0a118",
-        VERSION_1_0_A_119="1.0a119",
-        VERSION_1_0_A_120="1.0a120",
-        VERSION_1_0_A_121="1.0a121",
-        VERSION_1_0_A_122="1.0a122",
-        VERSION_1_0_A_123="1.0a123",
-        VERSION_1_0_A_124="1.0a124",
-        VERSION_1_0_A_125="1.0a125",
-        VERSION_1_0_A_126="1.0a126",
-        VERSION_1_0_A_127="1.0a127",
-        VERSION_1_0_A_128="1.0a128",
-        VERSION_1_0_A_129="1.0a129",
-        VERSION_1_0_A_130="1.0a130",
-        VERSION_1_1="1.1",
-        VERSION_1_2="1.2",
-        VERSION_1_3="1.3",
-        VERSION_1_4="1.4",
-        VERSION_1_5="1.5",
-        VERSION_1_6="1.6",
-        VERSION_1_7="1.7",
-        VERSION_1_8="1.8",
-        VERSION_1_9="1.9",
-        VERSION_1_10="1.10",
-        VERSION_1_11="1.11",
-        VERSION_1_12="1.12",
-        VERSION_1_13="1.13",
-        VERSION_1_14="1.14",
-        VERSION_1_15="1.15",
-        VERSION_1_16="1.16",
-        VERSION_1_17="1.17",
-        VERSION_1_18="1.18",
-        VERSION_1_19="1.19",
-        VERSION_1_20="1.20",
-        VERSION_1_21="1.21",
-        VERSION_1_22="1.22",
-        VERSION_1_23="1.23",
-        VERSION_1_24="1.24",
-        VERSION_1_25="1.25",
-        VERSION_1_26="1.26",
-        VERSION_1_27="1.27",
-        VERSION_1_28="1.28",
-        VERSION_1_29="1.29",
-        VERSION_1_30="1.30",
-        VERSION_1_31="1.31",
-        VERSION_1_32="1.32",
-        VERSION_1_33="1.33",
-        VERSION_1_34="1.34",
-        CURRENT_VERSION=VERSION_1_34
-    ;
+    public enum Version {
+        VERSION_1_0_A_100("1.0a100"),
+        VERSION_1_0_A_101("1.0a101"),
+        VERSION_1_0_A_102("1.0a102"),
+        VERSION_1_0_A_103("1.0a103"),
+        VERSION_1_0_A_104("1.0a104"),
+        VERSION_1_0_A_105("1.0a105"),
+        VERSION_1_0_A_106("1.0a106"),
+        VERSION_1_0_A_107("1.0a107"),
+        VERSION_1_0_A_108("1.0a108"),
+        VERSION_1_0_A_109("1.0a109"),
+        VERSION_1_0_A_110("1.0a110"),
+        VERSION_1_0_A_111("1.0a111"),
+        VERSION_1_0_A_112("1.0a112"),
+        VERSION_1_0_A_113("1.0a113"),
+        VERSION_1_0_A_114("1.0a114"),
+        VERSION_1_0_A_115("1.0a115"),
+        VERSION_1_0_A_116("1.0a116"),
+        VERSION_1_0_A_117("1.0a117"),
+        VERSION_1_0_A_118("1.0a118"),
+        VERSION_1_0_A_119("1.0a119"),
+        VERSION_1_0_A_120("1.0a120"),
+        VERSION_1_0_A_121("1.0a121"),
+        VERSION_1_0_A_122("1.0a122"),
+        VERSION_1_0_A_123("1.0a123"),
+        VERSION_1_0_A_124("1.0a124"),
+        VERSION_1_0_A_125("1.0a125"),
+        VERSION_1_0_A_126("1.0a126"),
+        VERSION_1_0_A_127("1.0a127"),
+        VERSION_1_0_A_128("1.0a128"),
+        VERSION_1_0_A_129("1.0a129"),
+        VERSION_1_0_A_130("1.0a130"),
+        VERSION_1_1("1.1"),
+        VERSION_1_2("1.2"),
+        VERSION_1_3("1.3"),
+        VERSION_1_4("1.4"),
+        VERSION_1_5("1.5"),
+        VERSION_1_6("1.6"),
+        VERSION_1_7("1.7"),
+        VERSION_1_8("1.8"),
+        VERSION_1_9("1.9"),
+        VERSION_1_10("1.10"),
+        VERSION_1_11("1.11"),
+        VERSION_1_12("1.12"),
+        VERSION_1_13("1.13"),
+        VERSION_1_14("1.14"),
+        VERSION_1_15("1.15"),
+        VERSION_1_16("1.16"),
+        VERSION_1_17("1.17"),
+        VERSION_1_18("1.18"),
+        VERSION_1_19("1.19"),
+        VERSION_1_20("1.20"),
+        VERSION_1_21("1.21"),
+        VERSION_1_22("1.22"),
+        VERSION_1_23("1.23"),
+        VERSION_1_24("1.24"),
+        VERSION_1_25("1.25"),
+        VERSION_1_26("1.26"),
+        VERSION_1_27("1.27"),
+        VERSION_1_28("1.28"),
+        VERSION_1_29("1.29"),
+        VERSION_1_30("1.30"),
+        VERSION_1_31("1.31"),
+        VERSION_1_32("1.32"),
+        VERSION_1_33("1.33"),
+        VERSION_1_34("1.34"),
+        VERSION_1_35("1.35"),
+        VERSION_1_36("1.36");
 
-    /**
-     * Gets all of the supported API versions.
-     *
-     * @return  a <code>String[]</code> of the versions, sorted with the oldest version of array index <code>0</code>.
-     */
-    public static String[] getVersions() {
-        Profiler.startProfile(Profiler.FAST, AOServProtocol.class, "getVersions()", null);
-        try {
-            return new String[] {
-                VERSION_1_0_A_100,
-                VERSION_1_0_A_101,
-                VERSION_1_0_A_102,
-                VERSION_1_0_A_103,
-                VERSION_1_0_A_104,
-                VERSION_1_0_A_105,
-                VERSION_1_0_A_106,
-                VERSION_1_0_A_107,
-                VERSION_1_0_A_108,
-                VERSION_1_0_A_109,
-                VERSION_1_0_A_110,
-                VERSION_1_0_A_111,
-                VERSION_1_0_A_112,
-                VERSION_1_0_A_113,
-                VERSION_1_0_A_114,
-                VERSION_1_0_A_115,
-                VERSION_1_0_A_116,
-                VERSION_1_0_A_117,
-                VERSION_1_0_A_118,
-                VERSION_1_0_A_119,
-                VERSION_1_0_A_120,
-                VERSION_1_0_A_121,
-                VERSION_1_0_A_122,
-                VERSION_1_0_A_123,
-                VERSION_1_0_A_124,
-                VERSION_1_0_A_125,
-                VERSION_1_0_A_126,
-                VERSION_1_0_A_127,
-                VERSION_1_0_A_128,
-                VERSION_1_0_A_129,
-                VERSION_1_0_A_130,
-                VERSION_1_1,
-                VERSION_1_2,
-                VERSION_1_3,
-                VERSION_1_4,
-                VERSION_1_5,
-                VERSION_1_6,
-                VERSION_1_7,
-                VERSION_1_8,
-                VERSION_1_9,
-                VERSION_1_10,
-                VERSION_1_11,
-                VERSION_1_12,
-                VERSION_1_13,
-                VERSION_1_14,
-                VERSION_1_15,
-                VERSION_1_16,
-                VERSION_1_17,
-                VERSION_1_18,
-                VERSION_1_19,
-                VERSION_1_20,
-                VERSION_1_21,
-                VERSION_1_22,
-                VERSION_1_23,
-                VERSION_1_24,
-                VERSION_1_25,
-                VERSION_1_26,
-                VERSION_1_27,
-                VERSION_1_28,
-                VERSION_1_29,
-                VERSION_1_30,
-                VERSION_1_31,
-                VERSION_1_32,
-                VERSION_1_33,
-                VERSION_1_34
-            };
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        public static final Version CURRENT_VERSION = VERSION_1_36;
+
+        private static final Map<String,Version> versionMap = new HashMap<String,Version>();
+        static {
+            for(Version version : values()) versionMap.put(version.getVersion(), version);
         }
-    }
 
-    /**
-     * Compares two version numbers.
-     *
-     * @return  <code>&lt;0</code> if version1 was released before version2, <code>0</code> if they are the same,
-     *          or <code>&gt;0</code> if version1 was released after version2.
-     */
-    public static int compareVersions(String version1, String version2) {
-        Profiler.startProfile(Profiler.FAST, AOServProtocol.class, "compareVersions(String,String)", null);
-        try {
-            String[] versions=getVersions();
-            int numVersions=versions.length;
+        /**
+         * Gets a specific version given its unique version string.
+         * 
+         * @see  #getVersion()
+         * 
+         * @throws  IllegalArgumentException if version not found
+         */
+        public static Version getVersion(String version) {
+            Version versionEnum = versionMap.get(version);
+            if(versionEnum==null) throw new IllegalArgumentException("Version not found: "+version);
+            return versionEnum;
+        }
 
-            // Find index of version1 in the array
-            int index1=-1;
-            for(int c=0;c<numVersions;c++) {
-                if(version1.equals(versions[c])) {
-                    index1=c;
-                    break;
-                }
-            }
-            if(index1==-1) throw new IllegalArgumentException("Unknown version1: "+version1);
-            
-            // Find index of version2 in the array
-            int index2=-1;
-            for(int c=0;c<numVersions;c++) {
-                if(version2.equals(versions[c])) {
-                    index2=c;
-                    break;
-                }
-            }
-            if(index2==-1) throw new IllegalArgumentException("Unknown version2: "+version2);
-            
-            // Return the difference in versions
-            return index1-index2;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        private final String version;
+        
+        private Version(String version) {
+            this.version = version;
+        }
+        
+        public String getVersion() {
+            return version;
+        }
+        
+        @Override
+        public String toString() {
+            return version;
         }
     }
 
@@ -463,7 +387,12 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         SET_FAILOVER_FILE_REPLICATION_BIT_RATE,
         SET_FAILOVER_FILE_SCHEDULES,
         SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE,
-        CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED
+        CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED,
+        GET_AO_SERVER_HDD_TEMP_REPORT,
+        GET_AO_SERVER_FILESYSTEMS_CSV_REPORT,
+        GET_AO_SERVER_LOADAVG_REPORT,
+        GET_AO_SERVER_MEMINFO_REPORT,
+        GET_NET_DEVICE_STATISTICS_REPORT
     }
 
     /**
@@ -472,16 +401,11 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
     public static final String FILTERED="*";
 
     static void checkResult(int code, CompressedDataInputStream in) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, AOServProtocol.class, "checkResult(int,CompressedDataInputStream)", null);
-        try {
-            if(in==null) throw new IllegalArgumentException("in is null");
-            if(code==AOServProtocol.IO_EXCEPTION) throw new IOException(in.readUTF());
-            if(code==AOServProtocol.SQL_EXCEPTION) throw new SQLException(in.readUTF());
-            if(code==-1) throw new EOFException("End of file while reading response code");
-            if(code!=AOServProtocol.DONE) throw new IOException("Unknown status code: "+code);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        if(in==null) throw new IllegalArgumentException("in is null");
+        if(code==AOServProtocol.IO_EXCEPTION) throw new IOException(in.readUTF());
+        if(code==AOServProtocol.SQL_EXCEPTION) throw new SQLException(in.readUTF());
+        if(code==-1) throw new EOFException("End of file while reading response code");
+        if(code!=AOServProtocol.DONE) throw new IOException("Unknown status code: "+code);
     }
 
     private long created;
@@ -489,17 +413,12 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
     private long last_used;
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, AOServProtocol.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_VERSION: return pkey;
-                case 1: return new java.sql.Date(created);
-                case 2: return comments;
-                case 3: return last_used == -1 ? null : new java.sql.Date(last_used);
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_VERSION: return pkey;
+            case 1: return new java.sql.Date(created);
+            case 2: return comments;
+            case 3: return last_used == -1 ? null : new java.sql.Date(last_used);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -523,40 +442,25 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         return SchemaTable.TableID.AOSERV_PROTOCOLS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, AOServProtocol.class, "initImpl(ResultSet)", null);
-        try {
-            pkey=result.getString(1);
-            created=result.getDate(2).getTime();
-            comments=result.getString(3);
-            java.sql.Date D = result.getDate(4);
-            last_used = D==null ? -1 : D.getTime();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getString(1);
+        created=result.getDate(2).getTime();
+        comments=result.getString(3);
+        java.sql.Date D = result.getDate(4);
+        last_used = D==null ? -1 : D.getTime();
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOServProtocol.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readUTF().intern();
-            created=in.readLong();
-            comments=in.readUTF();
-            last_used=in.readLong();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readUTF().intern();
+        created=in.readLong();
+        comments=in.readUTF();
+        last_used=in.readLong();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOServProtocol.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeUTF(pkey);
-            out.writeLong(created);
-            out.writeUTF(comments);
-            if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_9)>=0) out.writeLong(last_used);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+        out.writeUTF(pkey);
+        out.writeLong(created);
+        out.writeUTF(comments);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_9)>=0) out.writeLong(last_used);
     }
 }

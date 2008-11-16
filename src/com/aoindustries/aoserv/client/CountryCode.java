@@ -64,7 +64,7 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 	return SchemaTable.TableID.COUNTRY_CODES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	name = result.getString(2);
         charge_com_supported = result.getBoolean(3);
@@ -82,7 +82,7 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 	return getName();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(name);
         out.writeBoolean(charge_com_supported);

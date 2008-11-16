@@ -63,7 +63,7 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 	return SchemaTable.TableID.MASTER_SERVERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	username=result.getString(2);
 	server=result.getInt(3);
@@ -75,7 +75,7 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 	server=in.readCompressedInt();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(username);
 	out.writeCompressedInt(server);

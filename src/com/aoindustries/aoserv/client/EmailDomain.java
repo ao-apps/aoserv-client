@@ -101,7 +101,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	return SchemaTable.TableID.EMAIL_DOMAINS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
 	domain=result.getString(2);
 	ao_server=result.getInt(3);
@@ -166,7 +166,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeUTF(domain);
 	out.writeCompressedInt(ao_server);

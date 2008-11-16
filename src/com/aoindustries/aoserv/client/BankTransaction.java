@@ -135,7 +135,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return transID;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	time = result.getTimestamp(1).getTime();
 	transID = result.getInt(2);
 	bankAccount = result.getString(3);
@@ -176,11 +176,11 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return transID+"|"+administrator+'|'+type+'|'+SQLUtility.getDecimal(amount);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeLong(time);
 	out.writeCompressedInt(transID);
 	out.writeUTF(bankAccount);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_29)<0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
             out.writeNullUTF(null);
         } else {
             out.writeNullUTF(processor);

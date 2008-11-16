@@ -123,7 +123,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	return SchemaTable.TableID.EMAIL_ADDRESSES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getInt(1);
 	address = result.getString(2);
 	domain = result.getInt(3);
@@ -236,7 +236,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         return address+'@'+getDomain().getDomain();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(address);
 	out.writeCompressedInt(domain);

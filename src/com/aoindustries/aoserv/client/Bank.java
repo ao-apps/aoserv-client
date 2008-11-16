@@ -44,7 +44,7 @@ final public class Bank extends CachedObjectStringKey<Bank> {
 	return SchemaTable.TableID.BANKS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	display = result.getString(2);
     }
@@ -58,7 +58,7 @@ final public class Bank extends CachedObjectStringKey<Bank> {
 	return display;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(display);
     }

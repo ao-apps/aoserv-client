@@ -99,7 +99,7 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
 	return obj;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
         minorVersion=result.getString(2);
         postgisVersion=result.getInt(3);
@@ -112,10 +112,10 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
         postgisVersion=in.readCompressedInt();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_0_A_109)<=0) out.writeCompressedInt(5432);
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_0_A_121)>=0) out.writeUTF(minorVersion);
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_27)>=0) out.writeCompressedInt(postgisVersion);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_109)<=0) out.writeCompressedInt(5432);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_121)>=0) out.writeUTF(minorVersion);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_27)>=0) out.writeCompressedInt(postgisVersion);
     }
 }

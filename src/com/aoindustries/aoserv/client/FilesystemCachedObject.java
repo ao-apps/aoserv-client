@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import java.io.*;
 
 /**
@@ -26,14 +25,9 @@ public abstract class FilesystemCachedObject<K,T extends FilesystemCachedObject<
     }
     /*
     public FileListObject createInstance() throws IOException {
-        Profiler.startProfile(Profiler.FAST, FilesystemCachedObject.class, "createInstance()", null);
-        try {
-            T fco=table.getNewObject();
-            if(table!=null) fco.setTable(table);
-            return fco;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        T fco=table.getNewObject();
+        if(table!=null) fco.setTable(table);
+        return fco;
     }
      */
 
@@ -47,13 +41,8 @@ public abstract class FilesystemCachedObject<K,T extends FilesystemCachedObject<
     }
 
     final public void setTable(AOServTable<K,T> table) {
-        Profiler.startProfile(Profiler.FAST, FilesystemCachedObject.class, "setTable(AOServTable<K,T>)", null);
-        try {
-            if(this.table!=null) throw new IllegalStateException("table already set");
-            this.table=table;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
     
     public abstract void writeRecord(DataOutputStream out) throws IOException;

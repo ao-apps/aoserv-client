@@ -69,7 +69,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 	return SchemaTable.TableID.PAYMENT_TYPES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	description = result.getString(2);
 	isActive = result.getBoolean(3);
@@ -91,7 +91,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 	return description;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(description);
 	out.writeBoolean(isActive);

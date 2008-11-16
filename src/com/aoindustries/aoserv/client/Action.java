@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -39,54 +38,34 @@ final public class Action extends AOServObject<Integer,Action> implements Single
     protected AOServTable<Integer,Action> table;
 
     boolean equalsImpl(Object O) {
-        Profiler.startProfile(Profiler.FAST, Action.class, "equalsImpl(Object)", null);
-        try {
-            return
-                O instanceof Action
-                && ((Action)O).pkey==pkey
-            ;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return
+            O instanceof Action
+            && ((Action)O).pkey==pkey
+        ;
     }
 
     public ActionType getActionType() {
-        Profiler.startProfile(Profiler.FAST, Action.class, "getActionType()", null);
-        try {
-            ActionType type=table.connector.actionTypes.get(action_type);
-            if(type==null) throw new WrappedException(new SQLException("Unable to find ActionType: "+action_type));
-            return type;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        ActionType type=table.connector.actionTypes.get(action_type);
+        if(type==null) throw new WrappedException(new SQLException("Unable to find ActionType: "+action_type));
+        return type;
     }
 
     public BusinessAdministrator getBusinessAdministrator() {
-        Profiler.startProfile(Profiler.FAST, Action.class, "getBusinessAdministrator()", null);
-        try {
-            Username un=table.connector.usernames.get(administrator);
-            if(un==null) return null;
-            return un.getBusinessAdministrator();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        Username un=table.connector.usernames.get(administrator);
+        if(un==null) return null;
+        return un.getBusinessAdministrator();
     }
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, Action.class, "getColValueImpl()", null);
-        try {
-            switch(i) {
-                case 0: return Integer.valueOf(pkey);
-                case 1: return Integer.valueOf(ticket_id);
-                case 2: return administrator;
-                case 3: return new java.sql.Date(time);
-                case 4: return action_type;
-                case 5: return old_value;
-                case 6: return comments;
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case 0: return Integer.valueOf(pkey);
+            case 1: return Integer.valueOf(ticket_id);
+            case 2: return administrator;
+            case 3: return new java.sql.Date(time);
+            case 4: return action_type;
+            case 5: return old_value;
+            case 6: return comments;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -120,84 +99,56 @@ final public class Action extends AOServObject<Integer,Action> implements Single
     }
 
     public Ticket getTicket() {
-        Profiler.startProfile(Profiler.FAST, Action.class, "getTicket()", null);
-        try {
-            return table.connector.tickets.get(ticket_id);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.tickets.get(ticket_id);
     }
 
     public long getTime() {
         return time;
     }
 
+    @Override
     int hashCodeImpl() {
         return pkey;
     }
 
-    public void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, Action.class, "initImpl(ResultSet)", null);
-        try {
-            pkey = result.getInt(1);
-            ticket_id = result.getInt(2);
-            administrator = result.getString(3);
-            Timestamp temp = result.getTimestamp(4);
-            time = temp == null ? -1 : temp.getTime();
-            action_type = result.getString(5);
-            old_value = result.getString(6);
-            comments = result.getString(7);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getInt(1);
+        ticket_id = result.getInt(2);
+        administrator = result.getString(3);
+        Timestamp temp = result.getTimestamp(4);
+        time = temp == null ? -1 : temp.getTime();
+        action_type = result.getString(5);
+        old_value = result.getString(6);
+        comments = result.getString(7);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, Action.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readCompressedInt();
-            ticket_id=in.readCompressedInt();
-            administrator=in.readUTF().intern();
-            time=in.readLong();
-            action_type=in.readUTF().intern();
-            old_value=in.readNullUTF();
-            comments=in.readUTF();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readCompressedInt();
+        ticket_id=in.readCompressedInt();
+        administrator=in.readUTF().intern();
+        time=in.readLong();
+        action_type=in.readUTF().intern();
+        old_value=in.readNullUTF();
+        comments=in.readUTF();
     }
 
     public void setTable(AOServTable<Integer,Action> table) {
-        Profiler.startProfile(Profiler.FAST, Action.class, "setTable(AOServTable<Integer,Action>)", null);
-        try {
-            if(this.table!=null) throw new IllegalStateException("table already set");
-            this.table=table;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
+    @Override
     String toStringImpl() {
-        Profiler.startProfile(Profiler.FAST, Action.class, "toStringImpl()", null);
-        try {
-            return ticket_id+"|"+pkey+'|'+action_type+'|'+administrator;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return ticket_id+"|"+pkey+'|'+action_type+'|'+administrator;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, Action.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeCompressedInt(pkey);
-            out.writeCompressedInt(ticket_id);
-            out.writeUTF(administrator);
-            out.writeLong(time);
-            out.writeUTF(action_type);
-            out.writeNullUTF(old_value);
-            out.writeUTF(comments);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(ticket_id);
+        out.writeUTF(administrator);
+        out.writeLong(time);
+        out.writeUTF(action_type);
+        out.writeNullUTF(old_value);
+        out.writeUTF(comments);
     }
 }

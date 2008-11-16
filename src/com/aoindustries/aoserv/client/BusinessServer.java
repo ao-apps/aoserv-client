@@ -100,7 +100,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 	return SchemaTable.TableID.BUSINESS_SERVERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	accounting=result.getString(2);
 	server=result.getInt(3);
@@ -257,15 +257,15 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(accounting);
 	out.writeCompressedInt(server);
 	out.writeBoolean(is_default);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup
         out.writeBoolean(can_control_apache);
         out.writeBoolean(can_control_cron);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) out.writeBoolean(false); // can_control_interbase
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_control_interbase
         out.writeBoolean(can_control_mysql);
         out.writeBoolean(can_control_postgresql);
         out.writeBoolean(can_control_xfs);

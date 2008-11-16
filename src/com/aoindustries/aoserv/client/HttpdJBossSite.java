@@ -93,7 +93,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 	return obj;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	version=result.getInt(2);
 	jnpBind=result.getInt(3);
@@ -117,7 +117,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
         return getHttpdTomcatSite().toString();
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(version);
 	out.writeCompressedInt(jnpBind);

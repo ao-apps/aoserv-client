@@ -76,7 +76,7 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 	return SchemaTable.TableID.MASTER_USERS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getString(1);
 	is_active=result.getBoolean(2);
 	can_access_accounting=result.getBoolean(3);
@@ -114,7 +114,7 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 	is_dns_admin=in.readBoolean();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeBoolean(is_active);
 	out.writeBoolean(can_access_accounting);
@@ -123,6 +123,6 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 	out.writeBoolean(can_access_admin_web);
 	out.writeBoolean(is_ticket_admin);
 	out.writeBoolean(is_dns_admin);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_118)<0) out.writeBoolean(false);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)<0) out.writeBoolean(false);
     }
 }

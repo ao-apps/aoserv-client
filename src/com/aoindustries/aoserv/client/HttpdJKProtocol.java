@@ -49,7 +49,7 @@ final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol
 	return SchemaTable.TableID.HTTPD_JK_PROTOCOLS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getString(1);
     }
 
@@ -57,7 +57,7 @@ final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol
 	pkey=in.readUTF().intern();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
     }
 }

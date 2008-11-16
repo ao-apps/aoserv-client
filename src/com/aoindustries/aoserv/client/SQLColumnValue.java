@@ -5,10 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
 import java.util.List;
 
 /**
@@ -24,14 +20,9 @@ final public class SQLColumnValue extends SQLExpression {
     final private SchemaType columnType;
 
     public SQLColumnValue(AOServConnector conn, SchemaColumn column) {
-        Profiler.startProfile(Profiler.FAST, SQLColumnValue.class, "<init>(SchemaColumn)", null);
-        try {
-            if(column==null) throw new NullPointerException("column is null");
-            this.column=column;
-            this.columnType=column.getSchemaType(conn);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(column==null) throw new NullPointerException("column is null");
+        this.column=column;
+        this.columnType=column.getSchemaType(conn);
     }
 
     public String getColumnName() {
@@ -46,6 +37,7 @@ final public class SQLColumnValue extends SQLExpression {
         return columnType;
     }
 
+    @Override
     public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) {
         SchemaTable table=column.getSchemaTable(conn);
         if(!tables.contains(table)) tables.add(table);

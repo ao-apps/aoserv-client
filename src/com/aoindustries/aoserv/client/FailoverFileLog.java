@@ -107,7 +107,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	return pkey;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	replication=result.getInt(2);
 	startTime=result.getTimestamp(3).getTime();
@@ -138,7 +138,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	this.table=table;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
         out.writeCompressedInt(replication);
         out.writeLong(startTime);

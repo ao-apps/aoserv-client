@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,13 +28,8 @@ public final class CannotRemoveReason<T extends AOServObject> {
     }
 
     public CannotRemoveReason(String reason, T dependentObject) {
-        Profiler.startProfile(Profiler.FAST, CannotRemoveReason.class, "<init>(String,AOServObject)", null);
-        try {
-            this.reason=reason;
-            this.dependentObjects=dependentObject==null?null:Collections.singletonList(dependentObject);
-       } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        this.reason=reason;
+        this.dependentObjects=dependentObject==null?null:Collections.singletonList(dependentObject);
     }
     
     public CannotRemoveReason(String reason, List<T> dependentObjects) {

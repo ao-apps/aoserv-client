@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -58,30 +57,15 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     int disable_log;
 
     public void addFTPGuestUser() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "addFTPGuestUser()", null);
-        try {
-            table.connector.ftpGuestUsers.addFTPGuestUser(pkey);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        table.connector.ftpGuestUsers.addFTPGuestUser(pkey);
     }
 
     public void addLinuxGroup(LinuxGroup group) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "addLinuxGroup(LinuxGroup)", null);
-        try {
-            table.connector.linuxGroupAccounts.addLinuxGroupAccount(group, this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        table.connector.linuxGroupAccounts.addLinuxGroupAccount(group, this);
     }
 
     public int addLinuxServerAccount(AOServer aoServer, String home) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "addLinuxServerAccount(AOServer,String)", null);
-        try {
-            return table.connector.linuxServerAccounts.addLinuxServerAccount(this, aoServer, home);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.linuxServerAccounts.addLinuxServerAccount(this, aoServer, home);
     }
 
     public int arePasswordsSet() {
@@ -89,29 +73,19 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public boolean canDisable() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "canDisable()", null);
-        try {
-            // Already disabled
-            if(disable_log!=-1) return false;
+        // Already disabled
+        if(disable_log!=-1) return false;
 
-            // linux_server_accounts
-            for(LinuxServerAccount lsa : getLinuxServerAccounts()) if(lsa.disable_log==-1) return false;
+        // linux_server_accounts
+        for(LinuxServerAccount lsa : getLinuxServerAccounts()) if(lsa.disable_log==-1) return false;
 
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return true;
     }
 
     public boolean canEnable() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "canEnable()", null);
-        try {
-            DisableLog dl=getDisableLog();
-            if(dl==null) return false;
-            else return dl.canEnable() && getUsername().disable_log==-1;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        DisableLog dl=getDisableLog();
+        if(dl==null) return false;
+        else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
     public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
@@ -132,40 +106,25 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public void disable(DisableLog dl) {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "disable(DisableLog)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
     }
     
     public void enable() {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "enable()", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
     }
 
     public Object getColumn(int i) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "getColValueImpl(int)", null);
-        try {
-            switch(i) {
-                case COLUMN_USERNAME: return pkey;
-                case 1: return name;
-                case 2: return office_location;
-                case 3: return office_phone;
-                case 4: return home_phone;
-                case 5: return type;
-                case 6: return shell;
-                case 7: return new java.sql.Date(created);
-                case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
-                default: throw new IllegalArgumentException("Invalid index: "+i);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        switch(i) {
+            case COLUMN_USERNAME: return pkey;
+            case 1: return name;
+            case 2: return office_location;
+            case 3: return office_phone;
+            case 4: return home_phone;
+            case 5: return type;
+            case 6: return shell;
+            case 7: return new java.sql.Date(created);
+            case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
@@ -174,24 +133,14 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public DisableLog getDisableLog() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "getDisableLog()", null);
-        try {
-            if(disable_log==-1) return null;
-            DisableLog obj=table.connector.disableLogs.get(disable_log);
-            if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
-            return obj;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        return obj;
     }
 
     public FTPGuestUser getFTPGuestUser() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "getFTPGuestUser()", null);
-        try {
-            return table.connector.ftpGuestUsers.get(pkey);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.ftpGuestUsers.get(pkey);
     }
 
     public String getHomePhone() {
@@ -199,12 +148,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public List<LinuxGroup> getLinuxGroups() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "getLinuxGroups()", null);
-        try {
-            return table.connector.linuxGroupAccounts.getLinuxGroups(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.linuxGroupAccounts.getLinuxGroups(this);
     }
 
     public LinuxServerAccount getLinuxServerAccount(AOServer aoServer) {
@@ -228,23 +172,13 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public LinuxGroup getPrimaryGroup() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "getPrimaryGroup()", null);
-        try {
-            return table.connector.linuxGroupAccounts.getPrimaryGroup(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return table.connector.linuxGroupAccounts.getPrimaryGroup(this);
     }
 
     public Shell getShell() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "getShell()", null);
-        try {
-            Shell shellObject = table.connector.shells.get(shell);
-            if (shellObject == null) throw new WrappedException(new SQLException("Unable to find Shell: " + shell));
-            return shellObject;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        Shell shellObject = table.connector.shells.get(shell);
+        if (shellObject == null) throw new WrappedException(new SQLException("Unable to find Shell: " + shell));
+        return shellObject;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -258,14 +192,9 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public Username getUsername() {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "getUsername()", null);
-        try {
-            Username usernameObject = table.connector.usernames.get(pkey);
-            if (usernameObject == null) throw new WrappedException(new SQLException("Unable to find Username: " + pkey));
-            return usernameObject;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        Username usernameObject = table.connector.usernames.get(pkey);
+        if (usernameObject == null) throw new WrappedException(new SQLException("Unable to find Username: " + pkey));
+        return usernameObject;
     }
 
     public List<String> getValidHomeDirectories(AOServer ao) {
@@ -301,22 +230,17 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return dirs;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "initImpl(ResultSet)", null);
-        try {
-            pkey = result.getString(1);
-            name = result.getString(2);
-            office_location = result.getString(3);
-            office_phone = result.getString(4);
-            home_phone = result.getString(5);
-            type = result.getString(6);
-            shell = result.getString(7);
-            created = result.getTimestamp(8).getTime();
-            disable_log=result.getInt(9);
-            if(result.wasNull()) disable_log=-1;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        name = result.getString(2);
+        office_location = result.getString(3);
+        office_phone = result.getString(4);
+        home_phone = result.getString(5);
+        type = result.getString(6);
+        shell = result.getString(7);
+        created = result.getTimestamp(8).getTime();
+        disable_log=result.getInt(9);
+        if(result.wasNull()) disable_log=-1;
     }
 
     /**
@@ -332,171 +256,111 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * @see  #setHomePhone
      */
     public static String checkGECOS(String name, String display) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "checkGECOS(String,String)", null);
-        try {
-            if(name!=null) {
-                int len = name.length();
-                if (len == 0 || len > 100) return "The "+display+" must be between 1 and 100 characters long.";
+        if(name!=null) {
+            int len = name.length();
+            if (len == 0 || len > 100) return "The "+display+" must be between 1 and 100 characters long.";
 
-                for (int c = 0; c < len; c++) {
-                    char ch = name.charAt(c);
-                    if (
-                        (ch < 'a' || ch > 'z')
-                        && (ch<'A' || ch>'Z')
-                        && (ch < '0' || ch > '9')
-                        && ch != '-'
-                        && ch != '_'
-                        && ch != '@'
-                        && ch != ' '
-                        && ch != '.'
-                        && ch != '#'
-                        && ch != '='
-                        && ch != '/'
-                        && ch != '$'
-                        && ch != '%'
-                        && ch != '^'
-                        && ch != '&'
-                        && ch != '*'
-                        && ch != '('
-                        && ch != ')'
-                        && ch != '?'
-                        && ch != '\''
-                        && ch != '+'
-                    ) return "Invalid character found in "+display+": "+ch;
-                }
+            for (int c = 0; c < len; c++) {
+                char ch = name.charAt(c);
+                if (
+                    (ch < 'a' || ch > 'z')
+                    && (ch<'A' || ch>'Z')
+                    && (ch < '0' || ch > '9')
+                    && ch != '-'
+                    && ch != '_'
+                    && ch != '@'
+                    && ch != ' '
+                    && ch != '.'
+                    && ch != '#'
+                    && ch != '='
+                    && ch != '/'
+                    && ch != '$'
+                    && ch != '%'
+                    && ch != '^'
+                    && ch != '&'
+                    && ch != '*'
+                    && ch != '('
+                    && ch != ')'
+                    && ch != '?'
+                    && ch != '\''
+                    && ch != '+'
+                ) return "Invalid character found in "+display+": "+ch;
             }
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
+        return null;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, LinuxAccount.class, "read(CompressedDataInputStream)", null);
-        try {
-            pkey=in.readUTF().intern();
-            name=in.readUTF();
-            office_location=in.readBoolean()?in.readUTF():null;
-            office_phone=in.readBoolean()?in.readUTF():null;
-            home_phone=in.readBoolean()?in.readUTF():null;
-            type=in.readUTF().intern();
-            shell=in.readUTF().intern();
-            created=in.readLong();
-            disable_log=in.readCompressedInt();
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        pkey=in.readUTF().intern();
+        name=in.readUTF();
+        office_location=in.readBoolean()?in.readUTF():null;
+        office_phone=in.readBoolean()?in.readUTF():null;
+        home_phone=in.readBoolean()?in.readUTF():null;
+        type=in.readUTF().intern();
+        shell=in.readUTF().intern();
+        created=in.readLong();
+        disable_log=in.readCompressedInt();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "getCannotRemoveReasons()", null);
-        try {
-            List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+        List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-            // All LinuxServerAccounts must be removable
-            for(LinuxServerAccount lsa : getLinuxServerAccounts()) {
-                reasons.addAll(lsa.getCannotRemoveReasons());
-            }
-
-            return reasons;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        // All LinuxServerAccounts must be removable
+        for(LinuxServerAccount lsa : getLinuxServerAccounts()) {
+            reasons.addAll(lsa.getCannotRemoveReasons());
         }
+
+        return reasons;
     }
 
     public void remove() {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "remove()", null);
-        try {
-            table.connector.requestUpdateIL(
-                AOServProtocol.CommandID.REMOVE,
-                SchemaTable.TableID.LINUX_ACCOUNTS,
-                pkey
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.REMOVE,
+            SchemaTable.TableID.LINUX_ACCOUNTS,
+            pkey
+        );
     }
 
     public void removeLinuxGroup(LinuxGroup group) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "removeLinuxGroup(LinuxGroup)", null);
-        try {
-            table.connector.linuxGroupAccounts.getLinuxGroupAccount(group.pkey, pkey).remove();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        table.connector.linuxGroupAccounts.getLinuxGroupAccount(group.pkey, pkey).remove();
     }
 
     public void setHomePhone(String phone) {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setHomePhone(String)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
     }
 
     public void setName(String name) {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setName(String)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
     }
 
     public void setOfficeLocation(String location) {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setOfficeLocation(String)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
     }
 
     public void setOfficePhone(String phone) {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setOfficePhone(String)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
     }
 
     public void setPassword(String password) {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setPassword(String)", null);
-        try {
-            for(LinuxServerAccount lsa : getLinuxServerAccounts()) {
-                if(lsa.canSetPassword()) lsa.setPassword(password);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        for(LinuxServerAccount lsa : getLinuxServerAccounts()) {
+            if(lsa.canSetPassword()) lsa.setPassword(password);
         }
     }
 
     public void setShell(Shell shell) {
-        Profiler.startProfile(Profiler.UNKNOWN, LinuxAccount.class, "setShell(Shell)", null);
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
-        Profiler.startProfile(Profiler.IO, LinuxAccount.class, "write(CompressedDataOutputStream,String)", null);
-        try {
-            out.writeUTF(pkey);
-            out.writeUTF(name);
-            out.writeNullUTF(office_location);
-            out.writeNullUTF(office_phone);
-            out.writeNullUTF(home_phone);
-            out.writeUTF(type);
-            out.writeUTF(shell);
-            out.writeLong(created);
-            out.writeCompressedInt(disable_log);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(name);
+        out.writeNullUTF(office_location);
+        out.writeNullUTF(office_phone);
+        out.writeNullUTF(home_phone);
+        out.writeUTF(type);
+        out.writeUTF(shell);
+        out.writeLong(created);
+        out.writeCompressedInt(disable_log);
     }
 
     /**
@@ -508,19 +372,14 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * @see  Username#isValidUsername
      */
     public static boolean isValidUsername(String username) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "isValidUsername(String)", null);
-        try {
-            return
-                Username.checkUsername(username, Locale.getDefault())==null
-                && !"bin".equals(username)
-                && !"etc".equals(username)
-                && !"lib".equals(username)
-                && !"postmaster".equals(username)
-                && !"mailer-daemon".equals(username)
-            ;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return
+            Username.checkUsername(username, Locale.getDefault())==null
+            && !"bin".equals(username)
+            && !"etc".equals(username)
+            && !"lib".equals(username)
+            && !"postmaster".equals(username)
+            && !"mailer-daemon".equals(username)
+        ;
     }
     
     public boolean canSetPassword() {
@@ -528,13 +387,8 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public void setPrimaryLinuxGroup(LinuxGroup group) {
-        Profiler.startProfile(Profiler.FAST, LinuxAccount.class, "setPrimaryLinuxGroup(LinuxGroup)", null);
-        try {
-            LinuxGroupAccount lga=table.connector.linuxGroupAccounts.getLinuxGroupAccount(group.getName(), pkey);
-            if(lga==null) throw new WrappedException(new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName()));
-            lga.setAsPrimary();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        LinuxGroupAccount lga=table.connector.linuxGroupAccounts.getLinuxGroupAccount(group.getName(), pkey);
+        if(lga==null) throw new WrappedException(new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName()));
+        lga.setAsPrimary();
     }
 }

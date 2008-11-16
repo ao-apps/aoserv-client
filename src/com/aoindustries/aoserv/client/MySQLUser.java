@@ -283,7 +283,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return obj;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey=result.getString(1);
         select_priv=result.getBoolean(2);
         insert_priv=result.getBoolean(3);
@@ -364,7 +364,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         for(MySQLServerUser user : getMySQLServerUsers()) user.setPassword(password);
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
         out.writeBoolean(select_priv);
         out.writeBoolean(insert_priv);
@@ -380,7 +380,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         out.writeBoolean(references_priv);
         out.writeBoolean(index_priv);
         out.writeBoolean(alter_priv);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_111)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) {
             out.writeBoolean(show_db_priv);
             out.writeBoolean(super_priv);
             out.writeBoolean(create_tmp_table_priv);
@@ -389,7 +389,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
             out.writeBoolean(repl_slave_priv);
             out.writeBoolean(repl_client_priv);
         }
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_4)>=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {
             out.writeBoolean(create_view_priv);
             out.writeBoolean(show_view_priv);
             out.writeBoolean(create_routine_priv);

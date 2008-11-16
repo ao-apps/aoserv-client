@@ -64,7 +64,7 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
 	return SchemaTable.TableID.SHELLS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	is_login = result.getBoolean(2);
 	is_system = result.getBoolean(3);
@@ -84,7 +84,7 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
 	is_system=in.readBoolean();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeBoolean(is_login);
 	out.writeBoolean(is_system);

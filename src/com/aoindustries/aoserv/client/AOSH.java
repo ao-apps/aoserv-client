@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
@@ -30,59 +29,34 @@ final public class AOSH extends ShellInterpreter {
 
     public AOSH(AOServConnector connector, InputStream in, TerminalWriter out, TerminalWriter err) {
 	super(in, out, err);
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "<init>(AOServConnector,InputStream,TerminalWriter,TerminalWriter)", null);
-        try {
-            this.connector=connector;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        this.connector=connector;
     }
 
     public AOSH(AOServConnector connector, InputStream in, TerminalWriter out, TerminalWriter err, String[] args) {
 	super(in, out, err, args);
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "<init>(AOServConnector,InputStream,TerminalWriter,TerminalWriter,String[])", null);
-        try {
-            this.connector=connector;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        this.connector=connector;
     }
 
     public AOSH(AOServConnector connector, InputStream in, OutputStream out, OutputStream err) {
 	super(in, out, err);
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "<init>(AOServConnector,InputStream,OutputStream,OutputStream)", null);
-        try {
-            this.connector=connector;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        this.connector=connector;
     }
 
     public AOSH(AOServConnector connector, InputStream in, OutputStream out, OutputStream err, String[] args) {
 	super(in, out, err, args);
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "<init>(AOServConnector,InputStream,OutputStream,OutputStream,String[])", null);
-        try {
-            this.connector=connector;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        this.connector=connector;
     }
 
     static boolean checkMinParamCount(String function, String[] args, int minCount, PrintWriter err) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "checkMinParamCount(String,String[],int,PrintWriter)", null);
-        try {
-            int paramCount=args.length-1;
-            if(paramCount<minCount) {
-                err.print("aosh: ");
-                err.print(function);
-                err.println(": not enough parameters");
-                err.flush();
-                return false;
-            }
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        int paramCount=args.length-1;
+        if(paramCount<minCount) {
+            err.print("aosh: ");
+            err.print(function);
+            err.println(": not enough parameters");
+            err.flush();
+            return false;
         }
+        return true;
     }
 
     static boolean checkParamCount(String function, String[] args, int requiredCount, PrintWriter err) {
@@ -90,55 +64,40 @@ final public class AOSH extends ShellInterpreter {
     }
 
     static boolean checkRangeParamCount(String function, String[] args, int minCount, int maxCount, PrintWriter err) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "checkRangeParamCount(String,String[],int,int,PrintWriter)", null);
-        try {
-            int paramCount=args.length-1;
-            if(paramCount<minCount) {
-                err.print("aosh: ");
-                err.print(function);
-                err.println(": not enough parameters");
-                err.flush();
-                return false;
-            } else if(paramCount>maxCount) {
-                err.print("aosh: ");
-                err.print(function);
-                err.println(": too many parameters");
-                err.flush();
-                return false;
-            }
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        int paramCount=args.length-1;
+        if(paramCount<minCount) {
+            err.print("aosh: ");
+            err.print(function);
+            err.println(": not enough parameters");
+            err.flush();
+            return false;
+        } else if(paramCount>maxCount) {
+            err.print("aosh: ");
+            err.print(function);
+            err.println(": too many parameters");
+            err.flush();
+            return false;
         }
+        return true;
     }
 
     private void echo(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "echo(String[])", null);
-        try {
-            for(int c=1;c<args.length;c++) {
-                if(c>1) out.print(' ');
-                out.print(args[c]);
-            }
-            out.println();
-            out.flush();
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        for(int c=1;c<args.length;c++) {
+            if(c>1) out.print(' ');
+            out.print(args[c]);
         }
+        out.println();
+        out.flush();
     }
 
     static String executeCommand(AOServConnector connector, String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "executeCommand(AOServConnector,String[])", null);
-        try {
-            ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-            TerminalWriter out=new TerminalWriter(bytes);
-            out.setEnabled(false);
-            AOSH sh=new AOSH(connector, nullInput, out, out);
-            sh.handleCommand(args);
-            out.flush();
-            return new String(bytes.toByteArray());
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+        TerminalWriter out=new TerminalWriter(bytes);
+        out.setEnabled(false);
+        AOSH sh=new AOSH(connector, nullInput, out, out);
+        sh.handleCommand(args);
+        out.flush();
+        return new String(bytes.toByteArray());
     }
 
     protected String getName() {
@@ -146,12 +105,7 @@ final public class AOSH extends ShellInterpreter {
     }
 
     protected String getPrompt() {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "getPrompt()", null);
-        try {
-            return '['+connector.getThisBusinessAdministrator().toString()+'@'+connector.getHostname()+"]$ ";
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return '['+connector.getThisBusinessAdministrator().toString()+'@'+connector.getHostname()+"]$ ";
     }
 
     /** Avoid repeated array copies. */
@@ -165,463 +119,343 @@ final public class AOSH extends ShellInterpreter {
      * @return  <code>true</code> if more commands should be processed
      */
     protected boolean handleCommand(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "handleCommand(String[])", null);
-        try {
-            int argCount=args.length;
-            if(argCount>0) {
-                String command=args[0];
-                if(AOSHCommand.EXIT.equalsIgnoreCase(command)) {
-                    if(argCount!=1) {
-                        err.println("aosh: "+AOSHCommand.EXIT+": too many parameters");
+        int argCount=args.length;
+        if(argCount>0) {
+            String command=args[0];
+            if(AOSHCommand.EXIT.equalsIgnoreCase(command)) {
+                if(argCount!=1) {
+                    err.println("aosh: "+AOSHCommand.EXIT+": too many parameters");
+                    err.flush();
+                } else return false;
+            } else {
+                if(AOSHCommand.CLEAR.equalsIgnoreCase(command)) clear(args);
+                else if(AOSHCommand.ECHO.equalsIgnoreCase(command)) echo(args);
+                else if(AOSHCommand.INVALIDATE.equalsIgnoreCase(command)) invalidate(args);
+                else if(AOSHCommand.JOBS.equalsIgnoreCase(command)) jobs(args);
+                else if(AOSHCommand.PING.equalsIgnoreCase(command)) ping(args);
+                else if(AOSHCommand.REPEAT.equalsIgnoreCase(command)) repeat(args);
+                else if(AOSHCommand.SLEEP.equalsIgnoreCase(command)) sleep(args);
+                else if(AOSHCommand.SU.equalsIgnoreCase(command)) su(args);
+                else if(AOSHCommand.TIME.equalsIgnoreCase(command)) time(args);
+                else if(AOSHCommand.WHOAMI.equalsIgnoreCase(command)) whoami(args);
+                else {
+                    boolean done=false;
+                    // Use the aosh_commands table for faster lookups
+                    String lowerCommand=command.toLowerCase();
+                    AOSHCommand aoshCommand=connector.aoshCommands.get(lowerCommand);
+                    if(aoshCommand!=null) {
+                        AOServTable table=aoshCommand.getSchemaTable(connector).getAOServTable(connector);
+                        done=table.handleCommand(args, in, out, err, isInteractive());
+                        if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+lowerCommand+"', table='"+table.getTableName()+'\'');
+                    }
+                    /*
+                    for(int c=0;c<numTables;c++) {
+                        AOServTable table=connector.getTable(c);
+                        if(table.handleCommand(args, in, out, err, isInteractive())) {
+                            done=true;
+                            break;
+                        }
+                    }*/
+                    if(!done) {
+                        err.println("aosh: "+command+": command not found");
                         err.flush();
-                    } else return false;
-                } else {
-                    if(AOSHCommand.CLEAR.equalsIgnoreCase(command)) clear(args);
-                    else if(AOSHCommand.ECHO.equalsIgnoreCase(command)) echo(args);
-                    else if(AOSHCommand.INVALIDATE.equalsIgnoreCase(command)) invalidate(args);
-                    else if(AOSHCommand.JOBS.equalsIgnoreCase(command)) jobs(args);
-                    else if(AOSHCommand.PING.equalsIgnoreCase(command)) ping(args);
-                    else if(AOSHCommand.REPEAT.equalsIgnoreCase(command)) repeat(args);
-                    else if(AOSHCommand.SLEEP.equalsIgnoreCase(command)) sleep(args);
-                    else if(AOSHCommand.SU.equalsIgnoreCase(command)) su(args);
-                    else if(AOSHCommand.TIME.equalsIgnoreCase(command)) time(args);
-                    else if(AOSHCommand.WHOAMI.equalsIgnoreCase(command)) whoami(args);
-                    else {
-                        boolean done=false;
-                        // Use the aosh_commands table for faster lookups
-                        String lowerCommand=command.toLowerCase();
-                        AOSHCommand aoshCommand=connector.aoshCommands.get(lowerCommand);
-                        if(aoshCommand!=null) {
-                            AOServTable table=aoshCommand.getSchemaTable(connector).getAOServTable(connector);
-                            done=table.handleCommand(args, in, out, err, isInteractive());
-                            if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+lowerCommand+"', table='"+table.getTableName()+'\'');
-                        }
-                        /*
-                        for(int c=0;c<numTables;c++) {
-                            AOServTable table=connector.getTable(c);
-                            if(table.handleCommand(args, in, out, err, isInteractive())) {
-                                done=true;
-                                break;
-                            }
-                        }*/
-                        if(!done) {
-                            err.println("aosh: "+command+": command not found");
-                            err.flush();
-                        }
                     }
                 }
             }
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
+        return true;
     }
 
     private void invalidate(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "invalidate(String[])", null);
-        try {
-            if(checkRangeParamCount(AOSHCommand.INVALIDATE, args, 1, 2, err)) {
-                String tableName=args[1];
-                SchemaTableTable schemaTableTable=connector.schemaTables;
-                // Find the table ID
-                int tableID=-1;
-                for(int d=0;d<numTables;d++) {
-                    if(schemaTableTable.get(d).getName().equalsIgnoreCase(tableName)) {
-                        tableID=d;
-                        break;
-                    }
-                }
-                if(tableID>=0) {
-                    connector.simpleAOClient.invalidate(tableID, args.length>2?args[2]:null);
-                } else {
-                    err.print("aosh: "+AOSHCommand.INVALIDATE+": unable to find table: ");
-                    err.println(tableName);
-                    err.flush();
+        if(checkRangeParamCount(AOSHCommand.INVALIDATE, args, 1, 2, err)) {
+            String tableName=args[1];
+            SchemaTableTable schemaTableTable=connector.schemaTables;
+            // Find the table ID
+            int tableID=-1;
+            for(int d=0;d<numTables;d++) {
+                if(schemaTableTable.get(d).getName().equalsIgnoreCase(tableName)) {
+                    tableID=d;
+                    break;
                 }
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+            if(tableID>=0) {
+                connector.simpleAOClient.invalidate(tableID, args.length>2?args[2]:null);
+            } else {
+                err.print("aosh: "+AOSHCommand.INVALIDATE+": unable to find table: ");
+                err.println(tableName);
+                err.flush();
+            }
         }
     }
 
     public static void main(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "main(String[])", null);
+        TerminalWriter out=new TerminalWriter(System.out);
+        TerminalWriter err=new TerminalWriter(System.err);
         try {
-            TerminalWriter out=new TerminalWriter(System.out);
-            TerminalWriter err=new TerminalWriter(System.err);
-            try {
-                String username=getConfigUsername(System.in, err);
-                String password=getConfigPassword(System.in, err);
-                AOServConnector connector=AOServConnector.getConnector(username, password, new StandardErrorHandler(err));
-                AOSH aosh=new AOSH(connector, System.in, out, err, args);
-                aosh.run();
-                if(aosh.isInteractive()) {
-                    out.println();
-                    out.flush();
-                }
-            } catch(IOException exc) {
-                err.println("aosh: unable to connect: "+exc.getMessage());
-                err.flush();
+            String username=getConfigUsername(System.in, err);
+            String password=getConfigPassword(System.in, err);
+            AOServConnector connector=AOServConnector.getConnector(username, password, new StandardErrorHandler(err));
+            AOSH aosh=new AOSH(connector, System.in, out, err, args);
+            aosh.run();
+            if(aosh.isInteractive()) {
+                out.println();
+                out.flush();
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        } catch(IOException exc) {
+            err.println("aosh: unable to connect: "+exc.getMessage());
+            err.flush();
         }
     }
 
     public static String getConfigUsername(InputStream in, TerminalWriter err) throws IOException {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "getConfigUsername(InputStream,TerminalWriter)", null);
-        try {
-            String username=AOServClientConfiguration.getUsername();
-            if(username==null || username.length()==0) {
-                // Prompt for the username
-                err.print("Username: ");
-                err.flush();
-                username=readLine(in);
-            }
-            return username;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        String username=AOServClientConfiguration.getUsername();
+        if(username==null || username.length()==0) {
+            // Prompt for the username
+            err.print("Username: ");
+            err.flush();
+            username=readLine(in);
         }
+        return username;
     }
     
     public static String getConfigPassword(InputStream in, TerminalWriter err) throws IOException {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "getConfigPassword(InputStream,TerminalWriter)", null);
-        try {
-            String password=AOServClientConfiguration.getPassword();
-            if(password==null || password.length()==0) {
-                // Prompt for the password
-                err.print("Password: ");
-                err.flush();
-                password=readLine(in);
-                err.flush();
-            }
-            return password;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        String password=AOServClientConfiguration.getPassword();
+        if(password==null || password.length()==0) {
+            // Prompt for the password
+            err.print("Password: ");
+            err.flush();
+            password=readLine(in);
+            err.flush();
         }
+        return password;
     }
 
     protected ShellInterpreter newShellInterpreter(InputStream in, TerminalWriter out, TerminalWriter err, String[] args) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "newShellInterpreter(InputStream,TerminalWriter,TerminalWriter,String[])", null);
-        try {
-            return new AOSH(connector, in, out, err, args);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return new AOSH(connector, in, out, err, args);
     }
 
     static boolean parseBoolean(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseBoolean(String,String)", null);
-        try {
-            if(
-                S.equalsIgnoreCase("true")
-                || S.equalsIgnoreCase("t")
-                || S.equalsIgnoreCase("yes")
-                || S.equalsIgnoreCase("y")
-                || S.equalsIgnoreCase("vang")
-                || S.equalsIgnoreCase("da")
-                || S.equalsIgnoreCase("si")
-                || S.equalsIgnoreCase("oui")
-                || S.equalsIgnoreCase("ja")
-                || S.equalsIgnoreCase("nam")
-            ) return true;
-            else if(
-                S.equalsIgnoreCase("false")
-                || S.equalsIgnoreCase("f")
-                || S.equalsIgnoreCase("no")
-                || S.equalsIgnoreCase("n")
-                || S.equalsIgnoreCase("khong")
-                || S.equalsIgnoreCase("nyet")
-                || S.equalsIgnoreCase("non")
-                || S.equalsIgnoreCase("nien")
-                || S.equalsIgnoreCase("la")
-            ) return false;
-            else throw new IllegalArgumentException("invalid argument for boolean "+field+": "+S);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(
+            S.equalsIgnoreCase("true")
+            || S.equalsIgnoreCase("t")
+            || S.equalsIgnoreCase("yes")
+            || S.equalsIgnoreCase("y")
+            || S.equalsIgnoreCase("vang")
+            || S.equalsIgnoreCase("da")
+            || S.equalsIgnoreCase("si")
+            || S.equalsIgnoreCase("oui")
+            || S.equalsIgnoreCase("ja")
+            || S.equalsIgnoreCase("nam")
+        ) return true;
+        else if(
+            S.equalsIgnoreCase("false")
+            || S.equalsIgnoreCase("f")
+            || S.equalsIgnoreCase("no")
+            || S.equalsIgnoreCase("n")
+            || S.equalsIgnoreCase("khong")
+            || S.equalsIgnoreCase("nyet")
+            || S.equalsIgnoreCase("non")
+            || S.equalsIgnoreCase("nien")
+            || S.equalsIgnoreCase("la")
+        ) return false;
+        else throw new IllegalArgumentException("invalid argument for boolean "+field+": "+S);
     }
 
     static long parseDate(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseDate(String,String)", null);
         try {
-            try {
-                return SQLUtility.getDate(S).getTime();
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for date "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return SQLUtility.getDate(S).getTime();
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for date "+field+": "+S);
         }
     }
 
     static int parseInt(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseInt(String,String)", null);
         try {
-            try {
-                return Integer.parseInt(S);
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for int "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return Integer.parseInt(S);
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for int "+field+": "+S);
         }
     }
 
     static float parseFloat(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseFloat(String,String)", null);
         try {
-            try {
-                return Float.parseFloat(S);
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for float "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return Float.parseFloat(S);
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for float "+field+": "+S);
         }
     }
 
     static long parseLong(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseLong(String,String)", null);
         try {
-            try {
-                return Long.parseLong(S);
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for long "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return Long.parseLong(S);
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for long "+field+": "+S);
         }
     }
 
     static int parseMillis(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseMillis(String,String)", null);
         try {
-            try {
-                return SQLUtility.getMillis(S);
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return SQLUtility.getMillis(S);
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S);
         }
     }
 
     static int parseOctalInt(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseOctalInt(String,String)", null);
         try {
-            try {
-                return Integer.parseInt(S, 8);
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for octal int "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return Integer.parseInt(S, 8);
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for octal int "+field+": "+S);
         }
     }
 
     static long parseOctalLong(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseOctalLong(String,String)", null);
         try {
-            try {
-                return Long.parseLong(S, 8);
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for octal long "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return Long.parseLong(S, 8);
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for octal long "+field+": "+S);
         }
     }
 
     static int parsePennies(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parsePennies(String,String)", null);
         try {
-            try {
-                return SQLUtility.getPennies(S);
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return SQLUtility.getPennies(S);
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S);
         }
     }
 
     static short parseShort(String S, String field) {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "parseShort(String,String)", null);
         try {
-            try {
-                return Short.parseShort(S);
-            } catch(NumberFormatException err) {
-                throw new IllegalArgumentException("invalid argument for short "+field+": "+S);
-            }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return Short.parseShort(S);
+        } catch(NumberFormatException err) {
+            throw new IllegalArgumentException("invalid argument for short "+field+": "+S);
         }
     }
 
     private void ping(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "ping(String[])", null);
-        try {
-            if(checkParamCount(AOSHCommand.PING, args, 0, err)) {
-                out.print(connector.simpleAOClient.ping());
-                out.println(" ms");
-                out.flush();
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        if(checkParamCount(AOSHCommand.PING, args, 0, err)) {
+            out.print(connector.simpleAOClient.ping());
+            out.println(" ms");
+            out.flush();
         }
     }
 
     public static String readLine(InputStream in) throws IOException {
-        Profiler.startProfile(Profiler.FAST, AOSH.class, "readLine(InputStream)", null);
-        try {
-            StringBuilder SB=new StringBuilder();
-            readLine(in, SB);
-            return SB.toString();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        StringBuilder SB=new StringBuilder();
+        readLine(in, SB);
+        return SB.toString();
     }
     
     public static void readLine(InputStream in, StringBuilder SB) throws IOException {
-        Profiler.startProfile(Profiler.IO, AOSH.class, "readLine(InputStream,StringBuilder)", null);
-        try {
-            SB.setLength(0);
-            int ch;
-            while((ch=in.read())!=-1 && ch!='\n') if(ch!='\r') SB.append((char)ch);
-        } finally {
-            Profiler.endProfile(Profiler.IO);
-        }
+        SB.setLength(0);
+        int ch;
+        while((ch=in.read())!=-1 && ch!='\n') if(ch!='\r') SB.append((char)ch);
     }
 
     private void repeat(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "repeat(String[])", null);
-        try {
-            int argCount=args.length;
-            if(argCount>2) {
-                try {
-                    int count=Integer.parseInt(args[1]);
-                    if(count>=0) {
-                        String[] newArgs=new String[argCount-2];
-                        System.arraycopy(args, 2, newArgs, 0, argCount-2);
+        int argCount=args.length;
+        if(argCount>2) {
+            try {
+                int count=Integer.parseInt(args[1]);
+                if(count>=0) {
+                    String[] newArgs=new String[argCount-2];
+                    System.arraycopy(args, 2, newArgs, 0, argCount-2);
 
-                        for(int c=0;c<count;c++) handleCommand(newArgs);
-                    } else {
-                        err.print("aosh: "+AOSHCommand.REPEAT+": invalid loop count: ");
-                        err.println(count);
-                        err.flush();
-                    }
-                } catch(NumberFormatException nfe) {
+                    for(int c=0;c<count;c++) handleCommand(newArgs);
+                } else {
                     err.print("aosh: "+AOSHCommand.REPEAT+": invalid loop count: ");
-                    err.println(args[1]);
+                    err.println(count);
                     err.flush();
                 }
-            } else {
-                err.println("aosh: "+AOSHCommand.REPEAT+": not enough parameters");
+            } catch(NumberFormatException nfe) {
+                err.print("aosh: "+AOSHCommand.REPEAT+": invalid loop count: ");
+                err.println(args[1]);
                 err.flush();
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        } else {
+            err.println("aosh: "+AOSHCommand.REPEAT+": not enough parameters");
+            err.flush();
         }
     }
 
     private void sleep(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "sleep(String[])", null);
-        try {
-            if(args.length>1) {
-                try {
-                    for(int c=1;c<args.length;c++) {
-                        try {
-                            long time=1000*Integer.parseInt(args[c]);
-                            if(time<0) {
-                                err.println("aosh: "+AOSHCommand.SLEEP+": invalid time interval: "+args[c]);
-                                err.flush();
-                            } else {
-                                Thread.sleep(time);
-                            }
-                        } catch(NumberFormatException nfe) {
+        if(args.length>1) {
+            try {
+                for(int c=1;c<args.length;c++) {
+                    try {
+                        long time=1000*Integer.parseInt(args[c]);
+                        if(time<0) {
                             err.println("aosh: "+AOSHCommand.SLEEP+": invalid time interval: "+args[c]);
                             err.flush();
+                        } else {
+                            Thread.sleep(time);
                         }
+                    } catch(NumberFormatException nfe) {
+                        err.println("aosh: "+AOSHCommand.SLEEP+": invalid time interval: "+args[c]);
+                        err.flush();
                     }
-                } catch(InterruptedException ie) {
-                    status="Interrupted";
-                    err.println("aosh: "+AOSHCommand.SLEEP+": interrupted");
-                    err.flush();
                 }
-            } else {
-                err.println("aosh: "+AOSHCommand.SLEEP+": too few arguments");
+            } catch(InterruptedException ie) {
+                status="Interrupted";
+                err.println("aosh: "+AOSHCommand.SLEEP+": interrupted");
                 err.flush();
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        } else {
+            err.println("aosh: "+AOSHCommand.SLEEP+": too few arguments");
+            err.flush();
         }
     }
 
     private void su(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "su(String[])", null);
         try {
-            try {
-                int argCount=args.length;
-                if(argCount>=2) {
-                    String[] newArgs=new String[argCount+(isInteractive()?0:-1)];
-                    int pos=0;
-                    if(isInteractive()) newArgs[pos++]="-i";
-                    newArgs[pos++]="--";
-                    System.arraycopy(args, 2, newArgs, pos, argCount-2);
-                    new AOSH(connector.switchUsers(args[1]), in, out, err, newArgs).run();
-                } else {
-                    err.println("aosh: "+AOSHCommand.SU+": not enough parameters");
-                    err.flush();
-                }
-            } catch(IOException err) {
-                throw new WrappedException(err);
+            int argCount=args.length;
+            if(argCount>=2) {
+                String[] newArgs=new String[argCount+(isInteractive()?0:-1)];
+                int pos=0;
+                if(isInteractive()) newArgs[pos++]="-i";
+                newArgs[pos++]="--";
+                System.arraycopy(args, 2, newArgs, pos, argCount-2);
+                new AOSH(connector.switchUsers(args[1]), in, out, err, newArgs).run();
+            } else {
+                err.println("aosh: "+AOSHCommand.SU+": not enough parameters");
+                err.flush();
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        } catch(IOException err) {
+            throw new WrappedException(err);
         }
     }
 
     private void time(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "time(String[])", null);
-        try {
-            int argCount=args.length;
-            if(argCount>1) {
-                String[] newArgs=new String[argCount-1];
-                System.arraycopy(args, 1, newArgs, 0, argCount-1);
-                long startTime=System.currentTimeMillis();
-                handleCommand(newArgs);
-                long timeSpan=(long)(System.currentTimeMillis()-startTime);
-                int mins=(int)(timeSpan/60000);
-                int secs=(int)(timeSpan%60000);
-                out.println();
-                out.print("real    ");
-                out.print(mins);
-                out.print('m');
-                out.print(SQLUtility.getMilliDecimal(secs));
-                out.println('s');
-                out.flush();
-            } else {
-                err.println("aosh: "+AOSHCommand.TIME+": not enough parameters");
-                err.flush();
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        int argCount=args.length;
+        if(argCount>1) {
+            String[] newArgs=new String[argCount-1];
+            System.arraycopy(args, 1, newArgs, 0, argCount-1);
+            long startTime=System.currentTimeMillis();
+            handleCommand(newArgs);
+            long timeSpan=(long)(System.currentTimeMillis()-startTime);
+            int mins=(int)(timeSpan/60000);
+            int secs=(int)(timeSpan%60000);
+            out.println();
+            out.print("real    ");
+            out.print(mins);
+            out.print('m');
+            out.print(SQLUtility.getMilliDecimal(secs));
+            out.println('s');
+            out.flush();
+        } else {
+            err.println("aosh: "+AOSHCommand.TIME+": not enough parameters");
+            err.flush();
         }
     }
 
     private void whoami(String[] args) {
-        Profiler.startProfile(Profiler.UNKNOWN, AOSH.class, "whoami(String[])", null);
-        try {
-            if(args.length==1) {
-                out.println(connector.getThisBusinessAdministrator().getUsername().getUsername());
-                out.flush();
-            } else {
-                err.println("aosh: "+AOSHCommand.WHOAMI+": too many parameters");
-                err.flush();
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        if(args.length==1) {
+            out.println(connector.getThisBusinessAdministrator().getUsername().getUsername());
+            out.flush();
+        } else {
+            err.println("aosh: "+AOSHCommand.WHOAMI+": too many parameters");
+            err.flush();
         }
     }
 }

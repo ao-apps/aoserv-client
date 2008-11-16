@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.IntList;
 import java.io.*;
 import java.sql.*;
@@ -71,43 +70,38 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
-        Profiler.startProfile(Profiler.UNKNOWN, FileBackupSettingTable.class, "handleCommand(String[],InputStream,TerminalWriter,TerminalWriter,boolean)", null);
-        try {
-            String command=args[0];
-            if(command.equalsIgnoreCase(AOSHCommand.ADD_FILE_BACKUP_SETTING)) {
-                if(AOSH.checkParamCount(AOSHCommand.ADD_FILE_BACKUP_SETTING, args, 3, err)) {
-                    out.println(
-                        connector.simpleAOClient.addFileBackupSetting(
-                            AOSH.parseInt(args[1], "replication"),
-                            args[2],
-                            AOSH.parseBoolean(args[3], "backup_enabled")
-                        )
-                    );
-                    out.flush();
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_FILE_BACKUP_SETTING)) {
-                if(AOSH.checkParamCount(AOSHCommand.REMOVE_FILE_BACKUP_SETTING, args, 2, err)) {
-                    connector.simpleAOClient.removeFileBackupSetting(
-                        AOSH.parseInt(args[1], "replication"),
-                        args[2]
-                    );
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.SET_FILE_BACKUP_SETTING)) {
-                if(AOSH.checkParamCount(AOSHCommand.SET_FILE_BACKUP_SETTING, args, 3, err)) {
-                    connector.simpleAOClient.setFileBackupSetting(
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_FILE_BACKUP_SETTING)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_FILE_BACKUP_SETTING, args, 3, err)) {
+                out.println(
+                    connector.simpleAOClient.addFileBackupSetting(
                         AOSH.parseInt(args[1], "replication"),
                         args[2],
                         AOSH.parseBoolean(args[3], "backup_enabled")
-                    );
-                }
-                return true;
+                    )
+                );
+                out.flush();
             }
-            return false;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_FILE_BACKUP_SETTING)) {
+            if(AOSH.checkParamCount(AOSHCommand.REMOVE_FILE_BACKUP_SETTING, args, 2, err)) {
+                connector.simpleAOClient.removeFileBackupSetting(
+                    AOSH.parseInt(args[1], "replication"),
+                    args[2]
+                );
+            }
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.SET_FILE_BACKUP_SETTING)) {
+            if(AOSH.checkParamCount(AOSHCommand.SET_FILE_BACKUP_SETTING, args, 3, err)) {
+                connector.simpleAOClient.setFileBackupSetting(
+                    AOSH.parseInt(args[1], "replication"),
+                    args[2],
+                    AOSH.parseBoolean(args[3], "backup_enabled")
+                );
+            }
+            return true;
         }
+        return false;
     }
 
     void setFileBackupSettings(FailoverFileReplication ffr, List<String> paths, List<Boolean> backupEnableds) throws IOException, SQLException {

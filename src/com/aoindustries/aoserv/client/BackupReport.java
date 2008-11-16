@@ -118,7 +118,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	return pkey;
     }
 
-    public void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
         server=result.getInt(2);
         packageNum=result.getInt(3);
@@ -141,13 +141,13 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	this.table=table;
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
         out.writeCompressedInt(server);
         out.writeCompressedInt(packageNum);
         out.writeLong(date);
         out.writeInt(file_count);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_30)<=0) {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeLong(0); // uncompressed_size
             out.writeLong(0); // compressed_size
         }

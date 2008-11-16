@@ -56,7 +56,7 @@ final public class NetPort extends AOServObject<Integer,NetPort> {
 	return port;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
@@ -68,7 +68,7 @@ final public class NetPort extends AOServObject<Integer,NetPort> {
 	throw new IOException("Should not be read from a stream, should be generated.");
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	throw new IOException("Should not be written to a stream, should be generated.");
     }
 }

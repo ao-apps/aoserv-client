@@ -79,7 +79,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
 	return pkey;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey = result.getString(1);
 	description = result.getString(2);
 	client_view = result.getBoolean(3);
@@ -95,7 +95,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
 	client_view=in.readBoolean();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
 	out.writeUTF(description);
 	out.writeBoolean(client_view);

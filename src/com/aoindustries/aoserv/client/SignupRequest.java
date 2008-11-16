@@ -128,7 +128,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 	return SchemaTable.TableID.SIGNUP_REQUESTS;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey = result.getInt(pos++);
 	accounting = result.getString(pos++);
@@ -210,7 +210,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         completed_time=in.readLong();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
 	out.writeUTF(accounting);
         out.writeLong(time);
@@ -244,7 +244,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         out.writeBoolean(billing_use_monthly);
         out.writeBoolean(billing_pay_one_year);
         out.writeUTF(encrypted_data);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_31)>=0) out.writeCompressedInt(encryption_from);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(encryption_from);
         out.writeCompressedInt(encryption_recipient); // Used to be called encryption_key
         out.writeNullUTF(completed_by);
         out.writeLong(completed_time);

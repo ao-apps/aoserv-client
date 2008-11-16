@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -58,23 +57,13 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
     }
 
     public int getCachedRowCount() {
-        Profiler.startProfile(Profiler.UNKNOWN, DistroFileTable.class, "getCachedRowCount()", null);
-        try {
-            if(isLoaded()) return super.getCachedRowCount();
-            else return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        if(isLoaded()) return super.getCachedRowCount();
+        else return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
     }
 
     public int size() {
-        Profiler.startProfile(Profiler.UNKNOWN, DistroFileTable.class, "getRowCount()", null);
-        try {
-            if(isLoaded()) return super.size();
-            else return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        if(isLoaded()) return super.size();
+        else return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -82,34 +71,24 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
-        Profiler.startProfile(Profiler.UNKNOWN, DistroFileTable.class, "handleCommand(String[],InputStream,TerminalWriter,TerminalWriter,boolean)", null);
-        try {
-            String command=args[0];
-            if(command.equalsIgnoreCase(AOSHCommand.START_DISTRO)) {
-                if(AOSH.checkParamCount(AOSHCommand.START_DISTRO, args, 2, err)) {
-                    connector.simpleAOClient.startDistro(
-                        args[1],
-                        AOSH.parseBoolean(args[2], "include_user")
-                    );
-                }
-                return true;
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.START_DISTRO)) {
+            if(AOSH.checkParamCount(AOSHCommand.START_DISTRO, args, 2, err)) {
+                connector.simpleAOClient.startDistro(
+                    args[1],
+                    AOSH.parseBoolean(args[2], "include_user")
+                );
             }
-            return false;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+            return true;
         }
+        return false;
     }
 
     void startDistro(AOServer server, boolean includeUser) {
-        Profiler.startProfile(Profiler.UNKNOWN, DistroFileTable.class, "startDistro(AOServer,boolean)", null);
-        try {
-            connector.requestUpdate(
-                AOServProtocol.CommandID.START_DISTRO,
-                server.pkey,
-                includeUser
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        connector.requestUpdate(
+            AOServProtocol.CommandID.START_DISTRO,
+            server.pkey,
+            includeUser
+        );
     }
 }

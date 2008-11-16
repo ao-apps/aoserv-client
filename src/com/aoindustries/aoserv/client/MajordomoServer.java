@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -133,7 +132,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	return obj;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	linux_server_account=result.getInt(2);
 	linux_server_group=result.getInt(3);
@@ -161,7 +160,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	);
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(linux_server_account);
 	out.writeCompressedInt(linux_server_group);
@@ -169,7 +168,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	out.writeCompressedInt(majordomo_pipe_address);
 	out.writeCompressedInt(owner_majordomo_add);
 	out.writeCompressedInt(majordomo_owner_add);
-        if(AOServProtocol.compareVersions(protocolVersion, AOServProtocol.VERSION_1_30)<=0) {
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);
         }

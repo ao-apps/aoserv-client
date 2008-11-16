@@ -100,7 +100,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	return obj;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	zone=result.getString(2);
 	domain=result.getString(3);
@@ -150,7 +150,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     	return SB.toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(zone);
 	out.writeUTF(domain);
@@ -158,6 +158,6 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	out.writeCompressedInt(mx_priority);
 	out.writeUTF(destination);
         out.writeCompressedInt(dhcpAddress);
-        if(AOServProtocol.compareVersions(version, AOServProtocol.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);
     }
 }

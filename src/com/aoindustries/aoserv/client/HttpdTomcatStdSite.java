@@ -62,7 +62,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 	return SchemaTable.TableID.HTTPD_TOMCAT_STD_SITES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
         tomcat4_shutdown_port=result.getInt(2);
         if(result.wasNull()) tomcat4_shutdown_port=-1;
@@ -79,7 +79,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
         return getHttpdTomcatSite().toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
         out.writeCompressedInt(tomcat4_shutdown_port);
         out.writeNullUTF(tomcat4_shutdown_key);

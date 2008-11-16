@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import com.aoindustries.util.sort.*;
 import java.io.*;
@@ -68,17 +67,12 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
      * next use.
      */
     public void clearCache() {
-        Profiler.startProfile(Profiler.UNKNOWN, FilesystemCachedTable.class, "clearCache()", null);
-        try {
-            super.clearCache();
-            synchronized(this) {
-                lastLoaded=-1;
-                tableList=null;
-                unmodifiableTableList=null;
-                if(columnLists!=null) columnLists.clear();
-            }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        super.clearCache();
+        synchronized(this) {
+            lastLoaded=-1;
+            tableList=null;
+            unmodifiableTableList=null;
+            if(columnLists!=null) columnLists.clear();
         }
     }
 
@@ -86,35 +80,30 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
      * Reloads the cache if the cache has expired.  All accesses are already synchronized.
      */
     private void validateCache() {
-        Profiler.startProfile(Profiler.FAST, FilesystemCachedTable.class, "validateCache()", null);
         try {
-            try {
-                long currentTime=System.currentTimeMillis();
-                if(
-                   // If cache never loaded
-                   lastLoaded==-1
-                   // If the system time was reset to previous time
-                   || currentTime<lastLoaded
-                ) {
-                    SchemaTable schemaTable=getTableSchema();
-                    FileList<V> newTableList=new FileList<V>(
-                        schemaTable.getName(),
-                        "table",
-                        getRecordLength(),
-                        this
-                    );
-                    getObjects(newTableList, AOServProtocol.CommandID.GET_TABLE, getTableID());
-                    tableList=newTableList;
-                    unmodifiableTableList=Collections.unmodifiableList(tableList);
-                    lastLoaded=currentTime;
+            long currentTime=System.currentTimeMillis();
+            if(
+               // If cache never loaded
+               lastLoaded==-1
+               // If the system time was reset to previous time
+               || currentTime<lastLoaded
+            ) {
+                SchemaTable schemaTable=getTableSchema();
+                FileList<V> newTableList=new FileList<V>(
+                    schemaTable.getName(),
+                    "table",
+                    getRecordLength(),
+                    this
+                );
+                getObjects(newTableList, AOServProtocol.CommandID.GET_TABLE, getTableID());
+                tableList=newTableList;
+                unmodifiableTableList=Collections.unmodifiableList(tableList);
+                lastLoaded=currentTime;
 
-                    if(columnLists!=null) columnLists.clear();
-                }
-            } catch(IOException err) {
-                throw new WrappedException(err);
+                if(columnLists!=null) columnLists.clear();
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        } catch(IOException err) {
+            throw new WrappedException(err);
         }
     }
 
@@ -182,16 +171,11 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
      * Determines if the contents are currently sorted for quick unique lookups.
      */
     boolean isSorted(int uniqueColumn) {
-        Profiler.startProfile(Profiler.FAST, FilesystemCachedTable.class, "isSorted(int)", null);
-        try {
-            return
-                columnLists!=null
-                && columnLists.size()>uniqueColumn
-                && columnLists.get(uniqueColumn)!=null
-            ;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return
+            columnLists!=null
+            && columnLists.size()>uniqueColumn
+            && columnLists.get(uniqueColumn)!=null
+        ;
     }
 
     final public boolean isLoaded() {

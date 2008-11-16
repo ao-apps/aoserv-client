@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -38,17 +37,12 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
         MajordomoServer majordomoServer,
         String listName
     ) {
-        Profiler.startProfile(Profiler.UNKNOWN, MajordomoListTable.class, "addMajordomoList(MajordomoServer,String)", null);
-        try {
-            return connector.requestIntQueryIL(
-                AOServProtocol.CommandID.ADD,
-                SchemaTable.TableID.MAJORDOMO_LISTS,
-                majordomoServer.pkey,
-                listName
-            );
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        return connector.requestIntQueryIL(
+            AOServProtocol.CommandID.ADD,
+            SchemaTable.TableID.MAJORDOMO_LISTS,
+            majordomoServer.pkey,
+            listName
+        );
     }
 
     public MajordomoList get(Object pkey) {
@@ -60,31 +54,21 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
     }
 
     MajordomoList getMajordomoList(MajordomoServer ms, String listName) {
-        Profiler.startProfile(Profiler.UNKNOWN, MajordomoListTable.class, "getMajordomoList(MajordomoServer,String)", null);
-        try {
-            int majordomo_server=ms.pkey;
-            List<MajordomoList> mls=getRows();
-            int len=mls.size();
-            for(int c=0;c<len;c++) {
-                MajordomoList ml=mls.get(c);
-                if(
-                    ml.majordomo_server==majordomo_server
-                    && ml.name.equals(listName)
-                ) return ml;
-            }
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        int majordomo_server=ms.pkey;
+        List<MajordomoList> mls=getRows();
+        int len=mls.size();
+        for(int c=0;c<len;c++) {
+            MajordomoList ml=mls.get(c);
+            if(
+                ml.majordomo_server==majordomo_server
+                && ml.name.equals(listName)
+            ) return ml;
         }
+        return null;
     }
 
     List<MajordomoList> getMajordomoLists(MajordomoServer server) {
-        Profiler.startProfile(Profiler.UNKNOWN, MajordomoListTable.class, "getMajordomoLists(MajordomoServer)", null);
-        try {
-            return getIndexedRows(MajordomoList.COLUMN_MAJORDOMO_SERVER, server.pkey);
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
-        }
+        return getIndexedRows(MajordomoList.COLUMN_MAJORDOMO_SERVER, server.pkey);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -92,58 +76,53 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
     }
 
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
-        Profiler.startProfile(Profiler.UNKNOWN, MajordomoListTable.class, "handleCommand(String[],InputStream,TerminalWriter,TerminalWriter,boolean)", null);
-        try {
-            String command=args[0];
-            if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_LIST)) {
-                if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_LIST, args, 3, err)) {
-                    int pkey=connector.simpleAOClient.addMajordomoList(
-                        args[1],
-                        args[2],
-                        args[3]
-                    );
-                    out.println(pkey);
-                    out.flush();
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MAJORDOMO_LIST_NAME)) {
-                if(AOSH.checkParamCount(AOSHCommand.CHECK_MAJORDOMO_LIST_NAME, args, 1, err)) {
-                    try {
-                        SimpleAOClient.checkMajordomoListName(args[1]);
-                        out.println("true");
-                    } catch(IllegalArgumentException iae) {
-                        out.print("aosh: "+AOSHCommand.CHECK_MAJORDOMO_LIST_NAME+": ");
-                        out.println(iae.getMessage());
-                    }
-                    out.flush();
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INFO_FILE)) {
-                if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INFO_FILE, args, 3, err)) {
-                    out.println(connector.simpleAOClient.getMajordomoInfoFile(args[1], args[2], args[3]));
-                    out.flush();
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INTRO_FILE)) {
-                if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INTRO_FILE, args, 3, err)) {
-                    out.println(connector.simpleAOClient.getMajordomoIntroFile(args[1], args[2], args[3]));
-                    out.flush();
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INFO_FILE)) {
-                if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INFO_FILE, args, 4, err)) {
-                    connector.simpleAOClient.setMajordomoInfoFile(args[1], args[2], args[3], args[4]);
-                }
-                return true;
-            } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INTRO_FILE)) {
-                if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INTRO_FILE, args, 4, err)) {
-                    connector.simpleAOClient.setMajordomoIntroFile(args[1], args[2], args[3], args[4]);
-                }
-                return true;
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_LIST)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_LIST, args, 3, err)) {
+                int pkey=connector.simpleAOClient.addMajordomoList(
+                    args[1],
+                    args[2],
+                    args[3]
+                );
+                out.println(pkey);
+                out.flush();
             }
-            return false;
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MAJORDOMO_LIST_NAME)) {
+            if(AOSH.checkParamCount(AOSHCommand.CHECK_MAJORDOMO_LIST_NAME, args, 1, err)) {
+                try {
+                    SimpleAOClient.checkMajordomoListName(args[1]);
+                    out.println("true");
+                } catch(IllegalArgumentException iae) {
+                    out.print("aosh: "+AOSHCommand.CHECK_MAJORDOMO_LIST_NAME+": ");
+                    out.println(iae.getMessage());
+                }
+                out.flush();
+            }
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INFO_FILE)) {
+            if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INFO_FILE, args, 3, err)) {
+                out.println(connector.simpleAOClient.getMajordomoInfoFile(args[1], args[2], args[3]));
+                out.flush();
+            }
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INTRO_FILE)) {
+            if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INTRO_FILE, args, 3, err)) {
+                out.println(connector.simpleAOClient.getMajordomoIntroFile(args[1], args[2], args[3]));
+                out.flush();
+            }
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INFO_FILE)) {
+            if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INFO_FILE, args, 4, err)) {
+                connector.simpleAOClient.setMajordomoInfoFile(args[1], args[2], args[3], args[4]);
+            }
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INTRO_FILE)) {
+            if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INTRO_FILE, args, 4, err)) {
+                connector.simpleAOClient.setMajordomoIntroFile(args[1], args[2], args[3], args[4]);
+            }
+            return true;
         }
+        return false;
     }
 }

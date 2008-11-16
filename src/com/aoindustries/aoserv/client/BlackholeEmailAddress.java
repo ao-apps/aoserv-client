@@ -44,7 +44,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
 	return SchemaTable.TableID.BLACKHOLE_EMAIL_ADDRESSES;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
     }
 
@@ -68,7 +68,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
         return getEmailAddress().toString();
     }
 
-    public void write(CompressedDataOutputStream out, String version) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
     }
 }
