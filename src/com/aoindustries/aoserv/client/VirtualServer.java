@@ -40,25 +40,27 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     private boolean primaryPhysicalServerLocked;
     private int secondaryPhysicalServer;
     private boolean secondaryPhysicalServerLocked;
+    private boolean requires_hvm;
 
     public Object getColumn(int i) {
         switch(i) {
             case COLUMN_SERVER: return Integer.valueOf(pkey);
             case 1 : return primaryRam;
-            case 2 : return secondaryRam;
+            case 2 : return secondaryRam==-1 ? null : Integer.valueOf(secondaryRam);
             case 3 : return primaryMinimumProcessorType;
             case 4 : return secondaryMinimumProcessorType;
             case 5 : return minimumProcessorArchitecture;
             case 6 : return primaryMinimumProcessorSpeed==-1 ? null : Integer.valueOf(primaryMinimumProcessorSpeed);
             case 7 : return secondaryMinimumProcessorSpeed==-1 ? null : Integer.valueOf(secondaryMinimumProcessorSpeed);
             case 8 : return primaryProcessorCores;
-            case 9 : return secondaryProcessorCores;
+            case 9 : return secondaryProcessorCores==-1 ? null : Short.valueOf(secondaryProcessorCores);
             case 10 : return primaryProcessorWeight;
-            case 11 : return secondaryProcessorWeight;
+            case 11 : return secondaryProcessorWeight==-1 ? null : Short.valueOf(secondaryProcessorWeight);
             case 12 : return primaryPhysicalServer;
             case 13 : return primaryPhysicalServerLocked;
             case 14 : return secondaryPhysicalServer;
             case 15 : return secondaryPhysicalServerLocked;
+            case 16 : return requires_hvm;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -73,6 +75,9 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         return primaryRam;
     }
 
+    /**
+     * Gets the secondary RAM allocation or <code>-1</code> if no secondary required.
+     */
     public int getSecondaryRam() {
         return secondaryRam;
     }
@@ -128,7 +133,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
 
     /**
-     * Gets the secondary processor cores.
+     * Gets the secondary processor cores or <code>-1</code> if no secondary required.
      */
     public short getSecondaryProcessorCores() {
         return secondaryProcessorCores;
@@ -142,7 +147,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
 
     /**
-     * Gets the secondary processor weight.
+     * Gets the secondary processor weight or <code>-1</code> if no secondary is required.
      */
     public short getSecondaryProcessorWeight() {
         return secondaryProcessorWeight;
@@ -179,6 +184,13 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     public boolean isSecondaryPhysicalServerLocked() {
         return secondaryPhysicalServerLocked;
     }
+    
+    /**
+     * Gets if this virtual requires full hardware virtualization support.
+     */
+    public boolean getRequiresHvm() {
+        return requires_hvm;
+    }
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.VIRTUAL_SERVERS;
@@ -189,6 +201,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         pkey = result.getInt(pos++);
         primaryRam = result.getInt(pos++);
         secondaryRam = result.getInt(pos++);
+        if(result.wasNull()) secondaryRam = -1;
         primaryMinimumProcessorType = result.getString(pos++);
         secondaryMinimumProcessorType = result.getString(pos++);
         minimumProcessorArchitecture = result.getString(pos++);
@@ -198,12 +211,15 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         if(result.wasNull()) secondaryMinimumProcessorSpeed = -1;
         primaryProcessorCores = result.getShort(pos++);
         secondaryProcessorCores = result.getShort(pos++);
+        if(result.wasNull()) secondaryProcessorCores = -1;
         primaryProcessorWeight = result.getShort(pos++);
         secondaryProcessorWeight = result.getShort(pos++);
+        if(result.wasNull()) secondaryProcessorWeight = -1;
         primaryPhysicalServer = result.getInt(pos++);
         primaryPhysicalServerLocked = result.getBoolean(pos++);
         secondaryPhysicalServer = result.getInt(pos++);
         secondaryPhysicalServerLocked = result.getBoolean(pos++);
+        requires_hvm = result.getBoolean(pos++);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -223,6 +239,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         primaryPhysicalServerLocked = in.readBoolean();
         secondaryPhysicalServer = in.readCompressedInt();
         secondaryPhysicalServerLocked = in.readBoolean();
+        requires_hvm = in.readBoolean();
     }
 
     @Override
@@ -247,5 +264,6 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         out.writeBoolean(primaryPhysicalServerLocked);
         out.writeCompressedInt(secondaryPhysicalServer);
         out.writeBoolean(secondaryPhysicalServerLocked);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
     }
 }

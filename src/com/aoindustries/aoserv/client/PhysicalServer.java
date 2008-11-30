@@ -34,6 +34,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     private int processorSpeed;
     private int processorCores;
     private float maxPower;
+    private Boolean supports_hvm;
 
     public Object getColumn(int i) {
         switch(i) {
@@ -45,6 +46,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
             case 5: return processorSpeed==-1 ? null : Integer.valueOf(processorSpeed);
             case 6: return processorCores==-1 ? null : Integer.valueOf(processorCores);
             case 7: return Float.isNaN(maxPower) ? null : Float.valueOf(maxPower);
+            case 8: return supports_hvm;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -111,6 +113,13 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     public float getMaxPower() {
         return maxPower;
     }
+    
+    /**
+     * Gets if this supports HVM or <code>null</code> if not applicable.
+     */
+    public Boolean getSupportsHvm() {
+        return supports_hvm;
+    }
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.PHYSICAL_SERVERS;
@@ -132,6 +141,8 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         if(result.wasNull()) processorCores = -1;
         maxPower = result.getFloat(pos++);
         if(result.wasNull()) maxPower = Float.NaN;
+        supports_hvm = result.getBoolean(pos++);
+        if(result.wasNull()) supports_hvm = null;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -143,6 +154,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         processorSpeed = in.readCompressedInt();
         processorCores = in.readCompressedInt();
         maxPower = in.readFloat();
+        supports_hvm = in.readBoolean() ? in.readBoolean() : null;
     }
 
     @Override
@@ -159,5 +171,9 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         out.writeCompressedInt(processorSpeed);
         out.writeCompressedInt(processorCores);
         out.writeFloat(maxPower);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) {
+            out.writeBoolean(supports_hvm!=null);
+            if(supports_hvm!=null) out.writeBoolean(supports_hvm);
+        }
     }
 }

@@ -89,6 +89,14 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         return table.connector.aoServers.get(pkey);
     }
 
+    public PhysicalServer getPhysicalServer() {
+        return table.connector.physicalServers.get(pkey);
+    }
+
+    public VirtualServer getVirtualServer() {
+        return table.connector.virtualServers.get(pkey);
+    }
+
     public List<Business> getBusinesses() {
 	return table.connector.businessServers.getBusinesses(this);
     }

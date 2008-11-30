@@ -5,11 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +37,6 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     private String description;
     private String delete_route;
     private String gateway;
-    private String netmask;
     private String network;
     private String broadcast;
     private String mac_address;
@@ -54,15 +55,14 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
             case 3: return description;
             case 4: return delete_route;
             case 5: return gateway;
-            case 6: return netmask;
-            case 7: return network;
-            case 8: return broadcast;
-            case 9: return mac_address;
-            case 10: return max_bit_rate==-1 ? null : Long.valueOf(max_bit_rate);
-            case 11: return monitoring_bit_rate_low==-1 ? null : Long.valueOf(monitoring_bit_rate_low);
-            case 12: return monitoring_bit_rate_medium==-1 ? null : Long.valueOf(monitoring_bit_rate_medium);
-            case 13: return monitoring_bit_rate_high==-1 ? null : Long.valueOf(monitoring_bit_rate_high);
-            case 14: return monitoring_bit_rate_critical==-1 ? null : Long.valueOf(monitoring_bit_rate_critical);
+            case 6: return network;
+            case 7: return broadcast;
+            case 8: return mac_address;
+            case 9: return max_bit_rate==-1 ? null : Long.valueOf(max_bit_rate);
+            case 10: return monitoring_bit_rate_low==-1 ? null : Long.valueOf(monitoring_bit_rate_low);
+            case 11: return monitoring_bit_rate_medium==-1 ? null : Long.valueOf(monitoring_bit_rate_medium);
+            case 12: return monitoring_bit_rate_high==-1 ? null : Long.valueOf(monitoring_bit_rate_high);
+            case 13: return monitoring_bit_rate_critical==-1 ? null : Long.valueOf(monitoring_bit_rate_critical);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -91,10 +91,6 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	NetDeviceID ndi=table.connector.netDeviceIDs.get(device_id);
 	if(ndi==null) throw new WrappedException(new SQLException("Unable to find NetDeviceID: "+device_id));
 	return ndi;
-    }
-
-    public String getNetMask() {
-	return netmask;
     }
 
     public String getNetwork() {
@@ -182,7 +178,6 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	description=result.getString(pos++);
 	delete_route=result.getString(pos++);
 	gateway=result.getString(pos++);
-	netmask=result.getString(pos++);
         network=result.getString(pos++);
         broadcast=result.getString(pos++);
         mac_address=result.getString(pos++);
@@ -206,7 +201,6 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	description=in.readUTF();
 	delete_route=StringUtility.intern(in.readNullUTF());
 	gateway=StringUtility.intern(in.readNullUTF());
-	netmask=in.readUTF().intern();
         network=StringUtility.intern(in.readNullUTF());
         broadcast=StringUtility.intern(in.readNullUTF());
         mac_address=in.readNullUTF();
@@ -230,7 +224,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	out.writeUTF(description);
 	out.writeNullUTF(delete_route);
 	out.writeNullUTF(gateway);
-	out.writeUTF(netmask);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_37)<=0) out.writeUTF("255.255.255.0");
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_112)>=0) {
             out.writeNullUTF(network);
             out.writeNullUTF(broadcast);

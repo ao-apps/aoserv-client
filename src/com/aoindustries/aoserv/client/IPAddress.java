@@ -5,12 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.net.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -62,6 +63,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     private boolean isDHCP;
     private boolean pingMonitorEnabled;
     private String externalIpAddress;
+    private String netmask;
 
     public Object getColumn(int i) {
         switch(i) {
@@ -77,6 +79,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             case 9: return isDHCP?Boolean.TRUE:Boolean.FALSE;
             case 10: return pingMonitorEnabled ? Boolean.TRUE : Boolean.FALSE;
             case 11: return externalIpAddress;
+            case 12: return netmask;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -172,6 +175,10 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return externalIpAddress;
     }
 
+    public String getNetMask() {
+	return netmask;
+    }
+
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.IP_ADDRESSES;
     }
@@ -190,6 +197,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         isDHCP = result.getBoolean(10);
         pingMonitorEnabled = result.getBoolean(11);
         externalIpAddress = result.getString(12);
+	netmask = result.getString(13);
     }
 
     public boolean isAlias() {
@@ -259,6 +267,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         isDHCP=in.readBoolean();
         pingMonitorEnabled = in.readBoolean();
         externalIpAddress = in.readNullUTF();
+	netmask = in.readUTF().intern();
     }
 
     /**
@@ -296,12 +305,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         out.writeBoolean(isDHCP);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(externalIpAddress);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_38)>=0) out.writeUTF(netmask);
     }
-
-    /*
-    @Override
-    String toStringImpl() {
-        if(externalIpAddress==null) return ip_address;
-        else return ip_address+'@'+externalIpAddress;
-    }*/
 }
