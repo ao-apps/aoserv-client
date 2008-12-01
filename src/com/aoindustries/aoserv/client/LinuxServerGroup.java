@@ -129,9 +129,9 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
             }
         }
 
-        for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
+        /*for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
             if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
-        }
+        }*/
 
         return reasons;
     }

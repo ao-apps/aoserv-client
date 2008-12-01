@@ -468,7 +468,10 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
         // No private FTP servers
         for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
-            if(pfs.pub_linux_server_account==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerAccount().getAOServer().getHostname(), pfs));
+            if(pfs.pub_linux_server_account==pkey) {
+                LinuxServerAccount lsa = pfs.getLinuxServerAccount();
+                reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+lsa.getHome()+" on "+lsa.getAOServer().getHostname(), pfs));
+            }
         }
 
         // No httpd_sites

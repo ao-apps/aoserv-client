@@ -55,6 +55,7 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
 	return matches;
     }
 
+    /*
     PrivateFTPServer getPrivateFTPServer(AOServer ao, String path) {
         int aoPKey=ao.pkey;
 
@@ -68,7 +69,7 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
             ) return obj;
 	}
         return null;
-    }
+    }*/
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.PRIVATE_FTP_SERVERS;

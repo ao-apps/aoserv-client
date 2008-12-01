@@ -185,7 +185,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         if(ntr!=null) return "Port redirected to "+ntr.getDestinationHost()+':'+ntr.getDestinationPort().getPort();
 
         PrivateFTPServer pfs=getPrivateFTPServer();
-        if(pfs!=null) return "Private FTP server in "+pfs.getRoot();
+        if(pfs!=null) return "Private FTP server in "+pfs.getLinuxServerAccount().getHome();
 
         return null;
     }

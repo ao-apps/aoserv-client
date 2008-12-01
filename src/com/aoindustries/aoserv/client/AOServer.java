@@ -611,9 +611,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return nd.getPrimaryIPAddress();
     }
 
+    /*
     public PrivateFTPServer getPrivateFTPServer(String path) {
 	return table.connector.privateFTPServers.getPrivateFTPServer(this, path);
-    }
+    }*/
 
     public List<PrivateFTPServer> getPrivateFTPServers() {
 	return table.connector.privateFTPServers.getPrivateFTPServers(this);
