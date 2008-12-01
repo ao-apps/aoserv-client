@@ -5,10 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * All of the possible Linux login shells are provided as
@@ -27,23 +28,18 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
     static final String COLUMN_PATH_name = "path";
 
     public static final String
-        ASH="/bin/ash",
         BASH="/bin/bash",
-        BASH2="/bin/bash2",
-        BSH="/bin/bsh",
-        CSH="/bin/csh",
         FALSE="/bin/false",
-        FTPONLY="/usr/bin/ftponly",
-        FTPPASSWD="/usr/bin/ftppasswd",
-        HALT="/sbin/halt",
-        NOLOGIN="/sbin/nologin",
-        NULL="/dev/null",
-        PASSWD="/usr/bin/passwd",
+        KSH="/bin/ksh",
         SH="/bin/sh",
-        SHUTDOWN="/sbin/shutdown",
         SYNC="/bin/sync",
         TCSH="/bin/tcsh",
-        TRUE="/bin/true"
+        HALT="/sbin/halt",
+        NOLOGIN="/sbin/nologin",
+        SHUTDOWN="/sbin/shutdown",
+        FTPONLY="/usr/bin/ftponly",
+        FTPPASSWD="/usr/bin/ftppasswd",
+        PASSWD="/usr/bin/passwd"
     ;
 
     private boolean is_login;

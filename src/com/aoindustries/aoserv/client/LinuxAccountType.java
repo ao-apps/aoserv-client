@@ -1,3 +1,4 @@
+
 package com.aoindustries.aoserv.client;
 
 /*
@@ -5,11 +6,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,27 +72,28 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
         Shell.NOLOGIN,
         Shell.SYNC,
         Shell.HALT,
-        Shell.SHUTDOWN,
-        Shell.TRUE
+        Shell.SHUTDOWN//,
+        //Shell.TRUE
     };
 
     private static final String[] applicationShells={
         Shell.BASH,
-        Shell.FALSE,
-        Shell.NULL,
-        Shell.TRUE
+        Shell.FALSE//,
+        //Shell.NULL,
+        //Shell.TRUE
     };
 
     private static final String[] userShells={
-        Shell.ASH,
+        //Shell.ASH,
         Shell.BASH,
-        Shell.BASH2,
-        Shell.BSH,
-        Shell.CSH,
+        //Shell.BASH2,
+        //Shell.BSH,
+        //Shell.CSH,
         Shell.FALSE,
+        Shell.KSH,
         Shell.SH,
-        Shell.TCSH,
-        Shell.TRUE
+        Shell.TCSH//,
+        //Shell.TRUE
     };
 
     public boolean enforceStrongPassword() {
@@ -178,6 +181,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	is_email=in.readBoolean();
     }
 
+    @Override
     String toStringImpl() {
 	return description;
     }
