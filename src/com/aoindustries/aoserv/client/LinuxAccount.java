@@ -5,11 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * One user may have shell, FTP, and/or email access to any number
@@ -33,6 +37,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         APACHE="apache",
         AWSTATS="awstats",
         BIN="bin",
+        CYRUS="cyrus",
         EMAILMON="emailmon",
         FTP="ftp",
         FTPMON="ftpmon",

@@ -50,7 +50,6 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         JMX="JMX",
         JNP="JNP",
         NTALK="ntalk",
-        POP2="POP2",
         POP3="POP3",
         RMI="RMI",
         SIMAP="SIMAP",

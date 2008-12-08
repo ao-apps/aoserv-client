@@ -5,12 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Each <code>Username</code> is unique across all systems and must
@@ -297,7 +300,19 @@ final public class Username extends CachedObjectStringKey<Username> implements P
             if(ch=='\\') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.backslash");
             if(ch=='/') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.slash");
 	}
-	return null;
+        
+        // More strict at sign control is required for user@domain structure in Cyrus virtdomains.
+        int atPos = username.indexOf('@');
+        if(atPos!=-1) {
+            if(atPos==0) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.startWithAt");
+            if(atPos==(len-1)) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.endWithAt");
+            int atPos2 = username.indexOf('@', atPos+1);
+            if(atPos2!=-1) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.onlyOneAt");
+            if(username.startsWith("cyrus@")) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.startWithCyrusAt");
+            if(username.endsWith("@default")) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.endWithAtDefault");
+        }
+
+        return null;
     }
 
     /**
