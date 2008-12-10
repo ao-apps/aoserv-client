@@ -5,13 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.io.unix.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.unix.UnixFile;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>LinuxServerAccount</code> grants a <code>LinuxAccount</code>
@@ -47,7 +51,12 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     /**
      * The default SpamAssassin required score.
      */
-    public static final float DEFAULT_SPAM_ASSASSIN_REQUIRED_SCORE=3.0F;
+    public static final float DEFAULT_SPAM_ASSASSIN_REQUIRED_SCORE = 3.0F;
+    
+    /**
+     * The default SpamAssassin discard score.
+     */
+    public static final int DEFAULT_SPAM_ASSASSIN_DISCARD_SCORE = 20;
 
     String username;
     int ao_server;
@@ -65,6 +74,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     private int junk_email_retention;
     private String sa_integration_mode;
     private float sa_required_score;
+    private int sa_discard_score;
 
     public boolean canDisable() {
         // already disabled
@@ -156,6 +166,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
             case 14: return junk_email_retention==-1?null:Integer.valueOf(junk_email_retention);
             case 15: return sa_integration_mode;
             case 16: return new Float(sa_required_score);
+            case 17: return sa_discard_score==-1 ? null : Integer.valueOf(sa_discard_score);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -346,6 +357,14 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public float getSpamAssassinRequiredScore() {
         return sa_required_score;
     }
+    
+    /**
+     * Gets the minimum score where spam assassin should discard email or <code>-1</code> if this
+     * feature is disabled.
+     */
+    public int getSpamAssassinDiscardScore() {
+        return sa_discard_score;
+    }
 
     /**
      * Gets the primary <code>LinuxServerGroup</code> for this <code>LinuxServerAccount</code>
@@ -397,6 +416,8 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         if(result.wasNull()) junk_email_retention=-1;
         sa_integration_mode=result.getString(pos++);
         sa_required_score=result.getFloat(pos++);
+        sa_discard_score = result.getInt(pos++);
+        if(result.wasNull()) sa_discard_score = -1;
     }
 
     public int isProcmailManual() {
@@ -425,6 +446,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         junk_email_retention=in.readCompressedInt();
         sa_integration_mode=in.readUTF().intern();
         sa_required_score=in.readFloat();
+        sa_discard_score = in.readCompressedInt();
     }
 
     public List<EmailList> getEmailLists() {
@@ -562,6 +584,10 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, required_score);
     }
 
+    public void setSpamAssassinDiscardScore(int discard_score) {
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE, pkey, discard_score);
+    }
+
     public void setUseInbox(boolean useInbox) {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
     }
@@ -599,6 +625,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         }
     }
 
+    @Override
     String toStringImpl() {
         return username+" on "+getAOServer().getHostname();
     }
@@ -632,6 +659,9 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         }
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_124)>=0) {
             out.writeFloat(sa_required_score);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)>=0) {
+            out.writeCompressedInt(sa_discard_score);
         }
     }
 

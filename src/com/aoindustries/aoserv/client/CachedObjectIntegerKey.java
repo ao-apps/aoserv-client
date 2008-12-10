@@ -5,10 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
 
 /**
  * An object that is cached and uses an int as its primary key,
@@ -21,6 +17,7 @@ abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>> exten
 
     protected int pkey;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O!=null
@@ -37,10 +34,12 @@ abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>> exten
 	return pkey;
     }
 
+    @Override
     int hashCodeImpl() {
 	return pkey;
     }
 
+    @Override
     String toStringImpl() {
 	return Integer.toString(pkey);
     }

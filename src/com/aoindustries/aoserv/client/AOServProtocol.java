@@ -99,9 +99,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_36("1.36"),
         VERSION_1_37("1.37"),
         VERSION_1_38("1.38"),
-        VERSION_1_39("1.39");
+        VERSION_1_39("1.39"),
+        VERSION_1_40("1.40");
 
-        public static final Version CURRENT_VERSION = VERSION_1_39;
+        public static final Version CURRENT_VERSION = VERSION_1_40;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -392,7 +393,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_AO_SERVER_FILESYSTEMS_CSV_REPORT,
         GET_AO_SERVER_LOADAVG_REPORT,
         GET_AO_SERVER_MEMINFO_REPORT,
-        GET_NET_DEVICE_STATISTICS_REPORT
+        GET_NET_DEVICE_STATISTICS_REPORT,
+        SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE
     }
 
     /**

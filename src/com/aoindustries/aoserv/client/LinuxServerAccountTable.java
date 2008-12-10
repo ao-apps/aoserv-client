@@ -6,13 +6,18 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.io.unix.*;
-import com.aoindustries.security.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.unix.UnixFile;
+import com.aoindustries.security.AccountDisabledException;
+import com.aoindustries.security.BadPasswordException;
+import com.aoindustries.security.LoginException;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @see  LinuxServerAccount
@@ -47,6 +52,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         return pkey;
     }
 
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(uidHash) {
@@ -249,6 +255,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         return SchemaTable.TableID.LINUX_SERVER_ACCOUNTS;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_SERVER_ACCOUNT)) {
@@ -465,7 +472,6 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         int pkey=aoServer.pkey;
 
         String startsWith=directory+'/';
-        int startLen=startsWith.length();
 
         List<LinuxServerAccount> cached=getRows();
         int size=cached.size();
