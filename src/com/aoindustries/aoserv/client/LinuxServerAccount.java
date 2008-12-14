@@ -340,10 +340,18 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         return use_inbox;
     }
     
+    /**
+     * Gets the age of trash that will be auto-deleted, in days, or <code>-1</code>
+     * to not auto-delete.
+     */
     public int getTrashEmailRetention() {
         return trash_email_retention;
     }
     
+    /**
+     * Gets the age of junk that will be auto-deleted, in days, or <code>-1</code>
+     * to not auto-delete.
+     */
     public int getJunkEmailRetention() {
         return junk_email_retention;
     }

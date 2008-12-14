@@ -350,11 +350,16 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             if(AOSH.checkParamCount(AOSHCommand.GET_INBOX_ATTRIBUTES, args, 2, err)) {
                 InboxAttributes attr=connector.simpleAOClient.getInboxAttributes(args[1], args[2]);
                 out.print("System Time..: ");
-                out.println(SQLUtility.getDateTime(attr.getSystemTime()));
+                out.println(attr==null ? "Server Unavailable" : SQLUtility.getDateTime(attr.getSystemTime()));
                 out.print("File Size....: ");
-                out.println(attr.getFileSize());
+                out.println(attr==null ? "Server Unavailable" : attr.getFileSize());
                 out.print("Last Modified: ");
-                out.println(SQLUtility.getDateTime(attr.getLastModified()));
+                if(attr==null) out.println("Server Unavailable");
+                else {
+                    long lastModified = attr.getLastModified();
+                    if(lastModified==0) out.println("Unknown");
+                    else out.println(SQLUtility.getDateTime(lastModified));
+                }
                 out.flush();
             }
             return true;

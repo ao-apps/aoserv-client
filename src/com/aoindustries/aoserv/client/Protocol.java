@@ -52,6 +52,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         NTALK="ntalk",
         POP3="POP3",
         RMI="RMI",
+        SIEVE="sieve",
         SIMAP="SIMAP",
         SPOP3="SPOP3",
         SSH="SSH",

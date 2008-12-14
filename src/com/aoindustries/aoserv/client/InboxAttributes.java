@@ -56,6 +56,9 @@ final public class InboxAttributes implements Streamable {
         return fileSize;
     }
     
+    /**
+     * Gets the last modified time or <code>0L</code> if unknown.
+     */
     public long getLastModified() {
         return lastModified;
     }
