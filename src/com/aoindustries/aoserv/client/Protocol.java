@@ -100,6 +100,9 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         return obj;
     }
 
+    /**
+     * Gets the unique name of the protocol.
+     */
     public String getProtocol() {
         return pkey;
     }

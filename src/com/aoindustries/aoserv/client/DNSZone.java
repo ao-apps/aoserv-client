@@ -204,6 +204,14 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	int len=records.size();
 	for(int c=0;c<len;c++) {
             DNSRecord record=records.get(c);
+            boolean hasConflictAbove = false;
+            for(int d=0;d<c;d++) {
+                if(record.hasConflict(records.get(d))) {
+                    hasConflictAbove = true;
+                    break;
+                }
+            }
+            if(hasConflictAbove) out.print("; Disabled due to conflict: ");
             String domain=record.domain;
             out.print(domain);
             int count=Math.max(1, 24-domain.length());
@@ -241,6 +249,17 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
                 out.print('"');
             } else {
                 out.print(record.destination);
+            }
+            // Allow the first one when there is a conflict
+            if(!hasConflictAbove) {
+                boolean hasConflictBelow = false;
+                for(int d=c+1;d<len;d++) {
+                    if(record.hasConflict(records.get(d))) {
+                        hasConflictBelow = true;
+                        break;
+                    }
+                }
+                if(hasConflictBelow) out.print(" ; Some records below have been disabled due to conflict");
             }
             out.print('\n');
 	}

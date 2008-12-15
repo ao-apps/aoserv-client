@@ -80,6 +80,41 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	return domain;
     }
 
+    /**
+     * Gets the domain, but in fully-qualified, absolute path (with trailing period).
+     */
+    public String getAbsoluteDomain() {
+        if(domain.equals("@")) return zone;
+        if(domain.endsWith(".")) return domain;
+        return domain+'.'+zone;
+    }
+
+    /**
+     * Checks if this record conflicts with the provided record, meaning they may not both exist
+     * in a zone file at the same time.  The current conflicts checked are:
+     * <ol>
+     *   <li>CNAME must exist by itself, and only one CNAME maximum, per domain</li>
+     * </ol>
+     *
+     * @return <code>true</code> if there is a conflict, <code>false</code> if the records may coexist.
+     */
+    public boolean hasConflict(DNSRecord other) {
+        String domain1 = getAbsoluteDomain();
+        String domain2 = other.getAbsoluteDomain();
+        
+        // Look for CNAME conflict
+        if(domain1.equals(domain2)) {
+            // If either (or both) are CNAME, there is a conflict
+            if(
+                type.equals(DNSType.CNAME)
+                || other.type.equals(DNSType.CNAME)
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int getMXPriority() {
 	return mx_priority;
     }
