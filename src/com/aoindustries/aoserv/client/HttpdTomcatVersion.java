@@ -1,14 +1,16 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2007 by AO Industries, Inc.,
+ * Copyright 2001-2008 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * An <code>HttpdTomcatVersion</code> flags which
@@ -27,6 +29,8 @@ import java.sql.*;
 final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcatVersion> {
 
     static final int COLUMN_VERSION=0;
+
+    static final String COLUMN_VERSION_name = "version";
 
     private String install_dir;
     private boolean requires_mod_jk;
@@ -64,7 +68,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 	return obj;
     }
 
-    void initImpl(ResultSet result) throws SQLException {
+    public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
 	install_dir=result.getString(2);
         requires_mod_jk=result.getBoolean(3);
@@ -118,7 +122,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
         return requires_mod_jk;
     }
 
-    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeUTF(install_dir);
         out.writeBoolean(requires_mod_jk);
