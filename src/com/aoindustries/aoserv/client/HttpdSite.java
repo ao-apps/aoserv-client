@@ -47,6 +47,13 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
     public static final int MAX_SITE_NAME_LENGTH=255;
 
+    /**
+     * @deprecated  The directory for websites is now operating-system specific.
+     * 
+     * @see  OperatingSystemVersion#getHttpdSitesDirectory()
+     * @see  OperatingSystemVersion#getHttpdSitesDirectory(int)
+     */
+    @Deprecated
     public static final String WWW_DIRECTORY="/www";
 
     /**

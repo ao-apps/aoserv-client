@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class CachedTable<K,V extends CachedObject<K,V>> extends AOServTable<K,V> {
+public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServTable<K,V> {
 
     /**
      * The last time that the data was loaded, or

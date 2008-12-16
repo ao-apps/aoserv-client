@@ -5,12 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import com.aoindustries.util.sort.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.util.sort.AutoSort;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  CvsRepository
@@ -128,7 +127,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 
         // HttpdSharedTomcats
         for(HttpdSharedTomcat tomcat : connector.httpdSharedTomcats.getRows()) {
-            String dir=HttpdSharedTomcat.WWW_GROUP_DIR+'/'+tomcat.getName();
+            String dir=tomcat.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+tomcat.getName();
             if(tomcat.getDisableLog()==null && !prefixes.contains(dir)) prefixes.add(dir);
         }
         
@@ -140,6 +139,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         return prefixes;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_CVS_REPOSITORY)) {

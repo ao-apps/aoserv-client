@@ -5,10 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * One version of a operating system.
@@ -140,5 +142,59 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         out.writeUTF(display);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_3)>=0) out.writeShort(sort_order);
+    }
+    
+    /**
+     * Gets the directory that stores websites for this operating system or <code>null</code>
+     * if this OS doesn't support web sites.
+     */
+    public String getHttpdSitesDirectory() {
+        return getHttpdSitesDirectory(pkey);
+    }
+
+    /**
+     * Gets the directory that stores websites for this operating system or <code>null</code>
+     * if this OS doesn't support web sites.
+     */
+    public static String getHttpdSitesDirectory(int osv) {
+        switch(osv) {
+            case MANDRAKE_10_1_I586 :
+            case MANDRIVA_2006_0_I586 :
+            case REDHAT_ES_4_X86_64 :
+            case CENTOS_5_I686_AND_X86_64 :
+                return "/www";
+            case CENTOS_5DOM0_I686 :
+            case CENTOS_5DOM0_X86_64 :
+                return null;
+            default :
+                throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
+        }
+    }
+
+    /**
+     * Gets the directory that contains the shared tomcat directories or <code>null</code>
+     * if this OS doesn't support shared tomcats.
+     */
+    public String getHttpdSharedTomcatsDirectory() {
+        return getHttpdSharedTomcatsDirectory(pkey);
+    }
+
+    /**
+     * Gets the directory that contains the shared tomcat directories or <code>null</code>
+     * if this OS doesn't support shared tomcats.
+     */
+    public static String getHttpdSharedTomcatsDirectory(int osv) {
+        switch(osv) {
+            case MANDRAKE_10_1_I586 :
+            case MANDRIVA_2006_0_I586 :
+            case REDHAT_ES_4_X86_64 :
+            case CENTOS_5_I686_AND_X86_64 :
+                return "/wwwgroup";
+            case CENTOS_5DOM0_I686 :
+            case CENTOS_5DOM0_X86_64 :
+                return null;
+            default :
+                throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
+        }
     }
 }

@@ -38,7 +38,13 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
     /**
      * The directory that www groups are stored in.
+     *
+     * @deprecated  The directory for shared Tomcat installations is now operating-system specific.
+     * 
+     * @see  OperatingSystemVersion#getHttpdSharedTomcatsDirectory()
+     * @see  OperatingSystemVersion#getHttpdSharedTomcatsDirectory(int)
      */
+    @Deprecated
     public static final String WWW_GROUP_DIR="/wwwgroup";
 
     /**

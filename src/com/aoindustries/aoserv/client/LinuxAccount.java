@@ -230,7 +230,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         int hstslen=hsts.size();
         for(int c=0;c<hstslen;c++) {
             HttpdSharedTomcat hst=hsts.get(c);
-            dirs.add(HttpdSharedTomcat.WWW_GROUP_DIR+'/'+hst.getName());
+            dirs.add(hst.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+hst.getName());
         }
         return dirs;
     }

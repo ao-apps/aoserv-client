@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @author  AO Industries, Inc.
  */
-abstract class CachedTableIntegerKey<V extends CachedObjectIntegerKey<V>> extends CachedTable<Integer,V> {
+public abstract class CachedTableIntegerKey<V extends CachedObjectIntegerKey<V>> extends CachedTable<Integer,V> {
 
     CachedTableIntegerKey(AOServConnector connector, Class<V> clazz) {
 	super(connector, clazz);
