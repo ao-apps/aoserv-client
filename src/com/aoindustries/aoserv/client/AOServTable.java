@@ -66,13 +66,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     /**
      * All of the table load listeners.
      */
-    List<TableLoadListenerEntry> loadListeners=new ArrayList<TableLoadListenerEntry>();
-
-    /**
-     * The number of items to give room for beyond the size of the
-     * previously loaded table.
-     */
-    private static final int TABLE_SIZE_PADDING=10;
+    List<TableLoadListenerEntry> _loadListeners=new ArrayList<TableLoadListenerEntry>();
 
     protected AOServTable(AOServConnector connector, Class<V> clazz) {
         this.connector=connector;
@@ -128,8 +122,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     }
 
     final public void addTableLoadListener(TableLoadListener listener, Object param) {
-        synchronized(loadListeners) {
-            loadListeners.add(new TableLoadListenerEntry(listener, param));
+        synchronized(_loadListeners) {
+            _loadListeners.add(new TableLoadListenerEntry(listener, param));
         }
     }
 
@@ -580,10 +574,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     public abstract SchemaTable.TableID getTableID();
 
     private TableLoadListenerEntry[] getTableLoadListeners() {
-        synchronized(loadListeners) {
-            int size=loadListeners.size();
+        synchronized(_loadListeners) {
+            int size=_loadListeners.size();
             if(size==0) return null;
-            return loadListeners.toArray(new TableLoadListenerEntry[size]);
+            return _loadListeners.toArray(new TableLoadListenerEntry[size]);
         }
     }
 
@@ -738,12 +732,12 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * objects being notified when the table is being loaded.
      */
     final public void removeTableLoadListener(TableLoadListener listener) {
-        synchronized(loadListeners) {
-            int size=loadListeners.size();
+        synchronized(_loadListeners) {
+            int size=_loadListeners.size();
             for(int c=0;c<size;c++) {
-                TableLoadListenerEntry entry=(TableLoadListenerEntry)loadListeners.get(c);
+                TableLoadListenerEntry entry=(TableLoadListenerEntry)_loadListeners.get(c);
                 if(entry.listener==listener) {
-                    loadListeners.remove(c);
+                    _loadListeners.remove(c);
                     break;
                 }
             }

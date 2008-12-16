@@ -64,6 +64,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
 	);
     }
 
+    @Override
     String toStringImpl() {
         return getEmailAddress().toString();
     }

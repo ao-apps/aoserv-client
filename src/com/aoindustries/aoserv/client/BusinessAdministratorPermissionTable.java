@@ -51,6 +51,7 @@ final public class BusinessAdministratorPermissionTable extends CachedTableInteg
      */
     private Map<String,SortedSet<String>> cachedPermissions;
 
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(this) {

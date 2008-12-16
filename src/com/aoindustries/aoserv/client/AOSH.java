@@ -421,8 +421,8 @@ final public class AOSH extends ShellInterpreter {
                 err.println("aosh: "+AOSHCommand.SU+": not enough parameters");
                 err.flush();
             }
-        } catch(IOException err) {
-            throw new WrappedException(err);
+        } catch(IOException exception) {
+            throw new WrappedException(exception);
         }
     }
 

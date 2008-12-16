@@ -17,10 +17,11 @@ import java.sql.*;
  *
  * @author  AO Industries, Inc.
  */
-abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> extends CachedObject<String,V> {
+public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> extends CachedObject<String,V> {
 
     protected String pkey;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O!=null
@@ -33,10 +34,12 @@ abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> extends
 	return pkey;
     }
 
+    @Override
     int hashCodeImpl() {
 	return pkey.hashCode();
     }
 
+    @Override
     String toStringImpl() {
 	return pkey;
     }

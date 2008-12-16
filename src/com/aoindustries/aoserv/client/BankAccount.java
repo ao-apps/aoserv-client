@@ -82,6 +82,7 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
 	withdrawalDelay=in.readCompressedInt();
     }
 
+    @Override
     String toStringImpl() {
 	return display;
     }

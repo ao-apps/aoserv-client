@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @author  AO Industries, Inc.
  */
-abstract class CachedTableStringKey<V extends CachedObjectStringKey<V>> extends CachedTable<String,V> {
+public abstract class CachedTableStringKey<V extends CachedObjectStringKey<V>> extends CachedTable<String,V> {
 
     CachedTableStringKey(AOServConnector connector, Class<V> clazz) {
 	super(connector, clazz);

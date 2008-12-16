@@ -88,6 +88,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 	return SchemaTable.TableID.BUSINESS_SERVERS;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_SERVER)) {

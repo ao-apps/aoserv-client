@@ -17,10 +17,11 @@ import java.sql.*;
  *
  * @author  AO Industries, Inc.
  */
-abstract class GlobalObjectStringKey<T extends GlobalObjectStringKey<T>> extends GlobalObject<String,T> {
+public abstract class GlobalObjectStringKey<T extends GlobalObjectStringKey<T>> extends GlobalObject<String,T> {
 
     protected String pkey;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O!=null
@@ -33,10 +34,12 @@ abstract class GlobalObjectStringKey<T extends GlobalObjectStringKey<T>> extends
 	return pkey;
     }
 
+    @Override
     int hashCodeImpl() {
 	return pkey.hashCode();
     }
 
+    @Override
     String toStringImpl() {
 	return pkey;
     }

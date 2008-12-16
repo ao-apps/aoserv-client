@@ -27,6 +27,7 @@ final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
     short days;
     private String display;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof BackupRetention
@@ -56,6 +57,7 @@ final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
 	return SchemaTable.TableID.BACKUP_RETENTIONS;
     }
 
+    @Override
     int hashCodeImpl() {
 	return days;
     }
@@ -70,6 +72,7 @@ final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
 	display=in.readUTF();
     }
 
+    @Override
     String toStringImpl() {
 	return display;
     }

@@ -203,6 +203,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	return sendInvoice;
     }
 
+    @Override
     String toStringImpl() {
 	return name + " ("+priority+')';
     }

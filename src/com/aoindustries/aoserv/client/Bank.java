@@ -5,10 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * For AO Industries use only.
@@ -54,6 +55,7 @@ final public class Bank extends CachedObjectStringKey<Bank> {
 	display=in.readUTF();
     }
 
+    @Override
     String toStringImpl() {
 	return display;
     }

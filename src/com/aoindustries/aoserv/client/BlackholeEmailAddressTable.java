@@ -57,6 +57,7 @@ final public class BlackholeEmailAddressTable extends CachedTableIntegerKey<Blac
 	return SchemaTable.TableID.BLACKHOLE_EMAIL_ADDRESSES;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.REMOVE_BLACKHOLE_EMAIL_ADDRESS)) {

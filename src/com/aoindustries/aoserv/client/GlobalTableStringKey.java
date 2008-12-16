@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @author  AO Industries, Inc.
  */
-abstract class GlobalTableStringKey<V extends GlobalObjectStringKey<V>> extends GlobalTable<String,V> {
+public abstract class GlobalTableStringKey<V extends GlobalObjectStringKey<V>> extends GlobalTable<String,V> {
 
     GlobalTableStringKey(AOServConnector connector, Class<V> clazz) {
 	super(connector, clazz);

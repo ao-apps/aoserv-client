@@ -57,6 +57,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         /**
          * Gets the permission display value in the JVM-default locale.
          */
+        @Override
         public String toString() {
             return toString(Locale.getDefault());
         }
@@ -112,6 +113,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         sort_order = in.readShort();
     }
 
+    @Override
     String toStringImpl() {
         return pkey;
     }

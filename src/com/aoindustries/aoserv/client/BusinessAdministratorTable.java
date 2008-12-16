@@ -118,6 +118,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
         return SchemaTable.TableID.BUSINESS_ADMINISTRATORS;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_ADMINISTRATOR)) {

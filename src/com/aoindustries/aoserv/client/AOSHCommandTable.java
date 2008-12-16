@@ -73,6 +73,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
      */
     private static final int numTables = SchemaTable.TableID.values().length;
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.HELP) || command.equals("?")) {
@@ -152,6 +153,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
         }
     }
 
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(this) {

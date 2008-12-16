@@ -25,26 +25,25 @@ import java.util.Properties;
  */
 final public class AOServClientConfiguration {
 
+    private static final Object propsLock = new Object();
     private static Properties props;
 
     private static String getProperty(String name) throws IOException {
-        if (props == null) {
-            synchronized (AOServClientConfiguration.class) {
-                Properties newProps = new Properties();
-                if (props == null) {
-                    InputStream in = AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties");
-                    if(in==null) throw new IOException("Unable to find configuration: aoserv-client.properties");
-                    try {
-                        in = new BufferedInputStream(in);
-                        newProps.load(in);
-                    } finally {
-                        in.close();
-                    }
-                    props = newProps;
+        synchronized (propsLock) {
+            Properties newProps = new Properties();
+            if (props == null) {
+                InputStream in = AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties");
+                if(in==null) throw new IOException("Unable to find configuration: aoserv-client.properties");
+                try {
+                    in = new BufferedInputStream(in);
+                    newProps.load(in);
+                } finally {
+                    in.close();
                 }
+                props = newProps;
             }
+            return props.getProperty(name);
         }
-        return props.getProperty(name);
     }
 
     /**

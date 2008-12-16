@@ -136,6 +136,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
 	return SchemaTable.TableID.BUSINESS_PROFILES;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_PROFILE)) {

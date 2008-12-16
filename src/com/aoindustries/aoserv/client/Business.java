@@ -483,8 +483,8 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public Business getTopLevelBusiness() {
         String rootAccounting=table.connector.businesses.getRootAccounting();
         Business bu=this;
-        Business parent;
-        while((parent=bu.getParentBusiness())!=null && !parent.getAccounting().equals(rootAccounting)) bu=parent;
+        Business tempParent;
+        while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
         return bu;
     }
 
