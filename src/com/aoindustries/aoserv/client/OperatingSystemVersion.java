@@ -31,11 +31,20 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         //VERSION_7_2="7.2",
         //VERSION_9_2="9.2",
         VERSION_5="5",
-        VERSION_10_1="10.1",
         VERSION_2006_0="2006.0",
         VERSION_ES_4="ES 4"
     ;
+    
+    /**
+     * @deprecated  Mandrake 10.1 no longer used.
+     */
+    @Deprecated
+    public static final String VERSION_10_1="10.1";
 
+    /**
+     * @deprecated  What is this used for?
+     */
+    @Deprecated
     public static final String DEFAULT_OPERATING_SYSTEM_VERSION=VERSION_2006_0;
 
     public static final int
@@ -44,11 +53,16 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         CENTOS_5_I686_AND_X86_64 = 67,
         //GENTOO_1_4_I686=5,
         //MANDRAKE_9_2_I586=12,
-        MANDRAKE_10_1_I586=14,
         //REDHAT_7_2_I686=27
         MANDRIVA_2006_0_I586=45,
         REDHAT_ES_4_X86_64=47
     ;
+
+    /**
+     * @deprecated  Mandrake 10.1 no longer used.
+     */
+    @Deprecated
+    public static final int MANDRAKE_10_1_I586=14;
 
     private String operating_system;
     String version_number;

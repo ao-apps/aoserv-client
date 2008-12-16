@@ -17,7 +17,7 @@ import java.sql.*;
  *
  * @author  AO Industries, Inc.
  */
-abstract class GlobalObjectIntegerKey<T extends GlobalObjectIntegerKey<T>> extends GlobalObject<Integer,T> {
+public abstract class GlobalObjectIntegerKey<T extends GlobalObjectIntegerKey<T>> extends GlobalObject<Integer,T> {
 
     protected int pkey;
 
