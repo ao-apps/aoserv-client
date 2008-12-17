@@ -216,6 +216,12 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return isOverflow;
     }
 
+    /**
+     * TODO: Remove this field.
+     *
+     * @deprecated  All shared Tomcats are now not secured internally.
+     */
+    @Deprecated
     public boolean isSecure() {
         return isSecure;
     }
@@ -270,6 +276,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
     }
 
+    @Override
     String toStringImpl() {
         return name+" on "+getAOServer().getHostname();
     }
