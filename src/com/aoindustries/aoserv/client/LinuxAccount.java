@@ -41,7 +41,6 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         EMAILMON="emailmon",
         FTP="ftp",
         FTPMON="ftpmon",
-        HTTPD="httpd",
         INTERBASE="interbase",
         MAIL="mail",
         NOBODY="nobody",
@@ -49,6 +48,12 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         POSTGRES="postgres",
         ROOT="root"
     ;
+    
+    /**
+     * @deprecated  User httpd no longer used.
+     */
+    @Deprecated
+    public static final String HTTPD="httpd";
 
     public static final String NO_PASSWORD_CONFIG_VALUE="!!";
 

@@ -5,11 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -44,6 +45,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     int ao_server;
     private int number;
     private boolean can_add_sites;
+    // TODO: Remove this field
     private boolean is_mod_jk;
     private int max_binds;
     int linux_server_account;
@@ -170,6 +172,10 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         timeout=result.getInt(14);
     }
 
+    /**
+     * @deprecated  All servers now use mod_jk, mod_jserv is no longer supported.
+     */
+    @Deprecated
     public boolean isModJK() {
         return is_mod_jk;
     }
@@ -191,6 +197,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         timeout=in.readCompressedInt();
     }
 
+    @Override
     String toStringImpl() {
 	return "httpd"+number;
     }

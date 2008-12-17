@@ -41,7 +41,6 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         DAEMON="daemon",
         FTP="ftp",
         FTPONLY="ftponly",
-        HTTPD="httpd",
         MAIL="mail",
         MAILONLY="mailonly",
         NAMED="named",
@@ -52,6 +51,11 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         SYS="sys",
         TTY="tty"
     ;
+    /**
+     * @deprecated  Group httpd no longer used.
+     */
+    @Deprecated
+    public static final String HTTPD="httpd";
 
     String packageName;
     private String type;

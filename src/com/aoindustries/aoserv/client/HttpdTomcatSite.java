@@ -209,6 +209,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         }
     }
 
+    @Override
     String toStringImpl() {
         return getHttpdSite().toString();
     }
