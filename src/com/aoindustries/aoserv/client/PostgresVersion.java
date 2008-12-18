@@ -82,7 +82,7 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
             tv.getOperatingSystemVersion(connector).getPkey()
             != getTechnologyVersion(connector).getOperatingSystemVersion(connector).getPkey()
         ) {
-            throw new WrappedException(new SQLException("postgresql/postgis version mistmatch on PostgresVersion: #"+pkey));
+            throw new WrappedException(new SQLException("postgresql/postgis version mismatch on PostgresVersion: #"+pkey));
         }
         return tv;
     }

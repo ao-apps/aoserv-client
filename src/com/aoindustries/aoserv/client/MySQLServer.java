@@ -150,7 +150,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
             obj.getOperatingSystemVersion(table.connector).getPkey()
             != getAOServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
-            throw new WrappedException(new SQLException("resource/operating system version mistmatch on MySQLServer: #"+pkey));
+            throw new WrappedException(new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey));
         }
 	return obj;
     }
