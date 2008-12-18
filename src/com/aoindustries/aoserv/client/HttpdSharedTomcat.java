@@ -141,6 +141,12 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     public HttpdTomcatVersion getHttpdTomcatVersion() {
         HttpdTomcatVersion obj=table.connector.httpdTomcatVersions.get(version);
         if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdTomcatVersion: "+version));
+        if(
+            obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
+            != getAOServer().getServer().getOperatingSystemVersion().getPkey()
+        ) {
+            throw new WrappedException(new SQLException("resource/operating system version mistmatch on HttpdSharedTomcat: #"+pkey));
+        }
         return obj;
     }
 

@@ -113,6 +113,12 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         if(mod_php_version==-1) return null;
         TechnologyVersion tv=table.connector.technologyVersions.get(mod_php_version);
         if(tv==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+mod_php_version));
+        if(
+            tv.getOperatingSystemVersion(table.connector).getPkey()
+            != getAOServer().getServer().getOperatingSystemVersion().getPkey()
+        ) {
+            throw new WrappedException(new SQLException("mod_php/operating system version mismatch on HttpdServer: #"+pkey));
+        }
         return tv;
     }
 

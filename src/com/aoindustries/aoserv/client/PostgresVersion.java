@@ -78,6 +78,12 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
         if(postgisVersion==-1) return null;
         TechnologyVersion tv = connector.technologyVersions.get(postgisVersion);
         if(tv==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+postgisVersion));
+        if(
+            tv.getOperatingSystemVersion(connector).getPkey()
+            != getTechnologyVersion(connector).getOperatingSystemVersion(connector).getPkey()
+        ) {
+            throw new WrappedException(new SQLException("postgresql/postgis version mistmatch on PostgresVersion: #"+pkey));
+        }
         return tv;
     }
     

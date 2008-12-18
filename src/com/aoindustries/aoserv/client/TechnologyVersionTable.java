@@ -46,6 +46,7 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
         return defaultOrderBy;
     }
 
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(TechnologyVersionTable.class) {
