@@ -122,8 +122,11 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
+    /**
+     * Gets the directory where this site is installed.
+     */
     public String getInstallDirectory() {
-        return WWW_DIRECTORY+'/'+site_name;
+        return getAOServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory()+'/'+site_name;
     }
 
     public Object getColumn(int i) {
@@ -334,6 +337,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
     }
 
+    @Override
     String toStringImpl() {
         return site_name+" on "+getAOServer().getHostname();
     }

@@ -105,7 +105,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public String getInstallDirectory() {
-        return WWW_GROUP_DIR+'/'+name;
+        return getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+name;
     }
 
     public Object getColumn(int i) {
