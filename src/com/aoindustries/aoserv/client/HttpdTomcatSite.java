@@ -138,6 +138,16 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         ) {
             throw new WrappedException(new SQLException("resource/operating system version mismatch on HttpdTomcatSite: #"+pkey));
         }
+        // Make sure version shared JVM if is a shared site
+        HttpdTomcatSharedSite sharedSite = getHttpdTomcatSharedSite();
+        if(sharedSite!=null) {
+            if(
+                obj.pkey
+                != sharedSite.getHttpdSharedTomcat().getHttpdTomcatVersion().pkey
+            ) {
+                throw new WrappedException(new SQLException("HttpdTomcatSite/HttpdSharedTomcat version mismatch on HttpdTomcatSite: #"+pkey));
+            }
+        }
         return obj;
     }
 
