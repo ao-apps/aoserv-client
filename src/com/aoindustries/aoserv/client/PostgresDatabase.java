@@ -173,6 +173,14 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     public PostgresEncoding getPostgresEncoding() {
 	PostgresEncoding obj=table.connector.postgresEncodings.get(encoding);
 	if(obj==null) throw new WrappedException(new SQLException("Unable to find PostgresEncoding: "+encoding));
+        // Make sure the postgres encoding postgresql version matches the server this database is part of
+        if(
+            obj.getPostgresVersion(table.connector).getPkey()
+            != getPostgresServer().getPostgresVersion().getPkey()
+        ) {
+            throw new WrappedException(new SQLException("encoding/postgres server version mismatch on PostgresDatabase: #"+pkey));
+        }
+        
 	return obj;
     }
 
@@ -235,6 +243,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	);
     }
 
+    @Override
     String toStringImpl() {
 	return name;
     }
