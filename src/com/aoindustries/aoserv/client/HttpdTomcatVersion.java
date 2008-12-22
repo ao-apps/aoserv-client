@@ -78,9 +78,9 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
      * @deprecated  Please check all uses of this, because it also returns <code>true</code> for Tomcat 5, which doesn't seem
      *              to match the method name very well.
      *
-     * @see  #isTomcat41(AOServConnector)
-     * @see  #isTomcat55(AOServConnector)
-     * @see  #isTomcat60(AOServConnector)
+     * @see  #isTomcat4_1_X(AOServConnector)
+     * @see  #isTomcat5_5_X(AOServConnector)
+     * @see  #isTomcat6_0_X(AOServConnector)
      */
     public boolean isTomcat4(AOServConnector connector) {
         String version = getTechnologyVersion(connector).getVersion();
