@@ -244,6 +244,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
                 }
                 AOServProtocol.checkResult(code, in);
                 return null;
+            } catch(WrappedException err) {
+                connection.close();
+                Throwable cause = err.getCause();
+                if(cause instanceof IOException) throw (IOException)cause;
+                throw err;
             } catch(IOException err) {
                 connection.close();
                 throw err;
@@ -302,6 +307,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
                     lastProgresses,
                     loadListeners
                 );
+            } catch(WrappedException err) {
+                connection.close();
+                Throwable cause = err.getCause();
+                if(cause instanceof IOException) throw (IOException)cause;
+                throw err;
             } catch(IOException err) {
                 connection.close();
                 throw err;
@@ -413,6 +423,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
                     connection,
                     loadListeners
                 );
+            } catch(WrappedException err) {
+                connection.close();
+                Throwable cause = err.getCause();
+                if(cause instanceof IOException) throw (IOException)cause;
+                throw err;
             } catch(IOException err) {
                 connection.close();
                 throw err;
