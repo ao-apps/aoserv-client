@@ -5,12 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.md5.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.md5.MD5;
+import com.aoindustries.util.WrappedException;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * For AO Industries use only.
@@ -30,7 +33,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
     static final int
         MAX_PATH_LENGTH=178,
         MAX_TYPE_LENGTH=10,
-        MAX_SYMLINK_TARGET_LENGTH=72,
+        MAX_SYMLINK_TARGET_LENGTH=76,
         MAX_LINUX_ACCOUNT_LENGTH=12,
         MAX_LINUX_GROUP_LENGTH=10
     ;
@@ -54,6 +57,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
     private long file_md5_lo;
     private String symlink_target;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof DistroFile
@@ -149,6 +153,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         return SchemaTable.TableID.DISTRO_FILES;
     }
 
+    @Override
     public int hashCodeImpl() {
         return pkey;
     }
