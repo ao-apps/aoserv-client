@@ -5,10 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * To aid in system reliability, scalability, and debugging, many server
@@ -40,10 +41,8 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
         DB_CONNECTS="db_connects",
         DB_MAX_CONCURRENCY="db_max_concurrency",
         DB_POOL_SIZE="db_pool_size",
-        DB_QUERIES="db_queries",
         DB_TOTAL_TIME="db_total_time",
         DB_TRANSACTIONS="db_transactions",
-        DB_UPDATES="db_updates",
         ENTROPY_AVAIL="entropy_avail",
         ENTROPY_POOLSIZE="entropy_poolsize",
         ENTROPY_READ_BYTES="entropy_read_bytes",

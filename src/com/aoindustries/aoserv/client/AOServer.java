@@ -921,4 +921,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public String getMemInfoReport() {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
     }
+    
+    /**
+     * Gets the current system time in milliseconds.
+     */
+    public long getSystemTimeMillis() {
+        return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
+    }
 }
