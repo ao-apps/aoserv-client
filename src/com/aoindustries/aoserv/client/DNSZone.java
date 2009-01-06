@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2008 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -174,6 +174,45 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	return pkey.length()>13 && pkey.substring(pkey.length()-13).equals(".in-addr.arpa");
     }
 
+    private static void printRecord(PrintWriter out, String domain, int ttl, int recordTtl, String type, int mx, String destination) {
+        out.print(domain);
+        int count=Math.max(1, 24-domain.length());
+        for(int d=0;d<count;d++) out.print(' ');
+        if (recordTtl!=DNSRecord.NO_TTL) {
+            String s=String.valueOf(recordTtl);
+            out.print(s);
+            count=Math.max(1, 24-s.length());
+        } else {
+            String s=String.valueOf(ttl);
+            out.print(s);
+            count=Math.max(1, 24-s.length());
+        }
+        for(int d=0;d<count;d++) out.print(' ');
+        out.print("IN   ");
+        out.print(type);
+        count=Math.max(1, 8-type.length());
+        for(int d=0;d<count;d++) out.print(' ');
+        if(mx!=DNSRecord.NO_MX_PRIORITY) {
+            out.print(mx);
+            out.print(' ');
+        }
+        if(type.equals(DNSType.TXT)) {
+            // Double-quote TXT types and filter " and anything < (space) or >= (char)0x7f from the destination
+            out.print('"');
+            for(int d=0, dlen=destination.length(); d<dlen; d++) {
+                char ch = destination.charAt(d);
+                if(
+                    ch!='"'
+                    && ch>=' '
+                    && ch<(char)0x7f
+                ) out.print(ch);
+            }
+            out.print('"');
+        } else {
+            out.print(destination);
+        }
+    }
+
     public void printZoneFile(PrintWriter out) {
 	List<DNSRecord> records=getDNSRecords();
 	out.print("$TTL    ");
@@ -201,6 +240,14 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
                 + "                                1814400 ; expiry\n"
                 + "                                300     ; minimum\n"
                 + "                                )\n");
+        if(firstNS==null) {
+            // Add the default nameservers because named will refuse to start without them
+            out.print("; No name servers configured, using the defaults\n");
+            printRecord(out, "@", ttl, DNSRecord.NO_TTL, DNSType.NS, DNSRecord.NO_MX_PRIORITY, "ns1.aoindustries.com."); out.print('\n');
+            printRecord(out, "@", ttl, DNSRecord.NO_TTL, DNSType.NS, DNSRecord.NO_MX_PRIORITY, "ns2.aoindustries.com."); out.print('\n');
+            printRecord(out, "@", ttl, DNSRecord.NO_TTL, DNSType.NS, DNSRecord.NO_MX_PRIORITY, "ns3.aoindustries.com."); out.print('\n');
+            printRecord(out, "@", ttl, DNSRecord.NO_TTL, DNSType.NS, DNSRecord.NO_MX_PRIORITY, "ns4.aoindustries.com."); out.print('\n');
+        }
 	int len=records.size();
 	for(int c=0;c<len;c++) {
             DNSRecord record=records.get(c);
@@ -212,44 +259,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
                 }
             }
             if(hasConflictAbove) out.print("; Disabled due to conflict: ");
-            String domain=record.domain;
-            out.print(domain);
-            int count=Math.max(1, 24-domain.length());
-            for(int d=0;d<count;d++) out.print(' ');
-            if (record.ttl!=DNSRecord.NO_TTL) {
-                String s=String.valueOf(record.ttl);
-                out.print(s);
-                count=Math.max(1, 24-s.length());
-            } else {
-                String s=String.valueOf(ttl);
-                out.print(s);
-                count=Math.max(1, 24-s.length());
-            }
-            for(int d=0;d<count;d++) out.print(' ');
-            out.print("IN   ");
-            out.print(record.type);
-            count=Math.max(1, 8-record.type.length());
-            for(int d=0;d<count;d++) out.print(' ');
-            int mx=record.mx_priority;
-            if(mx!=DNSRecord.NO_MX_PRIORITY) {
-                out.print(mx);
-                out.print(' ');
-            }
-            if(record.type.equals(DNSType.TXT)) {
-                // Double-quote TXT types and filter " and anything < (space) or > (char)127 from the destination
-                out.print('"');
-                for(int d=0, dlen=record.destination.length(); d<dlen; d++) {
-                    char ch = record.destination.charAt(d);
-                    if(
-                        ch!='"'
-                        && ch>=' '
-                        && ch<=(char)0x7f
-                    ) out.print(ch);
-                }
-                out.print('"');
-            } else {
-                out.print(record.destination);
-            }
+            printRecord(out, record.domain, ttl, record.ttl, record.type, record.mx_priority, record.destination);
             // Allow the first one when there is a conflict
             if(!hasConflictAbove) {
                 boolean hasConflictBelow = false;

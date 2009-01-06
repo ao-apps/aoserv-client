@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2008 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
