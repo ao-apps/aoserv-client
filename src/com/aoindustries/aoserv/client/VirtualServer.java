@@ -27,18 +27,12 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 
     private int primaryRam;
     private int secondaryRam;
-    private String primaryMinimumProcessorType;
-    private String secondaryMinimumProcessorType;
+    private String minimumProcessorType;
     private String minimumProcessorArchitecture;
-    private int primaryMinimumProcessorSpeed;
-    private int secondaryMinimumProcessorSpeed;
-    private short primaryProcessorCores;
-    private short secondaryProcessorCores;
-    private short primaryProcessorWeight;
-    private short secondaryProcessorWeight;
-    private int primaryPhysicalServer;
+    private int minimumProcessorSpeed;
+    private short processorCores;
+    private short processorWeight;
     private boolean primaryPhysicalServerLocked;
-    private int secondaryPhysicalServer;
     private boolean secondaryPhysicalServerLocked;
     private boolean requires_hvm;
 
@@ -47,20 +41,14 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
             case COLUMN_SERVER: return Integer.valueOf(pkey);
             case 1 : return primaryRam;
             case 2 : return secondaryRam==-1 ? null : Integer.valueOf(secondaryRam);
-            case 3 : return primaryMinimumProcessorType;
-            case 4 : return secondaryMinimumProcessorType;
-            case 5 : return minimumProcessorArchitecture;
-            case 6 : return primaryMinimumProcessorSpeed==-1 ? null : Integer.valueOf(primaryMinimumProcessorSpeed);
-            case 7 : return secondaryMinimumProcessorSpeed==-1 ? null : Integer.valueOf(secondaryMinimumProcessorSpeed);
-            case 8 : return primaryProcessorCores;
-            case 9 : return secondaryProcessorCores==-1 ? null : Short.valueOf(secondaryProcessorCores);
-            case 10 : return primaryProcessorWeight;
-            case 11 : return secondaryProcessorWeight==-1 ? null : Short.valueOf(secondaryProcessorWeight);
-            case 12 : return primaryPhysicalServer;
-            case 13 : return primaryPhysicalServerLocked;
-            case 14 : return secondaryPhysicalServer;
-            case 15 : return secondaryPhysicalServerLocked;
-            case 16 : return requires_hvm;
+            case 3 : return minimumProcessorType;
+            case 4 : return minimumProcessorArchitecture;
+            case 5 : return minimumProcessorSpeed==-1 ? null : Integer.valueOf(minimumProcessorSpeed);
+            case 6 : return processorCores;
+            case 7 : return processorWeight;
+            case 8 : return primaryPhysicalServerLocked;
+            case 9 : return secondaryPhysicalServerLocked;
+            case 10 : return requires_hvm;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -77,31 +65,25 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 
     /**
      * Gets the secondary RAM allocation or <code>-1</code> if no secondary required.
+     * When RAM allocation is <code>-1</code>, the VM will not be able to run on the
+     * secondary server - it only provides block device replication.  Therefore,
+     * other things like processor type, speed, architecture, processor cores and
+     * processor weights will also not be allocated.
      */
     public int getSecondaryRam() {
         return secondaryRam;
     }
     
     /**
-     * Gets the primary minimum processor type or <code>null</code> if none.
+     * Gets the minimum processor type or <code>null</code> if none.
      */
-    public ProcessorType getPrimaryMinimumProcessorType() {
-        if(primaryMinimumProcessorType==null) return null;
-        ProcessorType pt = table.connector.processorTypes.get(primaryMinimumProcessorType);
-        if(pt==null) throw new WrappedException(new SQLException("Unable to find ProcessorType: "+primaryMinimumProcessorType));
+    public ProcessorType getMinimumProcessorType() {
+        if(minimumProcessorType==null) return null;
+        ProcessorType pt = table.connector.processorTypes.get(minimumProcessorType);
+        if(pt==null) throw new WrappedException(new SQLException("Unable to find ProcessorType: "+minimumProcessorType));
         return pt;
     }
-    
-    /**
-     * Gets the secondary minimum processor type or <code>null</code> if none.
-     */
-    public ProcessorType getSecondaryMinimumProcessorType() {
-        if(secondaryMinimumProcessorType==null) return null;
-        ProcessorType pt = table.connector.processorTypes.get(secondaryMinimumProcessorType);
-        if(pt==null) throw new WrappedException(new SQLException("Unable to find ProcessorType: "+secondaryMinimumProcessorType));
-        return pt;
-    }
-    
+
     /**
      * Gets the minimum processor architecture.
      */
@@ -112,70 +94,31 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
 
     /**
-     * Gets the primary minimum processor speed or <code>-1</code> for none.
+     * Gets the minimum processor speed or <code>-1</code> for none.
      */
-    public int getPrimaryMinimumProcessorSpeed() {
-        return primaryMinimumProcessorSpeed;
+    public int getMinimumProcessorSpeed() {
+        return minimumProcessorSpeed;
     }
 
     /**
-     * Gets the secondary minimum processor speed or <code>-1</code> for none.
+     * Gets the processor cores.
      */
-    public int getSecondaryMinimumProcessorSpeed() {
-        return secondaryMinimumProcessorSpeed;
+    public short getProcessorCores() {
+        return processorCores;
     }
 
     /**
-     * Gets the primary processor cores.
+     * Gets the processor weight.
      */
-    public short getPrimaryProcessorCores() {
-        return primaryProcessorCores;
+    public short getProcessorWeight() {
+        return processorWeight;
     }
 
-    /**
-     * Gets the secondary processor cores or <code>-1</code> if no secondary required.
-     */
-    public short getSecondaryProcessorCores() {
-        return secondaryProcessorCores;
-    }
-
-    /**
-     * Gets the primary processor weight.
-     */
-    public short getPrimaryProcessorWeight() {
-        return primaryProcessorWeight;
-    }
-
-    /**
-     * Gets the secondary processor weight or <code>-1</code> if no secondary is required.
-     */
-    public short getSecondaryProcessorWeight() {
-        return secondaryProcessorWeight;
-    }
-
-    /**
-     * Gets the primary physical server.
-     */
-    public PhysicalServer getPrimaryPhysicalServer() {
-        PhysicalServer ps = table.connector.physicalServers.get(primaryPhysicalServer);
-        if(ps==null) throw new WrappedException(new SQLException("Unable to find PhysicalServer: "+primaryPhysicalServer));
-        return ps;
-    }
-    
     /**
      * Gets if the primary server is locked (manually set).
      */
     public boolean isPrimaryPhysicalServerLocked() {
         return primaryPhysicalServerLocked;
-    }
-    
-    /**
-     * Gets the secondary physical server.
-     */
-    public PhysicalServer getSecondaryPhysicalServer() {
-        PhysicalServer ps = table.connector.physicalServers.get(secondaryPhysicalServer);
-        if(ps==null) throw new WrappedException(new SQLException("Unable to find PhysicalServer: "+secondaryPhysicalServer));
-        return ps;
     }
     
     /**
@@ -202,22 +145,13 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         primaryRam = result.getInt(pos++);
         secondaryRam = result.getInt(pos++);
         if(result.wasNull()) secondaryRam = -1;
-        primaryMinimumProcessorType = result.getString(pos++);
-        secondaryMinimumProcessorType = result.getString(pos++);
+        minimumProcessorType = result.getString(pos++);
         minimumProcessorArchitecture = result.getString(pos++);
-        primaryMinimumProcessorSpeed = result.getInt(pos++);
-        if(result.wasNull()) primaryMinimumProcessorSpeed = -1;
-        secondaryMinimumProcessorSpeed = result.getInt(pos++);
-        if(result.wasNull()) secondaryMinimumProcessorSpeed = -1;
-        primaryProcessorCores = result.getShort(pos++);
-        secondaryProcessorCores = result.getShort(pos++);
-        if(result.wasNull()) secondaryProcessorCores = -1;
-        primaryProcessorWeight = result.getShort(pos++);
-        secondaryProcessorWeight = result.getShort(pos++);
-        if(result.wasNull()) secondaryProcessorWeight = -1;
-        primaryPhysicalServer = result.getInt(pos++);
+        minimumProcessorSpeed = result.getInt(pos++);
+        if(result.wasNull()) minimumProcessorSpeed = -1;
+        processorCores = result.getShort(pos++);
+        processorWeight = result.getShort(pos++);
         primaryPhysicalServerLocked = result.getBoolean(pos++);
-        secondaryPhysicalServer = result.getInt(pos++);
         secondaryPhysicalServerLocked = result.getBoolean(pos++);
         requires_hvm = result.getBoolean(pos++);
     }
@@ -226,18 +160,12 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         pkey = in.readCompressedInt();
         primaryRam = in.readCompressedInt();
         secondaryRam = in.readCompressedInt();
-        primaryMinimumProcessorType = StringUtility.intern(in.readNullUTF());
-        secondaryMinimumProcessorType = StringUtility.intern(in.readNullUTF());
+        minimumProcessorType = StringUtility.intern(in.readNullUTF());
         minimumProcessorArchitecture = in.readUTF().intern();
-        primaryMinimumProcessorSpeed = in.readCompressedInt();
-        secondaryMinimumProcessorSpeed = in.readCompressedInt();
-        primaryProcessorCores = in.readShort();
-        secondaryProcessorCores = in.readShort();
-        primaryProcessorWeight = in.readShort();
-        secondaryProcessorWeight = in.readShort();
-        primaryPhysicalServer = in.readCompressedInt();
+        minimumProcessorSpeed = in.readCompressedInt();
+        processorCores = in.readShort();
+        processorWeight = in.readShort();
         primaryPhysicalServerLocked = in.readBoolean();
-        secondaryPhysicalServer = in.readCompressedInt();
         secondaryPhysicalServerLocked = in.readBoolean();
         requires_hvm = in.readBoolean();
     }
@@ -251,18 +179,18 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(primaryRam);
         out.writeCompressedInt(secondaryRam);
-        out.writeNullUTF(primaryMinimumProcessorType);
-        out.writeNullUTF(secondaryMinimumProcessorType);
+        out.writeNullUTF(minimumProcessorType);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(secondaryRam==-1 ? null : minimumProcessorType);
         out.writeUTF(minimumProcessorArchitecture);
-        out.writeCompressedInt(primaryMinimumProcessorSpeed);
-        out.writeCompressedInt(secondaryMinimumProcessorSpeed);
-        out.writeShort(primaryProcessorCores);
-        out.writeShort(secondaryProcessorCores);
-        out.writeShort(primaryProcessorWeight);
-        out.writeShort(secondaryProcessorWeight);
-        out.writeCompressedInt(primaryPhysicalServer);
+        out.writeCompressedInt(minimumProcessorSpeed);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(secondaryRam==-1 ? -1 : minimumProcessorSpeed);
+        out.writeShort(processorCores);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorCores);
+        out.writeShort(processorWeight);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorWeight);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
         out.writeBoolean(primaryPhysicalServerLocked);
-        out.writeCompressedInt(secondaryPhysicalServer);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
         out.writeBoolean(secondaryPhysicalServerLocked);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
     }

@@ -29,15 +29,11 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 
     private int virtualServer;
     private String device;
-    private String primaryMinimumRaidType;
-    private String secondaryMinimumRaidType;
-    private String primaryMinimumDiskType;
-    private String secondaryMinimumDiskType;
-    private int primaryMinimumDiskSpeed;
-    private int secondaryMinimumDiskSpeed;
+    private String minimumRaidType;
+    private String minimumDiskType;
+    private int minimumDiskSpeed;
     private int extents;
-    private short primaryWeight;
-    private short secondaryWeight;
+    private short weight;
     private boolean primaryPhysicalVolumesLocked;
     private boolean secondaryPhysicalVolumesLocked;
 
@@ -46,17 +42,13 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
             case COLUMN_PKEY: return pkey;
             case COLUMN_VIRTUAL_SERVER : return virtualServer;
             case COLUMN_DEVICE : return device;
-            case 3 : return primaryMinimumRaidType;
-            case 4 : return secondaryMinimumRaidType;
-            case 5 : return primaryMinimumDiskType;
-            case 6 : return secondaryMinimumDiskType;
-            case 7 : return primaryMinimumDiskSpeed==-1 ? null : Integer.valueOf(primaryMinimumDiskSpeed);
-            case 8 : return secondaryMinimumDiskSpeed==-1 ? null : Integer.valueOf(secondaryMinimumDiskSpeed);
-            case 9 : return extents;
-            case 10 : return primaryWeight;
-            case 11 : return secondaryWeight;
-            case 12 : return primaryPhysicalVolumesLocked;
-            case 13 : return secondaryPhysicalVolumesLocked;
+            case 3 : return minimumRaidType;
+            case 4 : return minimumDiskType;
+            case 5 : return minimumDiskSpeed==-1 ? null : Integer.valueOf(minimumDiskSpeed);
+            case 6 : return extents;
+            case 7 : return weight;
+            case 8 : return primaryPhysicalVolumesLocked;
+            case 9 : return secondaryPhysicalVolumesLocked;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -76,57 +68,30 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     }
 
     /**
-     * Gets the primary minimum RAID type or <code>null</code> if doesn't matter.
+     * Gets the minimum RAID type or <code>null</code> if doesn't matter.
      */
-    public RaidType getPrimaryMinimumRaidType() {
-        if(primaryMinimumRaidType==null) return null;
-        RaidType rt=table.connector.raidTypes.get(primaryMinimumRaidType);
-        if(rt==null) throw new WrappedException(new SQLException("Unable to find RaidType: "+primaryMinimumRaidType));
+    public RaidType getMinimumRaidType() {
+        if(minimumRaidType==null) return null;
+        RaidType rt=table.connector.raidTypes.get(minimumRaidType);
+        if(rt==null) throw new WrappedException(new SQLException("Unable to find RaidType: "+minimumRaidType));
         return rt;
     }
 
     /**
-     * Gets the secondary minimum RAID type or <code>null</code> if doesn't matter.
+     * Gets the minimum disk type or <code>null</code> if doesn't matter.
      */
-    public RaidType getSecondaryMinimumRaidType() {
-        if(secondaryMinimumRaidType==null) return null;
-        RaidType rt=table.connector.raidTypes.get(secondaryMinimumRaidType);
-        if(rt==null) throw new WrappedException(new SQLException("Unable to find RaidType: "+secondaryMinimumRaidType));
-        return rt;
-    }
-
-    /**
-     * Gets the primary minimum disk type or <code>null</code> if doesn't matter.
-     */
-    public DiskType getPrimaryMinimumDiskType() {
-        if(primaryMinimumDiskType==null) return null;
-        DiskType rt=table.connector.diskTypes.get(primaryMinimumDiskType);
-        if(rt==null) throw new WrappedException(new SQLException("Unable to find DiskType: "+primaryMinimumDiskType));
-        return rt;
-    }
-
-    /**
-     * Gets the secondary minimum disk type or <code>null</code> if doesn't matter.
-     */
-    public DiskType getSecondaryMinimumDiskType() {
-        if(secondaryMinimumDiskType==null) return null;
-        DiskType rt=table.connector.diskTypes.get(secondaryMinimumDiskType);
-        if(rt==null) throw new WrappedException(new SQLException("Unable to find DiskType: "+secondaryMinimumDiskType));
+    public DiskType getMinimumDiskType() {
+        if(minimumDiskType==null) return null;
+        DiskType rt=table.connector.diskTypes.get(minimumDiskType);
+        if(rt==null) throw new WrappedException(new SQLException("Unable to find DiskType: "+minimumDiskType));
         return rt;
     }
 
     /**
      * Gets the minimum disk speed or <code>-1</code> if doesn't matter.
      */
-    public int getPrimaryMinimumDiskSpeed() {
-        return primaryMinimumDiskSpeed;
-    }
-
-    /**
-     * Gets the minimum disk speed or <code>-1</code> if doesn't matter.
-     */
-    public int getSecondaryMinimumDiskSpeed() {
-        return secondaryMinimumDiskSpeed;
+    public int getMinimumDiskSpeed() {
+        return minimumDiskSpeed;
     }
 
     /**
@@ -137,17 +102,10 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     }
 
     /**
-     * Gets the primary disk weight.
+     * Gets the disk weight.
      */
-    public short getPrimaryWeight() {
-        return primaryWeight;
-    }
-    
-    /**
-     * Gets the secondary disk weight.
-     */
-    public short getSecondaryWeight() {
-        return secondaryWeight;
+    public short getWeight() {
+        return weight;
     }
 
     /**
@@ -173,17 +131,12 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
         pkey = result.getInt(pos++);
         virtualServer = result.getInt(pos++);
         device = result.getString(pos++);
-        primaryMinimumRaidType = result.getString(pos++);
-        secondaryMinimumRaidType = result.getString(pos++);
-        primaryMinimumDiskType = result.getString(pos++);
-        secondaryMinimumDiskType = result.getString(pos++);
-        primaryMinimumDiskSpeed = result.getInt(pos++);
-        if(result.wasNull()) primaryMinimumDiskSpeed = -1;
-        secondaryMinimumDiskSpeed = result.getInt(pos++);
-        if(result.wasNull()) secondaryMinimumDiskSpeed = -1;
+        minimumRaidType = result.getString(pos++);
+        minimumDiskType = result.getString(pos++);
+        minimumDiskSpeed = result.getInt(pos++);
+        if(result.wasNull()) minimumDiskSpeed = -1;
         extents = result.getInt(pos++);
-        primaryWeight = result.getShort(pos++);
-        secondaryWeight = result.getShort(pos++);
+        weight = result.getShort(pos++);
         primaryPhysicalVolumesLocked = result.getBoolean(pos++);
         secondaryPhysicalVolumesLocked = result.getBoolean(pos++);
     }
@@ -192,15 +145,11 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
         pkey = in.readCompressedInt();
         virtualServer = in.readCompressedInt();
         device = in.readUTF().intern();
-        primaryMinimumRaidType = StringUtility.intern(in.readNullUTF());
-        secondaryMinimumRaidType = StringUtility.intern(in.readNullUTF());
-        primaryMinimumDiskType = StringUtility.intern(in.readNullUTF());
-        secondaryMinimumDiskType = StringUtility.intern(in.readNullUTF());
-        primaryMinimumDiskSpeed = in.readCompressedInt();
-        secondaryMinimumDiskSpeed = in.readCompressedInt();
+        minimumRaidType = StringUtility.intern(in.readNullUTF());
+        minimumDiskType = StringUtility.intern(in.readNullUTF());
+        minimumDiskSpeed = in.readCompressedInt();
         extents = in.readCompressedInt();
-        primaryWeight = in.readShort();
-        secondaryWeight = in.readShort();
+        weight = in.readShort();
         primaryPhysicalVolumesLocked = in.readBoolean();
         secondaryPhysicalVolumesLocked = in.readBoolean();
     }
@@ -214,15 +163,15 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(virtualServer);
         out.writeUTF(device);
-        out.writeNullUTF(primaryMinimumRaidType);
-        out.writeNullUTF(secondaryMinimumRaidType);
-        out.writeNullUTF(primaryMinimumDiskType);
-        out.writeNullUTF(secondaryMinimumDiskType);
-        out.writeCompressedInt(primaryMinimumDiskSpeed);
-        out.writeCompressedInt(secondaryMinimumDiskSpeed);
+        out.writeNullUTF(minimumRaidType);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(minimumRaidType);
+        out.writeNullUTF(minimumDiskType);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(minimumDiskType);
+        out.writeCompressedInt(minimumDiskSpeed);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(minimumDiskSpeed);
         out.writeCompressedInt(extents);
-        out.writeShort(primaryWeight);
-        out.writeShort(secondaryWeight);
+        out.writeShort(weight);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(weight);
         out.writeBoolean(primaryPhysicalVolumesLocked);
         out.writeBoolean(secondaryPhysicalVolumesLocked);
     }

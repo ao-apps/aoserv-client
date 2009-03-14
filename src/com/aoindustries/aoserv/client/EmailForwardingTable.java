@@ -5,11 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * An <code>Architecture</code> wraps all the data for a single supported
@@ -75,6 +77,11 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
         return getIndexedRows(EmailForwarding.COLUMN_EMAIL_ADDRESS, ea.pkey);
     }
 
+    List<EmailForwarding> getEnabledEmailForwardings(EmailAddress ea) {
+        if(ea.getDomain().getPackage().disable_log==-1) return getEmailForwardings(ea);
+        else return Collections.emptyList();
+    }
+
     EmailForwarding getEmailForwarding(EmailAddress ea, String destination) {
         // Use index first
 	List<EmailForwarding> cached=getEmailForwardings(ea);
@@ -102,6 +109,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 	return SchemaTable.TableID.EMAIL_FORWARDING;
     }
 
+    @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_FORWARDING)) {

@@ -71,6 +71,10 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	return table.connector.emailForwardings.getEmailForwardings(this);
     }
 
+    public List<EmailForwarding> getEnabledEmailForwardings() {
+	return table.connector.emailForwardings.getEnabledEmailForwardings(this);
+    }
+
     public EmailForwarding getEmailForwarding(String destination) {
 	return table.connector.emailForwardings.getEmailForwarding(this, destination);
     }

@@ -5,11 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * An <code>HttpdTomcatSharedSite</code> is an <code>HttpdTomcatSite</code>
@@ -29,8 +30,6 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
         COLUMN_HTTPD_SHARED_TOMCAT=1
     ;
     static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
-
-    private int pkey;
 
     int httpd_shared_tomcat;
 
@@ -87,6 +86,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
 	httpd_shared_tomcat=in.readCompressedInt();
     }
 
+    @Override
     String toStringImpl() {
         return getHttpdTomcatSite().toString();
     }
