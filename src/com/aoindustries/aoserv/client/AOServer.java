@@ -16,9 +16,12 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -887,11 +890,967 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
     }
 
+    public static class DrbdReport {
+
+        /**
+         * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-connection-states
+         */
+        public enum ConnectionState {
+            StandAlone,
+            Disconnecting,
+            Unconnected,
+            Timeout,
+            BrokenPipe,
+            NetworkFailure,
+            ProtocolError,
+            TearDown,
+            WFConnection,
+            WFReportParams,
+            Connected,
+            StartingSyncS,
+            StartingSyncT,
+            WFBitMapS,
+            WFBitMapT,
+            WFSyncUUID,
+            SyncSource,
+            SyncTarget,
+            PausedSyncS,
+            PausedSyncT,
+            VerifyS,
+            VerifyT
+        }
+
+        /**
+         * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-roles
+         */
+        public enum Role {
+            Primary,
+            Secondary,
+            Unknown
+        }
+
+        /**
+         * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-disk-states
+         */
+        public enum DiskState {
+            Diskless,
+            Attaching,
+            Failed,
+            Negotiating,
+            Inconsistent,
+            Outdated,
+            DUnknown,
+            Consistent,
+            UpToDate
+        }
+
+        final private String device;
+        final private String domUHostname;
+        final private String domUDevice;
+        final private ConnectionState connectionState;
+        final private DiskState localDiskState;
+        final private DiskState remoteDiskState;
+        final private Role localRole;
+        final private Role remoteRole;
+
+        DrbdReport(String device, String domUHostname, String domUDevice, ConnectionState connectionState, DiskState localDiskState, DiskState remoteDiskState, Role localRole, Role remoteRole) {
+            this.device = device;
+            this.domUHostname = domUHostname;
+            this.domUDevice = domUDevice;
+            this.connectionState = connectionState;
+            this.localDiskState = localDiskState;
+            this.remoteDiskState = remoteDiskState;
+            this.localRole = localRole;
+            this.remoteRole = remoteRole;
+        }
+
+        public ConnectionState getConnectionState() {
+            return connectionState;
+        }
+
+        public String getDevice() {
+            return device;
+        }
+
+        public DiskState getLocalDiskState() {
+            return localDiskState;
+        }
+
+        public Role getLocalRole() {
+            return localRole;
+        }
+
+        public DiskState getRemoteDiskState() {
+            return remoteDiskState;
+        }
+
+        public Role getRemoteRole() {
+            return remoteRole;
+        }
+
+        public String getDomUDevice() {
+            return domUDevice;
+        }
+
+        public String getDomUHostname() {
+            return domUHostname;
+        }
+    }
+
     /**
      * Gets the DRBD report.
      */
-    public String getDrbdReport() {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey);
+    public List<DrbdReport> getDrbdReport(Locale locale) throws ParseException {
+        String report = table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey);
+        List<String> lines = StringUtility.splitLines(report);
+        int lineNum = 0;
+        List<DrbdReport> reports = new ArrayList<DrbdReport>(lines.size());
+        for(String line : lines) {
+            lineNum++;
+            String[] values = StringUtility.splitString(line, '\t');
+            if(values.length!=5) {
+                throw new ParseException(
+                    ApplicationResourcesAccessor.getMessage(
+                        locale,
+                        "AOServer.DrbdReport.ParseException.badColumnCount",
+                        line
+                    ),
+                    lineNum
+                );
+            }
+
+            // Device
+            String device = values[0];
+            if(!device.startsWith("/dev/drbd")) {
+                throw new ParseException(
+                    ApplicationResourcesAccessor.getMessage(
+                        locale,
+                        "AOServer.DrbdReport.ParseException.badDeviceStart",
+                        device
+                    ),
+                    lineNum
+                );
+            }
+
+            // Resource
+            String resource = values[1];
+            int dashPos = resource.lastIndexOf('-');
+            if(dashPos==-1) throw new ParseException(
+                ApplicationResourcesAccessor.getMessage(
+                    locale,
+                    "AOServer.DrbdReport.ParseException.noDash",
+                    resource
+                ),
+                lineNum
+            );
+            String domUHostname = resource.substring(0, dashPos);
+            String domUDevice = resource.substring(dashPos+1);
+            if(
+                domUDevice.length()!=4
+                || domUDevice.charAt(0)!='x'
+                || domUDevice.charAt(1)!='v'
+                || domUDevice.charAt(2)!='d'
+                || domUDevice.charAt(3)<'a'
+                || domUDevice.charAt(3)>'z'
+            ) throw new ParseException(
+                ApplicationResourcesAccessor.getMessage(
+                    locale,
+                    "AOServer.DrbdReport.ParseException.unexpectedResourceEnding",
+                    domUDevice
+                ),
+                lineNum
+            );
+
+            // Connection State
+            DrbdReport.ConnectionState connectionState = DrbdReport.ConnectionState.valueOf(values[2]);
+
+            // Disk states
+            String ds = values[3];
+            int dsSlashPos = ds.indexOf('/');
+            if(dsSlashPos==-1) throw new ParseException(
+                ApplicationResourcesAccessor.getMessage(
+                    locale,
+                    "AOServer.DrbdReport.ParseException.noSlashInDiskStates",
+                    ds
+                ),
+                lineNum
+            );
+            DrbdReport.DiskState localDiskState = DrbdReport.DiskState.valueOf(ds.substring(0, dsSlashPos));
+            DrbdReport.DiskState remoteDiskState = DrbdReport.DiskState.valueOf(ds.substring(dsSlashPos+1));
+
+            // Roles
+            String state = values[4];
+            int slashPos = state.indexOf('/');
+            if(slashPos==-1) throw new ParseException(
+                ApplicationResourcesAccessor.getMessage(
+                    locale,
+                    "AOServer.DrbdReport.ParseException.noSlashInState",
+                    state
+                ),
+                lineNum
+            );
+            DrbdReport.Role localRole = DrbdReport.Role.valueOf(state.substring(0, slashPos));
+            DrbdReport.Role remoteRole = DrbdReport.Role.valueOf(state.substring(slashPos+1));
+
+            reports.add(new DrbdReport(device, domUHostname, domUDevice, connectionState, localDiskState, remoteDiskState, localRole, remoteRole));
+        }
+        return Collections.unmodifiableList(reports);
+    }
+
+    public static class LvmReport {
+
+        public static class VolumeGroup implements Comparable<VolumeGroup> {
+
+            /**
+             * Parses the output of vgs --noheadings --separator=$'\t' --units=b -o vg_name,vg_extent_size,vg_extent_count,vg_free_count,pv_count,lv_count
+             */
+            private static Map<String,VolumeGroup> parseVgsReport(Locale locale, String vgs) throws ParseException {
+                List<String> lines = StringUtility.splitLines(vgs);
+                int size = lines.size();
+                Map<String,VolumeGroup> volumeGroups = new HashMap<String,VolumeGroup>(size*4/3+1);
+                for(int c=0;c<size;c++) {
+                    final int lineNum = c+1;
+                    String line = lines.get(c);
+                    String[] fields = StringUtility.splitString(line, '\t');
+                    if(fields.length!=6) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.VolumeGroup.parseVgsReport.badColumnCount",
+                            6,
+                            fields.length
+                        ),
+                        lineNum
+                    );
+                    String vgExtentSize = fields[1].trim();
+                    if(!vgExtentSize.endsWith("B")) {
+                        throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.VolumeGroup.parseVgsReport.invalidateVgExtentSize",
+                                vgExtentSize
+                            ),
+                            lineNum
+                        );
+                    }
+                    vgExtentSize = vgExtentSize.substring(0, vgExtentSize.length()-1);
+                    String vgName = fields[0].trim();
+                    if(
+                        volumeGroups.put(
+                            vgName,
+                            new VolumeGroup(
+                                vgName,
+                                Integer.parseInt(vgExtentSize),
+                                Long.parseLong(fields[2].trim()),
+                                Long.parseLong(fields[3].trim()),
+                                Integer.parseInt(fields[4].trim()),
+                                Integer.parseInt(fields[5].trim())
+                            )
+                        )!=null
+                    ) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.VolumeGroup.parseVgsReport.vgNameFoundTwice",
+                            vgName
+                        ),
+                        lineNum
+                    );
+                }
+                return Collections.unmodifiableMap(volumeGroups);
+            }
+
+            private final String vgName;
+            private final int vgExtentSize;
+            private final long vgExtentCount;
+            private final long vgFreeCount;
+            private final int pvCount;
+            private final int lvCount;
+            private final Map<String,LogicalVolume> logicalVolumes = new HashMap<String,LogicalVolume>();
+            private final Map<String,LogicalVolume> unmodifiableLogicalVolumes = Collections.unmodifiableMap(logicalVolumes);
+
+            private VolumeGroup(String vgName, int vgExtentSize, long vgExtentCount, long vgFreeCount, int pvCount, int lvCount) {
+                this.vgName = vgName;
+                this.vgExtentSize = vgExtentSize;
+                this.vgExtentCount = vgExtentCount;
+                this.vgFreeCount = vgFreeCount;
+                this.pvCount = pvCount;
+                this.lvCount = lvCount;
+            }
+
+            @Override
+            public String toString() {
+                return vgName;
+            }
+
+            /**
+             * Sorts ascending by:
+             * <ol>
+             *   <li>vgName</li>
+             * </ol>
+             */
+            public int compareTo(VolumeGroup other) {
+                return vgName.compareTo(other.vgName);
+            }
+
+            public int getLvCount() {
+                return lvCount;
+            }
+
+            public int getPvCount() {
+                return pvCount;
+            }
+
+            public long getVgExtentCount() {
+                return vgExtentCount;
+            }
+
+            public int getVgExtentSize() {
+                return vgExtentSize;
+            }
+
+            public long getVgFreeCount() {
+                return vgFreeCount;
+            }
+
+            public String getVgName() {
+                return vgName;
+            }
+            
+            public LogicalVolume getLogicalVolume(String lvName) {
+                return logicalVolumes.get(lvName);
+            }
+
+            public Map<String,LogicalVolume> getLogicalVolumes() {
+                return unmodifiableLogicalVolumes;
+            }
+        }
+
+        public static class PhysicalVolume implements Comparable<PhysicalVolume> {
+
+            /**
+             * Parses the output of pvs --noheadings --separator=$'\t' -o pv_name,pv_pe_count,pv_pe_alloc_count,vg_name
+             */
+            private static Map<String,PhysicalVolume> parsePvsReport(Locale locale, String pvs, Map<String,VolumeGroup> volumeGroups) throws ParseException {
+                List<String> lines = StringUtility.splitLines(pvs);
+                int size = lines.size();
+                Map<String,PhysicalVolume> physicalVolumes = new HashMap<String,PhysicalVolume>(size*4/3+1);
+                Map<String,Integer> vgPhysicalVolumeCounts = new HashMap<String,Integer>(volumeGroups.size()*4/3+1);
+                Map<String,Long> vgExtentCountTotals = new HashMap<String,Long>(volumeGroups.size()*4/3+1);
+                Map<String,Long> vgAllocCountTotals = new HashMap<String,Long>(volumeGroups.size()*4/3+1);
+                for(int c=0;c<size;c++) {
+                    final int lineNum = c+1;
+                    String line = lines.get(c);
+                    String[] fields = StringUtility.splitString(line, '\t');
+                    if(fields.length!=4) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
+                            4,
+                            fields.length
+                        ),
+                        lineNum
+                    );
+                    String pvName = fields[0].trim();
+                    String vgName = fields[2].trim();
+                    long pvPeCount = Long.parseLong(fields[1].trim());
+                    long pvPeAllocCount = Long.parseLong(fields[2].trim());
+                    VolumeGroup volumeGroup;
+                    if(vgName.length()==0) {
+                        if(pvPeCount!=0 || pvPeAllocCount!=0) throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
+                                pvPeCount,
+                                pvPeAllocCount,
+                                vgName
+                            ),
+                            lineNum
+                        );
+                        volumeGroup = null;
+                    } else {
+                        if(pvPeCount<1 && pvPeAllocCount<0 && pvPeAllocCount>pvPeCount) throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
+                                pvPeCount,
+                                pvPeAllocCount,
+                                vgName
+                            ),
+                            lineNum
+                        );
+                        volumeGroup = volumeGroups.get(vgName);
+                        if(volumeGroup==null) throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.PhysicalVolume.parsePvsReport.volumeGroupNotFound",
+                                vgName
+                            ),
+                            lineNum
+                        );
+                        // Add to totals for consistency checks
+                        Integer count = vgPhysicalVolumeCounts.get(vgName);
+                        vgPhysicalVolumeCounts.put(
+                            vgName,
+                            count==null ? 1 : (count+1)
+                        );
+                        Long vgExtentCountTotal = vgExtentCountTotals.get(vgName);
+                        vgExtentCountTotals.put(
+                            vgName,
+                            vgExtentCountTotal==null ? pvPeCount : (vgExtentCountTotal+pvPeCount)
+                        );
+                        Long vgFreeCountTotal = vgAllocCountTotals.get(vgName);
+                        vgAllocCountTotals.put(
+                            vgName,
+                            vgFreeCountTotal==null ? pvPeAllocCount : (vgFreeCountTotal+pvPeAllocCount)
+                        );
+                    }
+                    if(
+                        physicalVolumes.put(
+                            pvName,
+                            new PhysicalVolume(
+                                pvName,
+                                pvPeCount,
+                                pvPeAllocCount,
+                                volumeGroup
+                            )
+                        )!=null
+                    ) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.PhysicalVolume.parsePvsReport.pvNameFoundTwice",
+                            pvName
+                        ),
+                        lineNum
+                    );
+                }
+                for(Map.Entry<String,VolumeGroup> entry : volumeGroups.entrySet()) {
+                    // Make sure counts match vgs report
+                    VolumeGroup volumeGroup = entry.getValue();
+                    String vgName = entry.getKey();
+                    // Check pvCount
+                    int expectedPvCount = volumeGroup.getPvCount();
+                    Integer actualPvCountI = vgPhysicalVolumeCounts.get(vgName);
+                    int actualPvCount = actualPvCountI==null ? 0 : actualPvCountI.intValue();
+                    if(expectedPvCount!=actualPvCount) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.PhysicalVolume.parsePvsReport.mismatchPvCount",
+                            vgName
+                        ),
+                        0
+                    );
+                    // Check vgExtentCount
+                    long expectedVgExtentCount = volumeGroup.getVgExtentCount();
+                    Long actualVgExtentCountL = vgExtentCountTotals.get(vgName);
+                    long actualVgExtentCount = actualVgExtentCountL==null ? 0 : actualVgExtentCountL.longValue();
+                    if(expectedVgExtentCount!=actualVgExtentCount) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badVgExtentCount",
+                            vgName
+                        ),
+                        0
+                    );
+                    // Check vgFreeCount
+                    long expectedVgFreeCount = volumeGroup.getVgFreeCount();
+                    Long vgAllocCountTotalL = vgAllocCountTotals.get(vgName);
+                    long actualVgFreeCount = vgAllocCountTotalL==null ? expectedVgExtentCount : (expectedVgExtentCount-vgAllocCountTotalL);
+                    if(expectedVgFreeCount!=actualVgFreeCount) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badVgFreeCount",
+                            vgName
+                        ),
+                        0
+                    );
+                }
+                return Collections.unmodifiableMap(physicalVolumes);
+            }
+
+            private final String pvName;
+            private final long pvPeCount;
+            private final long pvPeAllocCount;
+            private final VolumeGroup volumeGroup;
+
+            private PhysicalVolume(String pvName, long pvPeCount, long pvPeAllocCount, VolumeGroup volumeGroup) {
+                this.pvName = pvName;
+                this.pvPeCount = pvPeCount;
+                this.pvPeAllocCount = pvPeAllocCount;
+                this.volumeGroup = volumeGroup;
+            }
+
+            @Override
+            public String toString() {
+                return pvName;
+            }
+
+            /**
+             * Sorts ascending by:
+             * <ol>
+             *   <li>pvName</li>
+             * </ol>
+             */
+            public int compareTo(PhysicalVolume other) {
+                return pvName.compareTo(other.pvName);
+            }
+
+            public String getPvName() {
+                return pvName;
+            }
+
+            public long getPvPeAllocCount() {
+                return pvPeAllocCount;
+            }
+
+            public long getPvPeCount() {
+                return pvPeCount;
+            }
+
+            public VolumeGroup getVolumeGroup() {
+                return volumeGroup;
+            }
+        }
+
+        private static boolean overlaps(long start1, long size1, long start2, long size2) {
+            return
+                (start2+size2)>start1
+                && (start1+size1)>start2
+            ;
+        }
+
+        public static class LogicalVolume implements Comparable<LogicalVolume> {
+
+            /**
+             * Parses the output from lvs --noheadings --separator=$'\t' -o vg_name,lv_name,seg_count,segtype,stripes,seg_start_pe,seg_pe_ranges
+             */
+            private static void parseLvsReport(Locale locale, String lvs, Map<String,VolumeGroup> volumeGroups, Map<String,PhysicalVolume> physicalVolumes) throws ParseException {
+                final List<String> lines = StringUtility.splitLines(lvs);
+                final int size = lines.size();
+                for(int c=0;c<size;c++) {
+                    final int lineNum = c+1;
+                    final String line = lines.get(c);
+                    final String[] fields = StringUtility.splitString(line, '\t');
+                    if(fields.length!=7) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.LogicalVolume.parseLsvReport.badColumnCount",
+                            7,
+                            fields.length
+                        ),
+                        lineNum
+                    );
+                    final String vgName = fields[0].trim();
+                    final String lvName = fields[1].trim();
+                    final int segCount = Integer.parseInt(fields[2].trim());
+                    final SegmentType segType = SegmentType.valueOf(fields[3].trim());
+                    final int stripeCount = Integer.parseInt(fields[4].trim());
+                    final long segStartPe = Long.parseLong(fields[5].trim());
+                    final String[] segPeRanges = StringUtility.splitString(fields[6].trim(), ' ');
+
+                    // Find the volume group
+                    VolumeGroup volumeGroup = volumeGroups.get(vgName);
+                    if(volumeGroup==null) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.LogicalVolume.parseLsvReport.volumeGroupNotFound",
+                            vgName
+                        ),
+                        lineNum
+                    );
+
+                    // Find or add the logical volume
+                    if(segCount<1) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.LogicalVolume.parseLsvReport.badSegCount",
+                            segCount
+                        ),
+                        lineNum
+                    );
+                    LogicalVolume logicalVolume = volumeGroup.getLogicalVolume(lvName);
+                    if(logicalVolume==null) {
+                        logicalVolume = new LogicalVolume(volumeGroup, lvName, segCount);
+                        volumeGroup.logicalVolumes.put(lvName, logicalVolume);
+                    } else {
+                        if(segCount!=logicalVolume.segCount) throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.LogicalVolume.parseLsvReport.segCountChanged",
+                                logicalVolume.segCount,
+                                segCount
+                            ),
+                            lineNum
+                        );
+                    }
+
+                    // Add the segment
+                    if(stripeCount<1) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.LogicalVolume.parseLsvReport.badStripeCount",
+                            stripeCount
+                        ),
+                        lineNum
+                    );
+                    if(segPeRanges.length!=stripeCount) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchStripeCount"
+                        ),
+                        lineNum
+                    );
+                    Segment newSegment = new Segment(logicalVolume, segType, stripeCount, segStartPe);
+                    // Check no overlap in segments
+                    for(Segment existingSegment : logicalVolume.segments) {
+                        if(newSegment.overlaps(existingSegment)) throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.LogicalVolume.parseLsvReport.segmentOverlap",
+                                existingSegment,
+                                newSegment
+                            ),
+                            lineNum
+                        );
+                    }
+                    logicalVolume.segments.add(newSegment);
+
+                    // Add the stripes
+                    for(String segPeRange : segPeRanges) {
+                        int colonPos = segPeRange.indexOf(':');
+                        if(colonPos==-1) throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoColon",
+                                segPeRange
+                            ),
+                            lineNum
+                        );
+                        int dashPos = segPeRange.indexOf('-', colonPos+1);
+                        if(dashPos==-1) throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoDash",
+                                segPeRange
+                            ),
+                            lineNum
+                        );
+                        String stripeDevice = segPeRange.substring(0, colonPos).trim();
+                        PhysicalVolume stripePv = physicalVolumes.get(stripeDevice);
+                        if(stripePv==null) throw new ParseException(
+                            ApplicationResourcesAccessor.getMessage(
+                                locale,
+                                "AOServer.LvmReport.LogicalVolume.parseLsvReport.physicalVolumeNotFound",
+                                stripeDevice
+                            ),
+                            lineNum
+                        );
+                        long firstPe = Long.parseLong(segPeRange.substring(colonPos+1, dashPos).trim());
+                        long lastPe = Long.parseLong(segPeRange.substring(dashPos+1).trim());
+                        // Make sure no overlap with other stripes in the same physical volume
+                        Stripe newStripe = new Stripe(newSegment, stripePv, firstPe, lastPe);
+                        for(VolumeGroup existingVG : volumeGroups.values()) {
+                            for(LogicalVolume existingLV : existingVG.logicalVolumes.values()) {
+                                for(Segment existingSegment : existingLV.segments) {
+                                    for(Stripe existingStripe : existingSegment.stripes) {
+                                        if(newStripe.overlaps(existingStripe)) throw new ParseException(
+                                            ApplicationResourcesAccessor.getMessage(
+                                                locale,
+                                                "AOServer.LvmReport.LogicalVolume.parseLsvReport.stripeOverlap",
+                                                existingStripe,
+                                               newStripe
+                                            ),
+                                            lineNum
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                        newSegment.stripes.add(newStripe);
+                    }
+                    Collections.sort(newSegment.stripes);
+                }
+
+                // Final cleaning and sanity checks
+                for(VolumeGroup volumeGroup : volumeGroups.values()) {
+                    // Make sure counts match vgs report
+                    int expectedLvCount = volumeGroup.getLvCount();
+                    int actualLvCount = volumeGroup.logicalVolumes.size();
+                    if(expectedLvCount!=actualLvCount) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchLvCount",
+                            volumeGroup
+                        ),
+                        0
+                    );
+
+                    // Check vgExtentCount and vgFreeCount matches total in logicalVolumes
+                    long totalLvExtents = 0;
+                    for(LogicalVolume lv : volumeGroup.logicalVolumes.values()) {
+                        for(Segment segment : lv.segments) {
+                            for(Stripe stripe : segment.stripes) {
+                                totalLvExtents += stripe.getLastPe()-stripe.getFirstPe()+1;
+                            }
+                        }
+                    }
+                    long expectedFreeCount = volumeGroup.vgFreeCount;
+                    long actualFreeCount = volumeGroup.vgExtentCount - totalLvExtents;
+                    if(expectedFreeCount!=actualFreeCount) throw new ParseException(
+                        ApplicationResourcesAccessor.getMessage(
+                            locale,
+                            "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchFreeCount",
+                            volumeGroup
+                        ),
+                        0
+                    );
+
+                    // Sort segments by segStartPe
+                    for(LogicalVolume logicalVolume : volumeGroup.logicalVolumes.values()) {
+                        Collections.sort(logicalVolume.segments);
+                    }
+                }
+            }
+
+            private final VolumeGroup volumeGroup;
+            private final String lvName;
+            private final int segCount;
+            private final List<Segment> segments = new ArrayList<Segment>();
+            private final List<Segment> unmodifiableSegments = Collections.unmodifiableList(segments);
+
+            private LogicalVolume(VolumeGroup volumeGroup, String lvName, int segCount) {
+                this.volumeGroup = volumeGroup;
+                this.lvName = lvName;
+                this.segCount = segCount;
+            }
+
+            @Override
+            public String toString() {
+                return volumeGroup+"/"+lvName;
+            }
+
+            /**
+             * Sorts ascending by:
+             * <ol>
+             *   <li>volumeGroup</li>
+             *   <li>lvName</li>
+             * </ol>
+             */
+            public int compareTo(LogicalVolume other) {
+                int diff = volumeGroup.compareTo(other.volumeGroup);
+                if(diff!=0) return diff;
+                return lvName.compareTo(other.lvName);
+            }
+
+            public VolumeGroup getVolumeGroup() {
+                return volumeGroup;
+            }
+
+            public String getLvName() {
+                return lvName;
+            }
+
+            public int getSegCount() {
+                return segCount;
+            }
+
+            public List<Segment> getSegments() {
+                return unmodifiableSegments;
+            }
+        }
+
+        public enum SegmentType {
+            linear,
+            striped
+        }
+
+        public static class Segment implements Comparable<Segment> {
+
+            private final LogicalVolume logicalVolume;
+            private final SegmentType segtype;
+            private final int stripeCount;
+            private final long segStartPe;
+            private final List<Stripe> stripes = new ArrayList<Stripe>();
+            private final List<Stripe> unmodifiableStripes = Collections.unmodifiableList(stripes);
+
+            private Segment(LogicalVolume logicalVolume, SegmentType segtype, int stripeCount, long segStartPe) {
+                this.logicalVolume = logicalVolume;
+                this.segtype = segtype;
+                this.stripeCount = stripeCount;
+                this.segStartPe = segStartPe;
+            }
+
+            @Override
+            public String toString() {
+                return logicalVolume+"("+segStartPe+"-"+getSegEndPe()+")";
+            }
+
+            /**
+             * Sorts ascending by:
+             * <ol>
+             *   <li>logicalVolume</li>
+             *   <li>segStartPe</li>
+             * </ol>
+             */
+            public int compareTo(Segment other) {
+                int diff = logicalVolume.compareTo(other.logicalVolume);
+                if(diff!=0) return diff;
+                if(segStartPe<other.segStartPe) return -1;
+                if(segStartPe>other.segStartPe) return 1;
+                return 0;
+            }
+
+            public LogicalVolume getLogicalVolume() {
+                return logicalVolume;
+            }
+
+            public SegmentType getSegtype() {
+                return segtype;
+            }
+
+            public int getStripeCount() {
+                return stripeCount;
+            }
+
+            public long getSegStartPe() {
+                return segStartPe;
+            }
+
+            public long getSegEndPe() {
+                long segmentCount = 0;
+                for(Stripe stripe : stripes) segmentCount += stripe.getLastPe()-stripe.getFirstPe()+1;
+                return segStartPe+segmentCount-1;
+            }
+
+            public List<Stripe> getStripes() {
+                return unmodifiableStripes;
+            }
+
+            public boolean overlaps(Segment other) {
+                // Doesn't overlap self
+                return
+                    this!=other
+                    && LvmReport.overlaps(
+                        segStartPe,
+                        getSegEndPe()-segStartPe+1,
+                        other.segStartPe,
+                        other.getSegEndPe()-other.segStartPe+1
+                    )
+                ;
+            }
+        }
+
+        public static class Stripe implements Comparable<Stripe> {
+
+            private final Segment segment;
+            private final PhysicalVolume physicalVolume;
+            private final long firstPe;
+            private final long lastPe;
+
+            private Stripe(Segment segment, PhysicalVolume physicalVolume, long firstPe, long lastPe) {
+                this.segment = segment;
+                this.physicalVolume = physicalVolume;
+                this.firstPe = firstPe;
+                this.lastPe = lastPe;
+            }
+
+            @Override
+            public String toString() {
+                return segment+":"+physicalVolume+"("+firstPe+"-"+lastPe+")";
+            }
+
+            /**
+             * Sorts ascending by:
+             * <ol>
+             *   <li>segment</li>
+             *   <li>firstPe</li>
+             * </ol>
+             */
+            public int compareTo(Stripe other) {
+                int diff = segment.compareTo(other.segment);
+                if(diff!=0) return diff;
+                if(firstPe<other.firstPe) return -1;
+                if(firstPe>other.firstPe) return 1;
+                return 0;
+            }
+
+            public Segment getSegment() {
+                return segment;
+            }
+
+            public PhysicalVolume getPhysicalVolume() {
+                return physicalVolume;
+            }
+
+            public long getFirstPe() {
+                return firstPe;
+            }
+
+            public long getLastPe() {
+                return lastPe;
+            }
+            
+            public boolean overlaps(Stripe other) {
+                // Doesn't overlap self
+                return
+                    this!=other
+                    && LvmReport.overlaps(
+                        firstPe,
+                        lastPe-firstPe+1,
+                        other.firstPe,
+                        other.lastPe-other.firstPe+1
+                    )
+                ;
+            }
+        }
+
+        private final Map<String,VolumeGroup> volumeGroups;
+        private final Map<String,PhysicalVolume> physicalVolumes;
+
+        private LvmReport(Locale locale, String vgs, String pvs, String lvs) throws ParseException {
+            this.volumeGroups = VolumeGroup.parseVgsReport(locale, vgs);
+            this.physicalVolumes = PhysicalVolume.parsePvsReport(locale, pvs, volumeGroups);
+            LogicalVolume.parseLvsReport(locale, lvs, volumeGroups, physicalVolumes);
+        }
+
+        public Map<String, PhysicalVolume> getPhysicalVolumes() {
+            return physicalVolumes;
+        }
+
+        public Map<String, VolumeGroup> getVolumeGroups() {
+            return volumeGroups;
+        }
+    }
+
+    /**
+     * Gets the LVM report.
+     */
+    public LvmReport getLvmReport(Locale locale) throws IOException, SQLException, ParseException {
+        String vgs;
+        String pvs;
+        String lvs;
+        AOServConnection connection=table.connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.GET_AO_SERVER_LVM_REPORT.ordinal());
+            out.writeCompressedInt(pkey);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                vgs = in.readUTF();
+                pvs = in.readUTF();
+                lvs = in.readUTF();
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
+            }
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
+        }
+        return new LvmReport(locale, vgs, pvs, lvs);
     }
 
     /**

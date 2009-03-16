@@ -12,6 +12,7 @@ import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * A <code>VirtualServer</code> consumes physical resources within the
@@ -193,5 +194,22 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
         out.writeBoolean(secondaryPhysicalServerLocked);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
+    }
+    
+    public List<VirtualDisk> getVirtualDisks() {
+        return table.connector.virtualDisks.getVirtualDisks(this);
+    }
+    
+    /**
+     * Gets the virtual disk for this virtual server and the provided device
+     * name.
+     * @param device should be <code>xvd[a-z]</code>
+     * @return the disk or <code>null</code> if not found
+     */
+    public VirtualDisk getVirtualDisk(String device) {
+        for(VirtualDisk vd : getVirtualDisks()) {
+            if(vd.getDevice().equals(device)) return vd;
+        }
+        return null;
     }
 }

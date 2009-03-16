@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import java.util.List;
+
 /*
  * Copyright 2008-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -33,5 +35,9 @@ final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.VIRTUAL_DISKS;
+    }
+    
+    List<VirtualDisk> getVirtualDisks(VirtualServer vs) {
+        return getIndexedRows(VirtualDisk.COLUMN_VIRTUAL_SERVER, vs.pkey);
     }
 }

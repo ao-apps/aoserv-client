@@ -146,9 +146,6 @@ abstract public class AOServConnector {
     public final DaemonProfileTable daemonProfiles;
     public final DisableLogTable disableLogs;
     
-    public final DiskTypeTable diskTypes;
-    public DiskTypeTable getDiskTypes() {return diskTypes;}
-
     public final DistroFileTypeTable distroFileTypes;
     public final DistroFileTable distroFiles;
     public final DNSForbiddenZoneTable dnsForbiddenZones;
@@ -277,9 +274,6 @@ abstract public class AOServConnector {
     public final RackTable racks;
     public RackTable getRacks() {return racks;}
 
-    public final RaidTypeTable raidTypes;
-    public RaidTypeTable getRaidTypes() {return raidTypes;}
-
     public final ResourceTable resources;
     public final SchemaColumnTable schemaColumns;
     public final SchemaForeignKeyTable schemaForeignKeys;
@@ -382,7 +376,6 @@ abstract public class AOServConnector {
         newTables.add(cvsRepositories=new CvsRepositoryTable(this));
         newTables.add(daemonProfiles=new DaemonProfileTable(this));
         newTables.add(disableLogs=new DisableLogTable(this));
-        newTables.add(diskTypes=new DiskTypeTable(this));
         newTables.add(distroFileTypes=new DistroFileTypeTable(this));
         newTables.add(distroFiles=new DistroFileTable(this));
         newTables.add(dnsForbiddenZones=new DNSForbiddenZoneTable(this));
@@ -484,7 +477,6 @@ abstract public class AOServConnector {
         newTables.add(processorTypes=new ProcessorTypeTable(this));
         newTables.add(protocols=new ProtocolTable(this));
         newTables.add(racks=new RackTable(this));
-        newTables.add(raidTypes=new RaidTypeTable(this));
         newTables.add(resources=new ResourceTable(this));
         newTables.add(schemaColumns=new SchemaColumnTable(this));
         newTables.add(schemaForeignKeys=new SchemaForeignKeyTable(this));
