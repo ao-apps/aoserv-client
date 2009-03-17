@@ -5,11 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -80,27 +81,27 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     private int email_relay_burst;
     private float email_relay_rate;
 
-    public void addDNSZone(String zone, String ip, int ttl) {
+    public void addDNSZone(String zone, String ip, int ttl) throws IOException, SQLException {
 	table.connector.dnsZones.addDNSZone(this, zone, ip, ttl);
     }
     
-    public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) {
+    public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
         return table.connector.emailSmtpRelays.addEmailSmtpRelay(this, aoServer, host, type, duration);
     }
 
-    public void addLinuxGroup(String name, LinuxGroupType type) {
+    public void addLinuxGroup(String name, LinuxGroupType type) throws IOException, SQLException {
 	addLinuxGroup(name, type.pkey);
     }
 
-    public void addLinuxGroup(String name, String type) {
+    public void addLinuxGroup(String name, String type) throws IOException, SQLException {
 	table.connector.linuxGroups.addLinuxGroup(name, this, type);
     }
 
-    public void addUsername(String username) {
+    public void addUsername(String username) throws IOException, SQLException {
 	table.connector.usernames.addUsername(this, username);
     }
 
-    public boolean canDisable() {
+    public boolean canDisable() throws IOException, SQLException {
         // Is already disabled
         if(disable_log!=-1) return false;
 
@@ -116,31 +117,31 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         return true;
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getBusiness().disable_log==-1;
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.PACKAGES, dl.pkey, name);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.PACKAGES, name);
     }
 
-    public List<BackupReport> getBackupReports() {
+    public List<BackupReport> getBackupReports() throws IOException, SQLException {
 	return table.connector.backupReports.getBackupReports(this);
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
 	Business accountingObject = table.connector.businesses.get(accounting);
-	if (accountingObject == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+	if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
 	return accountingObject;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_NAME: return name;
@@ -163,20 +164,20 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return created;
     }
 
-    public BusinessAdministrator getCreatedBy() {
+    public BusinessAdministrator getCreatedBy() throws SQLException {
 	BusinessAdministrator createdByObject = table.connector.usernames.get(created_by).getBusinessAdministrator();
-	if (createdByObject == null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: " + created_by));
+	if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
 	return createdByObject;
     }
 
-    public List<CvsRepository> getCvsRepositories() {
+    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
 	return table.connector.cvsRepositories.getCvsRepositories(this);
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
     
@@ -228,51 +229,51 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         return email_relay_rate;
     }
 
-    public List<DNSZone> getDNSZones() {
+    public List<DNSZone> getDNSZones() throws IOException, SQLException {
 	return table.connector.dnsZones.getDNSZones(this);
     }
 
-    public List<EmailList> getEmailLists() {
+    public List<EmailList> getEmailLists() throws IOException, SQLException {
 	return table.connector.emailLists.getEmailLists(this);
     }
 
-    public List<EmailPipe> getEmailPipes() {
+    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
 	return table.connector.emailPipes.getEmailPipes(this);
     }
 
-    public List<HttpdSharedTomcat> getHttpdSharedTomcats() {
+    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
 	return table.connector.httpdSharedTomcats.getHttpdSharedTomcats(this);
     }
 
-    public List<HttpdServer> getHttpdServers() {
+    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
 	return table.connector.httpdServers.getHttpdServers(this);
     }
 
-    public List<HttpdSite> getHttpdSites() {
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
 	return table.connector.httpdSites.getHttpdSites(this);
     }
 
-    public List<IPAddress> getIPAddresses() {
+    public List<IPAddress> getIPAddresses() throws IOException, SQLException {
 	return table.connector.ipAddresses.getIPAddresses(this);
     }
 
-    public List<LinuxGroup> getLinuxGroups() {
+    public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
 	return table.connector.linuxGroups.getLinuxGroups(this);
     }
 
-    public List<MySQLDatabase> getMySQLDatabases() {
+    public List<MySQLDatabase> getMySQLDatabases() throws IOException, SQLException {
 	return table.connector.mysqlDatabases.getMySQLDatabases(this);
     }
 
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() {
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
         return table.connector.failoverMySQLReplications.getFailoverMySQLReplications(this);
     }
 
-    public List<MySQLServer> getMySQLServers() {
+    public List<MySQLServer> getMySQLServers() throws IOException, SQLException {
 	return table.connector.mysqlServers.getMySQLServers(this);
     }
 
-    public List<MySQLUser> getMySQLUsers() {
+    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
 	return table.connector.mysqlUsers.getMySQLUsers(this);
     }
 
@@ -280,41 +281,41 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return name;
     }
 
-    public List<NetBind> getNetBinds() {
+    public List<NetBind> getNetBinds() throws IOException, SQLException {
 	return table.connector.netBinds.getNetBinds(this);
     }
 
-    public List<NetBind> getNetBinds(IPAddress ip) {
+    public List<NetBind> getNetBinds(IPAddress ip) throws IOException, SQLException {
 	return table.connector.netBinds.getNetBinds(this, ip);
     }
 
-    public PackageDefinition getPackageDefinition() {
+    public PackageDefinition getPackageDefinition() throws SQLException, IOException {
         PackageDefinition pd = table.connector.packageDefinitions.get(package_definition);
-        if(pd == null) throw new WrappedException(new SQLException("Unable to find PackageDefinition: "+package_definition));
+        if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
         return pd;
     }
 
-    public List<PostgresDatabase> getPostgresDatabases() {
+    public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
 	return table.connector.postgresDatabases.getPostgresDatabases(this);
     }
 
-    public List<PostgresUser> getPostgresUsers() {
+    public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
 	return table.connector.postgresUsers.getPostgresUsers(this);
     }
 
-    public Server getServer(String name) {
+    public Server getServer(String name) throws IOException, SQLException {
 	return table.connector.servers.getServer(this, name);
     }
 
-    public List<Server> getServers() {
+    public List<Server> getServers() throws IOException, SQLException {
 	return table.connector.servers.getServers(this);
     }
 
-    public List<EmailDomain> getEmailDomains() {
+    public List<EmailDomain> getEmailDomains() throws IOException, SQLException {
 	return table.connector.emailDomains.getEmailDomains(this);
     }
 
-    public List<EmailSmtpRelay> getEmailSmtpRelays() {
+    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
 	return table.connector.emailSmtpRelays.getEmailSmtpRelays(this);
     }
 
@@ -322,7 +323,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return SchemaTable.TableID.PACKAGES;
     }
 
-    public List<Username> getUsernames() {
+    public List<Username> getUsernames() throws IOException, SQLException {
 	return table.connector.usernames.getUsernames(this);
     }
 

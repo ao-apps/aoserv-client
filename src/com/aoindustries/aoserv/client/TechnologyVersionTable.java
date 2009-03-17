@@ -55,14 +55,20 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
     }
 
     public TechnologyVersion get(Object pkey) {
+        try {
+            return getUniqueRow(TechnologyVersion.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public TechnologyVersion get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(TechnologyVersion.COLUMN_PKEY, pkey);
     }
 
-    public TechnologyVersion get(int pkey) {
-	return getUniqueRow(TechnologyVersion.COLUMN_PKEY, pkey);
-    }
-
-    public long getMaximumUpdatedTime() {
+    public long getMaximumUpdatedTime() throws IOException, SQLException {
         synchronized(TechnologyVersionTable.class) {
             if(maximumUpdatedTime==-1) {
              	List<TechnologyVersion> versions=getRows();
@@ -87,7 +93,7 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
 	return SchemaTable.TableID.TECHNOLOGY_VERSIONS;
     }
 
-    TechnologyVersion getTechnologyVersion(TechnologyName techName, String version, OperatingSystemVersion osv) {
+    TechnologyVersion getTechnologyVersion(TechnologyName techName, String version, OperatingSystemVersion osv) throws IOException, SQLException {
 	String name=techName.getName();
         int osvPKey=osv.pkey;
 	List<TechnologyVersion> table=getRows();
@@ -111,7 +117,7 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
      *
      * @return  a <code>TechnologyVersion[]</code> of all the matches
      */
-    public List<TechnologyVersion> getTechnologyVersions(OperatingSystemVersion osv, String name, List<TechnologyClass> classes, String version, int orderBy) {
+    public List<TechnologyVersion> getTechnologyVersions(OperatingSystemVersion osv, String name, List<TechnologyClass> classes, String version, int orderBy) throws IOException, SQLException {
 	// Prepare names
 	String[] nameWords = null;
 	if (name != null) {

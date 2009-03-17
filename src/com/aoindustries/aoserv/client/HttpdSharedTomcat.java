@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -75,7 +74,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return disable_log==-1;
     }
     
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return
@@ -85,7 +84,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         ;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         for(HttpdTomcatSharedSite htss : getHttpdTomcatSharedSites()) {
@@ -96,19 +95,19 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return reasons;
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
-    public String getInstallDirectory() {
+    public String getInstallDirectory() throws SQLException, IOException {
         return getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+name;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return name;
@@ -127,38 +126,38 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         }
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
-    public List<HttpdTomcatSharedSite> getHttpdTomcatSharedSites() {
+    public List<HttpdTomcatSharedSite> getHttpdTomcatSharedSites() throws IOException, SQLException {
         return table.connector.httpdTomcatSharedSites.getHttpdTomcatSharedSites(this);
     }
 
-    public HttpdTomcatVersion getHttpdTomcatVersion() {
+    public HttpdTomcatVersion getHttpdTomcatVersion() throws SQLException, IOException {
         HttpdTomcatVersion obj=table.connector.httpdTomcatVersions.get(version);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdTomcatVersion: "+version));
+        if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
         if(
             obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
             != getAOServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
-            throw new WrappedException(new SQLException("resource/operating system version mismatch on HttpdSharedTomcat: #"+pkey));
+            throw new SQLException("resource/operating system version mismatch on HttpdSharedTomcat: #"+pkey);
         }
         return obj;
     }
 
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
         LinuxServerAccount obj=table.connector.linuxServerAccounts.get(linux_server_account);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: "+linux_server_account));
+        if(obj==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
         return obj;
     }
 
-    public LinuxServerGroup getLinuxServerGroup() {
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
         LinuxServerGroup obj=table.connector.linuxServerGroups.get(linux_server_group);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: "+linux_server_group));
+        if(obj==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
         return obj;
     }
 
@@ -166,9 +165,9 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return name;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
         AOServer obj=table.connector.aoServers.get(ao_server);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+        if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return obj;
     }
 
@@ -176,10 +175,10 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return SchemaTable.TableID.HTTPD_SHARED_TOMCATS;
     }
 
-    public HttpdWorker getTomcat4Worker() {
+    public HttpdWorker getTomcat4Worker() throws SQLException, IOException {
         if(tomcat4_worker==-1) return null;
         HttpdWorker hw=table.connector.httpdWorkers.get(tomcat4_worker);
-        if(hw==null) throw new WrappedException(new SQLException("Unable to find HttpdWorker: "+tomcat4_worker));
+        if(hw==null) throw new SQLException("Unable to find HttpdWorker: "+tomcat4_worker);
         return hw;
     }
 
@@ -187,10 +186,10 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return tomcat4_shutdown_key;
     }
 
-    public NetBind getTomcat4ShutdownPort() {
+    public NetBind getTomcat4ShutdownPort() throws IOException, SQLException {
         if(tomcat4_shutdown_port==-1) return null;
         NetBind nb=table.connector.netBinds.get(tomcat4_shutdown_port);
-        if(nb==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port));
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
         return nb;
     }
 
@@ -274,16 +273,16 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         isManual=in.readBoolean();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
-    public void setIsManual(boolean isManual) {
+    public void setIsManual(boolean isManual) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws SQLException, IOException {
         return name+" on "+getAOServer().getHostname();
     }
 

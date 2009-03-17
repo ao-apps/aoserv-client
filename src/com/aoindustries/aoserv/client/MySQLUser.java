@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -76,11 +75,11 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
     int disable_log;
 
-    public int addMySQLServerUser(MySQLServer mysqlServer, String host) {
+    public int addMySQLServerUser(MySQLServer mysqlServer, String host) throws IOException, SQLException {
 	return table.connector.mysqlServerUsers.addMySQLServerUser(pkey, mysqlServer, host);
     }
 
-    public int arePasswordsSet() {
+    public int arePasswordsSet() throws IOException, SQLException {
         return Username.groupPasswordsSet(getMySQLServerUsers());
     }
 
@@ -144,7 +143,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return delete_priv;
     }
 
-    public boolean canDisable() {
+    public boolean canDisable() throws IOException, SQLException {
         if(disable_log!=-1) return false;
         for(MySQLServerUser msu : getMySQLServerUsers()) if(msu.disable_log==-1) return false;
         return true;
@@ -154,7 +153,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return drop_priv;
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getUsername().disable_log==-1;
@@ -200,11 +199,11 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return update_priv;
     }
 
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
         return checkPassword(userLocale, pkey, password);
     }
 
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) {
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
         return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
 
@@ -216,15 +215,15 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return PasswordChecker.checkPasswordDescribe(username, password, true, false);
     }*/
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.MYSQL_USERS, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.MYSQL_USERS, pkey);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_USERNAME: return pkey;
             case 1: return select_priv;
@@ -258,18 +257,18 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         }
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
-    public MySQLServerUser getMySQLServerUser(MySQLServer mysqlServer) {
+    public MySQLServerUser getMySQLServerUser(MySQLServer mysqlServer) throws IOException, SQLException {
         return table.connector.mysqlServerUsers.getMySQLServerUser(pkey, mysqlServer);
     }
 
-    public List<MySQLServerUser> getMySQLServerUsers() {
+    public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
         return table.connector.mysqlServerUsers.getMySQLServerUsers(this);
     }
 
@@ -277,9 +276,9 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return SchemaTable.TableID.MYSQL_USERS;
     }
 
-    public Username getUsername() {
+    public Username getUsername() throws SQLException {
         Username obj=table.connector.usernames.get(pkey);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find Username: "+pkey));
+        if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
         return obj;
     }
 
@@ -352,7 +351,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_USERS,
@@ -360,7 +359,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         );
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password) throws IOException, SQLException {
         for(MySQLServerUser user : getMySQLServerUsers()) user.setPassword(password);
     }
 

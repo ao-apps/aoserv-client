@@ -44,7 +44,7 @@ final public class Architecture extends GlobalObjectStringKey<Architecture> {
 
     private int bits;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return Integer.valueOf(bits);

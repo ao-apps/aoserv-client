@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -48,7 +47,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     private long expiration;
     int disable_log;
 
-    public int addSpamEmailMessage(String message) {
+    public int addSpamEmailMessage(String message) throws IOException, SQLException {
         return table.connector.spamEmailMessages.addSpamEmailMessage(this, message);
     }
 
@@ -56,21 +55,21 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         return disable_log==-1;
     }
     
-    public boolean canEnable() {
+    public boolean canEnable() throws IOException, SQLException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getPackage().disable_log==-1;
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, pkey);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_PACKAGE: return packageName;
@@ -90,10 +89,10 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	return created;
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws IOException, SQLException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
@@ -105,9 +104,9 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	return host;
     }
     
-    public EmailSmtpRelayType getType() {
+    public EmailSmtpRelayType getType() throws SQLException {
         EmailSmtpRelayType esrt=table.connector.emailSmtpRelayTypes.get(type);
-        if(esrt==null) throw new WrappedException(new SQLException("Unable to find EmailSmtpRelayType: "+type));
+        if(esrt==null) throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
         return esrt;
     }
 
@@ -115,7 +114,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	return last_refreshed;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws IOException, SQLException {
         // May be filtered
 	return table.connector.packages.get(packageName);
     }
@@ -124,14 +123,14 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	return refresh_count;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
         if(ao_server==-1) return null;
 	AOServer ao=table.connector.aoServers.get(ao_server);
-	if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return ao;
     }
 
-    public List<SpamEmailMessage> getSpamEmailMessages() {
+    public List<SpamEmailMessage> getSpamEmailMessages() throws IOException, SQLException {
         return table.connector.spamEmailMessages.getSpamEmailMessages(this);
     }
 
@@ -175,7 +174,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         disable_log=in.readCompressedInt();
     }
 
-    public void refresh(long minDuration) {
+    public void refresh(long minDuration) throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REFRESH_EMAIL_SMTP_RELAY,
             pkey,
@@ -187,7 +186,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         return Collections.emptyList();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_SMTP_RELAYS,
@@ -195,7 +194,8 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	);
     }
 
-    protected String toStringImpl() {
+    @Override
+    protected String toStringImpl() throws SQLException, IOException {
         return packageName+" "+getType().getVerb()+" from "+host+" to "+getAOServer().getHostname();
     }
 

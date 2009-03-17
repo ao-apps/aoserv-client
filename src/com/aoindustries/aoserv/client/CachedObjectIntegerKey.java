@@ -1,5 +1,8 @@
 package com.aoindustries.aoserv.client;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 /*
  * Copyright 2006-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -40,7 +43,7 @@ public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws IOException, SQLException {
 	return Integer.toString(pkey);
     }
 }

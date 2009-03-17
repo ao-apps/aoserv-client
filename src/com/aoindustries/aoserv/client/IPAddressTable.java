@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -35,14 +36,20 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
     }
 
     public IPAddress get(Object pkey) {
+        try {
+            return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public IPAddress get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
     }
 
-    public IPAddress get(int pkey) {
-	return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
-    }
-
-    IPAddress getIPAddress(NetDevice device, String ipAddress) {
+    IPAddress getIPAddress(NetDevice device, String ipAddress) throws IOException, SQLException {
 	int pkey=device.getPkey();
 
 	List<IPAddress> cached = getRows();
@@ -57,11 +64,11 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 	return null;
     }
 
-    List<IPAddress> getIPAddresses(NetDevice device) {
+    List<IPAddress> getIPAddresses(NetDevice device) throws IOException, SQLException {
         return getIndexedRows(IPAddress.COLUMN_NET_DEVICE, device.pkey);
     }
 
-    public List<IPAddress> getIPAddresses(String ipAddress) {
+    public List<IPAddress> getIPAddresses(String ipAddress) throws IOException, SQLException {
 	List<IPAddress> cached = getRows();
 	int len = cached.size();
         List<IPAddress> matches=new ArrayList<IPAddress>(len);
@@ -72,11 +79,11 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 	return matches;
     }
 
-    List<IPAddress> getIPAddresses(Package pack) {
+    List<IPAddress> getIPAddresses(Package pack) throws IOException, SQLException {
         return getIndexedRows(IPAddress.COLUMN_PACKAGE, pack.name);
     }
 
-    List<IPAddress> getIPAddresses(Server se) {
+    List<IPAddress> getIPAddresses(Server se) throws IOException, SQLException {
         int sePKey=se.pkey;
 
 	List<IPAddress> cached = getRows();
@@ -93,7 +100,8 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 	return SchemaTable.TableID.IP_ADDRESSES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.CHECK_IP_ADDRESS)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_IP_ADDRESS, args, 1, err)) {

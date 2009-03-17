@@ -231,11 +231,11 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         return connector.getTable(pkey);
     }
 
-    public List<AOSHCommand> getAOSHCommands(AOServConnector connector) {
+    public List<AOSHCommand> getAOSHCommands(AOServConnector connector) throws IOException, SQLException {
         return connector.aoshCommands.getAOSHCommands(this);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return name;
             case 1: return Integer.valueOf(pkey);
@@ -273,19 +273,19 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         return name;
     }
 
-    public SchemaColumn getSchemaColumn(AOServConnector connector, String name) {
+    public SchemaColumn getSchemaColumn(AOServConnector connector, String name) throws IOException, SQLException {
         return connector.schemaColumns.getSchemaColumn(this, name);
     }
 
-    public SchemaColumn getSchemaColumn(AOServConnector connector, int index) {
+    public SchemaColumn getSchemaColumn(AOServConnector connector, int index) throws IOException, SQLException {
         return connector.schemaColumns.getSchemaColumn(this, index);
     }
 
-    public List<SchemaColumn> getSchemaColumns(AOServConnector connector) {
+    public List<SchemaColumn> getSchemaColumns(AOServConnector connector) throws IOException, SQLException {
         return connector.schemaColumns.getSchemaColumns(this);
     }
 
-    public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector connector) {
+    public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector connector) throws IOException, SQLException {
         return connector.schemaForeignKeys.getSchemaForeignKeys(this);
     }
 
@@ -311,7 +311,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         return is_public;
     }
 
-    public void printDescription(AOServConnector connector, TerminalWriter out, boolean isInteractive) throws IOException {
+    public void printDescription(AOServConnector connector, TerminalWriter out, boolean isInteractive) throws IOException, SQLException {
         out.println();
         out.boldOn();
         out.print("TABLE NAME");

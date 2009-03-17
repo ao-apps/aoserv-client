@@ -32,7 +32,7 @@ final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> 
     private String image_alt;
     private String home_page_url;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_NAME) return pkey;
 	if(i==1) return image_filename;
 	if(i==2) return image_width==-1?null:Integer.valueOf(image_width);
@@ -70,11 +70,11 @@ final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> 
 	return SchemaTable.TableID.TECHNOLOGY_NAMES;
     }
 
-    public List<Technology> getTechnologies(AOServConnector connector) {
+    public List<Technology> getTechnologies(AOServConnector connector) throws IOException, SQLException {
 	return connector.technologies.getTechnologies(this);
     }
 
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) {
+    public TechnologyVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
 	return connector.technologyVersions.getTechnologyVersion(this, version, osv);
     }
 

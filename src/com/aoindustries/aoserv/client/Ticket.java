@@ -7,7 +7,8 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -49,97 +50,92 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
     private String contact_emails;
     private String contact_phone_numbers;
 
-    public void actBounceTicket(BusinessAdministrator business_administrator, String comments) {
+    public void actBounceTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
-    public void actChangeAdminPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) {
+    public void actChangeAdminPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
     }
 
-    public void actChangeClientPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) {
+    public void actChangeClientPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_CLIENT_PRIORITY, pkey, priority.pkey, business_administrator.pkey, comments);
     }
 
-    public void actChangeDeadline(long deadline, BusinessAdministrator business_administrator, String comments) {
+    public void actChangeDeadline(long deadline, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_DEADLINE, pkey, deadline, business_administrator.pkey, comments);
     }
 
-    public void actChangeTechnology(TechnologyName technology, BusinessAdministrator business_administrator, String comments) {
+    public void actChangeTechnology(TechnologyName technology, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.CHANGE_TICKET_TECHNOLOGY.ordinal());
-                out.writeCompressedInt(pkey);
-                out.writeBoolean(technology!=null);
-                if(technology!=null) out.writeUTF(technology.pkey);
-                out.writeUTF(business_administrator.pkey);
-                out.writeUTF(comments);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.CHANGE_TICKET_TECHNOLOGY.ordinal());
+            out.writeCompressedInt(pkey);
+            out.writeBoolean(technology!=null);
+            if(technology!=null) out.writeUTF(technology.pkey);
+            out.writeUTF(business_administrator.pkey);
+            out.writeUTF(comments);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            table.connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
+        table.connector.tablesUpdated(invalidateList);
     }
 
-    public void actChangeTicketType(TicketType ticket_type, BusinessAdministrator business_administrator, String comments) {
+    public void actChangeTicketType(TicketType ticket_type, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
     }
 
-    public void actAssignTo(BusinessAdministrator assignedTo, BusinessAdministrator business_administrator, String comments) {
+    public void actAssignTo(BusinessAdministrator assignedTo, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
     }
 
-    public void setBusiness(Business business, BusinessAdministrator business_administrator, String comments) {
+    public void setBusiness(Business business, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_BUSINESS, pkey, business==null?"":business.getAccounting(), business_administrator.pkey, comments);
     }
 
-    public void actSetContactEmails(String contactEmails, BusinessAdministrator business_administrator, String comments) {
+    public void actSetContactEmails(String contactEmails, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_CONTACT_EMAILS, pkey, contactEmails, business_administrator.pkey, comments);
     }
 
-    public void actSetContactPhoneNumbers(String contactPhoneNumbers, BusinessAdministrator business_administrator, String comments) {
+    public void actSetContactPhoneNumbers(String contactPhoneNumbers, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers, business_administrator.pkey, comments);
     }
 
-    public void actCompleteTicket(BusinessAdministrator business_administrator, String comments) {
+    public void actCompleteTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.COMPLETE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
-    public void actHoldTicket(String comments) {
+    public void actHoldTicket(String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.HOLD_TICKET, pkey, comments);
     }
 
-    public void actKillTicket(BusinessAdministrator business_administrator, String comments) {
+    public void actKillTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.KILL_TICKET, pkey, business_administrator.pkey, comments);
     }
 
-    public void actReactivateTicket(BusinessAdministrator business_administrator, String comments) {
+    public void actReactivateTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
-    public void actWorkEntry(BusinessAdministrator business_administrator, String comments) {
+    public void actWorkEntry(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);
     }
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof Ticket
@@ -147,14 +143,14 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	;
     }
 
-    public List<Action> getActions() {
+    public List<Action> getActions() throws IOException, SQLException {
 	return table.connector.actions.getActions(this);
     }
 
-    public TicketPriority getAdminPriority() {
+    public TicketPriority getAdminPriority() throws SQLException {
         if(admin_priority==null) return null;
 	TicketPriority adminPriorityObject = table.connector.ticketPriorities.get(admin_priority);
-	if (adminPriorityObject == null) throw new WrappedException(new SQLException("Unable to find Priority: " + admin_priority));
+	if (adminPriorityObject == null) throw new SQLException("Unable to find Priority: " + admin_priority);
 	return adminPriorityObject;
     }
 
@@ -164,9 +160,9 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
         return table.connector.businessAdministrators.get(created_by);
     }
 
-    public TicketPriority getClientPriority() {
+    public TicketPriority getClientPriority() throws SQLException {
 	TicketPriority clientPriorityObject = table.connector.ticketPriorities.get(client_priority);
-	if (clientPriorityObject == null) throw new WrappedException(new SQLException("Unable to find Priority: " + client_priority));
+	if (clientPriorityObject == null) throw new SQLException("Unable to find Priority: " + client_priority);
 	return clientPriorityObject;
     }
 
@@ -182,7 +178,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
         return un.getBusinessAdministrator();
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return accounting;
@@ -216,10 +212,10 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	return open_date;
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
         if(accounting==null) return null;
 	Business bu = table.connector.businesses.get(accounting);
-	if (bu == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+	if (bu == null) throw new SQLException("Unable to find Business: " + accounting);
 	return bu;
     }
 
@@ -227,9 +223,9 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	return pkey;
     }
 
-    public TicketStatus getStatus() {
+    public TicketStatus getStatus() throws SQLException {
 	TicketStatus statusObject = table.connector.ticketStatuses.get(status);
-	if (statusObject == null) throw new WrappedException(new SQLException("Unable to find status: " + status));
+	if (statusObject == null) throw new SQLException("Unable to find status: " + status);
 	return statusObject;
     }
 
@@ -262,10 +258,10 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	return SchemaTable.TableID.TICKETS;
     }
 
-    public TechnologyName getTechnology() {
+    public TechnologyName getTechnology() throws SQLException {
 	if (technology==null) return null;
 	TechnologyName technologyObject = table.connector.technologyNames.get(technology);
-	if (technologyObject == null) throw new WrappedException(new SQLException("Unable to find technology: " + technology));
+	if (technologyObject == null) throw new SQLException("Unable to find technology: " + technology);
 	return technologyObject;
     }
 
@@ -273,12 +269,13 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	return pkey;
     }
 
-    public TicketType getTicketType() {
+    public TicketType getTicketType() throws SQLException {
 	TicketType ticketTypeObject = table.connector.ticketTypes.get(ticket_type);
-	if (ticketTypeObject  == null) throw new WrappedException(new SQLException("Unable to find TicketType: " + ticket_type));
+	if (ticketTypeObject  == null) throw new SQLException("Unable to find TicketType: " + ticket_type);
 	return ticketTypeObject;
     }
 
+    @Override
     int hashCodeImpl() {
 	return pkey;
     }
@@ -337,6 +334,7 @@ final public class Ticket extends AOServObject<Integer,Ticket> implements Single
 	this.table=table;
     }
 
+    @Override
     String toStringImpl() {
 	return pkey+"|"+accounting+'|'+status;
     }

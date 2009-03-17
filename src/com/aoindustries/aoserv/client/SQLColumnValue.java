@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -19,7 +21,7 @@ final public class SQLColumnValue extends SQLExpression {
     final private SchemaColumn column;
     final private SchemaType columnType;
 
-    public SQLColumnValue(AOServConnector conn, SchemaColumn column) {
+    public SQLColumnValue(AOServConnector conn, SchemaColumn column) throws SQLException, IOException {
         if(column==null) throw new NullPointerException("column is null");
         this.column=column;
         this.columnType=column.getSchemaType(conn);
@@ -38,7 +40,7 @@ final public class SQLColumnValue extends SQLExpression {
     }
 
     @Override
-    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) {
+    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws SQLException, IOException {
         SchemaTable table=column.getSchemaTable(conn);
         if(!tables.contains(table)) tables.add(table);
     }

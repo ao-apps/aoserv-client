@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.BufferManager;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -69,49 +69,43 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	return allow_conn;
     }
 
-    public void dump(PrintWriter out) {
+    public void dump(PrintWriter out) throws IOException, SQLException {
 	dump((Writer)out);
     }
 
-    public void dump(Writer out) {
+    public void dump(Writer out) throws IOException, SQLException {
+        // Create the new profile
+        AOServConnection connection=table.connector.getConnection();
         try {
-            // Create the new profile
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
-                masterOut.writeCompressedInt(pkey);
-                masterOut.flush();
+            CompressedDataOutputStream masterOut=connection.getOutputStream();
+            masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
+            masterOut.writeCompressedInt(pkey);
+            masterOut.flush();
 
-                CompressedDataInputStream masterIn=connection.getInputStream();
-                int code;
-                byte[] buff=BufferManager.getBytes();
+            CompressedDataInputStream masterIn=connection.getInputStream();
+            int code;
+            byte[] buff=BufferManager.getBytes();
+            try {
+                char[] chars=BufferManager.getChars();
                 try {
-                    char[] chars=BufferManager.getChars();
-                    try {
-                        while((code=masterIn.readByte())==AOServProtocol.NEXT) {
-                            int len=masterIn.readShort();
-                            masterIn.readFully(buff, 0, len);
-                            for(int c=0;c<len;c++) chars[c]=(char)buff[c];
-                            out.write(chars, 0, len);
-                        }
-                    } finally {
-                        BufferManager.release(chars);
+                    while((code=masterIn.readByte())==AOServProtocol.NEXT) {
+                        int len=masterIn.readShort();
+                        masterIn.readFully(buff, 0, len);
+                        for(int c=0;c<len;c++) chars[c]=(char)buff[c];
+                        out.write(chars, 0, len);
                     }
                 } finally {
-                    BufferManager.release(buff);
+                    BufferManager.release(chars);
                 }
-                if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
             } finally {
-                table.connector.releaseConnection(connection);
+                BufferManager.release(buff);
             }
+            if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
     }
 
@@ -122,7 +116,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         return enable_postgis;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return pkey;
             case 1: return name;
@@ -136,9 +130,9 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         }
     }
 
-    public PostgresServerUser getDatDBA() {
+    public PostgresServerUser getDatDBA() throws SQLException, IOException {
 	PostgresServerUser obj=table.connector.postgresServerUsers.get(datdba);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find PostgresServerUser: "+datdba));
+	if(obj==null) throw new SQLException("Unable to find PostgresServerUser: "+datdba);
 	return obj;
     }
 
@@ -146,7 +140,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         return JDBC_DRIVER;
     }
 
-    public String getJdbcUrl(boolean ipOnly) {
+    public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
 	AOServer ao=getPostgresServer().getAOServer();
         return
             "jdbc:postgresql://"
@@ -161,7 +155,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         ;
     }
     
-    public String getJdbcDocumentationUrl() {
+    public String getJdbcDocumentationUrl() throws SQLException, IOException {
         String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(table.connector).getVersion();
         return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
     }
@@ -170,23 +164,23 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	return name;
     }
 
-    public PostgresEncoding getPostgresEncoding() {
+    public PostgresEncoding getPostgresEncoding() throws SQLException, IOException {
 	PostgresEncoding obj=table.connector.postgresEncodings.get(encoding);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find PostgresEncoding: "+encoding));
+	if(obj==null) throw new SQLException("Unable to find PostgresEncoding: "+encoding);
         // Make sure the postgres encoding postgresql version matches the server this database is part of
         if(
             obj.getPostgresVersion(table.connector).getPkey()
             != getPostgresServer().getPostgresVersion().getPkey()
         ) {
-            throw new WrappedException(new SQLException("encoding/postgres server version mismatch on PostgresDatabase: #"+pkey));
+            throw new SQLException("encoding/postgres server version mismatch on PostgresDatabase: #"+pkey);
         }
         
 	return obj;
     }
 
-    public PostgresServer getPostgresServer() {
+    public PostgresServer getPostgresServer() throws SQLException, IOException {
 	PostgresServer obj=table.connector.postgresServers.get(postgres_server);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find PostgresServer: "+postgres_server));
+	if(obj==null) throw new SQLException("Unable to find PostgresServer: "+postgres_server);
 	return obj;
     }
 
@@ -220,7 +214,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         enable_postgis=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         
         PostgresServer ps=getPostgresServer();
@@ -235,7 +229,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_DATABASES,

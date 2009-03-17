@@ -45,7 +45,7 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
     private boolean is_login;
     private boolean is_system;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_PATH) return pkey;
 	if(i==1) return is_login?Boolean.TRUE:Boolean.FALSE;
 	if(i==2) return is_system?Boolean.TRUE:Boolean.FALSE;

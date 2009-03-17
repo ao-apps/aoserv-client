@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +31,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
     private float maxPower;
     private int totalRackUnits;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_FARM: return farm;
@@ -43,9 +42,9 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
         }
     }
 
-    public ServerFarm getServerFarm() {
+    public ServerFarm getServerFarm() throws SQLException {
 	ServerFarm sf=table.connector.serverFarms.get(farm);
-	if(sf==null) throw new WrappedException(new SQLException("Unable to find ServerFarm: "+farm));
+	if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
 	return sf;
     }
     

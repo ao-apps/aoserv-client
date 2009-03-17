@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -68,13 +67,13 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         return can_control_xvfb;
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
 	Business obj=table.connector.businesses.get(accounting);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find Business: "+accounting));
+	if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
 	return obj;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ACCOUNTING: return accounting;
@@ -90,9 +89,9 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         }
     }
 
-    public Server getServer() {
+    public Server getServer() throws IOException, SQLException {
 	Server obj=table.connector.servers.get(server);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
+	if(obj==null) throw new SQLException("Unable to find Server: "+server);
 	return obj;
     }
 
@@ -130,7 +129,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         can_control_xvfb=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         Business bu=getBusiness();
@@ -249,11 +248,11 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
     }
 
-    public void setAsDefault() {
+    public void setAsDefault() throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
     }
 

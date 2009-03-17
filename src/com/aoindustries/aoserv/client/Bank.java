@@ -27,7 +27,7 @@ final public class Bank extends CachedObjectStringKey<Bank> {
         display
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_NAME) return pkey;
 	if(i==1) return display;
 	throw new IllegalArgumentException("Invalid index: "+i);

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,13 +37,13 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
     private int encryption_from;
     private int encryption_recipient;
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
         Business business = table.connector.businesses.get(accounting);
-        if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+        if (business == null) throw new SQLException("Unable to find Business: " + accounting);
         return business;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PROVIDER_ID: return pkey;
             case COLUMN_ACCOUNTING: return accounting;
@@ -102,10 +101,10 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
      * Gets the key used for encrypting the card in storage or <code>null</code>
      * if the card is not stored in the database.
      */
-    public EncryptionKey getEncryptionFrom() {
+    public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
         if(encryption_from==-1) return null;
         EncryptionKey ek = table.connector.encryptionKeys.get(encryption_from);
-        if(ek==null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_from));
+        if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+encryption_from);
         return ek;
     }
 
@@ -113,10 +112,10 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
      * Gets the key used for encrypting the card in storage or <code>null</code>
      * if the card is not stored in the database.
      */
-    public EncryptionKey getEncryptionRecipient() {
+    public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
         if(encryption_recipient==-1) return null;
         EncryptionKey ek = table.connector.encryptionKeys.get(encryption_recipient);
-        if(ek==null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_recipient));
+        if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+encryption_recipient);
         return ek;
     }
 

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -29,14 +28,14 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
     static final int COLUMN_EMAIL_ADDRESS=0;
     static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_EMAIL_ADDRESS) return Integer.valueOf(pkey);
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public EmailAddress getEmailAddress() {
+    public EmailAddress getEmailAddress() throws SQLException, IOException {
         EmailAddress emailAddressObject = table.connector.emailAddresses.get(pkey);
-        if (emailAddressObject == null) throw new WrappedException(new SQLException("Unable to find EmailAddress: " + pkey));
+        if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + pkey);
         return emailAddressObject;
     }
 
@@ -56,7 +55,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
         return Collections.emptyList();
     }
     
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.BLACKHOLE_EMAIL_ADDRESSES,
@@ -65,7 +64,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws SQLException, IOException {
         return getEmailAddress().toString();
     }
 

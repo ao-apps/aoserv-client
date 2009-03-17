@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
@@ -33,10 +34,16 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
     }
 
     public SignupRequest get(Object pkey) {
-	return getUniqueRow(SignupRequest.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(SignupRequest.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public SignupRequest get(int pkey) {
+    public SignupRequest get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(SignupRequest.COLUMN_PKEY, pkey);
     }
 

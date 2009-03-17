@@ -32,7 +32,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
         return defaultOrderBy;
     }
 
-    int addSpamEmailMessage(EmailSmtpRelay esr, String message) {
+    int addSpamEmailMessage(EmailSmtpRelay esr, String message) throws IOException, SQLException {
         return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.SPAM_EMAIL_MESSAGES,
@@ -41,7 +41,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
         );
     }
 
-    public List<SpamEmailMessage> getRows() {
+    public List<SpamEmailMessage> getRows() throws IOException, SQLException {
         List<SpamEmailMessage> list=new ArrayList<SpamEmailMessage>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.SPAM_EMAIL_MESSAGES);
         return list;
@@ -52,22 +52,29 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
     }
 
     public SpamEmailMessage get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public SpamEmailMessage get(int pkey) {
+    public SpamEmailMessage get(int pkey) throws IOException, SQLException {
         return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.SPAM_EMAIL_MESSAGES, pkey);
     }
 
-    List<SpamEmailMessage> getSpamEmailMessages(EmailSmtpRelay esr) {
+    List<SpamEmailMessage> getSpamEmailMessages(EmailSmtpRelay esr) throws IOException, SQLException {
         return getSpamEmailMessages(esr.pkey);
     }
 
-    List<SpamEmailMessage> getSpamEmailMessages(int esr) {
+    List<SpamEmailMessage> getSpamEmailMessages(int esr) throws IOException, SQLException {
         return getObjects(AOServProtocol.CommandID.GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY, esr);
     }
 
-    final public List<SpamEmailMessage> getIndexedRows(int col, Object value) {
+    @Override
+    final public List<SpamEmailMessage> getIndexedRows(int col, Object value) throws IOException, SQLException {
         if(col==SpamEmailMessage.COLUMN_PKEY) {
             SpamEmailMessage sem=get(value);
             if(sem==null) return Collections.emptyList();
@@ -82,7 +89,8 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
         return get(value);
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_SPAM_EMAIL_MESSAGE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_SPAM_EMAIL_MESSAGE, args, 2, err)) {

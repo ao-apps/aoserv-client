@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -35,7 +36,13 @@ final public class ActionTypeTable extends GlobalTableStringKey<ActionType> {
     }
 
     public ActionType get(Object type) {
-        return getUniqueRow(ActionType.COLUMN_TYPE, type);
+        try {
+            return getUniqueRow(ActionType.COLUMN_TYPE, type);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

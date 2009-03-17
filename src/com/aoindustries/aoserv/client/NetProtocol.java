@@ -31,7 +31,7 @@ final public class NetProtocol extends GlobalObjectStringKey<NetProtocol> {
         TCP="tcp"
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_PROTOCOL) return pkey;
 	throw new IllegalArgumentException("Invalid index: "+i);
     }

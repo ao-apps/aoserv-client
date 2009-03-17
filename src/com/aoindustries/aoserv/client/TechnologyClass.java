@@ -46,7 +46,7 @@ final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass
 
     private String description;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_NAME) return pkey;
 	if(i==1) return description;
 	throw new IllegalArgumentException("Invalid index: "+i);

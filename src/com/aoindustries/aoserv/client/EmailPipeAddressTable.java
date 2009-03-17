@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,7 +35,7 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
         return defaultOrderBy;
     }
 
-    int addEmailPipeAddress(EmailAddress emailAddressObject, EmailPipe emailPipeObject) {
+    int addEmailPipeAddress(EmailAddress emailAddressObject, EmailPipe emailPipeObject) throws IOException, SQLException {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_PIPE_ADDRESSES,
@@ -44,14 +45,20 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
     }
 
     public EmailPipeAddress get(Object pkey) {
+        try {
+            return getUniqueRow(EmailPipeAddress.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public EmailPipeAddress get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EmailPipeAddress.COLUMN_PKEY, pkey);
     }
 
-    public EmailPipeAddress get(int pkey) {
-	return getUniqueRow(EmailPipeAddress.COLUMN_PKEY, pkey);
-    }
-
-    List<EmailPipe> getEmailPipes(EmailAddress address) {
+    List<EmailPipe> getEmailPipes(EmailAddress address) throws IOException, SQLException {
         int pkey=address.pkey;
 	List<EmailPipeAddress> cached=getRows();
 	int len = cached.size();
@@ -67,11 +74,11 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
 	return matches;
     }
 
-    List<EmailPipeAddress> getEmailPipeAddresses(EmailAddress address) {
+    List<EmailPipeAddress> getEmailPipeAddresses(EmailAddress address) throws IOException, SQLException {
         return getIndexedRows(EmailPipeAddress.COLUMN_EMAIL_ADDRESS, address.pkey);
     }
 
-    List<EmailPipeAddress> getEnabledEmailPipeAddresses(EmailAddress address) {
+    List<EmailPipeAddress> getEnabledEmailPipeAddresses(EmailAddress address) throws IOException, SQLException {
         // Use the index first
 	List<EmailPipeAddress> cached = getEmailPipeAddresses(address);
 	int len = cached.size();
@@ -83,7 +90,7 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
 	return matches;
     }
 
-    EmailPipeAddress getEmailPipeAddress(EmailAddress address, EmailPipe pipe) {
+    EmailPipeAddress getEmailPipeAddress(EmailAddress address, EmailPipe pipe) throws IOException, SQLException {
         int pkey=address.pkey;
         int pipePKey=pipe.pkey;
 	List<EmailPipeAddress> cached = getRows();
@@ -95,7 +102,7 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
         return null;
     }
 
-    List<EmailPipeAddress> getEmailPipeAddresses(AOServer ao) {
+    List<EmailPipeAddress> getEmailPipeAddresses(AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 	List<EmailPipeAddress> cached = getRows();
         int len = cached.size();
@@ -111,7 +118,8 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
 	return SchemaTable.TableID.EMAIL_PIPE_ADDRESSES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_PIPE_ADDRESS)) {
             if(AOSH.checkMinParamCount(AOSHCommand.ADD_EMAIL_PIPE_ADDRESS, args, 2, err)) {

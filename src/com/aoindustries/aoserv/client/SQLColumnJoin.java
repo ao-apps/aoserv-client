@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -29,7 +31,7 @@ final public class SQLColumnJoin extends SQLExpression {
         SQLExpression expression,
         SchemaColumn keyColumn,
         SchemaColumn valueColumn
-    ) {
+    ) throws SQLException, IOException {
         this.expression=expression;
         this.keyColumn=keyColumn;
         this.keyIndex=keyColumn.getIndex();
@@ -43,7 +45,7 @@ final public class SQLColumnJoin extends SQLExpression {
         return valueColumn.column_name;
     }
 
-    public Object getValue(AOServConnector conn, AOServObject obj) {
+    public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
         Object keyValue=expression.getValue(conn, obj);
         if(keyValue!=null) {
             AOServObject row=table.getUniqueRow(keyIndex, keyValue);
@@ -57,7 +59,7 @@ final public class SQLColumnJoin extends SQLExpression {
     }
 
     @Override
-    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) {
+    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
         expression.getReferencedTables(conn, tables);
         SchemaTable table=keyColumn.getSchemaTable(conn);
         if(!tables.contains(table)) tables.add(table);

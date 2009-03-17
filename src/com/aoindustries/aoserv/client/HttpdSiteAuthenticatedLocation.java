@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -82,7 +81,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         return Collections.emptyList();
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_HTTPD_SITE: return Integer.valueOf(httpd_site);
@@ -96,9 +95,9 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         }
     }
 
-    public HttpdSite getHttpdSite() {
+    public HttpdSite getHttpdSite() throws SQLException, IOException {
 	HttpdSite obj=table.connector.httpdSites.get(httpd_site);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdSite: "+httpd_site));
+	if(obj==null) throw new SQLException("Unable to find HttpdSite: "+httpd_site);
 	return obj;
     }
 
@@ -152,7 +151,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         require=in.readCompressedUTF().intern();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
     }
 
@@ -163,7 +162,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         String authGroupFile,
         String authUserFile,
         String require
-    ) {
+    ) throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES,
             pkey,
@@ -176,7 +175,8 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         );
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         HttpdSite site=getHttpdSite();
         return site.toString()+':'+path;
     }

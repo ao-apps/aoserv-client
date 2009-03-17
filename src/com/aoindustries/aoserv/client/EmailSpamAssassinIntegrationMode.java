@@ -36,7 +36,7 @@ public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKe
     private String display;
     private int sort_order;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return display;

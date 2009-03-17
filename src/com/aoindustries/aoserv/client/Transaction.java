@@ -7,7 +7,8 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -76,102 +77,85 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
     private byte payment_confirmed;
 
-    public void approved(int creditCardTransaction) {
+    public void approved(int creditCardTransaction) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_APPROVED.ordinal());
-                out.writeCompressedInt(transid);
-                out.writeCompressedInt(creditCardTransaction);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_APPROVED.ordinal());
+            out.writeCompressedInt(transid);
+            out.writeCompressedInt(creditCardTransaction);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            table.connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
+        table.connector.tablesUpdated(invalidateList);
     }
 
-    public void declined(int creditCardTransaction) {
+    public void declined(int creditCardTransaction) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_DECLINED.ordinal());
-                out.writeCompressedInt(transid);
-                out.writeCompressedInt(creditCardTransaction);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_DECLINED.ordinal());
+            out.writeCompressedInt(transid);
+            out.writeCompressedInt(creditCardTransaction);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            table.connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
+        table.connector.tablesUpdated(invalidateList);
     }
 
-    public void held(int creditCardTransaction) {
+    public void held(int creditCardTransaction) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_HELD.ordinal());
-                out.writeCompressedInt(transid);
-                out.writeCompressedInt(creditCardTransaction);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_HELD.ordinal());
+            out.writeCompressedInt(transid);
+            out.writeCompressedInt(creditCardTransaction);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            table.connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
+        table.connector.tablesUpdated(invalidateList);
     }
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof Transaction
@@ -186,33 +170,33 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
      * @see  #getCreditCardTransaction()
      * @see  CreditCardTransaction#getAuthorizationApprovalCode()
      */
-    public String getAprNum() {
+    public String getAprNum() throws SQLException, IOException {
         CreditCardTransaction cct = getCreditCardTransaction();
         return cct==null ? null : cct.getAuthorizationApprovalCode();
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
 	Business business = table.connector.businesses.get(accounting);
-	if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+	if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 	return business;
     }
     
-    public Business getSourceBusiness() {
+    public Business getSourceBusiness() throws SQLException {
 	Business business = table.connector.businesses.get(source_accounting);
-	if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + source_accounting));
+	if (business == null) throw new SQLException("Unable to find Business: " + source_accounting);
 	return business;
     }
 
-    public BusinessAdministrator getBusinessAdministrator() {
+    public BusinessAdministrator getBusinessAdministrator() throws SQLException {
         Username un=table.connector.usernames.get(username);
         // May be filtered
         if(un==null) return null;
         BusinessAdministrator business_administrator = un.getBusinessAdministrator();
-        if (business_administrator == null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: " + username));
+        if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + username);
         return business_administrator;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case 0: return new java.sql.Date(time);
             case COLUMN_TRANSID: return Integer.valueOf(transid);
@@ -236,17 +220,17 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return description;
     }
 
-    public CreditCardProcessor getCreditCardProcessor() {
+    public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
 	if (processor == null) return null;
 	CreditCardProcessor creditCardProcessor = table.connector.creditCardProcessors.get(processor);
-	if (creditCardProcessor == null) throw new WrappedException(new SQLException("Unable to find CreditCardProcessor: " + processor));
+	if (creditCardProcessor == null) throw new SQLException("Unable to find CreditCardProcessor: " + processor);
 	return creditCardProcessor;
     }
 
-    public CreditCardTransaction getCreditCardTransaction() {
+    public CreditCardTransaction getCreditCardTransaction() throws SQLException, IOException {
 	if (creditCardTransaction == -1) return null;
 	CreditCardTransaction cct = table.connector.creditCardTransactions.get(creditCardTransaction);
-	if (cct == null) throw new WrappedException(new SQLException("Unable to find CreditCardTransaction: " + creditCardTransaction));
+	if (cct == null) throw new SQLException("Unable to find CreditCardTransaction: " + creditCardTransaction);
 	return cct;
     }
 
@@ -262,10 +246,10 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return payment_info;
     }
 
-    public PaymentType getPaymentType() {
+    public PaymentType getPaymentType() throws SQLException {
 	if (payment_type == null) return null;
 	PaymentType paymentType = table.connector.paymentTypes.get(payment_type);
-	if (paymentType == null) throw new WrappedException(new SQLException("Unable to find PaymentType: " + payment_type));
+	if (paymentType == null) throw new SQLException("Unable to find PaymentType: " + payment_type);
 	return paymentType;
     }
 
@@ -311,12 +295,13 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return transid;
     }
 
-    public TransactionType getType() {
+    public TransactionType getType() throws SQLException {
         TransactionType tt = table.connector.transactionTypes.get(type);
-        if (tt == null) throw new WrappedException(new SQLException("Unable to find TransactionType: " + type));
+        if (tt == null) throw new SQLException("Unable to find TransactionType: " + type);
         return tt;
     }
 
+    @Override
     int hashCodeImpl() {
 	return transid;
     }
@@ -366,6 +351,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	this.table=table;
     }
 
+    @Override
     String toStringImpl() {
 	return
             transid

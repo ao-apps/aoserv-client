@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,7 +37,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 	String path,
 	LinuxServerAccount linuxAccountObject,
 	LinuxServerGroup linuxGroupObject
-    ) throws IllegalArgumentException {
+    ) throws IllegalArgumentException, IOException, SQLException {
 	if (!EmailList.isValidRegularPath(path)) throw new IllegalArgumentException("Invalid list path: " + path);
 
 	return connector.requestIntQueryIL(
@@ -49,14 +50,20 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
     }
 
     public EmailList get(Object pkey) {
+        try {
+            return getUniqueRow(EmailList.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public EmailList get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EmailList.COLUMN_PKEY, pkey);
     }
 
-    public EmailList get(int pkey) {
-	return getUniqueRow(EmailList.COLUMN_PKEY, pkey);
-    }
-
-    List<EmailList> getEmailLists(Business business) {
+    List<EmailList> getEmailLists(Business business) throws IOException, SQLException {
         String accounting=business.pkey;
         List<EmailList> cached = getRows();
         int len = cached.size();
@@ -75,7 +82,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
         return matches;
     }
 
-    List<EmailList> getEmailLists(Package pack) {
+    List<EmailList> getEmailLists(Package pack) throws IOException, SQLException {
         String packName=pack.name;
 
         List<EmailList> cached=getRows();
@@ -88,11 +95,11 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
         return matches;
     }
 
-    List<EmailList> getEmailLists(LinuxServerAccount lsa) {
+    List<EmailList> getEmailLists(LinuxServerAccount lsa) throws IOException, SQLException {
         return getIndexedRows(EmailList.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 
-    EmailList getEmailList(AOServer ao, String path) {
+    EmailList getEmailList(AOServer ao, String path) throws IOException, SQLException {
         int aoPKey=ao.pkey;
         List<EmailList> cached=getRows();
         int size=cached.size();
@@ -107,7 +114,8 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
         return SchemaTable.TableID.EMAIL_LISTS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_LIST, args, 4, err)) {

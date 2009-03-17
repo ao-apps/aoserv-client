@@ -7,7 +7,10 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.ErrorHandler;
+import com.aoindustries.util.IntArrayList;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
@@ -109,6 +112,10 @@ public class TCPConnector extends AOServConnector {
                         clearCaches();
                     }
                 }
+            } catch(IOException err) {
+                errorHandler.reportError(err, null);
+            } catch(SQLException err) {
+                errorHandler.reportError(err, null);
             } catch(RuntimeException err) {
                 errorHandler.reportError(err, null);
             } finally {
@@ -244,35 +251,31 @@ public class TCPConnector extends AOServConnector {
 	return newConnector;
     }
 
-    public boolean isSecure() {
+    public boolean isSecure() throws UnknownHostException, IOException {
+        byte[] address=InetAddress.getByName(hostname).getAddress();
+        if(
+            address[0]==(byte)127
+            || address[0]==(byte)10
+            || (
+                address[0]==(byte)192
+                && address[1]==(byte)168
+            )
+        ) return true;
+        // Allow same class C subnet as this host
+        SocketConnection conn=(SocketConnection)getConnection(1);
         try {
-            byte[] address=InetAddress.getByName(hostname).getAddress();
-            if(
-                address[0]==(byte)127
-                || address[0]==(byte)10
-                || (
-                    address[0]==(byte)192
-                    && address[1]==(byte)168
-                )
-            ) return true;
-            // Allow same class C subnet as this host
-            SocketConnection conn=(SocketConnection)getConnection(1);
-            try {
-                InetAddress ia=conn.getLocalInetAddress();
-                byte[] localAddress=ia.getAddress();
-                return
-                    address[0]==localAddress[0]
-                    && address[1]==localAddress[1]
-                    && address[2]==localAddress[2]
-                ;
-            } catch(IOException err) {
-                conn.close();
-                throw err;
-            } finally {
-                releaseConnection(conn);
-            }
+            InetAddress ia=conn.getLocalInetAddress();
+            byte[] localAddress=ia.getAddress();
+            return
+                address[0]==localAddress[0]
+                && address[1]==localAddress[1]
+                && address[2]==localAddress[2]
+            ;
         } catch(IOException err) {
-            throw new WrappedException(err);
+            conn.close();
+            throw err;
+        } finally {
+            releaseConnection(conn);
         }
     }
 

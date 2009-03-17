@@ -65,7 +65,7 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 	}
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_TYPE) return pkey;
 	if(i==1) return description;
 	if(i==2) return is_mx?Boolean.TRUE:Boolean.FALSE;

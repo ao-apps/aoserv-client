@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -31,7 +32,13 @@ final public class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCate
     }
 
     public ExpenseCategory get(Object pkey) {
-	return getUniqueRow(ExpenseCategory.COLUMN_EXPENSE_CODE, pkey);
+        try {
+            return getUniqueRow(ExpenseCategory.COLUMN_EXPENSE_CODE, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

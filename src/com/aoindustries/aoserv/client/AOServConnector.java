@@ -14,9 +14,7 @@ import com.aoindustries.util.ErrorHandler;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StandardErrorHandler;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -547,7 +545,7 @@ abstract public class AOServConnector {
      * @exception  SQLException  if unable to access the database or data integrity
      *                           checks fail
      */
-    public String executeCommand(String[] args) {
+    public String executeCommand(String[] args) throws IOException, SQLException {
         return AOSH.executeCommand(this, args);
     }
 
@@ -763,17 +761,9 @@ abstract public class AOServConnector {
      */
     abstract public String getProtocol();
 
-    private static Random random;
+    private static final Random random = new SecureRandom();
     public static Random getRandom() {
-        synchronized(AOServConnector.class) {
-            String algorithm="SHA1PRNG";
-            try {
-                if(random==null) random=SecureRandom.getInstance(algorithm);
-                return random;
-            } catch(NoSuchAlgorithmException err) {
-                throw new WrappedException(err, new Object[] {"algorithm="+algorithm});
-            }
-        }
+        return random;
     }
 
     /**
@@ -821,9 +811,9 @@ abstract public class AOServConnector {
      *                           <code>BusinessAdministrator</code> was not
      *                           found
      */
-    final public BusinessAdministrator getThisBusinessAdministrator() {
+    final public BusinessAdministrator getThisBusinessAdministrator() throws SQLException {
         BusinessAdministrator obj=businessAdministrators.get(connectAs);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: "+connectAs));
+        if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+connectAs);
         return obj;
     }
 
@@ -833,36 +823,30 @@ abstract public class AOServConnector {
      * @param tableID the table ID
      * @param server the pkey of the server or <code>-1</code> for all servers
      */
-    public void invalidateTable(int tableID, int server) {
+    public void invalidateTable(int tableID, int server) throws IOException, SQLException {
+        IntList tableList;
+        AOServConnection connection=getConnection();
         try {
-            IntList tableList;
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
-                out.writeCompressedInt(tableID);
-                out.writeCompressedInt(server);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
+            out.writeCompressedInt(tableID);
+            out.writeCompressedInt(server);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) tableList=readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unknown response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) tableList=readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unknown response code: "+code);
             }
-            tablesUpdated(tableList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
         }
+        tablesUpdated(tableList);
     }
 
     static IntList readInvalidateList(CompressedDataInputStream in) throws IOException {
@@ -886,14 +870,14 @@ abstract public class AOServConnector {
      * @exception  IOException  if unable to determine if the connection
      *                          is secure
      */
-    abstract public boolean isSecure();
+    abstract public boolean isSecure() throws IOException;
 
     /**
      * Times how long it takes to make one request with the server.
      *
      * @return  the connection latency in milliseconds
      */
-    final public int ping() {
+    final public int ping() throws IOException, SQLException {
         long startTime=System.currentTimeMillis();
         requestUpdate(AOServProtocol.CommandID.PING);
         long timeSpan=System.currentTimeMillis()-startTime;
@@ -942,265 +926,211 @@ abstract public class AOServConnector {
         }
     }
 
-    final boolean requestBooleanQuery(AOServProtocol.CommandID commID, Object ... params) {
+    final boolean requestBooleanQuery(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=getConnection();
         try {
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) return in.readBoolean();
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readBoolean();
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
+        }
+    }
+
+    final int requestIntQuery(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readCompressedInt();
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
+        }
+    }
+
+    final int requestIntQueryIL(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        int result;
+        IntList invalidateList;
+        AOServConnection connection=getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                result=in.readCompressedInt();
+                invalidateList=readInvalidateList(in);
+            } else {
                 AOServProtocol.checkResult(code, in);
                 throw new IOException("Unexpected response code: "+code);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
             }
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
+        }
+        tablesUpdated(invalidateList);
+        return result;
+    }
+
+    final long requestLongQuery(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readLong();
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
         }
     }
 
-    final int requestIntQuery(AOServProtocol.CommandID commID, Object ... params) {
+    final short requestShortQuery(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=getConnection();
         try {
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) return in.readCompressedInt();
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readShort();
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
+        }
+    }
+
+    final short requestShortQueryIL(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        short result;
+        IntList invalidateList;
+        AOServConnection connection=getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                result=in.readShort();
+                invalidateList=readInvalidateList(in);
+            } else {
                 AOServProtocol.checkResult(code, in);
                 throw new IOException("Unexpected response code: "+code);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
             }
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
+        }
+        tablesUpdated(invalidateList);
+        return result;
+    }
+
+    final String requestStringQuery(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readUTF();
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
         }
     }
 
-    final int requestIntQueryIL(AOServProtocol.CommandID commID, Object ... params) {
+    final void requestUpdate(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=getConnection();
         try {
-            int result;
-            IntList invalidateList;
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    result=in.readCompressedInt();
-                    invalidateList=readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
-            }
-            tablesUpdated(invalidateList);
-            return result;
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, in);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
         }
     }
 
-    final long requestLongQuery(AOServProtocol.CommandID commID, Object ... params) {
+    final void requestUpdateIL(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=getConnection();
         try {
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) return in.readLong();
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=readInvalidateList(in);
+            else {
                 AOServProtocol.checkResult(code, in);
                 throw new IOException("Unexpected response code: "+code);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
             }
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
         }
-    }
-
-    final short requestShortQuery(AOServProtocol.CommandID commID, Object ... params) {
-        try {
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) return in.readShort();
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
-            }
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    final short requestShortQueryIL(AOServProtocol.CommandID commID, Object ... params) {
-        try {
-            short result;
-            IntList invalidateList;
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    result=in.readShort();
-                    invalidateList=readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
-            }
-            tablesUpdated(invalidateList);
-            return result;
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    final String requestStringQuery(AOServProtocol.CommandID commID, Object ... params) {
-        try {
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) return in.readUTF();
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
-            }
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    final void requestUpdate(AOServProtocol.CommandID commID, Object ... params) {
-        try {
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, in);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
-            }
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    final void requestUpdateIL(AOServProtocol.CommandID commID, Object ... params) {
-        try {
-            IntList invalidateList;
-            AOServConnection connection=getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                writeParams(params, out);
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                releaseConnection(connection);
-            }
-            tablesUpdated(invalidateList);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+        tablesUpdated(invalidateList);
     }
     
     public abstract AOServConnector switchUsers(String username) throws IOException;
@@ -1230,32 +1160,26 @@ abstract public class AOServConnector {
      *
      * @exception  IOException  if unable to contact the server
      */
-    public final void testConnect() {
-        try {
-            synchronized(testConnectLock) {
-                AOServConnection conn=getConnection();
-                try {
-                    CompressedDataOutputStream out=conn.getOutputStream();
-                    out.writeCompressedInt(AOServProtocol.CommandID.TEST_CONNECTION.ordinal());
-                    out.flush();
+    public final void testConnect() throws IOException, SQLException {
+        synchronized(testConnectLock) {
+            AOServConnection conn=getConnection();
+            try {
+                CompressedDataOutputStream out=conn.getOutputStream();
+                out.writeCompressedInt(AOServProtocol.CommandID.TEST_CONNECTION.ordinal());
+                out.flush();
 
-                    CompressedDataInputStream in=conn.getInputStream();
-                    int code=in.readByte();
-                    if(code!=AOServProtocol.DONE) {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                } catch(IOException err) {
-                    conn.close();
-                    throw err;
-                } finally {
-                    releaseConnection(conn);
+                CompressedDataInputStream in=conn.getInputStream();
+                int code=in.readByte();
+                if(code!=AOServProtocol.DONE) {
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
                 }
+            } catch(IOException err) {
+                conn.close();
+                throw err;
+            } finally {
+                releaseConnection(conn);
             }
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
         }
     }
 
@@ -1273,74 +1197,62 @@ abstract public class AOServConnector {
     /**
      * Gets some entropy from the master server, returns the number of bytes actually obtained.
      */
-    public int getMasterEntropy(byte[] buff, int numBytes) {
+    public int getMasterEntropy(byte[] buff, int numBytes) throws IOException, SQLException {
+        AOServConnection conn=getConnection();
         try {
-            AOServConnection conn=getConnection();
-            try {
-                CompressedDataOutputStream out=conn.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.GET_MASTER_ENTROPY.ordinal());
-                out.writeCompressedInt(numBytes);
-                out.flush();
+            CompressedDataOutputStream out=conn.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.GET_MASTER_ENTROPY.ordinal());
+            out.writeCompressedInt(numBytes);
+            out.flush();
 
-                CompressedDataInputStream in=conn.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    int numObtained=in.readCompressedInt();
-                    for(int c=0;c<numObtained;c++) buff[c]=in.readByte();
-                    return numObtained;
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                conn.close();
-                throw err;
-            } finally {
-                releaseConnection(conn);
+            CompressedDataInputStream in=conn.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                int numObtained=in.readCompressedInt();
+                for(int c=0;c<numObtained;c++) buff[c]=in.readByte();
+                return numObtained;
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            conn.close();
+            throw err;
+        } finally {
+            releaseConnection(conn);
         }
     }
 
     /**
      * Gets the amount of entropy needed by the master server in bytes.
      */
-    public long getMasterEntropyNeeded() {
+    public long getMasterEntropyNeeded() throws IOException, SQLException {
         return requestLongQuery(AOServProtocol.CommandID.GET_MASTER_ENTROPY_NEEDED);
     }
 
     /**
      * Adds some entropy to the master server.
      */
-    public void addMasterEntropy(byte[] buff, int numBytes) {
+    public void addMasterEntropy(byte[] buff, int numBytes) throws IOException, SQLException {
+        AOServConnection conn=getConnection();
         try {
-            AOServConnection conn=getConnection();
-            try {
-                CompressedDataOutputStream out=conn.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD_MASTER_ENTROPY.ordinal());
-                out.writeCompressedInt(numBytes);
-                for(int c=0;c<numBytes;c++) out.writeByte(buff[c]);
-                out.flush();
+            CompressedDataOutputStream out=conn.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD_MASTER_ENTROPY.ordinal());
+            out.writeCompressedInt(numBytes);
+            for(int c=0;c<numBytes;c++) out.writeByte(buff[c]);
+            out.flush();
 
-                CompressedDataInputStream in=conn.getInputStream();
-                int code=in.readByte();
-                if(code!=AOServProtocol.DONE) {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                conn.close();
-                throw err;
-            } finally {
-                releaseConnection(conn);
+            CompressedDataInputStream in=conn.getInputStream();
+            int code=in.readByte();
+            if(code!=AOServProtocol.DONE) {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            conn.close();
+            throw err;
+        } finally {
+            releaseConnection(conn);
         }
     }
 }

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
@@ -58,7 +57,7 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
         };
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_VERSION: return Integer.valueOf(pkey);
             case 1: return minorVersion;
@@ -74,15 +73,15 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
     /**
      * Gets the PostGIS version of <code>null</code> if not supported by this PostgreSQL version....
      */
-    public TechnologyVersion getPostgisVersion(AOServConnector connector) {
+    public TechnologyVersion getPostgisVersion(AOServConnector connector) throws SQLException, IOException {
         if(postgisVersion==-1) return null;
         TechnologyVersion tv = connector.technologyVersions.get(postgisVersion);
-        if(tv==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+postgisVersion));
+        if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+postgisVersion);
         if(
             tv.getOperatingSystemVersion(connector).getPkey()
             != getTechnologyVersion(connector).getOperatingSystemVersion(connector).getPkey()
         ) {
-            throw new WrappedException(new SQLException("postgresql/postgis version mismatch on PostgresVersion: #"+pkey));
+            throw new SQLException("postgresql/postgis version mismatch on PostgresVersion: #"+pkey);
         }
         return tv;
     }
@@ -91,17 +90,17 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
 	return SchemaTable.TableID.POSTGRES_VERSIONS;
     }
 
-    public List<PostgresEncoding> getPostgresEncodings(AOServConnector connector) {
+    public List<PostgresEncoding> getPostgresEncodings(AOServConnector connector) throws IOException, SQLException {
         return connector.postgresEncodings.getPostgresEncodings(this);
     }
 
-    public PostgresEncoding getPostgresEncoding(AOServConnector connector, String encoding) {
+    public PostgresEncoding getPostgresEncoding(AOServConnector connector, String encoding) throws IOException, SQLException {
         return connector.postgresEncodings.getPostgresEncoding(this, encoding);
     }
 
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector) {
+    public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
 	TechnologyVersion obj=connector.technologyVersions.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
 	return obj;
     }
 

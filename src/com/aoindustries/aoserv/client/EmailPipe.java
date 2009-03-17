@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -38,7 +37,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     String packageName;
     int disable_log;
 
-    public int addEmailAddress(EmailAddress address) {
+    public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
 	return table.connector.emailPipeAddresses.addEmailPipeAddress(address, this);
     }
 
@@ -46,21 +45,21 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
         return disable_log==-1;
     }
     
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getPackage().disable_log==-1;
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_PIPES, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_PIPES, pkey);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
@@ -71,16 +70,16 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
         }
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws IOException, SQLException {
 	Package packageObject = table.connector.packages.get(packageName);
-	if (packageObject == null) throw new WrappedException(new SQLException("Unable to find Package: " + packageName));
+	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 	return packageObject;
     }
 
@@ -88,9 +87,9 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 	return path;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
         AOServer ao=table.connector.aoServers.get(ao_server);
-        if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return ao;
     }
 
@@ -119,7 +118,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
         return Collections.emptyList();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_PIPES,

@@ -6,8 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 
@@ -52,13 +50,13 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 	return can_invalidate_tables;
     }
 
-    public BusinessAdministrator getBusinessAdministrator() {
+    public BusinessAdministrator getBusinessAdministrator() throws SQLException {
 	BusinessAdministrator obj=table.connector.businessAdministrators.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+pkey);
 	return obj;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_USERNAME: return pkey;
             case 1: return is_active?Boolean.TRUE:Boolean.FALSE;

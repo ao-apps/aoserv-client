@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.IntList;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -39,7 +39,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     private boolean isManual;
     private boolean redirect_to_primary_hostname;
 
-    public int addHttpdSiteURL(String hostname) {
+    public int addHttpdSiteURL(String hostname) throws IOException, SQLException {
         return table.connector.httpdSiteURLs.addHttpdSiteURL(this, hostname);
     }
 
@@ -47,17 +47,17 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         return disable_log==-1;
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getHttpdSite().disable_log==-1;
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, pkey);
     }
 
@@ -65,11 +65,11 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	return access_log;
     }
 
-    public List<HttpdSiteURL> getAltHttpdSiteURLs() {
+    public List<HttpdSiteURL> getAltHttpdSiteURLs() throws IOException, SQLException {
 	return table.connector.httpdSiteURLs.getAltHttpdSiteURLs(this);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_HTTPD_SITE: return Integer.valueOf(httpd_site);
@@ -86,10 +86,10 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         }
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
@@ -97,19 +97,19 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	return error_log;
     }
 
-    public HttpdBind getHttpdBind() {
+    public HttpdBind getHttpdBind() throws SQLException, IOException {
 	HttpdBind obj=table.connector.httpdBinds.get(httpd_bind);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdBind: "+httpd_bind+" for HttpdSite="+httpd_site));
+	if(obj==null) throw new SQLException("Unable to find HttpdBind: "+httpd_bind+" for HttpdSite="+httpd_site);
 	return obj;
     }
 
-    public HttpdSite getHttpdSite() {
+    public HttpdSite getHttpdSite() throws SQLException, IOException {
 	HttpdSite obj=table.connector.httpdSites.get(httpd_site);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdSite: "+httpd_site));
+	if(obj==null) throw new SQLException("Unable to find HttpdSite: "+httpd_site);
 	return obj;
     }
 
-    public List<HttpdSiteURL> getHttpdSiteURLs() {
+    public List<HttpdSiteURL> getHttpdSiteURLs() throws IOException, SQLException {
 	return table.connector.httpdSiteURLs.getHttpdSiteURLs(this);
     }
 
@@ -117,7 +117,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         return predisable_config;
     }
 
-    public HttpdSiteURL getPrimaryHttpdSiteURL() {
+    public HttpdSiteURL getPrimaryHttpdSiteURL() throws SQLException, IOException {
 	return table.connector.httpdSiteURLs.getPrimaryHttpdSiteURL(this);
     }
 
@@ -170,48 +170,43 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         redirect_to_primary_hostname=in.readBoolean();
     }
 
-    public void setIsManual(boolean isManual) {
+    public void setIsManual(boolean isManual) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
     }
 
-    public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) {
+    public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
     }
 
-    public void setPredisableConfig(String config) {
+    public void setPredisableConfig(String config) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnector connector=table.connector;
+        AOServConnection connection=connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnector connector=table.connector;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG.ordinal());
-                out.writeCompressedInt(pkey);
-                out.writeNullUTF(config);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG.ordinal());
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(config);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
         }
+        connector.tablesUpdated(invalidateList);
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         HttpdSite site=getHttpdSite();
         HttpdBind bind=getHttpdBind();
         return site.toString()+'|'+bind.toString();

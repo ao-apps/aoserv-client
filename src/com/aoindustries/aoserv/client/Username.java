@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,7 +57,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	String state,
 	String country,
 	String zip
-    ) {
+    ) throws IOException, SQLException {
 	table.connector.businessAdministrators.addBusinessAdministrator(
             this,
             name,
@@ -87,7 +86,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	String home_phone,
 	LinuxAccountType typeObject,
 	Shell shellObject
-    ) {
+    ) throws IOException, SQLException {
 	addLinuxAccount(primaryGroup.getName(), name, office_location, office_phone, home_phone, typeObject.pkey, shellObject.pkey);
     }
 
@@ -99,7 +98,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	String home_phone,
 	String type,
 	String shell
-    ) {
+    ) throws IOException, SQLException {
 	table.connector.linuxAccounts.addLinuxAccount(
             this,
             primaryGroup,
@@ -112,15 +111,15 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	);
     }
 
-    public void addMySQLUser() {
+    public void addMySQLUser() throws IOException, SQLException {
         table.connector.mysqlUsers.addMySQLUser(pkey);
     }
 
-    public void addPostgresUser() {
+    public void addPostgresUser() throws IOException, SQLException {
         table.connector.postgresUsers.addPostgresUser(pkey);
     }
 
-    public int arePasswordsSet() {
+    public int arePasswordsSet() throws IOException, SQLException {
         // Build the array of objects
         List<PasswordProtected> pps=new ArrayList<PasswordProtected>();
 	BusinessAdministrator ba=getBusinessAdministrator();
@@ -145,7 +144,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         return true;
     }
     
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getPackage().disable_log==-1;
@@ -154,7 +153,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     /**
      * Checks the strength of a password as used by this <code>Username</code>.
      */
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
 	BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null) {
             PasswordChecker.Result[] results=ba.checkPassword(userLocale, password);
@@ -182,11 +181,11 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         return PasswordChecker.getAllGoodResults(userLocale);
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
@@ -194,7 +193,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	return table.connector.businessAdministrators.get(pkey);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_USERNAME: return pkey;
             case COLUMN_PACKAGE: return packageName;
@@ -203,10 +202,10 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         }
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
@@ -218,9 +217,9 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	return table.connector.mysqlUsers.get(pkey);
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws SQLException, IOException {
 	Package packageObject=table.connector.packages.get(packageName);
-	if (packageObject == null) throw new WrappedException(new SQLException("Unable to find Package: " + packageName));
+	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 	return packageObject;
     }
 
@@ -237,7 +236,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	return pkey;
     }
 
-    static int groupPasswordsSet(List<? extends PasswordProtected> pps) {
+    static int groupPasswordsSet(List<? extends PasswordProtected> pps) throws IOException, SQLException {
         int totalAll=0;
 	for(int c=0;c<pps.size();c++) {
             int result=pps.get(c).arePasswordsSet();
@@ -333,7 +332,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         LinuxAccount la=getLinuxAccount();
@@ -348,7 +347,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.USERNAMES,
@@ -356,7 +355,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	);
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password) throws SQLException, IOException {
 	BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null) ba.setPassword(password);
 

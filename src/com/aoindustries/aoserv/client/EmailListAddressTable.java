@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,7 +35,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
         return defaultOrderBy;
     }
 
-    int addEmailListAddress(EmailAddress emailAddressObject, EmailList emailListObject) {
+    int addEmailListAddress(EmailAddress emailAddressObject, EmailList emailListObject) throws IOException, SQLException {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
@@ -44,18 +45,24 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
     }
 
     public EmailListAddress get(Object pkey) {
+        try {
+            return getUniqueRow(EmailListAddress.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public EmailListAddress get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EmailListAddress.COLUMN_PKEY, pkey);
     }
 
-    public EmailListAddress get(int pkey) {
-	return getUniqueRow(EmailListAddress.COLUMN_PKEY, pkey);
-    }
-
-    List<EmailListAddress> getEmailListAddresses(EmailList list) {
+    List<EmailListAddress> getEmailListAddresses(EmailList list) throws IOException, SQLException {
         return getIndexedRows(EmailListAddress.COLUMN_EMAIL_LIST, list.pkey);
     }
 
-    List<EmailAddress> getEmailAddresses(EmailList list) {
+    List<EmailAddress> getEmailAddresses(EmailList list) throws IOException, SQLException {
         // Use the index first
         List<EmailListAddress> cached=getEmailListAddresses(list);
         int len=cached.size();
@@ -64,7 +71,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
 	return eas;
     }
 
-    EmailListAddress getEmailListAddress(EmailAddress ea, EmailList list) {
+    EmailListAddress getEmailListAddress(EmailAddress ea, EmailList list) throws IOException, SQLException {
         int pkey=ea.pkey;
         // Use the index first
 	List<EmailListAddress> cached=getEmailListAddresses(list);
@@ -76,11 +83,11 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
         return null;
     }
 
-    List<EmailListAddress> getEmailListAddresses(EmailAddress ea) {
+    List<EmailListAddress> getEmailListAddresses(EmailAddress ea) throws IOException, SQLException {
         return getIndexedRows(EmailListAddress.COLUMN_EMAIL_ADDRESS, ea.pkey);
     }
 
-    List<EmailList> getEmailLists(EmailAddress ea) {
+    List<EmailList> getEmailLists(EmailAddress ea) throws IOException, SQLException {
         // Use the cache first
         List<EmailListAddress> cached=getEmailListAddresses(ea);
         int len=cached.size();
@@ -89,7 +96,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
         return els;
     }
 
-    List<EmailListAddress> getEnabledEmailListAddresses(EmailAddress ea) {
+    List<EmailListAddress> getEnabledEmailListAddresses(EmailAddress ea) throws IOException, SQLException {
         // Use the cache first
 	List<EmailListAddress> cached=getEmailListAddresses(ea);
 	int size=cached.size();
@@ -101,7 +108,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
         return matches;
     }
 
-    List<EmailListAddress> getEmailListAddresses(AOServer ao) {
+    List<EmailListAddress> getEmailListAddresses(AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 	List<EmailListAddress> cached = getRows();
 	int len = cached.size();
@@ -117,7 +124,8 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
 	return SchemaTable.TableID.EMAIL_LIST_ADDRESSES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_LIST_ADDRESS)) {
             if(AOSH.checkMinParamCount(AOSHCommand.ADD_EMAIL_LIST_ADDRESS, args, 3, err)) {

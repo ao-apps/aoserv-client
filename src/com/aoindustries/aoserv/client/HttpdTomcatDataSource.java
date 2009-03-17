@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,7 +46,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         return Collections.emptyList();
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return pkey;
             case COLUMN_TOMCAT_CONTEXT: return tomcat_context;
@@ -64,9 +63,9 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         }
     }
 
-    public HttpdTomcatContext getHttpdTomcatContext() {
+    public HttpdTomcatContext getHttpdTomcatContext() throws SQLException, IOException {
 	HttpdTomcatContext obj=table.connector.httpdTomcatContexts.get(tomcat_context);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdTomcatContext: "+tomcat_context));
+	if(obj==null) throw new SQLException("Unable to find HttpdTomcatContext: "+tomcat_context);
 	return obj;
     }
 
@@ -138,7 +137,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         validationQuery=in.readNullUTF();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
     }
 
@@ -152,7 +151,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         int maxIdle,
         int maxWait,
         String validationQuery
-    ) {
+    ) throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
             pkey,

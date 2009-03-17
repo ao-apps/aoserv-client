@@ -164,10 +164,16 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
     }
 
     public CreditCardTransaction get(Object pkey) {
-	return getUniqueRow(CreditCardTransaction.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(CreditCardTransaction.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public CreditCardTransaction get(int pkey) {
+    public CreditCardTransaction get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(CreditCardTransaction.COLUMN_PKEY, pkey);
     }
 
@@ -175,7 +181,7 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
 	return SchemaTable.TableID.CREDIT_CARD_TRANSACTIONS;
     }
     
-    CreditCardTransaction getLastCreditCardTransaction(Business bu) {
+    CreditCardTransaction getLastCreditCardTransaction(Business bu) throws IOException, SQLException {
         String accounting = bu.pkey;
         // Sorted by accounting, time, so we search for first match from the bottom
         // TODO: We could do a binary search on accounting code and time to make this faster

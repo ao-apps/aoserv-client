@@ -81,7 +81,7 @@ final public class MasterServerProfile extends AOServObject<String,MasterServerP
         return classname;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case 0: return Integer.valueOf(level);
             case 1: return classname;

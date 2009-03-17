@@ -26,7 +26,7 @@ final public class DNSForbiddenZone extends GlobalObjectStringKey<DNSForbiddenZo
     static final int COLUMN_ZONE=0;
     static final String COLUMN_ZONE_name = "zone";
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_ZONE) return pkey;
 	throw new IllegalArgumentException("Invalid index: "+i);
     }

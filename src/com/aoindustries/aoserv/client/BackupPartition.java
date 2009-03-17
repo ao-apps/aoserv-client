@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -32,7 +31,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     private boolean quota_enabled;
 
     @Override
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
@@ -43,17 +42,17 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
         }
     }
 
-    public long getDiskTotalSize() {
+    public long getDiskTotalSize() throws IOException, SQLException {
         return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
     }
 
-    public long getDiskUsedSize() {
+    public long getDiskUsedSize() throws IOException, SQLException {
         return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
         AOServer ao=table.connector.aoServers.get(ao_server);
-        if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return ao;
     }
 
@@ -67,7 +66,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws SQLException, IOException {
         return getAOServer().getHostname()+":"+path;
     }
 

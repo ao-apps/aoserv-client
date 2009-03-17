@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -61,7 +60,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         PostgresServerUser datdba,
         PostgresEncoding encoding,
         boolean enablePostgis
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.postgresDatabases.addPostgresDatabase(
             name,
             this,
@@ -91,7 +90,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 	}
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return name;
@@ -114,21 +113,21 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 	return name;
     }
 
-    public PostgresVersion getPostgresVersion() {
+    public PostgresVersion getPostgresVersion() throws SQLException, IOException {
 	PostgresVersion obj=table.connector.postgresVersions.get(version);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find PostgresVersion: "+version));
+	if(obj==null) throw new SQLException("Unable to find PostgresVersion: "+version);
         if(
             obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
             != getAOServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
-            throw new WrappedException(new SQLException("resource/operating system version mismatch on PostgresServer: #"+pkey));
+            throw new SQLException("resource/operating system version mismatch on PostgresServer: #"+pkey);
         }
 	return obj;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
 	AOServer ao=table.connector.aoServers.get(ao_server);
-	if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return ao;
     }
 
@@ -136,29 +135,29 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         return max_connections;
     }
     
-    public NetBind getNetBind() {
+    public NetBind getNetBind() throws SQLException, IOException {
         NetBind nb=table.connector.netBinds.get(net_bind);
-        if(nb==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+net_bind));
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+net_bind);
         return nb;
     }
     
-    public PostgresDatabase getPostgresDatabase(String name) {
+    public PostgresDatabase getPostgresDatabase(String name) throws IOException, SQLException {
 	return table.connector.postgresDatabases.getPostgresDatabase(name, this);
     }
 
-    public List<PostgresDatabase> getPostgresDatabases() {
+    public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
 	return table.connector.postgresDatabases.getPostgresDatabases(this);
     }
 
-    public PostgresServerUser getPostgresServerUser(String username) {
+    public PostgresServerUser getPostgresServerUser(String username) throws IOException, SQLException {
 	return table.connector.postgresServerUsers.getPostgresServerUser(username, this);
     }
 
-    public List<PostgresServerUser> getPostgresServerUsers() {
+    public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
 	return table.connector.postgresServerUsers.getPostgresServerUsers(this);
     }
 
-    public List<PostgresUser> getPostgresUsers() {
+    public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
 	List<PostgresServerUser> psu=getPostgresServerUsers();
 	int len=psu.size();
 	List<PostgresUser> pu=new ArrayList<PostgresUser>(len);
@@ -194,7 +193,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         fsync=result.getBoolean(9);
     }
 
-    public boolean isPostgresDatabaseNameAvailable(String name) {
+    public boolean isPostgresDatabaseNameAvailable(String name) throws IOException, SQLException {
 	return table.connector.postgresDatabases.isPostgresDatabaseNameAvailable(name, this);
     }
 
@@ -210,19 +209,20 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         fsync=in.readBoolean();
     }
 
-    public void restartPostgreSQL() {
+    public void restartPostgreSQL() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_POSTGRESQL, pkey);
     }
 
-    public void startPostgreSQL() {
+    public void startPostgreSQL() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.START_POSTGRESQL, pkey);
     }
 
-    public void stopPostgreSQL() {
+    public void stopPostgreSQL() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return name+" on "+getAOServer().getHostname();
     }
 

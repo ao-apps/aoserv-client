@@ -49,7 +49,7 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
     ;
 
     @Override
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_TYPE: return pkey;
             case 1: return description;

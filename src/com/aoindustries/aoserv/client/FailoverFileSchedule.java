@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -34,7 +33,7 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
     private short minute;
     private boolean enabled;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_REPLICATION: return Integer.valueOf(replication);
@@ -45,9 +44,9 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
         }
     }
 
-    public FailoverFileReplication getFailoverFileReplication() {
+    public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
         FailoverFileReplication ffr=table.connector.failoverFileReplications.get(replication);
-        if(ffr==null) throw new WrappedException(new SQLException("Unable to find FailoverFileReplication: "+replication));
+        if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
         return ffr;
     }
 
@@ -83,7 +82,8 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
         enabled=in.readBoolean();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         StringBuilder SB = new StringBuilder();
         SB.append(getFailoverFileReplication().toString());
         SB.append('@');

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,23 +65,23 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     private long created;
     int disable_log;
 
-    public void addFTPGuestUser() {
+    public void addFTPGuestUser() throws IOException, SQLException {
         table.connector.ftpGuestUsers.addFTPGuestUser(pkey);
     }
 
-    public void addLinuxGroup(LinuxGroup group) {
+    public void addLinuxGroup(LinuxGroup group) throws IOException, SQLException {
         table.connector.linuxGroupAccounts.addLinuxGroupAccount(group, this);
     }
 
-    public int addLinuxServerAccount(AOServer aoServer, String home) {
+    public int addLinuxServerAccount(AOServer aoServer, String home) throws IOException, SQLException {
         return table.connector.linuxServerAccounts.addLinuxServerAccount(this, aoServer, home);
     }
 
-    public int arePasswordsSet() {
+    public int arePasswordsSet() throws IOException, SQLException {
         return Username.groupPasswordsSet(getLinuxServerAccounts());
     }
 
-    public boolean canDisable() {
+    public boolean canDisable() throws IOException, SQLException {
         // Already disabled
         if(disable_log!=-1) return false;
 
@@ -92,13 +91,13 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return true;
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
         return checkPassword(userLocale, pkey, type, password);
     }
 
@@ -110,20 +109,20 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * @see  LinuxAccountType#enforceStrongPassword(String)
      * @see  PasswordChecker#checkPassword(Locale,String,String,boolean,boolean)
      */
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String type, String password) {
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String type, String password) throws IOException {
         boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
         return PasswordChecker.checkPassword(userLocale, username, password, enforceStrong, !enforceStrong);
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_USERNAME: return pkey;
             case 1: return name;
@@ -142,10 +141,10 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return created;
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
@@ -157,15 +156,15 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return home_phone;
     }
 
-    public List<LinuxGroup> getLinuxGroups() {
+    public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
         return table.connector.linuxGroupAccounts.getLinuxGroups(this);
     }
 
-    public LinuxServerAccount getLinuxServerAccount(AOServer aoServer) {
+    public LinuxServerAccount getLinuxServerAccount(AOServer aoServer) throws IOException, SQLException {
         return table.connector.linuxServerAccounts.getLinuxServerAccount(aoServer, pkey);
     }
 
-    public List<LinuxServerAccount> getLinuxServerAccounts() {
+    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
         return table.connector.linuxServerAccounts.getLinuxServerAccounts(this);
     }
 
@@ -181,13 +180,13 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return office_phone;
     }
 
-    public LinuxGroup getPrimaryGroup() {
+    public LinuxGroup getPrimaryGroup() throws IOException, SQLException {
         return table.connector.linuxGroupAccounts.getPrimaryGroup(this);
     }
 
-    public Shell getShell() {
+    public Shell getShell() throws SQLException {
         Shell shellObject = table.connector.shells.get(shell);
-        if (shellObject == null) throw new WrappedException(new SQLException("Unable to find Shell: " + shell));
+        if (shellObject == null) throw new SQLException("Unable to find Shell: " + shell);
         return shellObject;
     }
 
@@ -201,24 +200,31 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return typeObject;
     }
 
-    public Username getUsername() {
+    public Username getUsername() throws SQLException {
         Username usernameObject = table.connector.usernames.get(pkey);
-        if (usernameObject == null) throw new WrappedException(new SQLException("Unable to find Username: " + pkey));
+        if (usernameObject == null) throw new SQLException("Unable to find Username: " + pkey);
         return usernameObject;
-    }
-
-    public List<String> getValidHomeDirectories(AOServer ao) {
-        return getValidHomeDirectories(pkey, ao);
     }
 
     /**
      * @deprecated  Please provide the locale for locale-specific errors.
      */
-    public static List<String> getValidHomeDirectories(String username, AOServer ao) {
+    public List<String> getValidHomeDirectories(AOServer ao) throws SQLException, IOException {
+        return getValidHomeDirectories(pkey, ao);
+    }
+
+    public List<String> getValidHomeDirectories(AOServer ao, Locale locale) throws SQLException, IOException {
+        return getValidHomeDirectories(pkey, ao, locale);
+    }
+
+    /**
+     * @deprecated  Please provide the locale for locale-specific errors.
+     */
+    public static List<String> getValidHomeDirectories(String username, AOServer ao) throws SQLException, IOException {
         return getValidHomeDirectories(username, ao, Locale.getDefault());
     }
 
-    public static List<String> getValidHomeDirectories(String username, AOServer ao, Locale locale) {
+    public static List<String> getValidHomeDirectories(String username, AOServer ao, Locale locale) throws SQLException, IOException {
         List<String> dirs=new ArrayList<String>();
         if(username!=null) dirs.add(LinuxServerAccount.getDefaultHomeDirectory(username, locale));
 
@@ -312,7 +318,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // All LinuxServerAccounts must be removable
@@ -323,7 +329,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_ACCOUNTS,
@@ -331,33 +337,33 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         );
     }
 
-    public void removeLinuxGroup(LinuxGroup group) {
+    public void removeLinuxGroup(LinuxGroup group) throws IOException, SQLException {
         table.connector.linuxGroupAccounts.getLinuxGroupAccount(group.pkey, pkey).remove();
     }
 
-    public void setHomePhone(String phone) {
+    public void setHomePhone(String phone) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
     }
 
-    public void setOfficeLocation(String location) {
+    public void setOfficeLocation(String location) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
     }
 
-    public void setOfficePhone(String phone) {
+    public void setOfficePhone(String phone) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password) throws SQLException, IOException {
         for(LinuxServerAccount lsa : getLinuxServerAccounts()) {
             if(lsa.canSetPassword()) lsa.setPassword(password);
         }
     }
 
-    public void setShell(Shell shell) {
+    public void setShell(Shell shell) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
     }
 
@@ -396,9 +402,9 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return disable_log==-1 && getType().canSetPassword();
     }
 
-    public void setPrimaryLinuxGroup(LinuxGroup group) {
+    public void setPrimaryLinuxGroup(LinuxGroup group) throws SQLException, IOException {
         LinuxGroupAccount lga=table.connector.linuxGroupAccounts.getLinuxGroupAccount(group.getName(), pkey);
-        if(lga==null) throw new WrappedException(new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName()));
+        if(lga==null) throw new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName());
         lga.setAsPrimary();
     }
 }

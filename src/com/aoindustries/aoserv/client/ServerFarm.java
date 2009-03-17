@@ -28,7 +28,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     private boolean use_restricted_smtp_port;
 
     @Override
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return description;
@@ -38,7 +38,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
         }
     }
 
-    public Package getOwner() {
+    public Package getOwner() throws IOException, SQLException {
         // May be filtered
         return table.connector.packages.get(owner);
     }

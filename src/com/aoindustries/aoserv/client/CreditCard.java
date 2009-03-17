@@ -10,7 +10,6 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -127,7 +126,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     /**
      * Flags a card as declined.
      */
-    public void declined(String reason) {
+    public void declined(String reason) throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.CREDIT_CARD_DECLINED,
             pkey,
@@ -138,15 +137,15 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     /**
      * Gets the processor that is storing the credit card numbers.
      */
-    public CreditCardProcessor getCreditCardProcessor() {
+    public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
         CreditCardProcessor ccp = table.connector.creditCardProcessors.get(processorId);
-        if(ccp==null) throw new WrappedException(new SQLException("Unable to find CreditCardProcessor: "+processorId));
+        if(ccp==null) throw new SQLException("Unable to find CreditCardProcessor: "+processorId);
         return ccp;
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
         Business business = table.connector.businesses.get(accounting);
-        if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+        if (business == null) throw new SQLException("Unable to find Business: " + accounting);
         return business;
     }
 
@@ -187,7 +186,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return nums;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_PROCESSOR_ID: return processorId;
@@ -274,9 +273,9 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return postalCode;
     }
 
-    public CountryCode getCountryCode() {
+    public CountryCode getCountryCode() throws SQLException {
         CountryCode countryCodeObj = table.connector.countryCodes.get(this.countryCode);
-        if (countryCodeObj == null) throw new WrappedException(new SQLException("Unable to find CountryCode: " + this.countryCode));
+        if (countryCodeObj == null) throw new SQLException("Unable to find CountryCode: " + this.countryCode);
         return countryCodeObj;
     }
 
@@ -284,9 +283,9 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	return created;
     }
 
-    public BusinessAdministrator getCreatedBy() {
+    public BusinessAdministrator getCreatedBy() throws SQLException {
         BusinessAdministrator business_administrator = table.connector.usernames.get(createdBy).getBusinessAdministrator();
-        if (business_administrator == null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: " + createdBy));
+        if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + createdBy);
         return business_administrator;
     }
 
@@ -313,31 +312,31 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	return description;
     }
 
-    public EncryptionKey getEncryptionCardNumberFrom() {
+    public EncryptionKey getEncryptionCardNumberFrom() throws SQLException, IOException {
         if(encryption_card_number_from==-1) return null;
         EncryptionKey ek = table.connector.encryptionKeys.get(encryption_card_number_from);
-        if(ek == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_card_number_from));
+        if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_card_number_from);
         return ek;
     }
 
-    public EncryptionKey getEncryptionCardNumberRecipient() {
+    public EncryptionKey getEncryptionCardNumberRecipient() throws SQLException, IOException {
         if(encryption_card_number_recipient==-1) return null;
         EncryptionKey er = table.connector.encryptionKeys.get(encryption_card_number_recipient);
-        if(er == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_card_number_recipient));
+        if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_card_number_recipient);
         return er;
     }
 
-    public EncryptionKey getEncryptionExpirationFrom() {
+    public EncryptionKey getEncryptionExpirationFrom() throws SQLException, IOException {
         if(encryption_expiration_from==-1) return null;
         EncryptionKey ek = table.connector.encryptionKeys.get(encryption_expiration_from);
-        if(ek == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_expiration_from));
+        if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_expiration_from);
         return ek;
     }
 
-    public EncryptionKey getEncryptionExpirationRecipient() {
+    public EncryptionKey getEncryptionExpirationRecipient() throws SQLException, IOException {
         if(encryption_expiration_recipient==-1) return null;
         EncryptionKey er = table.connector.encryptionKeys.get(encryption_expiration_recipient);
-        if(er == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_expiration_recipient));
+        if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_expiration_recipient);
         return er;
     }
 
@@ -427,7 +426,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         encryption_expiration_recipient=in.readCompressedInt();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
     }
 
@@ -510,7 +509,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         String postalCode,
         CountryCode countryCode,
         String description
-    ) {
+    ) throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.UPDATE_CREDIT_CARD,
             pkey,
@@ -593,7 +592,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     public void updateCardExpiration(
         byte expirationMonth,
         short expirationYear
-    ) throws IOException {
+    ) throws IOException, SQLException {
         CreditCardProcessor processor = getCreditCardProcessor();
         EncryptionKey encryptionFrom = processor.getEncryptionFrom();
         EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
@@ -613,7 +612,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     /**
      * Reactivates a credit card.
      */
-    public void reactivate() {
+    public void reactivate() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REACTIVATE_CREDIT_CARD,
             pkey
@@ -623,7 +622,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     /**
      * Gets the card number or <code>null</code> if not stored.
      */
-    synchronized public String getCardNumber(String passphrase) throws IOException {
+    synchronized public String getCardNumber(String passphrase) throws IOException, SQLException {
         // If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
         if(decryptCardNumberPassphrase==null || !passphrase.equals(decryptCardNumberPassphrase)) {
             // Clear first just in case there is a problem in part of the decryption
@@ -639,7 +638,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return card_number;
     }
 
-    synchronized private void decryptExpiration(String passphrase) throws IOException {
+    synchronized private void decryptExpiration(String passphrase) throws IOException, SQLException {
         // If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
         if(decryptExpirationPassphrase==null || !passphrase.equals(decryptExpirationPassphrase)) {
             // Clear first just in case there is a problem in part of the decryption
@@ -671,7 +670,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     /**
      * Gets the expiration month or <code>-1</code> if not stored.
      */
-    synchronized public byte getExpirationMonth(String passphrase) throws IOException {
+    synchronized public byte getExpirationMonth(String passphrase) throws IOException, SQLException {
         decryptExpiration(passphrase);
         return expiration_month;
     }
@@ -679,7 +678,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     /**
      * Gets the expiration year or <code>-1</code> if not stored.
      */
-    synchronized public short getExpirationYear(String passphrase) throws IOException {
+    synchronized public short getExpirationYear(String passphrase) throws IOException, SQLException {
         decryptExpiration(passphrase);
         return expiration_year;
     }

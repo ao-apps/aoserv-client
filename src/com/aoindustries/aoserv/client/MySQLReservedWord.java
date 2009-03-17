@@ -24,7 +24,7 @@ final public class MySQLReservedWord extends GlobalObjectStringKey<MySQLReserved
     static final int COLUMN_WORD=0;
     static final String COLUMN_WORD_name = "word";
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_WORD) return pkey;
 	throw new IllegalArgumentException("Invalid index: "+i);
     }

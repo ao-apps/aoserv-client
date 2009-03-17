@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -33,7 +33,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         return defaultOrderBy;
     }
 
-    int addLinuxServerGroup(LinuxGroup linuxGroup, AOServer aoServer) {
+    int addLinuxServerGroup(LinuxGroup linuxGroup, AOServer aoServer) throws IOException, SQLException {
         int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_SERVER_GROUPS,
@@ -43,6 +43,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         return pkey;
     }
 
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(gidHash) {
@@ -54,14 +55,20 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
     }
 
     public LinuxServerGroup get(Object pkey) {
+        try {
+            return getUniqueRow(LinuxServerGroup.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public LinuxServerGroup get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(LinuxServerGroup.COLUMN_PKEY, pkey);
     }
 
-    public LinuxServerGroup get(int pkey) {
-	return getUniqueRow(LinuxServerGroup.COLUMN_PKEY, pkey);
-    }
-
-    LinuxServerGroup getLinuxServerGroup(AOServer aoServer, Business business) {
+    LinuxServerGroup getLinuxServerGroup(AOServer aoServer, Business business) throws IOException, SQLException {
         String accounting=business.pkey;
         int aoPKey=aoServer.pkey;
 
@@ -86,7 +93,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
     private boolean nameHashBuilt=false;
     private final Map<Integer,Map<String,LinuxServerGroup>> nameHash=new HashMap<Integer,Map<String,LinuxServerGroup>>();
 
-    LinuxServerGroup getLinuxServerGroup(AOServer aoServer, String group_name) {
+    LinuxServerGroup getLinuxServerGroup(AOServer aoServer, String group_name) throws IOException, SQLException {
         synchronized(nameHash) {
             if(!nameHashBuilt) {
                 nameHash.clear();
@@ -98,7 +105,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
                     Integer I=Integer.valueOf(lsg.ao_server);
                     Map<String,LinuxServerGroup> serverHash=nameHash.get(I);
                     if(serverHash==null) nameHash.put(I, serverHash=new HashMap<String,LinuxServerGroup>());
-                    if(serverHash.put(lsg.name, lsg)!=null) throw new WrappedException(new SQLException("LinuxServerGroup name exists more than once on server: "+lsg.name+" on "+I.intValue()));
+                    if(serverHash.put(lsg.name, lsg)!=null) throw new SQLException("LinuxServerGroup name exists more than once on server: "+lsg.name+" on "+I.intValue());
 
                 }
                 nameHashBuilt=true;
@@ -112,7 +119,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
     private boolean gidHashBuilt=false;
     private final Map<Integer,Map<Integer,LinuxServerGroup>> gidHash=new HashMap<Integer,Map<Integer,LinuxServerGroup>>();
 
-    public LinuxServerGroup getLinuxServerGroup(AOServer aoServer, int gid) {
+    public LinuxServerGroup getLinuxServerGroup(AOServer aoServer, int gid) throws IOException, SQLException {
         synchronized(gidHash) {
             if(!gidHashBuilt) {
                 gidHash.clear();
@@ -125,7 +132,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
                     Map<Integer,LinuxServerGroup> serverHash=gidHash.get(serverI);
                     if(serverHash==null) gidHash.put(serverI, serverHash=new HashMap<Integer,LinuxServerGroup>());
                     Integer gidI=Integer.valueOf(lsg.getGID().getID());
-                    if(serverHash.put(gidI, lsg)!=null) throw new WrappedException(new SQLException("GID exists more than once on server: "+gidI.intValue()+" on "+serverI.intValue()));
+                    if(serverHash.put(gidI, lsg)!=null) throw new SQLException("GID exists more than once on server: "+gidI.intValue()+" on "+serverI.intValue());
                 }
                 gidHashBuilt=true;
             }
@@ -135,11 +142,11 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         }
     }
 
-    List<LinuxServerGroup> getLinuxServerGroups(AOServer aoServer) {
+    List<LinuxServerGroup> getLinuxServerGroups(AOServer aoServer) throws IOException, SQLException {
         return getIndexedRows(LinuxServerGroup.COLUMN_AO_SERVER, aoServer.pkey);
     }
 
-    List<LinuxServerGroup> getLinuxServerGroups(LinuxGroup lg) {
+    List<LinuxServerGroup> getLinuxServerGroups(LinuxGroup lg) throws IOException, SQLException {
         return getIndexedRows(LinuxServerGroup.COLUMN_NAME, lg.pkey);
     }
 
@@ -150,15 +157,15 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
      *                           or two or more groups are marked as primary
      *                           or the primary group does not exist on the same server
      */
-    LinuxServerGroup getPrimaryLinuxServerGroup(LinuxServerAccount account) {
+    LinuxServerGroup getPrimaryLinuxServerGroup(LinuxServerAccount account) throws SQLException, IOException {
         if(account==null) throw new IllegalArgumentException("account=null");
 
         // Find the primary group for the account
         LinuxAccount linuxAccount=account.getLinuxAccount();
         LinuxGroup linuxGroup=connector.linuxGroupAccounts.getPrimaryGroup(linuxAccount);
-        if(linuxGroup==null) throw new WrappedException(new SQLException("Unable to find primary LinuxGroup for username="+linuxAccount.pkey));
+        if(linuxGroup==null) throw new SQLException("Unable to find primary LinuxGroup for username="+linuxAccount.pkey);
         LinuxServerGroup lsg=getLinuxServerGroup(account.getAOServer(), linuxGroup.pkey);
-        if(lsg==null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: "+linuxGroup.pkey+" on "+account.ao_server));
+        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup.pkey+" on "+account.ao_server);
         return lsg;
     }
 
@@ -166,7 +173,8 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         return SchemaTable.TableID.LINUX_SERVER_GROUPS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_SERVER_GROUP)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_SERVER_GROUP, args, 2, err)) {

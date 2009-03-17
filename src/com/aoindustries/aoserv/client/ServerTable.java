@@ -45,56 +45,56 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         String password,
         String contact_phone,
         String contact_email
-    ) {
+    ) throws IOException, SQLException {
+        // Create the new profile
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
+        int pkey;
         try {
-            // Create the new profile
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            int pkey;
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD_BACKUP_SERVER.ordinal());
-                out.writeUTF(hostname);
-                out.writeUTF(farm.getName());
-                out.writeCompressedInt(owner.getPkey());
-                out.writeUTF(description);
-                out.writeCompressedInt(backup_hour);
-                out.writeCompressedInt(os_version.getPkey());
-                out.writeUTF(username);
-                out.writeUTF(password);
-                out.writeUTF(contact_phone);
-                out.writeUTF(contact_email);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD_BACKUP_SERVER.ordinal());
+            out.writeUTF(hostname);
+            out.writeUTF(farm.getName());
+            out.writeCompressedInt(owner.getPkey());
+            out.writeUTF(description);
+            out.writeCompressedInt(backup_hour);
+            out.writeCompressedInt(os_version.getPkey());
+            out.writeUTF(username);
+            out.writeUTF(password);
+            out.writeUTF(contact_phone);
+            out.writeUTF(contact_email);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    pkey=in.readCompressedInt();
-                    invalidateList=AOServConnector.readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                pkey=in.readCompressedInt();
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
-            return pkey;
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
         }
+        connector.tablesUpdated(invalidateList);
+        return pkey;
     }
 
     @Override
     public Server get(Object pkey) {
-        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-        else if(pkey instanceof String) return get((String)pkey);
-        else throw new IllegalArgumentException("Must be an Integer or a String");
+        try {
+            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+            else if(pkey instanceof String) return get((String)pkey);
+            else throw new IllegalArgumentException("Must be an Integer or a String");
+        } catch (IOException err) {
+            throw new WrappedException(err);
+        } catch (SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     /**
@@ -106,7 +106,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
      *
      * @see  Server#toString
      */
-    public Server get(String server) {
+    public Server get(String server) throws SQLException, IOException {
         // Is it the exact hostname of an ao_server?
         AOServer aoServer = connector.aoServers.get(server);
         if(aoServer!=null) return aoServer.getServer();
@@ -130,7 +130,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         }
     }
 
-    public Server get(int pkey) {
+    public Server get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(Server.COLUMN_PKEY, pkey);
     }
 
@@ -138,18 +138,18 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	return SchemaTable.TableID.SERVERS;
     }
 
-    Server getServer(Package pk, String name) {
+    Server getServer(Package pk, String name) throws IOException, SQLException {
         // Use index first
 	for(Server se : getServers(pk)) if(se.getName().equals(name)) return se;
 	return null;
     }
 
-    List<Server> getServers(Package pk) {
+    List<Server> getServers(Package pk) throws IOException, SQLException {
         return getIndexedRows(Server.COLUMN_PACKAGE, pk.pkey);
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BACKUP_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BACKUP_SERVER, args, 3, err)) {

@@ -73,7 +73,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
     // From database
     private short sort_order;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return sort_order;

@@ -39,7 +39,7 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
 
     private boolean is_loopback;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_NAME) return pkey;
 	if(i==1) return is_loopback?Boolean.TRUE:Boolean.FALSE;
 	throw new IllegalArgumentException("Invalid index: "+i);

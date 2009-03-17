@@ -5,7 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,7 +97,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 
     @Override
     @SuppressWarnings({"unchecked"})
-    final public List<V> getIndexedRows(int col, Object value) {
+    final public List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
         SchemaTable.TableID tableID=getTableID();
         synchronized(locks[tableID.ordinal()]) {
             validateCache();
@@ -142,7 +142,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     }
 
     @SuppressWarnings({"unchecked"})
-    final protected V getUniqueRowImpl(int col, Object value) {
+    final protected V getUniqueRowImpl(int col, Object value) throws SQLException, IOException {
         SchemaTable.TableID tableID=getTableID();
         synchronized(locks[tableID.ordinal()]) {
             validateCache();
@@ -170,7 +170,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
                     Object cvalue=O.getColumn(col);
                     if(cvalue!=null) {
                         GlobalObject old=colValues.put(cvalue, O);
-                        if(old!=null) throw new WrappedException(new SQLException("Duplicate pkey entry for table "+getTableID()+" ("+getTableName()+"), column #"+col+": "+cvalue));
+                        if(old!=null) throw new SQLException("Duplicate pkey entry for table "+getTableID()+" ("+getTableName()+"), column #"+col+": "+cvalue);
                     }
                 }
 
@@ -182,7 +182,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
     }
 
     @SuppressWarnings({"unchecked"})
-    public final List<V> getRows() {
+    public final List<V> getRows() throws IOException, SQLException {
         SchemaTable.TableID tableID = getTableID();
         // We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
         synchronized(locks[tableID.ordinal()]) {
@@ -228,7 +228,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
      * Reloads the cache if the cache time has expired.
      */
     @SuppressWarnings({"unchecked"})
-    private void validateCache() {
+    private void validateCache() throws IOException, SQLException {
         SchemaTable.TableID tableID=getTableID();
         synchronized(locks[tableID.ordinal()]) {
             long currentTime=System.currentTimeMillis();

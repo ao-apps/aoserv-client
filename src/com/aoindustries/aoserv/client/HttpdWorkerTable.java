@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -33,14 +34,20 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
     }
 
     public HttpdWorker get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdWorker.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public HttpdWorker get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdWorker.COLUMN_PKEY, pkey);
     }
 
-    public HttpdWorker get(int pkey) {
-	return getUniqueRow(HttpdWorker.COLUMN_PKEY, pkey);
-    }
-
-    List<HttpdWorker> getHttpdWorkers(HttpdServer server) {
+    List<HttpdWorker> getHttpdWorkers(HttpdServer server) throws IOException, SQLException {
         int serverPKey=server.pkey;
 	List<HttpdWorker> cached=getRows();
 	int size=cached.size();
@@ -82,11 +89,11 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 	return matches;
     }
 
-    List<HttpdWorker> getHttpdWorkers(HttpdTomcatSite tomcatSite) {
+    List<HttpdWorker> getHttpdWorkers(HttpdTomcatSite tomcatSite) throws IOException, SQLException {
         return getIndexedRows(HttpdWorker.COLUMN_TOMCAT_SITE, tomcatSite.pkey);
     }
 
-    HttpdWorker getHttpdWorker(NetBind nb) {
+    HttpdWorker getHttpdWorker(NetBind nb) throws IOException, SQLException {
 	return getUniqueRow(HttpdWorker.COLUMN_NET_BIND, nb.pkey);
     }
 

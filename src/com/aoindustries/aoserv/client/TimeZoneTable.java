@@ -1,10 +1,14 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+
 /*
  * Copyright 2006-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.sql.SQLException;
 
 /**
  * The table containing all of the possible time zones.
@@ -34,6 +38,12 @@ final public class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
     }
 
     public TimeZone get(Object pkey) {
-	return getUniqueRow(TimeZone.COLUMN_NAME, pkey);
+        try {
+            return getUniqueRow(TimeZone.COLUMN_NAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 }

@@ -38,7 +38,7 @@ final public class LinuxID extends AOServObject<Integer,LinuxID> {
 	;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==0) return Integer.valueOf(id);
 	if(i==1) return isSystem()?Boolean.TRUE:Boolean.FALSE;
 	throw new IllegalArgumentException("Invalid index: "+i);

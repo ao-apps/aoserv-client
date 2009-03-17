@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
@@ -27,17 +26,17 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
 
     private int depositDelay, withdrawalDelay;
 
-    public Bank getBank(long maximumCacheAge) {
+    public Bank getBank(long maximumCacheAge) throws SQLException {
         Bank bankObject = table.connector.banks.get(bank);
-        if (bankObject == null) throw new WrappedException(new SQLException("Bank not found: " + bank));
+        if (bankObject == null) throw new SQLException("Bank not found: " + bank);
         return bankObject;
     }
 
-    public List<BankTransaction> getBankTransactions() {
+    public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
 	return table.connector.bankTransactions.getBankTransactions(this);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_NAME) return pkey;
 	if(i==1) return display;
 	if(i==2) return bank;

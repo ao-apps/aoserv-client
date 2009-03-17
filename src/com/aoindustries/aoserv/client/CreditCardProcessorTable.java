@@ -5,6 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -28,14 +31,20 @@ final public class CreditCardProcessorTable extends CachedTableStringKey<CreditC
     }
 
     public CreditCardProcessor get(Object providerId) {
+        try {
+            return getUniqueRow(CreditCardProcessor.COLUMN_PROVIDER_ID, providerId);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public CreditCardProcessor get(String providerId) throws IOException, SQLException {
 	return getUniqueRow(CreditCardProcessor.COLUMN_PROVIDER_ID, providerId);
     }
 
-    public CreditCardProcessor get(String providerId) {
-	return getUniqueRow(CreditCardProcessor.COLUMN_PROVIDER_ID, providerId);
-    }
-
-    List<CreditCardProcessor> getCreditCardProcessors(Business business) {
+    List<CreditCardProcessor> getCreditCardProcessors(Business business) throws IOException, SQLException {
         return getIndexedRows(CreditCardProcessor.COLUMN_ACCOUNTING, business.pkey);
     }
 

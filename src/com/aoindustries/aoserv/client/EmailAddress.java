@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -40,7 +39,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     String address;
     int domain;
 
-    public int addEmailForwarding(String destination) {
+    public int addEmailForwarding(String destination) throws IOException, SQLException {
         return table.connector.emailForwardings.addEmailForwarding(this, destination);
     }
 
@@ -48,11 +47,11 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	return address;
     }
 
-    public BlackholeEmailAddress getBlackholeEmailAddress() {
+    public BlackholeEmailAddress getBlackholeEmailAddress() throws IOException, SQLException {
 	return table.connector.blackholeEmailAddresses.get(pkey);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return address;
@@ -61,65 +60,65 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         }
     }
 
-    public EmailDomain getDomain() {
+    public EmailDomain getDomain() throws SQLException, IOException {
 	EmailDomain domainObject = table.connector.emailDomains.get(domain);
-	if (domainObject == null) throw new WrappedException(new SQLException("Unable to find EmailDomain: " + domain));
+	if (domainObject == null) throw new SQLException("Unable to find EmailDomain: " + domain);
 	return domainObject;
     }
 
-    public List<EmailForwarding> getEmailForwardings() {
+    public List<EmailForwarding> getEmailForwardings() throws IOException, SQLException {
 	return table.connector.emailForwardings.getEmailForwardings(this);
     }
 
-    public List<EmailForwarding> getEnabledEmailForwardings() {
+    public List<EmailForwarding> getEnabledEmailForwardings() throws SQLException, IOException {
 	return table.connector.emailForwardings.getEnabledEmailForwardings(this);
     }
 
-    public EmailForwarding getEmailForwarding(String destination) {
+    public EmailForwarding getEmailForwarding(String destination) throws IOException, SQLException {
 	return table.connector.emailForwardings.getEmailForwarding(this, destination);
     }
 
-    public List<EmailList> getEmailLists() {
+    public List<EmailList> getEmailLists() throws IOException, SQLException {
 	return table.connector.emailListAddresses.getEmailLists(this);
     }
 
-    public List<EmailListAddress> getEmailListAddresses() {
+    public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
 	return table.connector.emailListAddresses.getEmailListAddresses(this);
     }
 
-    public List<EmailListAddress> getEnabledEmailListAddresses() {
+    public List<EmailListAddress> getEnabledEmailListAddresses() throws IOException, SQLException {
 	return table.connector.emailListAddresses.getEnabledEmailListAddresses(this);
     }
 
-    public EmailListAddress getEmailListAddress(EmailList list) {
+    public EmailListAddress getEmailListAddress(EmailList list) throws IOException, SQLException {
         return table.connector.emailListAddresses.getEmailListAddress(this, list);
     }
 
-    public List<EmailPipe> getEmailPipes() {
+    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
 	return table.connector.emailPipeAddresses.getEmailPipes(this);
     }
 
-    public List<EmailPipeAddress> getEmailPipeAddresses() {
+    public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
 	return table.connector.emailPipeAddresses.getEmailPipeAddresses(this);
     }
 
-    public List<EmailPipeAddress> getEnabledEmailPipeAddresses() {
+    public List<EmailPipeAddress> getEnabledEmailPipeAddresses() throws IOException, SQLException {
 	return table.connector.emailPipeAddresses.getEnabledEmailPipeAddresses(this);
     }
 
-    public EmailPipeAddress getEmailPipeAddress(EmailPipe pipe) {
+    public EmailPipeAddress getEmailPipeAddress(EmailPipe pipe) throws IOException, SQLException {
         return table.connector.emailPipeAddresses.getEmailPipeAddress(this, pipe);
     }
 
-    public List<LinuxServerAccount> getLinuxServerAccounts() {
+    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
 	return table.connector.linuxAccAddresses.getLinuxServerAccounts(this);
     }
 
-    public List<LinuxAccAddress> getLinuxAccAddresses() {
+    public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
 	return table.connector.linuxAccAddresses.getLinuxAccAddresses(this);
     }
 
-    public LinuxAccAddress getLinuxAccAddress(LinuxServerAccount lsa) {
+    public LinuxAccAddress getLinuxAccAddress(LinuxServerAccount lsa) throws IOException, SQLException {
         return table.connector.linuxAccAddresses.getLinuxAccAddress(this, lsa);
     }
 
@@ -133,7 +132,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	domain = result.getInt(3);
     }
 
-    public boolean isUsed() {
+    public boolean isUsed() throws IOException, SQLException {
         // Anything using this address must be removable
         return
             getBlackholeEmailAddress()!=null
@@ -181,7 +180,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	domain=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Everything using this address must be removable
@@ -228,7 +227,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
      * before it is removed.  For integrity, this entire operation is handled in a single
      * database transaction.
      */
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_ADDRESSES,
@@ -236,7 +235,8 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	);
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return address+'@'+getDomain().getDomain();
     }
 

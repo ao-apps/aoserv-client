@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,25 +38,20 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
      */
     private String whois_output;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) throws IOException, SQLException {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return new java.sql.Date(time);
             case COLUMN_ACCOUNTING: return accounting;
             case 3: return zone;
             case COLUMN_WHOIS_OUTPUT: {
-                //try {
-                    return getWhoisOutput();
-                //} catch(IOException err) {
-                //    throw new WrappedException(err);
-                //} catch(SQLException err) {
-                //    throw new WrappedException(err);
-                //}
+                return getWhoisOutput();
             }
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
+    @Override
     public int getPkey() {
         return pkey;
     }
@@ -66,9 +60,9 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
         return time;
     }
     
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
 	Business business = table.connector.businesses.get(accounting);
-	if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+	if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 	return business;
     }
     
@@ -87,7 +81,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
      * From an outside point of view, the object is still immutable and will yield constant return
      * values per instance.
      */
-    public String getWhoisOutput() {
+    public String getWhoisOutput() throws IOException, SQLException {
         if(whois_output==null) whois_output = table.connector.requestStringQuery(AOServProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT, pkey);
         return whois_output;
     }
@@ -112,6 +106,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
         // Note: this is loaded in a separate call to the master as needed to conserve heap space: whois_output = in.readUTF();
     }
 
+    @Override
     String toStringImpl() {
 	return pkey+"|"+accounting+'|'+zone+'|'+new java.sql.Date(time);
     }

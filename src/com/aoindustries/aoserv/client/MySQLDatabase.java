@@ -88,7 +88,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         boolean canCreateRoutine,
         boolean canAlterRoutine,
         boolean canExecute
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.mysqlDBUsers.addMySQLDBUser(
             this,
             msu,
@@ -110,53 +110,47 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	);
     }
 
-    public void dump(PrintWriter out) {
+    public void dump(PrintWriter out) throws IOException, SQLException {
 	dump((Writer)out);
     }
 
-    public void dump(Writer out) {
+    public void dump(Writer out) throws IOException, SQLException {
+        // Create the new profile
+        AOServConnection connection=table.connector.getConnection();
         try {
-            // Create the new profile
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
-                masterOut.writeCompressedInt(pkey);
-                masterOut.flush();
+            CompressedDataOutputStream masterOut=connection.getOutputStream();
+            masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
+            masterOut.writeCompressedInt(pkey);
+            masterOut.flush();
 
-                CompressedDataInputStream masterIn=connection.getInputStream();
-                int code;
-                byte[] buff=BufferManager.getBytes();
+            CompressedDataInputStream masterIn=connection.getInputStream();
+            int code;
+            byte[] buff=BufferManager.getBytes();
+            try {
+                char[] chars=BufferManager.getChars();
                 try {
-                    char[] chars=BufferManager.getChars();
-                    try {
-                        while((code=masterIn.readByte())==AOServProtocol.NEXT) {
-                            int len=masterIn.readShort();
-                            masterIn.readFully(buff, 0, len);
-                            for(int c=0;c<len;c++) chars[c]=(char)buff[c];
-                            out.write(chars, 0, len);
-                        }
-                    } finally {
-                        BufferManager.release(chars);
+                    while((code=masterIn.readByte())==AOServProtocol.NEXT) {
+                        int len=masterIn.readShort();
+                        masterIn.readFully(buff, 0, len);
+                        for(int c=0;c<len;c++) chars[c]=(char)buff[c];
+                        out.write(chars, 0, len);
                     }
                 } finally {
-                    BufferManager.release(buff);
+                    BufferManager.release(chars);
                 }
-                if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
             } finally {
-                table.connector.releaseConnection(connection);
+                BufferManager.release(buff);
             }
+            if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return name;
@@ -166,17 +160,17 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         }
     }
 
-    public String getJdbcDriver() {
+    public String getJdbcDriver() throws SQLException, IOException {
         int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DRIVER;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
             case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: return CENTOS_JDBC_DRIVER;
-            default : throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
+            default : throw new SQLException("Unsupported OperatingSystemVersion: "+osv);
         }
     }
 
-    public String getJdbcUrl(boolean ipOnly) {
+    public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
         MySQLServer ms=getMySQLServer();
 	AOServer ao=ms.getAOServer();
         return
@@ -192,25 +186,25 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         ;
     }
 
-    public String getJdbcDocumentationUrl() {
+    public String getJdbcDocumentationUrl() throws SQLException, IOException {
         int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 : return CENTOS_JDBC_DOCUMENTATION_URL;
-            default : throw new WrappedException(new SQLException("Unsupported OperatingSystemVersion: "+osv));
+            default : throw new SQLException("Unsupported OperatingSystemVersion: "+osv);
         }
     }
 
-    public MySQLDBUser getMySQLDBUser(MySQLServerUser msu) {
+    public MySQLDBUser getMySQLDBUser(MySQLServerUser msu) throws IOException, SQLException {
 	return table.connector.mysqlDBUsers.getMySQLDBUser(this, msu);
     }
 
-    public List<MySQLDBUser> getMySQLDBUsers() {
+    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
         return table.connector.mysqlDBUsers.getMySQLDBUsers(this);
     }
 
-    public List<MySQLServerUser> getMySQLServerUsers() {
+    public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
         return table.connector.mysqlDBUsers.getMySQLServerUsers(this);
     }
 
@@ -218,15 +212,15 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	return name;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws SQLException, IOException {
 	Package obj=table.connector.packages.get(packageName);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find Package: "+packageName));
+	if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
 	return obj;
     }
 
-    public MySQLServer getMySQLServer() {
+    public MySQLServer getMySQLServer() throws SQLException, IOException {
 	MySQLServer obj=table.connector.mysqlServers.get(mysql_server);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find MySQLServer: "+mysql_server));
+	if(obj==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
 	return obj;
     }
 
@@ -248,14 +242,14 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	packageName=in.readUTF().intern();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(name.equals(MYSQL)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+MYSQL, this));
         if(name.equals(INFORMATION_SCHEMA) && getMySQLServer().getVersion().getVersion().startsWith("5.0.")) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+INFORMATION_SCHEMA, this));
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DATABASES,
@@ -263,6 +257,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	);
     }
 
+    @Override
     String toStringImpl() {
 	return name;
     }

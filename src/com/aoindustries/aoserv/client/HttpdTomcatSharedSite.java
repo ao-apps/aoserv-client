@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,7 +38,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
      * Determines if the API user is allowed to stop the Java virtual machine associated
      * with this site.
      */
-    public boolean canStop() {
+    public boolean canStop() throws SQLException, IOException {
         HttpdSharedTomcat hst=getHttpdSharedTomcat();
         return getHttpdSharedTomcat()!=null && hst.getDisableLog()==null;
     }
@@ -48,12 +47,12 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
      * Determines if the API user is allowed to start the Java virtual machine associated
      * with this site.
      */
-    public boolean canStart() {
+    public boolean canStart() throws SQLException, IOException {
         HttpdSharedTomcat hst=getHttpdSharedTomcat();
         return getHttpdSharedTomcat()==null || hst.getDisableLog()==null;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_TOMCAT_SITE: return Integer.valueOf(pkey);
             case COLUMN_HTTPD_SHARED_TOMCAT: return Integer.valueOf(httpd_shared_tomcat);
@@ -61,14 +60,14 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
         }
     }
 
-    public HttpdSharedTomcat getHttpdSharedTomcat() {
+    public HttpdSharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
 	// May be null when filtered
 	return table.connector.httpdSharedTomcats.get(httpd_shared_tomcat);
     }
 
-    public HttpdTomcatSite getHttpdTomcatSite() {
+    public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
 	HttpdTomcatSite obj=table.connector.httpdTomcatSites.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdTomcatSite: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
 	return obj;
     }
 
@@ -87,7 +86,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws SQLException, IOException {
         return getHttpdTomcatSite().toString();
     }
 

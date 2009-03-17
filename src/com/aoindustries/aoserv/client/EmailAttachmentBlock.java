@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -35,7 +34,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     int linux_server_account;
     String extension;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
@@ -44,15 +43,15 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
         }
     }
 
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
 	LinuxServerAccount lsa=table.connector.linuxServerAccounts.get(linux_server_account);
-	if(lsa==null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: " + linux_server_account));
+	if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
 	return lsa;
     }
 
-    public EmailAttachmentType getEmailAttachmentType() {
+    public EmailAttachmentType getEmailAttachmentType() throws SQLException {
         EmailAttachmentType eat=table.connector.emailAttachmentTypes.get(extension);
-        if(eat==null) throw new WrappedException(new SQLException("Unable to find EmailAttachmentType: " + extension));
+        if(eat==null) throw new SQLException("Unable to find EmailAttachmentType: " + extension);
 	return eat;
     }
 
@@ -76,7 +75,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
         return Collections.emptyList();
     }
 
-    public void remove() {
+    public void remove() throws SQLException, IOException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_ATTACHMENT_BLOCKS,
@@ -84,7 +83,8 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
 	);
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getLinuxServerAccount().toString()+"->"+extension;
     }
 

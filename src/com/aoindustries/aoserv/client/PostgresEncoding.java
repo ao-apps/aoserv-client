@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -79,7 +78,7 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
     String encoding;
     int postgres_version;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return encoding;
@@ -92,9 +91,9 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
 	return encoding;
     }
 
-    public PostgresVersion getPostgresVersion(AOServConnector connector) {
+    public PostgresVersion getPostgresVersion(AOServConnector connector) throws SQLException, IOException {
         PostgresVersion pv=connector.postgresVersions.get(postgres_version);
-        if(pv==null) throw new WrappedException(new SQLException("Unable to find PostgresVersion: "+postgres_version));
+        if(pv==null) throw new SQLException("Unable to find PostgresVersion: "+postgres_version);
         return pv;
     }
 

@@ -35,39 +35,43 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
         return defaultOrderBy;
     }
 
-    int addEmailSmtpRelay(Package pack, AOServer aoServer, String host, EmailSmtpRelayType type, long duration) {
+    int addEmailSmtpRelay(Package pack, AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
+        int pkey;
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
         try {
-            int pkey;
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-                out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
-                out.writeUTF(pack.name);
-                out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);
-                out.writeUTF(host);
-                out.writeUTF(type.pkey);
-                out.writeLong(duration);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+            out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
+            out.writeUTF(pack.name);
+            out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);
+            out.writeUTF(host);
+            out.writeUTF(type.pkey);
+            out.writeLong(duration);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    pkey=in.readCompressedInt();
-                    invalidateList=AOServConnector.readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                pkey=in.readCompressedInt();
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
-            return pkey;
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+        connector.tablesUpdated(invalidateList);
+        return pkey;
+    }
+
+    public EmailSmtpRelay get(Object pkey) {
+        try {
+            return getUniqueRow(EmailSmtpRelay.COLUMN_PKEY, pkey);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -75,15 +79,11 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
         }
     }
 
-    public EmailSmtpRelay get(Object pkey) {
+    public EmailSmtpRelay get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EmailSmtpRelay.COLUMN_PKEY, pkey);
     }
 
-    public EmailSmtpRelay get(int pkey) {
-	return getUniqueRow(EmailSmtpRelay.COLUMN_PKEY, pkey);
-    }
-
-    EmailSmtpRelay getEmailSmtpRelay(Package pk, AOServer ao, String host) {
+    EmailSmtpRelay getEmailSmtpRelay(Package pk, AOServer ao, String host) throws IOException, SQLException {
 	String packageName=pk.name;
         int aoPKey=ao.pkey;
 
@@ -100,11 +100,11 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 	return null;
     }
 
-    List<EmailSmtpRelay> getEmailSmtpRelays(Package pk) {
+    List<EmailSmtpRelay> getEmailSmtpRelays(Package pk) throws IOException, SQLException {
         return getIndexedRows(EmailSmtpRelay.COLUMN_PACKAGE, pk.name);
     }
 
-    List<EmailSmtpRelay> getEmailSmtpRelays(AOServer ao) {
+    List<EmailSmtpRelay> getEmailSmtpRelays(AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 
 	List<EmailSmtpRelay> cached = getRows();
@@ -121,7 +121,8 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 	return SchemaTable.TableID.EMAIL_SMTP_RELAYS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_SMTP_RELAY)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_SMTP_RELAY, args, 5, err)) {

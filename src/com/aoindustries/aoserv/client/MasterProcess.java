@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 
@@ -104,7 +104,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         }
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case 0: return Long.valueOf(process_id);
             case 1: return connector_id==-1?null:Long.valueOf(connector_id);
@@ -155,9 +155,9 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         return effective_user;
     }
     
-    public BusinessAdministrator getEffectiveBusinessAdministrator() {
+    public BusinessAdministrator getEffectiveBusinessAdministrator() throws SQLException {
         BusinessAdministrator ba=table.connector.businessAdministrators.get(effective_user);
-        if(ba==null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: "+effective_user));
+        if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+effective_user);
         return ba;
     }
 
@@ -299,6 +299,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 	this.table=table;
     }
     
+    @Override
     protected String toStringImpl() {
         return getCommand();
     }
@@ -318,9 +319,9 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         out.writeLong(total_time);
         out.writeCompressedInt(priority);
         out.writeUTF(state);
-        String command=getCommand();
-        out.writeBoolean(command!=null);
-        if(command!=null) out.writeUTF(command);
+        String myCommand=getCommand();
+        out.writeBoolean(myCommand!=null);
+        if(myCommand!=null) out.writeUTF(myCommand);
         out.writeLong(state_start_time);
     }
 }

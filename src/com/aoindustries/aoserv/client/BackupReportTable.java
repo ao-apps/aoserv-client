@@ -6,6 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +35,20 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
     }
 
     public BackupReport get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public BackupReport get(int pkey) {
+    public BackupReport get(int pkey) throws IOException, SQLException {
         return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BACKUP_REPORTS, pkey);
     }
 
-    List<BackupReport> getBackupReports(Package pk) {
+    List<BackupReport> getBackupReports(Package pk) throws IOException, SQLException {
         int pkPKey=pk.pkey;
         List<BackupReport> cached=getRows();
         int size=cached.size();
@@ -51,7 +60,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
         return matches;
     }
 
-    List<BackupReport> getBackupReports(Server se) {
+    List<BackupReport> getBackupReports(Server se) throws IOException, SQLException {
         int sePKey=se.pkey;
         List<BackupReport> cached=getRows();
         int size=cached.size();
@@ -63,7 +72,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
         return matches;
     }
 
-    public List<BackupReport> getRows() {
+    public List<BackupReport> getRows() throws IOException, SQLException {
         List<BackupReport> list=new ArrayList<BackupReport>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BACKUP_REPORTS);
         return list;

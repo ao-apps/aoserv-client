@@ -48,7 +48,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
      */
     private boolean isCredit;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return display;

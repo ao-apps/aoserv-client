@@ -35,7 +35,7 @@ final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
 	;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_DAYS) return Short.valueOf(days);
 	if(i==1) return display;
 	throw new IllegalArgumentException("Invalid index: "+i);

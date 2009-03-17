@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -105,10 +106,16 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
     }
 
     public BusinessProfile get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public BusinessProfile get(int pkey) {
+    public BusinessProfile get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(BusinessProfile.COLUMN_PKEY, pkey);
     }
 
@@ -116,7 +123,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
      * Gets the highest priority  <code>BusinessProfile</code> for
      * the provided <code>Business</code>.
      */
-    BusinessProfile getBusinessProfile(Business business) {
+    BusinessProfile getBusinessProfile(Business business) throws IOException, SQLException {
 	String accounting=business.getAccounting();
 	List<BusinessProfile> cached=getRows();
 	int size=cached.size();
@@ -128,7 +135,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
 	return null;
     }
 
-    List<BusinessProfile> getBusinessProfiles(Business business) {
+    List<BusinessProfile> getBusinessProfiles(Business business) throws IOException, SQLException {
         return getIndexedRows(BusinessProfile.COLUMN_ACCOUNTING, business.pkey);
     }
 

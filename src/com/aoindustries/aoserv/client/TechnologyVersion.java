@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -31,7 +30,7 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
     private String owner;
     int operating_system_version;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return name;
@@ -43,19 +42,19 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
         }
     }
 
-    public HttpdTomcatVersion getHttpdTomcatVersion(AOServConnector connector) {
+    public HttpdTomcatVersion getHttpdTomcatVersion(AOServConnector connector) throws IOException, SQLException {
 	return connector.httpdTomcatVersions.get(pkey);
     }
 
-    public MasterUser getOwner(AOServConnector connector) {
+    public MasterUser getOwner(AOServConnector connector) throws SQLException {
 	MasterUser obj = connector.masterUsers.get(owner);
-	if (obj == null) throw new WrappedException(new SQLException("Unable to find MasterUser: " + owner));
+	if (obj == null) throw new SQLException("Unable to find MasterUser: " + owner);
 	return obj;
     }
 
-    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn) {
+    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn) throws SQLException, IOException {
         OperatingSystemVersion osv=conn.operatingSystemVersions.get(operating_system_version);
-        if(osv==null) throw new WrappedException(new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version));
+        if(osv==null) throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
         return osv;
     }
 
@@ -63,9 +62,9 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 	return SchemaTable.TableID.TECHNOLOGY_VERSIONS;
     }
 
-    public TechnologyName getTechnologyName(AOServConnector connector) {
+    public TechnologyName getTechnologyName(AOServConnector connector) throws SQLException {
         TechnologyName technologyName = connector.technologyNames.get(name);
-        if (technologyName == null) throw new WrappedException(new SQLException("Unable to find TechnologyName: " + name));
+        if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
         return technologyName;
     }
 

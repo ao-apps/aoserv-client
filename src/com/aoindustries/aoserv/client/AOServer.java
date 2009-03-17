@@ -9,7 +9,6 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Date;
@@ -61,7 +60,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         LinuxServerAccount lsa,
         LinuxServerGroup lsg,
         long mode
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.cvsRepositories.addCvsRepository(
             this,
             path,
@@ -71,11 +70,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	);
     }
 
-    public int addEmailDomain(String domain, Package packageObject) {
+    public int addEmailDomain(String domain, Package packageObject) throws SQLException, IOException {
 	return table.connector.emailDomains.addEmailDomain(domain, this, packageObject);
     }
 
-    public int addEmailPipe(String path, Package packageObject) {
+    public int addEmailPipe(String path, Package packageObject) throws IOException, SQLException {
 	return table.connector.emailPipes.addEmailPipe(this, path, packageObject);
     }
 
@@ -91,7 +90,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	String[] altHttpHostnames,
 	int jBossVersion,
 	String contentSrc
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.httpdJBossSites.addHttpdJBossSite(
             this,
             siteName,
@@ -115,7 +114,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	LinuxServerGroup lsg,
 	boolean isSecure,
         boolean isOverflow
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.httpdSharedTomcats.addHttpdSharedTomcat(
             name,
             this,
@@ -140,7 +139,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         String sharedTomcatName,
         HttpdTomcatVersion version,
         String contentSrc
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.httpdTomcatSharedSites.addHttpdTomcatSharedSite(
             this,
             siteName,
@@ -170,7 +169,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	String[] altHttpHostnames,
 	HttpdTomcatVersion tomcatVersion,
 	String contentSrc
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.httpdTomcatStdSites.addHttpdTomcatStdSite(
             this,
             siteName,
@@ -187,23 +186,23 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         );
     }
 
-    public List<AOServerDaemonHost> getAOServerDaemonHosts() {
+    public List<AOServerDaemonHost> getAOServerDaemonHosts() throws IOException, SQLException {
 	return table.connector.aoServerDaemonHosts.getAOServerDaemonHosts(this);
     }
 
-    public List<BackupPartition> getBackupPartitions() {
+    public List<BackupPartition> getBackupPartitions() throws IOException, SQLException {
         return table.connector.backupPartitions.getBackupPartitions(this);
     }
 
-    public BackupPartition getBackupPartitionForPath(String path) {
+    public BackupPartition getBackupPartitionForPath(String path) throws IOException, SQLException {
         return table.connector.backupPartitions.getBackupPartitionForPath(this, path);
     }
 
-    public List<BlackholeEmailAddress> getBlackholeEmailAddresses() {
+    public List<BlackholeEmailAddress> getBlackholeEmailAddresses() throws IOException, SQLException {
 	return table.connector.blackholeEmailAddresses.getBlackholeEmailAddresses(this);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_SERVER: return Integer.valueOf(pkey);
             case COLUMN_HOSTNAME: return hostname;
@@ -228,11 +227,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
     }
 
-    public CvsRepository getCvsRepository(String path) {
+    public CvsRepository getCvsRepository(String path) throws IOException, SQLException {
         return table.connector.cvsRepositories.getCvsRepository(this, path);
     }
 
-    public List<CvsRepository> getCvsRepositories() {
+    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
         return table.connector.cvsRepositories.getCvsRepositories(this);
     }
 
@@ -246,7 +245,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     /**
      * Gets the port information to bind to.
      */
-    public NetBind getDaemonBind() {
+    public NetBind getDaemonBind() throws IOException, SQLException {
 	if(daemon_bind==-1) return null;
         // May be filtered
         return table.connector.netBinds.get(daemon_bind);
@@ -255,19 +254,19 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     /**
      * Gets the port information to connect to.
      */
-    public NetBind getDaemonConnectBind() {
+    public NetBind getDaemonConnectBind() throws IOException, SQLException {
 	if(daemon_connect_bind==-1) return null;
         // May be filtered
         return table.connector.netBinds.get(daemon_connect_bind);
     }
     
-    public TimeZone getTimeZone() {
+    public TimeZone getTimeZone() throws SQLException {
         TimeZone tz=table.connector.timeZones.get(time_zone);
-        if(tz==null) throw new WrappedException(new SQLException("Unable to find TimeZone: "+time_zone));
+        if(tz==null) throw new SQLException("Unable to find TimeZone: "+time_zone);
         return tz;
     }
 
-    public NetBind getJilterBind() {
+    public NetBind getJilterBind() throws IOException, SQLException {
 	if(jilter_bind==-1) return null;
         // May be filtered
         return table.connector.netBinds.get(jilter_bind);
@@ -328,23 +327,23 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return monitoring_load_critical;
     }
 
-    public NetDeviceID getDaemonDeviceID() {
+    public NetDeviceID getDaemonDeviceID() throws SQLException {
         NetDeviceID ndi=table.connector.netDeviceIDs.get(daemon_device_id);
-        if(ndi==null) throw new WrappedException(new SQLException("Unable to find NetDeviceID: "+daemon_device_id));
+        if(ndi==null) throw new SQLException("Unable to find NetDeviceID: "+daemon_device_id);
         return ndi;
     }
 
-    public IPAddress getDaemonIPAddress() {
+    public IPAddress getDaemonIPAddress() throws SQLException, IOException {
         NetBind nb=getDaemonBind();
-        if(nb==null) throw new WrappedException(new SQLException("Unable to find daemon NetBind for AOServer: "+pkey));
+        if(nb==null) throw new SQLException("Unable to find daemon NetBind for AOServer: "+pkey);
         IPAddress ia=nb.getIPAddress();
         String ip=ia.getIPAddress();
         if(ip.equals(IPAddress.WILDCARD_IP)) {
             NetDeviceID ndi=getDaemonDeviceID();
             NetDevice nd=getServer().getNetDevice(ndi.getName());
-            if(nd==null) throw new WrappedException(new SQLException("Unable to find NetDevice: "+ndi.getName()+" on "+pkey));
+            if(nd==null) throw new SQLException("Unable to find NetDevice: "+ndi.getName()+" on "+pkey);
             ia=nd.getPrimaryIPAddress();
-            if(ia==null) throw new WrappedException(new SQLException("Unable to find primary IPAddress: "+ndi.getName()+" on "+pkey));
+            if(ia==null) throw new SQLException("Unable to find primary IPAddress: "+ndi.getName()+" on "+pkey);
         }
         return ia;
     }
@@ -357,80 +356,80 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return distro_hour;
     }
 
-    public List<EmailAddress> getEmailAddresses() {
+    public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
 	return table.connector.emailAddresses.getEmailAddresses(this);
     }
 
-    public EmailDomain getEmailDomain(String domain) {
+    public EmailDomain getEmailDomain(String domain) throws IOException, SQLException {
         return table.connector.emailDomains.getEmailDomain(this, domain);
     }
 
-    public List<EmailDomain> getEmailDomains() {
+    public List<EmailDomain> getEmailDomains() throws IOException, SQLException {
 	return table.connector.emailDomains.getEmailDomains(this);
     }
 
-    public List<EmailForwarding> getEmailForwarding() {
+    public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
 	return table.connector.emailForwardings.getEmailForwarding(this);
     }
 
     /**
      * Rename to getEmailList when all uses updated.
      */
-    public EmailList getEmailList(String path) {
+    public EmailList getEmailList(String path) throws IOException, SQLException {
         return table.connector.emailLists.getEmailList(this, path);
     }
 
-    public List<EmailListAddress> getEmailListAddresses() {
+    public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
 	return table.connector.emailListAddresses.getEmailListAddresses(this);
     }
 
-    public List<EmailPipeAddress> getEmailPipeAddresses() {
+    public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
 	return table.connector.emailPipeAddresses.getEmailPipeAddresses(this);
     }
 
-    public List<EmailPipe> getEmailPipes() {
+    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
 	return table.connector.emailPipes.getEmailPipes(this);
     }
 
-    public EmailSmtpRelay getEmailSmtpRelay(Package pk, String host) {
+    public EmailSmtpRelay getEmailSmtpRelay(Package pk, String host) throws IOException, SQLException {
 	return table.connector.emailSmtpRelays.getEmailSmtpRelay(pk, this, host);
     }
 
     /**
      * Gets all of the smtp relays settings that apply to either all servers or this server specifically.
      */
-    public List<EmailSmtpRelay> getEmailSmtpRelays() {
+    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
 	return table.connector.emailSmtpRelays.getEmailSmtpRelays(this);
     }
 
-    public AOServer getFailoverServer() throws SQLException {
+    public AOServer getFailoverServer() throws SQLException, IOException {
         if(failover_server==-1) return null;
         AOServer se=table.connector.aoServers.get(failover_server);
         if(se==null) new SQLException("Unable to find AOServer: "+failover_server);
         return se;
     }
 
-    public List<FTPGuestUser> getFTPGuestUsers() {
+    public List<FTPGuestUser> getFTPGuestUsers() throws IOException, SQLException {
 	return table.connector.ftpGuestUsers.getFTPGuestUsers(this);
     }
 
-    public List<HttpdServer> getHttpdServers() {
+    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
 	return table.connector.httpdServers.getHttpdServers(this);
     }
 
-    public List<HttpdSharedTomcat> getHttpdSharedTomcats() {
+    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
 	return table.connector.httpdSharedTomcats.getHttpdSharedTomcats(this);
     }
 
-    public HttpdSharedTomcat getHttpdSharedTomcat(String jvmName) {
+    public HttpdSharedTomcat getHttpdSharedTomcat(String jvmName) throws IOException, SQLException {
 	return table.connector.httpdSharedTomcats.getHttpdSharedTomcat(jvmName, this);
     }
 
-    public HttpdSite getHttpdSite(String siteName) {
+    public HttpdSite getHttpdSite(String siteName) throws IOException, SQLException {
 	return table.connector.httpdSites.getHttpdSite(siteName, this);
     }
 
-    public List<HttpdSite> getHttpdSites() {
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
 	return table.connector.httpdSites.getHttpdSites(this);
     }
 
@@ -438,11 +437,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return last_distro_time;
     }
 
-    public List<LinuxAccAddress> getLinuxAccAddresses() {
+    public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
 	return table.connector.linuxAccAddresses.getLinuxAccAddresses(this);
     }
 
-    public List<LinuxAccount> getLinuxAccounts() {
+    public List<LinuxAccount> getLinuxAccounts() throws SQLException, IOException {
 	List<LinuxServerAccount> lsa=getLinuxServerAccounts();
 	int len=lsa.size();
 	List<LinuxAccount> la=new ArrayList<LinuxAccount>(len);
@@ -450,7 +449,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return la;
     }
 
-    public List<LinuxGroup> getLinuxGroups() {
+    public List<LinuxGroup> getLinuxGroups() throws SQLException, IOException {
 	List<LinuxServerGroup> lsg=getLinuxServerGroups();
 	int len=lsg.size();
 	List<LinuxGroup> lg=new ArrayList<LinuxGroup>(len);
@@ -458,109 +457,103 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return lg;
     }
 
-    public LinuxServerAccount getLinuxServerAccount(String username) {
+    public LinuxServerAccount getLinuxServerAccount(String username) throws IOException, SQLException {
         return table.connector.linuxServerAccounts.getLinuxServerAccount(this, username);
     }
 
-    public LinuxServerAccount getLinuxServerAccount(int uid) {
+    public LinuxServerAccount getLinuxServerAccount(int uid) throws IOException, SQLException {
         return table.connector.linuxServerAccounts.getLinuxServerAccount(this, uid);
     }
 
-    public List<LinuxServerAccount> getLinuxServerAccounts() {
+    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
 	return table.connector.linuxServerAccounts.getLinuxServerAccounts(this);
     }
 
-    public LinuxServerGroup getLinuxServerGroup(int gid) {
+    public LinuxServerGroup getLinuxServerGroup(int gid) throws IOException, SQLException {
         return table.connector.linuxServerGroups.getLinuxServerGroup(this, gid);
     }
 
-    public LinuxServerGroup getLinuxServerGroup(String groupName) {
+    public LinuxServerGroup getLinuxServerGroup(String groupName) throws IOException, SQLException {
         return table.connector.linuxServerGroups.getLinuxServerGroup(this, groupName);
     }
 
-    public List<LinuxServerGroup> getLinuxServerGroups() {
+    public List<LinuxServerGroup> getLinuxServerGroups() throws IOException, SQLException {
 	return table.connector.linuxServerGroups.getLinuxServerGroups(this);
     }
 
-    public List<MajordomoServer> getMajordomoServers() {
+    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
         return table.connector.majordomoServers.getMajordomoServers(this);
     }
 
     private static final Map<Integer,Object> mrtgLocks = new HashMap<Integer,Object>();
 
-    public void getMrtgFile(String filename, OutputStream out) {
-        try {
-            // Only one MRTG graph per server at a time, if don't get the lock in 15 seconds, return an error
-            synchronized(mrtgLocks) {
-                long startTime = System.currentTimeMillis();
-                do {
-                    if(mrtgLocks.containsKey(pkey)) {
-                        long currentTime = System.currentTimeMillis();
-                        if(startTime > currentTime) startTime = currentTime;
-                        else if((currentTime - startTime)>=15000) throw new IOException("15 second timeout reached while trying to get lock to access server #"+pkey);
-                        else {
-                            try {
-                                mrtgLocks.wait(startTime + 15000 - currentTime);
-                            } catch(InterruptedException err) {
-                                table.connector.errorHandler.reportWarning(err, null);
-                            }
+    public void getMrtgFile(String filename, OutputStream out) throws IOException, SQLException {
+        // Only one MRTG graph per server at a time, if don't get the lock in 15 seconds, return an error
+        synchronized(mrtgLocks) {
+            long startTime = System.currentTimeMillis();
+            do {
+                if(mrtgLocks.containsKey(pkey)) {
+                    long currentTime = System.currentTimeMillis();
+                    if(startTime > currentTime) startTime = currentTime;
+                    else if((currentTime - startTime)>=15000) throw new IOException("15 second timeout reached while trying to get lock to access server #"+pkey);
+                    else {
+                        try {
+                            mrtgLocks.wait(startTime + 15000 - currentTime);
+                        } catch(InterruptedException err) {
+                            table.connector.errorHandler.reportWarning(err, null);
                         }
                     }
-                } while(mrtgLocks.containsKey(pkey));
-                mrtgLocks.put(pkey, Boolean.TRUE);
+                }
+            } while(mrtgLocks.containsKey(pkey));
+            mrtgLocks.put(pkey, Boolean.TRUE);
+            mrtgLocks.notifyAll();
+        }
+
+        try {
+            AOServConnection connection=table.connector.getConnection();
+            try {
+                CompressedDataOutputStream masterOut=connection.getOutputStream();
+                masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_MRTG_FILE.ordinal());
+                masterOut.writeCompressedInt(pkey);
+                masterOut.writeUTF(filename);
+                masterOut.flush();
+
+                CompressedDataInputStream in=connection.getInputStream();
+                byte[] buff=BufferManager.getBytes();
+                try {
+                    int code;
+                    while((code=in.readByte())==AOServProtocol.NEXT) {
+                        int len=in.readShort();
+                        in.readFully(buff, 0, len);
+                        out.write(buff, 0, len);
+                    }
+                    AOServProtocol.checkResult(code, in);
+                } finally {
+                    BufferManager.release(buff);
+                }
+            } catch(IOException err) {
+                connection.close();
+                throw err;
+            } finally {
+                table.connector.releaseConnection(connection);
+            }
+        } finally {
+            synchronized(mrtgLocks) {
+                mrtgLocks.remove(pkey);
                 mrtgLocks.notifyAll();
             }
-
-            try {
-                AOServConnection connection=table.connector.getConnection();
-                try {
-                    CompressedDataOutputStream masterOut=connection.getOutputStream();
-                    masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_MRTG_FILE.ordinal());
-                    masterOut.writeCompressedInt(pkey);
-                    masterOut.writeUTF(filename);
-                    masterOut.flush();
-
-                    CompressedDataInputStream in=connection.getInputStream();
-                    byte[] buff=BufferManager.getBytes();
-                    try {
-                        int code;
-                        while((code=in.readByte())==AOServProtocol.NEXT) {
-                            int len=in.readShort();
-                            in.readFully(buff, 0, len);
-                            out.write(buff, 0, len);
-                        }
-                        AOServProtocol.checkResult(code, in);
-                    } finally {
-                        BufferManager.release(buff);
-                    }
-                } catch(IOException err) {
-                    connection.close();
-                    throw err;
-                } finally {
-                    table.connector.releaseConnection(connection);
-                }
-            } finally {
-                synchronized(mrtgLocks) {
-                    mrtgLocks.remove(pkey);
-                    mrtgLocks.notifyAll();
-                }
-            }
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
         }
     }
 
-    public MySQLServer getMySQLServer(String name) {
+    public MySQLServer getMySQLServer(String name) throws IOException, SQLException {
 	return table.connector.mysqlServers.getMySQLServer(name, this);
     }
 
-    public List<MySQLServer> getMySQLServers() {
+    public List<MySQLServer> getMySQLServers() throws IOException, SQLException {
 	return table.connector.mysqlServers.getMySQLServers(this);
     }
 
-    public MySQLServer getPreferredMySQLServer() {
+    public MySQLServer getPreferredMySQLServer() throws IOException, SQLException {
         // Look for the most-preferred version that has an instance on the server
         List<MySQLServer> pss=getMySQLServers();
         String[] preferredVersions=MySQLServer.getPreferredVersions();
@@ -578,7 +571,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return pss.isEmpty()?null:pss.get(0);
     }
 
-    public List<AOServer> getNestedAOServers() {
+    public List<AOServer> getNestedAOServers() throws IOException, SQLException {
         return table.connector.aoServers.getNestedAOServers(this);
     }
 
@@ -586,15 +579,15 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return pool_size;
     }
 
-    public PostgresServer getPostgresServer(String name) {
+    public PostgresServer getPostgresServer(String name) throws IOException, SQLException {
 	return table.connector.postgresServers.getPostgresServer(name, this);
     }
 
-    public List<PostgresServer> getPostgresServers() {
+    public List<PostgresServer> getPostgresServers() throws IOException, SQLException {
 	return table.connector.postgresServers.getPostgresServers(this);
     }
 
-    public PostgresServer getPreferredPostgresServer() {
+    public PostgresServer getPreferredPostgresServer() throws SQLException, IOException {
         // Look for the most-preferred version that has an instance on the server
         List<PostgresServer> pss=getPostgresServers();
         String[] preferredMinorVersions=PostgresVersion.getPreferredMinorVersions();
@@ -612,11 +605,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return pss.isEmpty()?null:pss.get(0);
     }
 
-    public IPAddress getPrimaryIPAddress() {
+    public IPAddress getPrimaryIPAddress() throws SQLException, IOException {
         NetDeviceID ndi=getDaemonDeviceID();
         String name=ndi.getName();
         NetDevice nd=getServer().getNetDevice(name);
-        if(nd==null) throw new WrappedException(new SQLException("Unable to find NetDevice: "+name+" on "+pkey));
+        if(nd==null) throw new SQLException("Unable to find NetDevice: "+name+" on "+pkey);
         return nd.getPrimaryIPAddress();
     }
 
@@ -625,17 +618,17 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.privateFTPServers.getPrivateFTPServer(this, path);
     }*/
 
-    public List<PrivateFTPServer> getPrivateFTPServers() {
+    public List<PrivateFTPServer> getPrivateFTPServers() throws IOException, SQLException {
 	return table.connector.privateFTPServers.getPrivateFTPServers(this);
     }
 
-    public Server getServer() {
+    public Server getServer() throws SQLException, IOException {
         Server se=table.connector.servers.get(pkey);
-        if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+pkey));
+        if(se==null) throw new SQLException("Unable to find Server: "+pkey);
         return se;
     }
 
-    public List<SystemEmailAlias> getSystemEmailAliases() {
+    public List<SystemEmailAlias> getSystemEmailAliases() throws IOException, SQLException {
 	return table.connector.systemEmailAliases.getSystemEmailAliases(this);
     }
     
@@ -643,19 +636,19 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return SchemaTable.TableID.AO_SERVERS;
     }
 
-    public boolean isEmailDomainAvailable(String domain) {
+    public boolean isEmailDomainAvailable(String domain) throws SQLException, IOException {
         return table.connector.emailDomains.isEmailDomainAvailable(this, domain);
     }
 
-    public boolean isHomeUsed(String directory) {
+    public boolean isHomeUsed(String directory) throws IOException, SQLException {
 	return table.connector.linuxServerAccounts.isHomeUsed(this, directory);
     }
 
-    public boolean isMySQLServerNameAvailable(String name) {
+    public boolean isMySQLServerNameAvailable(String name) throws IOException, SQLException {
 	return table.connector.mysqlServers.isMySQLServerNameAvailable(name, this);
     }
 
-    public boolean isPostgresServerNameAvailable(String name) {
+    public boolean isPostgresServerNameAvailable(String name) throws IOException, SQLException {
 	return table.connector.postgresServers.isPostgresServerNameAvailable(name, this);
     }
 
@@ -712,23 +705,23 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         monitoring_load_critical = in.readFloat();
     }
 
-    public void restartApache() {
+    public void restartApache() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_APACHE, pkey);
     }
 
-    public void restartCron() {
+    public void restartCron() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_CRON, pkey);
     }
 
-    public void restartXfs() {
+    public void restartXfs() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_XFS, pkey);
     }
 
-    public void restartXvfb() {
+    public void restartXvfb() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_XVFB, pkey);
     }
 
-    public long requestDaemonAccess(int daemonCommandCode, int param1) {
+    public long requestDaemonAccess(int daemonCommandCode, int param1) throws IOException, SQLException {
         return table.connector.requestLongQuery(
             AOServProtocol.CommandID.REQUEST_DAEMON_ACCESS,
             pkey,
@@ -737,43 +730,43 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         );
     }
 
-    public void setLastDistroTime(long distroTime) {
+    public void setLastDistroTime(long distroTime) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
     }
 
-    public void startApache() {
+    public void startApache() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.START_APACHE, pkey);
     }
 
-    public void startCron() {
+    public void startCron() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.START_CRON, pkey);
     }
 
-    public void startDistro(boolean includeUser) {
+    public void startDistro(boolean includeUser) throws IOException, SQLException {
         table.connector.distroFiles.startDistro(this, includeUser);
     }
 
-    public void startXfs() {
+    public void startXfs() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.START_XFS, pkey);
     }
 
-    public void startXvfb() {
+    public void startXvfb() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.START_XVFB, pkey);
     }
 
-    public void stopApache() {
+    public void stopApache() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_APACHE, pkey);
     }
 
-    public void stopCron() {
+    public void stopCron() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_CRON, pkey);
     }
 
-    public void stopXfs() {
+    public void stopXfs() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_XFS, pkey);
     }
 
-    public void stopXvfb() {
+    public void stopXvfb() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_XVFB, pkey);
     }
 
@@ -782,39 +775,39 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return hostname;
     }
 
-    public void waitForHttpdSiteRebuild() {
+    public void waitForHttpdSiteRebuild() throws IOException, SQLException {
 	table.connector.httpdSites.waitForRebuild(this);
     }
 
-    public void waitForLinuxAccountRebuild() {
+    public void waitForLinuxAccountRebuild() throws IOException, SQLException {
 	table.connector.linuxAccounts.waitForRebuild(this);
     }
 
-    public void waitForMySQLDatabaseRebuild() {
+    public void waitForMySQLDatabaseRebuild() throws IOException, SQLException {
 	table.connector.mysqlDatabases.waitForRebuild(this);
     }
 
-    public void waitForMySQLDBUserRebuild() {
+    public void waitForMySQLDBUserRebuild() throws IOException, SQLException {
 	table.connector.mysqlDBUsers.waitForRebuild(this);
     }
 
-    public void waitForMySQLServerRebuild() {
+    public void waitForMySQLServerRebuild() throws IOException, SQLException {
 	table.connector.mysqlServers.waitForRebuild(this);
     }
 
-    public void waitForMySQLUserRebuild() {
+    public void waitForMySQLUserRebuild() throws IOException, SQLException {
 	table.connector.mysqlUsers.waitForRebuild(this);
     }
 
-    public void waitForPostgresDatabaseRebuild() {
+    public void waitForPostgresDatabaseRebuild() throws IOException, SQLException {
 	table.connector.postgresDatabases.waitForRebuild(this);
     }
 
-    public void waitForPostgresServerRebuild() {
+    public void waitForPostgresServerRebuild() throws IOException, SQLException {
 	table.connector.postgresServers.waitForRebuild(this);
     }
 
-    public void waitForPostgresUserRebuild() {
+    public void waitForPostgresUserRebuild() throws IOException, SQLException {
 	table.connector.postgresUsers.waitForRebuild(this);
     }
 
@@ -879,14 +872,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     /**
      * Gets the 3ware RAID report.
      */
-    public String get3wareRaidReport() {
+    public String get3wareRaidReport() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_3WARE_RAID_REPORT, pkey);
     }
 
     /**
      * Gets the MD RAID report.
      */
-    public String getMdRaidReport() {
+    public String getMdRaidReport() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
     }
 
@@ -945,18 +938,27 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
 
         final private String device;
-        final private String domUHostname;
-        final private String domUDevice;
+        final private String resourceHostname;
+        final private String resourceDevice;
         final private ConnectionState connectionState;
         final private DiskState localDiskState;
         final private DiskState remoteDiskState;
         final private Role localRole;
         final private Role remoteRole;
 
-        DrbdReport(String device, String domUHostname, String domUDevice, ConnectionState connectionState, DiskState localDiskState, DiskState remoteDiskState, Role localRole, Role remoteRole) {
+        DrbdReport(
+            String device,
+            String resourceHostname,
+            String resourceDevice,
+            ConnectionState connectionState,
+            DiskState localDiskState,
+            DiskState remoteDiskState,
+            Role localRole,
+            Role remoteRole
+        ) {
             this.device = device;
-            this.domUHostname = domUHostname;
-            this.domUDevice = domUDevice;
+            this.resourceHostname = resourceHostname;
+            this.resourceDevice = resourceDevice;
             this.connectionState = connectionState;
             this.localDiskState = localDiskState;
             this.remoteDiskState = remoteDiskState;
@@ -988,19 +990,19 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             return remoteRole;
         }
 
-        public String getDomUDevice() {
-            return domUDevice;
+        public String getResourceDevice() {
+            return resourceDevice;
         }
 
-        public String getDomUHostname() {
-            return domUHostname;
+        public String getResourceHostname() {
+            return resourceHostname;
         }
     }
 
     /**
      * Gets the DRBD report.
      */
-    public List<DrbdReport> getDrbdReport(Locale locale) throws ParseException {
+    public List<DrbdReport> getDrbdReport(Locale locale) throws IOException, SQLException, ParseException {
         String report = table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey);
         List<String> lines = StringUtility.splitLines(report);
         int lineNum = 0;
@@ -1098,6 +1100,13 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public static class LvmReport {
+
+        private static boolean overlaps(long start1, long size1, long start2, long size2) {
+            return
+                (start2+size2)>start1
+                && (start1+size1)>start2
+            ;
+        }
 
         public static class VolumeGroup implements Comparable<VolumeGroup> {
 
@@ -1408,13 +1417,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             public VolumeGroup getVolumeGroup() {
                 return volumeGroup;
             }
-        }
-
-        private static boolean overlaps(long start1, long size1, long start2, long size2) {
-            return
-                (start2+size2)>start1
-                && (start1+size1)>start2
-            ;
         }
 
         public static class LogicalVolume implements Comparable<LogicalVolume> {
@@ -1811,8 +1813,16 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             LogicalVolume.parseLvsReport(locale, lvs, volumeGroups, physicalVolumes);
         }
 
+        public PhysicalVolume getPhysicalVolume(String pvName) {
+            return physicalVolumes.get(pvName);
+        }
+
         public Map<String, PhysicalVolume> getPhysicalVolumes() {
             return physicalVolumes;
+        }
+
+        public VolumeGroup getVolumeGroup(String vgName) {
+            return volumeGroups.get(vgName);
         }
 
         public Map<String, VolumeGroup> getVolumeGroups() {
@@ -1856,35 +1866,69 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     /**
      * Gets the hard drive temperature report.
      */
-    public String getHddTempReport() {
+    public String getHddTempReport() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_HDD_TEMP_REPORT, pkey);
     }
-    
+
+    /**
+     * Gets the model of each hard drive on the server.  The key
+     * is the device name and the value is the model name.
+     */
+    public Map<String,String> getHddModelReport(Locale locale) throws IOException, SQLException, ParseException {
+        String report = table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
+        List<String> lines = StringUtility.splitLines(report);
+        int lineNum = 0;
+        Map<String,String> results = new HashMap<String,String>(lines.size()*4/3+1);
+        for(String line : lines) {
+            lineNum++;
+            int colonPos = line.indexOf(':');
+            if(colonPos==-1) throw new ParseException(
+                ApplicationResourcesAccessor.getMessage(
+                    locale,
+                    "AOServer.getHddModelReport.ParseException.noColon",
+                    line
+                ),
+                lineNum
+            );
+            String device = line.substring(0, colonPos).trim();
+            String model = line.substring(colonPos+1).trim();
+            if(results.put(device, model)!=null) throw new ParseException(
+                ApplicationResourcesAccessor.getMessage(
+                    locale,
+                    "AOServer.getHddModelReport.ParseException.duplicateDevice",
+                    device
+                ),
+                lineNum
+            );
+        }
+        return Collections.unmodifiableMap(results);
+    }
+
     /**
      * Gets the filesystem states report.
      */
-    public String getFilesystemsCsvReport() {
+    public String getFilesystemsCsvReport() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
     }
     
     /**
      * Gets the output of /proc/loadavg
      */
-    public String getLoadAvgReport() {
+    public String getLoadAvgReport() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_LOADAVG_REPORT, pkey);
     }
     
     /**
      * Gets the output of /proc/meminfo
      */
-    public String getMemInfoReport() {
+    public String getMemInfoReport() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
     }
     
     /**
      * Gets the current system time in milliseconds.
      */
-    public long getSystemTimeMillis() {
+    public long getSystemTimeMillis() throws IOException, SQLException {
         return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
     }
 }

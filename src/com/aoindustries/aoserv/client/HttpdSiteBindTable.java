@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -37,18 +38,24 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
     }
 
     public HttpdSiteBind get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdSiteBind.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public HttpdSiteBind get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdSiteBind.COLUMN_PKEY, pkey);
     }
 
-    public HttpdSiteBind get(int pkey) {
-	return getUniqueRow(HttpdSiteBind.COLUMN_PKEY, pkey);
-    }
-
-    List<HttpdSiteBind> getHttpdSiteBinds(HttpdSite site) {
+    List<HttpdSiteBind> getHttpdSiteBinds(HttpdSite site) throws IOException, SQLException {
         return getIndexedRows(HttpdSiteBind.COLUMN_HTTPD_SITE, site.pkey);
     }
 
-    List<HttpdSiteBind> getHttpdSiteBinds(HttpdSite site, HttpdServer server) {
+    List<HttpdSiteBind> getHttpdSiteBinds(HttpdSite site, HttpdServer server) throws SQLException, IOException {
         int serverPKey=server.pkey;
 
         // Use the index first
@@ -66,7 +73,8 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
 	return SchemaTable.TableID.HTTPD_SITE_BINDS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.DISABLE_HTTPD_SITE_BIND)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_HTTPD_SITE_BIND, args, 2, err)) {

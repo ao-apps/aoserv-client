@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.BufferManager;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -82,7 +82,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         String authGroupFile,
         String authUserFile,
         String require
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.httpdSiteAuthenticatedLocationTable.addHttpdSiteAuthenticatedLocation(
             this,
             path,
@@ -94,13 +94,13 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         );
     }
 
-    public boolean canDisable() {
+    public boolean canDisable() throws IOException, SQLException {
         if(disable_log!=-1) return false;
         for(HttpdSiteBind hsb : getHttpdSiteBinds()) if(hsb.disable_log==-1) return false;
         return true;
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return
@@ -114,22 +114,22 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         return Collections.emptyList();
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITES, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
     /**
      * Gets the directory where this site is installed.
      */
-    public String getInstallDirectory() {
+    public String getInstallDirectory() throws SQLException, IOException {
         return getAOServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory()+'/'+site_name;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
@@ -151,58 +151,58 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         return contentSrc;
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
-    public List<HttpdSiteAuthenticatedLocation> getHttpdSiteAuthenticatedLocations() {
+    public List<HttpdSiteAuthenticatedLocation> getHttpdSiteAuthenticatedLocations() throws IOException, SQLException {
         return table.connector.httpdSiteAuthenticatedLocationTable.getHttpdSiteAuthenticatedLocations(this);
     }
 
-    public List<HttpdSiteBind> getHttpdSiteBinds() {
+    public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
         return table.connector.httpdSiteBinds.getHttpdSiteBinds(this);
     }
 
-    public List<HttpdSiteBind> getHttpdSiteBinds(HttpdServer server) {
+    public List<HttpdSiteBind> getHttpdSiteBinds(HttpdServer server) throws SQLException, IOException {
         return table.connector.httpdSiteBinds.getHttpdSiteBinds(this, server);
     }
 
-    public HttpdStaticSite getHttpdStaticSite() {
+    public HttpdStaticSite getHttpdStaticSite() throws IOException, SQLException {
         return table.connector.httpdStaticSites.get(pkey);
     }
 
-    public HttpdTomcatSite getHttpdTomcatSite() {
+    public HttpdTomcatSite getHttpdTomcatSite() throws IOException, SQLException {
         return table.connector.httpdTomcatSites.get(pkey);
     }
 
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
         // May be filtered
         LinuxAccount obj=table.connector.linuxAccounts.get(linuxAccount);
         if(obj==null) return null;
 
         LinuxServerAccount lsa = obj.getLinuxServerAccount(getAOServer());
-        if (lsa==null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: "+linuxAccount+" on "+ao_server));
+        if (lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linuxAccount+" on "+ao_server);
         return lsa;
     }
 
-    public LinuxServerGroup getLinuxServerGroup() {
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
         LinuxGroup obj=table.connector.linuxGroups.get(linuxGroup);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find LinuxGroup: "+linuxGroup));
+        if(obj==null) throw new SQLException("Unable to find LinuxGroup: "+linuxGroup);
         LinuxServerGroup lsg = obj.getLinuxServerGroup(getAOServer());
-        if(lsg==null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: "+linuxGroup+" on "+ao_server));
+        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup+" on "+ao_server);
         return lsg;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws SQLException, IOException {
         Package obj=table.connector.packages.get(packageName);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find Package: "+packageName));
+        if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
         return obj;
     }
 
-    public HttpdSiteURL getPrimaryHttpdSiteURL() {
+    public HttpdSiteURL getPrimaryHttpdSiteURL() throws SQLException, IOException {
         List<HttpdSiteBind> binds=getHttpdSiteBinds();
         if(binds.isEmpty()) return null;
 
@@ -222,9 +222,9 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         return binds.get(index).getPrimaryHttpdSiteURL();
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
         AOServer obj=table.connector.aoServers.get(ao_server);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+        if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return obj;
     }
 
@@ -325,20 +325,20 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         awstatsSkipFiles=in.readNullUTF();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
-    public void setIsManual(boolean isManual) {
+    public void setIsManual(boolean isManual) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
     }
 
-    public void setServerAdmin(String address) {
+    public void setServerAdmin(String address) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws SQLException, IOException {
         return site_name+" on "+getAOServer().getHostname();
     }
 
@@ -367,40 +367,34 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_129)>=0) out.writeNullUTF(awstatsSkipFiles);
     }
 
-    public void getAWStatsFile(String path, String queryString, OutputStream out) {
+    public void getAWStatsFile(String path, String queryString, OutputStream out) throws IOException, SQLException {
+        AOServConnection connection=table.connector.getConnection();
         try {
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_AWSTATS_FILE.ordinal());
-                masterOut.writeCompressedInt(pkey);
-                masterOut.writeUTF(path);
-                masterOut.writeUTF(queryString==null ? "" : queryString);
-                masterOut.flush();
+            CompressedDataOutputStream masterOut=connection.getOutputStream();
+            masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_AWSTATS_FILE.ordinal());
+            masterOut.writeCompressedInt(pkey);
+            masterOut.writeUTF(path);
+            masterOut.writeUTF(queryString==null ? "" : queryString);
+            masterOut.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                byte[] buff=BufferManager.getBytes();
-                try {
-                    int code;
-                    while((code=in.readByte())==AOServProtocol.NEXT) {
-                        int len=in.readShort();
-                        in.readFully(buff, 0, len);
-                        out.write(buff, 0, len);
-                    }
-                    AOServProtocol.checkResult(code, in);
-                } finally {
-                    BufferManager.release(buff);
+            CompressedDataInputStream in=connection.getInputStream();
+            byte[] buff=BufferManager.getBytes();
+            try {
+                int code;
+                while((code=in.readByte())==AOServProtocol.NEXT) {
+                    int len=in.readShort();
+                    in.readFully(buff, 0, len);
+                    out.write(buff, 0, len);
                 }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
+                AOServProtocol.checkResult(code, in);
             } finally {
-                table.connector.releaseConnection(connection);
+                BufferManager.release(buff);
             }
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
     }
 }

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -160,13 +159,13 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
     private boolean signup_from;
     private boolean signup_recipient;
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
 	Business accountingObject = table.connector.businesses.get(accounting);
-	if (accountingObject == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+	if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
 	return accountingObject;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ACCOUNTING: return accounting;

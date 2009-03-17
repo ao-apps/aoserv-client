@@ -5,7 +5,10 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.sort.AutoSort;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -32,16 +35,22 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
     }
 
     public SchemaType get(Object pkey) {
-        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-        else if(pkey instanceof String) return get((String)pkey);
-        else throw new IllegalArgumentException("Must be an Integer or a String");
+        try {
+            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+            else if(pkey instanceof String) return get((String)pkey);
+            else throw new IllegalArgumentException("Must be an Integer or a String");
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public SchemaType get(int num) {
+    public SchemaType get(int num) throws IOException, SQLException {
         return getRows().get(num);
     }
 
-    public SchemaType get(String type) {
+    public SchemaType get(String type) throws IOException, SQLException {
         return getUniqueRow(SchemaType.COLUMN_TYPE, type);
     }
 

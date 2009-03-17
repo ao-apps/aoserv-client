@@ -59,7 +59,7 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
     ;
 
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return singular_display_unit;

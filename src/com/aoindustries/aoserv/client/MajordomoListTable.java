@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,7 +37,7 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
     int addMajordomoList(
         MajordomoServer majordomoServer,
         String listName
-    ) {
+    ) throws IOException, SQLException {
         return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MAJORDOMO_LISTS,
@@ -46,14 +47,20 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
     }
 
     public MajordomoList get(Object pkey) {
+        try {
+            return getUniqueRow(MajordomoList.COLUMN_EMAIL_LIST, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public MajordomoList get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(MajordomoList.COLUMN_EMAIL_LIST, pkey);
     }
 
-    public MajordomoList get(int pkey) {
-	return getUniqueRow(MajordomoList.COLUMN_EMAIL_LIST, pkey);
-    }
-
-    MajordomoList getMajordomoList(MajordomoServer ms, String listName) {
+    MajordomoList getMajordomoList(MajordomoServer ms, String listName) throws IOException, SQLException {
         int majordomo_server=ms.pkey;
         List<MajordomoList> mls=getRows();
         int len=mls.size();
@@ -67,7 +74,7 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
         return null;
     }
 
-    List<MajordomoList> getMajordomoLists(MajordomoServer server) {
+    List<MajordomoList> getMajordomoLists(MajordomoServer server) throws IOException, SQLException {
         return getIndexedRows(MajordomoList.COLUMN_MAJORDOMO_SERVER, server.pkey);
     }
 
@@ -75,7 +82,8 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
         return SchemaTable.TableID.MAJORDOMO_LISTS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_LIST, args, 3, err)) {

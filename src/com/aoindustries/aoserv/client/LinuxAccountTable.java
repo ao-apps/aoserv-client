@@ -6,7 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -41,49 +43,43 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
 	String home_phone,
 	String type,
 	String shell
-    ) {
+    ) throws IOException, SQLException {
+        String validity=LinuxAccount.checkGECOS(name, "full name");
+        if(validity!=null) throw new SQLException(validity);
+
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
         try {
-            String validity=LinuxAccount.checkGECOS(name, "full name");
-            if(validity!=null) throw new SQLException(validity);
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+            out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
+            out.writeUTF(usernameObject.pkey);
+            out.writeUTF(primaryGroup);
+            out.writeUTF(name);
+            if(office_location!=null && office_location.length()==0) office_location=null;
+            out.writeBoolean(office_location!=null); if(office_location!=null) out.writeUTF(office_location);
+            if(office_phone!=null && office_phone.length()==0) office_phone=null;
+            out.writeBoolean(office_phone!=null); if(office_phone!=null) out.writeUTF(office_phone);
+            if(home_phone!=null && home_phone.length()==0) home_phone=null;
+            out.writeBoolean(home_phone!=null); if(home_phone!=null) out.writeUTF(home_phone);
+            out.writeUTF(type);
+            out.writeUTF(shell);
+             out.flush();
 
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-                out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
-                out.writeUTF(usernameObject.pkey);
-                out.writeUTF(primaryGroup);
-                out.writeUTF(name);
-                if(office_location!=null && office_location.length()==0) office_location=null;
-                out.writeBoolean(office_location!=null); if(office_location!=null) out.writeUTF(office_location);
-                if(office_phone!=null && office_phone.length()==0) office_phone=null;
-                out.writeBoolean(office_phone!=null); if(office_phone!=null) out.writeUTF(office_phone);
-                if(home_phone!=null && home_phone.length()==0) home_phone=null;
-                out.writeBoolean(home_phone!=null); if(home_phone!=null) out.writeUTF(home_phone);
-                out.writeUTF(type);
-                out.writeUTF(shell);
-                 out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
         }
+        connector.tablesUpdated(invalidateList);
     }
     
     private static final String[] CONS = {
@@ -150,11 +146,11 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         "y"
     };
 
-    public static String generatePassword() {
+    public static String generatePassword() throws IOException {
         return generatePassword(AOServConnector.getRandom());
     }
 
-    public static String generatePassword(Random r) {
+    public static String generatePassword(Random r) throws IOException {
         StringBuilder pw = new StringBuilder();
         String password;
         do {
@@ -293,10 +289,16 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
     }
     
     public LinuxAccount get(Object pkey) {
-	return getUniqueRow(LinuxAccount.COLUMN_USERNAME, pkey);
+        try {
+            return getUniqueRow(LinuxAccount.COLUMN_USERNAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public List<LinuxAccount> getMailAccounts() {
+    public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
         List<LinuxAccount> cached = getRows();
         int len = cached.size();
         List<LinuxAccount> matches=new ArrayList<LinuxAccount>(len);
@@ -307,7 +309,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         return matches;
     }
 
-    List<LinuxAccount> getMailAccounts(Business business) {
+    List<LinuxAccount> getMailAccounts(Business business) throws IOException, SQLException {
         String accounting=business.pkey;
         List<LinuxAccount> cached = getRows();
         int len = cached.size();
@@ -326,7 +328,8 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         return SchemaTable.TableID.LINUX_ACCOUNTS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_ACCOUNT, args, 8, err)) {
@@ -443,7 +446,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         return false;
     }
 
-    void waitForRebuild(AOServer aoServer) {
+    void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.LINUX_ACCOUNTS,

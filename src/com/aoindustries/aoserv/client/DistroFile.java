@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.md5.MD5;
-import com.aoindustries.util.WrappedException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -65,7 +64,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_OPERATING_SYSTEM_VERSION: return Integer.valueOf(operating_system_version);
@@ -87,9 +86,9 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         return pkey;
     }
 
-    public OperatingSystemVersion getOperatingSystemVersion() {
+    public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
         OperatingSystemVersion osv=table.connector.operatingSystemVersions.get(operating_system_version);
-        if(osv==null) throw new WrappedException(new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version));
+        if(osv==null) throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
         return osv;
     }
 
@@ -101,9 +100,9 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         return optional;
     }
     
-    public DistroFileType getType() {
+    public DistroFileType getType() throws SQLException {
         DistroFileType fileType=table.connector.distroFileTypes.get(type);
-        if(fileType==null) throw new WrappedException(new SQLException("Unable to find DistroFileType: "+type));
+        if(fileType==null) throw new SQLException("Unable to find DistroFileType: "+type);
         return fileType;
     }
     
@@ -111,17 +110,17 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         return mode;
     }
     
-    public LinuxAccount getLinuxAccount() {
+    public LinuxAccount getLinuxAccount() throws SQLException {
         if(table==null) throw new NullPointerException("table is null");
         if(table.connector==null) throw new NullPointerException("table.connector is null");
         LinuxAccount linuxAccount=table.connector.linuxAccounts.get(linux_account);
-        if(linuxAccount==null) throw new WrappedException(new SQLException("Unable to find LinuxAccount: "+linux_account));
+        if(linuxAccount==null) throw new SQLException("Unable to find LinuxAccount: "+linux_account);
         return linuxAccount;
     }
 
-    public LinuxGroup getLinuxGroup() {
+    public LinuxGroup getLinuxGroup() throws SQLException {
         LinuxGroup linuxGroup=table.connector.linuxGroups.get(linux_group);
-        if(linuxGroup==null) throw new WrappedException(new SQLException("Unable to find LinuxGroup: "+linux_group));
+        if(linuxGroup==null) throw new SQLException("Unable to find LinuxGroup: "+linux_group);
         return linuxGroup;
     }
 

@@ -7,7 +7,8 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -41,7 +42,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     private boolean active;
     private boolean approved;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return accounting;
@@ -65,68 +66,62 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return table.connector.businesses.get(accounting);
     }
     
-    public PackageCategory getPackageCategory() {
+    public PackageCategory getPackageCategory() throws SQLException {
         PackageCategory pc=table.connector.packageCategories.get(category);
-        if(pc==null) throw new WrappedException(new SQLException("Unable to find PackageCategory: "+category));
+        if(pc==null) throw new SQLException("Unable to find PackageCategory: "+category);
         return pc;
     }
 
     /**
      * Gets the list of packages using this definition.
      */
-    public List<Package> getPackages() {
+    public List<Package> getPackages() throws IOException, SQLException {
         return table.connector.packages.getPackages(this);
     }
 
-    public PackageDefinitionLimit getLimit(Resource resource) {
+    public PackageDefinitionLimit getLimit(Resource resource) throws IOException, SQLException {
         if(resource==null) throw new AssertionError("resource is null");
         return table.connector.packageDefinitionLimits.getPackageDefinitionLimit(this, resource);
     }
 
-    public List<PackageDefinitionLimit> getLimits() {
+    public List<PackageDefinitionLimit> getLimits() throws IOException, SQLException {
         return table.connector.packageDefinitionLimits.getPackageDefinitionLimits(this);
     }
 
-    public void setLimits(PackageDefinitionLimit[] limits) {
+    public void setLimits(PackageDefinitionLimit[] limits) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS.ordinal());
-                out.writeCompressedInt(pkey);
-                out.writeCompressedInt(limits.length);
-                for(int c=0;c<limits.length;c++) {
-                    PackageDefinitionLimit limit=limits[c];
-                    out.writeUTF(limit.resource);
-                    out.writeCompressedInt(limit.soft_limit);
-                    out.writeCompressedInt(limit.hard_limit);
-                    out.writeCompressedInt(limit.additional_rate);
-                    out.writeBoolean(limit.additional_transaction_type!=null);
-                    if(limit.additional_transaction_type!=null) out.writeUTF(limit.additional_transaction_type);
-                }
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    invalidateList=AOServConnector.readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unknown response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS.ordinal());
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(limits.length);
+            for(int c=0;c<limits.length;c++) {
+                PackageDefinitionLimit limit=limits[c];
+                out.writeUTF(limit.resource);
+                out.writeCompressedInt(limit.soft_limit);
+                out.writeCompressedInt(limit.hard_limit);
+                out.writeCompressedInt(limit.additional_rate);
+                out.writeBoolean(limit.additional_transaction_type!=null);
+                if(limit.additional_transaction_type!=null) out.writeUTF(limit.additional_transaction_type);
             }
-            table.connector.tablesUpdated(invalidateList);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unknown response code: "+code);
+            }
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
+        table.connector.tablesUpdated(invalidateList);
     }
 
     public String getName() {
@@ -149,10 +144,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return setup_fee;
     }
     
-    public TransactionType getSetupFeeTransactionType() {
+    public TransactionType getSetupFeeTransactionType() throws SQLException {
         if(setup_fee_transaction_type==null) return null;
         TransactionType tt=table.connector.transactionTypes.get(setup_fee_transaction_type);
-        if(tt==null) throw new WrappedException(new SQLException("Unable to find TransactionType: "+setup_fee_transaction_type));
+        if(tt==null) throw new SQLException("Unable to find TransactionType: "+setup_fee_transaction_type);
         return tt;
     }
     
@@ -160,10 +155,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return monthly_rate;
     }
     
-    public TransactionType getMonthlyRateTransactionType() {
+    public TransactionType getMonthlyRateTransactionType() throws SQLException {
         if(monthly_rate_transaction_type==null) return null;
         TransactionType tt=table.connector.transactionTypes.get(monthly_rate_transaction_type);
-        if(tt==null) throw new WrappedException(new SQLException("Unable to find TransactionType: "+monthly_rate_transaction_type));
+        if(tt==null) throw new SQLException("Unable to find TransactionType: "+monthly_rate_transaction_type);
         return tt;
     }
 
@@ -171,11 +166,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return active;
     }
     
-    public int copy() {
+    public int copy() throws IOException, SQLException {
         return table.connector.requestIntQueryIL(AOServProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
     }
 
-    public void setActive(boolean active) {
+    public void setActive(boolean active) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
     }
 
@@ -220,6 +215,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         approved=in.readBoolean();
     }
 
+    @Override
     String toStringImpl() {
         return display;
     }
@@ -240,14 +236,14 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         out.writeBoolean(approved);
     }
     
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>(1);
         List<Package> packs=getPackages();
         if(!packs.isEmpty()) reasons.add(new CannotRemoveReason<Package>("Used by "+packs.size()+" "+(packs.size()==1?"package":"packages"), packs));
         return reasons;
     }
     
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.PACKAGE_DEFINITIONS,
@@ -266,46 +262,40 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         TransactionType setupFeeTransactionType,
         int monthlyRate,
         TransactionType monthlyRateTransactionType
-    ) {
+    ) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION.ordinal());
-                out.writeCompressedInt(pkey);
-                out.writeUTF(business.pkey);
-                out.writeUTF(category.pkey);
-                out.writeUTF(name);
-                out.writeUTF(version);
-                out.writeUTF(display);
-                out.writeUTF(description);
-                out.writeCompressedInt(setupFee);
-                out.writeBoolean(setupFeeTransactionType!=null);
-                if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.pkey);
-                out.writeCompressedInt(monthlyRate);
-                out.writeUTF(monthlyRateTransactionType.pkey);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION.ordinal());
+            out.writeCompressedInt(pkey);
+            out.writeUTF(business.pkey);
+            out.writeUTF(category.pkey);
+            out.writeUTF(name);
+            out.writeUTF(version);
+            out.writeUTF(display);
+            out.writeUTF(description);
+            out.writeCompressedInt(setupFee);
+            out.writeBoolean(setupFeeTransactionType!=null);
+            if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.pkey);
+            out.writeCompressedInt(monthlyRate);
+            out.writeUTF(monthlyRateTransactionType.pkey);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    invalidateList=AOServConnector.readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unknown response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unknown response code: "+code);
             }
-            table.connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
+        table.connector.tablesUpdated(invalidateList);
     }
 }

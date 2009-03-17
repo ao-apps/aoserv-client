@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -34,7 +33,7 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
     private String username;
     private int server;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return username;
@@ -43,15 +42,15 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
         }
     }
 
-    public MasterUser getMasterUser() {
+    public MasterUser getMasterUser() throws SQLException {
 	MasterUser obj=table.connector.masterUsers.get(username);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find MasterUser: "+username));
+	if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
 	return obj;
     }
 
-    public Server getServer() {
+    public Server getServer() throws SQLException, IOException {
 	Server obj=table.connector.servers.get(server);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
+	if(obj==null) throw new SQLException("Unable to find Server: "+server);
 	return obj;
     }
     

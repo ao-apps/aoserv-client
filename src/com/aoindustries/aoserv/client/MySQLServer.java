@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,7 +77,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     public int addMySQLDatabase(
         String name,
         Package pack
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.mysqlDatabases.addMySQLDatabase(
             name,
             this,
@@ -106,7 +105,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	}
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return name;
@@ -131,7 +130,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      * Gets the minor version number in X.X[-max|-source] format.  This corresponds to the installation
      * directory under /usr/mysql/X.X[-max|-source]
      */
-    public String getMinorVersion() {
+    public String getMinorVersion() throws SQLException, IOException {
         String techVersion=getVersion().getVersion();
         int pos=techVersion.indexOf('.');
         if(pos==-1) return techVersion;
@@ -143,21 +142,21 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return S;
     }
 
-    public TechnologyVersion getVersion() {
+    public TechnologyVersion getVersion() throws SQLException, IOException {
 	TechnologyVersion obj=table.connector.technologyVersions.get(version);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+version));
+	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+version);
         if(
             obj.getOperatingSystemVersion(table.connector).getPkey()
             != getAOServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
-            throw new WrappedException(new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey));
+            throw new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey);
         }
 	return obj;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
 	AOServer ao=table.connector.aoServers.get(ao_server);
-	if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return ao;
     }
 
@@ -165,43 +164,43 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return max_connections;
     }
 
-    public NetBind getNetBind() {
+    public NetBind getNetBind() throws SQLException, IOException {
         NetBind nb=table.connector.netBinds.get(net_bind);
-        if(nb==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+net_bind));
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+net_bind);
         return nb;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws SQLException, IOException {
         Package pk=table.connector.packages.get(packageName);
-        if(pk==null) throw new WrappedException(new SQLException("Unable to find Package: "+packageName));
+        if(pk==null) throw new SQLException("Unable to find Package: "+packageName);
         return pk;
     }
 
-    public MySQLDatabase getMySQLDatabase(String name) {
+    public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
 	return table.connector.mysqlDatabases.getMySQLDatabase(name, this);
     }
 
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() {
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
         return table.connector.failoverMySQLReplications.getFailoverMySQLReplications(this);
     }
 
-    public List<MySQLDatabase> getMySQLDatabases() {
+    public List<MySQLDatabase> getMySQLDatabases() throws IOException, SQLException {
 	return table.connector.mysqlDatabases.getMySQLDatabases(this);
     }
 
-    public List<MySQLDBUser> getMySQLDBUsers() {
+    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
 	return table.connector.mysqlDBUsers.getMySQLDBUsers(this);
     }
 
-    public MySQLServerUser getMySQLServerUser(String username) {
+    public MySQLServerUser getMySQLServerUser(String username) throws IOException, SQLException {
 	return table.connector.mysqlServerUsers.getMySQLServerUser(username, this);
     }
 
-    public List<MySQLServerUser> getMySQLServerUsers() {
+    public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
 	return table.connector.mysqlServerUsers.getMySQLServerUsers(this);
     }
 
-    public List<MySQLUser> getMySQLUsers() {
+    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
 	List<MySQLServerUser> psu=getMySQLServerUsers();
 	int len=psu.size();
 	List<MySQLUser> pu=new ArrayList<MySQLUser>(len);
@@ -223,7 +222,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         packageName=result.getString(7);
     }
 
-    public boolean isMySQLDatabaseNameAvailable(String name) {
+    public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
 	return table.connector.mysqlDatabases.isMySQLDatabaseNameAvailable(name, this);
     }
 
@@ -237,20 +236,20 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         packageName=in.readUTF().intern();
     }
 
-    public void restartMySQL() {
+    public void restartMySQL() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_MYSQL, pkey);
     }
 
-    public void startMySQL() {
+    public void startMySQL() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.START_MYSQL, pkey);
     }
 
-    public void stopMySQL() {
+    public void stopMySQL() throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.STOP_MYSQL, pkey);
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws SQLException, IOException {
         return name+" on "+getAOServer().getHostname();
     }
 

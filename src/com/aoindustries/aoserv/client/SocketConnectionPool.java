@@ -77,64 +77,68 @@ final public class SocketConnectionPool extends AOPool {
     private static final int numTables = SchemaTable.TableID.values().length;
 
     protected void printConnectionStats(ChainWriter out) throws IOException {
-        // Create statistics on the caches
-        int totalLoaded=0;
-        int totalCaches=0;
-        int totalActive=0;
-        int totalHashed=0;
-        int totalIndexed=0;
-        int totalRows=0;
-        for(AOServTable table : connector.tables) {
-            totalLoaded++;
-            if(table instanceof CachedTable) {
-                totalCaches++;
-                int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-                CachedTable cached=(CachedTable)table;
-                if(cached.isLoaded()) {
-                    totalActive++;
-                    for(int d=0;d<columnCount;d++) {
-                        if(cached.isHashed(d)) totalHashed++;
-                        if(cached.isIndexed(d)) totalIndexed++;
+        try {
+            // Create statistics on the caches
+            int totalLoaded=0;
+            int totalCaches=0;
+            int totalActive=0;
+            int totalHashed=0;
+            int totalIndexed=0;
+            int totalRows=0;
+            for(AOServTable table : connector.tables) {
+                totalLoaded++;
+                if(table instanceof CachedTable) {
+                    totalCaches++;
+                    int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
+                    CachedTable cached=(CachedTable)table;
+                    if(cached.isLoaded()) {
+                        totalActive++;
+                        for(int d=0;d<columnCount;d++) {
+                            if(cached.isHashed(d)) totalHashed++;
+                            if(cached.isIndexed(d)) totalIndexed++;
+                        }
+                        totalRows+=cached.size();
                     }
-                    totalRows+=cached.size();
-                }
-            } else if(table instanceof GlobalTable) {
-                totalCaches++;
-                int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-                GlobalTable global=(GlobalTable)table;
-                if(global.isLoaded()) {
-                    totalActive++;
-                    for(int d=0;d<columnCount;d++) {
-                        if(global.isHashed(d)) totalHashed++;
-                        if(global.isIndexed(d)) totalIndexed++;
+                } else if(table instanceof GlobalTable) {
+                    totalCaches++;
+                    int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
+                    GlobalTable global=(GlobalTable)table;
+                    if(global.isLoaded()) {
+                        totalActive++;
+                        for(int d=0;d<columnCount;d++) {
+                            if(global.isHashed(d)) totalHashed++;
+                            if(global.isIndexed(d)) totalIndexed++;
+                        }
+                        totalRows+=global.size();
                     }
-                    totalRows+=global.size();
                 }
             }
-        }
 
-        // Show the table statistics
-        out.print("  <TR><TH colspan=2><FONT size=+1>AOServ Tables</FONT></TH></TR>\n"
-                + "  <TR><TD>Total Tables:</TD><TD>").print(numTables).print("</TD></TR>\n"
-                + "  <TR><TD>Loaded:</TD><TD>").print(totalLoaded).print("</TD></TR>\n"
-                + "  <TR><TD>Caches:</TD><TD>").print(totalCaches).print("</TD></TR>\n"
-                + "  <TR><TD>Active:</TD><TD>").print(totalActive).print("</TD></TR>\n"
-                + "  <TR><TD>Hashed:</TD><TD>").print(totalHashed).print("</TD></TR>\n"
-                + "  <TR><TD>Indexes:</TD><TD>").print(totalIndexed).print("</TD></TR>\n"
-                + "  <TR><TD>Total Rows:</TD><TD>").print(totalRows).print("</TD></TR>\n"
-                + "</TABLE>\n"
-                + "<BR><BR>\n"
-                + "<TABLE>\n"
-                + "  <TR><TH colspan=2><FONT size=+1>TCP Connection Pool</FONT></TH></TR>\n"
-                + "  <TR><TD>Host:</TD><TD>").print(connector.hostname).print("</TD></TR>\n"
-                + "  <TR><TD>Port:</TD><TD>").print(connector.port).print("</TD></TR>\n"
-                + "  <TR><TD>Connected As:</TD><TD>").print(connector.connectAs).print("</TD></TR>\n"
-                + "  <TR><TD>Authenticated As:</TD><TD>").print(connector.authenticateAs).print("</TD></TR>\n"
-                + "  <TR><TD>Password:</TD><TD>");
-        String password=connector.password;
-        int len=password.length();
-        for(int c=0;c<len;c++) out.print('*');
-        out.print("</TD></TR>\n");
+            // Show the table statistics
+            out.print("  <TR><TH colspan=2><FONT size=+1>AOServ Tables</FONT></TH></TR>\n"
+                    + "  <TR><TD>Total Tables:</TD><TD>").print(numTables).print("</TD></TR>\n"
+                    + "  <TR><TD>Loaded:</TD><TD>").print(totalLoaded).print("</TD></TR>\n"
+                    + "  <TR><TD>Caches:</TD><TD>").print(totalCaches).print("</TD></TR>\n"
+                    + "  <TR><TD>Active:</TD><TD>").print(totalActive).print("</TD></TR>\n"
+                    + "  <TR><TD>Hashed:</TD><TD>").print(totalHashed).print("</TD></TR>\n"
+                    + "  <TR><TD>Indexes:</TD><TD>").print(totalIndexed).print("</TD></TR>\n"
+                    + "  <TR><TD>Total Rows:</TD><TD>").print(totalRows).print("</TD></TR>\n"
+                    + "</TABLE>\n"
+                    + "<BR><BR>\n"
+                    + "<TABLE>\n"
+                    + "  <TR><TH colspan=2><FONT size=+1>TCP Connection Pool</FONT></TH></TR>\n"
+                    + "  <TR><TD>Host:</TD><TD>").print(connector.hostname).print("</TD></TR>\n"
+                    + "  <TR><TD>Port:</TD><TD>").print(connector.port).print("</TD></TR>\n"
+                    + "  <TR><TD>Connected As:</TD><TD>").print(connector.connectAs).print("</TD></TR>\n"
+                    + "  <TR><TD>Authenticated As:</TD><TD>").print(connector.authenticateAs).print("</TD></TR>\n"
+                    + "  <TR><TD>Password:</TD><TD>");
+            String password=connector.password;
+            int len=password.length();
+            for(int c=0;c<len;c++) out.print('*');
+            out.print("</TD></TR>\n");
+        } catch(SQLException err) {
+            throw new IOException(err);
+        }
     }
 
     void printStatisticsHTML(ChainWriter out) throws IOException {

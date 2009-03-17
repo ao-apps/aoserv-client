@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,20 +33,26 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
     }
 
     public AOServer get(Object pkey) {
-        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-        else if(pkey instanceof String) return get((String)pkey);
-        else throw new IllegalArgumentException("Must be an Integer or a String");
+        try {
+            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+            else if(pkey instanceof String) return get((String)pkey);
+            else throw new IllegalArgumentException("Must be an Integer or a String");
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public AOServer get(int pkey) {
+    public AOServer get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(AOServer.COLUMN_SERVER, pkey);
     }
 
-    public AOServer get(String hostname) {
+    public AOServer get(String hostname) throws IOException, SQLException {
 	return getUniqueRow(AOServer.COLUMN_HOSTNAME, hostname);
     }
 
-    AOServer getAOServerByDaemonNetBind(NetBind nb) {
+    AOServer getAOServerByDaemonNetBind(NetBind nb) throws IOException, SQLException {
         int pkey=nb.pkey;
         List<AOServer> servers=getRows();
         int size=servers.size();
@@ -56,7 +63,7 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
         return null;
     }
 
-    AOServer getAOServerByJilterNetBind(NetBind nb) {
+    AOServer getAOServerByJilterNetBind(NetBind nb) throws IOException, SQLException {
         int pkey=nb.pkey;
         List<AOServer> servers=getRows();
         int size=servers.size();
@@ -70,7 +77,7 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
     /**
      * @see  AOServer#getNestedAOServers()
      */
-    List<AOServer> getNestedAOServers(AOServer server) {
+    List<AOServer> getNestedAOServers(AOServer server) throws IOException, SQLException {
         int pkey=server.pkey;
         List<AOServer> servers=getRows();
         int size=servers.size();
@@ -87,7 +94,8 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
 	return SchemaTable.TableID.AO_SERVERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.GET_MRTG_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_MRTG_FILE, args, 2, err)) {

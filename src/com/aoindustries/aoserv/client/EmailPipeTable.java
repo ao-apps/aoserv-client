@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,7 +33,7 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
         return defaultOrderBy;
     }
 
-    int addEmailPipe(AOServer ao, String path, Package packageObject) {
+    int addEmailPipe(AOServer ao, String path, Package packageObject) throws IOException, SQLException {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_PIPES,
@@ -44,18 +45,24 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
     }
 
     public EmailPipe get(Object pkey) {
+        try {
+            return getUniqueRow(EmailPipe.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public EmailPipe get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EmailPipe.COLUMN_PKEY, pkey);
     }
 
-    public EmailPipe get(int pkey) {
-	return getUniqueRow(EmailPipe.COLUMN_PKEY, pkey);
-    }
-
-    List<EmailPipe> getEmailPipes(Package pack) {
+    List<EmailPipe> getEmailPipes(Package pack) throws IOException, SQLException {
         return getIndexedRows(EmailPipe.COLUMN_PACKAGE, pack.name);
     }
 
-    List<EmailPipe> getEmailPipes(AOServer ao) {
+    List<EmailPipe> getEmailPipes(AOServer ao) throws IOException, SQLException {
         return getIndexedRows(EmailPipe.COLUMN_AO_SERVER, ao.pkey);
     }
 
@@ -63,7 +70,8 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 	return SchemaTable.TableID.EMAIL_PIPES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_PIPE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_PIPE, args, 3, err)) {

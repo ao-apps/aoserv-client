@@ -1,5 +1,8 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +38,20 @@ final public class BusinessAdministratorPermissionTable extends CachedTableInteg
     }
 
     public BusinessAdministratorPermission get(Object pkey) {
-	return getUniqueRow(BusinessAdministratorPermission.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(BusinessAdministratorPermission.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
     }
 
-    List<BusinessAdministratorPermission> getPermissions(BusinessAdministrator ba) {
+    List<BusinessAdministratorPermission> getPermissions(BusinessAdministrator ba) throws IOException, SQLException {
         return getIndexedRows(BusinessAdministratorPermission.COLUMN_USERNAME, ba.pkey);
     }
     
@@ -59,7 +68,7 @@ final public class BusinessAdministratorPermissionTable extends CachedTableInteg
         }
     }
     
-    boolean hasPermission(BusinessAdministrator ba, String permission) {
+    boolean hasPermission(BusinessAdministrator ba, String permission) throws IOException, SQLException {
         synchronized(this) {
             if(cachedPermissions==null) {
                 Map<String,SortedSet<String>> newCachedPermissions = new HashMap<String,SortedSet<String>>();

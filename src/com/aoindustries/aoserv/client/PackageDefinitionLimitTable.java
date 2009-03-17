@@ -38,19 +38,25 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
         return defaultOrderBy;
     }
 
-    List<PackageDefinitionLimit> getPackageDefinitionLimits(PackageDefinition packageDefinition) {
+    List<PackageDefinitionLimit> getPackageDefinitionLimits(PackageDefinition packageDefinition) throws IOException, SQLException {
         return getIndexedRows(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION, packageDefinition.pkey);
     }
 
     public PackageDefinitionLimit get(Object pkey) {
+        try {
+            return getUniqueRow(PackageDefinitionLimit.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public PackageDefinitionLimit get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(PackageDefinitionLimit.COLUMN_PKEY, pkey);
     }
 
-    public PackageDefinitionLimit get(int pkey) {
-	return getUniqueRow(PackageDefinitionLimit.COLUMN_PKEY, pkey);
-    }
-
-    PackageDefinitionLimit getPackageDefinitionLimit(PackageDefinition packageDefinition, Resource resource) {
+    PackageDefinitionLimit getPackageDefinitionLimit(PackageDefinition packageDefinition, Resource resource) throws IOException, SQLException {
         if(packageDefinition==null) throw new AssertionError("packageDefinition is null");
         if(resource==null) throw new AssertionError("resource is null");
         String resourceName=resource.pkey;

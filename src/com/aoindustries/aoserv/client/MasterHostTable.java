@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,10 +33,16 @@ final public class MasterHostTable extends CachedTableIntegerKey<MasterHost> {
     }
 
     public MasterHost get(Object pkey) {
-	return getUniqueRow(MasterHost.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(MasterHost.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public MasterHost get(int pkey) {
+    public MasterHost get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(MasterHost.COLUMN_PKEY, pkey);
     }
 

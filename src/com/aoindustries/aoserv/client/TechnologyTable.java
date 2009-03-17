@@ -5,6 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -34,14 +37,20 @@ final public class TechnologyTable extends GlobalTableIntegerKey<Technology> {
     }
 
     public Technology get(Object pkey) {
+        try {
+            return getUniqueRow(Technology.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public Technology get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(Technology.COLUMN_PKEY, pkey);
     }
 
-    public Technology get(int pkey) {
-	return getUniqueRow(Technology.COLUMN_PKEY, pkey);
-    }
-
-    List<Technology> getTechnologies(TechnologyName techName) {
+    List<Technology> getTechnologies(TechnologyName techName) throws IOException, SQLException {
         return getIndexedRows(Technology.COLUMN_NAME, techName.pkey);
     }
 }

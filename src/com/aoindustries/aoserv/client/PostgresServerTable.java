@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -40,7 +41,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
         int sortMem,
         int sharedBuffers,
         boolean fsync
-    ) {
+    ) throws IOException, SQLException {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_SERVERS,
@@ -55,22 +56,28 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
     }
 
     public PostgresServer get(Object pkey) {
+        try {
+            return getUniqueRow(PostgresServer.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public PostgresServer get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(PostgresServer.COLUMN_PKEY, pkey);
     }
 
-    public PostgresServer get(int pkey) {
-	return getUniqueRow(PostgresServer.COLUMN_PKEY, pkey);
-    }
-
-    PostgresServer getPostgresServer(NetBind nb) {
+    PostgresServer getPostgresServer(NetBind nb) throws IOException, SQLException {
 	return (PostgresServer)getUniqueRow(PostgresServer.COLUMN_NET_BIND, nb.pkey);
     }
 
-    List<PostgresServer> getPostgresServers(AOServer ao) {
+    List<PostgresServer> getPostgresServers(AOServer ao) throws IOException, SQLException {
         return getIndexedRows(PostgresServer.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    PostgresServer getPostgresServer(String name, AOServer ao) {
+    PostgresServer getPostgresServer(String name, AOServer ao) throws IOException, SQLException {
         // Use the index first
         List<PostgresServer> table=getPostgresServers(ao);
 	int size=table.size();
@@ -85,7 +92,8 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 	return SchemaTable.TableID.POSTGRES_SERVERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.CHECK_POSTGRES_SERVER_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_POSTGRES_SERVER_NAME, args, 1, err)) {
@@ -150,11 +158,11 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 	return false;
     }
 
-    boolean isPostgresServerNameAvailable(String name, AOServer ao) {
+    boolean isPostgresServerNameAvailable(String name, AOServer ao) throws IOException, SQLException {
 	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.pkey);
     }
 
-    void waitForRebuild(AOServer aoServer) {
+    void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.POSTGRES_SERVERS,

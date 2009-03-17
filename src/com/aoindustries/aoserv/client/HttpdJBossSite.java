@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -36,7 +35,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
         hypersonicBind,
         jmxBind;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_TOMCAT_SITE) return Integer.valueOf(pkey);
 	if(i==1) return Integer.valueOf(version);	
 	if(i==2) return Integer.valueOf(jnpBind);
@@ -47,39 +46,39 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public HttpdJBossVersion getHttpdJBossVersion() {
+    public HttpdJBossVersion getHttpdJBossVersion() throws SQLException, IOException {
 	HttpdJBossVersion obj=table.connector.httpdJBossVersions.get(version);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdJBossVersion: "+version));
+	if(obj==null) throw new SQLException("Unable to find HttpdJBossVersion: "+version);
 	return obj;
     }
 
-    public HttpdTomcatSite getHttpdTomcatSite() {
+    public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
 	HttpdTomcatSite obj=table.connector.httpdTomcatSites.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdTomcatSite: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
 	return obj;
     }
 
-    public NetBind getHypersonicBind() {
+    public NetBind getHypersonicBind() throws IOException, SQLException {
 	NetBind obj=table.connector.netBinds.get(hypersonicBind);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+hypersonicBind));
+	if(obj==null) throw new SQLException("Unable to find NetBind: "+hypersonicBind);
 	return obj;
     }
 
-    public NetBind getJmxBind() {
+    public NetBind getJmxBind() throws IOException, SQLException {
 	NetBind obj=table.connector.netBinds.get(jmxBind);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+jmxBind));
+	if(obj==null) throw new SQLException("Unable to find NetBind: "+jmxBind);
 	return obj;
     }
 
-    public NetBind getJnpBind() {
+    public NetBind getJnpBind() throws IOException, SQLException {
 	NetBind obj=table.connector.netBinds.get(jnpBind);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+jnpBind));
+	if(obj==null) throw new SQLException("Unable to find NetBind: "+jnpBind);
 	return obj;
     }
 
-    public NetBind getRmiBind() {
+    public NetBind getRmiBind() throws SQLException, IOException {
 	NetBind obj=table.connector.netBinds.get(rmiBind);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+rmiBind));
+	if(obj==null) throw new SQLException("Unable to find NetBind: "+rmiBind);
 	return obj;
     }
 
@@ -87,9 +86,9 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 	return SchemaTable.TableID.HTTPD_JBOSS_SITES;
     }
 
-    public NetBind getWebserverBind() {
+    public NetBind getWebserverBind() throws IOException, SQLException {
 	NetBind obj=table.connector.netBinds.get(webserverBind);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+webserverBind));
+	if(obj==null) throw new SQLException("Unable to find NetBind: "+webserverBind);
 	return obj;
     }
 
@@ -113,7 +112,8 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 	jmxBind=in.readCompressedInt();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getHttpdTomcatSite().toString();
     }
 

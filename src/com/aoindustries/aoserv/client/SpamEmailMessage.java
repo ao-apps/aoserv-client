@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -51,9 +50,9 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
         return pkey;
     }
     
-    public EmailSmtpRelay getEmailSmtpRelay() {
+    public EmailSmtpRelay getEmailSmtpRelay() throws SQLException, IOException {
 	EmailSmtpRelay er=table.connector.emailSmtpRelays.get(email_relay);
-	if(er==null) throw new WrappedException(new SQLException("Unable to find EmailSmtpRelay: "+email_relay));
+	if(er==null) throw new SQLException("Unable to find EmailSmtpRelay: "+email_relay);
 	return er;
     }
     
@@ -66,7 +65,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
     }
 
     @Override
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return Integer.valueOf(email_relay);

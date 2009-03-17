@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.zip.*;
 import java.io.*;
 import java.util.*;
@@ -80,147 +80,143 @@ final public class PasswordChecker {
         return results;
     }
 
-    public static Result[] checkPassword(Locale userLocale, String username, String password, boolean strict, boolean superLax) {
-        try {
-            Result[] results = getAllGoodResults(userLocale);
-            int passwordLen = password.length();
-            if (passwordLen > 0) {
-                /*
-                 * Check the length of the password
-                 *
-                 * Must be at least eight characters
-                 */
-                if (passwordLen < (superLax?6:8)) results[0].result = ApplicationResourcesAccessor.getMessage(userLocale, superLax ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
+    public static Result[] checkPassword(Locale userLocale, String username, String password, boolean strict, boolean superLax) throws IOException {
+        Result[] results = getAllGoodResults(userLocale);
+        int passwordLen = password.length();
+        if (passwordLen > 0) {
+            /*
+             * Check the length of the password
+             *
+             * Must be at least eight characters
+             */
+            if (passwordLen < (superLax?6:8)) results[0].result = ApplicationResourcesAccessor.getMessage(userLocale, superLax ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
 
-                /*
-                 * Gather password stats
-                 */
-                int lowercount = 0;
-                int uppercount = 0;
-                int numbercount = 0;
-                int specialcount = 0;
-                int ch;
-                for (int c = 0; c < passwordLen; c++) {
-                    if ((ch = password.charAt(c)) >= 'A' && ch <= 'Z') uppercount++;
-                    else if (ch >= 'a' && ch <= 'z') lowercount++;
-                    else if (ch >= '0' && ch <= '9') numbercount++;
-                    else if (ch <= ' ') specialcount++;
-                }
+            /*
+             * Gather password stats
+             */
+            int lowercount = 0;
+            int uppercount = 0;
+            int numbercount = 0;
+            int specialcount = 0;
+            int ch;
+            for (int c = 0; c < passwordLen; c++) {
+                if ((ch = password.charAt(c)) >= 'A' && ch <= 'Z') uppercount++;
+                else if (ch >= 'a' && ch <= 'z') lowercount++;
+                else if (ch >= '0' && ch <= '9') numbercount++;
+                else if (ch <= ' ') specialcount++;
+            }
 
-                /*
-                 * Must use numbers and/or punctuation
-                 *
-                 * 1) Must contain numbers/punctuation
-                 * 2) Must not be all numbers
-                 * 3) Must not contain a space
-                 */
-                if ((numbercount + specialcount) == passwordLen) results[1].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.characters.notOnlyNumbers");
-                else if (!superLax && (lowercount + uppercount + specialcount) == passwordLen) results[1].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.characters.numbersAndPunctuation");
-                else if (password.indexOf(' ')!=-1) results[1].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.characters.notContainSpace");
+            /*
+             * Must use numbers and/or punctuation
+             *
+             * 1) Must contain numbers/punctuation
+             * 2) Must not be all numbers
+             * 3) Must not contain a space
+             */
+            if ((numbercount + specialcount) == passwordLen) results[1].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.characters.notOnlyNumbers");
+            else if (!superLax && (lowercount + uppercount + specialcount) == passwordLen) results[1].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.characters.numbersAndPunctuation");
+            else if (password.indexOf(' ')!=-1) results[1].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.characters.notContainSpace");
 
-                /*
-                 * Must use different cases
-                 *
-                 * If more than one letter exists, force different case
-                 */
-                if (
-                    !superLax
-                    && (
-                        (lowercount > 1 && uppercount == 0)
-                        || (uppercount > 1 && lowercount == 0)
-                        || (lowercount == 0 && uppercount == 0)
-                    )
-                ) results[2].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.case.capitalAndLower");
+            /*
+             * Must use different cases
+             *
+             * If more than one letter exists, force different case
+             */
+            if (
+                !superLax
+                && (
+                    (lowercount > 1 && uppercount == 0)
+                    || (uppercount > 1 && lowercount == 0)
+                    || (lowercount == 0 && uppercount == 0)
+                )
+            ) results[2].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.case.capitalAndLower");
 
-                /*
-                 * Generate the backwards version of the password
-                 */
-                String backwards;
-                {
-                    char[] backwards_ca = new char[passwordLen];
-                    for (int c = 0; c < passwordLen; c++) backwards_ca[c] = password.charAt(passwordLen - c - 1);
-                    backwards = new String(backwards_ca);
-                }
+            /*
+             * Generate the backwards version of the password
+             */
+            String backwards;
+            {
+                char[] backwards_ca = new char[passwordLen];
+                for (int c = 0; c < passwordLen; c++) backwards_ca[c] = password.charAt(passwordLen - c - 1);
+                backwards = new String(backwards_ca);
+            }
 
-                /*
-                 * Must not be the same as your username
-                 */
-                if(username!=null && username.equalsIgnoreCase(password)) {
-                    results[4].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.dictionary.notSameAsUsername");
-                }
+            /*
+             * Must not be the same as your username
+             */
+            if(username!=null && username.equalsIgnoreCase(password)) {
+                results[4].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.dictionary.notSameAsUsername");
+            }
 
-                /*
-                 * Must not contain a date
-                 * <p>
-                 * Does not contain, forwards or backwards and case insensitive (FBCI), jan ... dec<br>
-                 * Removed -> Does not contain the two digit representation of the current year, last year, or
-                 * Removed -> next year, and a month 1-12 (strict mode only)
-                 */
-                if (!superLax) {
-                    String lowerf = password.toLowerCase();
-                    String lowerb = backwards.toLowerCase();
-                    boolean goodb = true;
-                    int len = months.length;
-                    for (int c = 0; c < len; c++) {
-                        String month = months[c].toLowerCase();
-                        if (lowerf.indexOf(month) != -1 || lowerb.indexOf(month) != -1) {
-                            goodb = false;
-                            break;
-                        }
+            /*
+             * Must not contain a date
+             * <p>
+             * Does not contain, forwards or backwards and case insensitive (FBCI), jan ... dec<br>
+             * Removed -> Does not contain the two digit representation of the current year, last year, or
+             * Removed -> next year, and a month 1-12 (strict mode only)
+             */
+            if (!superLax) {
+                String lowerf = password.toLowerCase();
+                String lowerb = backwards.toLowerCase();
+                boolean goodb = true;
+                int len = months.length;
+                for (int c = 0; c < len; c++) {
+                    String month = months[c].toLowerCase();
+                    if (lowerf.indexOf(month) != -1 || lowerb.indexOf(month) != -1) {
+                        goodb = false;
+                        break;
                     }
-                    if (!goodb) results[3].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.dates.noDate");
+                }
+                if (!goodb) results[3].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.dates.noDate");
 
-                    if(results[4].result.equals(ApplicationResourcesAccessor.getMessage(userLocale, GOOD_KEY))) {
-                        /*
-                         * Dictionary check
-                         *
-                         * Must not contain a dictionary word, forward or backword and case insensitive,
-                         * that is longer than half the length of the password if strict or 2 characters if not strict.
-                         */
-                        byte[] words = getDictionary();
+                if(results[4].result.equals(ApplicationResourcesAccessor.getMessage(userLocale, GOOD_KEY))) {
+                    /*
+                     * Dictionary check
+                     *
+                     * Must not contain a dictionary word, forward or backword and case insensitive,
+                     * that is longer than half the length of the password if strict or 2 characters if not strict.
+                     */
+                    byte[] words = getDictionary();
 
-                        int max_allowed_dict_len = strict ? 3 : (passwordLen / 2);
+                    int max_allowed_dict_len = strict ? 3 : (passwordLen / 2);
 
-                        // Search through each dictionary word
-                        int wordslen = words.length;
-                        int pos = 0;
-                        String longest = "";
-                        boolean longest_forwards = true;
-                    Loop :
-                        while (pos < wordslen) {
-                            // Find the beginning of the next word
-                            while (pos < wordslen && words[pos] <= ' ') pos++;
+                    // Search through each dictionary word
+                    int wordslen = words.length;
+                    int pos = 0;
+                    String longest = "";
+                    boolean longest_forwards = true;
+                Loop :
+                    while (pos < wordslen) {
+                        // Find the beginning of the next word
+                        while (pos < wordslen && words[pos] <= ' ') pos++;
 
-                            // Search to the end of the word
-                            int startpos = pos;
-                            while (pos < wordslen && words[pos] > ' ') pos++;
+                        // Search to the end of the word
+                        int startpos = pos;
+                        while (pos < wordslen && words[pos] > ' ') pos++;
 
-                            // Get the word
-                            int wordlen = pos - startpos;
-                            if (wordlen > max_allowed_dict_len) {
-                                if (indexOfIgnoreCase(password, words, startpos, wordlen) != -1) {
-                                    if (longest_forwards ? (wordlen > longest.length()) : (wordlen >= longest.length())) {
-                                        longest = new String(words, startpos, wordlen);
-                                        longest_forwards = true;
-                                    }
-                                } else if (indexOfIgnoreCase(backwards, words, startpos, wordlen) != -1) {
-                                    if (wordlen > longest.length()) {
-                                        longest = new String(words, startpos, wordlen);
-                                        longest_forwards = false;
-                                    }
+                        // Get the word
+                        int wordlen = pos - startpos;
+                        if (wordlen > max_allowed_dict_len) {
+                            if (indexOfIgnoreCase(password, words, startpos, wordlen) != -1) {
+                                if (longest_forwards ? (wordlen > longest.length()) : (wordlen >= longest.length())) {
+                                    longest = new String(words, startpos, wordlen);
+                                    longest_forwards = true;
+                                }
+                            } else if (indexOfIgnoreCase(backwards, words, startpos, wordlen) != -1) {
+                                if (wordlen > longest.length()) {
+                                    longest = new String(words, startpos, wordlen);
+                                    longest_forwards = false;
                                 }
                             }
                         }
-                        if (longest.length() > 0) {
-                            results[4].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.dictionary.basedOnWord", longest);
-                        }
+                    }
+                    if (longest.length() > 0) {
+                        results[4].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.dictionary.basedOnWord", longest);
                     }
                 }
-            } else results[0].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.length.noPassword");
-            return results;
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        }
+            }
+        } else results[0].result = ApplicationResourcesAccessor.getMessage(userLocale, "PasswordChecker.length.noPassword");
+        return results;
     }
 /**
  * TODO: Need to pull the values from ApplicationResources here based on locales.
@@ -318,7 +314,7 @@ final public class PasswordChecker {
                 .print(results[c].getCategory())
                 .print(":</TD><TD nowrap>")
                 .print(results[c].getResult())
-                .print("</TD></TR>\n");
+                .print("</TD></TR>\n")
             ;
         }
         out.print("    </TABLE>\n");
@@ -336,7 +332,7 @@ final public class PasswordChecker {
                 .append(results[c].getCategory())
                 .append(":</TD><TD nowrap>")
                 .append(results[c].getResult())
-                .append("</TD></TR>\n");
+                .append("</TD></TR>\n")
             ;
         }
         SB.append("    </TABLE>\n");

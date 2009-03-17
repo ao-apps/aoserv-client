@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -59,9 +59,9 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	return StringUtility.splitStringCommaSpace(billingEmail);
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
 	Business business=table.connector.businesses.get(accounting);
-        if (business == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+        if (business == null) throw new SQLException("Unable to find Business: " + accounting);
         return business;
     }
 
@@ -69,7 +69,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	return city;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ACCOUNTING: return accounting;
@@ -94,9 +94,9 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
         }
     }
 
-    public CountryCode getCountry() {
+    public CountryCode getCountry() throws SQLException {
         CountryCode countryCode = table.connector.countryCodes.get(country);
-        if (countryCode == null) throw new WrappedException(new SQLException("CountryCode not found: " + country));
+        if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
         return countryCode;
     }
 

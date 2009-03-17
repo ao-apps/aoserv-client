@@ -1,10 +1,14 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+
 /*
  * Copyright 2002-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @see  PostgresVersion
@@ -28,14 +32,20 @@ final public class PostgresVersionTable extends GlobalTableIntegerKey<PostgresVe
     }
 
     public PostgresVersion get(Object pkey) {
+        try {
+            return getUniqueRow(PostgresVersion.COLUMN_VERSION, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public PostgresVersion get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(PostgresVersion.COLUMN_VERSION, pkey);
     }
 
-    public PostgresVersion get(int pkey) {
-	return getUniqueRow(PostgresVersion.COLUMN_VERSION, pkey);
-    }
-
-    public PostgresVersion getPostgresVersion(String version, OperatingSystemVersion osv) {
+    public PostgresVersion getPostgresVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {
 	return get(
             connector
             .technologyNames

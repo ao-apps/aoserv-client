@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,18 +33,24 @@ final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
     }
 
     public HttpdServer get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdServer.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public HttpdServer get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdServer.COLUMN_PKEY, pkey);
     }
 
-    public HttpdServer get(int pkey) {
-	return getUniqueRow(HttpdServer.COLUMN_PKEY, pkey);
-    }
-
-    List<HttpdServer> getHttpdServers(AOServer ao) {
+    List<HttpdServer> getHttpdServers(AOServer ao) throws IOException, SQLException {
         return getIndexedRows(HttpdServer.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    List<HttpdServer> getHttpdServers(Package pk) {
+    List<HttpdServer> getHttpdServers(Package pk) throws IOException, SQLException {
         return getIndexedRows(HttpdServer.COLUMN_PACKAGE, pk.pkey);
     }
 

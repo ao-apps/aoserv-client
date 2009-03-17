@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -37,7 +38,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         LinuxServerAccount linuxServerAccount,
         LinuxServerGroup linuxServerGroup,
         MajordomoVersion majordomoVersion
-    ) {
+    ) throws IOException, SQLException {
         connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MAJORDOMO_SERVERS,
@@ -49,14 +50,20 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
     }
 
     public MajordomoServer get(Object pkey) {
+        try {
+            return getUniqueRow(MajordomoServer.COLUMN_DOMAIN, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public MajordomoServer get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(MajordomoServer.COLUMN_DOMAIN, pkey);
     }
 
-    public MajordomoServer get(int pkey) {
-	return getUniqueRow(MajordomoServer.COLUMN_DOMAIN, pkey);
-    }
-
-    List<MajordomoServer> getMajordomoServers(AOServer ao) {
+    List<MajordomoServer> getMajordomoServers(AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
         List<MajordomoServer> cached=getRows();
         int size=cached.size();
@@ -72,7 +79,8 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         return SchemaTable.TableID.MAJORDOMO_SERVERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_SERVER, args, 5, err)) {

@@ -55,11 +55,11 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	int mx_priority,
 	String destination,
         int ttl
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.dnsRecords.addDNSRecord(this, domain, type, mx_priority, destination, ttl);
     }
 
-    public void dump(PrintWriter out) {
+    public void dump(PrintWriter out) throws SQLException, IOException {
 	printZoneFile(out);
     }
 
@@ -93,7 +93,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         return oct3+'.'+oct2+'.'+oct1+".in-addr.arpa";
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_ZONE: return pkey;
             case 1: return file;
@@ -115,11 +115,11 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	;
     }
 
-    public List<DNSRecord> getDNSRecords() {
+    public List<DNSRecord> getDNSRecords() throws IOException, SQLException {
 	return table.connector.dnsRecords.getDNSRecords(this);
     }
 
-    public List<DNSRecord> getDNSRecords(String domain, DNSType type) {
+    public List<DNSRecord> getDNSRecords(String domain, DNSType type) throws IOException, SQLException {
         return table.connector.dnsRecords.getDNSRecords(this, domain, type);
     }
 
@@ -131,9 +131,9 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	return hostmaster;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws SQLException, IOException {
 	Package obj=table.connector.packages.get(packageName);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find Package: "+packageName));
+	if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
 	return obj;
     }
 
@@ -153,7 +153,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	return pkey;
     }
 
-    public String getZoneFile() {
+    public String getZoneFile() throws SQLException, IOException {
 	ByteArrayOutputStream bout=new ByteArrayOutputStream();
 	PrintWriter out=new PrintWriter(bout);
 	printZoneFile(out);
@@ -213,7 +213,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         }
     }
 
-    public void printZoneFile(PrintWriter out) {
+    public void printZoneFile(PrintWriter out) throws SQLException, IOException {
 	List<DNSRecord> records=getDNSRecords();
 	out.print("$TTL    ");
         out.print(ttl);
@@ -290,11 +290,11 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_ZONES, pkey);
     }
     
-    public void setTTL(int ttl) {
+    public void setTTL(int ttl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_DNS_ZONE_TTL, pkey, ttl);
         this.ttl=ttl;
     }

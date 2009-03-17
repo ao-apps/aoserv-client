@@ -5,13 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.unix.UnixFile;
 import com.aoindustries.security.AccountDisabledException;
 import com.aoindustries.security.BadPasswordException;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.WrappedException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         return defaultOrderBy;
     }
 
-    int addLinuxServerAccount(LinuxAccount linuxAccount, AOServer aoServer, String home) {
+    int addLinuxServerAccount(LinuxAccount linuxAccount, AOServer aoServer, String home) throws IOException, SQLException {
         int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_SERVER_ACCOUNTS,
@@ -64,14 +65,20 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
     }
 
     public LinuxServerAccount get(Object pkey) {
+        try {
+            return getUniqueRow(LinuxServerAccount.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public LinuxServerAccount get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(LinuxServerAccount.COLUMN_PKEY, pkey);
     }
 
-    public LinuxServerAccount get(int pkey) {
-	return getUniqueRow(LinuxServerAccount.COLUMN_PKEY, pkey);
-    }
-
-    List<LinuxServerAccount> getAlternateLinuxServerAccounts(LinuxServerGroup group) {
+    List<LinuxServerAccount> getAlternateLinuxServerAccounts(LinuxServerGroup group) throws SQLException, IOException {
         int aoServer=group.getAOServer().pkey;
         String groupName = group.getLinuxGroup().pkey;
 
@@ -94,7 +101,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
     private boolean nameHashBuilt=false;
     private final Map<Integer,Map<String,LinuxServerAccount>> nameHash=new HashMap<Integer,Map<String,LinuxServerAccount>>();
 
-    LinuxServerAccount getLinuxServerAccount(AOServer aoServer, String username) {
+    LinuxServerAccount getLinuxServerAccount(AOServer aoServer, String username) throws IOException, SQLException {
         synchronized(nameHash) {
             if(!nameHashBuilt) {
                 nameHash.clear();
@@ -106,7 +113,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
                     Integer I=Integer.valueOf(lsa.getAOServer().pkey);
                     Map<String,LinuxServerAccount> serverHash=nameHash.get(I);
                     if(serverHash==null) nameHash.put(I, serverHash=new HashMap<String,LinuxServerAccount>());
-                    if(serverHash.put(lsa.username, lsa)!=null) throw new WrappedException(new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.username+" on "+I.intValue()));
+                    if(serverHash.put(lsa.username, lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.username+" on "+I.intValue());
                 }
                 nameHashBuilt=true;
             }
@@ -124,7 +131,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
      *
      * @exception  LoginException  if a possible account match is found but the account is disabled or has a different password
      */
-    public LinuxServerAccount getLinuxServerAccountFromUsernamePassword(String username, String password, boolean emailOnly) throws LoginException {
+    public LinuxServerAccount getLinuxServerAccountFromUsernamePassword(String username, String password, boolean emailOnly) throws LoginException, IOException, SQLException {
         List<LinuxServerAccount> list = getRows();
         LinuxServerAccount badPasswordLSA=null;
         LinuxServerAccount disabledLSA=null;
@@ -163,7 +170,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
      *
      * @exception  LoginException  if a possible account match is found but the account is disabled or has a different password
      */
-    public LinuxServerAccount getLinuxServerAccountFromEmailAddress(String address, String domain, String password) throws LoginException {
+    public LinuxServerAccount getLinuxServerAccountFromEmailAddress(String address, String domain, String password) throws LoginException, IOException, SQLException {
         LinuxServerAccount badPasswordLSA=null;
         LinuxServerAccount disabledLSA=null;
 
@@ -205,7 +212,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
     private boolean uidHashBuilt=false;
     private final Map<Integer,Map<Integer,LinuxServerAccount>> uidHash=new HashMap<Integer,Map<Integer,LinuxServerAccount>>();
 
-    LinuxServerAccount getLinuxServerAccount(AOServer aoServer, int uid) {
+    LinuxServerAccount getLinuxServerAccount(AOServer aoServer, int uid) throws IOException, SQLException {
         synchronized(uidHash) {
             if(!uidHashBuilt) {
                 uidHash.clear();
@@ -232,15 +239,15 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         }
     }
 
-    List<LinuxServerAccount> getLinuxServerAccounts(LinuxAccount linuxAccount) {
+    List<LinuxServerAccount> getLinuxServerAccounts(LinuxAccount linuxAccount) throws IOException, SQLException {
         return getIndexedRows(LinuxServerAccount.COLUMN_USERNAME, linuxAccount.pkey);
     }
 
-    List<LinuxServerAccount> getLinuxServerAccounts(AOServer aoServer) {
+    List<LinuxServerAccount> getLinuxServerAccounts(AOServer aoServer) throws IOException, SQLException {
         return getIndexedRows(LinuxServerAccount.COLUMN_AO_SERVER, aoServer.pkey);
     }
 
-    public List<LinuxServerAccount> getMailAccounts() {
+    public List<LinuxServerAccount> getMailAccounts() throws IOException, SQLException {
         List<LinuxServerAccount> cached = getRows();
         int len = cached.size();
         List<LinuxServerAccount> matches=new ArrayList<LinuxServerAccount>(len);
@@ -256,7 +263,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_SERVER_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_SERVER_ACCOUNT, args, 3, err)) {
@@ -473,7 +480,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         return false;
     }
 
-    boolean isHomeUsed(AOServer aoServer, String directory) {
+    boolean isHomeUsed(AOServer aoServer, String directory) throws IOException, SQLException {
         int pkey=aoServer.pkey;
 
         String startsWith=directory+'/';

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -28,7 +27,7 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
     private String destination_host;
     private int destination_port;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NET_BIND: return Integer.valueOf(pkey);
             case 1: return Integer.valueOf(cps);
@@ -39,9 +38,9 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
         }
     }
 
-    public NetBind getNetBind() {
+    public NetBind getNetBind() throws IOException, SQLException {
         NetBind nb=table.connector.netBinds.get(pkey);
-        if(nb==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+pkey));
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+pkey);
         return nb;
     }
 
@@ -57,9 +56,9 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
         return destination_host;
     }
     
-    public NetPort getDestinationPort() {
+    public NetPort getDestinationPort() throws SQLException {
         NetPort np=table.connector.netPorts.get(destination_port);
-        if(np==null) throw new WrappedException(new SQLException("Unable to find NetPort: "+destination_port));
+        if(np==null) throw new SQLException("Unable to find NetPort: "+destination_port);
         return np;
     }
 
@@ -83,7 +82,8 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
         destination_port=in.readCompressedInt();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getNetBind().toString()+"->"+destination_host+':'+destination_port;
     }
 

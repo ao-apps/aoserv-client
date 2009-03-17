@@ -6,8 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 
@@ -31,7 +29,7 @@ final public class Technology extends GlobalObjectIntegerKey<Technology> {
 
     String name, clazz;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         if(i==COLUMN_PKEY) return pkey;
 	if(i==COLUMN_NAME) return name;
 	if(i==2) return clazz;
@@ -42,15 +40,15 @@ final public class Technology extends GlobalObjectIntegerKey<Technology> {
 	return SchemaTable.TableID.TECHNOLOGIES;
     }
 
-    public TechnologyClass getTechnologyClass(AOServConnector connector) {
+    public TechnologyClass getTechnologyClass(AOServConnector connector) throws SQLException {
         TechnologyClass technologyClass = connector.technologyClasses.get(clazz);
-        if (technologyClass == null) throw new WrappedException(new SQLException("Unable to find TechnologyClass: " + clazz));
+        if (technologyClass == null) throw new SQLException("Unable to find TechnologyClass: " + clazz);
         return technologyClass;
     }
 
-    public TechnologyName getTechnologyName(AOServConnector connector) {
+    public TechnologyName getTechnologyName(AOServConnector connector) throws SQLException {
         TechnologyName technologyName = connector.technologyNames.get(name);
-        if (technologyName == null) throw new WrappedException(new SQLException("Unable to find TechnologyName: " + name));
+        if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
         return technologyName;
     }
 

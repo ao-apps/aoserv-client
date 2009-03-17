@@ -5,6 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,14 +50,20 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
     }
 
     public SchemaForeignKey get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public SchemaForeignKey get(int pkey) {
+    public SchemaForeignKey get(int pkey) throws IOException, SQLException {
         return getUniqueRow(SchemaForeignKey.COLUMN_PKEY, pkey);
     }
 
-    List<SchemaForeignKey> getSchemaForeignKeys(SchemaTable table) {
+    List<SchemaForeignKey> getSchemaForeignKeys(SchemaTable table) throws IOException, SQLException {
         synchronized(SchemaForeignKeyTable.class) {
             if(tableKeys.isEmpty()) {
                 List<SchemaForeignKey> cached=getRows();
@@ -73,7 +82,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
         }
     }
 
-    private void rebuildReferenceHashes() {
+    private void rebuildReferenceHashes() throws IOException, SQLException {
         if(
             referencedByHash.isEmpty()
             || referencesHash.isEmpty()
@@ -99,7 +108,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
         }
     }
 
-    List<SchemaForeignKey> getSchemaForeignKeysReferencedBy(SchemaColumn column) {
+    List<SchemaForeignKey> getSchemaForeignKeysReferencedBy(SchemaColumn column) throws IOException, SQLException {
         synchronized(SchemaForeignKeyTable.class) {
             rebuildReferenceHashes();
             List<SchemaForeignKey> matches=referencedByHash.get(Integer.valueOf(column.getPkey()));
@@ -108,7 +117,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
         }
     }
 
-    List<SchemaForeignKey> getSchemaForeignKeysReferencing(SchemaColumn column) {
+    List<SchemaForeignKey> getSchemaForeignKeysReferencing(SchemaColumn column) throws IOException, SQLException {
         synchronized(SchemaForeignKeyTable.class) {
             rebuildReferenceHashes();
             List<SchemaForeignKey> matches=referencesHash.get(Integer.valueOf(column.getPkey()));

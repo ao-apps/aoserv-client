@@ -35,6 +35,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
     private long bytes;
     private boolean is_successful;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof FailoverFileLog
@@ -46,7 +47,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	return bytes;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case 0: return Integer.valueOf(pkey);
             case 1: return Integer.valueOf(replication);
@@ -80,9 +81,9 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	return scanned;
     }
 
-    public FailoverFileReplication getFailoverFileReplication() {
+    public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
         FailoverFileReplication ffr=table.connector.failoverFileReplications.get(replication);
-        if(ffr==null) throw new WrappedException(new SQLException("Unable to find FailoverFileReplication: "+replication));
+        if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
         return ffr;
     }
 
@@ -103,6 +104,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	return updated;
     }
 
+    @Override
     int hashCodeImpl() {
 	return pkey;
     }

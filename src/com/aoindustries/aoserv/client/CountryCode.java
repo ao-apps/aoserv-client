@@ -40,7 +40,7 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 	return pkey;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_CODE) return pkey;
 	if(i==1) return name;
         if(i==2) return charge_com_supported?Boolean.TRUE:Boolean.FALSE;

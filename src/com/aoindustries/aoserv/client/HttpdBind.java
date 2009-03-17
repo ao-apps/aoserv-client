@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -33,7 +32,7 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     
     int httpd_server;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NET_BIND: return Integer.valueOf(pkey);
             case COLUMN_HTTPD_SERVER: return Integer.valueOf(httpd_server);
@@ -41,15 +40,15 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
         }
     }
 
-    public HttpdServer getHttpdServer() {
+    public HttpdServer getHttpdServer() throws SQLException, IOException {
 	HttpdServer obj=table.connector.httpdServers.get(httpd_server);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdServer: "+httpd_server));
+	if(obj==null) throw new SQLException("Unable to find HttpdServer: "+httpd_server);
 	return obj;
     }
 
-    public NetBind getNetBind() {
+    public NetBind getNetBind() throws SQLException, IOException {
 	NetBind obj=table.connector.netBinds.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find NetBind: "+pkey);
 	return obj;
     }
 
@@ -67,7 +66,8 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 	httpd_server=in.readCompressedInt();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         HttpdServer server=getHttpdServer();
         NetBind bind=getNetBind();
         return server.toString()+'|'+bind.toString();

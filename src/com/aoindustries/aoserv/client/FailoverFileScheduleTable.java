@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -37,15 +38,21 @@ final public class FailoverFileScheduleTable extends CachedTableIntegerKey<Failo
         return defaultOrderBy;
     }
 
-    List<FailoverFileSchedule> getFailoverFileSchedules(FailoverFileReplication replication) {
+    List<FailoverFileSchedule> getFailoverFileSchedules(FailoverFileReplication replication) throws IOException, SQLException {
         return getIndexedRows(FailoverFileSchedule.COLUMN_REPLICATION, replication.pkey);
     }
 
     public FailoverFileSchedule get(Object pkey) {
-	return getUniqueRow(FailoverFileSchedule.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(FailoverFileSchedule.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public FailoverFileSchedule get(int pkey) {
+    public FailoverFileSchedule get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(FailoverFileSchedule.COLUMN_PKEY, pkey);
     }
 

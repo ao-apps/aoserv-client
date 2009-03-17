@@ -105,7 +105,7 @@ final public class TransactionSearchCriteria implements Streamable {
 	this.payment_confirmed = payment_confirmed;
     }
 
-    public TransactionSearchCriteria(BusinessAdministrator business_administrator) {
+    public TransactionSearchCriteria(BusinessAdministrator business_administrator) throws IOException, SQLException {
 	// The current time
 	Calendar cal = Calendar.getInstance();
 	cal.setTime(new java.util.Date());
@@ -189,7 +189,7 @@ final public class TransactionSearchCriteria implements Streamable {
 	return sortSecond;
     }
 
-    public List<Transaction> getTransactions(AOServConnector connector) {
+    public List<Transaction> getTransactions(AOServConnector connector) throws IOException, SQLException {
 	return connector.transactions.getTransactions(this);
     }
 

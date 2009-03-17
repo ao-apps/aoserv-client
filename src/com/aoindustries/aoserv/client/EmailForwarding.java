@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,7 +35,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
     int email_address;
     String destination;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_EMAIL_ADDRESS: return Integer.valueOf(email_address);
@@ -55,9 +54,9 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
     /**
      * Gets the <code>email_address</code>
      */
-    public EmailAddress getEmailAddress() {
+    public EmailAddress getEmailAddress() throws SQLException, IOException {
         EmailAddress emailAddressObject = table.connector.emailAddresses.get(email_address);
-        if (emailAddressObject == null) throw new WrappedException(new SQLException("Unable to find EmailAddress: " + email_address));
+        if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
         return emailAddressObject;
     }
 
@@ -81,7 +80,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
         return Collections.emptyList();
     }
     
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_FORWARDING,
@@ -89,7 +88,8 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
 	);
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getEmailAddress().toString()+" -> "+destination;
     }
 

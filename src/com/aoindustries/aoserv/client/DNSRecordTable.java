@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -42,7 +43,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 	int mx_priority,
 	String destination,
         int ttl
-    ) {
+    ) throws IOException, SQLException {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.DNS_RECORDS,
@@ -56,18 +57,24 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
     }
 
     public DNSRecord get(Object pkey) {
+        try {
+            return getUniqueRow(DNSRecord.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public DNSRecord get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(DNSRecord.COLUMN_PKEY, pkey);
     }
 
-    public DNSRecord get(int pkey) {
-	return getUniqueRow(DNSRecord.COLUMN_PKEY, pkey);
-    }
-
-    List<DNSRecord> getDNSRecords(DNSZone dnsZone) {
+    List<DNSRecord> getDNSRecords(DNSZone dnsZone) throws IOException, SQLException {
         return getIndexedRows(DNSRecord.COLUMN_ZONE, dnsZone.pkey);
     }
 
-    List<DNSRecord> getDNSRecords(DNSZone dnsZone, String domain, DNSType dnsType) {
+    List<DNSRecord> getDNSRecords(DNSZone dnsZone, String domain, DNSType dnsType) throws IOException, SQLException {
         String type=dnsType.pkey;
 
         // Use the index first
@@ -88,7 +95,8 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 	return SchemaTable.TableID.DNS_RECORDS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_DNS_RECORD)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_DNS_RECORD, args, 6, err)) {

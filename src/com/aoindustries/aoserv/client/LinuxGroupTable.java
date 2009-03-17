@@ -32,7 +32,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         return defaultOrderBy;
     }
 
-    void addLinuxGroup(String name, Package packageObject, String type) {
+    void addLinuxGroup(String name, Package packageObject, String type) throws IOException, SQLException {
         connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_GROUPS,
@@ -43,10 +43,16 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
     }
 
     public LinuxGroup get(Object pkey) {
-	return getUniqueRow(LinuxGroup.COLUMN_NAME, pkey);
+        try {
+            return getUniqueRow(LinuxGroup.COLUMN_NAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    List<LinuxGroup> getLinuxGroups(Package pack) {
+    List<LinuxGroup> getLinuxGroups(Package pack) throws IOException, SQLException {
         return getIndexedRows(LinuxGroup.COLUMN_PACKAGE, pack.name);
     }
 
@@ -54,7 +60,8 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         return SchemaTable.TableID.LINUX_GROUPS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_GROUP)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_GROUP, args, 3, err)) {
@@ -100,8 +107,8 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         return false;
     }
 
-    public boolean isLinuxGroupNameAvailable(String groupname) {
-        if(!LinuxGroup.isValidGroupname(groupname)) throw new WrappedException(new SQLException("Invalid groupname: "+groupname));
+    public boolean isLinuxGroupNameAvailable(String groupname) throws SQLException, IOException {
+        if(!LinuxGroup.isValidGroupname(groupname)) throw new SQLException("Invalid groupname: "+groupname);
         return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_LINUX_GROUP_NAME_AVAILABLE, groupname);
     }
 }

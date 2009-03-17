@@ -7,7 +7,9 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.*;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.SortedArrayList;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -95,7 +97,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public int addBusinessServer(
 	Server server
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.businessServers.addBusinessServer(this, server);
     }
 
@@ -122,7 +124,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         String cardNumber,
         byte expirationMonth,
         short expirationYear
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.creditCards.addCreditCard(
             processor,
             this,
@@ -256,7 +258,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public int addDisableLog(
         String disableReason
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.disableLogs.addDisableLog(this, disableReason);
     }
 
@@ -266,7 +268,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	int balance,
 	String type,
 	int transid
-    ) {
+    ) throws IOException, SQLException {
 	table.connector.noticeLogs.addNoticeLog(
             pkey,
             billingContact,
@@ -280,7 +282,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public int addPackage(
 	String name,
         PackageDefinition packageDefinition
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.packages.addPackage(
             name,
             this,
@@ -298,7 +300,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         TransactionType setupFeeTransactionType,
         int monthlyRate,
         TransactionType monthlyRateTransactionType
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.packageDefinitions.addPackageDefinition(
             this,
             category,
@@ -324,7 +326,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         String paymentInfo,
         CreditCardProcessor processor,
 	byte payment_confirmed
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.transactions.addTransaction(
             this,
             sourceBusiness,
@@ -348,54 +350,48 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return can_add_businesses;
     }
 
-    public void cancel(String cancelReason) {
-        try {
-            // Automatically disable if not already disabled
-            if(disable_log==-1) {
-                new SimpleAOClient(table.connector).disableBusiness(pkey, "Account canceled");
-            }
-
-            // Now cancel the account
-            IntList invalidateList;
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
-                out.writeUTF(pkey);
-                if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
-                out.writeNullUTF(cancelReason);
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
-            }
-            table.connector.tablesUpdated(invalidateList);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+    public void cancel(String cancelReason) throws IllegalArgumentException, IOException, SQLException {
+        // Automatically disable if not already disabled
+        if(disable_log==-1) {
+            new SimpleAOClient(table.connector).disableBusiness(pkey, "Account canceled");
         }
+
+        // Now cancel the account
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
+            out.writeUTF(pkey);
+            if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
+            out.writeNullUTF(cancelReason);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
+            }
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
+        }
+        table.connector.tablesUpdated(invalidateList);
     }
 
-    public boolean canCancel() {
+    public boolean canCancel() throws IOException, SQLException {
         return canceled==-1 && !isRootBusiness();
     }
     
-    public boolean isRootBusiness() {
+    public boolean isRootBusiness() throws IOException, SQLException {
         return pkey.equals(table.connector.businesses.getRootAccounting());
     }
 
-    public boolean canDisable() {
+    public boolean canDisable() throws IOException, SQLException {
         // already disabled
         if(disable_log!=-1) return false;
         
@@ -407,7 +403,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return true;
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         // Cannot enable a canceled business
         if(canceled!=-1) return false;
 
@@ -421,33 +417,33 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return can_see_prices;
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
     }
 
-    public int getAccountBalance() {
+    public int getAccountBalance() throws IOException, SQLException {
 	return table.connector.transactions.getAccountBalance(pkey);
     }
 
-    public int getAccountBalance(long before) {
+    public int getAccountBalance(long before) throws IOException, SQLException {
 	return table.connector.transactions.getAccountBalance(pkey, before);
     }
 
     /**
      * @see  #getAccountBalance()
      */
-    public String getAccountBalanceString() {
+    public String getAccountBalanceString() throws IOException, SQLException {
         return "$"+SQLUtility.getDecimal(getAccountBalance());
     }
 
     /**
      * @see  #getAccountBalance(long)
      */
-    public String getAccountBalanceString(long before) {
+    public String getAccountBalanceString(long before) throws IOException, SQLException {
         return "$"+SQLUtility.getDecimal(getAccountBalance(before));
     }
 
@@ -463,7 +459,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return bill_parent;
     }
     
-    public int getAutoEnableMinimumPayment() {
+    public int getAutoEnableMinimumPayment() throws IOException, SQLException {
         int balance=getAccountBalance();
         if(balance<0) return 0;
         int minimum=balance/2;
@@ -480,7 +476,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * Gets the <code>Business</code> in the business tree that is one level down
      * from the top level business.
      */
-    public Business getTopLevelBusiness() {
+    public Business getTopLevelBusiness() throws IOException, SQLException {
         String rootAccounting=table.connector.businesses.getRootAccounting();
         Business bu=this;
         Business tempParent;
@@ -491,11 +487,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * Gets the <code>Business</code> the is responsible for paying the bills created by this business.
      */
-    public Business getAccountingBusiness() {
+    public Business getAccountingBusiness() throws SQLException {
         Business bu=this;
         while(bu.bill_parent) {
             bu=bu.getParentBusiness();
-            if(bu==null) throw new WrappedException(new SQLException("Unable to find the accounting business for '"+pkey+'\''));
+            if(bu==null) throw new SQLException("Unable to find the accounting business for '"+pkey+'\'');
         }
         return bu;
     }
@@ -503,7 +499,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * Gets the <code>BusinessProfile</code> with the highest priority.
      */
-    public BusinessProfile getBusinessProfile() {
+    public BusinessProfile getBusinessProfile() throws IOException, SQLException {
 	return table.connector.businessProfiles.getBusinessProfile(this);
     }
 
@@ -511,17 +507,17 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * Gets a list of all <code>BusinessProfiles</code> for this <code>Business</code>
      * sorted with the highest priority profile at the zero index.
      */
-    public List<BusinessProfile> getBusinessProfiles() {
+    public List<BusinessProfile> getBusinessProfiles() throws IOException, SQLException {
 	return table.connector.businessProfiles.getBusinessProfiles(this);
     }
 
     public BusinessServer getBusinessServer(
 	Server server
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.businessServers.getBusinessServer(this, server);
     }
     
-    public List<BusinessServer> getBusinessServers() {
+    public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
         return table.connector.businessServers.getBusinessServers(this);
     }
 
@@ -533,11 +529,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return cancelReason;
     }
 
-    public List<Business> getChildBusinesses() {
+    public List<Business> getChildBusinesses() throws IOException, SQLException {
 	return table.connector.businesses.getChildBusinesses(this);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_ACCOUNTING: return pkey;
             case 1: return contractVersion;
@@ -556,11 +552,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         }
     }
 
-    public int getConfirmedAccountBalance() {
+    public int getConfirmedAccountBalance() throws IOException, SQLException {
 	return table.connector.transactions.getConfirmedAccountBalance(pkey);
     }
 
-    public int getConfirmedAccountBalance(long before) {
+    public int getConfirmedAccountBalance(long before) throws IOException, SQLException {
 	return table.connector.transactions.getConfirmedAccountBalance(pkey, before);
     }
 
@@ -572,47 +568,47 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return created;
     }
 
-    public List<CreditCardProcessor> getCreditCardProcessors() {
+    public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
 	return table.connector.creditCardProcessors.getCreditCardProcessors(this);
     }
 
-    public List<CreditCard> getCreditCards() {
+    public List<CreditCard> getCreditCards() throws IOException, SQLException {
 	return table.connector.creditCards.getCreditCards(this);
     }
 
-    public Server getDefaultServer() {
+    public Server getDefaultServer() throws IOException, SQLException {
         // May be null when the account is canceled or not using servers
 	return table.connector.businessServers.getDefaultServer(this);
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
-    public List<EmailForwarding> getEmailForwarding() {
+    public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
 	return table.connector.emailForwardings.getEmailForwarding(this);
     }
 
-    public List<EmailList> getEmailLists() {
+    public List<EmailList> getEmailLists() throws IOException, SQLException {
 	return table.connector.emailLists.getEmailLists(this);
     }
 
-    public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) {
+    public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
 	return table.connector.linuxServerGroups.getLinuxServerGroup(aoServer, this);
     }
 
-    public List<LinuxAccount> getMailAccounts() {
+    public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
 	return table.connector.linuxAccounts.getMailAccounts(this);
     }
 
-    public CreditCard getMonthlyCreditCard() {
+    public CreditCard getMonthlyCreditCard() throws IOException, SQLException {
 	return table.connector.creditCards.getMonthlyCreditCard(this);
     }
 
-    public List<MonthlyCharge> getMonthlyCharges() {
+    public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
         return table.connector.monthlyCharges.getMonthlyCharges(this);
     }
 
@@ -620,7 +616,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * Gets an approximation of the monthly rate paid by this account.  This is not guaranteed to
      * be exactly the same as the underlying accounting database processes.
      */
-    public int getMonthlyRate() {
+    public int getMonthlyRate() throws SQLException, IOException {
         int total=0;
         for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total+=mc.getPennies();
         return total;
@@ -629,23 +625,23 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * @see  #getMonthlyRate()
      */
-    public String getMonthlyRateString() {
+    public String getMonthlyRateString() throws SQLException, IOException {
         return "$"+SQLUtility.getDecimal(getMonthlyRate());
     }
 
-    public List<NoticeLog> getNoticeLogs() {
+    public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
         return table.connector.noticeLogs.getNoticeLogs(this);
     }
 
-    public List<Package> getPackages() {
+    public List<Package> getPackages() throws IOException, SQLException {
 	return table.connector.packages.getPackages(this);
     }
 
-    public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) {
+    public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
         return table.connector.packageDefinitions.getPackageDefinition(this, category, name, version);
     }
 
-    public List<PackageDefinition> getPackageDefinitions(PackageCategory category) {
+    public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
         return table.connector.packageDefinitions.getPackageDefinitions(this, category);
     }
 
@@ -656,7 +652,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return table.connector.businesses.get(parent);
     }
 
-    public List<EmailDomain> getEmailDomains() {
+    public List<EmailDomain> getEmailDomains() throws SQLException, IOException {
 	return table.connector.emailDomains.getEmailDomains(this);
     }
 
@@ -667,7 +663,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * Gets the total monthly rate or <code>-1</code> if unavailable.
      */
-    public int getTotalMonthlyRate() {
+    public int getTotalMonthlyRate() throws SQLException, IOException {
 	int sum = 0;
 	for (Package pack : getPackages()) {
             int monthlyRate = pack.getPackageDefinition().getMonthlyRate();
@@ -680,17 +676,17 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * Gets the total monthly rate as a <code>String</code> in US dollars of <code>null</code> if unavailable.
      */
-    public String getTotalMonthlyRateString() {
+    public String getTotalMonthlyRateString() throws SQLException, IOException {
         int rate=getTotalMonthlyRate();
         if(rate==-1) return null;
         return SQLUtility.getDecimal(rate);
     }
 
-    public List<Transaction> getTransactions() {
+    public List<Transaction> getTransactions() throws IOException, SQLException {
 	return table.connector.transactions.getTransactions(pkey);
     }
 
-    public List<WhoisHistory> getWhoisHistory() {
+    public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
         return table.connector.whoisHistory.getWhoisHistory(this);
     }
 
@@ -735,265 +731,259 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return true;
     }
 
-    public void move(AOServer from, AOServer to, TerminalWriter out) {
-        try {
-            if(from.equals(to)) throw new SQLException("Cannot move from AOServer "+from.getHostname()+" to AOServer "+to.getHostname()+": same AOServer");
+    public void move(AOServer from, AOServer to, TerminalWriter out) throws IOException, SQLException {
+        if(from.equals(to)) throw new SQLException("Cannot move from AOServer "+from.getHostname()+" to AOServer "+to.getHostname()+": same AOServer");
 
-            BusinessServer fromBusinessServer=getBusinessServer(from.getServer());
-            if(fromBusinessServer==null) throw new SQLException("Unable to find BusinessServer for Business="+pkey+" and Server="+from.getHostname());
+        BusinessServer fromBusinessServer=getBusinessServer(from.getServer());
+        if(fromBusinessServer==null) throw new SQLException("Unable to find BusinessServer for Business="+pkey+" and Server="+from.getHostname());
 
-            // Grant the Business access to the other server if it does not already have access
+        // Grant the Business access to the other server if it does not already have access
+        if(out!=null) {
+            out.boldOn();
+            out.println("Adding Business Privileges");
+            out.attributesOff();
+            out.flush();
+        }
+        BusinessServer toBusinessServer=getBusinessServer(to.getServer());
+        if(toBusinessServer==null) {
             if(out!=null) {
-                out.boldOn();
-                out.println("Adding Business Privileges");
-                out.attributesOff();
-                out.flush();
-            }
-            BusinessServer toBusinessServer=getBusinessServer(to.getServer());
-            if(toBusinessServer==null) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.println(to.getHostname());
-                    out.flush();
-                }
-                addBusinessServer(to.getServer());
-            }
-
-            // Add the LinuxServerGroups
-            if(out!=null) {
-                out.boldOn();
-                out.println("Adding Linux Groups");
-                out.attributesOff();
-                out.flush();
-            }
-            List<LinuxServerGroup> fromLinuxServerGroups=new ArrayList<LinuxServerGroup>();
-            List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<LinuxServerGroup>();
-            {
-                for(LinuxServerGroup lsg : table.connector.linuxServerGroups.getRows()) {
-                    Package pk=lsg.getLinuxGroup().getPackage();
-                    if(pk!=null && pk.getBusiness().equals(this)) {
-                        AOServer ao=lsg.getAOServer();
-                        if(ao.equals(from)) fromLinuxServerGroups.add(lsg);
-                        else if(ao.equals(to)) toLinuxServerGroups.add(lsg);
-                    }
-                }
-            }
-            for(int c=0;c<fromLinuxServerGroups.size();c++) {
-                LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
-                if(!toLinuxServerGroups.contains(lsg)) {
-                    if(out!=null) {
-                        out.print("    ");
-                        out.print(lsg.name);
-                        out.print(" to ");
-                        out.println(to.getHostname());
-                        out.flush();
-                    }
-                    lsg.getLinuxGroup().addLinuxServerGroup(to);
-                }
-            }
-
-            // Add the LinuxServerAccounts
-            if(out!=null) {
-                out.boldOn();
-                out.println("Adding Linux Accounts");
-                out.attributesOff();
-                out.flush();
-            }
-            List<LinuxServerAccount> fromLinuxServerAccounts=new ArrayList<LinuxServerAccount>();
-            List<LinuxServerAccount> toLinuxServerAccounts=new SortedArrayList<LinuxServerAccount>();
-            {
-                List<LinuxServerAccount> lsas=table.connector.linuxServerAccounts.getRows();
-                for(int c=0;c<lsas.size();c++) {
-                    LinuxServerAccount lsa=lsas.get(c);
-                    Package pk=lsa.getLinuxAccount().getUsername().getPackage();
-                    if(pk!=null && pk.getBusiness().equals(this)) {
-                        AOServer ao=lsa.getAOServer();
-                        if(ao.equals(from)) fromLinuxServerAccounts.add(lsa);
-                        else if(ao.equals(to)) toLinuxServerAccounts.add(lsa);
-                    }
-                }
-            }
-            for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-                LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-                if(!toLinuxServerAccounts.contains(lsa)) {
-                    if(out!=null) {
-                        out.print("    ");
-                        out.print(lsa.username);
-                        out.print(" to ");
-                        out.println(to.getHostname());
-                        out.flush();
-                    }
-                    lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
-                }
-            }
-
-            // Wait for Linux Account rebuild
-            if(out!=null) {
-                out.boldOn();
-                out.println("Waiting for Linux Account rebuild");
-                out.attributesOff();
                 out.print("    ");
                 out.println(to.getHostname());
                 out.flush();
             }
-            to.waitForLinuxAccountRebuild();
+            addBusinessServer(to.getServer());
+        }
 
-            // Copy the home directory contents
-            if(out!=null) {
-                out.boldOn();
-                out.println("Copying Home Directories");
-                out.attributesOff();
-                out.flush();
-            }
-            for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-                LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-                if(!toLinuxServerAccounts.contains(lsa)) {
-                    if(out!=null) {
-                        out.print("    ");
-                        out.print(lsa.username);
-                        out.print(" to ");
-                        out.print(to.getHostname());
-                        out.print(": ");
-                        out.flush();
-                    }
-                    long byteCount=lsa.copyHomeDirectory(to);
-                    if(out!=null) {
-                        out.print(byteCount);
-                        out.println(byteCount==1?" byte":" bytes");
-                        out.flush();
-                    }
+        // Add the LinuxServerGroups
+        if(out!=null) {
+            out.boldOn();
+            out.println("Adding Linux Groups");
+            out.attributesOff();
+            out.flush();
+        }
+        List<LinuxServerGroup> fromLinuxServerGroups=new ArrayList<LinuxServerGroup>();
+        List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<LinuxServerGroup>();
+        {
+            for(LinuxServerGroup lsg : table.connector.linuxServerGroups.getRows()) {
+                Package pk=lsg.getLinuxGroup().getPackage();
+                if(pk!=null && pk.getBusiness().equals(this)) {
+                    AOServer ao=lsg.getAOServer();
+                    if(ao.equals(from)) fromLinuxServerGroups.add(lsg);
+                    else if(ao.equals(to)) toLinuxServerGroups.add(lsg);
                 }
             }
-
-            // Copy the cron tables
-            if(out!=null) {
-                out.boldOn();
-                out.println("Copying Cron Tables");
-                out.attributesOff();
-                out.flush();
-            }
-            for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-                LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-                if(!toLinuxServerAccounts.contains(lsa)) {
-                    if(out!=null) {
-                        out.print("    ");
-                        out.print(lsa.username);
-                        out.print(" to ");
-                        out.print(to.getHostname());
-                        out.print(": ");
-                        out.flush();
-                    }
-                    String cronTable=lsa.getCronTable();
-                    lsa.getLinuxAccount().getLinuxServerAccount(to).setCronTable(cronTable);
-                    if(out!=null) {
-                        out.print(cronTable.length());
-                        out.println(cronTable.length()==1?" byte":" bytes");
-                        out.flush();
-                    }
-                }
-            }
-
-            // Copy the passwords
-            if(out!=null) {
-                out.boldOn();
-                out.println("Copying Passwords");
-                out.attributesOff();
-                out.flush();
-            }
-            for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-                LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-                if(!toLinuxServerAccounts.contains(lsa)) {
-                    if(out!=null) {
-                        out.print("    ");
-                        out.print(lsa.username);
-                        out.print(" to ");
-                        out.println(to.getHostname());
-                        out.flush();
-                    }
-
-                    lsa.copyPassword(lsa.getLinuxAccount().getLinuxServerAccount(to));
-                }
-            }
-
-            // Move IP Addresses
-            if(out!=null) {
-                out.boldOn();
-                out.println("Moving IP Addresses");
-                out.attributesOff();
-                out.flush();
-            }
-            List<IPAddress> ips=table.connector.ipAddresses.getRows();
-            for(int c=0;c<ips.size();c++) {
-                IPAddress ip=ips.get(c);
-                if(
-                    ip.isAlias()
-                    && !ip.isWildcard()
-                    && !ip.getNetDevice().getNetDeviceID().isLoopback()
-                    && ip.getPackage().accounting.equals(pkey)
-                ) {
-                    out.print("    ");
-                    out.println(ip);
-                    ip.moveTo(to.getServer());
-                }
-            }
-
-            // TODO: Continue development here
-
-
-
-            // Remove the LinuxServerAccounts
-            if(out!=null) {
-                out.boldOn();
-                out.println("Removing Linux Accounts");
-                out.attributesOff();
-                out.flush();
-            }
-            for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-                LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" on ");
-                    out.println(from.getHostname());
-                    out.flush();
-                }
-                lsa.remove();
-            }
-
-            // Remove the LinuxServerGroups
-            if(out!=null) {
-                out.boldOn();
-                out.println("Removing Linux Groups");
-                out.attributesOff();
-                out.flush();
-            }
-            for(int c=0;c<fromLinuxServerGroups.size();c++) {
-                LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
+        }
+        for(int c=0;c<fromLinuxServerGroups.size();c++) {
+            LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
+            if(!toLinuxServerGroups.contains(lsg)) {
                 if(out!=null) {
                     out.print("    ");
                     out.print(lsg.name);
-                    out.print(" on ");
-                    out.println(from.getHostname());
+                    out.print(" to ");
+                    out.println(to.getHostname());
                     out.flush();
                 }
-                lsg.remove();
+                lsg.getLinuxGroup().addLinuxServerGroup(to);
             }
+        }
 
-            // Remove access to the old server
-            if(out!=null) {
-                out.boldOn();
-                out.println("Removing Business Privileges");
-                out.attributesOff();
+        // Add the LinuxServerAccounts
+        if(out!=null) {
+            out.boldOn();
+            out.println("Adding Linux Accounts");
+            out.attributesOff();
+            out.flush();
+        }
+        List<LinuxServerAccount> fromLinuxServerAccounts=new ArrayList<LinuxServerAccount>();
+        List<LinuxServerAccount> toLinuxServerAccounts=new SortedArrayList<LinuxServerAccount>();
+        {
+            List<LinuxServerAccount> lsas=table.connector.linuxServerAccounts.getRows();
+            for(int c=0;c<lsas.size();c++) {
+                LinuxServerAccount lsa=lsas.get(c);
+                Package pk=lsa.getLinuxAccount().getUsername().getPackage();
+                if(pk!=null && pk.getBusiness().equals(this)) {
+                    AOServer ao=lsa.getAOServer();
+                    if(ao.equals(from)) fromLinuxServerAccounts.add(lsa);
+                    else if(ao.equals(to)) toLinuxServerAccounts.add(lsa);
+                }
+            }
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(!toLinuxServerAccounts.contains(lsa)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsa.username);
+                    out.print(" to ");
+                    out.println(to.getHostname());
+                    out.flush();
+                }
+                lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
+            }
+        }
+
+        // Wait for Linux Account rebuild
+        if(out!=null) {
+            out.boldOn();
+            out.println("Waiting for Linux Account rebuild");
+            out.attributesOff();
+            out.print("    ");
+            out.println(to.getHostname());
+            out.flush();
+        }
+        to.waitForLinuxAccountRebuild();
+
+        // Copy the home directory contents
+        if(out!=null) {
+            out.boldOn();
+            out.println("Copying Home Directories");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(!toLinuxServerAccounts.contains(lsa)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsa.username);
+                    out.print(" to ");
+                    out.print(to.getHostname());
+                    out.print(": ");
+                    out.flush();
+                }
+                long byteCount=lsa.copyHomeDirectory(to);
+                if(out!=null) {
+                    out.print(byteCount);
+                    out.println(byteCount==1?" byte":" bytes");
+                    out.flush();
+                }
+            }
+        }
+
+        // Copy the cron tables
+        if(out!=null) {
+            out.boldOn();
+            out.println("Copying Cron Tables");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(!toLinuxServerAccounts.contains(lsa)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsa.username);
+                    out.print(" to ");
+                    out.print(to.getHostname());
+                    out.print(": ");
+                    out.flush();
+                }
+                String cronTable=lsa.getCronTable();
+                lsa.getLinuxAccount().getLinuxServerAccount(to).setCronTable(cronTable);
+                if(out!=null) {
+                    out.print(cronTable.length());
+                    out.println(cronTable.length()==1?" byte":" bytes");
+                    out.flush();
+                }
+            }
+        }
+
+        // Copy the passwords
+        if(out!=null) {
+            out.boldOn();
+            out.println("Copying Passwords");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(!toLinuxServerAccounts.contains(lsa)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsa.username);
+                    out.print(" to ");
+                    out.println(to.getHostname());
+                    out.flush();
+                }
+
+                lsa.copyPassword(lsa.getLinuxAccount().getLinuxServerAccount(to));
+            }
+        }
+
+        // Move IP Addresses
+        if(out!=null) {
+            out.boldOn();
+            out.println("Moving IP Addresses");
+            out.attributesOff();
+            out.flush();
+        }
+        List<IPAddress> ips=table.connector.ipAddresses.getRows();
+        for(int c=0;c<ips.size();c++) {
+            IPAddress ip=ips.get(c);
+            if(
+                ip.isAlias()
+                && !ip.isWildcard()
+                && !ip.getNetDevice().getNetDeviceID().isLoopback()
+                && ip.getPackage().accounting.equals(pkey)
+            ) {
                 out.print("    ");
+                out.println(ip);
+                ip.moveTo(to.getServer());
+            }
+        }
+
+        // TODO: Continue development here
+
+
+
+        // Remove the LinuxServerAccounts
+        if(out!=null) {
+            out.boldOn();
+            out.println("Removing Linux Accounts");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(out!=null) {
+                out.print("    ");
+                out.print(lsa.username);
+                out.print(" on ");
                 out.println(from.getHostname());
                 out.flush();
             }
-            fromBusinessServer.remove();
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            lsa.remove();
         }
+
+        // Remove the LinuxServerGroups
+        if(out!=null) {
+            out.boldOn();
+            out.println("Removing Linux Groups");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerGroups.size();c++) {
+            LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
+            if(out!=null) {
+                out.print("    ");
+                out.print(lsg.name);
+                out.print(" on ");
+                out.println(from.getHostname());
+                out.flush();
+            }
+            lsg.remove();
+        }
+
+        // Remove access to the old server
+        if(out!=null) {
+            out.boldOn();
+            out.println("Removing Business Privileges");
+            out.attributesOff();
+            out.print("    ");
+            out.println(from.getHostname());
+            out.flush();
+        }
+        fromBusinessServer.remove();
     }
 
      public void init(ResultSet result) throws SQLException {
@@ -1031,8 +1021,8 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         bill_parent=in.readBoolean();
     }
 
-    public void setAccounting(String accounting) {
-        if(!isValidAccounting(accounting)) throw new WrappedException(new SQLException("Invalid accounting code: "+accounting));
+    public void setAccounting(String accounting) throws SQLException, IOException {
+        if(!isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
     }
 
@@ -1053,14 +1043,14 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         out.writeBoolean(bill_parent);
     }
 
-    public List<Ticket> getTickets() {
+    public List<Ticket> getTickets() throws SQLException, IOException {
 	return table.connector.tickets.getTickets(this);
     }
     
     /**
      * Gets all of the encryption keys for this business.
      */
-    public List<EncryptionKey> getEncryptionKeys() {
+    public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
         return table.connector.encryptionKeys.getEncryptionKeys(this);
     }
     
@@ -1068,7 +1058,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * Sets the credit card that will be used monthly.  Any other selected card will
      * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
      */
-    public void setUseMonthlyCreditCard(CreditCard creditCard) {
+    public void setUseMonthlyCreditCard(CreditCard creditCard) throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
             pkey,
@@ -1079,7 +1069,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * Gets the most recent credit card transaction.
      */
-    public CreditCardTransaction getLastCreditCardTransaction() {
+    public CreditCardTransaction getLastCreditCardTransaction() throws IOException, SQLException {
         return table.connector.creditCardTransactions.getLastCreditCardTransaction(this);
     }
 }

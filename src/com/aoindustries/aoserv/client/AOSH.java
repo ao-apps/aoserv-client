@@ -6,11 +6,16 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.ShellInterpreter;
+import com.aoindustries.util.StandardErrorHandler;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.sql.SQLException;
 
 /**
  * <code>AOSH</code> is a command interpreter and scripting language
@@ -90,7 +95,7 @@ final public class AOSH extends ShellInterpreter {
         out.flush();
     }
 
-    static String executeCommand(AOServConnector connector, String[] args) {
+    static String executeCommand(AOServConnector connector, String[] args) throws IOException, SQLException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
         TerminalWriter out=new TerminalWriter(bytes);
         out.setEnabled(false);
@@ -104,7 +109,7 @@ final public class AOSH extends ShellInterpreter {
         return "aosh";
     }
 
-    protected String getPrompt() {
+    protected String getPrompt() throws SQLException {
         return '['+connector.getThisBusinessAdministrator().toString()+'@'+connector.getHostname()+"]$ ";
     }
 
@@ -118,7 +123,7 @@ final public class AOSH extends ShellInterpreter {
      *
      * @return  <code>true</code> if more commands should be processed
      */
-    protected boolean handleCommand(String[] args) {
+    protected boolean handleCommand(String[] args) throws IOException, SQLException {
         int argCount=args.length;
         if(argCount>0) {
             String command=args[0];
@@ -166,7 +171,7 @@ final public class AOSH extends ShellInterpreter {
         return true;
     }
 
-    private void invalidate(String[] args) {
+    private void invalidate(String[] args) throws IllegalArgumentException, SQLException, IOException {
         if(checkRangeParamCount(AOSHCommand.INVALIDATE, args, 1, 2, err)) {
             String tableName=args[1];
             SchemaTableTable schemaTableTable=connector.schemaTables;
@@ -333,7 +338,7 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    private void ping(String[] args) {
+    private void ping(String[] args) throws IOException, SQLException {
         if(checkParamCount(AOSHCommand.PING, args, 0, err)) {
             out.print(connector.simpleAOClient.ping());
             out.println(" ms");
@@ -353,7 +358,7 @@ final public class AOSH extends ShellInterpreter {
         while((ch=in.read())!=-1 && ch!='\n') if(ch!='\r') SB.append((char)ch);
     }
 
-    private void repeat(String[] args) {
+    private void repeat(String[] args) throws IOException, SQLException {
         int argCount=args.length;
         if(argCount>2) {
             try {
@@ -407,49 +412,48 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    private void su(String[] args) {
-        try {
-            int argCount=args.length;
-            if(argCount>=2) {
-                String[] newArgs=new String[argCount+(isInteractive()?0:-1)];
-                int pos=0;
-                if(isInteractive()) newArgs[pos++]="-i";
-                newArgs[pos++]="--";
-                System.arraycopy(args, 2, newArgs, pos, argCount-2);
-                new AOSH(connector.switchUsers(args[1]), in, out, err, newArgs).run();
-            } else {
-                err.println("aosh: "+AOSHCommand.SU+": not enough parameters");
-                err.flush();
-            }
-        } catch(IOException exception) {
-            throw new WrappedException(exception);
+    private void su(String[] args) throws IOException {
+        int argCount=args.length;
+        if(argCount>=2) {
+            String[] newArgs=new String[argCount+(isInteractive()?0:-1)];
+            int pos=0;
+            if(isInteractive()) newArgs[pos++]="-i";
+            newArgs[pos++]="--";
+            System.arraycopy(args, 2, newArgs, pos, argCount-2);
+            new AOSH(connector.switchUsers(args[1]), in, out, err, newArgs).run();
+        } else {
+            err.println("aosh: "+AOSHCommand.SU+": not enough parameters");
+            err.flush();
         }
     }
 
-    private void time(String[] args) {
+    private void time(String[] args) throws IOException, SQLException {
         int argCount=args.length;
         if(argCount>1) {
             String[] newArgs=new String[argCount-1];
             System.arraycopy(args, 1, newArgs, 0, argCount-1);
             long startTime=System.currentTimeMillis();
-            handleCommand(newArgs);
-            long timeSpan=(long)(System.currentTimeMillis()-startTime);
-            int mins=(int)(timeSpan/60000);
-            int secs=(int)(timeSpan%60000);
-            out.println();
-            out.print("real    ");
-            out.print(mins);
-            out.print('m');
-            out.print(SQLUtility.getMilliDecimal(secs));
-            out.println('s');
-            out.flush();
+            try {
+                handleCommand(newArgs);
+            } finally {
+                long timeSpan=(long)(System.currentTimeMillis()-startTime);
+                int mins=(int)(timeSpan/60000);
+                int secs=(int)(timeSpan%60000);
+                out.println();
+                out.print("real    ");
+                out.print(mins);
+                out.print('m');
+                out.print(SQLUtility.getMilliDecimal(secs));
+                out.println('s');
+                out.flush();
+            }
         } else {
             err.println("aosh: "+AOSHCommand.TIME+": not enough parameters");
             err.flush();
         }
     }
 
-    private void whoami(String[] args) {
+    private void whoami(String[] args) throws SQLException {
         if(args.length==1) {
             out.println(connector.getThisBusinessAdministrator().getUsername().getUsername());
             out.flush();

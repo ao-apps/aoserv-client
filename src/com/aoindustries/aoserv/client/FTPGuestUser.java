@@ -6,8 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -30,14 +28,14 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
     static final int COLUMN_USERNAME=0;
     static final String COLUMN_USERNAME_name = "username";
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         if(i==COLUMN_USERNAME) return pkey;
         throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public LinuxAccount getLinuxAccount() {
+    public LinuxAccount getLinuxAccount() throws SQLException {
 	LinuxAccount obj = table.connector.linuxAccounts.get(pkey);
-	if (obj == null) throw new WrappedException(new SQLException("Unable to find LinuxAccount: " + pkey));
+	if (obj == null) throw new SQLException("Unable to find LinuxAccount: " + pkey);
 	return obj;
     }
 
@@ -57,7 +55,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
         return Collections.emptyList();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FTP_GUEST_USERS,

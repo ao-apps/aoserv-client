@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -61,7 +60,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return Integer.valueOf(server);
@@ -77,15 +76,15 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
         return pkey;
     }
 
-    public Server getServer() {
+    public Server getServer() throws SQLException, IOException {
         Server se=table.connector.servers.get(server);
-        if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
+        if(se==null) throw new SQLException("Unable to find Server: "+server);
         return se;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws IOException, SQLException {
         Package pk=table.connector.packages.get(packageNum);
-        if(pk==null) throw new WrappedException(new SQLException("Unable to find Package: "+packageNum));
+        if(pk==null) throw new SQLException("Unable to find Package: "+packageNum);
         return pk;
     }
 

@@ -5,11 +5,16 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @see  AOSHCommand
@@ -36,7 +41,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
         return defaultOrderBy;
     }
 
-    List<AOSHCommand> getAOSHCommands(SchemaTable table) {
+    List<AOSHCommand> getAOSHCommands(SchemaTable table) throws IOException, SQLException {
         synchronized(this) {
             // Table might be null
             String name=table==null?GLOBAL_COMMANDS:table.name;
@@ -60,7 +65,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
         }
     }
 
-    public List<AOSHCommand> getGlobalAOSHCommands() {
+    public List<AOSHCommand> getGlobalAOSHCommands() throws IOException, SQLException {
         return getAOSHCommands(null);
     }
 
@@ -74,7 +79,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
     private static final int numTables = SchemaTable.TableID.values().length;
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.HELP) || command.equals("?")) {
             int argCount=args.length;
@@ -84,11 +89,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
                     SchemaTable schemaTable=c==-1?null:schemaTableTable.get(c);
                     String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
                     List<AOSHCommand> commands=c==-1?getGlobalAOSHCommands():schemaTable.getAOSHCommands(connector);
-                    try {
-                        printHelpList(out, title, commands, true, c>=0);
-                    } catch(IOException err2) {
-                        throw new WrappedException(err2);
-                    }
+                    printHelpList(out, title, commands, true, c>=0);
                 }
                 out.flush();
             } else if(argCount==2) {
@@ -98,22 +99,14 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
                         SchemaTable schemaTable=c==-1?null:schemaTableTable.get(c);
                         String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
                         List<AOSHCommand> commands=c==-1?getGlobalAOSHCommands():schemaTable.getAOSHCommands(connector);
-                        try {
-                            printHelpList(out, title, commands, false, c>=0);
-                        } catch(IOException err2) {
-                            throw new WrappedException(err2);
-                        }
+                        printHelpList(out, title, commands, false, c>=0);
                     }
                     out.flush();
                 } else {
                     // Try to find the command
                     AOSHCommand aoshCom=get(args[1].toLowerCase());
                     if(aoshCom!=null) {
-                        try {
-                            aoshCom.printCommandHelp(out);
-                        } catch(IOException err2) {
-                            throw new WrappedException(err2);
-                        }
+                        aoshCom.printCommandHelp(out);
                         out.flush();
                     } else {
                         err.print("aosh: help: help on command not found: ");
@@ -162,6 +155,12 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
     }
 
     public AOSHCommand get(Object command) {
-        return getUniqueRow(AOSHCommand.COLUMN_COMMAND, command);
+        try {
+            return getUniqueRow(AOSHCommand.COLUMN_COMMAND, command);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 }

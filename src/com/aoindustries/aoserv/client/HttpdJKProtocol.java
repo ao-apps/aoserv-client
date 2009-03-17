@@ -6,8 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 
@@ -34,14 +32,14 @@ final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol
         AJP13="ajp13"
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_PROTOCOL) return pkey;
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public Protocol getProtocol(AOServConnector connector) {
+    public Protocol getProtocol(AOServConnector connector) throws SQLException {
 	Protocol protocol=connector.protocols.get(pkey);
-	if(protocol==null) throw new WrappedException(new SQLException("Unable to find Protocol: "+pkey));
+	if(protocol==null) throw new SQLException("Unable to find Protocol: "+pkey);
 	return protocol;
     }
 

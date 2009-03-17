@@ -34,21 +34,27 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
     }
 
     public SchemaTable get(Object pkey) {
-        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-        else if(pkey instanceof String) return get((String)pkey);
-        else if(pkey instanceof SchemaTable.TableID) return get((SchemaTable.TableID)pkey);
-        else throw new IllegalArgumentException("Must be an Integer or a String");
+        try {
+            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+            else if(pkey instanceof String) return get((String)pkey);
+            else if(pkey instanceof SchemaTable.TableID) return get((SchemaTable.TableID)pkey);
+            else throw new IllegalArgumentException("Must be an Integer or a String");
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public SchemaTable get(int table_id) {
+    public SchemaTable get(int table_id) throws IOException, SQLException {
         return getRows().get(table_id);
     }
 
-    public SchemaTable get(String name) {
+    public SchemaTable get(String name) throws IOException, SQLException {
         return getUniqueRow(SchemaTable.COLUMN_NAME, name);
     }
 
-    public SchemaTable get(SchemaTable.TableID tableID) {
+    public SchemaTable get(SchemaTable.TableID tableID) throws IOException, SQLException {
         return get(tableID.ordinal());
     }
 
@@ -57,19 +63,15 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws SQLException, IOException {
         String command = args[0];
         if (command.equalsIgnoreCase(AOSHCommand.DESC) || command.equalsIgnoreCase(AOSHCommand.DESCRIBE)) {
             if(AOSH.checkParamCount(AOSHCommand.DESCRIBE, args, 1, err)) {
                 String tableName=args[1];
                 SchemaTable table=connector.schemaTables.get(tableName);
                 if(table!=null) {
-                    try {
-                        table.printDescription(connector, out, isInteractive);
-                        out.flush();
-                    } catch(IOException err2) {
-                        throw new WrappedException(err2);
-                    }
+                    table.printDescription(connector, out, isInteractive);
+                    out.flush();
                 } else {
                     err.print("aosh: "+AOSHCommand.DESCRIBE+": table not found: ");
                     err.println(tableName);
@@ -186,10 +188,10 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                                                 }
                                             }
                                         }
-                                        if(orderExpressions.isEmpty()) throw new WrappedException(new SQLException("Parse error: no columns listed after 'order by'"));
-                                    } else throw new WrappedException(new SQLException("Parse error: 'by' expected"));
-                                } else throw new WrappedException(new SQLException("Parse error: 'by' expected"));
-                            } else throw new WrappedException(new SQLException("Parse error: 'order' expected, found '"+arg+'\''));
+                                        if(orderExpressions.isEmpty()) throw new SQLException("Parse error: no columns listed after 'order by'");
+                                    } else throw new SQLException("Parse error: 'by' expected");
+                                } else throw new SQLException("Parse error: 'by' expected");
+                            } else throw new SQLException("Parse error: 'order' expected, found '"+arg+'\'');
                         }
 
                         // Figure out the expressions for each columns

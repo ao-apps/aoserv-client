@@ -6,7 +6,8 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -48,50 +49,44 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         String paymentInfo,
         CreditCardProcessor processor,
 	byte payment_confirmed
-    ) {
+    ) throws IOException, SQLException {
+        int transid;
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
         try {
-            int transid;
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-                out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
-                out.writeUTF(business.pkey);
-                out.writeUTF(sourceBusiness.pkey);
-                out.writeUTF(business_administrator.pkey);
-                out.writeUTF(type);
-                out.writeUTF(description);
-                out.writeCompressedInt(quantity);
-                out.writeCompressedInt(rate);
-                out.writeBoolean(paymentType!=null); if(paymentType!=null) out.writeUTF(paymentType.pkey);
-                out.writeNullUTF(paymentInfo);
-                out.writeNullUTF(processor==null ? null : processor.getProviderId());
-                out.writeByte(payment_confirmed);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+            out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
+            out.writeUTF(business.pkey);
+            out.writeUTF(sourceBusiness.pkey);
+            out.writeUTF(business_administrator.pkey);
+            out.writeUTF(type);
+            out.writeUTF(description);
+            out.writeCompressedInt(quantity);
+            out.writeCompressedInt(rate);
+            out.writeBoolean(paymentType!=null); if(paymentType!=null) out.writeUTF(paymentType.pkey);
+            out.writeNullUTF(paymentInfo);
+            out.writeNullUTF(processor==null ? null : processor.getProviderId());
+            out.writeByte(payment_confirmed);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    transid=in.readCompressedInt();
-                    invalidateList=AOServConnector.readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                transid=in.readCompressedInt();
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
-            return transid;
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
         }
+        connector.tablesUpdated(invalidateList);
+        return transid;
     }
 
     @Override
@@ -103,7 +98,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         }
     }
 
-    int getAccountBalance(String accounting) {
+    int getAccountBalance(String accounting) throws IOException, SQLException {
 	synchronized(this) {
 	    Integer O=accountBalances.get(accounting);
 	    if(O!=null) return O.intValue();
@@ -113,11 +108,11 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
     }
 
-    int getAccountBalance(String accounting, long before) {
+    int getAccountBalance(String accounting, long before) throws IOException, SQLException {
         return connector.requestIntQuery(AOServProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting, before);
     }
 
-    int getConfirmedAccountBalance(String accounting) {
+    int getConfirmedAccountBalance(String accounting) throws IOException, SQLException {
 	synchronized(this) {
 	    Integer O=confirmedAccountBalances.get(accounting);
 	    if(O!=null) return O.intValue();
@@ -127,15 +122,15 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
     }
 
-    int getConfirmedAccountBalance(String accounting, long before) {
+    int getConfirmedAccountBalance(String accounting, long before) throws IOException, SQLException {
 	return connector.requestIntQuery(AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting, before);
     }
 
-    public List<Transaction> getPendingPayments() {
+    public List<Transaction> getPendingPayments() throws IOException, SQLException {
         return getObjects(AOServProtocol.CommandID.GET_PENDING_PAYMENTS);
     }
 
-    public List<Transaction> getRows() {
+    public List<Transaction> getRows() throws IOException, SQLException {
         List<Transaction> list=new ArrayList<Transaction>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TRANSACTIONS);
         return list;
@@ -146,27 +141,33 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     }
 
     public Transaction get(Object transid) {
-        return get(((Integer)transid).intValue());
+        try {
+            return get(((Integer)transid).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public Transaction get(int transid) {
+    public Transaction get(int transid) throws IOException, SQLException {
         return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TRANSACTIONS, transid);
     }
 
-    List<Transaction> getTransactions(TransactionSearchCriteria search) {
+    List<Transaction> getTransactions(TransactionSearchCriteria search) throws IOException, SQLException {
         return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
     }
 
-    List<Transaction> getTransactions(String accounting) {
+    List<Transaction> getTransactions(String accounting) throws IOException, SQLException {
         return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting);
     }
 
-    List<Transaction> getTransactions(BusinessAdministrator ba) {
+    List<Transaction> getTransactions(BusinessAdministrator ba) throws IOException, SQLException {
         return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
     @Override
-    final public List<Transaction> getIndexedRows(int col, Object value) {
+    final public List<Transaction> getIndexedRows(int col, Object value) throws IOException, SQLException {
         if(col==Transaction.COLUMN_TRANSID) {
             Transaction tr=get(value);
             if(tr==null) return Collections.emptyList();
@@ -182,7 +183,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_TRANSACTION)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_TRANSACTION, args, 11, err)) {

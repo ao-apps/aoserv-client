@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -33,18 +34,24 @@ final public class NetDeviceTable extends CachedTableIntegerKey<NetDevice> {
     }
 
     public NetDevice get(Object pkey) {
+        try {
+            return getUniqueRow(NetDevice.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public NetDevice get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(NetDevice.COLUMN_PKEY, pkey);
     }
 
-    public NetDevice get(int pkey) {
-	return getUniqueRow(NetDevice.COLUMN_PKEY, pkey);
-    }
-
-    List<NetDevice> getNetDevices(Server se) {
+    List<NetDevice> getNetDevices(Server se) throws IOException, SQLException {
         return getIndexedRows(NetDevice.COLUMN_SERVER, se.pkey);
     }
 
-    NetDevice getNetDevice(Server se, String deviceID) {
+    NetDevice getNetDevice(Server se, String deviceID) throws IOException, SQLException {
         // Use the index first
 	List<NetDevice> cached=getNetDevices(se);
 	int size=cached.size();

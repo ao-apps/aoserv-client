@@ -9,7 +9,9 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
 import com.aoindustries.table.Row;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
     protected AOServObject() {
     }
 
-    final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) {
+    final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
         int len=sortExpressions.length;
         for(int c=0;c<len;c++) {
             SQLExpression expr=sortExpressions[c];
@@ -46,7 +48,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
         return 0;
     }
 
-    final public int compareTo(AOServConnector conn, Comparable value, SQLExpression[] sortExpressions, boolean[] sortOrders) {
+    final public int compareTo(AOServConnector conn, Comparable value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
         int len=sortExpressions.length;
         for(int c=0;c<len;c++) {
             SQLExpression expr=sortExpressions[c];
@@ -60,7 +62,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
         return 0;
     }
 
-    final public int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) {
+    final public int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
         int len=sortExpressions.length;
         if(len!=OA.length) throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length="+len+", OA.length="+OA.length);
 
@@ -93,16 +95,26 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
         return false;
     }
 
-    abstract public Object getColumn(int i);
+    final public Object getColumn(int i) {
+        try {
+            return getColumnImpl(i);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
 
-    final public List<Object> getColumns(AOServConnector connector) {
+    abstract Object getColumnImpl(int i) throws IOException, SQLException;
+
+    final public List<Object> getColumns(AOServConnector connector) throws IOException, SQLException {
         int len=getTableSchema(connector).getSchemaColumns(connector).size();
         List<Object> buff=new ArrayList<Object>(len);
         for(int c=0;c<len;c++) buff.add(getColumn(c));
         return buff;
     }
 
-    final public int getColumns(AOServConnector connector, List<Object> buff) {
+    final public int getColumns(AOServConnector connector, List<Object> buff) throws IOException, SQLException {
         int len=getTableSchema(connector).getSchemaColumns(connector).size();
         for(int c=0;c<len;c++) buff.add(getColumn(c));
         return len;
@@ -112,7 +124,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
     public abstract SchemaTable.TableID getTableID();
 
-    final public SchemaTable getTableSchema(AOServConnector connector) {
+    final public SchemaTable getTableSchema(AOServConnector connector) throws IOException, SQLException {
         return connector.schemaTables.get(getTableID());
     }
 
@@ -139,10 +151,16 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
     @Override
     final public String toString() {
-        return toStringImpl();
+        try {
+            return toStringImpl();
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    String toStringImpl() {
+    String toStringImpl() throws IOException, SQLException {
         K pkey=getKey();
         if(pkey==null) return super.toString();
         return pkey.toString();

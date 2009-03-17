@@ -45,45 +45,55 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
         BusinessAdministrator assigned_to,
         String contact_emails,
         String contact_phone_numbers
-    ) {
+    ) throws IOException, SQLException {
+        int pkey;
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
         try {
-            int pkey;
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-                out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
-                out.writeBoolean(business!=null); if(business!=null) out.writeUTF(business.pkey);
-                out.writeUTF(businessAdministratorObj.pkey);
-                out.writeUTF(ticket_type);
-                out.writeUTF(details);
-                out.writeLong(deadline);
-                out.writeUTF(client_priority);
-                out.writeUTF(admin_priority==null ? "" : admin_priority);
-                out.writeBoolean(technology!=null); if(technology!=null) out.writeUTF(technology);
-                out.writeBoolean(assigned_to!=null); if(assigned_to!=null) out.writeUTF(assigned_to.pkey);
-                out.writeUTF(contact_emails);
-                out.writeUTF(contact_phone_numbers);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+            out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
+            out.writeBoolean(business!=null); if(business!=null) out.writeUTF(business.pkey);
+            out.writeUTF(businessAdministratorObj.pkey);
+            out.writeUTF(ticket_type);
+            out.writeUTF(details);
+            out.writeLong(deadline);
+            out.writeUTF(client_priority);
+            out.writeUTF(admin_priority==null ? "" : admin_priority);
+            out.writeBoolean(technology!=null); if(technology!=null) out.writeUTF(technology);
+            out.writeBoolean(assigned_to!=null); if(assigned_to!=null) out.writeUTF(assigned_to.pkey);
+            out.writeUTF(contact_emails);
+            out.writeUTF(contact_phone_numbers);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    pkey=in.readCompressedInt();
-                    invalidateList=AOServConnector.readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                pkey=in.readCompressedInt();
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
-            return pkey;
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+        connector.tablesUpdated(invalidateList);
+        return pkey;
+    }
+
+    @Override
+    public int getCachedRowCount() throws IOException, SQLException {
+        return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.TICKETS);
+    }
+
+    @Override
+    public int size() {
+        try {
+            return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.TICKETS);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -91,15 +101,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
         }
     }
 
-    public int getCachedRowCount() {
-        return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.TICKETS);
-    }
-
-    public int size() {
-        return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.TICKETS);
-    }
-
-    public List<Ticket> getRows() {
+    public List<Ticket> getRows() throws IOException, SQLException {
         List<Ticket> list=new ArrayList<Ticket>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TICKETS);
         return list;
@@ -110,28 +112,34 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
     }
 
     public Ticket get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public Ticket get(int pkey) {
+    public Ticket get(int pkey) throws IOException, SQLException {
         return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TICKETS, pkey);
     }
 
-    List<Ticket> getTickets(BusinessAdministrator business_administrator) {
+    List<Ticket> getTickets(BusinessAdministrator business_administrator) throws IOException, SQLException {
 	boolean isAdmin = business_administrator.isActiveTicketAdmin();
 	if(isAdmin) return getRows();
 	return getObjects(AOServProtocol.CommandID.GET_TICKETS_BUSINESS_ADMINISTRATOR, business_administrator.pkey);
     }
 
-    List<Ticket> getTickets(Business business) {
+    List<Ticket> getTickets(Business business) throws IOException, SQLException {
 	return getObjects(AOServProtocol.CommandID.GET_TICKETS_BUSINESS, business.pkey);
     }
 
-    List<Ticket> getCreatedTickets(BusinessAdministrator ba) {
+    List<Ticket> getCreatedTickets(BusinessAdministrator ba) throws IOException, SQLException {
 	return getObjects(AOServProtocol.CommandID.GET_TICKETS_CREATED_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
-    List<Ticket> getClosedTickets(BusinessAdministrator ba) {
+    List<Ticket> getClosedTickets(BusinessAdministrator ba) throws IOException, SQLException {
 	return getObjects(AOServProtocol.CommandID.GET_TICKETS_CLOSED_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
@@ -140,7 +148,8 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
         return get(value);
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_TICKET, args, 11, err)) {

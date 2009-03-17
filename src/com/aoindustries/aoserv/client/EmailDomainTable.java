@@ -33,8 +33,8 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
         return defaultOrderBy;
     }
 
-    int addEmailDomain(String domain, AOServer ao, Package packageObject) {
-	if (!EmailDomain.isValidFormat(domain)) throw new WrappedException(new SQLException("Invalid domain format: " + domain));
+    int addEmailDomain(String domain, AOServer ao, Package packageObject) throws SQLException, IOException {
+	if (!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid domain format: " + domain);
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_DOMAINS,
@@ -45,14 +45,20 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
     }
 
     public EmailDomain get(Object pkey) {
+        try {
+            return getUniqueRow(EmailDomain.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public EmailDomain get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EmailDomain.COLUMN_PKEY, pkey);
     }
 
-    public EmailDomain get(int pkey) {
-	return getUniqueRow(EmailDomain.COLUMN_PKEY, pkey);
-    }
-
-    List<EmailDomain> getEmailDomains(Business owner) {
+    List<EmailDomain> getEmailDomains(Business owner) throws SQLException, IOException {
         String accounting=owner.pkey;
 
         List<EmailDomain> cached = getRows();
@@ -65,15 +71,15 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	return matches;
     }
 
-    List<EmailDomain> getEmailDomains(Package pack) {
+    List<EmailDomain> getEmailDomains(Package pack) throws IOException, SQLException {
         return getIndexedRows(EmailDomain.COLUMN_PACKAGE, pack.name);
     }
 
-    List<EmailDomain> getEmailDomains(AOServer ao) {
+    List<EmailDomain> getEmailDomains(AOServer ao) throws IOException, SQLException {
         return getIndexedRows(EmailDomain.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    EmailDomain getEmailDomain(AOServer ao, String domain) {
+    EmailDomain getEmailDomain(AOServer ao, String domain) throws IOException, SQLException {
         // Use the index first
         List<EmailDomain> cached = getEmailDomains(ao);
 	int len = cached.size();
@@ -88,7 +94,8 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	return SchemaTable.TableID.EMAIL_DOMAINS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_DOMAIN)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_DOMAIN, args, 3, err)) {
@@ -137,8 +144,8 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	return false;
     }
 
-    boolean isEmailDomainAvailable(AOServer aoServer, String domain) {
-	if(!EmailDomain.isValidFormat(domain)) throw new WrappedException(new SQLException("Invalid EmailDomain: "+domain));
+    boolean isEmailDomainAvailable(AOServer aoServer, String domain) throws SQLException, IOException {
+	if(!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid EmailDomain: "+domain);
 	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_EMAIL_DOMAIN_AVAILABLE, aoServer.pkey, domain);
     }
 }

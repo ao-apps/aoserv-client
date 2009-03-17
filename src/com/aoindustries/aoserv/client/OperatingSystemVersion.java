@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,7 +71,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     private boolean is_aoserv_daemon_supported;
     private short sort_order;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return operating_system;
@@ -98,9 +97,9 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         return version_name;
     }
 
-    public Architecture getArchitecture(AOServConnector connector) {
+    public Architecture getArchitecture(AOServConnector connector) throws SQLException {
         Architecture ar=connector.architectures.get(architecture);
-        if(ar==null) throw new WrappedException(new SQLException("Unable to find Architecture: "+architecture));
+        if(ar==null) throw new SQLException("Unable to find Architecture: "+architecture);
         return ar;
     }
 

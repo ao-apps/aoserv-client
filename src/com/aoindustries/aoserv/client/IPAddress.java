@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -65,7 +64,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     private String externalIpAddress;
     private String netmask;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return ip_address;
@@ -140,18 +139,18 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	return ip_address;
     }
 
-    public List<NetBind> getNetBinds() {
+    public List<NetBind> getNetBinds() throws IOException, SQLException {
 	return table.connector.netBinds.getNetBinds(this);
     }
 
-    public NetDevice getNetDevice() {
+    public NetDevice getNetDevice() throws SQLException, IOException {
         if(net_device==-1) return null;
 	NetDevice nd = table.connector.netDevices.get(net_device);
-	if (nd == null) throw new WrappedException(new SQLException("Unable to find NetDevice: " + net_device));
+	if (nd == null) throw new SQLException("Unable to find NetDevice: " + net_device);
 	return nd;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws IOException, SQLException {
         // May be null when filtered
         return table.connector.packages.get(packageName);
     }
@@ -208,7 +207,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return available;
     }
 
-    public boolean isUsed() {
+    public boolean isUsed() throws IOException, SQLException {
         return !getNetBinds().isEmpty();
     }
 
@@ -250,7 +249,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return WILDCARD_IP.equals(ip_address);
     }
 
-    public void moveTo(Server server) {
+    public void moveTo(Server server) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.MOVE_IP_ADDRESS, ip_address, server.pkey);
     }
 
@@ -273,7 +272,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     /**
      * Sets the hostname for this <code>IPAddress</code>.
      */
-    public void setHostname(String hostname) {
+    public void setHostname(String hostname) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
     }
 
@@ -281,13 +280,13 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
      * Sets the <code>Package</code>.  The package may only be set if the IP Address is not used
      * by other resources.
      */
-    public void setPackage(Package pk) {
-        if(isUsed()) throw new WrappedException(new SQLException("Unable to set Package, IPAddress in use: #"+pkey));
+    public void setPackage(Package pk) throws IOException, SQLException {
+        if(isUsed()) throw new SQLException("Unable to set Package, IPAddress in use: #"+pkey);
 
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_IP_ADDRESS_PACKAGE, pkey, pk.name);
     }
 
-    public void setDHCPAddress(String ipAddress) {
+    public void setDHCPAddress(String ipAddress) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
     }
 

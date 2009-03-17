@@ -1,10 +1,14 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @see  TicketStatus
@@ -32,6 +36,12 @@ final public class TicketStatusTable extends GlobalTableStringKey<TicketStatus> 
     }
 
     public TicketStatus get(Object pkey) {
-	return getUniqueRow(TicketStatus.COLUMN_STATUS, pkey);
+        try {
+            return getUniqueRow(TicketStatus.COLUMN_STATUS, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 }

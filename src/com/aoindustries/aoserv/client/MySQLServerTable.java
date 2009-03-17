@@ -38,8 +38,8 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
         AOServer aoServer,
         TechnologyVersion version,
         int maxConnections
-    ) {
-        if(!version.name.equals(TechnologyName.MYSQL)) throw new WrappedException(new SQLException("TechnologyVersion must have name of "+TechnologyName.MYSQL+": "+version.name));
+    ) throws SQLException, IOException {
+        if(!version.name.equals(TechnologyName.MYSQL)) throw new SQLException("TechnologyVersion must have name of "+TechnologyName.MYSQL+": "+version.name);
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MYSQL_SERVERS,
@@ -51,22 +51,28 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
     }
 
     public MySQLServer get(Object pkey) {
+        try {
+            return getUniqueRow(MySQLServer.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public MySQLServer get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(MySQLServer.COLUMN_PKEY, pkey);
     }
 
-    public MySQLServer get(int pkey) {
-	return getUniqueRow(MySQLServer.COLUMN_PKEY, pkey);
-    }
-
-    MySQLServer getMySQLServer(NetBind nb) {
+    MySQLServer getMySQLServer(NetBind nb) throws IOException, SQLException {
 	return getUniqueRow(MySQLServer.COLUMN_NET_BIND, nb.pkey);
     }
 
-    List<MySQLServer> getMySQLServers(AOServer ao) {
+    List<MySQLServer> getMySQLServers(AOServer ao) throws IOException, SQLException {
         return getIndexedRows(MySQLServer.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    MySQLServer getMySQLServer(String name, AOServer ao) {
+    MySQLServer getMySQLServer(String name, AOServer ao) throws IOException, SQLException {
         // Use the index first
         List<MySQLServer> table=getMySQLServers(ao);
 	int size=table.size();
@@ -77,7 +83,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 	return null;
     }
 
-    List<MySQLServer> getMySQLServers(Package pk) {
+    List<MySQLServer> getMySQLServers(Package pk) throws IOException, SQLException {
         return getIndexedRows(MySQLServer.COLUMN_PACKAGE, pk.name);
     }
 
@@ -85,7 +91,8 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 	return SchemaTable.TableID.MYSQL_SERVERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_SERVER_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_SERVER_NAME, args, 1, err)) {
@@ -150,11 +157,11 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 	return false;
     }
 
-    boolean isMySQLServerNameAvailable(String name, AOServer ao) {
+    boolean isMySQLServerNameAvailable(String name, AOServer ao) throws IOException, SQLException {
 	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_MYSQL_SERVER_NAME_AVAILABLE, name, ao.pkey);
     }
 
-    void waitForRebuild(AOServer aoServer) {
+    void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_SERVERS,

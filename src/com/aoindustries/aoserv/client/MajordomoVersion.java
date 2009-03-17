@@ -34,7 +34,7 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 
     private long created;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_VERSION) return pkey;
 	if(i==1) return new java.sql.Date(created);
 	throw new IllegalArgumentException("Invalid index: "+i);

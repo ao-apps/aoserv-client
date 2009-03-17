@@ -5,10 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.IntList;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +42,7 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
         String value,
         boolean override,
         String description
-    ) {
+    ) throws IOException, SQLException {
         return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS,
@@ -58,18 +55,24 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
     }
 
     public HttpdTomcatParameter get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdTomcatParameter.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public HttpdTomcatParameter get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdTomcatParameter.COLUMN_PKEY, pkey);
     }
 
-    public HttpdTomcatParameter get(int pkey) {
-	return getUniqueRow(HttpdTomcatParameter.COLUMN_PKEY, pkey);
-    }
-
-    List<HttpdTomcatParameter> getHttpdTomcatParameters(HttpdTomcatContext htc) {
+    List<HttpdTomcatParameter> getHttpdTomcatParameters(HttpdTomcatContext htc) throws IOException, SQLException {
         return getIndexedRows(HttpdTomcatParameter.COLUMN_TOMCAT_CONTEXT, htc.pkey);
     }
 
-    HttpdTomcatParameter getHttpdTomcatParameter(HttpdTomcatContext htc, String name) {
+    HttpdTomcatParameter getHttpdTomcatParameter(HttpdTomcatContext htc, String name) throws IOException, SQLException {
         // Use index first
         List<HttpdTomcatParameter> parameters=getHttpdTomcatParameters(htc);
         for(HttpdTomcatParameter parameter : parameters) {
@@ -82,7 +85,8 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
 	return SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_PARAMETER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_PARAMETER, args, 7, err)) {

@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,7 +46,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     private long monitoring_bit_rate_critical;
 
     @Override
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_SERVER: return Integer.valueOf(server);
@@ -79,17 +78,17 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	return gateway;
     }
     
-    public IPAddress getIPAddress(String ipAddress) {
+    public IPAddress getIPAddress(String ipAddress) throws IOException, SQLException {
 	return table.connector.ipAddresses.getIPAddress(this, ipAddress);
     }
 
-    public List<IPAddress> getIPAddresses() {
+    public List<IPAddress> getIPAddresses() throws IOException, SQLException {
 	return table.connector.ipAddresses.getIPAddresses(this);
     }
 
-    public NetDeviceID getNetDeviceID() {
+    public NetDeviceID getNetDeviceID() throws SQLException {
 	NetDeviceID ndi=table.connector.netDeviceIDs.get(device_id);
-	if(ndi==null) throw new WrappedException(new SQLException("Unable to find NetDeviceID: "+device_id));
+	if(ndi==null) new SQLException("Unable to find NetDeviceID: "+device_id);
 	return ndi;
     }
 
@@ -146,21 +145,21 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
         return monitoring_bit_rate_critical;
     }
 
-    public IPAddress getPrimaryIPAddress() {
+    public IPAddress getPrimaryIPAddress() throws SQLException, IOException {
 	List<IPAddress> ips=getIPAddresses();
         List<IPAddress> matches=new ArrayList<IPAddress>();
 	for(int c=0;c<ips.size();c++) {
             IPAddress ip=ips.get(c);
             if(!ip.isAlias()) matches.add(ip);
 	}
-        if(matches.isEmpty()) throw new WrappedException(new SQLException("Unable to find primary IPAddress for NetDevice: "+device_id+" on "+server));
-        if(matches.size()>1) throw new WrappedException(new SQLException("Found more than one primary IPAddress for NetDevice: "+device_id+" on "+server));
+        if(matches.isEmpty()) throw new SQLException("Unable to find primary IPAddress for NetDevice: "+device_id+" on "+server);
+        if(matches.size()>1) throw new SQLException("Found more than one primary IPAddress for NetDevice: "+device_id+" on "+server);
         return matches.get(0);
     }
 
-    public Server getServer() {
+    public Server getServer() throws SQLException, IOException {
 	Server se=table.connector.servers.get(server);
-	if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
+	if(se==null) throw new SQLException("Unable to find Server: "+server);
 	return se;
     }
 
@@ -212,7 +211,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws SQLException, IOException {
         return getServer().toString()+'|'+device_id;
     }
 
@@ -247,7 +246,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
      * Gets the bonding report from <code>/proc/net/bonding/[p]bond#</code>
      * or <code>null</code> if not a bonded device.
      */
-    public String getBondingReport() {
+    public String getBondingReport() throws IOException, SQLException {
         if(!device_id.startsWith("bond")) return null;
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
     }
@@ -256,7 +255,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
      * Gets the report from <code>/sys/class/net/<i>device</i>/statistics/...</code>
      * or <code>null</code> if not an AOServer.
      */
-    public String getStatisticsReport() {
+    public String getStatisticsReport() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_NET_DEVICE_STATISTICS_REPORT, pkey);
     }
 }

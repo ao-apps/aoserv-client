@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -76,7 +75,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
         return column_name;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return table_name;
@@ -109,17 +108,17 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
         return index;
     }
 
-    public List<SchemaForeignKey> getReferencedBy(AOServConnector connector) {
+    public List<SchemaForeignKey> getReferencedBy(AOServConnector connector) throws IOException, SQLException {
         return connector.schemaForeignKeys.getSchemaForeignKeysReferencing(this);
     }
 
-    public List<SchemaForeignKey> getReferences(AOServConnector connector) {
+    public List<SchemaForeignKey> getReferences(AOServConnector connector) throws IOException, SQLException {
         return connector.schemaForeignKeys.getSchemaForeignKeysReferencedBy(this);
     }
 
-    public SchemaTable getSchemaTable(AOServConnector connector) {
+    public SchemaTable getSchemaTable(AOServConnector connector) throws SQLException, IOException {
         SchemaTable obj=connector.schemaTables.get(table_name);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaTable: "+table_name));
+        if(obj==null) throw new SQLException("Unable to find SchemaTable: "+table_name);
         return obj;
     }
 
@@ -127,9 +126,9 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
         return table_name;
     }
 
-    public SchemaType getSchemaType(AOServConnector connector) {
+    public SchemaType getSchemaType(AOServConnector connector) throws SQLException, IOException {
         SchemaType obj=connector.schemaTypes.get(type);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaType: "+type));
+        if(obj==null) throw new SQLException("Unable to find SchemaType: "+type);
         return obj;
     }
 

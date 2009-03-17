@@ -49,7 +49,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 	return allowWeb;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_NAME) return pkey;
 	if(i==1) return description;
 	if(i==2) return isActive?Boolean.TRUE:Boolean.FALSE;

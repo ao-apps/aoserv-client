@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -35,6 +36,12 @@ public final class TransactionTypeTable extends GlobalTableStringKey<Transaction
     }
 
     public TransactionType get(Object pkey) {
-	return getUniqueRow(TransactionType.COLUMN_NAME, pkey);
+        try {
+            return getUniqueRow(TransactionType.COLUMN_NAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 }

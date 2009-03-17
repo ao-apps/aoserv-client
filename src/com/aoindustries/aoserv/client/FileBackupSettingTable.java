@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,7 +37,7 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
         return defaultOrderBy;
     }
 
-    int addFileBackupSetting(FailoverFileReplication replication, String path, boolean backupEnabled) {
+    int addFileBackupSetting(FailoverFileReplication replication, String path, boolean backupEnabled) throws IOException, SQLException {
         return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.FILE_BACKUP_SETTINGS,
@@ -47,20 +48,26 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
     }
 
     public FileBackupSetting get(Object pkey) {
+        try {
+            return getUniqueRow(FileBackupSetting.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public FileBackupSetting get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(FileBackupSetting.COLUMN_PKEY, pkey);
     }
 
-    public FileBackupSetting get(int pkey) {
-	return getUniqueRow(FileBackupSetting.COLUMN_PKEY, pkey);
-    }
-
-    FileBackupSetting getFileBackupSetting(FailoverFileReplication ffr, String path) {
+    FileBackupSetting getFileBackupSetting(FailoverFileReplication ffr, String path) throws IOException, SQLException {
         // Use index first
 	for(FileBackupSetting fbs : getFileBackupSettings(ffr)) if(fbs.path.equals(path)) return fbs;
 	return null;
     }
 
-    List<FileBackupSetting> getFileBackupSettings(FailoverFileReplication ffr) {
+    List<FileBackupSetting> getFileBackupSettings(FailoverFileReplication ffr) throws IOException, SQLException {
         return getIndexedRows(FileBackupSetting.COLUMN_REPLICATION, ffr.pkey);
     }
 
@@ -69,7 +76,7 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_FILE_BACKUP_SETTING)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_FILE_BACKUP_SETTING, args, 3, err)) {

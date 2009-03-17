@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -37,14 +38,21 @@ final public class HttpdTomcatSiteTable extends CachedTableIntegerKey<HttpdTomca
     }
 
     public HttpdTomcatSite get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdTomcatSite.COLUMN_HTTPD_SITE, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public HttpdTomcatSite get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdTomcatSite.COLUMN_HTTPD_SITE, pkey);
     }
 
-    public HttpdTomcatSite get(int pkey) {
-	return getUniqueRow(HttpdTomcatSite.COLUMN_HTTPD_SITE, pkey);
-    }
-
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.START_JVM)) {
             if(AOSH.checkParamCount(AOSHCommand.START_JVM, args, 2, err)) {

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -37,6 +36,7 @@ final public class Action extends AOServObject<Integer,Action> implements Single
     private String comments;
     protected AOServTable<Integer,Action> table;
 
+    @Override
     boolean equalsImpl(Object O) {
         return
             O instanceof Action
@@ -44,9 +44,9 @@ final public class Action extends AOServObject<Integer,Action> implements Single
         ;
     }
 
-    public ActionType getActionType() {
+    public ActionType getActionType() throws SQLException {
         ActionType type=table.connector.actionTypes.get(action_type);
-        if(type==null) throw new WrappedException(new SQLException("Unable to find ActionType: "+action_type));
+        if(type==null) throw new SQLException("Unable to find ActionType: "+action_type);
         return type;
     }
 
@@ -56,7 +56,7 @@ final public class Action extends AOServObject<Integer,Action> implements Single
         return un.getBusinessAdministrator();
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case 0: return Integer.valueOf(pkey);
             case 1: return Integer.valueOf(ticket_id);
@@ -98,8 +98,10 @@ final public class Action extends AOServObject<Integer,Action> implements Single
         return SchemaTable.TableID.ACTIONS;
     }
 
-    public Ticket getTicket() {
-        return table.connector.tickets.get(ticket_id);
+    public Ticket getTicket() throws IOException, SQLException {
+        Ticket t = table.connector.tickets.get(ticket_id);
+        if(t==null) throw new SQLException("Unable to find Ticket: "+ticket_id);
+        return t;
     }
 
     public long getTime() {

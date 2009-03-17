@@ -38,23 +38,29 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
         return defaultOrderBy;
     }
 
-    int addHttpdSiteURL(HttpdSiteBind hsb, String hostname) {
+    int addHttpdSiteURL(HttpdSiteBind hsb, String hostname) throws IOException, SQLException {
         return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
     }
 
     public HttpdSiteURL get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdSiteURL.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public HttpdSiteURL get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdSiteURL.COLUMN_PKEY, pkey);
     }
 
-    public HttpdSiteURL get(int pkey) {
-	return getUniqueRow(HttpdSiteURL.COLUMN_PKEY, pkey);
-    }
-
-    List<HttpdSiteURL> getHttpdSiteURLs(HttpdSiteBind bind) {
+    List<HttpdSiteURL> getHttpdSiteURLs(HttpdSiteBind bind) throws IOException, SQLException {
         return getIndexedRows(HttpdSiteURL.COLUMN_HTTPD_SITE_BIND, bind.pkey);
     }
 
-    HttpdSiteURL getPrimaryHttpdSiteURL(HttpdSiteBind bind) {
+    HttpdSiteURL getPrimaryHttpdSiteURL(HttpdSiteBind bind) throws SQLException, IOException {
         // Use the index first
 	List<HttpdSiteURL> cached=getHttpdSiteURLs(bind);
 	int size=cached.size();
@@ -62,10 +68,10 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
             HttpdSiteURL hsu=cached.get(c);
             if(hsu.isPrimary) return hsu;
 	}
-	throw new WrappedException(new SQLException("Unable to find primary HttpdSiteURL for HttpdSiteBind with pkey="+bind.pkey));
+	throw new SQLException("Unable to find primary HttpdSiteURL for HttpdSiteBind with pkey="+bind.pkey);
     }
 
-    List<HttpdSiteURL> getAltHttpdSiteURLs(HttpdSiteBind bind) {
+    List<HttpdSiteURL> getAltHttpdSiteURLs(HttpdSiteBind bind) throws IOException, SQLException {
         // Use the index first
 	List<HttpdSiteURL> cached=getHttpdSiteURLs(bind);
 	int size=cached.size();
@@ -81,7 +87,8 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
 	return SchemaTable.TableID.HTTPD_SITE_URLS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_SITE_URL)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_SITE_URL, args, 2, err)) {

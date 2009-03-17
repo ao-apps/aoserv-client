@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -39,7 +40,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
         PostgresServerUser datdba,
         PostgresEncoding encoding,
         boolean enablePostgis
-    ) {
+    ) throws IOException, SQLException {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_DATABASES,
@@ -52,25 +53,31 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	return pkey;
     }
 
-    public String generatePostgresDatabaseName(String template_base, String template_added) {
+    public String generatePostgresDatabaseName(String template_base, String template_added) throws IOException, SQLException {
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added);
     }
 
     public PostgresDatabase get(Object pkey) {
+        try {
+            return getUniqueRow(PostgresDatabase.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public PostgresDatabase get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(PostgresDatabase.COLUMN_PKEY, pkey);
     }
 
-    public PostgresDatabase get(int pkey) {
-	return getUniqueRow(PostgresDatabase.COLUMN_PKEY, pkey);
-    }
-
-    PostgresDatabase getPostgresDatabase(String name, PostgresServer postgresServer) {
+    PostgresDatabase getPostgresDatabase(String name, PostgresServer postgresServer) throws IOException, SQLException {
         // Use the index first
 	for(PostgresDatabase pd : getPostgresDatabases(postgresServer)) if(pd.name.equals(name)) return pd;
 	return null;
     }
 
-    List<PostgresDatabase> getPostgresDatabases(Package pack) {
+    List<PostgresDatabase> getPostgresDatabases(Package pack) throws IOException, SQLException {
         String name=pack.name;
 
         List<PostgresDatabase> cached=getRows();
@@ -83,11 +90,11 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	return matches;
     }
 
-    List<PostgresDatabase> getPostgresDatabases(PostgresServerUser psu) {
+    List<PostgresDatabase> getPostgresDatabases(PostgresServerUser psu) throws IOException, SQLException {
         return getIndexedRows(PostgresDatabase.COLUMN_DATDBA, psu.pkey);
     }
 
-    List<PostgresDatabase> getPostgresDatabases(PostgresServer postgresServer) {
+    List<PostgresDatabase> getPostgresDatabases(PostgresServer postgresServer) throws IOException, SQLException {
         return getIndexedRows(PostgresDatabase.COLUMN_POSTGRES_SERVER, postgresServer.pkey);
     }
 
@@ -95,7 +102,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	return SchemaTable.TableID.POSTGRES_DATABASES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_POSTGRES_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_POSTGRES_DATABASE, args, 5, err)) {
@@ -174,7 +182,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	return false;
     }
 
-    boolean isPostgresDatabaseNameAvailable(String name, PostgresServer postgresServer) {
+    boolean isPostgresDatabaseNameAvailable(String name, PostgresServer postgresServer) throws IOException, SQLException {
 	return connector.requestBooleanQuery(
             AOServProtocol.CommandID.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
             name,
@@ -182,7 +190,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
         );
     }
 
-    public boolean isValidDatabaseName(String name) {
+    public boolean isValidDatabaseName(String name) throws IOException, SQLException {
 	return isValidDatabaseName(name, connector.postgresReservedWords.getRows());
     }
 
@@ -207,7 +215,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	return true;
     }
 
-    void waitForRebuild(AOServer aoServer) {
+    void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.POSTGRES_DATABASES,

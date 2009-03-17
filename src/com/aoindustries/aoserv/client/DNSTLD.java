@@ -34,7 +34,7 @@ final public class DNSTLD extends GlobalObjectStringKey<DNSTLD> {
 
     private String description;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_DOMAIN) return pkey;
 	if(i==1) return description;
 	throw new IllegalArgumentException("Invalid index: "+i);

@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.WrappedException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
         return defaultOrderBy;
     }
 
-    int addEmailForwarding(EmailAddress emailAddressObject, String destination) {
-	if (!EmailAddress.isValidEmailAddress(destination)) throw new WrappedException(new SQLException("Invalid destination: " + destination));
+    int addEmailForwarding(EmailAddress emailAddressObject, String destination) throws IOException, SQLException {
+	if (!EmailAddress.isValidEmailAddress(destination)) throw new SQLException("Invalid destination: " + destination);
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_FORWARDING,
@@ -49,14 +50,20 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
     }
 
     public EmailForwarding get(Object pkey) {
+        try {
+            return getUniqueRow(EmailForwarding.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public EmailForwarding get(int pkey) throws SQLException, IOException {
 	return getUniqueRow(EmailForwarding.COLUMN_PKEY, pkey);
     }
 
-    public EmailForwarding get(int pkey) {
-	return getUniqueRow(EmailForwarding.COLUMN_PKEY, pkey);
-    }
-
-    List<EmailForwarding> getEmailForwarding(Business business) {
+    List<EmailForwarding> getEmailForwarding(Business business) throws SQLException, IOException {
 	List<EmailForwarding> cached = getRows();
 	int len = cached.size();
         List<EmailForwarding> matches=new ArrayList<EmailForwarding>(len);
@@ -73,16 +80,16 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 	return matches;
     }
 
-    List<EmailForwarding> getEmailForwardings(EmailAddress ea) {
+    List<EmailForwarding> getEmailForwardings(EmailAddress ea) throws IOException, SQLException {
         return getIndexedRows(EmailForwarding.COLUMN_EMAIL_ADDRESS, ea.pkey);
     }
 
-    List<EmailForwarding> getEnabledEmailForwardings(EmailAddress ea) {
+    List<EmailForwarding> getEnabledEmailForwardings(EmailAddress ea) throws SQLException, IOException {
         if(ea.getDomain().getPackage().disable_log==-1) return getEmailForwardings(ea);
         else return Collections.emptyList();
     }
 
-    EmailForwarding getEmailForwarding(EmailAddress ea, String destination) {
+    EmailForwarding getEmailForwarding(EmailAddress ea, String destination) throws IOException, SQLException {
         // Use index first
 	List<EmailForwarding> cached=getEmailForwardings(ea);
 	int len=cached.size();
@@ -93,7 +100,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
         return null;
     }
 
-    List<EmailForwarding> getEmailForwarding(AOServer ao) {
+    List<EmailForwarding> getEmailForwarding(AOServer ao) throws SQLException, IOException {
         int aoPKey=ao.pkey;
 	List<EmailForwarding> cached = getRows();
 	int len = cached.size();
@@ -110,7 +117,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_FORWARDING)) {
             if(AOSH.checkMinParamCount(AOSHCommand.ADD_EMAIL_FORWARDING, args, 3, err)) {

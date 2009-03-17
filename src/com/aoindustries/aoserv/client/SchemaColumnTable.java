@@ -5,6 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,14 +51,20 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
     }
 
     public SchemaColumn get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public SchemaColumn get(int pkey) {
+    public SchemaColumn get(int pkey) throws IOException, SQLException {
         return getUniqueRow(SchemaColumn.COLUMN_PKEY, pkey);
     }
 
-    SchemaColumn getSchemaColumn(SchemaTable table, String columnName) {
+    SchemaColumn getSchemaColumn(SchemaTable table, String columnName) throws IOException, SQLException {
         int tableID=table.pkey;
         synchronized(nameToColumns) {
             Map<String,SchemaColumn> map=nameToColumns.get(tableID);
@@ -72,11 +81,11 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
         }
     }
 
-    SchemaColumn getSchemaColumn(SchemaTable table, int columnIndex) {
+    SchemaColumn getSchemaColumn(SchemaTable table, int columnIndex) throws IOException, SQLException {
         return getSchemaColumns(table).get(columnIndex);
     }
 
-    List<SchemaColumn> getSchemaColumns(SchemaTable table) {
+    List<SchemaColumn> getSchemaColumns(SchemaTable table) throws IOException, SQLException {
         int tableID=table.pkey;
         synchronized(tableColumns) {
             List<SchemaColumn> cols=tableColumns.get(tableID);

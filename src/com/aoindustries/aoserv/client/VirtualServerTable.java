@@ -1,10 +1,14 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+
 /*
  * Copyright 2008-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @see  VirtualServer
@@ -27,7 +31,13 @@ final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
     }
 
     public VirtualServer get(Object server) {
-	return getUniqueRow(VirtualServer.COLUMN_SERVER, server);
+        try {
+            return getUniqueRow(VirtualServer.COLUMN_SERVER, server);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

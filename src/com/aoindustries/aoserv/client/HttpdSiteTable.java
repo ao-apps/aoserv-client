@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,19 +33,25 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
         return defaultOrderBy;
     }
 
-    public String generateSiteName(String template) {
+    public String generateSiteName(String template) throws IOException, SQLException {
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SITE_NAME, template);
     }
 
     public HttpdSite get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdSite.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public HttpdSite get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdSite.COLUMN_PKEY, pkey);
     }
 
-    public HttpdSite get(int pkey) {
-	return getUniqueRow(HttpdSite.COLUMN_PKEY, pkey);
-    }
-
-    HttpdSite getHttpdSite(String siteName, AOServer ao) {
+    HttpdSite getHttpdSite(String siteName, AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 
         List<HttpdSite> cached=getRows();
@@ -59,7 +66,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	return null;
     }
 
-    List<HttpdSite> getHttpdSites(HttpdServer server) {
+    List<HttpdSite> getHttpdSites(HttpdServer server) throws IOException, SQLException {
         int serverPKey=server.pkey;
 
         List<HttpdSite> cached=getRows();
@@ -77,15 +84,15 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	return matches;
     }
 
-    List<HttpdSite> getHttpdSites(AOServer ao) {
+    List<HttpdSite> getHttpdSites(AOServer ao) throws IOException, SQLException {
         return getIndexedRows(HttpdSite.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    List<HttpdSite> getHttpdSites(Package pk) {
+    List<HttpdSite> getHttpdSites(Package pk) throws IOException, SQLException {
         return getIndexedRows(HttpdSite.COLUMN_PACKAGE, pk.name);
     }
 
-    List<HttpdSite> getHttpdSites(LinuxServerAccount lsa) {
+    List<HttpdSite> getHttpdSites(LinuxServerAccount lsa) throws IOException, SQLException {
         String lsaUsername=lsa.username;
         int aoServer=lsa.ao_server;
 
@@ -106,7 +113,8 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	return SchemaTable.TableID.HTTPD_SITES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.CHECK_SITE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_SITE_NAME, args, 1, err)) {
@@ -199,11 +207,11 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	} else return false;
     }
 
-    public boolean isSiteNameAvailable(String sitename) {
+    public boolean isSiteNameAvailable(String sitename) throws IOException, SQLException {
 	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_SITE_NAME_AVAILABLE, sitename);
     }
 
-    void waitForRebuild(AOServer aoServer) {
+    void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
 	connector.requestUpdate(
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.HTTPD_SITES,

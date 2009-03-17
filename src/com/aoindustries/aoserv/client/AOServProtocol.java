@@ -398,7 +398,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_NET_DEVICE_STATISTICS_REPORT,
         SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE,
         GET_AO_SERVER_SYSTEM_TIME_MILLIS,
-        GET_AO_SERVER_LVM_REPORT
+        GET_AO_SERVER_LVM_REPORT,
+        GET_AO_SERVER_HDD_MODEL_REPORT
     }
 
     /**
@@ -418,7 +419,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
     private String comments;
     private long last_used;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_VERSION: return pkey;
             case 1: return new java.sql.Date(created);

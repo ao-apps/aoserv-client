@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -24,10 +26,10 @@ public interface Removable {
      *
      * @return  an empty <code>List<CannotRemoveReason></code> if this object may be removed, or a list of descriptions
      */
-    List<CannotRemoveReason> getCannotRemoveReasons();
+    List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException;
 
     /**
      * Removes this object, and all dependant objects, from the system.
      */
-    void remove();
+    void remove() throws IOException, SQLException;
 }

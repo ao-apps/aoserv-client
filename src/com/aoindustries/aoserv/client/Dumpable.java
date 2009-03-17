@@ -5,7 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 /**
@@ -19,8 +20,8 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 public interface Dumpable {
-/**
- * Dumps the contents of this object into a <code>Writer</code>
- */
-void dump(PrintWriter out);
+    /**
+     * Dumps the contents of this object into a <code>Writer</code>
+     */
+    void dump(PrintWriter out) throws IOException, SQLException;
 }

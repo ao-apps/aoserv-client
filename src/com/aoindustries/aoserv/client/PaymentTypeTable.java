@@ -32,10 +32,16 @@ final public class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
     }
 
     public PaymentType get(Object pkey) {
-	return getUniqueRow(PaymentType.COLUMN_NAME, pkey);
+        try {
+            return getUniqueRow(PaymentType.COLUMN_NAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public PaymentType getCreditCardType(String card_number) {
+    public PaymentType getCreditCardType(String card_number) throws SQLException {
 	// Build the list of numbers
 	StringBuilder numbers = new StringBuilder();
 
@@ -69,7 +75,7 @@ final public class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
         ) paymentType = get(PaymentType.MASTERCARD);
 	else if (numbers.length() >= 1 && numbers.charAt(0) == '4') paymentType = get(PaymentType.VISA);
 	else throw new IllegalArgumentException("Unable to determine card type.");
-	if (paymentType == null) throw new WrappedException(new SQLException("Unable to find payment_type"));
+	if (paymentType == null) throw new SQLException("Unable to find payment_type");
 	return paymentType;
     }
 

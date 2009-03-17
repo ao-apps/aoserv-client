@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +31,7 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
     private String name;
     private String value;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_REQUEST: return request;
@@ -68,9 +67,9 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
         out.writeNullUTF(value);
     }
 
-    public SignupRequest getSignupRequest() {
+    public SignupRequest getSignupRequest() throws SQLException, IOException {
 	SignupRequest sr = table.connector.signupRequests.get(request);
-	if (sr == null) throw new WrappedException(new SQLException("Unable to find SignupRequest: " + request));
+	if (sr == null) throw new SQLException("Unable to find SignupRequest: " + request);
 	return sr;
     }
 

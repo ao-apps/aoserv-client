@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,7 +36,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     private boolean secondaryPhysicalServerLocked;
     private boolean requires_hvm;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_SERVER: return Integer.valueOf(pkey);
             case 1 : return primaryRam;
@@ -54,9 +53,9 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         }
     }
 
-    public Server getServer() {
+    public Server getServer() throws SQLException, IOException {
         Server se=table.connector.servers.get(pkey);
-        if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+pkey));
+        if(se==null) new SQLException("Unable to find Server: "+pkey);
         return se;
     }
 
@@ -81,7 +80,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     public ProcessorType getMinimumProcessorType() {
         if(minimumProcessorType==null) return null;
         ProcessorType pt = table.connector.processorTypes.get(minimumProcessorType);
-        if(pt==null) throw new WrappedException(new SQLException("Unable to find ProcessorType: "+minimumProcessorType));
+        if(pt==null) new SQLException("Unable to find ProcessorType: "+minimumProcessorType);
         return pt;
     }
 
@@ -90,7 +89,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
      */
     public Architecture getMinimumProcessorArchitecture() {
         Architecture a = table.connector.architectures.get(minimumProcessorArchitecture);
-        if(a==null) throw new WrappedException(new SQLException("Unable to find Architecture: "+minimumProcessorArchitecture));
+        if(a==null) new SQLException("Unable to find Architecture: "+minimumProcessorArchitecture);
         return a;
     }
 
@@ -172,7 +171,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
 
     @Override
-    protected String toStringImpl() {
+    protected String toStringImpl() throws SQLException, IOException {
         return getServer().toStringImpl();
     }
 
@@ -196,7 +195,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
     }
     
-    public List<VirtualDisk> getVirtualDisks() {
+    public List<VirtualDisk> getVirtualDisks() throws IOException, SQLException {
         return table.connector.virtualDisks.getVirtualDisks(this);
     }
     
@@ -206,7 +205,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
      * @param device should be <code>xvd[a-z]</code>
      * @return the disk or <code>null</code> if not found
      */
-    public VirtualDisk getVirtualDisk(String device) {
+    public VirtualDisk getVirtualDisk(String device) throws IOException, SQLException {
         for(VirtualDisk vd : getVirtualDisks()) {
             if(vd.getDevice().equals(device)) return vd;
         }

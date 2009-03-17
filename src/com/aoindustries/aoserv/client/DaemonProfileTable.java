@@ -33,7 +33,7 @@ final public class DaemonProfileTable extends AOServTable<Object,DaemonProfile> 
         return defaultOrderBy;
     }
 
-    public List<DaemonProfile> getRows() {
+    public List<DaemonProfile> getRows() throws IOException, SQLException {
         List<DaemonProfile> list=new ArrayList<DaemonProfile>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.DAEMON_PROFILE);
         return list;

@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,7 +35,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
         return defaultOrderBy;
     }
 
-    int addLinuxAccAddress(EmailAddress emailAddressObject, LinuxServerAccount lsa) {
+    int addLinuxAccAddress(EmailAddress emailAddressObject, LinuxServerAccount lsa) throws IOException, SQLException {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_ACC_ADDRESSES,
@@ -44,14 +45,20 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
     }
 
     public LinuxAccAddress get(Object pkey) {
+        try {
+            return getUniqueRow(LinuxAccAddress.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public LinuxAccAddress get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(LinuxAccAddress.COLUMN_PKEY, pkey);
     }
 
-    public LinuxAccAddress get(int pkey) {
-	return getUniqueRow(LinuxAccAddress.COLUMN_PKEY, pkey);
-    }
-
-    List<EmailAddress> getEmailAddresses(LinuxServerAccount lsa) {
+    List<EmailAddress> getEmailAddresses(LinuxServerAccount lsa) throws SQLException, IOException {
         // Start with the index
 	List<LinuxAccAddress> cached = getLinuxAccAddresses(lsa);
 	int len = cached.size();
@@ -63,11 +70,11 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 	return matches;
     }
 
-    List<LinuxAccAddress> getLinuxAccAddresses(LinuxServerAccount lsa) {
+    List<LinuxAccAddress> getLinuxAccAddresses(LinuxServerAccount lsa) throws IOException, SQLException {
         return getIndexedRows(LinuxAccAddress.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 
-    public LinuxAccAddress getLinuxAccAddress(EmailAddress ea, LinuxServerAccount lsa) {
+    public LinuxAccAddress getLinuxAccAddress(EmailAddress ea, LinuxServerAccount lsa) throws IOException, SQLException {
         int pkey=ea.pkey;
         int lsaPKey=lsa.pkey;
         List<LinuxAccAddress> cached=getRows();
@@ -79,7 +86,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
         return null;
     }
 
-    List<LinuxAccAddress> getLinuxAccAddresses(AOServer ao) {
+    List<LinuxAccAddress> getLinuxAccAddresses(AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 	List<LinuxAccAddress> cached = getRows();
 	int len = cached.size();
@@ -91,7 +98,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 	return matches;
     }
 
-    List<LinuxServerAccount> getLinuxServerAccounts(EmailAddress address) {
+    List<LinuxServerAccount> getLinuxServerAccounts(EmailAddress address) throws IOException, SQLException {
         int pkey=address.pkey;
 	List<LinuxAccAddress> cached = getRows();
 	int len = cached.size();
@@ -106,7 +113,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 	return matches;
     }
 
-    List<LinuxAccAddress> getLinuxAccAddresses(EmailAddress address) {
+    List<LinuxAccAddress> getLinuxAccAddresses(EmailAddress address) throws IOException, SQLException {
         return getIndexedRows(LinuxAccAddress.COLUMN_EMAIL_ADDRESS, address.pkey);
     }
 
@@ -114,7 +121,8 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 	return SchemaTable.TableID.LINUX_ACC_ADDRESSES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_ACC_ADDRESS)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_ACC_ADDRESS, args, 3, err)) {

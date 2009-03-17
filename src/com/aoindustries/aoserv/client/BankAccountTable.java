@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -31,7 +32,13 @@ final public class BankAccountTable extends CachedTableStringKey<BankAccount> {
     }
 
     public BankAccount get(Object name) {
-	return getUniqueRow(BankAccount.COLUMN_NAME, name);
+        try {
+            return getUniqueRow(BankAccount.COLUMN_NAME, name);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

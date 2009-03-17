@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,7 +33,13 @@ final public class MajordomoVersionTable extends GlobalTableStringKey<MajordomoV
 
     @Override
     public MajordomoVersion get(Object pkey) {
-	return getUniqueRow(MajordomoVersion.COLUMN_VERSION, pkey);
+        try {
+            return getUniqueRow(MajordomoVersion.COLUMN_VERSION, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -33,11 +34,17 @@ final public class MasterServerProfileTable extends AOServTable<String,MasterSer
     }
 
     public MasterServerProfile get(Object key) {
-        for(MasterServerProfile msp : getRows()) if(key.equals(msp.getKey())) return msp;
-        return null;
+        try {
+            for(MasterServerProfile msp : getRows()) if(key.equals(msp.getKey())) return msp;
+            return null;
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public List<MasterServerProfile> getRows() {
+    public List<MasterServerProfile> getRows() throws IOException, SQLException {
         List<MasterServerProfile> list=new ArrayList<MasterServerProfile>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_SERVER_PROFILE);
         return list;

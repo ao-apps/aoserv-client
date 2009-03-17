@@ -26,7 +26,7 @@ final public class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
     private short sortOrder;
 
     @Override
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_TYPE: return pkey;
             case COLUMN_SORT_ORDER : return sortOrder;

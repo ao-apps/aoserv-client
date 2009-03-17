@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,14 +35,20 @@ final public class BlackholeEmailAddressTable extends CachedTableIntegerKey<Blac
     }
 
     public BlackholeEmailAddress get(Object address) {
-        return get(((Integer)address).intValue());
+        try {
+            return get(((Integer)address).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public BlackholeEmailAddress get(int address) {
+    public BlackholeEmailAddress get(int address) throws IOException, SQLException {
 	return getUniqueRow(BlackholeEmailAddress.COLUMN_EMAIL_ADDRESS, address);
     }
 
-    List<BlackholeEmailAddress> getBlackholeEmailAddresses(AOServer ao) {
+    List<BlackholeEmailAddress> getBlackholeEmailAddresses(AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 	List<BlackholeEmailAddress> cached = getRows();
 	int len = cached.size();
@@ -58,7 +65,7 @@ final public class BlackholeEmailAddressTable extends CachedTableIntegerKey<Blac
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.REMOVE_BLACKHOLE_EMAIL_ADDRESS)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_BLACKHOLE_EMAIL_ADDRESS, args, 2, err)) {

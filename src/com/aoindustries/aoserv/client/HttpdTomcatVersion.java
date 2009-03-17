@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +44,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
         VERSION_6_0_PREFIX="6.0."
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_VERSION: return Integer.valueOf(pkey);
             case 1: return install_dir;
@@ -62,9 +61,9 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 	return SchemaTable.TableID.HTTPD_TOMCAT_VERSIONS;
     }
 
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector) {
+    public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
 	TechnologyVersion obj=connector.technologyVersions.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
 	return obj;
     }
 
@@ -82,32 +81,32 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
      * @see  #isTomcat5_5_X(AOServConnector)
      * @see  #isTomcat6_0_X(AOServConnector)
      */
-    public boolean isTomcat4(AOServConnector connector) {
+    public boolean isTomcat4(AOServConnector connector) throws SQLException, IOException {
         String version = getTechnologyVersion(connector).getVersion();
         return version.startsWith("4.") || version.startsWith("5.");
     }
 
-    public boolean isTomcat3_1(AOServConnector connector) {
+    public boolean isTomcat3_1(AOServConnector connector) throws SQLException, IOException {
         String version = getTechnologyVersion(connector).getVersion();
         return version.equals(VERSION_3_1);
     }
 
-    public boolean isTomcat3_2_4(AOServConnector connector) {
+    public boolean isTomcat3_2_4(AOServConnector connector) throws SQLException, IOException {
         String version = getTechnologyVersion(connector).getVersion();
         return version.equals(VERSION_3_2_4);
     }
 
-    public boolean isTomcat4_1_X(AOServConnector connector) {
+    public boolean isTomcat4_1_X(AOServConnector connector) throws SQLException, IOException {
         String version = getTechnologyVersion(connector).getVersion();
         return version.startsWith(VERSION_4_1_PREFIX);
     }
 
-    public boolean isTomcat5_5_X(AOServConnector connector) {
+    public boolean isTomcat5_5_X(AOServConnector connector) throws SQLException, IOException {
         String version = getTechnologyVersion(connector).getVersion();
         return version.startsWith(VERSION_5_5_PREFIX);
     }
 
-    public boolean isTomcat6_0_X(AOServConnector connector) {
+    public boolean isTomcat6_0_X(AOServConnector connector) throws SQLException, IOException {
         String version = getTechnologyVersion(connector).getVersion();
         return version.startsWith(VERSION_6_0_PREFIX);
     }

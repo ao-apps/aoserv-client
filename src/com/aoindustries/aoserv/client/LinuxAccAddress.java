@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -40,22 +39,22 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
     int email_address;
     int linux_server_account;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
 	if(i==COLUMN_EMAIL_ADDRESS) return Integer.valueOf(email_address);
 	if(i==COLUMN_LINUX_SERVER_ACCOUNT) return Integer.valueOf(linux_server_account);
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public EmailAddress getEmailAddress() {
+    public EmailAddress getEmailAddress() throws SQLException, IOException {
 	EmailAddress emailAddressObject = table.connector.emailAddresses.get(email_address);
-	if (emailAddressObject == null) throw new WrappedException(new SQLException("Unable to find EmailAddress: " + email_address));
+	if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 	return emailAddressObject;
     }
 
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
 	LinuxServerAccount lsa = table.connector.linuxServerAccounts.get(linux_server_account);
-	if(lsa == null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: " + linux_server_account));
+	if(lsa == null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
 	return lsa;
     }
 
@@ -79,7 +78,7 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
         return Collections.emptyList();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_ACC_ADDRESSES,
@@ -87,7 +86,8 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
 	);
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getEmailAddress().toString()+"->"+getLinuxServerAccount().toString();
     }
 

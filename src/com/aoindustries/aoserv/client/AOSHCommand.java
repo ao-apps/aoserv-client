@@ -9,7 +9,6 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -349,7 +348,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
     private String since_version;
     private String last_version;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_COMMAND: return pkey;
             case 1: return table_name;
@@ -365,10 +364,10 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         return pkey;
     }
 
-    public SchemaTable getSchemaTable(AOServConnector connector) {
+    public SchemaTable getSchemaTable(AOServConnector connector) throws SQLException, IOException {
         if(table_name==null) return null;
         SchemaTable obj=connector.schemaTables.get(table_name);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaTable: "+table_name));
+        if(obj==null) throw new SQLException("Unable to find SchemaTable: "+table_name);
         return obj;
     }
 

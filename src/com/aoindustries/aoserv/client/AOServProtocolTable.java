@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,7 +33,13 @@ final public class AOServProtocolTable extends GlobalTableStringKey<AOServProtoc
     }
 
     public AOServProtocol get(Object version) {
-        return getUniqueRow(AOServProtocol.COLUMN_VERSION, version);
+        try {
+            return getUniqueRow(AOServProtocol.COLUMN_VERSION, version);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

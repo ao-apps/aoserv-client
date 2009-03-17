@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,7 +33,7 @@ final public class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
         return defaultOrderBy;
     }
 
-    OperatingSystemVersion getOperatingSystemVersion(OperatingSystem os, String version, Architecture architecture) {
+    OperatingSystemVersion getOperatingSystemVersion(OperatingSystem os, String version, Architecture architecture) throws IOException, SQLException {
         String name=os.pkey;
         String arch=architecture.pkey;
         for(OperatingSystemVersion osv : getRows()) {
@@ -46,10 +47,16 @@ final public class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
     }
 
     public OperatingSystemVersion get(Object pkey) {
-	return getUniqueRow(OperatingSystemVersion.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(OperatingSystemVersion.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public OperatingSystemVersion get(int pkey) {
+    public OperatingSystemVersion get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(OperatingSystemVersion.COLUMN_PKEY, pkey);
     }
 

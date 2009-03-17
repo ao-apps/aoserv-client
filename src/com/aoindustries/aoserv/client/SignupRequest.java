@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -81,7 +80,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     transient private String billing_state;
     transient private String billing_zip;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ACCOUNTING: return accounting;
@@ -250,9 +249,9 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         out.writeLong(completed_time);
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
 	Business accountingObject = table.connector.businesses.get(accounting);
-	if (accountingObject == null) throw new WrappedException(new SQLException("Unable to find Business: " + accounting));
+	if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
 	return accountingObject;
     }
 
@@ -264,9 +263,9 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         return ip_address;
     }
 
-    public PackageDefinition getPackageDefinition() {
+    public PackageDefinition getPackageDefinition() throws SQLException, IOException {
         PackageDefinition pd = table.connector.packageDefinitions.get(package_definition);
-        if(pd == null) throw new WrappedException(new SQLException("Unable to find PackageDefinition: "+package_definition));
+        if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
         return pd;
     }
 
@@ -378,15 +377,15 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         return billing_pay_one_year;
     }
 
-    public EncryptionKey getEncryptionFrom() {
+    public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
         EncryptionKey ek = table.connector.encryptionKeys.get(encryption_from);
-        if(ek == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_from));
+        if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_from);
         return ek;
     }
 
-    public EncryptionKey getEncryptionRecipient() {
+    public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
         EncryptionKey er = table.connector.encryptionKeys.get(encryption_recipient);
-        if(er == null) throw new WrappedException(new SQLException("Unable to find EncryptionKey: "+encryption_recipient));
+        if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_recipient);
         return er;
     }
 
@@ -400,52 +399,52 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         return completed_time;
     }
 
-    synchronized public String getBaPassword(String passphrase) throws IOException {
+    synchronized public String getBaPassword(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return ba_password;
     }
 
-    synchronized public String getBillingCardholderName(String passphrase) throws IOException {
+    synchronized public String getBillingCardholderName(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return billing_cardholder_name;
     }
 
-    synchronized public String getBillingCardNumber(String passphrase) throws IOException {
+    synchronized public String getBillingCardNumber(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return billing_card_number;
     }
 
-    synchronized public String getBillingExpirationMonth(String passphrase) throws IOException {
+    synchronized public String getBillingExpirationMonth(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return billing_expiration_month;
     }
 
-    synchronized public String getBillingExpirationYear(String passphrase) throws IOException {
+    synchronized public String getBillingExpirationYear(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return billing_expiration_year;
     }
 
-    synchronized public String getBillingStreetAddress(String passphrase) throws IOException {
+    synchronized public String getBillingStreetAddress(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return billing_street_address;
     }
 
-    synchronized public String getBillingCity(String passphrase) throws IOException {
+    synchronized public String getBillingCity(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return billing_city;
     }
 
-    synchronized public String getBillingState(String passphrase) throws IOException {
+    synchronized public String getBillingState(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return billing_state;
     }
 
-    synchronized public String getBillingZip(String passphrase) throws IOException {
+    synchronized public String getBillingZip(String passphrase) throws IOException, SQLException {
         decrypt(passphrase);
         return billing_zip;
     }
     
-    synchronized private void decrypt(String passphrase) throws IOException {
+    synchronized private void decrypt(String passphrase) throws IOException, SQLException {
         // If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
         if(decryptPassphrase==null || !passphrase.equals(decryptPassphrase)) {
             // Clear first just in case there is a problem in part of the decryption

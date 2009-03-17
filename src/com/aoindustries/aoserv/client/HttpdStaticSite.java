@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -26,14 +25,14 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
     static final int COLUMN_HTTPD_SITE=0;
     static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_HTTPD_SITE) return Integer.valueOf(pkey);
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public HttpdSite getHttpdSite() {
+    public HttpdSite getHttpdSite() throws SQLException, IOException {
 	HttpdSite obj=table.connector.httpdSites.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdSite: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find HttpdSite: "+pkey);
 	return obj;
     }
 
@@ -49,7 +48,8 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
 	pkey=in.readCompressedInt();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getHttpdSite().toString();
     }
 

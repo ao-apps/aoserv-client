@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +34,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
     int pub_linux_server_account;
     private boolean allow_anonymous;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NET_BIND: return Integer.valueOf(pkey);
             case 1: return logfile;
@@ -60,9 +59,9 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
         return hostname;
     }
 
-    public NetBind getNetBind() {
+    public NetBind getNetBind() throws SQLException, IOException {
         NetBind nb=table.connector.netBinds.get(pkey);
-        if(nb==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+pkey));
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+pkey);
         return nb;
     }
 
@@ -70,16 +69,16 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
         return logfile;
     }
 
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
         LinuxServerAccount lsa=table.connector.linuxServerAccounts.get(pub_linux_server_account);
-        if(lsa==null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: "+pub_linux_server_account));
+        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+pub_linux_server_account);
         return lsa;
     }
 
     /**
      * @deprecated  use getLinuxServerAccount().getPrimaryLinuxServerGroup()
      */
-    public LinuxServerGroup getLinuxServerGroup() {
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
         return getLinuxServerAccount().getPrimaryLinuxServerGroup();
     }
 
@@ -90,7 +89,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
     /**
      * @deprecated  use getLinuxServerAccount().getHome()
      */
-    public String getRoot() {
+    public String getRoot() throws SQLException, IOException {
         return getLinuxServerAccount().getHome();
     }
 

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,7 +33,7 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     private boolean primaryPhysicalVolumesLocked;
     private boolean secondaryPhysicalVolumesLocked;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return pkey;
             case COLUMN_VIRTUAL_SERVER : return virtualServer;
@@ -48,9 +47,9 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
         }
     }
 
-    public VirtualServer getVirtualServer() {
+    public VirtualServer getVirtualServer() throws SQLException {
         VirtualServer vs=table.connector.virtualServers.get(virtualServer);
-        if(vs==null) throw new WrappedException(new SQLException("Unable to find VirtualServer: "+virtualServer));
+        if(vs==null) throw new SQLException("Unable to find VirtualServer: "+virtualServer);
         return vs;
     }
 
@@ -126,7 +125,7 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     }
 
     @Override
-    protected String toStringImpl() {
+    protected String toStringImpl() throws SQLException, IOException {
         return getVirtualServer().toStringImpl()+":/dev/"+device;
     }
 

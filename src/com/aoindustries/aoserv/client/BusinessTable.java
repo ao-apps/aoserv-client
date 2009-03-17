@@ -44,46 +44,41 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 	boolean canAddBusinesses,
         boolean canSeePrices,
         boolean billParent
-    ) {
+    ) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-                out.writeCompressedInt(SchemaTable.TableID.BUSINESSES.ordinal());
-                out.writeUTF(accounting);
-                out.writeBoolean(contractNumber!=null);
-                if(contractNumber!=null) out.writeUTF(contractNumber);
-                out.writeCompressedInt(defaultServer.pkey);
-                out.writeUTF(parent);
-                out.writeBoolean(canAddBackupServers);
-                out.writeBoolean(canAddBusinesses);
-                out.writeBoolean(canSeePrices);
-                out.writeBoolean(billParent);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+            out.writeCompressedInt(SchemaTable.TableID.BUSINESSES.ordinal());
+            out.writeUTF(accounting);
+            out.writeBoolean(contractNumber!=null);
+            if(contractNumber!=null) out.writeUTF(contractNumber);
+            out.writeCompressedInt(defaultServer.pkey);
+            out.writeUTF(parent);
+            out.writeBoolean(canAddBackupServers);
+            out.writeBoolean(canAddBusinesses);
+            out.writeBoolean(canSeePrices);
+            out.writeBoolean(billParent);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
         }
+        connector.tablesUpdated(invalidateList);
     }
 
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(this) {
@@ -91,7 +86,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
         }
     }
 
-    public String generateAccountingCode(String template) {
+    public String generateAccountingCode(String template) throws IOException, SQLException {
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_ACCOUNTING_CODE, template);
     }
 
@@ -99,10 +94,16 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
      * Gets one <code>Business</code> from the database.
      */
     public Business get(Object accounting) {
-	return getUniqueRow(Business.COLUMN_ACCOUNTING, accounting);
+        try {
+            return getUniqueRow(Business.COLUMN_ACCOUNTING, accounting);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    List<Business> getChildBusinesses(Business business) {
+    List<Business> getChildBusinesses(Business business) throws IOException, SQLException {
 	String accounting=business.pkey;
 
 	List<Business> cached=getRows();
@@ -115,15 +116,15 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 	return matches;
     }
 
-    synchronized public String getRootAccounting() {
+    synchronized public String getRootAccounting() throws IOException, SQLException {
         if(rootAccounting==null) rootAccounting=connector.requestStringQuery(AOServProtocol.CommandID.GET_ROOT_BUSINESS);
         return rootAccounting;
     }
 
-    public Business getRootBusiness() {
+    public Business getRootBusiness() throws IOException, SQLException {
         String accounting=getRootAccounting();
         Business bu=get(accounting);
-        if(bu==null) throw new WrappedException(new SQLException("Unable to find Business: "+accounting));
+        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
         return bu;
     }
 
@@ -131,7 +132,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 	return SchemaTable.TableID.BUSINESSES;
     }
 
-    public List<Business> getTopLevelBusinesses() {
+    public List<Business> getTopLevelBusinesses() throws IOException, SQLException {
 	List<Business> cached=getRows();
 	List<Business> matches=new ArrayList<Business>();
 	int size=cached.size();
@@ -142,7 +143,8 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 	return matches;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS, args, 8, err)) {
@@ -240,8 +242,8 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 	} else return false;
     }
 
-    public boolean isAccountingAvailable(String accounting) {
-	if(!Business.isValidAccounting(accounting)) throw new WrappedException(new SQLException("Invalid accounting code: "+accounting));
+    public boolean isAccountingAvailable(String accounting) throws SQLException, IOException {
+	if(!Business.isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
 	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_ACCOUNTING_AVAILABLE, accounting);
     }
 }

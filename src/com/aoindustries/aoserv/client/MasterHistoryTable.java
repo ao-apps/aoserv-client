@@ -5,6 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,15 +30,21 @@ final public class MasterHistoryTable extends AOServTable<Long,MasterHistory> {
     }
 
     public MasterHistory get(Object commandID) {
-        return get(((Long)commandID).longValue());
+        try {
+            return get(((Long)commandID).longValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public MasterHistory get(long commandID) {
+    public MasterHistory get(long commandID) throws IOException, SQLException {
         for(MasterHistory mh : getRows()) if(mh.command_id==commandID) return mh;
         return null;
     }
 
-    public List<MasterHistory> getRows() {
+    public List<MasterHistory> getRows() throws IOException, SQLException {
         List<MasterHistory> list=new ArrayList<MasterHistory>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_HISTORY);
         return list;

@@ -34,9 +34,9 @@ public interface PasswordProtected {
      */
     int ALL=2;
 
-    PasswordChecker.Result[] checkPassword(Locale userLocale, String password);
+    PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException, SQLException;
     //String checkPasswordDescribe(String password);
-    boolean canSetPassword();
-    int arePasswordsSet();
-    void setPassword(String password);
+    boolean canSetPassword() throws SQLException;
+    int arePasswordsSet() throws IOException, SQLException;
+    void setPassword(String password) throws IOException, SQLException;
 }

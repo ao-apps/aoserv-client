@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -104,7 +103,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	return !type.equals(EMAIL);
     }
 
-    public List<Shell> getAllowedShells(AOServConnector connector) {
+    public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException {
 	String[] paths=getShellList(pkey);
 
 	ShellTable shellTable=connector.shells;
@@ -112,13 +111,13 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	List<Shell> shells=new ArrayList<Shell>(len);
 	for(int c=0;c<len;c++) {
             Shell shell=shellTable.get(paths[c]);
-            if(shell==null) throw new WrappedException(new SQLException("Unable to find Shell: "+paths[c]));
+            if(shell==null) throw new SQLException("Unable to find Shell: "+paths[c]);
             shells.add(shell);
 	}
 	return shells;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_NAME) return pkey;
 	if(i==1) return description;
 	if(i==2) return is_email?Boolean.TRUE:Boolean.FALSE;
@@ -133,7 +132,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	return pkey;
     }
 
-    private static String[] getShellList(String type) {
+    private static String[] getShellList(String type) throws SQLException {
 	if(type.equals(BACKUP)) return backupShells;
 	if(type.equals(EMAIL)) return emailShells;
 	if(type.equals(FTPONLY)) return ftpShells;
@@ -141,7 +140,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	if(type.equals(MERCENARY)) return mercenaryShells;
 	if(type.equals(SYSTEM)) return systemShells;
 	if(type.equals(APPLICATION)) return applicationShells;
-	throw new WrappedException(new SQLException("Unknown type: "+type));
+	throw new SQLException("Unknown type: "+type);
     }
 
     public SchemaTable.TableID getTableID() {

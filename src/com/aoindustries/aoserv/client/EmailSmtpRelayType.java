@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 
@@ -38,7 +37,7 @@ final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRel
     private String sendmail_config;
     private String qmail_config;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return sendmail_config;
@@ -63,12 +62,12 @@ final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRel
 	return SchemaTable.TableID.EMAIL_SMTP_RELAY_TYPES;
     }
 
-    public String getVerb() {
+    public String getVerb() throws SQLException {
         if(pkey.equals(ALLOW)) return "allowed regular access";
         if(pkey.equals(ALLOW_RELAY)) return "allowed unauthenticated relay access";
         if(pkey.equals(DENY_SPAM)) return "blocked for sending unsolicited bulk email";
         if(pkey.equals(DENY)) return "blocked";
-        throw new WrappedException(new SQLException("Unknown value for name: "+pkey));
+        throw new SQLException("Unknown value for name: "+pkey);
     }
 
     public void init(ResultSet result) throws SQLException {

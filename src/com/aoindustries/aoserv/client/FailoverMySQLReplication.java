@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +31,7 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
     int replication;
     private int mysql_server;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_REPLICATION: return Integer.valueOf(replication);
@@ -41,15 +40,15 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         }
     }
 
-    public FailoverFileReplication getFailoverFileReplication() {
+    public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
         FailoverFileReplication ffr=table.connector.failoverFileReplications.get(replication);
-        if(ffr==null) throw new WrappedException(new SQLException("Unable to find FailoverFileReplication: "+replication));
+        if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
         return ffr;
     }
 
-    public MySQLServer getMySQLServer() {
+    public MySQLServer getMySQLServer() throws IOException, SQLException {
         MySQLServer ms=table.connector.mysqlServers.get(mysql_server);
-        if(ms==null) throw new WrappedException(new SQLException("Unable to find MySQLServer: "+mysql_server));
+        if(ms==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
         return ms;
     }
 
@@ -69,7 +68,8 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         mysql_server=in.readCompressedInt();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws IOException, SQLException {
         return getMySQLServer().getName()+", "+getFailoverFileReplication().toString();
     }
 

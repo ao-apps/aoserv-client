@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,7 +60,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	return can_add_sites;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
@@ -81,15 +80,15 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         }
     }
 
-    public List<HttpdBind> getHttpdBinds() {
+    public List<HttpdBind> getHttpdBinds() throws IOException, SQLException {
 	return table.connector.httpdBinds.getHttpdBinds(this);
     }
 
-    public List<HttpdSite> getHttpdSites() {
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
 	return table.connector.httpdSites.getHttpdSites(this);
     }
 
-    public List<HttpdWorker> getHttpdWorkers() {
+    public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
 	return table.connector.httpdWorkers.getHttpdWorkers(this);
     }
 
@@ -97,27 +96,27 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         return max_binds;
     }
 
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
         LinuxServerAccount lsa=table.connector.linuxServerAccounts.get(linux_server_account);
-        if(lsa==null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: "+linux_server_account));
+        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
         return lsa;
     }
 
-    public LinuxServerGroup getLinuxServerGroup() {
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
         LinuxServerGroup lsg=table.connector.linuxServerGroups.get(linux_server_group);
-        if(lsg==null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: "+linux_server_group));
+        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
         return lsg;
     }
 
-    public TechnologyVersion getModPhpVersion() {
+    public TechnologyVersion getModPhpVersion() throws SQLException, IOException {
         if(mod_php_version==-1) return null;
         TechnologyVersion tv=table.connector.technologyVersions.get(mod_php_version);
-        if(tv==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+mod_php_version));
+        if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+mod_php_version);
         if(
             tv.getOperatingSystemVersion(table.connector).getPkey()
             != getAOServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
-            throw new WrappedException(new SQLException("mod_php/operating system version mismatch on HttpdServer: #"+pkey));
+            throw new SQLException("mod_php/operating system version mismatch on HttpdServer: #"+pkey);
         }
         return tv;
     }
@@ -126,7 +125,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         return use_suexec;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws IOException, SQLException {
         // Package may be filtered
         return table.connector.packages.get(packageNum);
     }
@@ -150,9 +149,9 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	return number;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
 	AOServer obj=table.connector.aoServers.get(ao_server);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+	if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return obj;
     }
 

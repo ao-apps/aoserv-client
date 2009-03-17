@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -65,7 +65,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         setTable(package_definition.table.connector.packageDefinitionLimits);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_PACKAGE_DEFINITION: return Integer.valueOf(package_definition);
@@ -78,15 +78,15 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         }
     }
 
-    public PackageDefinition getPackageDefinition() {
+    public PackageDefinition getPackageDefinition() throws IOException, SQLException {
         PackageDefinition pd = table.connector.packageDefinitions.get(package_definition);
-        if(pd == null) throw new WrappedException(new SQLException("Unable to find PackageDefinition: " + package_definition));
+        if(pd == null) throw new SQLException("Unable to find PackageDefinition: " + package_definition);
         return pd;
     }
     
-    public Resource getResource() {
+    public Resource getResource() throws SQLException {
         Resource r=table.connector.resources.get(resource);
-        if(r==null) throw new WrappedException(new SQLException("Unable to find Resource: "+resource));
+        if(r==null) throw new SQLException("Unable to find Resource: "+resource);
         return r;
     }
 
@@ -102,10 +102,10 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         return additional_rate;
     }
     
-    public TransactionType getAdditionalTransactionType() {
+    public TransactionType getAdditionalTransactionType() throws SQLException {
         if(additional_transaction_type==null) return null;
         TransactionType tt=table.connector.transactionTypes.get(additional_transaction_type);
-        if(tt==null) throw new WrappedException(new SQLException("Unable to find TransactionType: "+additional_transaction_type));
+        if(tt==null) throw new SQLException("Unable to find TransactionType: "+additional_transaction_type);
         return tt;
     }
     

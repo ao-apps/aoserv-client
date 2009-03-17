@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
@@ -56,7 +55,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         String wrapperClass,
         int debug,
         String workDir
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.httpdTomcatContexts.addHttpdTomcatContext(
             this,
             className,
@@ -78,7 +77,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
      * Determines if the API user is allowed to stop the Java virtual machine associated
      * with this site.
      */
-    public boolean canStop() {
+    public boolean canStop() throws SQLException, IOException {
         if(getHttpdSite().getDisableLog()!=null) return false;
         HttpdTomcatSharedSite shr=getHttpdTomcatSharedSite();
         if(shr!=null) return shr.canStop();
@@ -89,54 +88,54 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
      * Determines if the API user is allowed to start the Java virtual machine associated
      * with this site.
      */
-    public boolean canStart() {
+    public boolean canStart() throws SQLException, IOException {
         if(getHttpdSite().getDisableLog()!=null) return false;
         HttpdTomcatSharedSite shr=getHttpdTomcatSharedSite();
         if(shr!=null) return shr.canStart();
         return true;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         if(i==COLUMN_HTTPD_SITE) return Integer.valueOf(pkey);
         if(i==1) return Integer.valueOf(version);
         if(i==2) return use_apache?Boolean.TRUE:Boolean.FALSE;
         throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public HttpdJBossSite getHttpdJBossSite() {
+    public HttpdJBossSite getHttpdJBossSite() throws SQLException, IOException {
         return table.connector.httpdJBossSites.get(pkey);
     }
 
-    public HttpdSite getHttpdSite() {
+    public HttpdSite getHttpdSite() throws SQLException, IOException {
         HttpdSite obj=table.connector.httpdSites.get(pkey);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdSite: "+pkey));
+        if(obj==null) throw new SQLException("Unable to find HttpdSite: "+pkey);
         return obj;
     }
 
-    public HttpdTomcatContext getHttpdTomcatContext(String path) {
+    public HttpdTomcatContext getHttpdTomcatContext(String path) throws IOException, SQLException {
         return table.connector.httpdTomcatContexts.getHttpdTomcatContext(this, path);
     }
 
-    public List<HttpdTomcatContext> getHttpdTomcatContexts() {
+    public List<HttpdTomcatContext> getHttpdTomcatContexts() throws IOException, SQLException {
         return table.connector.httpdTomcatContexts.getHttpdTomcatContexts(this);
     }
 
-    public HttpdTomcatSharedSite getHttpdTomcatSharedSite() {
+    public HttpdTomcatSharedSite getHttpdTomcatSharedSite() throws IOException, SQLException {
         return table.connector.httpdTomcatSharedSites.get(pkey);
     }
 
-    public HttpdTomcatStdSite getHttpdTomcatStdSite() {
+    public HttpdTomcatStdSite getHttpdTomcatStdSite() throws IOException, SQLException {
         return table.connector.httpdTomcatStdSites.get(pkey);
     }
 
-    public HttpdTomcatVersion getHttpdTomcatVersion() {
+    public HttpdTomcatVersion getHttpdTomcatVersion() throws SQLException, IOException {
         HttpdTomcatVersion obj=table.connector.httpdTomcatVersions.get(version);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdTomcatVersion: "+version));
+        if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
         if(
             obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
             != getHttpdSite().getAOServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
-            throw new WrappedException(new SQLException("resource/operating system version mismatch on HttpdTomcatSite: #"+pkey));
+            throw new SQLException("resource/operating system version mismatch on HttpdTomcatSite: #"+pkey);
         }
         // Make sure version shared JVM if is a shared site
         HttpdTomcatSharedSite sharedSite = getHttpdTomcatSharedSite();
@@ -145,13 +144,13 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
                 obj.pkey
                 != sharedSite.getHttpdSharedTomcat().getHttpdTomcatVersion().pkey
             ) {
-                throw new WrappedException(new SQLException("HttpdTomcatSite/HttpdSharedTomcat version mismatch on HttpdTomcatSite: #"+pkey));
+                throw new SQLException("HttpdTomcatSite/HttpdSharedTomcat version mismatch on HttpdTomcatSite: #"+pkey);
             }
         }
         return obj;
     }
 
-    public List<HttpdWorker> getHttpdWorkers() {
+    public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
         return table.connector.httpdWorkers.getHttpdWorkers(this);
     }
 
@@ -171,63 +170,51 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         use_apache=in.readBoolean();
     }
 
-    public String startJVM() {
+    public String startJVM() throws IOException, SQLException {
+        AOServConnection connection=table.connector.getConnection();
         try {
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.START_JVM.ordinal());
-                out.writeCompressedInt(pkey);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.START_JVM.ordinal());
+            out.writeCompressedInt(pkey);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) return in.readBoolean()?in.readUTF():null;
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
-            }
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readBoolean()?in.readUTF():null;
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
     }
 
-    public String stopJVM() {
-            try {
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.STOP_JVM.ordinal());
-                out.writeCompressedInt(pkey);
-                out.flush();
+    public String stopJVM() throws IOException, SQLException {
+        AOServConnection connection=table.connector.getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.STOP_JVM.ordinal());
+            out.writeCompressedInt(pkey);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) return in.readBoolean()?in.readUTF():null;
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
-            }
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readBoolean()?in.readUTF():null;
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
     }
 
     @Override
-    String toStringImpl() {
-        return getHttpdSite().toString();
+    String toStringImpl() throws SQLException, IOException {
+        return getHttpdSite().toStringImpl();
     }
 
     public boolean useApache() {

@@ -6,9 +6,10 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.IntList;
 import com.aoindustries.util.WrappedException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
         int maxIdle,
         int maxWait,
         String validationQuery
-    ) {
+    ) throws IOException, SQLException {
         return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES,
@@ -64,18 +65,24 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
     }
 
     public HttpdTomcatDataSource get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdTomcatDataSource.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public HttpdTomcatDataSource get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdTomcatDataSource.COLUMN_PKEY, pkey);
     }
 
-    public HttpdTomcatDataSource get(int pkey) {
-	return getUniqueRow(HttpdTomcatDataSource.COLUMN_PKEY, pkey);
-    }
-
-    List<HttpdTomcatDataSource> getHttpdTomcatDataSources(HttpdTomcatContext htc) {
+    List<HttpdTomcatDataSource> getHttpdTomcatDataSources(HttpdTomcatContext htc) throws IOException, SQLException {
         return getIndexedRows(HttpdTomcatDataSource.COLUMN_TOMCAT_CONTEXT, htc.pkey);
     }
 
-    HttpdTomcatDataSource getHttpdTomcatDataSource(HttpdTomcatContext htc, String name) {
+    HttpdTomcatDataSource getHttpdTomcatDataSource(HttpdTomcatContext htc, String name) throws IOException, SQLException {
         // Use index first
         List<HttpdTomcatDataSource> dataSources=getHttpdTomcatDataSources(htc);
         for(HttpdTomcatDataSource dataSource : dataSources) {
@@ -88,7 +95,8 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
 	return SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_DATA_SOURCE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_DATA_SOURCE, args, 12, err)) {

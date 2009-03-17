@@ -27,7 +27,7 @@ public final class EmailAttachmentType extends GlobalObjectStringKey<EmailAttach
     private String description;
     private boolean is_default_block;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_EXTENSION: return pkey;
             case 1: return description;

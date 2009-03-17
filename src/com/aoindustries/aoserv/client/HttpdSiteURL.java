@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -39,7 +38,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     private String hostname;
     boolean isPrimary;
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         if(isPrimary) reasons.add(new CannotRemoveReason<HttpdSiteURL>("Not allowed to remove the primary URL", this));
@@ -48,7 +47,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
         return reasons;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_HTTPD_SITE_BIND: return Integer.valueOf(httpd_site_bind);
@@ -62,9 +61,9 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	return hostname;
     }
 
-    public HttpdSiteBind getHttpdSiteBind() {
+    public HttpdSiteBind getHttpdSiteBind() throws SQLException, IOException {
 	HttpdSiteBind obj=table.connector.httpdSiteBinds.get(httpd_site_bind);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdSiteBind: "+httpd_site_bind));
+	if(obj==null) throw new SQLException("Unable to find HttpdSiteBind: "+httpd_site_bind);
 	return obj;
     }
 
@@ -72,7 +71,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	return SchemaTable.TableID.HTTPD_SITE_URLS;
     }
 
-    public String getURL() {
+    public String getURL() throws SQLException, IOException {
 	HttpdSiteBind siteBind=getHttpdSiteBind();
 	NetBind netBind=siteBind.getHttpdBind().getNetBind();
 	NetPort port=netBind.getPort();
@@ -93,7 +92,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	return url.toString();
     }
 
-    public String getURLNoSlash() {
+    public String getURLNoSlash() throws SQLException, IOException {
 	HttpdSiteBind siteBind=getHttpdSiteBind();
 	NetBind netBind=siteBind.getHttpdBind().getNetBind();
 	NetPort port=netBind.getPort();
@@ -124,7 +123,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	return isPrimary;
     }
 
-    public boolean isTestURL() {
+    public boolean isTestURL() throws SQLException, IOException {
         HttpdSite hs=getHttpdSiteBind().getHttpdSite();
         return hostname.equals(hs.getSiteName()+'.'+hs.getAOServer().getHostname());
     }
@@ -136,14 +135,15 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	isPrimary=in.readBoolean();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITE_URLS, pkey);
     }
 
-    public void setAsPrimary() {
+    public void setAsPrimary() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_PRIMARY_HTTPD_SITE_URL, pkey);
     }
 
+    @Override
     String toStringImpl() {
 	return hostname;
     }

@@ -5,7 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -60,7 +60,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
     }
 
     @Override
-    public List<V> getIndexedRows(int col, Object value) {
+    public List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
         synchronized(this) {
             validateCache();
             int minLength=col+1;
@@ -97,7 +97,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
         }
     }
 
-    final protected V getUniqueRowImpl(int col, Object value) {
+    final protected V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         synchronized(this) {
             validateCache();
             int minLength=col+1;
@@ -119,7 +119,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
                     Object cvalue=O.getColumn(col);
                     if(cvalue!=null) {
                         Object old=map.put(cvalue, O);
-                        if(old!=null) throw new WrappedException(new SQLException("Duplicate unique entry for table #"+getTableID()+" ("+getTableName()+"), column "+col+": "+cvalue));
+                        if(old!=null) throw new SQLException("Duplicate unique entry for table #"+getTableID()+" ("+getTableName()+"), column "+col+": "+cvalue);
                     }
                 }
                 columnsHashed.set(col);
@@ -131,7 +131,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
     /**
      * Gets the complete list of objects in the table.
      */
-    public List<V> getRows() {
+    public List<V> getRows() throws IOException, SQLException {
         synchronized(this) {
             validateCache();
             return tableData;
@@ -194,7 +194,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
     /**
      * Reloads the cache if the cache time has expired.  All accesses are already synchronized.
      */
-    private void validateCache() {
+    private void validateCache() throws IOException, SQLException {
         long currentTime=System.currentTimeMillis();
         if(
            // If cache never loaded

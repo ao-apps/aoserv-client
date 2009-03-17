@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,13 +46,13 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     private boolean open_firewall;
     private boolean monitoring_enabled;
 
-    public Protocol getAppProtocol() {
+    public Protocol getAppProtocol() throws SQLException {
 	Protocol obj=table.connector.protocols.get(app_protocol);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find Protocol: "+app_protocol));
+	if(obj==null) throw new SQLException("Unable to find Protocol: "+app_protocol);
 	return obj;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_PACKAGE: return packageName;
@@ -68,7 +67,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         }
     }
 
-    public String getDetails() {
+    public String getDetails() throws SQLException, IOException {
         AOServer aoServer=getAOServerByDaemonNetBind();
         if(aoServer!=null) return "AOServDaemon";
 
@@ -193,53 +192,53 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return null;
     }
     
-    public AOServer getAOServerByDaemonNetBind() {
+    public AOServer getAOServerByDaemonNetBind() throws IOException, SQLException {
         return table.connector.aoServers.getAOServerByDaemonNetBind(this);
     }
 
-    public AOServer getAOServerByJilterNetBind() {
+    public AOServer getAOServerByJilterNetBind() throws IOException, SQLException {
         return table.connector.aoServers.getAOServerByJilterNetBind(this);
     }
 
-    public HttpdBind getHttpdBind() {
+    public HttpdBind getHttpdBind() throws IOException, SQLException {
         return table.connector.httpdBinds.get(pkey);
     }
 
-    public HttpdJBossSite getHttpdJBossSiteByJNPPort() {
+    public HttpdJBossSite getHttpdJBossSiteByJNPPort() throws IOException, SQLException {
         return table.connector.httpdJBossSites.getHttpdJBossSiteByJNPPort(this);
     }
 
-    public HttpdJBossSite getHttpdJBossSiteByWebserverPort() {
+    public HttpdJBossSite getHttpdJBossSiteByWebserverPort() throws IOException, SQLException {
         return table.connector.httpdJBossSites.getHttpdJBossSiteByWebserverPort(this);
     }
 
-    public HttpdJBossSite getHttpdJBossSiteByRMIPort() {
+    public HttpdJBossSite getHttpdJBossSiteByRMIPort() throws IOException, SQLException {
         return table.connector.httpdJBossSites.getHttpdJBossSiteByRMIPort(this);
     }
 
-    public HttpdJBossSite getHttpdJBossSiteByHypersonicPort() {
+    public HttpdJBossSite getHttpdJBossSiteByHypersonicPort() throws IOException, SQLException {
         return table.connector.httpdJBossSites.getHttpdJBossSiteByHypersonicPort(this);
     }
 
-    public HttpdJBossSite getHttpdJBossSiteByJMXPort() {
+    public HttpdJBossSite getHttpdJBossSiteByJMXPort() throws IOException, SQLException {
         return table.connector.httpdJBossSites.getHttpdJBossSiteByJMXPort(this);
     }
 
-    public HttpdWorker getHttpdWorker() {
+    public HttpdWorker getHttpdWorker() throws IOException, SQLException {
         return table.connector.httpdWorkers.getHttpdWorker(this);
     }
 
-    public HttpdSharedTomcat getHttpdSharedTomcatByShutdownPort() {
+    public HttpdSharedTomcat getHttpdSharedTomcatByShutdownPort() throws SQLException, IOException {
         return table.connector.httpdSharedTomcats.getHttpdSharedTomcatByShutdownPort(this);
     }
     
-    public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() {
+    public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
         return table.connector.httpdTomcatStdSites.getHttpdTomcatStdSiteByShutdownPort(this);
     }
 
-    public IPAddress getIPAddress() {
+    public IPAddress getIPAddress() throws SQLException, IOException {
         IPAddress obj=table.connector.ipAddresses.get(ip_address);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find IPAddress: "+ip_address));
+        if(obj==null) throw new SQLException("Unable to find IPAddress: "+ip_address);
         return obj;
     }
 
@@ -247,38 +246,38 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return monitoring_enabled;
     }
 
-    public NetProtocol getNetProtocol() {
+    public NetProtocol getNetProtocol() throws SQLException {
         NetProtocol obj=table.connector.netProtocols.get(net_protocol);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find NetProtocol: "+net_protocol));
+        if(obj==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
         return obj;
     }
 
-    public NetTcpRedirect getNetTcpRedirect() {
+    public NetTcpRedirect getNetTcpRedirect() throws IOException, SQLException {
         return table.connector.netTcpRedirects.get(pkey);
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws IOException, SQLException {
         // May be filtered
         return table.connector.packages.get(packageName);
     }
     
-    public PostgresServer getPostgresServer() {
+    public PostgresServer getPostgresServer() throws IOException, SQLException {
         return table.connector.postgresServers.getPostgresServer(this);
     }
 
-    public PrivateFTPServer getPrivateFTPServer() {
+    public PrivateFTPServer getPrivateFTPServer() throws IOException, SQLException {
         return table.connector.privateFTPServers.get(pkey);
     }
 
-    public NetPort getPort() {
+    public NetPort getPort() throws SQLException {
         NetPort obj=table.connector.netPorts.get(port);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find NetPort: "+port));
+        if(obj==null) throw new SQLException("Unable to find NetPort: "+port);
         return obj;
     }
 
-    public Server getServer() {
+    public Server getServer() throws SQLException, IOException {
         Server obj=table.connector.servers.get(server);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find Server: "+server));
+        if(obj==null) throw new SQLException("Unable to find Server: "+server);
         return obj;
     }
 
@@ -314,7 +313,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         monitoring_enabled=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServConnector conn=table.connector;
@@ -387,7 +386,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.NET_BINDS,
@@ -395,7 +394,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         );
     }
 
-    public void setMonitoringEnabled(boolean monitoring_enabled) {
+    public void setMonitoringEnabled(boolean monitoring_enabled) throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.SET_NET_BIND_MONITORING,
             pkey,
@@ -403,7 +402,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         );
     }
 
-    public void setOpenFirewall(boolean open_firewall) {
+    public void setOpenFirewall(boolean open_firewall) throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.SET_NET_BIND_OPEN_FIREWALL,
             pkey,

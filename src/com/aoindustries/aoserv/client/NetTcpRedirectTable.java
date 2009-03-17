@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,10 +37,16 @@ public final class NetTcpRedirectTable extends CachedTableIntegerKey<NetTcpRedir
     }
 
     public NetTcpRedirect get(Object pkey) {
-	return getUniqueRow(NetTcpRedirect.COLUMN_NET_BIND, pkey);
+        try {
+            return getUniqueRow(NetTcpRedirect.COLUMN_NET_BIND, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public NetTcpRedirect get(int pkey) {
+    public NetTcpRedirect get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(NetTcpRedirect.COLUMN_NET_BIND, pkey);
     }
 

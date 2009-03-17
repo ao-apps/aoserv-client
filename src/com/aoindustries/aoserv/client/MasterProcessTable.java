@@ -29,15 +29,21 @@ final public class MasterProcessTable extends AOServTable<Long,MasterProcess> {
     }
 
     public MasterProcess get(Object pid) {
-        return get(((Long)pid).longValue());
+        try {
+            return get(((Long)pid).longValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public MasterProcess get(long pid) {
+    public MasterProcess get(long pid) throws IOException, SQLException {
         for(MasterProcess mp : getRows()) if(mp.process_id==pid) return mp;
         return null;
     }
 
-    public List<MasterProcess> getRows() {
+    public List<MasterProcess> getRows() throws IOException, SQLException {
         List<MasterProcess> list=new ArrayList<MasterProcess>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_PROCESSES);
         return list;

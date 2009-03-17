@@ -5,11 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A <code>CvsRepository</code> represents on repository directory for the CVS pserver.
@@ -82,21 +85,21 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         return disable_log==-1;
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getLinuxServerAccount().disable_log==-1;
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return path;
@@ -109,10 +112,10 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         }
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
@@ -120,15 +123,15 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         return path;
     }
     
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
         LinuxServerAccount lsa=table.connector.linuxServerAccounts.get(linux_server_account);
-        if(lsa==null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: "+linux_server_account));
+        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
         return lsa;
     }
 
-    public LinuxServerGroup getLinuxServerGroup() {
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
         LinuxServerGroup lsg=table.connector.linuxServerGroups.get(linux_server_group);
-        if(lsg==null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: "+linux_server_group));
+        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
         return lsg;
     }
     
@@ -170,10 +173,16 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+        try {
+            table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public void setMode(long mode) {
+    public void setMode(long mode) throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
     }
 

@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +35,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     private float maxPower;
     private Boolean supports_hvm;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_SERVER: return Integer.valueOf(pkey);
             case 1: return rack==-1 ? null : Integer.valueOf(rack);
@@ -51,19 +50,19 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         }
     }
 
-    public Server getServer() {
+    public Server getServer() throws SQLException, IOException {
         Server se=table.connector.servers.get(pkey);
-        if(se==null) throw new WrappedException(new SQLException("Unable to find Server: "+pkey));
+        if(se==null) throw new SQLException("Unable to find Server: "+pkey);
         return se;
     }
 
     /**
      * Gets the rack this server is part of or <code>null</code> if not in a rack.
      */
-    public Rack getRack() {
+    public Rack getRack() throws SQLException {
         if(rack==-1) return null;
         Rack ra = table.connector.racks.get(rack);
-        if(ra==null) throw new WrappedException(new SQLException("Unable to find Rack: "+rack));
+        if(ra==null) throw new SQLException("Unable to find Rack: "+rack);
         return ra;
     }
 
@@ -85,10 +84,10 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     /**
      * Gets the processor type or <code>null</code> if not applicable.
      */
-    public ProcessorType getProcessorType() {
+    public ProcessorType getProcessorType() throws SQLException {
         if(processorType==null) return null;
         ProcessorType pt = table.connector.processorTypes.get(processorType);
-        if(pt==null) throw new WrappedException(new SQLException("Unable to find ProcessorType: "+processorType));
+        if(pt==null) throw new SQLException("Unable to find ProcessorType: "+processorType);
         return pt;
     }
 
@@ -158,7 +157,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     }
 
     @Override
-    protected String toStringImpl() {
+    protected String toStringImpl() throws SQLException, IOException {
         return getServer().toStringImpl();
     }
 

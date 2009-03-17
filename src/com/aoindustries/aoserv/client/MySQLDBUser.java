@@ -124,7 +124,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         return execute_priv;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return pkey;
             case COLUMN_MYSQL_DATABASE: return mysql_database;
@@ -150,12 +150,12 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         }
     }
 
-    public MySQLDatabase getMySQLDatabase() {
+    public MySQLDatabase getMySQLDatabase() throws IOException, SQLException {
         // May be null due to filtering or a recently removed table
 	return table.connector.mysqlDatabases.get(mysql_database);
     }
 
-    public MySQLServerUser getMySQLServerUser() {
+    public MySQLServerUser getMySQLServerUser() throws IOException, SQLException {
         // May be null due to filtering or a recently removed table
 	return table.connector.mysqlServerUsers.get(mysql_server_user);
     }
@@ -210,14 +210,14 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         execute_priv=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         reasons.addAll(getMySQLServerUser().getCannotRemoveReasons());
         reasons.addAll(getMySQLDatabase().getCannotRemoveReasons());
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DB_USERS,

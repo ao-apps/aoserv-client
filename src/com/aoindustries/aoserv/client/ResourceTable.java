@@ -1,10 +1,14 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.sql.SQLException;
 
 /**
  * @see  Resource
@@ -28,7 +32,13 @@ final public class ResourceTable extends GlobalTableStringKey<Resource> {
     }
 
     public Resource get(Object pkey) {
-	return getUniqueRow(Resource.COLUMN_NAME, pkey);
+        try {
+            return getUniqueRow(Resource.COLUMN_NAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

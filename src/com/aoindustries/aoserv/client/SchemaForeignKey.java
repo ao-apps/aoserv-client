@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +35,7 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
     private String since_version;
     private String last_version;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return Integer.valueOf(key_column);
@@ -47,15 +46,15 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
         }
     }
 
-    public SchemaColumn getForeignColumn(AOServConnector connector) {
+    public SchemaColumn getForeignColumn(AOServConnector connector) throws SQLException, IOException {
         SchemaColumn obj=connector.schemaColumns.get(foreign_column);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+foreign_column));
+        if(obj==null) throw new SQLException("Unable to find SchemaColumn: "+foreign_column);
         return obj;
     }
 
-    public SchemaColumn getKeyColumn(AOServConnector connector) {
+    public SchemaColumn getKeyColumn(AOServConnector connector) throws SQLException, IOException {
         SchemaColumn obj=connector.schemaColumns.get(key_column);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+key_column));
+        if(obj==null) throw new SQLException("Unable to find SchemaColumn: "+key_column);
         return obj;
     }
 

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -37,7 +36,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     int email_address;
     int email_list;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_EMAIL_ADDRESS: return Integer.valueOf(email_address);
@@ -46,15 +45,15 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
         }
     }
 
-    public EmailAddress getEmailAddress() {
+    public EmailAddress getEmailAddress() throws SQLException, IOException {
 	EmailAddress emailAddressObject = table.connector.emailAddresses.get(email_address);
-	if (emailAddressObject == null) throw new WrappedException(new SQLException("Unable to find EmailAddress: " + email_address));
+	if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 	return emailAddressObject;
     }
 
-    public EmailList getEmailList() {
+    public EmailList getEmailList() throws SQLException, IOException {
 	EmailList emailListObject = table.connector.emailLists.get(email_list);
-	if (emailListObject == null) throw new WrappedException(new SQLException("Unable to find EmailList: " + email_list));
+	if (emailListObject == null) throw new SQLException("Unable to find EmailList: " + email_list);
 	return emailListObject;
     }
 
@@ -74,7 +73,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
 	email_list=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be used as the list for a majordomo list
@@ -88,7 +87,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
         return reasons;
     }
     
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
@@ -96,7 +95,8 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
 	);
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getEmailAddress().toString()+"->"+getEmailList().getPath();
     }
 

@@ -1,10 +1,14 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * For AO Industries use only.
@@ -28,7 +32,13 @@ final public class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
     }
 
     public ServerFarm get(Object name) {
-	return getUniqueRow(ServerFarm.COLUMN_NAME, name);
+        try {
+            return getUniqueRow(ServerFarm.COLUMN_NAME, name);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

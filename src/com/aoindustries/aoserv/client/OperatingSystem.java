@@ -38,7 +38,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
     private String display;
     private boolean is_unix;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return display;
@@ -59,7 +59,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
         return is_unix;
     }
 
-    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) {
+    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
         return conn.operatingSystemVersions.getOperatingSystemVersion(this, version, architecture);
     }
 
@@ -79,6 +79,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
         is_unix=in.readBoolean();
     }
 
+    @Override
     String toStringImpl() {
         return display;
     }

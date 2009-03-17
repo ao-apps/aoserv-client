@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,14 +35,20 @@ public final class EmailAttachmentBlockTable extends CachedTableIntegerKey<Email
     }
 
     public EmailAttachmentBlock get(Object pkey) {
+        try {
+            return getUniqueRow(EmailAttachmentBlock.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public EmailAttachmentBlock get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EmailAttachmentBlock.COLUMN_PKEY, pkey);
     }
 
-    public EmailAttachmentBlock get(int pkey) {
-	return getUniqueRow(EmailAttachmentBlock.COLUMN_PKEY, pkey);
-    }
-
-    List<EmailAttachmentBlock> getEmailAttachmentBlocks(LinuxServerAccount lsa) {
+    List<EmailAttachmentBlock> getEmailAttachmentBlocks(LinuxServerAccount lsa) throws IOException, SQLException {
         return getIndexedRows(EmailAttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 

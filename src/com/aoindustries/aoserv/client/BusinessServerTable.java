@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -31,27 +32,33 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
         return defaultOrderBy;
     }
 
-    int addBusinessServer(Business business, Server server) {
+    int addBusinessServer(Business business, Server server) throws IOException, SQLException {
 	return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey);
     }
 
     public BusinessServer get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public BusinessServer get(int pkey) {
+    public BusinessServer get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(BusinessServer.COLUMN_PKEY, pkey);
     }
 
-    List<BusinessServer> getBusinessServers(Business bu) {
+    List<BusinessServer> getBusinessServers(Business bu) throws IOException, SQLException {
         return getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, bu.pkey);
     }
 
-    List<BusinessServer> getBusinessServers(Server server) {
+    List<BusinessServer> getBusinessServers(Server server) throws IOException, SQLException {
         return getIndexedRows(BusinessServer.COLUMN_SERVER, server.pkey);
     }
 
-    List<Business> getBusinesses(Server server) {
+    List<Business> getBusinesses(Server server) throws IOException, SQLException {
         // Use the cache and convert
 	List<BusinessServer> cached=getBusinessServers(server);
 	int size=cached.size();
@@ -60,7 +67,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 	return businesses;
     }
 
-    BusinessServer getBusinessServer(Business bu, Server se) {
+    BusinessServer getBusinessServer(Business bu, Server se) throws IOException, SQLException {
         int pkey=se.pkey;
         
         // Use the index first
@@ -73,7 +80,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 	return null;
     }
 
-    Server getDefaultServer(Business business) {
+    Server getDefaultServer(Business business) throws IOException, SQLException {
         // Use index first
 	List<BusinessServer> cached=getBusinessServers(business);
 	int size=cached.size();
@@ -89,7 +96,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_SERVER, args, 2, err)) {

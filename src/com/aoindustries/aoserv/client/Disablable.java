@@ -17,13 +17,13 @@ import java.sql.SQLException;
  */
 public interface Disablable {
 
-    DisableLog getDisableLog();
+    DisableLog getDisableLog() throws IOException, SQLException;
 
-    boolean canDisable();
+    boolean canDisable() throws IOException, SQLException;
 
-    boolean canEnable();
+    boolean canEnable() throws IOException, SQLException;
 
-    void disable(DisableLog dl);
+    void disable(DisableLog dl) throws IOException, SQLException;
 
-    void enable();
+    void enable() throws IOException, SQLException;
 }

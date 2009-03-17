@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -33,10 +34,16 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
     }
 
     public DistroFile get(Object pkey) {
-        return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public DistroFile get(int pkey) {
+    public DistroFile get(int pkey) throws IOException, SQLException {
         return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
     }
 
@@ -56,21 +63,30 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
         ;
     }
 
-    public int getCachedRowCount() {
+    @Override
+    public int getCachedRowCount() throws IOException, SQLException {
         if(isLoaded()) return super.getCachedRowCount();
         else return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
     }
 
+    @Override
     public int size() {
-        if(isLoaded()) return super.size();
-        else return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
+        try {
+            if(isLoaded()) return super.size();
+            else return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.DISTRO_FILES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.START_DISTRO)) {
             if(AOSH.checkParamCount(AOSHCommand.START_DISTRO, args, 2, err)) {
@@ -84,7 +100,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
         return false;
     }
 
-    void startDistro(AOServer server, boolean includeUser) {
+    void startDistro(AOServer server, boolean includeUser) throws IOException, SQLException {
         connector.requestUpdate(
             AOServProtocol.CommandID.START_DISTRO,
             server.pkey,

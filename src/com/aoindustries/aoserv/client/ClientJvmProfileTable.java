@@ -38,7 +38,7 @@ final public class ClientJvmProfileTable extends AOServTable<String,ClientJvmPro
         return get((String)pkey);
     }
 
-    public List<ClientJvmProfile> getRows() {
+    public List<ClientJvmProfile> getRows() throws SQLException, IOException {
         List<MethodProfile> mps=Profiler.getMethodProfiles();
         int len=mps.size();
         List<ClientJvmProfile> cjps=new ArrayList<ClientJvmProfile>(len);

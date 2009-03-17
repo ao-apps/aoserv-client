@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -31,7 +32,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         return defaultOrderBy;
     }
 
-    void addMySQLUser(String username) {
+    void addMySQLUser(String username) throws IOException, SQLException {
         connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MYSQL_USERS,
@@ -40,10 +41,16 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
     }
 
     public MySQLUser get(Object pkey) {
-	return getUniqueRow(MySQLUser.COLUMN_USERNAME, pkey);
+        try {
+            return getUniqueRow(MySQLUser.COLUMN_USERNAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    List<MySQLUser> getMySQLUsers(Package pack) {
+    List<MySQLUser> getMySQLUsers(Package pack) throws IOException, SQLException {
         String name=pack.name;
         List<MySQLUser> cached=getRows();
         int size=cached.size();
@@ -59,7 +66,8 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         return SchemaTable.TableID.MYSQL_USERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_USER, args, 1, err)) {
@@ -132,7 +140,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         return false;
     }
 
-    void waitForRebuild(AOServer aoServer) {
+    void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_USERS,

@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,20 +35,26 @@ final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
     }
 
     public WhoisHistory get(Object pkey) {
-	return getUniqueRow(WhoisHistory.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(WhoisHistory.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public WhoisHistory get(int pkey) {
+    public WhoisHistory get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(WhoisHistory.COLUMN_PKEY, pkey);
     }
 
     @Override
-    public List<WhoisHistory> getIndexedRows(int col, Object value) {
+    public List<WhoisHistory> getIndexedRows(int col, Object value) throws IOException, SQLException {
         if(col==WhoisHistory.COLUMN_WHOIS_OUTPUT) throw new UnsupportedOperationException("getIndexedRows not supported for whois_history.whois_output");
         return super.getIndexedRows(col, value);
     }
 
-    List<WhoisHistory> getWhoisHistory(Business bu) {
+    List<WhoisHistory> getWhoisHistory(Business bu) throws IOException, SQLException {
         return getIndexedRows(WhoisHistory.COLUMN_ACCOUNTING, bu.pkey);
     }
 

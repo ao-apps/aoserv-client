@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -37,14 +38,20 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
     }
 
     public FailoverMySQLReplication get(Object pkey) {
+        try {
+            return getUniqueRow(FailoverMySQLReplication.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public FailoverMySQLReplication get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(FailoverMySQLReplication.COLUMN_PKEY, pkey);
     }
 
-    public FailoverMySQLReplication get(int pkey) {
-	return getUniqueRow(FailoverMySQLReplication.COLUMN_PKEY, pkey);
-    }
-
-    List<FailoverMySQLReplication> getFailoverMySQLReplications(Package pk) {
+    List<FailoverMySQLReplication> getFailoverMySQLReplications(Package pk) throws IOException, SQLException {
         List<FailoverMySQLReplication> matches = new ArrayList<FailoverMySQLReplication>();
         List<MySQLServer> mss = pk.getMySQLServers();
         for(MySQLServer ms : mss) {
@@ -53,11 +60,11 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
         return matches;
     }
 
-    List<FailoverMySQLReplication> getFailoverMySQLReplications(MySQLServer mysqlServer) {
+    List<FailoverMySQLReplication> getFailoverMySQLReplications(MySQLServer mysqlServer) throws IOException, SQLException {
         return getIndexedRows(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, mysqlServer.pkey);
     }
 
-    List<FailoverMySQLReplication> getFailoverMySQLReplications(FailoverFileReplication replication) {
+    List<FailoverMySQLReplication> getFailoverMySQLReplications(FailoverFileReplication replication) throws IOException, SQLException {
         return getIndexedRows(FailoverMySQLReplication.COLUMN_REPLICATION, replication.pkey);
     }
 

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,7 +30,7 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
     String username;
     String permission;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return pkey;
             case COLUMN_USERNAME: return username;
@@ -40,15 +39,15 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
         }
     }
 
-    public BusinessAdministrator getBusinessAdministrator() {
+    public BusinessAdministrator getBusinessAdministrator() throws SQLException {
         BusinessAdministrator ba = table.connector.businessAdministrators.get(username);
-        if(ba==null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: "+username));
+        if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+username);
         return ba;
     }
     
-    public AOServPermission getAOServPermission() {
+    public AOServPermission getAOServPermission() throws SQLException {
         AOServPermission ap = table.connector.aoservPermissions.get(permission);
-        if(ap==null) throw new WrappedException(new SQLException("Unable to find AOServPermission: "+permission));
+        if(ap==null) throw new SQLException("Unable to find AOServPermission: "+permission);
         return ap;
     }
 

@@ -6,8 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -61,15 +59,15 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
     private String type;
     public static final int MAX_LENGTH=255;
 
-    public int addLinuxAccount(LinuxAccount account) {
+    public int addLinuxAccount(LinuxAccount account) throws IOException, SQLException {
         return table.connector.linuxGroupAccounts.addLinuxGroupAccount(this, account);
     }
 
-    public int addLinuxServerGroup(AOServer aoServer) {
+    public int addLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
         return table.connector.linuxServerGroups.addLinuxServerGroup(this, aoServer);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case COLUMN_PACKAGE: return packageName;
@@ -78,17 +76,17 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         }
     }
 
-    public LinuxGroupType getLinuxGroupType() {
+    public LinuxGroupType getLinuxGroupType() throws SQLException {
         LinuxGroupType typeObject = table.connector.linuxGroupTypes.get(type);
-        if (typeObject == null) throw new WrappedException(new SQLException("Unable to find LinuxGroupType: " + type));
+        if (typeObject == null) throw new SQLException("Unable to find LinuxGroupType: " + type);
         return typeObject;
     }
 
-    public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) {
+    public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
         return table.connector.linuxServerGroups.getLinuxServerGroup(aoServer, pkey);
     }
 
-    public List<LinuxServerGroup> getLinuxServerGroups() {
+    public List<LinuxServerGroup> getLinuxServerGroups() throws IOException, SQLException {
         return table.connector.linuxServerGroups.getLinuxServerGroups(this);
     }
 
@@ -96,7 +94,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         return pkey;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws IOException, SQLException {
         // null OK because data may be filtered at this point, like the linux group 'mail'
         return table.connector.packages.get(packageName);
     }
@@ -154,7 +152,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         type=in.readUTF().intern();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be the primary group for any linux accounts
@@ -170,7 +168,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_GROUPS,

@@ -5,6 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +33,16 @@ final public class TicketTypeTable extends GlobalTableStringKey<TicketType> {
     }
 
     public TicketType get(Object pkey) {
-	return getUniqueRow(TicketType.COLUMN_TYPE, pkey);
+        try {
+            return getUniqueRow(TicketType.COLUMN_TYPE, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public List<TicketType> getClientViewableTicketTypes() {
+    public List<TicketType> getClientViewableTicketTypes() throws IOException, SQLException {
 	List<TicketType> cached = getRows();
 	int size = cached.size();
         List<TicketType> matches=new ArrayList<TicketType>(size);

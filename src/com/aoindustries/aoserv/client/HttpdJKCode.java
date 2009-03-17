@@ -30,7 +30,7 @@ final public class HttpdJKCode extends GlobalObjectStringKey<HttpdJKCode> {
 	return pkey;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_CODE) return pkey;
 	throw new IllegalArgumentException("Invalid index: "+i);
     }

@@ -5,10 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +48,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     int dhcpAddress;
     int ttl;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ZONE: return zone;
@@ -65,10 +66,10 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	return destination;
     }
     
-    public IPAddress getDHCPAddress() {
+    public IPAddress getDHCPAddress() throws SQLException, IOException {
         if(dhcpAddress==-1) return null;
         IPAddress ia=table.connector.ipAddresses.get(dhcpAddress);
-        if(ia==null) throw new WrappedException(new SQLException("Unable to find IPAddress: "+dhcpAddress));
+        if(ia==null) throw new SQLException("Unable to find IPAddress: "+dhcpAddress);
         return ia;
     }
     
@@ -123,15 +124,15 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	return SchemaTable.TableID.DNS_RECORDS;
     }
 
-    public DNSType getType() {
+    public DNSType getType() throws SQLException {
 	DNSType obj=table.connector.dnsTypes.get(type);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find DNSType: "+type));
+	if(obj==null) throw new SQLException("Unable to find DNSType: "+type);
 	return obj;
     }
 
-    public DNSZone getZone() {
+    public DNSZone getZone() throws SQLException {
 	DNSZone obj=table.connector.dnsZones.get(zone);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find DNSZone: "+zone));
+	if(obj==null) throw new SQLException("Unable to find DNSZone: "+zone);
 	return obj;
     }
 
@@ -164,10 +165,11 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
         return Collections.emptyList();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_RECORDS, pkey);
     }
 
+    @Override
     String toStringImpl() {
 	StringBuilder SB=new StringBuilder();
 	SB

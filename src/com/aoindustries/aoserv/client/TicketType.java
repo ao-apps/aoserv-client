@@ -60,7 +60,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
         TODO_SUPPORT_TOOLS="TODO: Support Tools"
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_TYPE) return pkey;
 	if(i==1) return description;
 	if(i==2) return client_view?Boolean.TRUE:Boolean.FALSE;

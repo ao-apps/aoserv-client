@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -43,7 +44,7 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
         int updated,
         long bytes,
         boolean isSuccessful
-    ) {
+    ) throws IOException, SQLException {
     	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.FAILOVER_FILE_LOG,
@@ -58,20 +59,26 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
     }
 
     public FailoverFileLog get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public FailoverFileLog get(int pkey) {
+    public FailoverFileLog get(int pkey) throws IOException, SQLException {
         return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.FAILOVER_FILE_LOG, pkey);
     }
 
-    public List<FailoverFileLog> getRows() {
+    public List<FailoverFileLog> getRows() throws IOException, SQLException {
         List<FailoverFileLog> list=new ArrayList<FailoverFileLog>();
         getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.FAILOVER_FILE_LOG);
         return list;
     }
 
-    List<FailoverFileLog> getFailoverFileLogs(FailoverFileReplication replication, int maxRows) {
+    List<FailoverFileLog> getFailoverFileLogs(FailoverFileReplication replication, int maxRows) throws IOException, SQLException {
         List<FailoverFileLog> list=new ArrayList<FailoverFileLog>();
         getObjectsNoProgress(list, AOServProtocol.CommandID.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.pkey, maxRows);
         return list;

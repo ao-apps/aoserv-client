@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -31,7 +32,7 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
         return defaultOrderBy;
     }
 
-    void addFTPGuestUser(String username) {
+    void addFTPGuestUser(String username) throws IOException, SQLException {
 	connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.FTP_GUEST_USERS,
@@ -39,7 +40,7 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
 	);
     }
 
-    List<FTPGuestUser> getFTPGuestUsers(AOServer aoServer) {
+    List<FTPGuestUser> getFTPGuestUsers(AOServer aoServer) throws IOException, SQLException {
 	List<FTPGuestUser> cached=getRows();
 	int size=cached.size();
         List<FTPGuestUser> matches=new ArrayList<FTPGuestUser>(size);
@@ -51,14 +52,21 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
     }
 
     public FTPGuestUser get(Object pkey) {
-	return getUniqueRow(FTPGuestUser.COLUMN_USERNAME, pkey);
+        try {
+            return getUniqueRow(FTPGuestUser.COLUMN_USERNAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.FTP_GUEST_USERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_FTP_GUEST_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_FTP_GUEST_USER, args, 1, err)) {

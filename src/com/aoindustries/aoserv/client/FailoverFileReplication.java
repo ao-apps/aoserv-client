@@ -7,7 +7,8 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.BufferManager;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
@@ -36,7 +37,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     private boolean enabled;
     private int quota_gid;
 
-    public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) {
+    public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws IOException, SQLException {
 	return table.connector.failoverFileLogs.addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
     }
 
@@ -44,7 +45,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         return max_bit_rate;
     }
 
-    public void setBitRate(int bitRate) {
+    public void setBitRate(int bitRate) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
     }
 
@@ -53,7 +54,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     @Override
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_SERVER: return server;
@@ -69,17 +70,17 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         }
     }
 
-    public List<FailoverFileSchedule> getFailoverFileSchedules() {
+    public List<FailoverFileSchedule> getFailoverFileSchedules() throws IOException, SQLException {
         return table.connector.failoverFileSchedules.getFailoverFileSchedules(this);
     }
 
-    public Server getServer() throws SQLException {
+    public Server getServer() throws SQLException, IOException {
         Server se=table.connector.servers.get(server);
         if(se==null) throw new SQLException("Unable to find Server: "+server);
         return se;
     }
 
-    public BackupPartition getBackupPartition() throws SQLException {
+    public BackupPartition getBackupPartition() throws SQLException, IOException {
         BackupPartition bp = table.connector.backupPartitions.get(backup_partition);
         if(bp==null) throw new SQLException("Unable to find BackupPartition: "+backup_partition);
         return bp;
@@ -90,11 +91,11 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
      * maximum number of rows.  May return less than this number of rows.  The results
      * are sorted by start_time descending (most recent at index zero).
      */
-    public List<FailoverFileLog> getFailoverFileLogs(int maxRows) {
+    public List<FailoverFileLog> getFailoverFileLogs(int maxRows) throws IOException, SQLException {
         return table.connector.failoverFileLogs.getFailoverFileLogs(this, maxRows);
     }
 
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() {
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
         return table.connector.failoverMySQLReplications.getFailoverMySQLReplications(this);
     }
 
@@ -102,9 +103,9 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         return use_compression;
     }
     
-    public BackupRetention getRetention() {
+    public BackupRetention getRetention() throws SQLException, IOException {
         BackupRetention br=table.connector.backupRetentions.get(retention);
-        if(br==null) throw new WrappedException(new SQLException("Unable to find BackupRetention: "+retention));
+        if(br==null) throw new SQLException("Unable to find BackupRetention: "+retention);
         return br;
     }
     
@@ -183,12 +184,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     @Override
-    String toStringImpl() {
-        try {
-            return getServer()+"->"+getBackupPartition();
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    String toStringImpl() throws SQLException, IOException {
+        return getServer()+"->"+getBackupPartition();
     }
 
     @Override
@@ -214,15 +211,15 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(quota_gid);
     }
 
-    public int addFileBackupSetting(String path, boolean backupEnabled) {
+    public int addFileBackupSetting(String path, boolean backupEnabled) throws IOException, SQLException {
         return table.connector.fileBackupSettings.addFileBackupSetting(this, path, backupEnabled);
     }
 
-    public FileBackupSetting getFileBackupSetting(String path) {
+    public FileBackupSetting getFileBackupSetting(String path) throws IOException, SQLException {
         return table.connector.fileBackupSettings.getFileBackupSetting(this, path);
     }
 
-    public List<FileBackupSetting> getFileBackupSettings() {
+    public List<FileBackupSetting> getFileBackupSettings() throws IOException, SQLException {
         return table.connector.fileBackupSettings.getFileBackupSettings(this);
     }
     

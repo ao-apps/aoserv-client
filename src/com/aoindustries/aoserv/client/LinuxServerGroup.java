@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -39,11 +38,11 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     int gid;
     long created;
 
-    public List<LinuxServerAccount> getAlternateLinuxServerAccounts() {
+    public List<LinuxServerAccount> getAlternateLinuxServerAccounts() throws SQLException, IOException {
         return table.connector.linuxServerAccounts.getAlternateLinuxServerAccounts(this);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_NAME: return name;
@@ -54,9 +53,9 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         }
     }
 
-    public LinuxID getGID() {
+    public LinuxID getGID() throws SQLException {
         LinuxID obj=table.connector.linuxIDs.get(gid);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find LinuxID: "+gid));
+        if(obj==null) throw new SQLException("Unable to find LinuxID: "+gid);
         return obj;
     }
 
@@ -64,15 +63,15 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         return created;
     }
 
-    public LinuxGroup getLinuxGroup() {
+    public LinuxGroup getLinuxGroup() throws SQLException {
         LinuxGroup group = table.connector.linuxGroups.get(name);
-        if (group == null) throw new WrappedException(new SQLException("Unable to find LinuxGroup: " + name));
+        if (group == null) throw new SQLException("Unable to find LinuxGroup: " + name);
         return group;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
         AOServer ao=table.connector.aoServers.get(ao_server);
-        if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return ao;
     }
 
@@ -96,7 +95,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         created=in.readLong();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServer ao=getAOServer();
@@ -136,7 +135,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_SERVER_GROUPS,
@@ -144,6 +143,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         );
     }
 
+    @Override
     String toStringImpl() {
         return name;
     }

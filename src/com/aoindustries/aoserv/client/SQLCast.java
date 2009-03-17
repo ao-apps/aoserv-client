@@ -5,6 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -28,7 +31,7 @@ final public class SQLCast extends SQLExpression {
         return castToType.getType();
     }
 
-    public Object getValue(AOServConnector conn, AOServObject obj) {
+    public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
         return expression.getType().cast(conn, expression.getValue(conn, obj), castToType);
     }
 
@@ -37,7 +40,7 @@ final public class SQLCast extends SQLExpression {
     }
 
     @Override
-    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) {
+    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
         expression.getReferencedTables(conn, tables);
     }
 }

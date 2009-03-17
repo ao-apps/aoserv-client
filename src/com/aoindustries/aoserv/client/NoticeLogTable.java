@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -39,7 +40,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	int balance,
 	String type,
 	int transid
-    ) {
+    ) throws IOException, SQLException {
 	connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.NOTICE_LOG,
@@ -53,14 +54,20 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
     }
 
     public NoticeLog get(Object pkey) {
+        try {
+            return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public NoticeLog get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
     }
 
-    public NoticeLog get(int pkey) {
-	return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
-    }
-
-    List<NoticeLog> getNoticeLogs(Business bu) {
+    List<NoticeLog> getNoticeLogs(Business bu) throws IOException, SQLException {
         return getIndexedRows(NoticeLog.COLUMN_ACCOUNTING, bu.pkey);
     }
 
@@ -68,7 +75,8 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	return SchemaTable.TableID.NOTICE_LOG;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_NOTICE_LOG)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_NOTICE_LOG, args, 6, err)) {

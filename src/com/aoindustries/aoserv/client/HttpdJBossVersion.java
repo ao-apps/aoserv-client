@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -38,16 +37,16 @@ final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVe
 
     public static final String DEFAULT_VERSION=VERSION_2_2_2;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_VERSION) return Integer.valueOf(pkey);
 	if(i==1) return Integer.valueOf(tomcatVersion);
 	if(i==2) return templateDir;
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public HttpdTomcatVersion getHttpdTomcatVersion(AOServConnector connector) {
+    public HttpdTomcatVersion getHttpdTomcatVersion(AOServConnector connector) throws SQLException, IOException {
 	HttpdTomcatVersion obj=connector.httpdTomcatVersions.get(tomcatVersion);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdTomcatVersion: "+tomcatVersion));
+	if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
 	return obj;
     }
 
@@ -55,9 +54,9 @@ final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVe
 	return SchemaTable.TableID.HTTPD_JBOSS_VERSIONS;
     }
 
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector) {
+    public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
 	TechnologyVersion obj=connector.technologyVersions.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find TechnologyVersion: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
 	return obj;
     }
 

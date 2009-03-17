@@ -5,9 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @see  HttpdJKCode
@@ -31,7 +31,13 @@ final public class HttpdJKCodeTable extends GlobalTableStringKey<HttpdJKCode> {
     }
 
     public HttpdJKCode get(Object pkey) {
-	return getUniqueRow(HttpdJKCode.COLUMN_CODE, pkey);
+        try {
+            return getUniqueRow(HttpdJKCode.COLUMN_CODE, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

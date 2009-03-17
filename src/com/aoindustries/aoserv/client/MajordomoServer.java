@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -57,7 +56,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 
     public int addMajordomoList(
         String listName
-    ) {
+    ) throws SQLException, IOException {
         return table.connector.majordomoLists.addMajordomoList(this, listName);
     }
 
@@ -65,7 +64,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
         return Collections.emptyList();
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_DOMAIN: return Integer.valueOf(pkey);
             case 1: return Integer.valueOf(linux_server_account);
@@ -78,47 +77,47 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
         }
     }
 
-    public EmailDomain getDomain() {
+    public EmailDomain getDomain() throws IOException, SQLException {
 	EmailDomain obj=table.connector.emailDomains.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find EmailDomain: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find EmailDomain: "+pkey);
 	return obj;
     }
 
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
 	LinuxServerAccount obj=table.connector.linuxServerAccounts.get(linux_server_account);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: "+linux_server_account));
+	if(obj==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
 	return obj;
     }
 
-    public LinuxServerGroup getLinuxServerGroup() {
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
 	LinuxServerGroup obj=table.connector.linuxServerGroups.get(linux_server_group);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: "+linux_server_group));
+	if(obj==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
 	return obj;
     }
 
-    public EmailPipeAddress getMajordomoPipeAddress() {
+    public EmailPipeAddress getMajordomoPipeAddress() throws SQLException, IOException {
 	EmailPipeAddress obj=table.connector.emailPipeAddresses.get(majordomo_pipe_address);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find EmailPipeAddress: "+majordomo_pipe_address));
+	if(obj==null) throw new SQLException("Unable to find EmailPipeAddress: "+majordomo_pipe_address);
 	return obj;
     }
 
-    public MajordomoList getMajordomoList(String listName) {
+    public MajordomoList getMajordomoList(String listName) throws IOException, SQLException {
         return table.connector.majordomoLists.getMajordomoList(this, listName);
     }
 
-    public List<MajordomoList> getMajordomoLists() {
+    public List<MajordomoList> getMajordomoLists() throws IOException, SQLException {
 	return table.connector.majordomoLists.getMajordomoLists(this);
     }
 
-    public EmailAddress getMajordomoOwnerAddress() {
+    public EmailAddress getMajordomoOwnerAddress() throws SQLException, IOException {
 	EmailAddress obj=table.connector.emailAddresses.get(majordomo_owner_add);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find EmailAddress: "+majordomo_owner_add));
+	if(obj==null) throw new SQLException("Unable to find EmailAddress: "+majordomo_owner_add);
 	return obj;
     }
 
-    public EmailAddress getOwnerMajordomoAddress() {
+    public EmailAddress getOwnerMajordomoAddress() throws SQLException, IOException {
 	EmailAddress obj=table.connector.emailAddresses.get(owner_majordomo_add);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find EmailAddress: "+owner_majordomo_add));
+	if(obj==null) throw new SQLException("Unable to find EmailAddress: "+owner_majordomo_add);
 	return obj;
     }
 
@@ -126,9 +125,9 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	return SchemaTable.TableID.MAJORDOMO_SERVERS;
     }
 
-    public MajordomoVersion getVersion() {
+    public MajordomoVersion getVersion() throws SQLException {
 	MajordomoVersion obj=table.connector.majordomoVersions.get(version);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find MajordomoVersion: "+version));
+	if(obj==null) throw new SQLException("Unable to find MajordomoVersion: "+version);
 	return obj;
     }
 
@@ -152,7 +151,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	majordomo_owner_add=in.readCompressedInt();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MAJORDOMO_SERVERS,

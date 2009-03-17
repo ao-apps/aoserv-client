@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -43,7 +42,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     int listname_approval_add;
     int listname_request_pipe_add;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_EMAIL_LIST: return Integer.valueOf(pkey);
             case COLUMN_MAJORDOMO_SERVER: return Integer.valueOf(majordomo_server);
@@ -80,7 +79,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         ;
     }
 
-    public String getDefaultInfoFile() {
+    public String getDefaultInfoFile() throws SQLException, IOException {
         return getDefaultInfoFile(getMajordomoServer().getDomain().getDomain(), name);
     }
     
@@ -108,57 +107,57 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         ;
     }
 
-    public String getDefaultIntroFile() {
+    public String getDefaultIntroFile() throws SQLException, IOException {
         return getDefaultIntroFile(getMajordomoServer().getDomain().getDomain(), name);
     }
 
-    public EmailList getEmailList() {
+    public EmailList getEmailList() throws SQLException, IOException {
         EmailList obj=table.connector.emailLists.get(pkey);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find EmailList: "+pkey));
+        if(obj==null) throw new SQLException("Unable to find EmailList: "+pkey);
         return obj;
     }
 
     /**
      * Gets the info file for the list.
      */
-    public String getInfoFile() {
+    public String getInfoFile() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
     }
 
     /**
      * Gets the intro file for the list.
      */
-    public String getIntroFile() {
+    public String getIntroFile() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
     }
 
-    public EmailPipeAddress getListPipeAddress() {
+    public EmailPipeAddress getListPipeAddress() throws SQLException, IOException {
         EmailPipeAddress pipeAddress=table.connector.emailPipeAddresses.get(listname_pipe_add);
-        if(pipeAddress==null) throw new WrappedException(new SQLException("Unable to find EmailPipeAddress: "+listname_pipe_add));
+        if(pipeAddress==null) throw new SQLException("Unable to find EmailPipeAddress: "+listname_pipe_add);
         return pipeAddress;
     }
 
-    public EmailAddress getListApprovalAddress() {
+    public EmailAddress getListApprovalAddress() throws SQLException, IOException {
         EmailAddress address=table.connector.emailAddresses.get(listname_approval_add);
-        if(address==null) throw new WrappedException(new SQLException("Unable to find EmailAddress: "+listname_approval_add));
+        if(address==null) throw new SQLException("Unable to find EmailAddress: "+listname_approval_add);
         return address;
     }
 
-    public EmailListAddress getListListAddress() {
+    public EmailListAddress getListListAddress() throws SQLException, IOException {
         EmailListAddress listAddress=table.connector.emailListAddresses.get(listname_list_add);
-        if(listAddress==null) throw new WrappedException(new SQLException("Unable to find EmailListAddress: "+listname_list_add));
+        if(listAddress==null) throw new SQLException("Unable to find EmailListAddress: "+listname_list_add);
         return listAddress;
     }
 
-    public EmailAddress getListOwnerAddress() {
+    public EmailAddress getListOwnerAddress() throws SQLException, IOException {
         EmailAddress address=table.connector.emailAddresses.get(listname_owner_add);
-        if(address==null) throw new WrappedException(new SQLException("Unable to find EmailAddress: "+listname_owner_add));
+        if(address==null) throw new SQLException("Unable to find EmailAddress: "+listname_owner_add);
         return address;
     }
 
-    public EmailPipeAddress getListRequestPipeAddress() {
+    public EmailPipeAddress getListRequestPipeAddress() throws SQLException, IOException {
         EmailPipeAddress pipeAddress=table.connector.emailPipeAddresses.get(listname_request_pipe_add);
-        if(pipeAddress==null) throw new WrappedException(new SQLException("Unable to find EmailPipeAddress: "+listname_request_pipe_add));
+        if(pipeAddress==null) throw new SQLException("Unable to find EmailPipeAddress: "+listname_request_pipe_add);
         return pipeAddress;
     }
 
@@ -166,15 +165,15 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         return name;
     }
 
-    public EmailAddress getOwnerListAddress() {
+    public EmailAddress getOwnerListAddress() throws SQLException, IOException {
         EmailAddress address=table.connector.emailAddresses.get(owner_listname_add);
-        if(address==null) throw new WrappedException(new SQLException("Unable to find EmailAddress: "+owner_listname_add));
+        if(address==null) throw new SQLException("Unable to find EmailAddress: "+owner_listname_add);
         return address;
     }
 
-    public MajordomoServer getMajordomoServer() {
+    public MajordomoServer getMajordomoServer() throws SQLException, IOException {
         MajordomoServer obj=table.connector.majordomoServers.get(majordomo_server);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find MajordomoServer: "+majordomo_server));
+        if(obj==null) throw new SQLException("Unable to find MajordomoServer: "+majordomo_server);
         return obj;
     }
 
@@ -223,16 +222,16 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         listname_request_pipe_add=in.readCompressedInt();
     }
 
-    public void setInfoFile(String file) {
+    public void setInfoFile(String file) throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
     }
 
-    public void setIntroFile(String file) {
+    public void setIntroFile(String file) throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl() throws SQLException, IOException {
         return name+'@'+getMajordomoServer().getDomain().domain;
     }
 

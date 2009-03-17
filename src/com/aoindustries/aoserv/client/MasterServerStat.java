@@ -79,7 +79,7 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 	this.description=description;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==0) return name;
 	if(i==1) return value;
 	if(i==2) return description;

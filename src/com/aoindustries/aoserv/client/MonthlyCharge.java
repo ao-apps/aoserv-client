@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -70,7 +69,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	this.active=true;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return pkey==-1?null:Integer.valueOf(pkey);
             case 1: return accounting;
@@ -90,25 +89,25 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	return created;
     }
 
-    public BusinessAdministrator getCreatedBy() {
+    public BusinessAdministrator getCreatedBy() throws SQLException {
         BusinessAdministrator createdByObject = table.connector.usernames.get(created_by).getBusinessAdministrator();
-        if (createdByObject == null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: " + created_by));
+        if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
         return createdByObject;
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
         Business bu=table.connector.businesses.get(accounting);
-        if(bu==null) throw new WrappedException(new SQLException("Unable to find Business: "+accounting));
+        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
         return bu;
     }
 
-    public String getDescription() {
+    public String getDescription() throws SQLException {
 	return description == null ? getType().getDescription() : description;
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws SQLException, IOException {
 	Package packageObject = table.connector.packages.get(packageName);
-  	if (packageObject == null) throw new WrappedException(new SQLException("Unable to find Package: " + packageName));
+  	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 	return packageObject;
     }
 
@@ -133,9 +132,9 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	return SchemaTable.TableID.MONTHLY_CHARGES;
     }
 
-    public TransactionType getType() {
+    public TransactionType getType() throws SQLException {
         TransactionType typeObject = table.connector.transactionTypes.get(type);
-        if (typeObject == null) throw new WrappedException(new SQLException("Unable to find TransactionType: " + type));
+        if (typeObject == null) throw new SQLException("Unable to find TransactionType: " + type);
         return typeObject;
     }
 
@@ -169,6 +168,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	active=in.readBoolean();
     }
 
+    @Override
     String toStringImpl() {
 	return packageName+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
     }

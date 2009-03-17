@@ -48,50 +48,54 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
         String sharedTomcatName,
         HttpdTomcatVersion version,
         String contentSrc
-    ) {
+    ) throws IOException, SQLException {
+        int pkey;
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
         try {
-            int pkey;
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-                out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES.ordinal());
-                out.writeCompressedInt(aoServer.pkey);
-                out.writeUTF(siteName);
-                out.writeUTF(packageObj.name);
-                out.writeUTF(siteUser.pkey);
-                out.writeUTF(siteGroup.pkey);
-                out.writeUTF(serverAdmin);
-                out.writeBoolean(useApache);
-                out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);
-                out.writeUTF(primaryHttpHostname);
-                out.writeCompressedInt(altHttpHostnames.length);
-                for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
-                out.writeBoolean(sharedTomcatName!=null);
-                if(sharedTomcatName!=null) out.writeUTF(sharedTomcatName);
-                out.writeCompressedInt(version==null?-1:version.getTechnologyVersion(connector).getPkey());
-                out.writeBoolean(contentSrc!=null);
-                if (contentSrc!=null) out.writeUTF(contentSrc);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+            out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES.ordinal());
+            out.writeCompressedInt(aoServer.pkey);
+            out.writeUTF(siteName);
+            out.writeUTF(packageObj.name);
+            out.writeUTF(siteUser.pkey);
+            out.writeUTF(siteGroup.pkey);
+            out.writeUTF(serverAdmin);
+            out.writeBoolean(useApache);
+            out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);
+            out.writeUTF(primaryHttpHostname);
+            out.writeCompressedInt(altHttpHostnames.length);
+            for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
+            out.writeBoolean(sharedTomcatName!=null);
+            if(sharedTomcatName!=null) out.writeUTF(sharedTomcatName);
+            out.writeCompressedInt(version==null?-1:version.getTechnologyVersion(connector).getPkey());
+            out.writeBoolean(contentSrc!=null);
+            if (contentSrc!=null) out.writeUTF(contentSrc);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    pkey=in.readCompressedInt();
-                    invalidateList=AOServConnector.readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unknown response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                pkey=in.readCompressedInt();
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unknown response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
-            return pkey;
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+        connector.tablesUpdated(invalidateList);
+        return pkey;
+    }
+
+    public HttpdTomcatSharedSite get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdTomcatSharedSite.COLUMN_TOMCAT_SITE, pkey);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -99,15 +103,11 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
         }
     }
 
-    public HttpdTomcatSharedSite get(Object pkey) {
+    public HttpdTomcatSharedSite get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(HttpdTomcatSharedSite.COLUMN_TOMCAT_SITE, pkey);
     }
 
-    public HttpdTomcatSharedSite get(int pkey) {
-	return getUniqueRow(HttpdTomcatSharedSite.COLUMN_TOMCAT_SITE, pkey);
-    }
-
-    List<HttpdTomcatSharedSite> getHttpdTomcatSharedSites(HttpdSharedTomcat tomcat) {
+    List<HttpdTomcatSharedSite> getHttpdTomcatSharedSites(HttpdSharedTomcat tomcat) throws IOException, SQLException {
         return getIndexedRows(HttpdTomcatSharedSite.COLUMN_HTTPD_SHARED_TOMCAT, tomcat.pkey);
     }
 
@@ -115,13 +115,14 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
         return SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES;
     }
 
+    @Override
     boolean handleCommand(
         String[] args,
         InputStream in,
         TerminalWriter out,
         TerminalWriter err,
         boolean isInteractive
-    ) {
+    ) throws IllegalArgumentException, SQLException, IOException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE)) {
             if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE, args, 13, err)) {

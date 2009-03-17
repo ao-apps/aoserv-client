@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -33,7 +34,7 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
         return defaultOrderBy;
     }
 
-    int addPostgresServerUser(String username, PostgresServer postgresServer) {
+    int addPostgresServerUser(String username, PostgresServer postgresServer) throws IOException, SQLException {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_SERVER_USERS,
@@ -44,18 +45,24 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
     }
 
     public PostgresServerUser get(Object pkey) {
+        try {
+            return getUniqueRow(PostgresServerUser.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public PostgresServerUser get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(PostgresServerUser.COLUMN_PKEY, pkey);
     }
 
-    public PostgresServerUser get(int pkey) {
-	return getUniqueRow(PostgresServerUser.COLUMN_PKEY, pkey);
-    }
-
-    PostgresServerUser getPostgresServerUser(String username, PostgresServer postgresServer) {
+    PostgresServerUser getPostgresServerUser(String username, PostgresServer postgresServer) throws IOException, SQLException {
         return getPostgresServerUser(username, postgresServer.pkey);
     }
 
-    PostgresServerUser getPostgresServerUser(String username, int postgresServer) {
+    PostgresServerUser getPostgresServerUser(String username, int postgresServer) throws IOException, SQLException {
 	List<PostgresServerUser> table=getRows();
 	int size=table.size();
 	for(int c=0;c<size;c++) {
@@ -68,11 +75,11 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
 	return null;
     }
 
-    List<PostgresServerUser> getPostgresServerUsers(PostgresUser pu) {
+    List<PostgresServerUser> getPostgresServerUsers(PostgresUser pu) throws IOException, SQLException {
         return getIndexedRows(PostgresServerUser.COLUMN_USERNAME, pu.pkey);
     }
 
-    List<PostgresServerUser> getPostgresServerUsers(PostgresServer postgresServer) {
+    List<PostgresServerUser> getPostgresServerUsers(PostgresServer postgresServer) throws IOException, SQLException {
         return getIndexedRows(PostgresServerUser.COLUMN_POSTGRES_SERVER, postgresServer.pkey);
     }
 
@@ -80,7 +87,8 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
 	return SchemaTable.TableID.POSTGRES_SERVER_USERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_POSTGRES_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_POSTGRES_SERVER_USER, args, 3, err)) {

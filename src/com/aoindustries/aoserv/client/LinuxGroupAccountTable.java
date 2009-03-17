@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -45,7 +46,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
     int addLinuxGroupAccount(
 	LinuxGroup groupNameObject,
 	LinuxAccount usernameObject
-    ) {
+    ) throws IOException, SQLException {
         int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
@@ -56,17 +57,23 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
     }
 
     public LinuxGroupAccount get(Object pkey) {
-	return getUniqueRow(LinuxGroupAccount.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(LinuxGroupAccount.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public LinuxGroupAccount get(int pkey) {
+    public LinuxGroupAccount get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(LinuxGroupAccount.COLUMN_PKEY, pkey);
     }
 
     LinuxGroupAccount getLinuxGroupAccount(
 	String groupName,
 	String username
-    ) {
+    ) throws IOException, SQLException {
         synchronized(hash) {
             if(!hashBuilt) {
                 hash.clear();
@@ -82,7 +89,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         }
     }
 
-    List<LinuxGroup> getLinuxGroups(LinuxAccount linuxAccount) {
+    List<LinuxGroup> getLinuxGroups(LinuxAccount linuxAccount) throws IOException, SQLException {
         String username = linuxAccount.pkey;
         List<LinuxGroupAccount> cached = getRows();
         int len = cached.size();
@@ -94,7 +101,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         return matches;
     }
 
-    LinuxGroup getPrimaryGroup(LinuxAccount account) {
+    LinuxGroup getPrimaryGroup(LinuxAccount account) throws IOException, SQLException {
         synchronized(primaryHash) {
             if(account==null) throw new IllegalArgumentException("param account is null");
             // Rebuild the hash if needed
@@ -119,7 +126,8 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         return SchemaTable.TableID.LINUX_GROUP_ACCOUNTS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_GROUP_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
@@ -149,6 +157,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         return false;
     }
 
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(hash) {

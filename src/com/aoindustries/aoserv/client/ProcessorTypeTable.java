@@ -1,10 +1,14 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+
 /*
  * Copyright 2008-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * The table containing all of the possible processor types.
@@ -26,7 +30,13 @@ final public class ProcessorTypeTable extends GlobalTableStringKey<ProcessorType
     }
 
     public ProcessorType get(Object type) {
-        return getUniqueRow(ProcessorType.COLUMN_TYPE, type);
+        try {
+            return getUniqueRow(ProcessorType.COLUMN_TYPE, type);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {

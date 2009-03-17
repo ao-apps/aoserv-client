@@ -6,8 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import com.aoindustries.util.sort.*;
+import com.aoindustries.util.sort.AutoSort;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -66,6 +65,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
      * Clears the cache, freeing up memory.  The data will be reloaded upon
      * next use.
      */
+    @Override
     public void clearCache() {
         super.clearCache();
         synchronized(this) {
@@ -79,31 +79,27 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
     /**
      * Reloads the cache if the cache has expired.  All accesses are already synchronized.
      */
-    private void validateCache() {
-        try {
-            long currentTime=System.currentTimeMillis();
-            if(
-               // If cache never loaded
-               lastLoaded==-1
-               // If the system time was reset to previous time
-               || currentTime<lastLoaded
-            ) {
-                SchemaTable schemaTable=getTableSchema();
-                FileList<V> newTableList=new FileList<V>(
-                    schemaTable.getName(),
-                    "table",
-                    getRecordLength(),
-                    this
-                );
-                getObjects(newTableList, AOServProtocol.CommandID.GET_TABLE, getTableID());
-                tableList=newTableList;
-                unmodifiableTableList=Collections.unmodifiableList(tableList);
-                lastLoaded=currentTime;
+    private void validateCache() throws IOException, SQLException {
+        long currentTime=System.currentTimeMillis();
+        if(
+           // If cache never loaded
+           lastLoaded==-1
+           // If the system time was reset to previous time
+           || currentTime<lastLoaded
+        ) {
+            SchemaTable schemaTable=getTableSchema();
+            FileList<V> newTableList=new FileList<V>(
+                schemaTable.getName(),
+                "table",
+                getRecordLength(),
+                this
+            );
+            getObjects(newTableList, AOServProtocol.CommandID.GET_TABLE, getTableID());
+            tableList=newTableList;
+            unmodifiableTableList=Collections.unmodifiableList(tableList);
+            lastLoaded=currentTime;
 
-                if(columnLists!=null) columnLists.clear();
-            }
-        } catch(IOException err) {
-            throw new WrappedException(err);
+            if(columnLists!=null) columnLists.clear();
         }
     }
 
@@ -113,57 +109,53 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
      * safely assume the data is constant as long as the code uses the same reference to List returned
      * here.
      */
-    public final List<V> getRows() {
+    public final List<V> getRows() throws IOException, SQLException {
         synchronized(this) {
             validateCache();
             return unmodifiableTableList;
         }
     }
 
-    final protected V getUniqueRowImpl(int col, Object value) {
-        try {
-            SchemaTable schemaTable=getTableSchema();
-            SchemaColumn schemaColumn=schemaTable.getSchemaColumn(connector, col);
-            SQLComparator<V> Vcomparator=new SQLComparator<V>(
-                connector,
-                new SQLExpression[] {
-                    new SQLColumnValue(connector, schemaColumn)
-                },
-                new boolean[] {ASCENDING}
-            );
+    final protected V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+        SchemaTable schemaTable=getTableSchema();
+        SchemaColumn schemaColumn=schemaTable.getSchemaColumn(connector, col);
+        SQLComparator<V> Vcomparator=new SQLComparator<V>(
+            connector,
+            new SQLExpression[] {
+                new SQLColumnValue(connector, schemaColumn)
+            },
+            new boolean[] {ASCENDING}
+        );
 
-            SQLComparator<Object> Ocomparator=new SQLComparator<Object>(
-                connector,
-                new SQLExpression[] {
-                    new SQLColumnValue(connector, schemaColumn)
-                },
-                new boolean[] {ASCENDING}
-            );
+        SQLComparator<Object> Ocomparator=new SQLComparator<Object>(
+            connector,
+            new SQLExpression[] {
+                new SQLColumnValue(connector, schemaColumn)
+            },
+            new boolean[] {ASCENDING}
+        );
 
-            synchronized(this) {
-                validateCache();
-                // Create any needed objects
-                int minLength=col+1;
-                if(columnLists==null) columnLists=new ArrayList<List<V>>(minLength);
-                else while(columnLists.size()<minLength) columnLists.add(null);
-                List<V> unmodifiableSortedList = columnLists.get(col);
-                if(unmodifiableSortedList==null) {
-                    FileList<V> sortedFileList=new FileList<V>(
-                        schemaTable.getName()+'.'+schemaColumn.getColumnName(),
-                        "unique",
-                        getRecordLength(),
-                        tableList.getObjectFactory()
-                    );
-                    sortedFileList.addAll(tableList);
-                    AutoSort.sortStatic(sortedFileList, Vcomparator);
-                    unmodifiableSortedList=Collections.unmodifiableList(sortedFileList);
-                    columnLists.set(col, unmodifiableSortedList);
-                }
-                int index=Collections.binarySearch(unmodifiableSortedList, value, Ocomparator);
-                return index<0?null:unmodifiableSortedList.get(index);
+        synchronized(this) {
+            validateCache();
+            // Create any needed objects
+            int minLength=col+1;
+            if(columnLists==null) columnLists=new ArrayList<List<V>>(minLength);
+            else while(columnLists.size()<minLength) columnLists.add(null);
+            List<V> unmodifiableSortedList = columnLists.get(col);
+            if(unmodifiableSortedList==null) {
+                FileList<V> sortedFileList=new FileList<V>(
+                    schemaTable.getName()+'.'+schemaColumn.getColumnName(),
+                    "unique",
+                    getRecordLength(),
+                    tableList.getObjectFactory()
+                );
+                sortedFileList.addAll(tableList);
+                AutoSort.sortStatic(sortedFileList, Vcomparator);
+                unmodifiableSortedList=Collections.unmodifiableList(sortedFileList);
+                columnLists.set(col, unmodifiableSortedList);
             }
-        } catch(IOException err) {
-            throw new WrappedException(err);
+            int index=Collections.binarySearch(unmodifiableSortedList, value, Ocomparator);
+            return index<0?null:unmodifiableSortedList.get(index);
         }
     }
 
@@ -178,6 +170,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
         ;
     }
 
+    @Override
     final public boolean isLoaded() {
         return lastLoaded!=-1;
     }

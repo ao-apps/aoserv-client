@@ -6,8 +6,11 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.sort.AutoSort;
+import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +42,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         LinuxServerAccount lsa,
         LinuxServerGroup lsg,
         long mode
-    ) {
+    ) throws IOException, SQLException {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.CVS_REPOSITORIES,
@@ -52,17 +55,23 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
     }
 
     public CvsRepository get(Object pkey) {
-	return getUniqueRow(CvsRepository.COLUMN_PKEY, pkey);
+        try {
+            return getUniqueRow(CvsRepository.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public CvsRepository get(int pkey) {
+    public CvsRepository get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(CvsRepository.COLUMN_PKEY, pkey);
     }
 
     /**
      * Gets one <code>CvsRepository</code> from the database.
      */
-    CvsRepository getCvsRepository(AOServer aoServer, String path) {
+    CvsRepository getCvsRepository(AOServer aoServer, String path) throws IOException, SQLException {
         int aoPKey=aoServer.pkey;
 
         List<CvsRepository> cached=getRows();
@@ -74,7 +83,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	return null;
     }
 
-    List<CvsRepository> getCvsRepositories(AOServer aoServer) {
+    List<CvsRepository> getCvsRepositories(AOServer aoServer) throws IOException, SQLException {
         int aoPKey=aoServer.pkey;
 
         List<CvsRepository> cached=getRows();
@@ -87,7 +96,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	return matches;
     }
 
-    List<CvsRepository> getCvsRepositories(Package pk) {
+    List<CvsRepository> getCvsRepositories(Package pk) throws IOException, SQLException {
         String pkname=pk.name;
 
         List<CvsRepository> cached=getRows();
@@ -100,7 +109,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	return matches;
     }
 
-    List<CvsRepository> getCvsRepositories(LinuxServerAccount lsa) {
+    List<CvsRepository> getCvsRepositories(LinuxServerAccount lsa) throws IOException, SQLException {
         return getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 
@@ -108,7 +117,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	return SchemaTable.TableID.CVS_REPOSITORIES;
     }
 
-    public List<String> getValidPrefixes() {
+    public List<String> getValidPrefixes() throws IOException, SQLException {
         List<String> prefixes=new ArrayList<String>();
 
         // Home directories
@@ -140,7 +149,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_CVS_REPOSITORY)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_CVS_REPOSITORY, args, 5, err)) {

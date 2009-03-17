@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -37,7 +38,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
         String name,
         MySQLServer mysqlServer,
         Package packageObj
-    ) {
+    ) throws IOException, SQLException {
 	int pkey=connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MYSQL_DATABASES,
@@ -48,29 +49,35 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	return pkey;
     }
 
-    public String generateMySQLDatabaseName(String template_base, String template_added) {
+    public String generateMySQLDatabaseName(String template_base, String template_added) throws IOException, SQLException {
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_MYSQL_DATABASE_NAME, template_base, template_added);
     }
 
     public MySQLDatabase get(Object pkey) {
+        try {
+            return getUniqueRow(MySQLDatabase.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public MySQLDatabase get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(MySQLDatabase.COLUMN_PKEY, pkey);
     }
 
-    public MySQLDatabase get(int pkey) {
-	return getUniqueRow(MySQLDatabase.COLUMN_PKEY, pkey);
-    }
-
-    MySQLDatabase getMySQLDatabase(String name, MySQLServer ms) {
+    MySQLDatabase getMySQLDatabase(String name, MySQLServer ms) throws IOException, SQLException {
         // Use index first
 	for(MySQLDatabase md : getMySQLDatabases(ms)) if(md.name.equals(name)) return md;
 	return null;
     }
 
-    List<MySQLDatabase> getMySQLDatabases(Package pack) {
+    List<MySQLDatabase> getMySQLDatabases(Package pack) throws IOException, SQLException {
         return getIndexedRows(MySQLDatabase.COLUMN_PACKAGE, pack.name);
     }
 
-    List<MySQLDatabase> getMySQLDatabases(MySQLServer ms) {
+    List<MySQLDatabase> getMySQLDatabases(MySQLServer ms) throws IOException, SQLException {
         return getIndexedRows(MySQLDatabase.COLUMN_MYSQL_SERVER, ms.pkey);
     }
 
@@ -78,7 +85,8 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	return SchemaTable.TableID.MYSQL_DATABASES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DATABASE, args, 4, err)) {
@@ -149,11 +157,11 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	return false;
     }
 
-    boolean isMySQLDatabaseNameAvailable(String name, MySQLServer mysqlServer) {
+    boolean isMySQLDatabaseNameAvailable(String name, MySQLServer mysqlServer) throws IOException, SQLException {
         return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_MYSQL_DATABASE_NAME_AVAILABLE, name, mysqlServer.pkey);
     }
 
-    public boolean isValidDatabaseName(String name) {
+    public boolean isValidDatabaseName(String name) throws IOException, SQLException {
 	return isValidDatabaseName(name, connector.mysqlReservedWords.getRows());
     }
 
@@ -178,7 +186,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	return true;
     }
 
-    void waitForRebuild(AOServer aoServer) {
+    void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_DATABASES,

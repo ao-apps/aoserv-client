@@ -33,7 +33,7 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
         ENABLED="enabled"
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_TYPE) return pkey;
 	if(i==1) return description;
 	throw new IllegalArgumentException("Invalid index: "+i);

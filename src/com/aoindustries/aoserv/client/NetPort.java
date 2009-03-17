@@ -34,7 +34,7 @@ final public class NetPort extends AOServObject<Integer,NetPort> {
 	;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==0) return Integer.valueOf(port);
 	if(i==1) return port>=1024 ? Boolean.TRUE : Boolean.FALSE;
 	throw new IllegalArgumentException("Invalid index: "+i);

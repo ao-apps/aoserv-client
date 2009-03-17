@@ -5,12 +5,22 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.Base64Coder;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>BusinessAdministrator</code> is a username and password pair, usually
@@ -59,7 +69,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     int disable_log;
     boolean can_switch_users;
 
-    public int arePasswordsSet() {
+    public int arePasswordsSet() throws IOException, SQLException {
         return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
@@ -74,7 +84,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         BusinessAdministrator assignedTo,
         String contact_emails,
         String contact_phone_numbers
-    ) {
+    ) throws IOException, SQLException {
 	return addTicket(
             business,
             ticket_typeObj.pkey,
@@ -100,7 +110,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         BusinessAdministrator assignedTo,
         String contact_emails,
         String contact_phone_numbers
-    ) {
+    ) throws IOException, SQLException {
 	return table.connector.tickets.addTicket(
             business,
             this,
@@ -116,7 +126,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         );
     }
 
-    public boolean canDisable() {
+    public boolean canDisable() throws SQLException {
         return disable_log==-1 && !equals(table.connector.getThisBusinessAdministrator());
     }
     
@@ -124,20 +134,20 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         return can_switch_users;
     }
     
-    public boolean canSwitchUser(BusinessAdministrator other) {
+    public boolean canSwitchUser(BusinessAdministrator other) throws SQLException, IOException {
         if(getDisableLog()!=null || other.getDisableLog()!=null) return false;
         Business business=getUsername().getPackage().getBusiness();
         Business otherBusiness=other.getUsername().getPackage().getBusiness();
         return !business.equals(otherBusiness) && business.isBusinessOrParentOf(otherBusiness);
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable();
     }
 
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
 	return checkPassword(userLocale, pkey, password);
     }
 
@@ -145,7 +155,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) {
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
 	return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
 
@@ -168,21 +178,41 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     /**
      * Encrypts a password.  If the password is <code>null</code>, returns <code>NO_PASSWORD</code>.
      * If the salt is <code>null</code>, a random salt will be generated.
+     * 
+     * @deprecated  Please use hash instead
+     * @see #hash(String)
      */
     public static String crypt(String password, String salt) {
 	if(password==null || password.length()==0) return BusinessAdministrator.NO_PASSWORD;
-	return salt==null || salt.length()==0?UnixCrypt.crypt(password):UnixCrypt.crypt(password, salt);
+	return salt==null || salt.length()==0?com.aoindustries.util.UnixCrypt.crypt(password):com.aoindustries.util.UnixCrypt.crypt(password, salt);
     }
 
-    public void disable(DisableLog dl) {
+    /**
+     * Performs a one-way hash of the plaintext value using SHA-1.
+     *
+     * @exception  WrappedException  if any problem occurs.
+     */
+    public static String hash(String plaintext) throws WrappedException {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            md.update(plaintext.getBytes("UTF-8"));
+            return new String(Base64Coder.encode(md.digest()));
+        } catch(NoSuchAlgorithmException err) {
+            throw new WrappedException(err);
+        } catch(UnsupportedEncodingException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
     }
 
-    public List<Action> getActions() {
+    public List<Action> getActions() throws IOException, SQLException {
         return table.connector.actions.getActions(this);
     }
 
@@ -206,7 +236,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return city;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_USERNAME: return pkey;
             case 1: return password;
@@ -244,18 +274,18 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return created;
     }
 
-    public List<Ticket> getCreatedTickets() {
+    public List<Ticket> getCreatedTickets() throws IOException, SQLException {
         return table.connector.tickets.getCreatedTickets(this);
     }
 
-    public List<Ticket> getClosedTickets() {
+    public List<Ticket> getClosedTickets() throws IOException, SQLException {
         return table.connector.tickets.getClosedTickets(this);
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
@@ -275,7 +305,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return table.connector.masterUsers.get(pkey);
     }
 
-    public List<MonthlyCharge> getMonthlyCharges() {
+    public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
 	return table.connector.monthlyCharges.getMonthlyCharges(this, null);
     }
 
@@ -284,7 +314,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     /**
-     * Gets the encrypted password for this business_administrator.  This information is only
+     * Gets the hashed password for this business_administrator.  This information is only
      * available if all communication has been over secure connections.  Otherwise,
      * all passwords will be changed to <code>NO_PASSWORD</code>.
      *
@@ -302,7 +332,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return SchemaTable.TableID.BUSINESS_ADMINISTRATORS;
     }
 
-    public List<Ticket> getTickets() {
+    public List<Ticket> getTickets() throws IOException, SQLException {
 	return table.connector.tickets.getTickets(this);
     }
 
@@ -310,13 +340,13 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return title;
     }
 
-    public List<Transaction> getTransactions() {
+    public List<Transaction> getTransactions() throws IOException, SQLException {
         return table.connector.transactions.getTransactions(this);
     }
 
-     public Username getUsername() {
+     public Username getUsername() throws SQLException {
         Username usernameObject = table.connector.usernames.get(pkey);
-        if (usernameObject == null) throw new WrappedException(new SQLException("Username not found: " + pkey));
+        if (usernameObject == null) throw new SQLException("Username not found: " + pkey);
         return usernameObject;
     }
 
@@ -390,12 +420,19 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return isPrivate;
     }
 
+    @SuppressWarnings("deprecation")
     public boolean passwordMatches(String plaintext) {
-	if(password.length()>=2) {
-            String salt=password.substring(0,2);
-            String crypted=UnixCrypt.crypt(plaintext, salt);
-            return crypted.equals(password);
-	}
+        if(!NO_PASSWORD.equals(password)) {
+            // Try hash first
+            String hashed = hash(plaintext);
+            if(hashed.equals(password)) return true;
+            // Try old crypt next
+            if(password.length()>=2) {
+                String salt=password.substring(0,2);
+                String crypted=com.aoindustries.util.UnixCrypt.crypt(plaintext, salt);
+                return crypted.equals(password);
+            }
+        }
 	return false;
     }
 
@@ -449,7 +486,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         can_switch_users=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServConnector conn=table.connector;
@@ -471,7 +508,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.BUSINESS_ADMINISTRATORS,
@@ -484,9 +521,9 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      * be over secure protocols for this method to work.  If the connections
      * are not secure, an <code>IOException</code> is thrown.
      */
-    public void setPassword(String plaintext) {
+    public void setPassword(String plaintext) throws IOException, SQLException {
 	AOServConnector connector=table.connector;
-	if(!connector.isSecure()) throw new WrappedException(new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure."));
+	if(!connector.isSecure()) throw new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 	connector.requestUpdateIL(AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
     }
 
@@ -506,60 +543,54 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	String state,
 	String country,
 	String zip
-    ) {
+    ) throws IOException, SQLException {
+        IntList invalidateList;
+        AOServConnection connection=table.connector.getConnection();
         try {
-            IntList invalidateList;
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE.ordinal());
-                out.writeUTF(pkey);
-                out.writeUTF(name);
-                if(title!=null && title.length()==0) title=null;
-                out.writeBoolean(title!=null); if(title!=null) out.writeUTF(title);
-                out.writeLong(birthday);
-                out.writeBoolean(isPrivate);
-                out.writeUTF(workPhone);
-                if(homePhone!=null && homePhone.length()==0) homePhone=null;
-                out.writeBoolean(homePhone!=null); if(homePhone!=null) out.writeUTF(homePhone);
-                if(cellPhone!=null && cellPhone.length()==0) cellPhone=null;
-                out.writeBoolean(cellPhone!=null); if(cellPhone!=null) out.writeUTF(cellPhone);
-                if(fax!=null && fax.length()==0) fax=null;
-                out.writeBoolean(fax!=null); if(fax!=null) out.writeUTF(fax);
-                out.writeUTF(email);
-                if(address1!=null && address1.length()==0) address1=null;
-                out.writeBoolean(address1!=null); if(address1!=null) out.writeUTF(address1);
-                if(address2!=null && address2.length()==0) address2=null;
-                out.writeBoolean(address2!=null); if(address2!=null) out.writeUTF(address2);
-                if(city!=null && city.length()==0) city=null;
-                out.writeBoolean(city!=null); if(city!=null) out.writeUTF(city);
-                if(state!=null && state.length()==0) state=null;
-                out.writeBoolean(state!=null); if(state!=null) out.writeUTF(state);
-                if(country!=null && country.length()==0) country=null;
-                out.writeBoolean(country!=null); if(country!=null) out.writeUTF(country);
-                if(zip!=null && zip.length()==0) zip=null;
-                out.writeBoolean(zip!=null); if(zip!=null) out.writeUTF(zip);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE.ordinal());
+            out.writeUTF(pkey);
+            out.writeUTF(name);
+            if(title!=null && title.length()==0) title=null;
+            out.writeBoolean(title!=null); if(title!=null) out.writeUTF(title);
+            out.writeLong(birthday);
+            out.writeBoolean(isPrivate);
+            out.writeUTF(workPhone);
+            if(homePhone!=null && homePhone.length()==0) homePhone=null;
+            out.writeBoolean(homePhone!=null); if(homePhone!=null) out.writeUTF(homePhone);
+            if(cellPhone!=null && cellPhone.length()==0) cellPhone=null;
+            out.writeBoolean(cellPhone!=null); if(cellPhone!=null) out.writeUTF(cellPhone);
+            if(fax!=null && fax.length()==0) fax=null;
+            out.writeBoolean(fax!=null); if(fax!=null) out.writeUTF(fax);
+            out.writeUTF(email);
+            if(address1!=null && address1.length()==0) address1=null;
+            out.writeBoolean(address1!=null); if(address1!=null) out.writeUTF(address1);
+            if(address2!=null && address2.length()==0) address2=null;
+            out.writeBoolean(address2!=null); if(address2!=null) out.writeUTF(address2);
+            if(city!=null && city.length()==0) city=null;
+            out.writeBoolean(city!=null); if(city!=null) out.writeUTF(city);
+            if(state!=null && state.length()==0) state=null;
+            out.writeBoolean(state!=null); if(state!=null) out.writeUTF(state);
+            if(country!=null && country.length()==0) country=null;
+            out.writeBoolean(country!=null); if(country!=null) out.writeUTF(country);
+            if(zip!=null && zip.length()==0) zip=null;
+            out.writeBoolean(zip!=null); if(zip!=null) out.writeUTF(zip);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            table.connector.tablesUpdated(invalidateList);
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            table.connector.releaseConnection(connection);
         }
+        table.connector.tablesUpdated(invalidateList);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
@@ -612,28 +643,28 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         return disable_log==-1;
     }
 
-    public List<BusinessAdministratorPermission> getPermissions() {
+    public List<BusinessAdministratorPermission> getPermissions() throws IOException, SQLException {
         return table.connector.businessAdministratorPermissions.getPermissions(this);
     }
     
     /**
      * Checks if this business administrator has the provided permission.
      */
-    public boolean hasPermission(AOServPermission permission) {
+    public boolean hasPermission(AOServPermission permission) throws IOException, SQLException {
         return hasPermission(permission.getName());
     }
 
     /**
      * Checks if this business administrator has the provided permission.
      */
-    public boolean hasPermission(AOServPermission.Permission permission) {
+    public boolean hasPermission(AOServPermission.Permission permission) throws IOException, SQLException {
         return hasPermission(permission.name());
     }
 
     /**
      * Checks if this business administrator has the provided permission.
      */
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(String permission) throws IOException, SQLException {
         return table.connector.businessAdministratorPermissions.hasPermission(this, permission);
     }
 }

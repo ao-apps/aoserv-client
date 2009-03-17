@@ -150,7 +150,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         for(int c=0;c<len;c++) {
             String columnName=orderBys[c].getExpression();
             SchemaColumn col=schemaTable.getSchemaColumn(connector, columnName);
-            if(col==null) throw new WrappedException(new SQLException("Unable to find SchemaColumn: "+columnName+" on "+schemaTable.getName()));
+            if(col==null) throw new SQLException("Unable to find SchemaColumn: "+columnName+" on "+schemaTable.getName());
             schemaColumns[c]=col;
         }
         return schemaColumns;
@@ -197,7 +197,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      */
     abstract OrderBy[] getDefaultOrderBy();
 
-    final public SQLExpression[] getDefaultOrderBySQLExpressions() {
+    final public SQLExpression[] getDefaultOrderBySQLExpressions() throws SQLException, IOException {
         OrderBy[] orderBys=getDefaultOrderBy();
         if(orderBys==null) return null;
         int len=orderBys.length;
@@ -225,109 +225,93 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     }
 
     @SuppressWarnings({"unchecked"})
-    protected V getObject(AOServProtocol.CommandID commID, Object ... params) {
+    protected V getObject(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
         try {
-            AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                AOServConnector.writeParams(params, out);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            AOServConnector.writeParams(params, out);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.NEXT) {
-                    V obj=getNewObject();
-                    obj.read(in);
-                    if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
-                    return obj;
-                }
-                AOServProtocol.checkResult(code, in);
-                return null;
-            } catch(WrappedException err) {
-                connection.close();
-                Throwable cause = err.getCause();
-                if(cause instanceof IOException) throw (IOException)cause;
-                throw err;
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.NEXT) {
+                V obj=getNewObject();
+                obj.read(in);
+                if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
+                return obj;
             }
+            AOServProtocol.checkResult(code, in);
+            return null;
+        } catch(RuntimeException err) {
+            connection.close();
+            throw err;
         } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
         }
     }
 
-    protected List<V> getObjects(AOServProtocol.CommandID commID, Object ... params) {
+    protected List<V> getObjects(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         List<V> list=new ArrayList<V>();
         getObjects(list, commID, params);
         return list;
     }
 
-    protected void getObjects(List<V> list, AOServProtocol.CommandID commID, Object ... params) {
-        try {
-            // Get a snapshot of all listeners
-            ProgressListener[] listeners=getProgressListeners();
-            int listenerCount=listeners==null?0:listeners.length;
-            int[] progressScales=null;
-            int[] lastProgresses=null;
-            if(listeners!=null) {
-                progressScales=new int[listenerCount];
-                for(int c=0;c<listenerCount;c++) progressScales[c]=listeners[c].getScale();
-                lastProgresses=new int[listenerCount];
-            }
-            // Get a snapshot of all load listeners
-            TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
-            int loadCount=loadListeners==null?0:loadListeners.length;
-            // Start the progresses at zero
-            for(int c=0;c<listenerCount;c++) listeners[c].progressChanged(0, progressScales[c], this);
-            // Tell each load listener that we are starting
-            for(int c=0;c<loadCount;c++) {
-                TableLoadListenerEntry entry=loadListeners[c];
-                entry.param=entry.listener.tableLoadStarted(this, entry.param);
-            }
-
-            AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                out.writeBoolean(listeners!=null);
-                AOServConnector.writeParams(params, out);
-                out.flush();
-
-                getObjects0(
-                    list,
-                    connection,
-                    listeners,
-                    progressScales,
-                    lastProgresses,
-                    loadListeners
-                );
-            } catch(WrappedException err) {
-                connection.close();
-                Throwable cause = err.getCause();
-                if(cause instanceof IOException) throw (IOException)cause;
-                throw err;
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
-            }
-
-            sortIfNeeded(list);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+    protected void getObjects(List<V> list, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        // Get a snapshot of all listeners
+        ProgressListener[] listeners=getProgressListeners();
+        int listenerCount=listeners==null?0:listeners.length;
+        int[] progressScales=null;
+        int[] lastProgresses=null;
+        if(listeners!=null) {
+            progressScales=new int[listenerCount];
+            for(int c=0;c<listenerCount;c++) progressScales[c]=listeners[c].getScale();
+            lastProgresses=new int[listenerCount];
         }
+        // Get a snapshot of all load listeners
+        TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
+        int loadCount=loadListeners==null?0:loadListeners.length;
+        // Start the progresses at zero
+        for(int c=0;c<listenerCount;c++) listeners[c].progressChanged(0, progressScales[c], this);
+        // Tell each load listener that we are starting
+        for(int c=0;c<loadCount;c++) {
+            TableLoadListenerEntry entry=loadListeners[c];
+            entry.param=entry.listener.tableLoadStarted(this, entry.param);
+        }
+
+        AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            out.writeBoolean(listeners!=null);
+            AOServConnector.writeParams(params, out);
+            out.flush();
+
+            getObjects0(
+                list,
+                connection,
+                listeners,
+                progressScales,
+                lastProgresses,
+                loadListeners
+            );
+        } catch(RuntimeException err) {
+            connection.close();
+            throw err;
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+
+        sortIfNeeded(list);
     }
 
-    protected List<V> getObjects(AOServProtocol.CommandID commID, Streamable param1) {
+    protected List<V> getObjects(AOServProtocol.CommandID commID, Streamable param1) throws IOException, SQLException {
         List<V> list=new ArrayList<V>();
         getObjects(list, commID, param1);
         return list;
@@ -394,52 +378,45 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
-    protected List<V> getObjectsNoProgress(AOServProtocol.CommandID commID, Object ... params) {
+    protected List<V> getObjectsNoProgress(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         List<V> list=new ArrayList<V>();
         getObjectsNoProgress(list, commID, params);
         return list;
     }
 
-    protected void getObjectsNoProgress(List<V> list, AOServProtocol.CommandID commID, Object ... params) {
-        try {
-            // Get a snapshot of all load listeners
-            TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
-            int loadCount=loadListeners==null?0:loadListeners.length;
-            // Tell each load listener that we are starting
-            for(int c=0;c<loadCount;c++) {
-                TableLoadListenerEntry entry=loadListeners[c];
-                entry.param=entry.listener.tableLoadStarted(this, entry.param);
-            }
-
-            AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(commID.ordinal());
-                AOServConnector.writeParams(params, out);
-                out.flush();
-
-                getObjectsNoProgress0(
-                    list,
-                    connection,
-                    loadListeners
-                );
-            } catch(WrappedException err) {
-                connection.close();
-                Throwable cause = err.getCause();
-                if(cause instanceof IOException) throw (IOException)cause;
-                throw err;
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
-            }
-
-            sortIfNeeded(list);
-        } catch(IOException err) {
-            System.err.println("Error trying to getObjects for table "+getTableID());
-            throw new WrappedException(err);
+    protected void getObjectsNoProgress(List<V> list, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        // Get a snapshot of all load listeners
+        TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
+        int loadCount=loadListeners==null?0:loadListeners.length;
+        // Tell each load listener that we are starting
+        for(int c=0;c<loadCount;c++) {
+            TableLoadListenerEntry entry=loadListeners[c];
+            entry.param=entry.listener.tableLoadStarted(this, entry.param);
         }
+
+        AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            AOServConnector.writeParams(params, out);
+            out.flush();
+
+            getObjectsNoProgress0(
+                list,
+                connection,
+                loadListeners
+            );
+        } catch(RuntimeException err) {
+            connection.close();
+            throw err;
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+
+        sortIfNeeded(list);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -447,37 +424,31 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         List<V> list,
         AOServConnection connection,
         TableLoadListenerEntry[] loadListeners
-    ) {
-        try {
-            int loadCount=loadListeners==null?0:loadListeners.length;
+    ) throws IOException, SQLException {
+        int loadCount=loadListeners==null?0:loadListeners.length;
 
-            // Load the data
-            CompressedDataInputStream in=connection.getInputStream();
-            int objCount=0;
-            int code;
-            while((code=in.readByte())==AOServProtocol.NEXT) {
-                V obj=getNewObject();
-                obj.read(in);
-                if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
-                list.add(obj);
+        // Load the data
+        CompressedDataInputStream in=connection.getInputStream();
+        int objCount=0;
+        int code;
+        while((code=in.readByte())==AOServProtocol.NEXT) {
+            V obj=getNewObject();
+            obj.read(in);
+            if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
+            list.add(obj);
 
-                // Tell each load listener of the new object
-                for(int c=0;c<loadCount;c++) {
-                    TableLoadListenerEntry entry=loadListeners[c];
-                    entry.param=entry.listener.tableRowLoaded(this, obj, objCount-1, entry.param);
-                }
-            }
-            AOServProtocol.checkResult(code, in);
-
-            // Tell each load listener that we are done
+            // Tell each load listener of the new object
             for(int c=0;c<loadCount;c++) {
                 TableLoadListenerEntry entry=loadListeners[c];
-                entry.param=entry.listener.tableLoadCompleted(this, entry.param);
+                entry.param=entry.listener.tableRowLoaded(this, obj, objCount-1, entry.param);
             }
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+        }
+        AOServProtocol.checkResult(code, in);
+
+        // Tell each load listener that we are done
+        for(int c=0;c<loadCount;c++) {
+            TableLoadListenerEntry entry=loadListeners[c];
+            entry.param=entry.listener.tableLoadCompleted(this, entry.param);
         }
     }
 
@@ -487,7 +458,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      *
      * @see  #getDefaultSortSQLExpressions()
      */
-    protected void sortIfNeeded(List<V> list) {
+    protected void sortIfNeeded(List<V> list) throws SQLException, IOException {
         // Get the details for the sorting
         SQLExpression[] sortExpressions=getDefaultOrderBySQLExpressions();
         if(sortExpressions!=null) {
@@ -513,7 +484,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      *
      * @see  #size()
      */
-    public int getCachedRowCount() {
+    public int getCachedRowCount() throws IOException, SQLException {
         return size();
     }
 
@@ -525,9 +496,9 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      * @exception  IOException  if unable to access the server
      * @exception  SQLException  if unable to access the database
      */
-    abstract public List<V> getRows();
+    abstract public List<V> getRows() throws IOException, SQLException;
     
-    final public SQLExpression getSQLExpression(String expr) {
+    final public SQLExpression getSQLExpression(String expr) throws SQLException, IOException {
         int joinPos=expr.indexOf('.');
         if(joinPos==-1) joinPos=expr.length();
         int castPos=expr.indexOf("::");
@@ -596,11 +567,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
-    final public SchemaTable getTableSchema() {
+    final public SchemaTable getTableSchema() throws IOException, SQLException {
         return connector.schemaTables.get(getTableID());
     }
 
-    final public String getTableName() {
+    final public String getTableName() throws IOException, SQLException {
         return getTableSchema().getName();
     }
 
@@ -609,7 +580,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      *
      * @exception UnsupportedOperationException if not supported by the specific table implementation
      */
-    final public List<V> getIndexedRows(int col, int value) {
+    final public List<V> getIndexedRows(int col, int value) throws IOException, SQLException {
         return getIndexedRows(col, Integer.valueOf(value));
     }
 
@@ -618,30 +589,30 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
      *
      * @exception UnsupportedOperationException if not supported by the specific table implementation
      */
-    public List<V> getIndexedRows(int col, Object value) {
+    public List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
         throw new UnsupportedOperationException("getIndexedRows now supported by table implementation");
     }
 
-    final public V getUniqueRow(int col, int value) {
+    final public V getUniqueRow(int col, int value) throws IOException, SQLException {
         return getUniqueRowImpl(col, Integer.valueOf(value));
     }
 
-    final public V getUniqueRow(int col, long value) {
+    final public V getUniqueRow(int col, long value) throws IOException, SQLException {
         return getUniqueRowImpl(col, Long.valueOf(value));
     }
 
-    final public V getUniqueRow(int col, Object value) {
+    final public V getUniqueRow(int col, Object value) throws IOException, SQLException {
         if(value==null) return null;
         return getUniqueRowImpl(col, value);
     }
 
-    final public V getUniqueRow(int col, short value) {
+    final public V getUniqueRow(int col, short value) throws IOException, SQLException {
         return getUniqueRowImpl(col, Short.valueOf(value));
     }
 
-    protected abstract V getUniqueRowImpl(int col, Object value);
+    protected abstract V getUniqueRowImpl(int col, Object value) throws IOException, SQLException;
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
         return false;
     }
 
@@ -657,7 +628,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     /**
      * Prints the contents of this table.
      */
-    final public void printTable(AOServConnector conn, PrintWriter out, boolean isInteractive) {
+    final public void printTable(AOServConnector conn, PrintWriter out, boolean isInteractive) throws IOException, SQLException {
         SchemaTable schemaTable=getTableSchema();
         List<SchemaColumn> cols=schemaTable.getSchemaColumns(conn);
         int numCols=cols.size();
@@ -788,25 +759,55 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
 
     @Override
     final public String toString() {
-        return getTableSchema().display;
+        try {
+            return getTableSchema().display;
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     // Iterable methods
     public Iterator<V> iterator() {
-        return getRows().iterator();
+        try {
+            return getRows().iterator();
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     // Map methods
     public Set<Entry<K,V>> entrySet() {
-        return new EntrySet<K,V>(getRows());
+        try {
+            return new EntrySet<K,V>(getRows());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public Collection<V> values() {
-        return getRows();
+        try {
+            return getRows();
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public Set<K> keySet() {
-        return new KeySet<K,V>(getRows());
+        try {
+            return new KeySet<K,V>(getRows());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public void clear() {
@@ -837,10 +838,22 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     }
 
     public boolean isEmpty() {
-        return getRows().isEmpty();
+        try {
+            return getRows().isEmpty();
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public int size() {
-        return getRows().size();
+        try {
+            return getRows().size();
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 }

@@ -34,8 +34,8 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
         return defaultOrderBy;
     }
 
-    int addEmailAddress(String address, EmailDomain domainObject) {
-	if (!EmailAddress.isValidFormat(address)) throw new WrappedException(new SQLException("Invalid email address: " + address));
+    int addEmailAddress(String address, EmailDomain domainObject) throws SQLException, IOException {
+	if (!EmailAddress.isValidFormat(address)) throw new SQLException("Invalid email address: " + address);
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_ADDRESSES,
@@ -45,14 +45,20 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
     }
 
     public EmailAddress get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public EmailAddress get(int pkey) {
+    public EmailAddress get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EmailAddress.COLUMN_PKEY, pkey);
     }
 
-    EmailAddress getEmailAddress(String address, EmailDomain domain) {
+    EmailAddress getEmailAddress(String address, EmailDomain domain) throws IOException, SQLException {
         // Uses index on domain first, then searched on address
 	for(EmailAddress emailAddress : domain.getEmailAddresses()) {
             if(emailAddress.address.equals(address)) return emailAddress;
@@ -60,11 +66,11 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
 	return null;
     }
 
-    List<EmailAddress> getEmailAddresses(EmailDomain domain) {
+    List<EmailAddress> getEmailAddresses(EmailDomain domain) throws IOException, SQLException {
         return getIndexedRows(EmailAddress.COLUMN_DOMAIN, domain.pkey);
     }
 
-    List<EmailAddress> getEmailAddresses(AOServer ao) {
+    List<EmailAddress> getEmailAddresses(AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 	List<EmailAddress> addresses = getRows();
 	int len = addresses.size();
@@ -80,7 +86,8 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
 	return SchemaTable.TableID.EMAIL_ADDRESSES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.CHECK_EMAIL_ADDRESS)) {
             if(AOSH.checkMinParamCount(AOSHCommand.CHECK_EMAIL_ADDRESS, args, 1, err)) {

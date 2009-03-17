@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 
@@ -33,7 +32,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
      * Determines if the current <code>AOServConnector</code> can enable
      * things disabled by this <code>DisableLog</code>.
      */
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         BusinessAdministrator disabledBy=getDisabledBy();
         return disabledBy!=null && table
             .connector
@@ -50,7 +49,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         ;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
 	if(i==1) return new java.sql.Date(time);
         if(i==2) return accounting;
@@ -59,9 +58,9 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
         Business bu=table.connector.businesses.get(accounting);
-        if(bu==null) throw new WrappedException(new SQLException("Unable to find Business: "+accounting));
+        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
         return bu;
     }
 

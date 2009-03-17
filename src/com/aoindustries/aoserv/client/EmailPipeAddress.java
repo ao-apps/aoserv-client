@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,22 +35,22 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
     int email_address;
     int email_pipe;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
 	if(i==COLUMN_EMAIL_ADDRESS) return Integer.valueOf(email_address);
 	if(i==2) return Integer.valueOf(email_pipe);
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public EmailAddress getEmailAddress() {
+    public EmailAddress getEmailAddress() throws SQLException, IOException {
 	EmailAddress emailAddressObject = table.connector.emailAddresses.get(email_address);
-	if (emailAddressObject == null) throw new WrappedException(new SQLException("Unable to find EmailAddress: " + email_address));
+	if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 	return emailAddressObject;
     }
 
-    public EmailPipe getEmailPipe() {
+    public EmailPipe getEmailPipe() throws SQLException, IOException {
 	EmailPipe emailPipeObject = table.connector.emailPipes.get(email_pipe);
-	if (emailPipeObject == null) throw new WrappedException(new SQLException("Unable to find EmailPipe: " + email_pipe));
+	if (emailPipeObject == null) throw new SQLException("Unable to find EmailPipe: " + email_pipe);
 	return emailPipeObject;
     }
     
@@ -71,7 +70,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 	email_pipe=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be used as any part of a majordomo list
@@ -96,7 +95,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_PIPE_ADDRESSES,
@@ -104,7 +103,8 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 	);
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getEmailAddress()+"->"+getEmailPipe().getPath();
     }
 

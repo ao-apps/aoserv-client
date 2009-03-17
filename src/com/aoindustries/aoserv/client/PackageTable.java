@@ -36,7 +36,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	String name,
 	Business business,
         PackageDefinition packageDefinition
-    ) {
+    ) throws IOException, SQLException {
 	return connector.requestIntQueryIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.PACKAGES,
@@ -47,28 +47,34 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
     }
 
     public Package get(Object pkey) {
-        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-        if(pkey instanceof String) return get((String)pkey);
-        throw new IllegalArgumentException("pkey must be either an Integer or a String");
+        try {
+            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+            if(pkey instanceof String) return get((String)pkey);
+            throw new IllegalArgumentException("pkey must be either an Integer or a String");
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public Package get(int pkey) {
+    public Package get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(Package.COLUMN_PKEY, pkey);
     }
 
-    public Package get(String packageName) {
+    public Package get(String packageName) throws IOException, SQLException {
 	return getUniqueRow(Package.COLUMN_NAME, packageName);
     }
 
-    public String generatePackageName(String template) {
+    public String generatePackageName(String template) throws IOException, SQLException {
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_PACKAGE_NAME, template);
     }
 
-    List<Package> getPackages(Business business) {
+    List<Package> getPackages(Business business) throws IOException, SQLException {
         return getIndexedRows(Package.COLUMN_ACCOUNTING, business.pkey);
     }
 
-    List<Package> getPackages(PackageDefinition pd) {
+    List<Package> getPackages(PackageDefinition pd) throws IOException, SQLException {
         return getIndexedRows(Package.COLUMN_PACKAGE_DEFINITION, pd.pkey);
     }
 
@@ -76,7 +82,8 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	return SchemaTable.TableID.PACKAGES;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_PACKAGE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_PACKAGE, args, 3, err)) {
@@ -145,8 +152,8 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	} else return false;
     }
 
-    public boolean isPackageNameAvailable(String packageName) {
-	if(!Package.isValidPackageName(packageName)) throw new WrappedException(new SQLException("Invalid package name: "+packageName));
+    public boolean isPackageNameAvailable(String packageName) throws SQLException, IOException {
+	if(!Package.isValidPackageName(packageName)) throw new SQLException("Invalid package name: "+packageName);
 	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_PACKAGE_NAME_AVAILABLE, packageName);
     }
 }

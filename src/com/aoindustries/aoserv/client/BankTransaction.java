@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 
@@ -38,6 +38,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
     private int amount;
     private boolean confirmed;
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof BankTransaction
@@ -45,9 +46,9 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	;
     }
 
-    public MasterUser getAdministrator() {
+    public MasterUser getAdministrator() throws SQLException {
 	MasterUser obj = table.connector.masterUsers.get(administrator);
-	if (obj == null) throw new WrappedException(new SQLException("Unable to find MasterUser: " + administrator));
+	if (obj == null) throw new SQLException("Unable to find MasterUser: " + administrator);
 	return obj;
     }
 
@@ -55,15 +56,15 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return amount;
     }
 
-    public BankAccount getBankAccount() {
+    public BankAccount getBankAccount() throws SQLException {
 	BankAccount bankAccountObject = table.connector.bankAccounts.get(bankAccount);
-        if (bankAccountObject == null) throw new WrappedException(new SQLException("BankAccount not found: " + bankAccount));
+        if (bankAccountObject == null) throw new SQLException("BankAccount not found: " + bankAccount);
         return bankAccountObject;
     }
 
-    public BankTransactionType getBankTransactionType() {
+    public BankTransactionType getBankTransactionType() throws SQLException {
         BankTransactionType typeObject = table.connector.bankTransactionTypes.get(type);
-        if (typeObject == null) throw new WrappedException(new SQLException("BankTransactionType not found: " + type));
+        if (typeObject == null) throw new SQLException("BankTransactionType not found: " + type);
         return typeObject;
     }
 
@@ -71,7 +72,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return checkNo;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case 0: return new java.sql.Date(time);
             case 1: return Integer.valueOf(transID);
@@ -92,17 +93,17 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return description;
     }
 
-    public ExpenseCategory getExpenseCategory() {
+    public ExpenseCategory getExpenseCategory() throws SQLException {
 	if(expenseCode==null) return null;
 	ExpenseCategory cat=table.connector.expenseCategories.get(expenseCode);
-	if (cat == null) throw new WrappedException(new SQLException("ExpenseCategory not found: " + expenseCode));
+	if (cat == null) throw new SQLException("ExpenseCategory not found: " + expenseCode);
 	return cat;
     }
 
-    public CreditCardProcessor getCreditCardProcessor() {
+    public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
         if (processor == null) return null;
         CreditCardProcessor ccProcessor = table.connector.creditCardProcessors.get(processor);
-        if (ccProcessor == null) throw new WrappedException(new SQLException("CreditCardProcessor not found: " + processor));
+        if (ccProcessor == null) throw new SQLException("CreditCardProcessor not found: " + processor);
         return ccProcessor;
     }
 
@@ -131,6 +132,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return transID;
     }
 
+    @Override
     int hashCodeImpl() {
 	return transID;
     }
@@ -172,6 +174,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	this.table=table;
     }
 
+    @Override
     String toStringImpl() {
 	return transID+"|"+administrator+'|'+type+'|'+SQLUtility.getDecimal(amount);
     }

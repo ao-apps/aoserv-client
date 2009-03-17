@@ -1,5 +1,9 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -32,6 +36,12 @@ final public class TicketPriorityTable extends GlobalTableStringKey<TicketPriori
     }
 
     public TicketPriority get(Object pkey) {
-	return getUniqueRow(TicketPriority.COLUMN_PRIORITY, pkey);
+        try {
+            return getUniqueRow(TicketPriority.COLUMN_PRIORITY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 }

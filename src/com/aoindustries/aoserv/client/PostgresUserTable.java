@@ -32,7 +32,7 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
         return defaultOrderBy;
     }
 
-    void addPostgresUser(String username) {
+    void addPostgresUser(String username) throws IOException, SQLException {
         connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_USERS,
@@ -41,10 +41,16 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
     }
 
     public PostgresUser get(Object pkey) {
-	return getUniqueRow(PostgresUser.COLUMN_USERNAME, pkey);
+        try {
+            return getUniqueRow(PostgresUser.COLUMN_USERNAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    List<PostgresUser> getPostgresUsers(Package pack) {
+    List<PostgresUser> getPostgresUsers(Package pack) throws SQLException, IOException {
         String name=pack.name;
 
         List<PostgresUser> cached=getRows();
@@ -61,7 +67,8 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
         return SchemaTable.TableID.POSTGRES_USERS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, IllegalArgumentException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_POSTGRES_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_POSTGRES_USER, args, 1, err)) {
@@ -82,14 +89,10 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_POSTGRES_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_POSTGRES_PASSWORD, args, 2, err)) {
-                try {
-                    PasswordChecker.Result[] results = SimpleAOClient.checkPostgresPassword(args[1], args[2]);
-                    if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
-                        PasswordChecker.printResults(results, out);
-                        out.flush();
-                    }
-                } catch(IOException err2) {
-                    throw new WrappedException(err2);
+                PasswordChecker.Result[] results = SimpleAOClient.checkPostgresPassword(args[1], args[2]);
+                if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                    PasswordChecker.printResults(results, out);
+                    out.flush();
                 }
             }
             return true;
@@ -138,7 +141,7 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
         return false;
     }
 
-    void waitForRebuild(AOServer aoServer) {
+    void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.POSTGRES_USERS,

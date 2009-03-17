@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -37,7 +36,7 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
 	return address;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
@@ -51,9 +50,9 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
 	return destination;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
 	AOServer ao=table.connector.aoServers.get(ao_server);
-	if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return ao;
     }
 

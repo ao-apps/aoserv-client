@@ -1,10 +1,14 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.sql.SQLException;
 
 /**
  * @see  TechnologyClass
@@ -32,6 +36,12 @@ final public class TechnologyClassTable extends GlobalTableStringKey<TechnologyC
     }
 
     public TechnologyClass get(Object pkey) {
-	return getUniqueRow(TechnologyClass.COLUMN_NAME, pkey);
+        try {
+            return getUniqueRow(TechnologyClass.COLUMN_NAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 }

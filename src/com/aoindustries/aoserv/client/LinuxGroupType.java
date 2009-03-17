@@ -45,7 +45,7 @@ final public class LinuxGroupType extends GlobalObjectStringKey<LinuxGroupType> 
         APPLICATION="application"
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_NAME) return pkey;
 	if(i==1) return description;
 	throw new IllegalArgumentException("Invalid index: "+i);

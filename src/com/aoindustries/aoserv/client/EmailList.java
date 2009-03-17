@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -46,7 +46,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     int linux_server_group;
     int disable_log;
 
-    public int addEmailAddress(EmailAddress address) {
+    public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
         return table.connector.emailListAddresses.addEmailListAddress(address, this);
     }
 
@@ -54,7 +54,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         return disable_log==-1;
     }
     
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return
@@ -64,11 +64,11 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         ;
     }
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
     }
 
@@ -76,7 +76,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
      * Gets the list of addresses that email will be sent to, one address per line.
      * The list is obtained from a file on the server that hosts the list.
      */
-    public String getAddressList() {
+    public String getAddressList() throws IOException, SQLException {
         return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
     }
 
@@ -84,7 +84,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
      * Gets the number of addresses in an address list.  The number of addresses is equal to the number
      * of non-blank lines.
      */
-    public int getAddressListCount() {
+    public int getAddressListCount() throws IOException, SQLException {
         String list=getAddressList();
         String[] lines=StringUtility.splitString(list, '\n');
         int count=0;
@@ -94,7 +94,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         return count;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return path;
@@ -105,30 +105,30 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         }
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
-    public List<EmailAddress> getEmailAddresses() {
+    public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
         return table.connector.emailListAddresses.getEmailAddresses(this);
     }
 
-    public List<EmailListAddress> getEmailListAddresses() {
+    public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
         return table.connector.emailListAddresses.getEmailListAddresses(this);
     }
 
-    public LinuxServerAccount getLinuxServerAccount() {
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
         LinuxServerAccount linuxServerAccountObject = table.connector.linuxServerAccounts.get(linux_server_account);
-        if (linuxServerAccountObject == null) throw new WrappedException(new SQLException("Unable to find LinuxServerAccount: " + linux_server_account));
+        if (linuxServerAccountObject == null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
         return linuxServerAccountObject;
     }
 
-    public LinuxServerGroup getLinuxServerGroup() {
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
         LinuxServerGroup linuxServerGroupObject = table.connector.linuxServerGroups.get(linux_server_group);
-        if (linuxServerGroupObject == null) throw new WrappedException(new SQLException("Unable to find LinuxServerGroup: " + linux_server_group));
+        if (linuxServerGroupObject == null) throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
         return linuxServerGroupObject;
     }
 
@@ -143,7 +143,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         } else return LIST_DIRECTORY+"//";
     }
 
-    public MajordomoList getMajordomoList() {
+    public MajordomoList getMajordomoList() throws IOException, SQLException {
         return table.connector.majordomoLists.get(pkey);
     }
 
@@ -204,7 +204,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         return Collections.emptyList();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_LISTS,
@@ -212,7 +212,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         );
     }
 
-    public void setAddressList(String addresses) {
+    public void setAddressList(String addresses) throws IOException, SQLException {
         table.connector.requestUpdate(AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
     }
 

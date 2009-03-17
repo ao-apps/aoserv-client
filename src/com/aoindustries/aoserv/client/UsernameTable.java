@@ -32,7 +32,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
         return defaultOrderBy;
     }
 
-    void addUsername(Package packageObject, String username) {
+    void addUsername(Package packageObject, String username) throws IOException, SQLException {
 	connector.requestUpdateIL(
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.USERNAMES,
@@ -42,18 +42,25 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
     }
 
     public Username get(Object pkey) {
-	return getUniqueRow(Username.COLUMN_USERNAME, pkey);
+        try {
+            return getUniqueRow(Username.COLUMN_USERNAME, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.USERNAMES;
     }
 
-    List<Username> getUsernames(Package pack) {
+    List<Username> getUsernames(Package pack) throws IOException, SQLException {
         return getIndexedRows(Username.COLUMN_PACKAGE, pack.name);
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_USERNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_USERNAME, args, 2, err)) {
@@ -139,13 +146,13 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
     /**
      * @deprecated  Please provide the locale for locale-specific errors.
      */
-    public boolean isUsernameAvailable(String username) {
+    public boolean isUsernameAvailable(String username) throws SQLException, IOException {
         return isUsernameAvailable(username, Locale.getDefault());
     }
 
-    public boolean isUsernameAvailable(String username, Locale locale) {
+    public boolean isUsernameAvailable(String username, Locale locale) throws SQLException, IOException {
         String check = Username.checkUsername(username, locale);
-	if(check!=null) throw new WrappedException(new SQLException(check));
+	if(check!=null) throw new SQLException(check);
 	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_USERNAME_AVAILABLE, username);
     }
 }

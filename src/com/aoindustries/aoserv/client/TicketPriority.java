@@ -35,7 +35,7 @@ final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> 
         URGENT="3-Urgent"
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_PRIORITY) return pkey;
 	throw new IllegalArgumentException("Invalid index: "+i);
     }

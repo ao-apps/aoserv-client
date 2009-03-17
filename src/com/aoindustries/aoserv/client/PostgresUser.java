@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -57,11 +56,11 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     ;
     int disable_log;
 
-    public int addPostgresServerUser(PostgresServer postgresServer) {
+    public int addPostgresServerUser(PostgresServer postgresServer) throws IOException, SQLException {
         return table.connector.postgresServerUsers.addPostgresServerUser(pkey, postgresServer);
     }
 
-    public int arePasswordsSet() {
+    public int arePasswordsSet() throws IOException, SQLException {
         return Username.groupPasswordsSet(getPostgresServerUsers());
     }
 
@@ -73,13 +72,13 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         return createdb;
     }
 
-    public boolean canDisable() {
+    public boolean canDisable() throws IOException, SQLException {
         if(disable_log!=-1) return false;
         for(PostgresServerUser psu : getPostgresServerUsers()) if(psu.disable_log==-1) return false;
         return true;
     }
 
-    public boolean canEnable() {
+    public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getUsername().disable_log==-1;
@@ -89,11 +88,11 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         return trace;
     }
 
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) {
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
         return checkPassword(userLocale, pkey, password);
     }
 
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) {
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
         return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
 
@@ -105,15 +104,15 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         return PasswordChecker.checkPasswordDescribe(username, password, true, false);
     }*/
 
-    public void disable(DisableLog dl) {
+    public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
     }
     
-    public void enable() {
+    public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_USERS, pkey);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         if(i==COLUMN_USERNAME) return pkey;
         if(i==1) return createdb?Boolean.TRUE:Boolean.FALSE;
         if(i==2) return trace?Boolean.TRUE:Boolean.FALSE;
@@ -123,18 +122,18 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public DisableLog getDisableLog() {
+    public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.disableLogs.get(disable_log);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find DisableLog: "+disable_log));
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
-    public PostgresServerUser getPostgresServerUser(PostgresServer server) {
+    public PostgresServerUser getPostgresServerUser(PostgresServer server) throws IOException, SQLException {
         return server.getPostgresServerUser(pkey);
     }
 
-    public List<PostgresServerUser> getPostgresServerUsers() {
+    public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
         return table.connector.postgresServerUsers.getPostgresServerUsers(this);
     }
 
@@ -142,9 +141,9 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         return SchemaTable.TableID.POSTGRES_USERS;
     }
 
-    public Username getUsername() {
+    public Username getUsername() throws SQLException {
         Username username=table.connector.usernames.get(this.pkey);
-        if(username==null) throw new WrappedException(new SQLException("Unable to find Username: "+this.pkey));
+        if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
         return username;
     }
 
@@ -171,13 +170,13 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         for(PostgresServerUser psu : getPostgresServerUsers()) reasons.addAll(psu.getCannotRemoveReasons());
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_USERS,
@@ -185,7 +184,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         );
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password) throws IOException, SQLException {
         for(PostgresServerUser user : getPostgresServerUsers()) if(user.canSetPassword()) user.setPassword(password);
     }
 

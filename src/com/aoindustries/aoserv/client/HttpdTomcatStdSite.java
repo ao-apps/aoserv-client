@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -32,7 +31,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     int tomcat4_shutdown_port;
     private String tomcat4_shutdown_key;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_TOMCAT_SITE: return Integer.valueOf(pkey);
             case 1: return tomcat4_shutdown_port==-1?null:Integer.valueOf(tomcat4_shutdown_port);
@@ -41,9 +40,9 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
         }
     }
 
-    public HttpdTomcatSite getHttpdTomcatSite() {
+    public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
 	HttpdTomcatSite obj=table.connector.httpdTomcatSites.get(pkey);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find HttpdTomcatSite: "+pkey));
+	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
 	return obj;
     }
 
@@ -51,10 +50,10 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
         return tomcat4_shutdown_key;
     }
 
-    public NetBind getTomcat4ShutdownPort() {
+    public NetBind getTomcat4ShutdownPort() throws IOException, SQLException {
         if(tomcat4_shutdown_port==-1) return null;
         NetBind nb=table.connector.netBinds.get(tomcat4_shutdown_port);
-        if(nb==null) throw new WrappedException(new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port));
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
         return nb;
     }
 
@@ -75,7 +74,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
         tomcat4_shutdown_key=in.readNullUTF();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl() throws SQLException, IOException {
         return getHttpdTomcatSite().toString();
     }
 

@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -42,7 +42,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     int ao_server;
     String packageName;
 
-    public int addEmailAddress(String address) {
+    public int addEmailAddress(String address) throws SQLException, IOException {
 	return table.connector.emailAddresses.addEmailAddress(address, this);
     }
 
@@ -50,7 +50,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         LinuxServerAccount linuxServerAccount,
         LinuxServerGroup linuxServerGroup,
         MajordomoVersion majordomoVersion
-    ) {
+    ) throws IOException, SQLException {
         table.connector.majordomoServers.addMajordomoServer(
             this,
             linuxServerAccount,
@@ -59,7 +59,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         );
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return domain;
@@ -73,27 +73,27 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	return domain;
     }
 
-    public EmailAddress getEmailAddress(String address) {
+    public EmailAddress getEmailAddress(String address) throws IOException, SQLException {
 	return table.connector.emailAddresses.getEmailAddress(address, this);
     }
 
-    public List<EmailAddress> getEmailAddresses() {
+    public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
 	return table.connector.emailAddresses.getEmailAddresses(this);
     }
 
-    public MajordomoServer getMajordomoServer() {
+    public MajordomoServer getMajordomoServer() throws IOException, SQLException {
 	return table.connector.majordomoServers.get(pkey);
     }
 
-    public Package getPackage() {
+    public Package getPackage() throws SQLException, IOException {
 	Package packageObject = table.connector.packages.get(packageName);
-	if (packageObject == null) throw new WrappedException(new SQLException("Unable to find Package: " + packageName));
+	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 	return packageObject;
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws SQLException, IOException {
 	AOServer ao=table.connector.aoServers.get(ao_server);
-	if(ao==null) throw new WrappedException(new SQLException("Unable to find AOServer: "+ao_server));
+	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return ao;
     }
 
@@ -144,7 +144,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	packageName=in.readUTF().intern();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         MajordomoServer ms=getMajordomoServer();
@@ -159,11 +159,17 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     }
 
     public void remove() {
-	table.connector.requestUpdateIL(
-            AOServProtocol.CommandID.REMOVE,
-            SchemaTable.TableID.EMAIL_DOMAINS,
-            pkey
-	);
+        try {
+            table.connector.requestUpdateIL(
+                AOServProtocol.CommandID.REMOVE,
+                SchemaTable.TableID.EMAIL_DOMAINS,
+                pkey
+            );
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

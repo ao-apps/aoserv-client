@@ -33,7 +33,7 @@ final public class USState extends GlobalObjectStringKey<USState> {
 	return pkey;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
 	if(i==COLUMN_CODE) return pkey;
 	if(i==1) return name;
 	throw new IllegalArgumentException("Invalid index: "+i);

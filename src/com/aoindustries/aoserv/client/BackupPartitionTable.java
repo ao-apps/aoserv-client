@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -33,18 +34,24 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
     }
 
     public BackupPartition get(Object pkey) {
-        return get(((Integer)pkey).intValue());
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
-    public BackupPartition get(int pkey) {
+    public BackupPartition get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(BackupPartition.COLUMN_PKEY, pkey);
     }
 
-    List<BackupPartition> getBackupPartitions(AOServer ao) {
+    List<BackupPartition> getBackupPartitions(AOServer ao) throws IOException, SQLException {
         return getIndexedRows(BackupPartition.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    BackupPartition getBackupPartitionForPath(AOServer ao, String path) {
+    BackupPartition getBackupPartitionForPath(AOServer ao, String path) throws IOException, SQLException {
         // Use index first
         List<BackupPartition> cached=getBackupPartitions(ao);
 	int size=cached.size();
@@ -59,7 +66,8 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 	return SchemaTable.TableID.BACKUP_PARTITIONS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {

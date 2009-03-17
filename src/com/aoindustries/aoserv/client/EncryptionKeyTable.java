@@ -6,6 +6,8 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -29,14 +31,20 @@ final public class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKe
     }
 
     public EncryptionKey get(Object pkey) {
+        try {
+            return getUniqueRow(EncryptionKey.COLUMN_PKEY, pkey);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public EncryptionKey get(int pkey) throws IOException, SQLException {
 	return getUniqueRow(EncryptionKey.COLUMN_PKEY, pkey);
     }
 
-    public EncryptionKey get(int pkey) {
-	return getUniqueRow(EncryptionKey.COLUMN_PKEY, pkey);
-    }
-
-    List<EncryptionKey> getEncryptionKeys(Business business) {
+    List<EncryptionKey> getEncryptionKeys(Business business) throws IOException, SQLException {
         return getIndexedRows(EncryptionKey.COLUMN_ACCOUNTING, business.pkey);
     }
 

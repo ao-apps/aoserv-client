@@ -42,41 +42,49 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	LinuxServerGroup lsg,
 	boolean isSecure,
         boolean isOverflow
-    ) {
+    ) throws IOException, SQLException {
+        int pkey;
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
         try {
-            int pkey;
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-                out.writeCompressedInt(SchemaTable.TableID.HTTPD_SHARED_TOMCATS.ordinal());
-                out.writeUTF(name);
-                out.writeCompressedInt(aoServer.pkey);
-                out.writeCompressedInt(version.getTechnologyVersion(connector).getPkey());
-                out.writeUTF(lsa.username);
-                out.writeUTF(lsg.name);
-                out.writeBoolean(isSecure);
-                out.writeBoolean(isOverflow);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+            out.writeCompressedInt(SchemaTable.TableID.HTTPD_SHARED_TOMCATS.ordinal());
+            out.writeUTF(name);
+            out.writeCompressedInt(aoServer.pkey);
+            out.writeCompressedInt(version.getTechnologyVersion(connector).getPkey());
+            out.writeUTF(lsa.username);
+            out.writeUTF(lsg.name);
+            out.writeBoolean(isSecure);
+            out.writeBoolean(isOverflow);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    pkey=in.readCompressedInt();
-                    invalidateList=AOServConnector.readInvalidateList(in);
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) {
+                pkey=in.readCompressedInt();
+                invalidateList=AOServConnector.readInvalidateList(in);
+            } else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
-            return pkey;
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+        connector.tablesUpdated(invalidateList);
+        return pkey;
+    }
+
+    public String generateSharedTomcatName(String template) throws IOException, SQLException {
+	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SHARED_TOMCAT_NAME, template);
+    }
+
+    public HttpdSharedTomcat get(Object pkey) {
+        try {
+            return getUniqueRow(HttpdSharedTomcat.COLUMN_PKEY, pkey);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -84,31 +92,23 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
         }
     }
 
-    public String generateSharedTomcatName(String template) {
-	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SHARED_TOMCAT_NAME, template);
-    }
-
-    public HttpdSharedTomcat get(Object pkey) {
+    public HttpdSharedTomcat get(int pkey) throws SQLException, IOException {
 	return getUniqueRow(HttpdSharedTomcat.COLUMN_PKEY, pkey);
     }
 
-    public HttpdSharedTomcat get(int pkey) {
-	return getUniqueRow(HttpdSharedTomcat.COLUMN_PKEY, pkey);
-    }
-
-    HttpdSharedTomcat getHttpdSharedTomcat(HttpdWorker hw) {
+    HttpdSharedTomcat getHttpdSharedTomcat(HttpdWorker hw) throws SQLException, IOException {
 	return getUniqueRow(HttpdSharedTomcat.COLUMN_TOMCAT4_WORKER, hw.pkey);
     }
 
-    HttpdSharedTomcat getHttpdSharedTomcatByShutdownPort(NetBind nb) {
+    HttpdSharedTomcat getHttpdSharedTomcatByShutdownPort(NetBind nb) throws SQLException, IOException {
 	return getUniqueRow(HttpdSharedTomcat.COLUMN_TOMCAT4_SHUTDOWN_PORT, nb.pkey);
     }
 
-    List<HttpdSharedTomcat> getHttpdSharedTomcats(LinuxServerAccount lsa) {
+    List<HttpdSharedTomcat> getHttpdSharedTomcats(LinuxServerAccount lsa) throws IOException, SQLException {
         return getIndexedRows(HttpdSharedTomcat.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
     }
 
-    List<HttpdSharedTomcat> getHttpdSharedTomcats(Package pk) {
+    List<HttpdSharedTomcat> getHttpdSharedTomcats(Package pk) throws IOException, SQLException {
         String pkname=pk.name;
 
         List<HttpdSharedTomcat> cached=getRows();
@@ -121,11 +121,11 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	return matches;
     }
 
-    List<HttpdSharedTomcat> getHttpdSharedTomcats(AOServer ao) {
+    List<HttpdSharedTomcat> getHttpdSharedTomcats(AOServer ao) throws IOException, SQLException {
         return getIndexedRows(HttpdSharedTomcat.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    HttpdSharedTomcat getHttpdSharedTomcat(String name, AOServer ao) {
+    HttpdSharedTomcat getHttpdSharedTomcat(String name, AOServer ao) throws IOException, SQLException {
         // Use the index first
         List<HttpdSharedTomcat> cached=getHttpdSharedTomcats(ao);
 	int size=cached.size();
@@ -140,7 +140,8 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	return SchemaTable.TableID.HTTPD_SHARED_TOMCATS;
     }
 
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    @Override
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_SHARED_TOMCAT)) {
             if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_SHARED_TOMCAT, args, 7, err)) {
@@ -218,7 +219,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	return false;
     }
 
-    public boolean isSharedTomcatNameAvailable(String name) {
+    public boolean isSharedTomcatNameAvailable(String name) throws IOException, SQLException {
 	return connector.requestBooleanQuery(
             AOServProtocol.CommandID.IS_SHARED_TOMCAT_NAME_AVAILABLE,
             name

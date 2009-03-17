@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -55,13 +54,13 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	return billing_email;
     }
 
-    public Business getBusiness() {
+    public Business getBusiness() throws SQLException {
 	Business obj=table.connector.businesses.get(accounting);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find Business: "+accounting));
+	if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
 	return obj;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return new java.sql.Date(create_time);
@@ -79,9 +78,9 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	return create_time;
     }
 
-    public NoticeType getNoticeType() {
+    public NoticeType getNoticeType() throws SQLException {
 	NoticeType obj=table.connector.noticeTypes.get(notice_type);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find NoticeType: "+notice_type));
+	if(obj==null) throw new SQLException("Unable to find NoticeType: "+notice_type);
 	return obj;
     }
 
@@ -89,10 +88,10 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	return SchemaTable.TableID.NOTICE_LOG;
     }
 
-    public Transaction getTransaction() {
+    public Transaction getTransaction() throws IOException, SQLException {
 	if(transid==-1) return null;
 	Transaction obj=table.connector.transactions.get(transid);
-	if(obj==null) throw new WrappedException(new SQLException("Unable to find Transaction: "+transid));
+	if(obj==null) throw new SQLException("Unable to find Transaction: "+transid);
 	return obj;
     }
 
@@ -119,6 +118,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	transid=in.readCompressedInt();
     }
 
+    @Override
     String toStringImpl() {
 	return pkey+"|"+accounting+'|'+SQLUtility.getDecimal(balance)+'|'+notice_type;
     }

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -65,7 +64,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         WEBSERVER="webserver"
     ;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PROTOCOL: return pkey;
             case 1: return Integer.valueOf(port);
@@ -88,15 +87,15 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         return is_user_service;
     }
 
-    public NetProtocol getNetProtocol(AOServConnector connector) {
+    public NetProtocol getNetProtocol(AOServConnector connector) throws SQLException {
         NetProtocol np=connector.netProtocols.get(net_protocol);
-        if(np==null) throw new WrappedException(new SQLException("Unable to find NetProtocol: "+net_protocol));
+        if(np==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
         return np;
     }
 
-    public NetPort getPort(AOServConnector connector) {
+    public NetPort getPort(AOServConnector connector) throws SQLException {
         NetPort obj=connector.netPorts.get(port);
-        if(obj==null) throw new WrappedException(new SQLException("Unable to find NetPort: "+port));
+        if(obj==null) throw new SQLException("Unable to find NetPort: "+port);
         return obj;
     }
 

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -41,7 +40,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
     String username;
     boolean is_primary;
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return group_name;
@@ -51,15 +50,15 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         }
     }
 
-    public LinuxAccount getLinuxAccount() {
+    public LinuxAccount getLinuxAccount() throws SQLException {
         LinuxAccount usernameObject = table.connector.usernames.get(username).getLinuxAccount();
-        if (usernameObject == null) throw new WrappedException(new SQLException("Unable to find LinuxAccount: " + username));
+        if (usernameObject == null) throw new SQLException("Unable to find LinuxAccount: " + username);
         return usernameObject;
     }
 
-    public LinuxGroup getLinuxGroup() {
+    public LinuxGroup getLinuxGroup() throws SQLException {
         LinuxGroup groupNameObject = table.connector.linuxGroups.get(group_name);
-        if (groupNameObject == null) throw new WrappedException(new SQLException("Unable to find LinuxGroup: " + group_name));
+        if (groupNameObject == null) throw new SQLException("Unable to find LinuxGroup: " + group_name);
         return groupNameObject;
     }
 
@@ -91,7 +90,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         return reasons;
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
@@ -99,13 +98,14 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         );
     }
 
-    void setAsPrimary() {
+    void setAsPrimary() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
             pkey
         );
     }
 
+    @Override
     String toStringImpl() {
         return group_name+'|'+username+(is_primary?"|p":"|a");
     }

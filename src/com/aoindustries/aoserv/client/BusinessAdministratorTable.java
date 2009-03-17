@@ -6,7 +6,8 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -49,57 +50,64 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
         String state,
         String country,
         String zip
-    ) {
+    ) throws IOException, SQLException {
+        // Create the new profile
+        IntList invalidateList;
+        AOServConnection connection=connector.getConnection();
         try {
-            // Create the new profile
-            IntList invalidateList;
-            AOServConnection connection=connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-                out.writeCompressedInt(SchemaTable.TableID.BUSINESS_ADMINISTRATORS.ordinal());
-                out.writeUTF(username.pkey);
-                out.writeUTF(name);
-                if(title!=null && title.length()==0) title=null;
-                out.writeBoolean(title!=null); if(title!=null) out.writeUTF(title);
-                out.writeLong(birthday);
-                out.writeBoolean(isPrivate);
-                out.writeUTF(workPhone);
-                if(homePhone!=null && homePhone.length()==0) homePhone=null;
-                out.writeBoolean(homePhone!=null); if(homePhone!=null) out.writeUTF(homePhone);
-                if(cellPhone!=null && cellPhone.length()==0) cellPhone=null;
-                out.writeBoolean(cellPhone!=null); if(cellPhone!=null) out.writeUTF(cellPhone);
-                if(fax!=null && fax.length()==0) fax=null;
-                out.writeBoolean(fax!=null); if(fax!=null) out.writeUTF(fax);
-                out.writeUTF(email);
-                if(address1!=null && address1.length()==0) address1=null;
-                out.writeBoolean(address1!=null); if(address1!=null) out.writeUTF(address1);
-                if(address2!=null && address2.length()==0) address2=null;
-                out.writeBoolean(address2!=null); if(address2!=null) out.writeUTF(address2);
-                if(city!=null && city.length()==0) city=null;
-                out.writeBoolean(city!=null); if(city!=null) out.writeUTF(city);
-                if(state!=null && state.length()==0) state=null;
-                out.writeBoolean(state!=null); if(state!=null) out.writeUTF(state);
-                if(country!=null && country.length()==0) country=null;
-                out.writeBoolean(country!=null); if(country!=null) out.writeUTF(country);
-                if(zip!=null && zip.length()==0) zip=null;
-                out.writeBoolean(zip!=null); if(zip!=null) out.writeUTF(zip);
-                out.flush();
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+            out.writeCompressedInt(SchemaTable.TableID.BUSINESS_ADMINISTRATORS.ordinal());
+            out.writeUTF(username.pkey);
+            out.writeUTF(name);
+            if(title!=null && title.length()==0) title=null;
+            out.writeBoolean(title!=null); if(title!=null) out.writeUTF(title);
+            out.writeLong(birthday);
+            out.writeBoolean(isPrivate);
+            out.writeUTF(workPhone);
+            if(homePhone!=null && homePhone.length()==0) homePhone=null;
+            out.writeBoolean(homePhone!=null); if(homePhone!=null) out.writeUTF(homePhone);
+            if(cellPhone!=null && cellPhone.length()==0) cellPhone=null;
+            out.writeBoolean(cellPhone!=null); if(cellPhone!=null) out.writeUTF(cellPhone);
+            if(fax!=null && fax.length()==0) fax=null;
+            out.writeBoolean(fax!=null); if(fax!=null) out.writeUTF(fax);
+            out.writeUTF(email);
+            if(address1!=null && address1.length()==0) address1=null;
+            out.writeBoolean(address1!=null); if(address1!=null) out.writeUTF(address1);
+            if(address2!=null && address2.length()==0) address2=null;
+            out.writeBoolean(address2!=null); if(address2!=null) out.writeUTF(address2);
+            if(city!=null && city.length()==0) city=null;
+            out.writeBoolean(city!=null); if(city!=null) out.writeUTF(city);
+            if(state!=null && state.length()==0) state=null;
+            out.writeBoolean(state!=null); if(state!=null) out.writeUTF(state);
+            if(country!=null && country.length()==0) country=null;
+            out.writeBoolean(country!=null); if(country!=null) out.writeUTF(country);
+            if(zip!=null && zip.length()==0) zip=null;
+            out.writeBoolean(zip!=null); if(zip!=null) out.writeUTF(zip);
+            out.flush();
 
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
-                }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                connector.releaseConnection(connection);
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+            else {
+                AOServProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: "+code);
             }
-            connector.tablesUpdated(invalidateList);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            connector.releaseConnection(connection);
+        }
+        connector.tablesUpdated(invalidateList);
+    }
+
+    /**
+     * Gets one BusinessAdministrator from the database.
+     */
+    public BusinessAdministrator get(Object username) {
+        try {
+            return getUniqueRow(BusinessAdministrator.COLUMN_USERNAME, username);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -107,19 +115,13 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
         }
     }
 
-    /**
-     * Gets one BusinessAdministrator from the database.
-     */
-    public BusinessAdministrator get(Object username) {
-        return getUniqueRow(BusinessAdministrator.COLUMN_USERNAME, username);
-    }
-
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.BUSINESS_ADMINISTRATORS;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
+    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_ADMINISTRATOR)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_ADMINISTRATOR, args, 16, err)) {

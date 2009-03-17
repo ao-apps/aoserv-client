@@ -5,11 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -51,7 +51,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         boolean can_add_businesses,
         boolean can_see_prices,
         boolean billParent
-    ) {
+    ) throws IOException, SQLException {
 	table.connector.businesses.addBusiness(
             accounting,
             contractVersion,
@@ -72,7 +72,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         Protocol appProtocol,
         boolean openFirewall,
         boolean monitoringEnabled
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.netBinds.addNetBind(
             this,
             pk,
@@ -85,7 +85,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         );
     }
 
-    public AOServer getAOServer() {
+    public AOServer getAOServer() throws IOException, SQLException {
         return table.connector.aoServers.get(pkey);
     }
 
@@ -97,11 +97,11 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         return table.connector.virtualServers.get(pkey);
     }
 
-    public List<Business> getBusinesses() {
+    public List<Business> getBusinesses() throws IOException, SQLException {
 	return table.connector.businessServers.getBusinesses(this);
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return farm;
@@ -114,17 +114,17 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         }
     }
 
-    public OperatingSystemVersion getOperatingSystemVersion() {
+    public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
         if(operating_system_version==-1) return null;
         OperatingSystemVersion osv=table.connector.operatingSystemVersions.get(operating_system_version);
-        if(osv==null) throw new WrappedException(new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version));
+        if(osv==null) new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
         return osv;
     }
     
     /**
      * May be filtered.
      */
-    public Package getPackage() {
+    public Package getPackage() throws IOException, SQLException {
         return table.connector.packages.get(packageId);
     }
 
@@ -136,9 +136,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         return monitoring_enabled;
     }
 
-    public ServerFarm getServerFarm() {
+    public ServerFarm getServerFarm() throws SQLException {
 	ServerFarm sf=table.connector.serverFarms.get(farm);
-	if(sf==null) throw new WrappedException(new SQLException("Unable to find ServerFarm: "+farm));
+	if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
 	return sf;
     }
 
@@ -173,7 +173,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     @Override
-    protected String toStringImpl() {
+    protected String toStringImpl() throws IOException, SQLException {
         AOServer aoServer = getAOServer();
         if(aoServer!=null) return aoServer.toStringImpl();
         Package pk = getPackage();
@@ -228,7 +228,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     /**
      * Gets the list of all replications coming from this server.
      */
-    public List<FailoverFileReplication> getFailoverFileReplications() {
+    public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
         return table.connector.failoverFileReplications.getFailoverFileReplications(this);
     }
 
@@ -236,35 +236,35 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         IPAddress ipAddress,
         NetPort port,
         NetProtocol netProtocol
-    ) {
+    ) throws IOException, SQLException {
         return table.connector.netBinds.getNetBind(this, ipAddress, port, netProtocol);
     }
 
-    public List<NetBind> getNetBinds() {
+    public List<NetBind> getNetBinds() throws IOException, SQLException {
 	return table.connector.netBinds.getNetBinds(this);
     }
 
-    public List<NetBind> getNetBinds(IPAddress ipAddress) {
+    public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
 	return table.connector.netBinds.getNetBinds(this, ipAddress);
     }
 
-    public List<NetBind> getNetBinds(Protocol protocol) {
+    public List<NetBind> getNetBinds(Protocol protocol) throws IOException, SQLException {
 	return table.connector.netBinds.getNetBinds(this, protocol);
     }
 
-    public NetDevice getNetDevice(String deviceID) {
+    public NetDevice getNetDevice(String deviceID) throws IOException, SQLException {
 	return table.connector.netDevices.getNetDevice(this, deviceID);
     }
 
-    public List<NetDevice> getNetDevices() {
+    public List<NetDevice> getNetDevices() throws IOException, SQLException {
 	return table.connector.netDevices.getNetDevices(this);
     }
 
-    public List<IPAddress> getIPAddresses() {
+    public List<IPAddress> getIPAddresses() throws IOException, SQLException {
 	return table.connector.ipAddresses.getIPAddresses(this);
     }
 
-    public IPAddress getAvailableIPAddress() {
+    public IPAddress getAvailableIPAddress() throws SQLException, IOException {
 	for(IPAddress ip : getIPAddresses()) {
             if(
                 ip.isAvailable()

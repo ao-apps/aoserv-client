@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -66,7 +65,7 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         this.command=command;
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         if(i==0) return Long.valueOf(command_id);
         if(i==1) return Long.valueOf(process_id);
         if(i==2) return Long.valueOf(connector_id);
@@ -106,9 +105,9 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         return effective_user;
     }
     
-    public BusinessAdministrator getEffectiveBusinessAdministrator() {
+    public BusinessAdministrator getEffectiveBusinessAdministrator() throws SQLException {
         BusinessAdministrator ba=table.connector.businessAdministrators.get(effective_user);
-        if(ba==null) throw new WrappedException(new SQLException("Unable to find BusinessAdministrator: "+effective_user));
+        if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+effective_user);
         return ba;
     }
 
@@ -136,6 +135,7 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         return command;
     }
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof MasterHistory
@@ -143,6 +143,7 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
 	;
     }
 
+    @Override
     int hashCodeImpl() {
         return (int)command_id;
     }

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -35,7 +34,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
         return Collections.emptyList();
     }
 
-    public Object getColumn(int i) {
+    Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_REPLICATION: return Integer.valueOf(replication);
@@ -45,9 +44,9 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
         }
     }
 
-    public FailoverFileReplication getReplication() {
+    public FailoverFileReplication getReplication() throws SQLException, IOException {
         FailoverFileReplication ffr = table.connector.failoverFileReplications.get(replication);
-        if(ffr==null) throw new WrappedException(new SQLException("Unable to find FailoverFileReplication: "+replication));
+        if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
         return ffr;
     }
 
@@ -77,7 +76,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
         backup_enabled = in.readBoolean();
     }
 
-    public void remove() {
+    public void remove() throws IOException, SQLException {
 	table.connector.requestUpdateIL(
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FILE_BACKUP_SETTINGS,
@@ -88,7 +87,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
     public void setSettings(
         String path,
         boolean backupEnabled
-    ) {
+    ) throws IOException, SQLException {
         table.connector.requestUpdateIL(
             AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
             pkey,
