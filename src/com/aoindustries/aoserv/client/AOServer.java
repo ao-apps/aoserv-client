@@ -1236,7 +1236,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         public static class PhysicalVolume implements Comparable<PhysicalVolume> {
 
             /**
-             * Parses the output of pvs --noheadings --separator=$'\t' -o pv_name,pv_pe_count,pv_pe_alloc_count,vg_name
+             * Parses the output of pvs --noheadings --separator=$'\t' --units=b -o pv_name,pv_pe_count,pv_pe_alloc_count,pv_size,vg_name
              */
             private static Map<String,PhysicalVolume> parsePvsReport(Locale locale, String pvs, Map<String,VolumeGroup> volumeGroups) throws ParseException {
                 List<String> lines = StringUtility.splitLines(pvs);
@@ -1249,19 +1249,22 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     final int lineNum = c+1;
                     String line = lines.get(c);
                     String[] fields = StringUtility.splitString(line, '\t');
-                    if(fields.length!=4) throw new ParseException(
+                    if(fields.length!=5) throw new ParseException(
                         ApplicationResourcesAccessor.getMessage(
                             locale,
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
-                            4,
+                            5,
                             fields.length
                         ),
                         lineNum
                     );
                     String pvName = fields[0].trim();
-                    String vgName = fields[2].trim();
+                    String vgName = fields[4].trim();
                     long pvPeCount = Long.parseLong(fields[1].trim());
                     long pvPeAllocCount = Long.parseLong(fields[2].trim());
+                    String pvSizeString = fields[3].trim();
+                    if(pvSizeString.endsWith("B")) pvSizeString = pvSizeString.substring(0, pvSizeString.length()-1);
+                    long pvSize = Long.parseLong(pvSizeString);
                     VolumeGroup volumeGroup;
                     if(vgName.length()==0) {
                         if(pvPeCount!=0 || pvPeAllocCount!=0) throw new ParseException(
@@ -1319,6 +1322,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                                 pvName,
                                 pvPeCount,
                                 pvPeAllocCount,
+                                pvSize,
                                 volumeGroup
                             )
                         )!=null
@@ -1378,12 +1382,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             private final String pvName;
             private final long pvPeCount;
             private final long pvPeAllocCount;
+            private final long pvSize;
             private final VolumeGroup volumeGroup;
 
-            private PhysicalVolume(String pvName, long pvPeCount, long pvPeAllocCount, VolumeGroup volumeGroup) {
+            private PhysicalVolume(String pvName, long pvPeCount, long pvPeAllocCount, long pvSize, VolumeGroup volumeGroup) {
                 this.pvName = pvName;
                 this.pvPeCount = pvPeCount;
                 this.pvPeAllocCount = pvPeAllocCount;
+                this.pvSize = pvSize;
                 this.volumeGroup = volumeGroup;
             }
 
@@ -1406,12 +1412,26 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                 return pvName;
             }
 
+            /**
+             * The number of extents allocated, this is 0 when not allocated.
+             */
             public long getPvPeAllocCount() {
                 return pvPeAllocCount;
             }
 
+            /**
+             * The total number of extents, this is 0 when not allocated.
+             */
             public long getPvPeCount() {
                 return pvPeCount;
+            }
+            
+            /**
+             * The size of the physical volume in bytes.  This is always available,
+             * even when not allocated.
+             */
+            public long getPvSize() {
+                return pvSize;
             }
 
             public VolumeGroup getVolumeGroup() {
@@ -1546,7 +1566,9 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                             lineNum
                         );
                         long firstPe = Long.parseLong(segPeRange.substring(colonPos+1, dashPos).trim());
+                        if(firstPe<0) throw new AssertionError("firstPe<0: "+firstPe);
                         long lastPe = Long.parseLong(segPeRange.substring(dashPos+1).trim());
+                        if(lastPe<firstPe) throw new AssertionError("lastPe<firstPe: "+lastPe+"<"+firstPe);
                         // Make sure no overlap with other stripes in the same physical volume
                         Stripe newStripe = new Stripe(newSegment, stripePv, firstPe, lastPe);
                         for(VolumeGroup existingVG : volumeGroups.values()) {
@@ -1558,7 +1580,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                                                 locale,
                                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.stripeOverlap",
                                                 existingStripe,
-                                               newStripe
+                                                newStripe
                                             ),
                                             lineNum
                                         );
@@ -1730,6 +1752,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                 // Doesn't overlap self
                 return
                     this!=other
+                    && logicalVolume==other.logicalVolume
                     && LvmReport.overlaps(
                         segStartPe,
                         getSegEndPe()-segStartPe+1,
@@ -1794,6 +1817,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                 // Doesn't overlap self
                 return
                     this!=other
+                    && physicalVolume==other.physicalVolume
                     && LvmReport.overlaps(
                         firstPe,
                         lastPe-firstPe+1,
