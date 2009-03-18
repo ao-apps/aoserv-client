@@ -28,10 +28,10 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     private int virtualServer;
     private String device;
     private int minimumDiskSpeed;
+    private int minimumDiskSpeedTarget;
     private int extents;
     private short weight;
-    private boolean primaryPhysicalVolumesLocked;
-    private boolean secondaryPhysicalVolumesLocked;
+    private short weightTarget;
 
     Object getColumnImpl(int i) {
         switch(i) {
@@ -39,10 +39,10 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
             case COLUMN_VIRTUAL_SERVER : return virtualServer;
             case COLUMN_DEVICE : return device;
             case 3 : return minimumDiskSpeed==-1 ? null : Integer.valueOf(minimumDiskSpeed);
-            case 4 : return extents;
-            case 5 : return weight;
-            case 6 : return primaryPhysicalVolumesLocked;
-            case 7 : return secondaryPhysicalVolumesLocked;
+            case 4 : return minimumDiskSpeedTarget==-1 ? null : Integer.valueOf(minimumDiskSpeedTarget);
+            case 5 : return extents;
+            case 6 : return weight;
+            case 7 : return weightTarget;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -69,6 +69,13 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     }
 
     /**
+     * Gets the minimum disk speed target or <code>-1</code> if doesn't matter.
+     */
+    public int getMinimumDiskSpeedTarget() {
+        return minimumDiskSpeedTarget;
+    }
+
+    /**
      * Gets the total extents required by this device.
      */
     public int getExtents() {
@@ -83,17 +90,10 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     }
 
     /**
-     * Gets if the primary physical volumes are locked (manually configured).
+     * Gets the disk weight target.
      */
-    public boolean getPrimaryPhysicalVolumesLocked() {
-        return primaryPhysicalVolumesLocked;
-    }
-
-    /**
-     * Gets if the secondary physical volumes are locked (manually configured).
-     */
-    public boolean getSecondaryPhysicalVolumesLocked() {
-        return secondaryPhysicalVolumesLocked;
+    public short getWeightTarget() {
+        return weightTarget;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -107,10 +107,11 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
         device = result.getString(pos++);
         minimumDiskSpeed = result.getInt(pos++);
         if(result.wasNull()) minimumDiskSpeed = -1;
+        minimumDiskSpeedTarget = result.getInt(pos++);
+        if(result.wasNull()) minimumDiskSpeedTarget = -1;
         extents = result.getInt(pos++);
         weight = result.getShort(pos++);
-        primaryPhysicalVolumesLocked = result.getBoolean(pos++);
-        secondaryPhysicalVolumesLocked = result.getBoolean(pos++);
+        weightTarget = result.getShort(pos++);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -118,10 +119,10 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
         virtualServer = in.readCompressedInt();
         device = in.readUTF().intern();
         minimumDiskSpeed = in.readCompressedInt();
+        minimumDiskSpeedTarget = in.readCompressedInt();
         extents = in.readCompressedInt();
         weight = in.readShort();
-        primaryPhysicalVolumesLocked = in.readBoolean();
-        secondaryPhysicalVolumesLocked = in.readBoolean();
+        weightTarget = in.readShort();
     }
 
     @Override
@@ -138,11 +139,15 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumDiskType
         if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumDiskType
         out.writeCompressedInt(minimumDiskSpeed);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumDiskSpeedTarget);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(minimumDiskSpeed);
         out.writeCompressedInt(extents);
         out.writeShort(weight);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(weightTarget);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(weight);
-        out.writeBoolean(primaryPhysicalVolumesLocked);
-        out.writeBoolean(secondaryPhysicalVolumesLocked);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_42)<=0) {
+            out.writeBoolean(false); // primaryPhysicalVolumesLocked
+            out.writeBoolean(false); // secondaryPhysicalVolumesLocked
+        }
     }
 }

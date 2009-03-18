@@ -1738,6 +1738,13 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                 return segStartPe;
             }
 
+            /**
+             * Gets the last logical physical extent as determined by counting
+             * the total size of the stripes and using the following function:
+             * <pre>segStartPe + totalStripePE - 1</pre>
+             * 
+             * @return
+             */
             public long getSegEndPe() {
                 long segmentCount = 0;
                 for(Stripe stripe : stripes) segmentCount += stripe.getLastPe()-stripe.getFirstPe()+1;
