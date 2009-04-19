@@ -421,19 +421,23 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     @SuppressWarnings("deprecation")
-    public boolean passwordMatches(String plaintext) {
-        if(!NO_PASSWORD.equals(password)) {
+    public static boolean passwordMatches(String plaintext, String ciphertext) {
+        if(!NO_PASSWORD.equals(ciphertext)) {
             // Try hash first
             String hashed = hash(plaintext);
-            if(hashed.equals(password)) return true;
+            if(hashed.equals(ciphertext)) return true;
             // Try old crypt next
-            if(password.length()>=2) {
-                String salt=password.substring(0,2);
+            if(ciphertext.length()>=2) {
+                String salt=ciphertext.substring(0,2);
                 String crypted=com.aoindustries.util.UnixCrypt.crypt(plaintext, salt);
-                return crypted.equals(password);
+                return crypted.equals(ciphertext);
             }
         }
 	return false;
+    }
+
+    public boolean passwordMatches(String plaintext) {
+        return passwordMatches(plaintext, password);
     }
 
     public void init(ResultSet result) throws SQLException {

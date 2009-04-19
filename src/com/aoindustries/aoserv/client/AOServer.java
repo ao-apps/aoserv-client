@@ -1096,7 +1096,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
             reports.add(new DrbdReport(device, domUHostname, domUDevice, connectionState, localDiskState, remoteDiskState, localRole, remoteRole));
         }
-        return Collections.unmodifiableList(reports);
+        return reports;
     }
 
     public static class LvmReport {
@@ -1932,7 +1932,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                 lineNum
             );
         }
-        return Collections.unmodifiableMap(results);
+        return results;
     }
 
     /**

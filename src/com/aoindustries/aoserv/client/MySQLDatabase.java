@@ -124,7 +124,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             masterOut.flush();
 
             CompressedDataInputStream masterIn=connection.getInputStream();
-            int code;
+            /*int code;
             byte[] buff=BufferManager.getBytes();
             try {
                 char[] chars=BufferManager.getChars();
@@ -141,7 +141,21 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             } finally {
                 BufferManager.release(buff);
             }
-            if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);
+            if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);*/
+            Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8");
+            try {
+                char[] chars=BufferManager.getChars();
+                try {
+                    int len;
+                    while((len=nestedIn.read(chars, 0, BufferManager.BUFFER_SIZE))!=-1) {
+                        out.write(chars, 0, len);
+                    }
+                } finally {
+                    BufferManager.release(chars);
+                }
+            } finally {
+                nestedIn.close();
+            }
         } catch(IOException err) {
             connection.close();
             throw err;
