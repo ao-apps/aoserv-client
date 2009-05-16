@@ -42,7 +42,7 @@ public class GetTableSizesTest extends TestCase {
     /**
      * Test the size() method of each AOServTable.
      */
-    public void testTableSizes() {
+    public void testTableSizes() throws Exception {
         final int PASSES=10;
         System.out.println("Testing getTable(tableID).size()");
         for(AOServConnector conn : conns) {

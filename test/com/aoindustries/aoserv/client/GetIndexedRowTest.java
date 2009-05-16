@@ -45,7 +45,7 @@ public class GetIndexedRowTest extends TestCase {
     /**
      * Test the size() method of each AOServTable.
      */
-    public void testGetIndexedRows() {
+    public void testGetIndexedRows() throws Exception {
         System.out.println("Testing all indexed rows:");
         System.out.println("+ means supported");
         System.out.println("- means unsupported");

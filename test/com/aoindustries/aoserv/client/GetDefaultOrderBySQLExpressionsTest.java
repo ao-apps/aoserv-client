@@ -42,7 +42,7 @@ public class GetDefaultOrderBySQLExpressionsTest extends TestCase {
     /**
      * Test the size() method of each AOServTable.
      */
-    public void testTableSizes() {
+    public void testTableSizes() throws Exception {
         System.out.println("Testing getTable(tableID).getDefaultOrderBySQLExpressions()");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;

@@ -43,7 +43,7 @@ public class ObjectTypesTest extends TestCase {
     /**
      * Test the type of all the objects in each AOServTable.
      */
-    public void testTableObjectTypes() {
+    public void testTableObjectTypes() throws Exception {
         System.out.println("Testing all object types returned by getColumn(int index)");
         System.out.println(". = Tested");
         System.out.println("E = Empty Table, Tests Not Performed");

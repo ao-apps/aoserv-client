@@ -47,7 +47,7 @@ public class GetUniqueRowTest extends TestCase {
      * Test the size() method of each AOServTable.
      */
     @SuppressWarnings({"unchecked"})
-    public void testGetUniqueRows() {
+    public void testGetUniqueRows() throws Exception {
         System.out.println("Testing all unique rows:");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;

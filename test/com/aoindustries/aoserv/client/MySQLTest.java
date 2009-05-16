@@ -67,7 +67,7 @@ public class MySQLTest extends TestCase {
     /**
      * Runs the full MySQL test.
      */
-    public void testMySQL() throws SQLException {
+    public void testMySQL() throws Exception {
         addMySQLServerUsers();
         setMySQLServerUserPasswords();
         addMySQLDatabases();
@@ -85,7 +85,7 @@ public class MySQLTest extends TestCase {
     /**
      * Test adding a new mysql user to each of the mysql servers.
      */
-    private void addMySQLServerUsers() {
+    private void addMySQLServerUsers() throws Exception {
         System.out.println("Testing adding MySQLUser to each MySQLServer");
         System.out.print("    Resolving TEST Package: ");
         pack=conn.packages.get("TEST");
@@ -93,7 +93,7 @@ public class MySQLTest extends TestCase {
         System.out.println("Done");
 
         System.out.print("    Generating random username: ");
-        Random random=conn.getRandom();
+        Random random=AOServConnector.getRandom();
         String randomUsername=null;
         while(randomUsername==null) {
             String temp=
@@ -138,7 +138,7 @@ public class MySQLTest extends TestCase {
     /**
      * Tests the password setting and related functions
      */
-    private void setMySQLServerUserPasswords() {
+    private void setMySQLServerUserPasswords() throws Exception {
         System.out.print("Testing MySQLUser.arePasswordsSet for NONE: ");
         assertEquals(mysqlUser.arePasswordsSet(), PasswordProtected.NONE);
         System.out.println("Done");
@@ -150,7 +150,7 @@ public class MySQLTest extends TestCase {
             System.out.println("Done");
 
             System.out.print("Testing MySQLServerUser.setPassword for "+msu+": ");
-            String password=conn.linuxAccounts.generatePassword();
+            String password=LinuxAccountTable.generatePassword();
             msu.setPassword(password);
             System.out.println("Done");
             mysqlServerUserPasswords.put(msu, password);
@@ -173,10 +173,10 @@ public class MySQLTest extends TestCase {
     /**
      * Test adding a new mysql databases to each of the mysql servers.
      */
-    private void addMySQLDatabases() {
+    private void addMySQLDatabases() throws Exception {
         System.out.println("Testing adding MySQLDatabase to each MySQLServer");
 
-        Random random=conn.getRandom();
+        Random random=AOServConnector.getRandom();
         for(MySQLServer mysqlServer : conn.mysqlServers) {
             System.out.print("    Generating random database name on "+mysqlServer+": ");
             String randomName=null;
@@ -210,7 +210,7 @@ public class MySQLTest extends TestCase {
     /**
      * Gets the test MySQLServerUser for the provided MySQLServer.
      */
-    private MySQLServerUser getMySQLServerUser(MySQLServer ms) {
+    private MySQLServerUser getMySQLServerUser(MySQLServer ms) throws Exception {
         MySQLServerUser foundMSU=null;
         for(MySQLServerUser msu : mysqlServerUsers) {
             if(msu.getMySQLServer().equals(ms)) {
@@ -225,7 +225,7 @@ public class MySQLTest extends TestCase {
     /**
      * Gets a new connection to the provided MySQLDatabase.
      */
-    private Connection getConnection(MySQLDatabase md, MySQLServerUser msu) throws SQLException {
+    private Connection getConnection(MySQLDatabase md, MySQLServerUser msu) throws Exception {
         try {
             assertEquals(md.getMySQLServer(), msu.getMySQLServer());
             Class.forName(md.getJdbcDriver()).newInstance();
@@ -245,25 +245,25 @@ public class MySQLTest extends TestCase {
     /**
      * Gets a new connection to the provided MySQLDatabase.
      */
-    private Connection getConnection(MySQLDatabase md) throws SQLException {
+    private Connection getConnection(MySQLDatabase md) throws Exception {
         return getConnection(md, getMySQLServerUser(md.getMySQLServer()));
     }
 
     /**
      * Test that cannot connect until MySQLDBUser added
      */
-    private void doCantConnectTest() {
+    private void doCantConnectTest() throws Exception {
         System.out.print("Testing not allowed to connect to MySQLDatabase until MySQLDBUser added: ");
         for(MySQLDatabase md : mysqlDatabases) {
             System.out.print('.');
             boolean connected=false;
             try {
-                Connection conn=getConnection(md);
+                Connection myConn=getConnection(md);
                 try {
                     //conn.createStatement().executeUpdate("create table test (test integer not null)");
                     connected=true;
                 } finally {
-                    conn.close();
+                    myConn.close();
                 }
             } catch(SQLException err) {
                 String message=err.getMessage();
@@ -292,7 +292,7 @@ public class MySQLTest extends TestCase {
     /**
      * Adds the MySQLDBUser.
      */
-    private void addMySQLDBUser() {
+    private void addMySQLDBUser() throws Exception {
         System.out.print("Testing addMySQLDBUser: ");
         for(MySQLDatabase md : mysqlDatabases) {
             System.out.print('.');
@@ -306,7 +306,7 @@ public class MySQLTest extends TestCase {
     /**
      * Test creating a test table.
      */
-    private void createTestTable() throws SQLException {
+    private void createTestTable() throws Exception {
         System.out.print("Creating test tables: ");
         for(MySQLDatabase md : mysqlDatabases) {
             System.out.print('.');
@@ -314,7 +314,7 @@ public class MySQLTest extends TestCase {
             try {
                 Statement stmt=connection.createStatement();
                 stmt.executeUpdate("create table test (test integer not null)");
-                Random random=conn.getRandom();
+                Random random=AOServConnector.getRandom();
                 for(int c=0;c<1000;c++) {
                     stmt.executeUpdate("insert into test values("+random.nextInt()+")");
                 }
@@ -328,7 +328,7 @@ public class MySQLTest extends TestCase {
     /**
      * Test select count.
      */
-    private void selectCount() throws SQLException {
+    private void selectCount() throws Exception {
         System.out.print("Testing select count(*) from test: ");
         for(MySQLDatabase md : mysqlDatabases) {
             System.out.print('.');
@@ -349,7 +349,7 @@ public class MySQLTest extends TestCase {
     /**
      * Test disable users.
      */
-    private void disableMySQLServerUsers() throws SQLException {
+    private void disableMySQLServerUsers() throws Exception {
         System.out.print("Disabling MySQLServerUsers: ");
         DisableLog dl=conn.disableLogs.get(pack.getBusiness().addDisableLog("Test disabling"));
         for(MySQLServerUser msu : mysqlServerUsers) {
@@ -363,7 +363,7 @@ public class MySQLTest extends TestCase {
     /**
      * Test enable users.
      */
-    private void enableMySQLServerUsers() throws SQLException {
+    private void enableMySQLServerUsers() throws Exception {
         System.out.print("Enabling MySQLServerUsers: ");
         for(MySQLServerUser msu : mysqlServerUsers) {
             System.out.print('.');
@@ -376,7 +376,7 @@ public class MySQLTest extends TestCase {
     /**
      * Test dump.
      */
-    private void dumpMySQLDatabases() throws SQLException {
+    private void dumpMySQLDatabases() throws Exception {
         System.out.print("Dumping MySQLDatabases:");
         for(MySQLDatabase md : mysqlDatabases) {
             ByteArrayOutputStream bout=new ByteArrayOutputStream();

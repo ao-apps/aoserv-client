@@ -64,7 +64,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of clearCaches method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testClearCaches() {
+    public void testClearCaches() throws Exception {
         System.out.println("Testing clearCaches");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -76,7 +76,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of executeCommand method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testExecuteCommand() {
+    public void testExecuteCommand() throws Exception {
         System.out.println("Testing executeCommand");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -88,7 +88,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of getConnectorID method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testGetConnectorID() {
+    public void testGetConnectorID() throws Exception {
         System.out.println("Testing getConnectorID");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -110,7 +110,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of getHostname method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testGetHostname() {
+    public void testGetHostname() throws Exception {
         System.out.println("Testing getHostname");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -122,7 +122,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of getPort method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testGetPort() {
+    public void testGetPort() throws Exception {
         System.out.println("Testing getPort");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -134,7 +134,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of getProtocol method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testGetProtocol() {
+    public void testGetProtocol() throws Exception {
         System.out.println("Testing getProtocol");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -146,7 +146,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of getRandom method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testGetRandom() {
+    public void testGetRandom() throws Exception {
         System.out.println("Testing getRandom");
         Random random=AOServConnector.getRandom();
         for(AOServConnector conn : conns) {
@@ -179,7 +179,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of isSecure method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testIsSecure() {
+    public void testIsSecure() throws Exception {
         System.out.println("Testing isSecure");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -191,7 +191,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of ping method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testPing() {
+    public void testPing() throws Exception {
         System.out.print("Testing ping: ");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -210,7 +210,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of getConnection method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
-    public void testGetConnection() throws IOException {
+    public void testGetConnection() throws Exception {
         System.out.println("Testing getConnection and releaseConnection");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
@@ -225,7 +225,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test the ability to get each table from the connector by table ID.  Also makes sure each table is a unique instance.
      */
-    public void testGetTable() {
+    public void testGetTable() throws Exception {
         System.out.println("Testing getTable and getTables");
         for(AOServConnector conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
