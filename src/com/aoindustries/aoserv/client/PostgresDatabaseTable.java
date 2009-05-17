@@ -191,7 +191,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
     }
 
     public boolean isValidDatabaseName(String name) throws IOException, SQLException {
-	return isValidDatabaseName(name, connector.postgresReservedWords.getRows());
+	return isValidDatabaseName(name, connector.getPostgresReservedWords().getRows());
     }
 
     public static boolean isValidDatabaseName(String name, List<?> reservedWords) {

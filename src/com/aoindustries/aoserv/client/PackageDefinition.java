@@ -5,13 +5,16 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A <code>PackageDefinition</code> stores one unique set of resources, limits, and prices.
@@ -23,13 +26,13 @@ import java.util.*;
 public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefinition> implements Removable {
 
     static final int COLUMN_PKEY=0;
-    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_BRAND_name = "brand";
     static final String COLUMN_CATEGORY_name = "category";
     static final String COLUMN_MONTHLY_RATE_name = "monthly_rate";
     static final String COLUMN_NAME_name = "name";
     static final String COLUMN_VERSION_name = "version";
 
-    String accounting;
+    String brand;
     String category;
     String name;
     String version;
@@ -45,7 +48,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return accounting;
+            case 1: return brand;
             case 2: return category;
             case 3: return name;
             case 4: return version;
@@ -61,13 +64,13 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         }
     }
 
-    public Business getBusiness() {
+    public Brand getBrand() {
         // May be filtered
-        return table.connector.businesses.get(accounting);
+        return table.connector.getBrands().get(brand);
     }
     
     public PackageCategory getPackageCategory() throws SQLException {
-        PackageCategory pc=table.connector.packageCategories.get(category);
+        PackageCategory pc=table.connector.getPackageCategories().get(category);
         if(pc==null) throw new SQLException("Unable to find PackageCategory: "+category);
         return pc;
     }
@@ -76,16 +79,16 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
      * Gets the list of packages using this definition.
      */
     public List<Package> getPackages() throws IOException, SQLException {
-        return table.connector.packages.getPackages(this);
+        return table.connector.getPackages().getPackages(this);
     }
 
     public PackageDefinitionLimit getLimit(Resource resource) throws IOException, SQLException {
         if(resource==null) throw new AssertionError("resource is null");
-        return table.connector.packageDefinitionLimits.getPackageDefinitionLimit(this, resource);
+        return table.connector.getPackageDefinitionLimits().getPackageDefinitionLimit(this, resource);
     }
 
     public List<PackageDefinitionLimit> getLimits() throws IOException, SQLException {
-        return table.connector.packageDefinitionLimits.getPackageDefinitionLimits(this);
+        return table.connector.getPackageDefinitionLimits().getPackageDefinitionLimits(this);
     }
 
     public void setLimits(PackageDefinitionLimit[] limits) throws IOException, SQLException {
@@ -146,7 +149,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     
     public TransactionType getSetupFeeTransactionType() throws SQLException {
         if(setup_fee_transaction_type==null) return null;
-        TransactionType tt=table.connector.transactionTypes.get(setup_fee_transaction_type);
+        TransactionType tt=table.connector.getTransactionTypes().get(setup_fee_transaction_type);
         if(tt==null) throw new SQLException("Unable to find TransactionType: "+setup_fee_transaction_type);
         return tt;
     }
@@ -157,7 +160,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     
     public TransactionType getMonthlyRateTransactionType() throws SQLException {
         if(monthly_rate_transaction_type==null) return null;
-        TransactionType tt=table.connector.transactionTypes.get(monthly_rate_transaction_type);
+        TransactionType tt=table.connector.getTransactionTypes().get(monthly_rate_transaction_type);
         if(tt==null) throw new SQLException("Unable to find TransactionType: "+monthly_rate_transaction_type);
         return tt;
     }
@@ -184,7 +187,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
-        accounting=result.getString(2);
+        brand=result.getString(2);
         category=result.getString(3);
         name=result.getString(4);
         version=result.getString(5);
@@ -201,7 +204,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-        accounting=in.readUTF().intern();
+        brand=in.readUTF().intern();
         category=in.readUTF().intern();
         name=in.readUTF();
         version=in.readUTF();
@@ -222,7 +225,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version aoservVersion) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeUTF(accounting);
+        out.writeUTF(brand);
         out.writeUTF(category);
         out.writeUTF(name);
         out.writeUTF(version);

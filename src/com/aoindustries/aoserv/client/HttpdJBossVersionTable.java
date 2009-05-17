@@ -47,8 +47,7 @@ final public class HttpdJBossVersionTable extends GlobalTableIntegerKey<HttpdJBo
 
     public HttpdJBossVersion getHttpdJBossVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {
 	return get(
-            connector
-            .technologyNames
+            connector.getTechnologyNames()
             .get(HttpdJBossVersion.TECHNOLOGY_NAME)
             .getTechnologyVersion(connector, version, osv)
             .getPkey()

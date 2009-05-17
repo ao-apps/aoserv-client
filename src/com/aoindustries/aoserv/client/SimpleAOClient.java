@@ -98,25 +98,25 @@ final public class SimpleAOClient {
     }
 
     private Architecture getArchitecture(String architecture) throws IllegalArgumentException {
-        Architecture ar=connector.architectures.get(architecture);
+        Architecture ar=connector.getArchitectures().get(architecture);
         if(ar==null) throw new IllegalArgumentException("Unable to find Architecture: "+architecture);
         return ar;
     }
 
     private AOServer getAOServer(String hostname) throws IllegalArgumentException, IOException, SQLException {
-        AOServer ao=connector.aoServers.get(hostname);
+        AOServer ao=connector.getAoServers().get(hostname);
         if(ao==null) throw new IllegalArgumentException("Server is not an AOServer: "+hostname);
         return ao;
     }
 
     private Business getBusiness(String accounting) throws IllegalArgumentException {
-        Business bu=connector.businesses.get(accounting);
+        Business bu=connector.getBusinesses().get(accounting);
         if(bu==null) throw new IllegalArgumentException("Unable to find Business: "+accounting);
         return bu;
     }
 
     private DNSZone getDNSZone(String zone) throws IllegalArgumentException {
-        DNSZone dz=connector.dnsZones.get(zone);
+        DNSZone dz=connector.getDnsZones().get(zone);
         if(dz==null) throw new IllegalArgumentException("Unable to find DNSZone: "+zone);
         return dz;
     }
@@ -140,7 +140,7 @@ final public class SimpleAOClient {
     }
 
     private EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode(String mode) throws IllegalArgumentException {
-        EmailSpamAssassinIntegrationMode esaim=connector.emailSpamAssassinIntegrationModes.get(mode);
+        EmailSpamAssassinIntegrationMode esaim=connector.getEmailSpamAssassinIntegrationModes().get(mode);
         if(esaim==null) throw new IllegalArgumentException("Unable to find EmailSpamAssassinIntegrationMode: "+mode);
         return esaim;
     }
@@ -170,7 +170,7 @@ final public class SimpleAOClient {
     }
 
     private LinuxGroup getLinuxGroup(String name) throws IllegalArgumentException {
-        LinuxGroup lg=connector.linuxGroups.get(name);
+        LinuxGroup lg=connector.getLinuxGroups().get(name);
         if(lg==null) throw new IllegalArgumentException("Unable to find LinuxGroup: "+name);
         return lg;
     }
@@ -213,7 +213,7 @@ final public class SimpleAOClient {
     }
 
     private NetBind getNetBind(int pkey) throws IllegalArgumentException, IOException, SQLException {
-        NetBind nb=connector.netBinds.get(pkey);
+        NetBind nb=connector.getNetBinds().get(pkey);
         if(nb==null) throw new IllegalArgumentException("Unable to find NetBind: "+pkey);
         return nb;
     }
@@ -225,7 +225,7 @@ final public class SimpleAOClient {
     }
 
     private OperatingSystem getOperatingSystem(String name) throws IllegalArgumentException {
-        OperatingSystem os=connector.operatingSystems.get(name);
+        OperatingSystem os=connector.getOperatingSystems().get(name);
         if(os==null) throw new IllegalArgumentException("Unable to find OperatingSystem: "+name);
         return os;
     }
@@ -237,13 +237,13 @@ final public class SimpleAOClient {
     }
 
     private PackageDefinition getPackageDefinition(int packageDefinition) throws IllegalArgumentException, IOException, SQLException {
-        PackageDefinition pd=connector.packageDefinitions.get(packageDefinition);
+        PackageDefinition pd=connector.getPackageDefinitions().get(packageDefinition);
         if(pd==null) throw new IllegalArgumentException("Unable to find PackageDefinition: "+packageDefinition);
         return pd;
     }
 
     private Package getPackage(String name) throws IllegalArgumentException, IOException, SQLException {
-        Package pk=connector.packages.get(name);
+        Package pk=connector.getPackages().get(name);
         if(pk==null) throw new IllegalArgumentException("Unable to find Package: "+name);
         return pk;
     }
@@ -274,19 +274,19 @@ final public class SimpleAOClient {
     }
 
     private Server getServer(String server) throws IllegalArgumentException, SQLException, IOException {
-        Server se=connector.servers.get(server);
+        Server se=connector.getServers().get(server);
         if(se==null) throw new IllegalArgumentException("Unable to find Server: "+server);
         return se;
     }
 
     private ServerFarm getServerFarm(String name) throws IllegalArgumentException {
-        ServerFarm sf=connector.serverFarms.get(name);
+        ServerFarm sf=connector.getServerFarms().get(name);
         if(sf==null) throw new IllegalArgumentException("Unable to find ServerFarm: "+name);
         return sf;
     }
 
     private Username getUsername(String username) throws IllegalArgumentException {
-        Username un=connector.usernames.get(username);
+        Username un=connector.getUsernames().get(username);
         if(un==null) throw new IllegalArgumentException("Unable to find Username: "+username);
         return un;
     }
@@ -331,7 +331,7 @@ final public class SimpleAOClient {
         String contact_phone,
         String contact_email
     ) throws IllegalArgumentException, IOException, SQLException {
-        return connector.servers.addBackupServer(
+        return connector.getServers().addBackupServer(
             hostname,
             getServerFarm(farm),
             getPackage(owner),
@@ -588,7 +588,7 @@ final public class SimpleAOClient {
         DNSZone nz=getDNSZone(zone);
 
         // Must be a valid type
-        DNSType nt=connector.dnsTypes.get(type);
+        DNSType nt=connector.getDnsTypes().get(type);
         if(nt==null) throw new IllegalArgumentException("Unable to find DNSType: "+type);
 
         // Must have appropriate MX priority
@@ -672,7 +672,7 @@ final public class SimpleAOClient {
         EmailAddress eaddress=sd.getEmailAddress(address);
         boolean added=false;
         if(eaddress==null) {
-            eaddress=connector.emailAddresses.get(sd.addEmailAddress(address));
+            eaddress=connector.getEmailAddresses().get(sd.addEmailAddress(address));
             added=true;
         }
         try {
@@ -725,7 +725,7 @@ final public class SimpleAOClient {
         String username,
         String group
     ) throws IllegalArgumentException, IOException, SQLException {
-        return connector.emailLists.addEmailList(
+        return connector.getEmailLists().addEmailList(
             path,
             getLinuxServerAccount(aoServer, username),
             getLinuxServerGroup(aoServer, group)
@@ -763,7 +763,7 @@ final public class SimpleAOClient {
         EmailAddress ea=sd.getEmailAddress(address);
         boolean added=false;
         if(ea==null) {
-            ea=connector.emailAddresses.get(connector.emailAddresses.addEmailAddress(address, sd));
+            ea=connector.getEmailAddresses().get(connector.getEmailAddresses().addEmailAddress(address, sd));
             added=true;
         }
         try {
@@ -799,7 +799,7 @@ final public class SimpleAOClient {
         String path,
         String packageName
     ) throws IllegalArgumentException, IOException, SQLException {
-        return connector.emailPipes.addEmailPipe(
+        return connector.getEmailPipes().addEmailPipe(
             getAOServer(aoServer),
             path,
             getPackage(packageName)
@@ -830,7 +830,7 @@ final public class SimpleAOClient {
         String domain,
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        EmailPipe ep=connector.emailPipes.get(pkey);
+        EmailPipe ep=connector.getEmailPipes().get(pkey);
         if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+ep);
         AOServer ao=ep.getAOServer();
         EmailDomain sd=ao.getEmailDomain(domain);
@@ -838,7 +838,7 @@ final public class SimpleAOClient {
         EmailAddress ea=sd.getEmailAddress(address);
         boolean added=false;
         if(ea==null) {
-            ea=connector.emailAddresses.get(connector.emailAddresses.addEmailAddress(address, sd));
+            ea=connector.getEmailAddresses().get(connector.getEmailAddresses().addEmailAddress(address, sd));
             added=true;
         }
         try {
@@ -871,7 +871,7 @@ final public class SimpleAOClient {
         String path,
         boolean backupEnabled
     ) throws IllegalArgumentException, IOException, SQLException {
-        FailoverFileReplication ffr = getConnector().failoverFileReplications.get(replication);
+        FailoverFileReplication ffr = getConnector().getFailoverFileReplications().get(replication);
         if(ffr==null) throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
         return ffr.addFileBackupSetting(
             path,
@@ -973,7 +973,7 @@ final public class SimpleAOClient {
             String hostname=altHttpHostnames[c];
             if(!EmailDomain.isValidFormat(hostname)) throw new IllegalArgumentException("Invalid hostname: "+hostname);
         }
-        HttpdJBossVersion hjv=connector.httpdJBossVersions.getHttpdJBossVersion(jBossVersion, ao.getServer().getOperatingSystemVersion());
+        HttpdJBossVersion hjv=connector.getHttpdJBossVersions().getHttpdJBossVersion(jBossVersion, ao.getServer().getOperatingSystemVersion());
         if(hjv==null) throw new IllegalArgumentException("Unable to find HttpdJBossVersion: "+jBossVersion);
         return ao.addHttpdJBossSite(
             siteName,
@@ -1013,7 +1013,7 @@ final public class SimpleAOClient {
         boolean isOverflow
     ) throws IllegalArgumentException, SQLException, IOException {
         AOServer ao=getAOServer(aoServer);
-        HttpdTomcatVersion ve = connector.httpdTomcatVersions.getHttpdTomcatVersion(version, ao.getServer().getOperatingSystemVersion());
+        HttpdTomcatVersion ve = connector.getHttpdTomcatVersions().getHttpdTomcatVersion(version, ao.getServer().getOperatingSystemVersion());
         if (ve==null) throw new IllegalArgumentException("Unable to find HttpdTomcatVersion: "+version);
         return ao.addHttpdSharedTomcat(
             name,
@@ -1036,7 +1036,7 @@ final public class SimpleAOClient {
         int hsbPKey,
         String hostname
     ) throws IllegalArgumentException, IOException, SQLException {
-        HttpdSiteBind hsb=connector.httpdSiteBinds.get(hsbPKey);
+        HttpdSiteBind hsb=connector.getHttpdSiteBinds().get(hsbPKey);
         if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+hsbPKey);
         return hsb.addHttpdSiteURL(hostname);
     }
@@ -1245,7 +1245,7 @@ final public class SimpleAOClient {
         }
         HttpdTomcatVersion htv;
         if(version!=null && version.length()>0) {
-            TechnologyName tn=connector.technologyNames.get(HttpdTomcatVersion.TECHNOLOGY_NAME);
+            TechnologyName tn=connector.getTechnologyNames().get(HttpdTomcatVersion.TECHNOLOGY_NAME);
             if(tn==null) throw new SQLException("Unable to find TechnologyName: "+HttpdTomcatVersion.TECHNOLOGY_NAME);
             TechnologyVersion tv=tn.getTechnologyVersion(connector, version, ao.getServer().getOperatingSystemVersion());
             if(tv==null) throw new IllegalArgumentException("Unable to find TechnologyVersion: "+HttpdTomcatVersion.TECHNOLOGY_NAME+" version "+version);
@@ -1347,7 +1347,7 @@ final public class SimpleAOClient {
             String hostname=altHttpHostnames[c];
             if(!EmailDomain.isValidFormat(hostname)) throw new IllegalArgumentException("Invalid hostname: "+hostname);
         }
-        HttpdTomcatVersion htv=connector.httpdTomcatVersions.getHttpdTomcatVersion(tomcatVersion, ao.getServer().getOperatingSystemVersion());
+        HttpdTomcatVersion htv=connector.getHttpdTomcatVersions().getHttpdTomcatVersion(tomcatVersion, ao.getServer().getOperatingSystemVersion());
         if(htv==null) throw new IllegalArgumentException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
         return ao.addHttpdTomcatStdSite(
             siteName,
@@ -1400,7 +1400,7 @@ final public class SimpleAOClient {
         EmailAddress ea=sd.getEmailAddress(address);
         boolean added;
         if(ea==null) {
-            ea=connector.emailAddresses.get(sd.addEmailAddress(address));
+            ea=connector.getEmailAddresses().get(sd.addEmailAddress(address));
             added=true;
         } else added=false;
         try {
@@ -1455,9 +1455,9 @@ final public class SimpleAOClient {
         LinuxGroup lg=getLinuxGroup(primary_group);
         String validity=LinuxAccount.checkGECOS(name, "full name");
         if(validity!=null) throw new IllegalArgumentException(validity);
-        LinuxAccountType lat=connector.linuxAccountTypes.get(type);
+        LinuxAccountType lat=connector.getLinuxAccountTypes().get(type);
         if(lat==null) throw new IllegalArgumentException("Unable to find LinuxAccountType: "+type);
-        Shell sh=connector.shells.get(shell);
+        Shell sh=connector.getShells().get(shell);
         if(sh==null) throw new IllegalArgumentException("Unable to find Shell: "+shell);
         un.addLinuxAccount(
             primary_group,
@@ -1497,9 +1497,9 @@ final public class SimpleAOClient {
         String packageName,
         String type
     ) throws IllegalArgumentException, IOException, SQLException {
-        LinuxGroupType lgt=connector.linuxGroupTypes.get(type);
+        LinuxGroupType lgt=connector.getLinuxGroupTypes().get(type);
         if(lgt==null) throw new IllegalArgumentException("Unable to find LinuxGroupType: "+type);
-        connector.linuxGroups.addLinuxGroup(
+        connector.getLinuxGroups().addLinuxGroup(
             name,
             getPackage(packageName),
             type
@@ -1654,7 +1654,7 @@ final public class SimpleAOClient {
         String version
     ) throws IllegalArgumentException, IOException, SQLException {
         EmailDomain ed=getEmailDomain(aoServer, domain);
-        MajordomoVersion mv=connector.majordomoVersions.get(version);
+        MajordomoVersion mv=connector.getMajordomoVersions().get(version);
         if(mv==null) throw new IllegalArgumentException("Unable to find MajordomoVersion: "+version);
         ed.addMajordomoServer(
             getLinuxServerAccount(aoServer, linux_account),
@@ -1695,7 +1695,7 @@ final public class SimpleAOClient {
         String packageName
     ) throws IllegalArgumentException, IOException, SQLException {
         checkMySQLDatabaseName(name);
-        return connector.mysqlDatabases.addMySQLDatabase(
+        return connector.getMysqlDatabases().addMySQLDatabase(
             name,
             getMySQLServer(aoServer, mysqlServer),
             getPackage(packageName)
@@ -1854,11 +1854,11 @@ final public class SimpleAOClient {
         boolean monitoringEnabled
     ) throws IllegalArgumentException, SQLException, IOException {
         IPAddress ia=getIPAddress(server, net_device, ipAddress);
-        NetPort netPortObj=connector.netPorts.get(netPort);
+        NetPort netPortObj=connector.getNetPorts().get(netPort);
         if(netPortObj==null) throw new IllegalArgumentException("Unable to find NetPort: "+netPort);
-        NetProtocol netProt=connector.netProtocols.get(netProtocol);
+        NetProtocol netProt=connector.getNetProtocols().get(netProtocol);
         if(netProt==null) throw new IllegalArgumentException("Unable to find NetProtocol: "+netProtocol);
-        Protocol appProt=connector.protocols.get(appProtocol);
+        Protocol appProt=connector.getProtocols().get(appProtocol);
         if(appProt==null) throw new IllegalArgumentException("Unable to find Protocol: "+appProtocol);
         return getServer(server).addNetBind(
             getPackage(packageName),
@@ -1903,13 +1903,13 @@ final public class SimpleAOClient {
         int transid
     ) throws IllegalArgumentException, IOException, SQLException {
         Business bu=getBusiness(accounting);
-        NoticeType nt=connector.noticeTypes.get(type);
+        NoticeType nt=connector.getNoticeTypes().get(type);
         if(nt==null) throw new IllegalArgumentException("Unable to find NoticeType: "+type);
         if(transid!=NoticeLog.NO_TRANSACTION) {
-            Transaction trans=connector.transactions.get(transid);
+            Transaction trans=connector.getTransactions().get(transid);
             if(trans==null) throw new IllegalArgumentException("Unable to find Transaction: "+transid);
         }
-        connector.noticeLogs.addNoticeLog(
+        connector.getNoticeLogs().addNoticeLog(
             accounting,
             billingContact,
             emailAddress,
@@ -2005,7 +2005,7 @@ final public class SimpleAOClient {
         PostgresEncoding pe=pv.getPostgresEncoding(connector, encoding);
         if(pe==null) throw new IllegalArgumentException("Unable to find PostgresEncoding for PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+": "+encoding);
         if(enablePostgis && pv.getPostgisVersion(connector)==null) throw new IllegalArgumentException("Unable to enable PostGIS, PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+" doesn't support PostGIS");
-        return connector.postgresDatabases.addPostgresDatabase(
+        return connector.getPostgresDatabases().addPostgresDatabase(
             name,
             ps,
             psu,
@@ -2131,7 +2131,7 @@ final public class SimpleAOClient {
         if(aoServer!=null && (aoServer=aoServer.trim()).length()==0) aoServer=null;
         if(aoServer==null) ao=null;
         else ao=getAOServer(aoServer);
-        EmailSmtpRelayType esrt=connector.emailSmtpRelayTypes.get(type);
+        EmailSmtpRelayType esrt=connector.getEmailSmtpRelayTypes().get(type);
         if(esrt==null) throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
 
         return getPackage(packageName).addEmailSmtpRelay(ao, host, esrt, duration);
@@ -2153,7 +2153,7 @@ final public class SimpleAOClient {
         int email_relay,
         String message
     ) throws IllegalArgumentException, IOException, SQLException {
-        EmailSmtpRelay esr=connector.emailSmtpRelays.get(email_relay);
+        EmailSmtpRelay esr=connector.getEmailSmtpRelays().get(email_relay);
         if(esr==null) throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+email_relay);
         return esr.addSpamEmailMessage(message);
     }
@@ -2206,27 +2206,27 @@ final public class SimpleAOClient {
         Business business;
         if(accounting==null || accounting.length()==0) business=null;
         else business=getBusiness(accounting);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
-        TicketType tt=connector.ticketTypes.get(ticket_type);
+        TicketType tt=connector.getTicketTypes().get(ticket_type);
         if(tt==null) throw new IllegalArgumentException("Unable to find TicketType: "+ticket_type);
-        TicketPriority clp=connector.ticketPriorities.get(client_priority);
+        TicketPriority clp=connector.getTicketPriorities().get(client_priority);
         if(clp==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+client_priority);
         TicketPriority adp;
         if(admin_priority==null || admin_priority.length()==0) adp=null;
         else {
-            adp=connector.ticketPriorities.get(admin_priority);
+            adp=connector.getTicketPriorities().get(admin_priority);
             if(adp==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+admin_priority);
         }
         TechnologyName tn;
         if(technology!=null && technology.length()>0) {
-            tn=connector.technologyNames.get(technology);
+            tn=connector.getTechnologyNames().get(technology);
             if(tn==null) throw new IllegalArgumentException("Unable to find TechnologyName: "+technology);
         } else tn=null;
         BusinessAdministrator assignedBA;
         if(assigned_to==null) assignedBA=null;
         else {
-            assignedBA=connector.businessAdministrators.get(assigned_to);
+            assignedBA=connector.getBusinessAdministrators().get(assigned_to);
             if(assignedBA==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+assigned_to);
         }
 
@@ -2268,9 +2268,9 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actWorkEntry(pe, comments);
     }
@@ -2323,21 +2323,21 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException, IOException, SQLException {
         Business bu=getBusiness(business);
         Business sourceBU=getBusiness(source_business);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
-        TransactionType tt=connector.transactionTypes.get(type);
+        TransactionType tt=connector.getTransactionTypes().get(type);
         if(tt==null) throw new IllegalArgumentException("Unable to find TransactionType: "+type);
         PaymentType pt;
         if(paymentType==null || paymentType.length()==0) pt=null;
         else {
-            pt=connector.paymentTypes.get(paymentType);
+            pt=connector.getPaymentTypes().get(paymentType);
             if(pt==null) throw new IllegalArgumentException("Unable to find PaymentType: "+paymentType);
         }
         if(paymentInfo!=null && paymentInfo.length()==0) paymentInfo=null;
         CreditCardProcessor ccProcessor;
         if(processor==null || processor.length()==0) ccProcessor=null;
         else {
-            ccProcessor = connector.creditCardProcessors.get(processor);
+            ccProcessor = connector.getCreditCardProcessors().get(processor);
             if(ccProcessor==null) throw new IllegalArgumentException("Unable to find CreditCardProcessor: "+processor);
         }
         return bu.addTransaction(
@@ -2497,9 +2497,9 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actBounceTicket(pe, comments);
     }
@@ -2549,16 +2549,16 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
         TicketPriority pr;
         if(priority==null || priority.length()==0) {
             pr=null;
         } else {
-            pr=connector.ticketPriorities.get(priority);
+            pr=connector.getTicketPriorities().get(priority);
             if(pr==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
         }
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeAdminPriority(pr, pe, comments);
     }
@@ -2589,11 +2589,11 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        TicketPriority pr=connector.ticketPriorities.get(priority);
+        TicketPriority pr=connector.getTicketPriorities().get(priority);
         if(pr==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeClientPriority(pr, pe, comments);
     }
@@ -2625,9 +2625,9 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeDeadline(deadline, pe, comments);
     }
@@ -2659,14 +2659,14 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
         TechnologyName tn;
         if(technology!=null && technology.length()>0) {
-            tn=connector.technologyNames.get(technology);
+            tn=connector.getTechnologyNames().get(technology);
             if(tn==null) throw new IllegalArgumentException("Unable to find TechnologyName: "+technology);
         } else tn=null;
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeTechnology(tn, pe, comments);
     }
@@ -2698,11 +2698,11 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        TicketType tt=connector.ticketTypes.get(type);
+        TicketType tt=connector.getTicketTypes().get(type);
         if(tt==null) throw new IllegalArgumentException("Unable to find TicketType: "+type);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeTicketType(tt, pe, comments);
     }
@@ -3258,9 +3258,9 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actCompleteTicket(pe, comments);
     }
@@ -3361,7 +3361,7 @@ final public class SimpleAOClient {
         int pkey,
         String reason
     ) throws IllegalArgumentException, IOException, SQLException {
-        CreditCard card=connector.creditCards.get(pkey);
+        CreditCard card=connector.getCreditCards().get(pkey);
         if(card==null) throw new IllegalArgumentException("Unable to find CreditCard: "+pkey);
         card.declined(reason);
     }
@@ -3381,7 +3381,7 @@ final public class SimpleAOClient {
      */
     public int disableBusiness(String accounting, String disableReason) throws IllegalArgumentException, IOException, SQLException {
         Business bu=getBusiness(accounting);
-        DisableLog dl=connector.disableLogs.get(bu.addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(bu.addDisableLog(disableReason));
         for(Package pk : bu.getPackages()) if(pk.disable_log==-1) disablePackage(dl, pk);
         bu.disable(dl);
         return dl.getPkey();
@@ -3402,7 +3402,7 @@ final public class SimpleAOClient {
      */
     public int disablePackage(String name, String disableReason) throws IllegalArgumentException, SQLException, IOException {
         Package pk=getPackage(name);
-        DisableLog dl=connector.disableLogs.get(pk.getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(pk.getBusiness().addDisableLog(disableReason));
         disablePackage(dl, pk);
         return dl.getPkey();
     }
@@ -3462,7 +3462,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, IOException, SQLException {
         HttpdSharedTomcat hst=getHttpdSharedTomcat(aoServer, name);
-        DisableLog dl=connector.disableLogs.get(hst.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(hst.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
         hst.disable(dl);
         return dl.getPkey();
     }
@@ -3484,9 +3484,9 @@ final public class SimpleAOClient {
         int pkey,
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
-        EmailPipe ep=connector.emailPipes.get(pkey);
+        EmailPipe ep=connector.getEmailPipes().get(pkey);
         if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
-        DisableLog dl=connector.disableLogs.get(ep.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(ep.getPackage().getBusiness().addDisableLog(disableReason));
         ep.disable(dl);
         return dl.getPkey();
     }
@@ -3511,7 +3511,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         HttpdSite hs=getHttpdSite(aoServer, name);
-        DisableLog dl=connector.disableLogs.get(hs.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(hs.getPackage().getBusiness().addDisableLog(disableReason));
         disableHttpdSite(dl, hs);
         return dl.getPkey();
     }
@@ -3537,9 +3537,9 @@ final public class SimpleAOClient {
         int pkey,
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
-        HttpdSiteBind hsb=connector.httpdSiteBinds.get(pkey);
+        HttpdSiteBind hsb=connector.getHttpdSiteBinds().get(pkey);
         if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
-        DisableLog dl=connector.disableLogs.get(hsb.getHttpdSite().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(hsb.getHttpdSite().getPackage().getBusiness().addDisableLog(disableReason));
         hsb.disable(dl);
         return dl.getPkey();
     }
@@ -3564,7 +3564,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         EmailList el=getEmailList(aoServer, path);
-        DisableLog dl=connector.disableLogs.get(el.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(el.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
         el.disable(dl);
         return dl.getPkey();
     }
@@ -3586,9 +3586,9 @@ final public class SimpleAOClient {
         int pkey,
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
-        EmailSmtpRelay ssr=connector.emailSmtpRelays.get(pkey);
+        EmailSmtpRelay ssr=connector.getEmailSmtpRelays().get(pkey);
         if(ssr==null) throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
-        DisableLog dl=connector.disableLogs.get(ssr.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(ssr.getPackage().getBusiness().addDisableLog(disableReason));
         ssr.disable(dl);
         return dl.getPkey();
     }
@@ -3611,7 +3611,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         Username un=getUsername(username);
-        DisableLog dl=connector.disableLogs.get(un.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(un.getPackage().getBusiness().addDisableLog(disableReason));
         disableUsername(dl, un);
         return dl.getPkey();
     }
@@ -3646,7 +3646,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         LinuxAccount la=getLinuxAccount(username);
-        DisableLog dl=connector.disableLogs.get(la.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(la.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
         disableLinuxAccount(dl, la);
         return dl.getPkey();
     }
@@ -3679,7 +3679,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         LinuxServerAccount lsa=getLinuxServerAccount(aoServer, username);
-        DisableLog dl=connector.disableLogs.get(lsa.getLinuxAccount().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(lsa.getLinuxAccount().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
         disableLinuxServerAccount(dl, lsa);
         return dl.getPkey();
     }
@@ -3705,10 +3705,9 @@ final public class SimpleAOClient {
         int pkey,
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
-        CvsRepository cr=connector.cvsRepositories.get(pkey);
+        CvsRepository cr=connector.getCvsRepositories().get(pkey);
         if(cr==null) throw new IllegalArgumentException("Unable to find CvsRepository: "+pkey);
-        DisableLog dl=connector
-            .disableLogs
+        DisableLog dl=connector.getDisableLogs()
             .get(
                 cr
                 .getLinuxServerAccount()
@@ -3741,7 +3740,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         MySQLUser mu=getMySQLUser(username);
-        DisableLog dl=connector.disableLogs.get(mu.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(mu.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
         disableMySQLUser(dl, mu);
         return dl.getPkey();
     }
@@ -3771,7 +3770,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         MySQLServerUser msu=getMySQLServerUser(aoServer, mysqlServer, username);
-        DisableLog dl=connector.disableLogs.get(msu.getMySQLUser().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(msu.getMySQLUser().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
         msu.disable(dl);
         return dl.getPkey();
     }
@@ -3796,7 +3795,7 @@ final public class SimpleAOClient {
         Username un=getUsername(username);
         PostgresUser pu=un.getPostgresUser();
         if(pu==null) throw new IllegalArgumentException("Unable to find PostgresUser: "+username);
-        DisableLog dl=connector.disableLogs.get(un.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(un.getPackage().getBusiness().addDisableLog(disableReason));
         disablePostgresUser(dl, pu);
         return dl.getPkey();
     }
@@ -3827,8 +3826,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         PostgresServerUser psu=getPostgresServerUser(aoServer, postgresServer, username);
-        DisableLog dl=connector
-            .disableLogs
+        DisableLog dl=connector.getDisableLogs()
             .get(
                 psu
                 .getPostgresUser()
@@ -3862,7 +3860,7 @@ final public class SimpleAOClient {
         Username un=getUsername(username);
         BusinessAdministrator ba=un.getBusinessAdministrator();
         if(ba==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
-        DisableLog dl=connector.disableLogs.get(un.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(un.getPackage().getBusiness().addDisableLog(disableReason));
         ba.disable(dl);
         return dl.getPkey();
     }
@@ -3976,7 +3974,7 @@ final public class SimpleAOClient {
     public void enableEmailPipe(
         int pkey
     ) throws IllegalArgumentException, SQLException, IOException {
-        EmailPipe ep=connector.emailPipes.get(pkey);
+        EmailPipe ep=connector.getEmailPipes().get(pkey);
         if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
         DisableLog dl=ep.getDisableLog();
         if(dl==null) throw new IllegalArgumentException("EmailPipe not disabled: "+pkey);
@@ -4021,7 +4019,7 @@ final public class SimpleAOClient {
     public void enableHttpdSiteBind(
         int pkey
     ) throws IllegalArgumentException, SQLException, IOException {
-        HttpdSiteBind hsb=connector.httpdSiteBinds.get(pkey);
+        HttpdSiteBind hsb=connector.getHttpdSiteBinds().get(pkey);
         if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
         DisableLog dl=hsb.getDisableLog();
         if(dl==null) throw new IllegalArgumentException("HttpdSiteBind not disabled: "+pkey);
@@ -4062,7 +4060,7 @@ final public class SimpleAOClient {
     public void enableEmailSmtpRelay(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        EmailSmtpRelay ssr=connector.emailSmtpRelays.get(pkey);
+        EmailSmtpRelay ssr=connector.getEmailSmtpRelays().get(pkey);
         if(ssr==null) throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
         DisableLog dl=ssr.getDisableLog();
         if(dl==null) throw new IllegalArgumentException("EmailSmtpRelay not disabled: "+pkey);
@@ -4180,7 +4178,7 @@ final public class SimpleAOClient {
     public void enableCvsRepository(
         int pkey
     ) throws IllegalArgumentException, SQLException, IOException {
-        CvsRepository cr=connector.cvsRepositories.get(pkey);
+        CvsRepository cr=connector.getCvsRepositories().get(pkey);
         if(cr==null) throw new IllegalArgumentException("Unable to find CvsRepository: "+pkey);
         DisableLog dl=cr.getDisableLog();
         if(dl==null) throw new IllegalArgumentException("CvsRepository not disabled: "+pkey);
@@ -4386,7 +4384,7 @@ final public class SimpleAOClient {
     public String generateAccountingCode(
         String accountingTemplate
     ) throws IOException, SQLException {
-        return connector.businesses.generateAccountingCode(accountingTemplate);
+        return connector.getBusinesses().generateAccountingCode(accountingTemplate);
     }
 
     /**
@@ -4409,7 +4407,7 @@ final public class SimpleAOClient {
         String template_base,
         String template_added
     ) throws IOException, SQLException {
-        return connector.mysqlDatabases.generateMySQLDatabaseName(template_base, template_added);
+        return connector.getMysqlDatabases().generateMySQLDatabaseName(template_base, template_added);
     }
 
     /**
@@ -4429,7 +4427,7 @@ final public class SimpleAOClient {
     public String generatePackageName(
         String template
     ) throws IOException, SQLException {
-        return connector.packages.generatePackageName(template);
+        return connector.getPackages().generatePackageName(template);
     }
 
     /**
@@ -4465,7 +4463,7 @@ final public class SimpleAOClient {
         String template_base,
         String template_added
     ) throws IOException, SQLException {
-        return connector.postgresDatabases.generatePostgresDatabaseName(template_base, template_added);
+        return connector.getPostgresDatabases().generatePostgresDatabaseName(template_base, template_added);
     }
 
     /**
@@ -4486,7 +4484,7 @@ final public class SimpleAOClient {
     public String generateSharedTomcatName(
         String template
     ) throws IOException, SQLException {
-        return connector.httpdSharedTomcats.generateSharedTomcatName(template);
+        return connector.getHttpdSharedTomcats().generateSharedTomcatName(template);
     }
 
     /**
@@ -4506,7 +4504,7 @@ final public class SimpleAOClient {
     public String generateSiteName(
         String template
     ) throws IOException, SQLException {
-        return connector.httpdSites.generateSiteName(template);
+        return connector.getHttpdSites().generateSiteName(template);
     }
 
     /**
@@ -4787,7 +4785,7 @@ final public class SimpleAOClient {
      * @see  BusinessTable#getRootAccounting
      */
     public String getRootBusiness() throws IOException, SQLException {
-        return connector.businesses.getRootAccounting();
+        return connector.getBusinesses().getRootAccounting();
     }
 
     /**
@@ -4812,7 +4810,7 @@ final public class SimpleAOClient {
         int ticket_id,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
         ti.actHoldTicket(comments);
     }
@@ -4873,7 +4871,7 @@ final public class SimpleAOClient {
         if(server!=null && server.length()==0) server=null;
         if(server==null) se=null;
         else {
-            se = connector.servers.get(server);
+            se = connector.getServers().get(server);
             if(se==null) throw new IllegalArgumentException("Unable to find Server: "+server);
         }
         connector.invalidateTable(tableID, se==null ? -1 : se.pkey);
@@ -4900,7 +4898,7 @@ final public class SimpleAOClient {
         String accounting
     ) throws IllegalArgumentException, SQLException, IOException {
         checkAccounting(accounting);
-        return connector.businesses.isAccountingAvailable(accounting);
+        return connector.getBusinesses().isAccountingAvailable(accounting);
     }
 
     /**
@@ -4921,7 +4919,7 @@ final public class SimpleAOClient {
     public boolean isBusinessAdministratorPasswordSet(
         String username
     ) throws IllegalArgumentException, IOException, SQLException {
-        BusinessAdministrator ba=connector.businessAdministrators.get(username);
+        BusinessAdministrator ba=connector.getBusinessAdministrators().get(username);
         if(ba==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
         return ba.arePasswordsSet()==PasswordProtected.ALL;
     }
@@ -4944,7 +4942,7 @@ final public class SimpleAOClient {
     public boolean isDNSZoneAvailable(
         String zone
     ) throws IllegalArgumentException, IOException, SQLException {
-        return connector.dnsZones.isDNSZoneAvailable(zone);
+        return connector.getDnsZones().isDNSZoneAvailable(zone);
     }
 
     /**
@@ -4988,7 +4986,7 @@ final public class SimpleAOClient {
         String groupname
     ) throws IllegalArgumentException, IOException, SQLException {
         checkLinuxGroupname(groupname);
-        return connector.linuxGroups.isLinuxGroupNameAvailable(groupname);
+        return connector.getLinuxGroups().isLinuxGroupNameAvailable(groupname);
     }
 
     /**
@@ -5132,7 +5130,7 @@ final public class SimpleAOClient {
         String packageName
     ) throws IllegalArgumentException, IOException, SQLException {
         checkPackageName(packageName);
-        return connector.packages.isPackageNameAvailable(packageName);
+        return connector.getPackages().isPackageNameAvailable(packageName);
     }
 
     /**
@@ -5253,7 +5251,7 @@ final public class SimpleAOClient {
     public boolean isSharedTomcatNameAvailable(
         String name
     ) throws IOException, SQLException{
-        return connector.httpdSharedTomcats.isSharedTomcatNameAvailable(name);
+        return connector.getHttpdSharedTomcats().isSharedTomcatNameAvailable(name);
     }
 
     /**
@@ -5273,7 +5271,7 @@ final public class SimpleAOClient {
         String siteName
     ) throws IllegalArgumentException, IOException, SQLException {
         checkSiteName(siteName);
-        return connector.httpdSites.isSiteNameAvailable(siteName);
+        return connector.getHttpdSites().isSiteNameAvailable(siteName);
     }
 
     /**
@@ -5295,7 +5293,7 @@ final public class SimpleAOClient {
         String username
     ) throws IllegalArgumentException, IOException, SQLException {
         checkUsername(username);
-        return connector.usernames.isUsernameAvailable(username, Locale.getDefault());
+        return connector.getUsernames().isUsernameAvailable(username, Locale.getDefault());
     }
 
     /**
@@ -5322,9 +5320,9 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actKillTicket(pe, comments);
     }
@@ -5431,9 +5429,9 @@ final public class SimpleAOClient {
         String business_administrator,
         String comments
     ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.tickets.get(ticket_id);
+        Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        BusinessAdministrator pe=connector.businessAdministrators.get(business_administrator);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actReactivateTicket(pe, comments);
     }
@@ -5456,7 +5454,7 @@ final public class SimpleAOClient {
         int pkey,
         long minDuration
     ) throws IllegalArgumentException, IOException, SQLException {
-        EmailSmtpRelay sr=connector.emailSmtpRelays.get(pkey);
+        EmailSmtpRelay sr=connector.getEmailSmtpRelays().get(pkey);
         if(sr==null) throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
         sr.refresh(minDuration);
     }
@@ -5554,7 +5552,7 @@ final public class SimpleAOClient {
     public void removeCreditCard(
         int pkey
     ) throws IllegalArgumentException, SQLException, IOException {
-        CreditCard cc=connector.creditCards.get(pkey);
+        CreditCard cc=connector.getCreditCards().get(pkey);
         if(cc==null) throw new IllegalArgumentException("Unable to find CreditCard: "+pkey);
         cc.remove();
     }
@@ -5602,7 +5600,7 @@ final public class SimpleAOClient {
     public void removeDNSRecord(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        DNSRecord nr=connector.dnsRecords.get(pkey);
+        DNSRecord nr=connector.getDnsRecords().get(pkey);
         if(nr==null) throw new IllegalArgumentException("Unable to find DNSRecord: "+pkey);
         nr.remove();
     }
@@ -5776,7 +5774,7 @@ final public class SimpleAOClient {
     public void removeEmailPipe(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        EmailPipe ep=connector.emailPipes.get(pkey);
+        EmailPipe ep=connector.getEmailPipes().get(pkey);
         if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
         ep.remove();
     }
@@ -5803,12 +5801,12 @@ final public class SimpleAOClient {
         String domain,
         int pipe
     ) throws IllegalArgumentException, IOException, SQLException {
-        EmailPipe ep=connector.emailPipes.get(pipe);
+        EmailPipe ep=connector.getEmailPipes().get(pipe);
         if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pipe);
         AOServer ao=ep.getAOServer();
         EmailDomain sd=ao.getEmailDomain(domain);
         if(sd==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getHostname());
-        EmailAddress addr=connector.emailAddresses.getEmailAddress(address, sd);
+        EmailAddress addr=connector.getEmailAddresses().getEmailAddress(address, sd);
         if(addr==null) throw new IllegalArgumentException("Unable to find EmailAddress: "+address+'@'+domain+" on "+ao.getHostname());
         EmailPipeAddress epa=addr.getEmailPipeAddress(ep);
         if(epa==null) throw new IllegalArgumentException("Unable to find EmailPipeAddress: "+address+'@'+domain+"->"+ep);
@@ -5833,7 +5831,7 @@ final public class SimpleAOClient {
     public void removeFTPGuestUser(
         String username
     ) throws IllegalArgumentException, IOException, SQLException {
-        FTPGuestUser ftpUser=connector.ftpGuestUsers.get(username);
+        FTPGuestUser ftpUser=connector.getFtpGuestUsers().get(username);
         if(ftpUser==null) throw new IllegalArgumentException("Unable to find FTPGuestUser: "+username);
         ftpUser.remove();
     }
@@ -5895,7 +5893,7 @@ final public class SimpleAOClient {
     public void removeHttpdSiteURL(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        HttpdSiteURL hsu=connector.httpdSiteURLs.get(pkey);
+        HttpdSiteURL hsu=connector.getHttpdSiteURLs().get(pkey);
         if(hsu==null) throw new IllegalArgumentException("Unable to find HttpdSiteURL: "+pkey);
         hsu.remove();
     }
@@ -5915,7 +5913,7 @@ final public class SimpleAOClient {
     public void removeHttpdTomcatContext(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        HttpdTomcatContext htc=connector.httpdTomcatContexts.get(pkey);
+        HttpdTomcatContext htc=connector.getHttpdTomcatContexts().get(pkey);
         if(htc==null) throw new IllegalArgumentException("Unable to find HttpdTomcatContext: "+pkey);
         htc.remove();
     }
@@ -5935,7 +5933,7 @@ final public class SimpleAOClient {
     public void removeHttpdTomcatDataSource(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        HttpdTomcatDataSource htds=connector.httpdTomcatDataSources.get(pkey);
+        HttpdTomcatDataSource htds=connector.getHttpdTomcatDataSources().get(pkey);
         if(htds==null) throw new IllegalArgumentException("Unable to find HttpdTomcatDataSource: "+pkey);
         htds.remove();
     }
@@ -5955,7 +5953,7 @@ final public class SimpleAOClient {
     public void removeHttpdTomcatParameter(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        HttpdTomcatParameter htp=connector.httpdTomcatParameters.get(pkey);
+        HttpdTomcatParameter htp=connector.getHttpdTomcatParameters().get(pkey);
         if(htp==null) throw new IllegalArgumentException("Unable to find HttpdTomcatParameter: "+pkey);
         htp.remove();
     }
@@ -6052,7 +6050,7 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException, IOException, SQLException {
         LinuxGroup lg=getLinuxGroup(group);
         LinuxAccount la=getLinuxAccount(username);
-        LinuxGroupAccount lga=connector.linuxGroupAccounts.getLinuxGroupAccount(group, username);
+        LinuxGroupAccount lga=connector.getLinuxGroupAccounts().getLinuxGroupAccount(group, username);
         if(lga==null) throw new IllegalArgumentException(username+" is not part of the "+group+" group");
         lga.remove();
     }
@@ -6334,7 +6332,7 @@ final public class SimpleAOClient {
     public void removeEmailSmtpRelay(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        EmailSmtpRelay sr=connector.emailSmtpRelays.get(pkey);
+        EmailSmtpRelay sr=connector.getEmailSmtpRelays().get(pkey);
         if(sr==null) throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
         sr.remove();
     }
@@ -6357,7 +6355,7 @@ final public class SimpleAOClient {
         int replication,
         String path
     ) throws IllegalArgumentException, IOException, SQLException {
-        FailoverFileReplication ffr = getConnector().failoverFileReplications.get(replication);
+        FailoverFileReplication ffr = getConnector().getFailoverFileReplications().get(replication);
         if(ffr==null) throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
         FileBackupSetting fbs=ffr.getFileBackupSetting(path);
         if(fbs==null) throw new IllegalArgumentException("Unable to find FileBackupSetting: "+path+" on "+replication);
@@ -6589,7 +6587,7 @@ final public class SimpleAOClient {
         String username,
         String password
     ) throws IllegalArgumentException, IOException, SQLException {
-        BusinessAdministrator pe=connector.businessAdministrators.get(username);
+        BusinessAdministrator pe=connector.getBusinessAdministrators().get(username);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
         pe.setPassword(password);
     }
@@ -6624,7 +6622,7 @@ final public class SimpleAOClient {
         String country,
         String zip
     ) throws IllegalArgumentException, IOException, SQLException {
-        BusinessAdministrator business_administrator=connector.businessAdministrators.get(username);
+        BusinessAdministrator business_administrator=connector.getBusinessAdministrators().get(username);
         if(business_administrator==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
         business_administrator.setProfile(
             name,
@@ -6766,7 +6764,7 @@ final public class SimpleAOClient {
         String path,
         boolean backupEnabled
     ) throws IllegalArgumentException, IOException, SQLException {
-        FailoverFileReplication ffr = getConnector().failoverFileReplications.get(replication);
+        FailoverFileReplication ffr = getConnector().getFailoverFileReplications().get(replication);
         if(ffr==null) throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
         FileBackupSetting fbs=ffr.getFileBackupSetting(path);
         if(fbs==null) throw new IllegalArgumentException("Unable to find FileBackupSetting: "+path+" on "+replication);
@@ -6813,7 +6811,7 @@ final public class SimpleAOClient {
         int pkey,
         boolean isManual
     ) throws IllegalArgumentException, IOException, SQLException {
-        HttpdSiteBind hsb=connector.httpdSiteBinds.get(pkey);
+        HttpdSiteBind hsb=connector.getHttpdSiteBinds().get(pkey);
         if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
         hsb.setIsManual(isManual);
     }
@@ -6834,7 +6832,7 @@ final public class SimpleAOClient {
         int pkey,
         boolean redirectToPrimaryHostname
     ) throws IllegalArgumentException, IOException, SQLException {
-        HttpdSiteBind hsb=connector.httpdSiteBinds.get(pkey);
+        HttpdSiteBind hsb=connector.getHttpdSiteBinds().get(pkey);
         if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
         hsb.setRedirectToPrimaryHostname(redirectToPrimaryHostname);
     }
@@ -6974,7 +6972,7 @@ final public class SimpleAOClient {
         int ipAddress,
         String dhcpAddress
     ) throws IllegalArgumentException, IOException, SQLException {
-        IPAddress ia=connector.ipAddresses.get(ipAddress);
+        IPAddress ia=connector.getIpAddresses().get(ipAddress);
         if(ia==null) throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress);
         if(!IPAddress.isValidIPAddress(dhcpAddress)) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
         ia.setDHCPAddress(dhcpAddress);
@@ -7135,7 +7133,7 @@ final public class SimpleAOClient {
         String path
     ) throws IllegalArgumentException, IOException, SQLException {
         LinuxAccount la=getLinuxAccount(username);
-        Shell sh=connector.shells.get(path);
+        Shell sh=connector.getShells().get(path);
         if(sh==null) throw new IllegalArgumentException("Unable to find Shell: "+path);
         la.setShell(sh);
     }
@@ -7486,7 +7484,7 @@ final public class SimpleAOClient {
     public void setPrimaryHttpdSiteURL(
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
-        HttpdSiteURL hsu=connector.httpdSiteURLs.get(pkey);
+        HttpdSiteURL hsu=connector.getHttpdSiteURLs().get(pkey);
         if(hsu==null) throw new IllegalArgumentException("Unable to find HttpdSiteURL: "+pkey);
         hsu.setAsPrimary();
     }

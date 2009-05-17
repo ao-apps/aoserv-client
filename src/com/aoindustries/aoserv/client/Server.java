@@ -52,7 +52,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         boolean can_see_prices,
         boolean billParent
     ) throws IOException, SQLException {
-	table.connector.businesses.addBusiness(
+	    table.connector.getBusinesses().addBusiness(
             accounting,
             contractVersion,
             this,
@@ -73,7 +73,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         boolean openFirewall,
         boolean monitoringEnabled
     ) throws IOException, SQLException {
-        return table.connector.netBinds.addNetBind(
+        return table.connector.getNetBinds().addNetBind(
             this,
             pk,
             ia,
@@ -86,19 +86,19 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     public AOServer getAOServer() throws IOException, SQLException {
-        return table.connector.aoServers.get(pkey);
+        return table.connector.getAoServers().get(pkey);
     }
 
     public PhysicalServer getPhysicalServer() {
-        return table.connector.physicalServers.get(pkey);
+        return table.connector.getPhysicalServers().get(pkey);
     }
 
     public VirtualServer getVirtualServer() {
-        return table.connector.virtualServers.get(pkey);
+        return table.connector.getVirtualServers().get(pkey);
     }
 
     public List<Business> getBusinesses() throws IOException, SQLException {
-	return table.connector.businessServers.getBusinesses(this);
+	return table.connector.getBusinessServers().getBusinesses(this);
     }
 
     Object getColumnImpl(int i) {
@@ -116,7 +116,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 
     public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
         if(operating_system_version==-1) return null;
-        OperatingSystemVersion osv=table.connector.operatingSystemVersions.get(operating_system_version);
+        OperatingSystemVersion osv=table.connector.getOperatingSystemVersions().get(operating_system_version);
         if(osv==null) new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
         return osv;
     }
@@ -125,7 +125,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
      * May be filtered.
      */
     public Package getPackage() throws IOException, SQLException {
-        return table.connector.packages.get(packageId);
+        return table.connector.getPackages().get(packageId);
     }
 
     public String getName() {
@@ -137,7 +137,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     public ServerFarm getServerFarm() throws SQLException {
-	ServerFarm sf=table.connector.serverFarms.get(farm);
+	ServerFarm sf=table.connector.getServerFarms().get(farm);
 	if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
 	return sf;
     }
@@ -229,7 +229,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
      * Gets the list of all replications coming from this server.
      */
     public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
-        return table.connector.failoverFileReplications.getFailoverFileReplications(this);
+        return table.connector.getFailoverFileReplications().getFailoverFileReplications(this);
     }
 
     public NetBind getNetBind(
@@ -237,31 +237,31 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         NetPort port,
         NetProtocol netProtocol
     ) throws IOException, SQLException {
-        return table.connector.netBinds.getNetBind(this, ipAddress, port, netProtocol);
+        return table.connector.getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
     }
 
     public List<NetBind> getNetBinds() throws IOException, SQLException {
-	return table.connector.netBinds.getNetBinds(this);
+	return table.connector.getNetBinds().getNetBinds(this);
     }
 
     public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
-	return table.connector.netBinds.getNetBinds(this, ipAddress);
+	return table.connector.getNetBinds().getNetBinds(this, ipAddress);
     }
 
     public List<NetBind> getNetBinds(Protocol protocol) throws IOException, SQLException {
-	return table.connector.netBinds.getNetBinds(this, protocol);
+	return table.connector.getNetBinds().getNetBinds(this, protocol);
     }
 
     public NetDevice getNetDevice(String deviceID) throws IOException, SQLException {
-	return table.connector.netDevices.getNetDevice(this, deviceID);
+	return table.connector.getNetDevices().getNetDevice(this, deviceID);
     }
 
     public List<NetDevice> getNetDevices() throws IOException, SQLException {
-	return table.connector.netDevices.getNetDevices(this);
+	return table.connector.getNetDevices().getNetDevices(this);
     }
 
     public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-	return table.connector.ipAddresses.getIPAddresses(this);
+	return table.connector.getIpAddresses().getIPAddresses(this);
     }
 
     public IPAddress getAvailableIPAddress() throws SQLException, IOException {

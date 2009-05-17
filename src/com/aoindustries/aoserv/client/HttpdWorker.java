@@ -42,7 +42,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
     int tomcat_site;
 
     public HttpdJKCode getCode() throws SQLException {
-	HttpdJKCode obj=table.connector.httpdJKCodes.get(code);
+	HttpdJKCode obj=table.connector.getHttpdJKCodes().get(code);
 	if(obj==null) throw new SQLException("Unable to find HttpdJKCode: "+code);
 	return obj;
     }
@@ -64,18 +64,18 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
     }
 
     public HttpdSharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
-        return table.connector.httpdSharedTomcats.getHttpdSharedTomcat(this);
+        return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcat(this);
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
         if(tomcat_site==-1) return null;
-	HttpdTomcatSite obj=table.connector.httpdTomcatSites.get(tomcat_site);
+	HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(tomcat_site);
 	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+tomcat_site);
 	return obj;
     }
 
     public NetBind getNetBind() throws IOException, SQLException {
-	NetBind obj=table.connector.netBinds.get(net_bind);
+	NetBind obj=table.connector.getNetBinds().get(net_bind);
 	if(obj==null) throw new SQLException("Unable to find NetBind: "+net_bind);
 	return obj;
     }

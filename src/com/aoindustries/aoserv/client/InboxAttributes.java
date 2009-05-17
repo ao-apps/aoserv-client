@@ -45,7 +45,7 @@ final public class InboxAttributes implements Streamable {
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws IOException, SQLException {
-        return connector.linuxServerAccounts.get(linuxServerAccount);
+        return connector.getLinuxServerAccounts().get(linuxServerAccount);
     }
     
     public long getSystemTime() {

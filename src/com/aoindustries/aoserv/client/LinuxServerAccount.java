@@ -165,11 +165,11 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-        return table.connector.cvsRepositories.getCvsRepositories(this);
+        return table.connector.getCvsRepositories().getCvsRepositories(this);
     }
 
     public List<EmailAttachmentBlock> getEmailAttachmentBlocks() throws IOException, SQLException {
-        return table.connector.emailAttachmentBlocks.getEmailAttachmentBlocks(this);
+        return table.connector.getEmailAttachmentBlocks().getEmailAttachmentBlocks(this);
     }
 
     public String getAutoresponderContent() throws IOException, SQLException {
@@ -181,7 +181,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     public LinuxAccAddress getAutoresponderFrom() throws IOException, SQLException {
         if(autoresponder_from==-1) return null;
         // Might be filtered
-        return table.connector.linuxAccAddresses.get(autoresponder_from);
+        return table.connector.getLinuxAccAddresses().get(autoresponder_from);
     }
 
     public String getAutoresponderSubject() {
@@ -215,21 +215,21 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
     public List<EmailAddress> getEmailAddresses() throws SQLException, IOException {
-        return table.connector.linuxAccAddresses.getEmailAddresses(this);
+        return table.connector.getLinuxAccAddresses().getEmailAddresses(this);
     }
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return table.connector.httpdSharedTomcats.getHttpdSharedTomcats(this);
+        return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcats(this);
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return table.connector.httpdSites.getHttpdSites(this);
+        return table.connector.getHttpdSites().getHttpdSites(this);
     }
 
     public InboxAttributes getInboxAttributes() throws IOException, SQLException {
@@ -294,7 +294,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
-        return table.connector.linuxAccAddresses.getLinuxAccAddresses(this);
+        return table.connector.getLinuxAccAddresses().getLinuxAccAddresses(this);
     }
 
     public String getHome() {
@@ -302,7 +302,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public LinuxAccount getLinuxAccount() throws SQLException {
-        Username usernameObj=table.connector.usernames.get(username);
+        Username usernameObj=table.connector.getUsernames().get(username);
         if(usernameObj==null) throw new SQLException("Unable to find Username: "+username);
         LinuxAccount linuxAccountObject = usernameObj.getLinuxAccount();
         if (linuxAccountObject == null) throw new SQLException("Unable to find LinuxAccount: " + username);
@@ -338,7 +338,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
     
     public EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode() throws SQLException {
-        EmailSpamAssassinIntegrationMode esaim=table.connector.emailSpamAssassinIntegrationModes.get(sa_integration_mode);
+        EmailSpamAssassinIntegrationMode esaim=table.connector.getEmailSpamAssassinIntegrationModes().get(sa_integration_mode);
         if(esaim==null) throw new SQLException("Unable to find EmailSpamAssassinIntegrationMode: "+sa_integration_mode);
         return esaim;
     }
@@ -363,11 +363,11 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
      *                           or the primary group does not exist on the same server
      */
     public LinuxServerGroup getPrimaryLinuxServerGroup() throws SQLException, IOException {
-        return table.connector.linuxServerGroups.getPrimaryLinuxServerGroup(this);
+        return table.connector.getLinuxServerGroups().getPrimaryLinuxServerGroup(this);
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        AOServer ao=table.connector.aoServers.get(ao_server);
+        AOServer ao=table.connector.getAoServers().get(ao_server);
         if(ao==null) throw new SQLException("Unable to find AOServer: " + ao_server);
         return ao;
     }
@@ -377,7 +377,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public LinuxID getUID() throws SQLException {
-        LinuxID obj=table.connector.linuxIDs.get(uid);
+        LinuxID obj=table.connector.getLinuxIDs().get(uid);
         if(obj==null) throw new SQLException("Unable to find LinuxID: "+uid);
         return obj;
     }
@@ -439,7 +439,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-        return table.connector.emailLists.getEmailLists(this);
+        return table.connector.getEmailLists().getEmailLists(this);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -651,6 +651,6 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
-        return table.connector.linuxAccAddresses.addLinuxAccAddress(address, this);
+        return table.connector.getLinuxAccAddresses().addLinuxAccAddress(address, this);
     }
 }

@@ -5,15 +5,20 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
-import java.io.*;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.*;
-import java.util.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A <code>Business</code> is one distinct set of packages, resources, and permissions.
@@ -59,23 +64,23 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     private boolean bill_parent;
 
     public int addBusinessProfile(
-	String name,
-	boolean isPrivate,
-	String phone,
-	String fax,
-	String address1,
-	String address2,
-	String city,
-	String state,
-	String country,
-	String zip,
-	boolean sendInvoice,
-	String billingContact,
-	String billingEmail,
-	String technicalContact,
-	String technicalEmail
+        String name,
+        boolean isPrivate,
+        String phone,
+        String fax,
+        String address1,
+        String address2,
+        String city,
+        String state,
+        String country,
+        String zip,
+        boolean sendInvoice,
+        String billingContact,
+        String billingEmail,
+        String technicalContact,
+        String technicalEmail
     ) throws IOException, SQLException {
-	return table.connector.businessProfiles.addBusinessProfile(
+        return table.connector.getBusinessProfiles().addBusinessProfile(
             this,
             name,
             isPrivate,
@@ -92,13 +97,13 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             billingEmail,
             technicalContact,
             technicalEmail
-	);
+        );
     }
 
     public int addBusinessServer(
-	Server server
+        Server server
     ) throws IOException, SQLException {
-	return table.connector.businessServers.addBusinessServer(this, server);
+        return table.connector.getBusinessServers().addBusinessServer(this, server);
     }
 
     public int addCreditCard(
@@ -125,7 +130,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         byte expirationMonth,
         short expirationYear
     ) throws IOException, SQLException {
-	return table.connector.creditCards.addCreditCard(
+	return table.connector.getCreditCards().addCreditCard(
             processor,
             this,
             groupName,
@@ -204,7 +209,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         long authorizationTime,
         String authorizationPrincipalName
     ) throws IOException, SQLException {
-	return table.connector.creditCardTransactions.addCreditCardTransaction(
+	return table.connector.getCreditCardTransactions().addCreditCardTransaction(
             processor,
             this,
             groupName,
@@ -259,7 +264,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public int addDisableLog(
         String disableReason
     ) throws IOException, SQLException {
-        return table.connector.disableLogs.addDisableLog(this, disableReason);
+        return table.connector.getDisableLogs().addDisableLog(this, disableReason);
     }
 
     public void addNoticeLog(
@@ -269,7 +274,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	String type,
 	int transid
     ) throws IOException, SQLException {
-	table.connector.noticeLogs.addNoticeLog(
+	    table.connector.getNoticeLogs().addNoticeLog(
             pkey,
             billingContact,
             emailAddress,
@@ -283,7 +288,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	String name,
         PackageDefinition packageDefinition
     ) throws IOException, SQLException {
-	return table.connector.packages.addPackage(
+	return table.connector.getPackages().addPackage(
             name,
             this,
             packageDefinition
@@ -301,7 +306,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         int monthlyRate,
         TransactionType monthlyRateTransactionType
     ) throws IOException, SQLException {
-        return table.connector.packageDefinitions.addPackageDefinition(
+        return table.connector.getPackageDefinitions().addPackageDefinition(
             this,
             category,
             name,
@@ -327,7 +332,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         CreditCardProcessor processor,
 	byte payment_confirmed
     ) throws IOException, SQLException {
-	return table.connector.transactions.addTransaction(
+	return table.connector.getTransactions().addTransaction(
             this,
             sourceBusiness,
             business_administrator,
@@ -388,7 +393,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
     
     public boolean isRootBusiness() throws IOException, SQLException {
-        return pkey.equals(table.connector.businesses.getRootAccounting());
+        return pkey.equals(table.connector.getBusinesses().getRootAccounting());
     }
 
     public boolean canDisable() throws IOException, SQLException {
@@ -426,11 +431,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public int getAccountBalance() throws IOException, SQLException {
-	return table.connector.transactions.getAccountBalance(pkey);
+	return table.connector.getTransactions().getAccountBalance(pkey);
     }
 
     public int getAccountBalance(long before) throws IOException, SQLException {
-	return table.connector.transactions.getAccountBalance(pkey, before);
+	return table.connector.getTransactions().getAccountBalance(pkey, before);
     }
 
     /**
@@ -477,7 +482,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * from the top level business.
      */
     public Business getTopLevelBusiness() throws IOException, SQLException {
-        String rootAccounting=table.connector.businesses.getRootAccounting();
+        String rootAccounting=table.connector.getBusinesses().getRootAccounting();
         Business bu=this;
         Business tempParent;
         while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
@@ -500,7 +505,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * Gets the <code>BusinessProfile</code> with the highest priority.
      */
     public BusinessProfile getBusinessProfile() throws IOException, SQLException {
-	return table.connector.businessProfiles.getBusinessProfile(this);
+        return table.connector.getBusinessProfiles().getBusinessProfile(this);
     }
 
     /**
@@ -508,17 +513,17 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * sorted with the highest priority profile at the zero index.
      */
     public List<BusinessProfile> getBusinessProfiles() throws IOException, SQLException {
-	return table.connector.businessProfiles.getBusinessProfiles(this);
+        return table.connector.getBusinessProfiles().getBusinessProfiles(this);
     }
 
     public BusinessServer getBusinessServer(
-	Server server
+        Server server
     ) throws IOException, SQLException {
-	return table.connector.businessServers.getBusinessServer(this, server);
+        return table.connector.getBusinessServers().getBusinessServer(this, server);
     }
     
     public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
-        return table.connector.businessServers.getBusinessServers(this);
+        return table.connector.getBusinessServers().getBusinessServers(this);
     }
 
     public long getCanceled() {
@@ -530,7 +535,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<Business> getChildBusinesses() throws IOException, SQLException {
-	return table.connector.businesses.getChildBusinesses(this);
+	return table.connector.getBusinesses().getChildBusinesses(this);
     }
 
     Object getColumnImpl(int i) {
@@ -553,11 +558,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public int getConfirmedAccountBalance() throws IOException, SQLException {
-	return table.connector.transactions.getConfirmedAccountBalance(pkey);
+	return table.connector.getTransactions().getConfirmedAccountBalance(pkey);
     }
 
     public int getConfirmedAccountBalance(long before) throws IOException, SQLException {
-	return table.connector.transactions.getConfirmedAccountBalance(pkey, before);
+	return table.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
     }
 
     public String getContractVersion() {
@@ -569,47 +574,47 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
-	return table.connector.creditCardProcessors.getCreditCardProcessors(this);
+	return table.connector.getCreditCardProcessors().getCreditCardProcessors(this);
     }
 
     public List<CreditCard> getCreditCards() throws IOException, SQLException {
-	return table.connector.creditCards.getCreditCards(this);
+	return table.connector.getCreditCards().getCreditCards(this);
     }
 
     public Server getDefaultServer() throws IOException, SQLException {
         // May be null when the account is canceled or not using servers
-	return table.connector.businessServers.getDefaultServer(this);
+	return table.connector.getBusinessServers().getDefaultServer(this);
     }
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
     public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
-	return table.connector.emailForwardings.getEmailForwarding(this);
+	return table.connector.getEmailForwardings().getEmailForwarding(this);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-	return table.connector.emailLists.getEmailLists(this);
+	return table.connector.getEmailLists().getEmailLists(this);
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-	return table.connector.linuxServerGroups.getLinuxServerGroup(aoServer, this);
+	return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
     }
 
     public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
-	return table.connector.linuxAccounts.getMailAccounts(this);
+	return table.connector.getLinuxAccounts().getMailAccounts(this);
     }
 
     public CreditCard getMonthlyCreditCard() throws IOException, SQLException {
-	return table.connector.creditCards.getMonthlyCreditCard(this);
+	return table.connector.getCreditCards().getMonthlyCreditCard(this);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
-        return table.connector.monthlyCharges.getMonthlyCharges(this);
+        return table.connector.getMonthlyCharges().getMonthlyCharges(this);
     }
 
     /**
@@ -630,30 +635,30 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
-        return table.connector.noticeLogs.getNoticeLogs(this);
+        return table.connector.getNoticeLogs().getNoticeLogs(this);
     }
 
     public List<Package> getPackages() throws IOException, SQLException {
-	return table.connector.packages.getPackages(this);
+	return table.connector.getPackages().getPackages(this);
     }
 
     public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
-        return table.connector.packageDefinitions.getPackageDefinition(this, category, name, version);
+        return table.connector.getPackageDefinitions().getPackageDefinition(this, category, name, version);
     }
 
     public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
-        return table.connector.packageDefinitions.getPackageDefinitions(this, category);
+        return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
     }
 
     public Business getParentBusiness() {
         if(parent==null) return null;
 	// The parent business might not be found, even when the value is set.  This is normal due
 	// to filtering.
-	return table.connector.businesses.get(parent);
+	return table.connector.getBusinesses().get(parent);
     }
 
     public List<EmailDomain> getEmailDomains() throws SQLException, IOException {
-	return table.connector.emailDomains.getEmailDomains(this);
+	return table.connector.getEmailDomains().getEmailDomains(this);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -683,11 +688,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<Transaction> getTransactions() throws IOException, SQLException {
-	return table.connector.transactions.getTransactions(pkey);
+	return table.connector.getTransactions().getTransactions(pkey);
     }
 
     public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
-        return table.connector.whoisHistory.getWhoisHistory(this);
+        return table.connector.getWhoisHistory().getWhoisHistory(this);
     }
 
     /**
@@ -764,7 +769,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         List<LinuxServerGroup> fromLinuxServerGroups=new ArrayList<LinuxServerGroup>();
         List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<LinuxServerGroup>();
         {
-            for(LinuxServerGroup lsg : table.connector.linuxServerGroups.getRows()) {
+            for(LinuxServerGroup lsg : table.connector.getLinuxServerGroups().getRows()) {
                 Package pk=lsg.getLinuxGroup().getPackage();
                 if(pk!=null && pk.getBusiness().equals(this)) {
                     AOServer ao=lsg.getAOServer();
@@ -797,7 +802,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         List<LinuxServerAccount> fromLinuxServerAccounts=new ArrayList<LinuxServerAccount>();
         List<LinuxServerAccount> toLinuxServerAccounts=new SortedArrayList<LinuxServerAccount>();
         {
-            List<LinuxServerAccount> lsas=table.connector.linuxServerAccounts.getRows();
+            List<LinuxServerAccount> lsas=table.connector.getLinuxServerAccounts().getRows();
             for(int c=0;c<lsas.size();c++) {
                 LinuxServerAccount lsa=lsas.get(c);
                 Package pk=lsa.getLinuxAccount().getUsername().getPackage();
@@ -917,7 +922,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             out.attributesOff();
             out.flush();
         }
-        List<IPAddress> ips=table.connector.ipAddresses.getRows();
+        List<IPAddress> ips=table.connector.getIpAddresses().getRows();
         for(int c=0;c<ips.size();c++) {
             IPAddress ip=ips.get(c);
             if(
@@ -987,16 +992,16 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
      public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	contractVersion = result.getString(2);
-	created = result.getTimestamp(3).getTime();
-	Timestamp T = result.getTimestamp(4);
-	if (result.wasNull()) canceled = -1;
-	else canceled = T.getTime();
-	cancelReason = result.getString(5);
-	parent = result.getString(6);
+        pkey = result.getString(1);
+        contractVersion = result.getString(2);
+        created = result.getTimestamp(3).getTime();
+        Timestamp T = result.getTimestamp(4);
+        if (result.wasNull()) canceled = -1;
+        else canceled = T.getTime();
+        cancelReason = result.getString(5);
+        parent = result.getString(6);
         can_add_backup_server=result.getBoolean(7);
-	can_add_businesses=result.getBoolean(8);
+        can_add_businesses=result.getBoolean(8);
         can_see_prices=result.getBoolean(9);
         disable_log=result.getInt(10);
         if(result.wasNull()) disable_log=-1;
@@ -1005,15 +1010,15 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         bill_parent=result.getBoolean(13);
     }
 
-     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	contractVersion=StringUtility.intern(in.readNullUTF());
-	created=in.readLong();
-	canceled=in.readLong();
-	cancelReason=in.readNullUTF();
-	parent=StringUtility.intern(in.readNullUTF());
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        contractVersion=StringUtility.intern(in.readNullUTF());
+        created=in.readLong();
+        canceled=in.readLong();
+        cancelReason=in.readNullUTF();
+        parent=StringUtility.intern(in.readNullUTF());
         can_add_backup_server=in.readBoolean();
-	can_add_businesses=in.readBoolean();
+        can_add_businesses=in.readBoolean();
         can_see_prices=in.readBoolean();
         disable_log=in.readCompressedInt();
         do_not_disable_reason=in.readNullUTF();
@@ -1028,13 +1033,13 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
-	out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
-	out.writeLong(created);
-	out.writeLong(canceled);
-	out.writeNullUTF(cancelReason);
+        out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
+        out.writeLong(created);
+        out.writeLong(canceled);
+        out.writeNullUTF(cancelReason);
         out.writeNullUTF(parent);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
-	out.writeBoolean(can_add_businesses);
+        out.writeBoolean(can_add_businesses);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) out.writeBoolean(can_see_prices);
         out.writeCompressedInt(disable_log);
@@ -1044,14 +1049,14 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<Ticket> getTickets() throws SQLException, IOException {
-	return table.connector.tickets.getTickets(this);
+	return table.connector.getTickets().getTickets(this);
     }
     
     /**
      * Gets all of the encryption keys for this business.
      */
     public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
-        return table.connector.encryptionKeys.getEncryptionKeys(this);
+        return table.connector.getEncryptionKeys().getEncryptionKeys(this);
     }
     
     /**
@@ -1070,6 +1075,13 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * Gets the most recent credit card transaction.
      */
     public CreditCardTransaction getLastCreditCardTransaction() throws IOException, SQLException {
-        return table.connector.creditCardTransactions.getLastCreditCardTransaction(this);
+        return table.connector.getCreditCardTransactions().getLastCreditCardTransaction(this);
+    }
+
+    /**
+     * Gets the Brand for this business or <code>null</code> if not a brand.
+     */
+    public Brand getBrand() throws IOException, SQLException {
+        return table.connector.getBrands().getBrand(this);
     }
 }

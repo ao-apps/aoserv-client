@@ -43,13 +43,13 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
     }
 
     public MasterUser getMasterUser() throws SQLException {
-	MasterUser obj=table.connector.masterUsers.get(username);
+	MasterUser obj=table.connector.getMasterUsers().get(username);
 	if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
 	return obj;
     }
 
     public Server getServer() throws SQLException, IOException {
-	Server obj=table.connector.servers.get(server);
+	Server obj=table.connector.getServers().get(server);
 	if(obj==null) throw new SQLException("Unable to find Server: "+server);
 	return obj;
     }

@@ -109,15 +109,15 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
     }
 
     public List<SchemaForeignKey> getReferencedBy(AOServConnector connector) throws IOException, SQLException {
-        return connector.schemaForeignKeys.getSchemaForeignKeysReferencing(this);
+        return connector.getSchemaForeignKeys().getSchemaForeignKeysReferencing(this);
     }
 
     public List<SchemaForeignKey> getReferences(AOServConnector connector) throws IOException, SQLException {
-        return connector.schemaForeignKeys.getSchemaForeignKeysReferencedBy(this);
+        return connector.getSchemaForeignKeys().getSchemaForeignKeysReferencedBy(this);
     }
 
     public SchemaTable getSchemaTable(AOServConnector connector) throws SQLException, IOException {
-        SchemaTable obj=connector.schemaTables.get(table_name);
+        SchemaTable obj=connector.getSchemaTables().get(table_name);
         if(obj==null) throw new SQLException("Unable to find SchemaTable: "+table_name);
         return obj;
     }
@@ -127,7 +127,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
     }
 
     public SchemaType getSchemaType(AOServConnector connector) throws SQLException, IOException {
-        SchemaType obj=connector.schemaTypes.get(type);
+        SchemaType obj=connector.getSchemaTypes().get(type);
         if(obj==null) throw new SQLException("Unable to find SchemaType: "+type);
         return obj;
     }

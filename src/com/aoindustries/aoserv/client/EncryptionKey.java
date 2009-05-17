@@ -156,13 +156,11 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 
     String accounting;
     private String id;
-    private boolean signup_from;
-    private boolean signup_recipient;
 
     public Business getBusiness() throws SQLException {
-	Business accountingObject = table.connector.businesses.get(accounting);
-	if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
-	return accountingObject;
+        Business accountingObject = table.connector.getBusinesses().get(accounting);
+        if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
+        return accountingObject;
     }
 
     Object getColumnImpl(int i) {
@@ -170,8 +168,6 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_ACCOUNTING: return accounting;
             case 2: return id;
-            case 3: return signup_from;
-            case 4: return signup_recipient;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -183,51 +179,30 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         return id;
     }
 
-    /**
-     * Indicates this key may be used as the from (signer) for signup request encryption.
-     */
-    public boolean getSignupFrom() {
-        return signup_from;
-    }
-    
-    /**
-     * Indicates this key may be used as the recipient for signup request encryption.
-     */
-    public boolean getSignupRecipient() {
-        return signup_recipient;
-    }
-
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.ENCRYPTION_KEYS;
+        return SchemaTable.TableID.ENCRYPTION_KEYS;
     }
 
     public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
-	accounting = result.getString(2);
+    	accounting = result.getString(2);
         id = result.getString(3);
-        signup_from = result.getBoolean(4);
-        signup_recipient = result.getBoolean(5);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	accounting=in.readUTF().intern();
+    	accounting=in.readUTF().intern();
         id = in.readUTF();
-        signup_from=in.readBoolean();
-        signup_recipient=in.readBoolean();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-	out.writeUTF(accounting);
+    	out.writeUTF(accounting);
         out.writeUTF(id);
-        out.writeBoolean(signup_from); // Used to be signup_signer
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_25)>=0) out.writeBoolean(signup_recipient);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_from / signup_signer
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_25)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_recipient
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_signer
-        if(
-            version.compareTo(AOServProtocol.Version.VERSION_1_25)>=0
-            && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
-        ) out.writeBoolean(false); // credit_card_recipient
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_25)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_recipient
     }
     
     /**

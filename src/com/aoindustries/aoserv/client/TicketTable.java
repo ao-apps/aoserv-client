@@ -5,24 +5,25 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  Ticket
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class TicketTable extends AOServTable<Integer,Ticket> {
+final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 
     TicketTable(AOServConnector connector) {
-	super(connector, Ticket.class);
+        super(connector, Ticket.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -34,14 +35,14 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
     }
 
     int addTicket(
-	Business business,
-	BusinessAdministrator businessAdministratorObj,
-	String ticket_type,
-	String details,
-	long deadline,
-	String client_priority,
-	String admin_priority,
-	String technology,
+        Business business,
+        BusinessAdministrator businessAdministratorObj,
+        String ticket_type,
+        String details,
+        long deadline,
+        String client_priority,
+        String admin_priority,
+        String technology,
         BusinessAdministrator assigned_to,
         String contact_emails,
         String contact_phone_numbers
@@ -85,35 +86,13 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
         return pkey;
     }
 
-    @Override
-    public int getCachedRowCount() throws IOException, SQLException {
-        return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.TICKETS);
-    }
-
-    @Override
-    public int size() {
-        try {
-            return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.TICKETS);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    public List<Ticket> getRows() throws IOException, SQLException {
-        List<Ticket> list=new ArrayList<Ticket>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TICKETS);
-        return list;
-    }
-
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TICKETS;
+        return SchemaTable.TableID.TICKETS;
     }
 
     public Ticket get(Object pkey) {
         try {
-            return get(((Integer)pkey).intValue());
+            return getUniqueRow(Ticket.COLUMN_PKEY, pkey);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -122,36 +101,21 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
     }
 
     public Ticket get(int pkey) throws IOException, SQLException {
-        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TICKETS, pkey);
-    }
-
-    List<Ticket> getTickets(BusinessAdministrator business_administrator) throws IOException, SQLException {
-	boolean isAdmin = business_administrator.isActiveTicketAdmin();
-	if(isAdmin) return getRows();
-	return getObjects(AOServProtocol.CommandID.GET_TICKETS_BUSINESS_ADMINISTRATOR, business_administrator.pkey);
+        return getUniqueRow(Ticket.COLUMN_PKEY, pkey);
     }
 
     List<Ticket> getTickets(Business business) throws IOException, SQLException {
-	return getObjects(AOServProtocol.CommandID.GET_TICKETS_BUSINESS, business.pkey);
+        return getIndexedRows(Ticket.COLUMN_ACCOUNTING, business.pkey);
     }
 
     List<Ticket> getCreatedTickets(BusinessAdministrator ba) throws IOException, SQLException {
-	return getObjects(AOServProtocol.CommandID.GET_TICKETS_CREATED_BUSINESS_ADMINISTRATOR, ba.pkey);
-    }
-
-    List<Ticket> getClosedTickets(BusinessAdministrator ba) throws IOException, SQLException {
-	return getObjects(AOServProtocol.CommandID.GET_TICKETS_CLOSED_BUSINESS_ADMINISTRATOR, ba.pkey);
-    }
-
-    protected Ticket getUniqueRowImpl(int col, Object value) {
-        if(col!=Ticket.COLUMN_PKEY) throw new IllegalArgumentException("Not a unique column: "+col);
-        return get(value);
+        return getIndexedRows(Ticket.COLUMN_CREATED_BY, ba.pkey);
     }
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-	String command=args[0];
-	if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET)) {
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_TICKET, args, 11, err)) {
                 int pkey=connector.simpleAOClient.addTicket(
                     args[1],
@@ -170,7 +134,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET_WORK)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET_WORK)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_TICKET_WORK, args, 3, err)) {
                 connector.simpleAOClient.addTicketWork(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -179,7 +143,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.BOUNCE_TICKET)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.BOUNCE_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.BOUNCE_TICKET, args, 3, err)) {
                 connector.simpleAOClient.bounceTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -188,7 +152,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_ADMIN_PRIORITY)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_ADMIN_PRIORITY)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_ADMIN_PRIORITY, args, 4, err)) {
                 connector.simpleAOClient.changeTicketAdminPriority(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -198,7 +162,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_CLIENT_PRIORITY)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_CLIENT_PRIORITY)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_CLIENT_PRIORITY, args, 4, err)) {
                 connector.simpleAOClient.changeTicketClientPriority(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -208,7 +172,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_DEADLINE)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_DEADLINE)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_DEADLINE, args, 4, err)) {
                 connector.simpleAOClient.changeTicketDeadline(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -218,7 +182,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_TECHNOLOGY)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_TECHNOLOGY)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_TECHNOLOGY, args, 4, err)) {
                 connector.simpleAOClient.changeTicketTechnology(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -228,7 +192,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_TYPE)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_TYPE)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_TYPE, args, 4, err)) {
                 connector.simpleAOClient.changeTicketType(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -238,7 +202,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.COMPLETE_TICKET)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.COMPLETE_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.COMPLETE_TICKET, args, 3, err)) {
                 connector.simpleAOClient.completeTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -247,7 +211,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.HOLD_TICKET)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.HOLD_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.HOLD_TICKET, args, 2, err)) {
                 connector.simpleAOClient.holdTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -255,7 +219,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.KILL_TICKET)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.KILL_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.KILL_TICKET, args, 3, err)) {
                 connector.simpleAOClient.killTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -264,7 +228,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.REACTIVATE_TICKET)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.REACTIVATE_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.REACTIVATE_TICKET, args, 3, err)) {
                 connector.simpleAOClient.reactivateTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
@@ -273,7 +237,7 @@ final public class TicketTable extends AOServTable<Integer,Ticket> {
                 );
             }
             return true;
-	}
-	return false;
+        }
+        return false;
     }
 }

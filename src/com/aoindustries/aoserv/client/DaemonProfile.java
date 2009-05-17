@@ -121,7 +121,7 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        AOServer ao=table.connector.aoServers.get(ao_server);
+        AOServer ao=table.connector.getAoServers().get(ao_server);
         if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return ao;
     }

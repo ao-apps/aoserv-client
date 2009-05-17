@@ -21,7 +21,7 @@ import java.util.List;
 final public class TicketTypeTable extends GlobalTableStringKey<TicketType> {
 
     TicketTypeTable(AOServConnector connector) {
-	super(connector, TicketType.class);
+        super(connector, TicketType.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -40,6 +40,10 @@ final public class TicketTypeTable extends GlobalTableStringKey<TicketType> {
         } catch(SQLException err) {
             throw new WrappedException(err);
         }
+    }
+
+    public TicketType get(String type) throws IOException, SQLException {
+        return getUniqueRow(TicketType.COLUMN_TYPE, type);
     }
 
     public List<TicketType> getClientViewableTicketTypes() throws IOException, SQLException {

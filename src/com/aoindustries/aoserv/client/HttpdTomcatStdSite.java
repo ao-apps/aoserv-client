@@ -41,7 +41,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-	HttpdTomcatSite obj=table.connector.httpdTomcatSites.get(pkey);
+	HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(pkey);
 	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
 	return obj;
     }
@@ -52,7 +52,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 
     public NetBind getTomcat4ShutdownPort() throws IOException, SQLException {
         if(tomcat4_shutdown_port==-1) return null;
-        NetBind nb=table.connector.netBinds.get(tomcat4_shutdown_port);
+        NetBind nb=table.connector.getNetBinds().get(tomcat4_shutdown_port);
         if(nb==null) throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
         return nb;
     }

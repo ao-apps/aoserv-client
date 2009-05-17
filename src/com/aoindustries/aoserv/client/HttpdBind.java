@@ -41,13 +41,13 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     }
 
     public HttpdServer getHttpdServer() throws SQLException, IOException {
-	HttpdServer obj=table.connector.httpdServers.get(httpd_server);
+	HttpdServer obj=table.connector.getHttpdServers().get(httpd_server);
 	if(obj==null) throw new SQLException("Unable to find HttpdServer: "+httpd_server);
 	return obj;
     }
 
     public NetBind getNetBind() throws SQLException, IOException {
-	NetBind obj=table.connector.netBinds.get(pkey);
+	NetBind obj=table.connector.getNetBinds().get(pkey);
 	if(obj==null) throw new SQLException("Unable to find NetBind: "+pkey);
 	return obj;
     }

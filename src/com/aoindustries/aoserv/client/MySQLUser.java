@@ -76,7 +76,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     int disable_log;
 
     public int addMySQLServerUser(MySQLServer mysqlServer, String host) throws IOException, SQLException {
-	return table.connector.mysqlServerUsers.addMySQLServerUser(pkey, mysqlServer, host);
+	return table.connector.getMysqlServerUsers().addMySQLServerUser(pkey, mysqlServer, host);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
@@ -259,17 +259,17 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
     public MySQLServerUser getMySQLServerUser(MySQLServer mysqlServer) throws IOException, SQLException {
-        return table.connector.mysqlServerUsers.getMySQLServerUser(pkey, mysqlServer);
+        return table.connector.getMysqlServerUsers().getMySQLServerUser(pkey, mysqlServer);
     }
 
     public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
-        return table.connector.mysqlServerUsers.getMySQLServerUsers(this);
+        return table.connector.getMysqlServerUsers().getMySQLServerUsers(this);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -277,7 +277,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     }
 
     public Username getUsername() throws SQLException {
-        Username obj=table.connector.usernames.get(pkey);
+        Username obj=table.connector.getUsernames().get(pkey);
         if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
         return obj;
     }

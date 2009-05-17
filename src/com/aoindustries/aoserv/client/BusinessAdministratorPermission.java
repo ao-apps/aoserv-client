@@ -40,13 +40,13 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
     }
 
     public BusinessAdministrator getBusinessAdministrator() throws SQLException {
-        BusinessAdministrator ba = table.connector.businessAdministrators.get(username);
+        BusinessAdministrator ba = table.connector.getBusinessAdministrators().get(username);
         if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+username);
         return ba;
     }
     
     public AOServPermission getAOServPermission() throws SQLException {
-        AOServPermission ap = table.connector.aoservPermissions.get(permission);
+        AOServPermission ap = table.connector.getAoservPermissions().get(permission);
         if(ap==null) throw new SQLException("Unable to find AOServPermission: "+permission);
         return ap;
     }

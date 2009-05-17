@@ -147,7 +147,7 @@ final public class AOSH extends ShellInterpreter {
                     boolean done=false;
                     // Use the aosh_commands table for faster lookups
                     String lowerCommand=command.toLowerCase();
-                    AOSHCommand aoshCommand=connector.aoshCommands.get(lowerCommand);
+                    AOSHCommand aoshCommand=connector.getAoshCommands().get(lowerCommand);
                     if(aoshCommand!=null) {
                         AOServTable table=aoshCommand.getSchemaTable(connector).getAOServTable(connector);
                         done=table.handleCommand(args, in, out, err, isInteractive());
@@ -174,7 +174,7 @@ final public class AOSH extends ShellInterpreter {
     private void invalidate(String[] args) throws IllegalArgumentException, SQLException, IOException {
         if(checkRangeParamCount(AOSHCommand.INVALIDATE, args, 1, 2, err)) {
             String tableName=args[1];
-            SchemaTableTable schemaTableTable=connector.schemaTables;
+            SchemaTableTable schemaTableTable=connector.getSchemaTables();
             // Find the table ID
             int tableID=-1;
             for(int d=0;d<numTables;d++) {

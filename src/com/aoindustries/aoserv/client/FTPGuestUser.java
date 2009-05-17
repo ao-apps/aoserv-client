@@ -34,7 +34,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
     }
 
     public LinuxAccount getLinuxAccount() throws SQLException {
-	LinuxAccount obj = table.connector.linuxAccounts.get(pkey);
+	LinuxAccount obj = table.connector.getLinuxAccounts().get(pkey);
 	if (obj == null) throw new SQLException("Unable to find LinuxAccount: " + pkey);
 	return obj;
     }

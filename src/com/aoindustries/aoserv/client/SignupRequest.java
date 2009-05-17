@@ -26,12 +26,12 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=1
+        COLUMN_BRAND=1
     ;
-    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_BRAND_name = "brand";
     static final String COLUMN_TIME_name = "time";
 
-    String accounting;
+    String brand;
     private long time;
     private String ip_address;
     private int package_definition;
@@ -83,7 +83,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_ACCOUNTING: return accounting;
+            case COLUMN_BRAND: return brand;
             case 2: return new Date(time);
             case 3: return ip_address;
             case 4: return package_definition;
@@ -130,7 +130,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey = result.getInt(pos++);
-	accounting = result.getString(pos++);
+        brand = result.getString(pos++);
         time = result.getTimestamp(pos++).getTime();
         ip_address=result.getString(pos++);
         package_definition=result.getInt(pos++);
@@ -171,7 +171,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	accounting=in.readUTF().intern();
+        brand=in.readUTF().intern();
         time=in.readLong();
         ip_address=in.readUTF();
         package_definition=in.readCompressedInt();
@@ -211,7 +211,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-	out.writeUTF(accounting);
+        out.writeUTF(brand);
         out.writeLong(time);
         out.writeUTF(ip_address);
         out.writeCompressedInt(package_definition);
@@ -249,10 +249,10 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         out.writeLong(completed_time);
     }
 
-    public Business getBusiness() throws SQLException {
-	Business accountingObject = table.connector.businesses.get(accounting);
-	if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
-	return accountingObject;
+    public Brand getBrand() throws SQLException {
+        Brand br = table.connector.getBrands().get(brand);
+        if(br == null) throw new SQLException("Unable to find Brand: " + brand);
+        return br;
     }
 
     public long getTime() {
@@ -264,7 +264,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     }
 
     public PackageDefinition getPackageDefinition() throws SQLException, IOException {
-        PackageDefinition pd = table.connector.packageDefinitions.get(package_definition);
+        PackageDefinition pd = table.connector.getPackageDefinitions().get(package_definition);
         if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
         return pd;
     }
@@ -378,13 +378,13 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     }
 
     public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
-        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_from);
+        EncryptionKey ek = table.connector.getEncryptionKeys().get(encryption_from);
         if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_from);
         return ek;
     }
 
     public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
-        EncryptionKey er = table.connector.encryptionKeys.get(encryption_recipient);
+        EncryptionKey er = table.connector.getEncryptionKeys().get(encryption_recipient);
         if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_recipient);
         return er;
     }
@@ -392,7 +392,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     public BusinessAdministrator getCompletedBy() {
         if(completed_by==null) return null;
         // May be filtered, null is OK
-        return table.connector.businessAdministrators.get(completed_by);
+        return table.connector.getBusinessAdministrators().get(completed_by);
     }
 
     public long getCompletedTime() {

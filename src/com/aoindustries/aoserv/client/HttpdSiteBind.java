@@ -40,7 +40,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     private boolean redirect_to_primary_hostname;
 
     public int addHttpdSiteURL(String hostname) throws IOException, SQLException {
-        return table.connector.httpdSiteURLs.addHttpdSiteURL(this, hostname);
+        return table.connector.getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
     }
 
     public boolean canDisable() {
@@ -66,7 +66,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public List<HttpdSiteURL> getAltHttpdSiteURLs() throws IOException, SQLException {
-	return table.connector.httpdSiteURLs.getAltHttpdSiteURLs(this);
+	return table.connector.getHttpdSiteURLs().getAltHttpdSiteURLs(this);
     }
 
     Object getColumnImpl(int i) {
@@ -88,7 +88,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
@@ -98,19 +98,19 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public HttpdBind getHttpdBind() throws SQLException, IOException {
-	HttpdBind obj=table.connector.httpdBinds.get(httpd_bind);
+	HttpdBind obj=table.connector.getHttpdBinds().get(httpd_bind);
 	if(obj==null) throw new SQLException("Unable to find HttpdBind: "+httpd_bind+" for HttpdSite="+httpd_site);
 	return obj;
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
-	HttpdSite obj=table.connector.httpdSites.get(httpd_site);
+	HttpdSite obj=table.connector.getHttpdSites().get(httpd_site);
 	if(obj==null) throw new SQLException("Unable to find HttpdSite: "+httpd_site);
 	return obj;
     }
 
     public List<HttpdSiteURL> getHttpdSiteURLs() throws IOException, SQLException {
-	return table.connector.httpdSiteURLs.getHttpdSiteURLs(this);
+	return table.connector.getHttpdSiteURLs().getHttpdSiteURLs(this);
     }
 
     public String getPredisableConfig() {
@@ -118,7 +118,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public HttpdSiteURL getPrimaryHttpdSiteURL() throws SQLException, IOException {
-	return table.connector.httpdSiteURLs.getPrimaryHttpdSiteURL(this);
+	return table.connector.getHttpdSiteURLs().getPrimaryHttpdSiteURL(this);
     }
 
     public String getSSLCertFile() {

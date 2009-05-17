@@ -58,7 +58,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	String country,
 	String zip
     ) throws IOException, SQLException {
-	table.connector.businessAdministrators.addBusinessAdministrator(
+	    table.connector.getBusinessAdministrators().addBusinessAdministrator(
             this,
             name,
             title,
@@ -99,7 +99,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	String type,
 	String shell
     ) throws IOException, SQLException {
-	table.connector.linuxAccounts.addLinuxAccount(
+	    table.connector.getLinuxAccounts().addLinuxAccount(
             this,
             primaryGroup,
             name,
@@ -112,11 +112,11 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public void addMySQLUser() throws IOException, SQLException {
-        table.connector.mysqlUsers.addMySQLUser(pkey);
+        table.connector.getMysqlUsers().addMySQLUser(pkey);
     }
 
     public void addPostgresUser() throws IOException, SQLException {
-        table.connector.postgresUsers.addPostgresUser(pkey);
+        table.connector.getPostgresUsers().addPostgresUser(pkey);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
@@ -190,7 +190,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public BusinessAdministrator getBusinessAdministrator() {
-	return table.connector.businessAdministrators.get(pkey);
+	return table.connector.getBusinessAdministrators().get(pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -204,27 +204,27 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
     public LinuxAccount getLinuxAccount() {
-	return table.connector.linuxAccounts.get(pkey);
+	return table.connector.getLinuxAccounts().get(pkey);
     }
 
     public MySQLUser getMySQLUser() {
-	return table.connector.mysqlUsers.get(pkey);
+	return table.connector.getMysqlUsers().get(pkey);
     }
 
     public Package getPackage() throws SQLException, IOException {
-	Package packageObject=table.connector.packages.get(packageName);
+	Package packageObject=table.connector.getPackages().get(packageName);
 	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 	return packageObject;
     }
 
     public PostgresUser getPostgresUser() {
-	return table.connector.postgresUsers.get(pkey);
+	return table.connector.getPostgresUsers().get(pkey);
 
     }
 

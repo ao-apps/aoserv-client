@@ -38,7 +38,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     int disable_log;
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
-	return table.connector.emailPipeAddresses.addEmailPipeAddress(address, this);
+	return table.connector.getEmailPipeAddresses().addEmailPipeAddress(address, this);
     }
 
     public boolean canDisable() {
@@ -72,13 +72,13 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
     public Package getPackage() throws IOException, SQLException {
-	Package packageObject = table.connector.packages.get(packageName);
+	Package packageObject = table.connector.getPackages().get(packageName);
 	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 	return packageObject;
     }
@@ -88,7 +88,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        AOServer ao=table.connector.aoServers.get(ao_server);
+        AOServer ao=table.connector.getAoServers().get(ao_server);
         if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return ao;
     }

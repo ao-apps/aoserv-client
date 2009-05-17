@@ -27,13 +27,13 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
     private int depositDelay, withdrawalDelay;
 
     public Bank getBank(long maximumCacheAge) throws SQLException {
-        Bank bankObject = table.connector.banks.get(bank);
+        Bank bankObject = table.connector.getBanks().get(bank);
         if (bankObject == null) throw new SQLException("Bank not found: " + bank);
         return bankObject;
     }
 
     public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
-	return table.connector.bankTransactions.getBankTransactions(this);
+	return table.connector.getBankTransactions().getBankTransactions(this);
     }
 
     Object getColumnImpl(int i) {

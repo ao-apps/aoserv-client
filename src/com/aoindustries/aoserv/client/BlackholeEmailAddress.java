@@ -34,7 +34,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
     }
 
     public EmailAddress getEmailAddress() throws SQLException, IOException {
-        EmailAddress emailAddressObject = table.connector.emailAddresses.get(pkey);
+        EmailAddress emailAddressObject = table.connector.getEmailAddresses().get(pkey);
         if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + pkey);
         return emailAddressObject;
     }

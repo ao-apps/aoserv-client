@@ -140,19 +140,19 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     }
 
     public List<NetBind> getNetBinds() throws IOException, SQLException {
-	return table.connector.netBinds.getNetBinds(this);
+	return table.connector.getNetBinds().getNetBinds(this);
     }
 
     public NetDevice getNetDevice() throws SQLException, IOException {
         if(net_device==-1) return null;
-	NetDevice nd = table.connector.netDevices.get(net_device);
+	NetDevice nd = table.connector.getNetDevices().get(net_device);
 	if (nd == null) throw new SQLException("Unable to find NetDevice: " + net_device);
 	return nd;
     }
 
     public Package getPackage() throws IOException, SQLException {
         // May be null when filtered
-        return table.connector.packages.get(packageName);
+        return table.connector.getPackages().get(packageName);
     }
 
     public boolean isOverflow() {

@@ -45,7 +45,7 @@ final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVe
     }
 
     public HttpdTomcatVersion getHttpdTomcatVersion(AOServConnector connector) throws SQLException, IOException {
-	HttpdTomcatVersion obj=connector.httpdTomcatVersions.get(tomcatVersion);
+	HttpdTomcatVersion obj=connector.getHttpdTomcatVersions().get(tomcatVersion);
 	if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
 	return obj;
     }
@@ -55,7 +55,7 @@ final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVe
     }
 
     public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-	TechnologyVersion obj=connector.technologyVersions.get(pkey);
+	TechnologyVersion obj=connector.getTechnologyVersions().get(pkey);
 	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
 	return obj;
     }

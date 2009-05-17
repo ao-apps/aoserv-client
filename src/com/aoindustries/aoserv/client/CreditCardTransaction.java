@@ -117,7 +117,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
      * Gets the credit card processor used for this transaction.
      */
     public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
-        CreditCardProcessor ccp = table.connector.creditCardProcessors.get(processorId);
+        CreditCardProcessor ccp = table.connector.getCreditCardProcessors().get(processorId);
         if(ccp==null) throw new SQLException("Unable to find CreditCardProcessor: "+processorId);
         return ccp;
     }
@@ -128,7 +128,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
      * as the owner of the credit card processor.
      */
     public Business getBusiness() throws SQLException {
-        Business business = table.connector.businesses.get(accounting);
+        Business business = table.connector.getBusinesses().get(accounting);
         if(business==null) throw new SQLException("Unable to find Business: "+accounting);
         return business;
     }
@@ -245,7 +245,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
      */
     public CountryCode getShippingCountryCode() throws SQLException {
         if(shippingCountryCode==null) return null;
-        CountryCode cc = table.connector.countryCodes.get(shippingCountryCode);
+        CountryCode cc = table.connector.getCountryCodes().get(shippingCountryCode);
         if(cc==null) throw new SQLException("Unable to find CountryCode: "+shippingCountryCode);
         return cc;
     }
@@ -267,7 +267,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     }
 
     public BusinessAdministrator getCreditCardCreatedBy() throws SQLException {
-        BusinessAdministrator business_administrator = table.connector.businessAdministrators.get(creditCardCreatedBy);
+        BusinessAdministrator business_administrator = table.connector.getBusinessAdministrators().get(creditCardCreatedBy);
         if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + creditCardCreatedBy);
         return business_administrator;
     }
@@ -280,7 +280,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     }
 
     public Business getCreditCardBusiness() throws SQLException {
-        Business business = table.connector.businesses.get(creditCardAccounting);
+        Business business = table.connector.getBusinesses().get(creditCardAccounting);
         if (business == null) throw new SQLException("Unable to find Business: " + creditCardAccounting);
         return business;
     }
@@ -351,7 +351,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
      * See <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2</a>
      */
     public CountryCode getCreditCardCountryCode() throws SQLException {
-        CountryCode cc = table.connector.countryCodes.get(creditCardCountryCode);
+        CountryCode cc = table.connector.getCountryCodes().get(creditCardCountryCode);
         if(cc==null) throw new SQLException("Unable to find CountryCode: "+creditCardCountryCode);
         return cc;
     }
@@ -373,7 +373,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
      */
     public BusinessAdministrator getAuthorizationAdministrator() throws SQLException {
         if(authorizationUsername==null) return null;
-        BusinessAdministrator business_administrator = table.connector.businessAdministrators.get(authorizationUsername);
+        BusinessAdministrator business_administrator = table.connector.getBusinessAdministrators().get(authorizationUsername);
         if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + authorizationUsername);
         return business_administrator;
     }
@@ -463,7 +463,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
      */
     public BusinessAdministrator getCaptureAdministrator() throws SQLException {
         if(captureUsername==null) return null;
-        BusinessAdministrator business_administrator = table.connector.businessAdministrators.get(captureUsername);
+        BusinessAdministrator business_administrator = table.connector.getBusinessAdministrators().get(captureUsername);
         if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + captureUsername);
         return business_administrator;
     }
@@ -509,7 +509,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
      */
     public BusinessAdministrator getVoidAdministrator() throws SQLException {
         if(voidUsername==null) return null;
-        BusinessAdministrator business_administrator = table.connector.businessAdministrators.get(voidUsername);
+        BusinessAdministrator business_administrator = table.connector.getBusinessAdministrators().get(voidUsername);
         if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + voidUsername);
         return business_administrator;
     }

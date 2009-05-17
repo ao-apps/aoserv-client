@@ -39,7 +39,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     long created;
 
     public List<LinuxServerAccount> getAlternateLinuxServerAccounts() throws SQLException, IOException {
-        return table.connector.linuxServerAccounts.getAlternateLinuxServerAccounts(this);
+        return table.connector.getLinuxServerAccounts().getAlternateLinuxServerAccounts(this);
     }
 
     Object getColumnImpl(int i) {
@@ -54,7 +54,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     }
 
     public LinuxID getGID() throws SQLException {
-        LinuxID obj=table.connector.linuxIDs.get(gid);
+        LinuxID obj=table.connector.getLinuxIDs().get(gid);
         if(obj==null) throw new SQLException("Unable to find LinuxID: "+gid);
         return obj;
     }
@@ -64,13 +64,13 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     }
 
     public LinuxGroup getLinuxGroup() throws SQLException {
-        LinuxGroup group = table.connector.linuxGroups.get(name);
+        LinuxGroup group = table.connector.getLinuxGroups().get(name);
         if (group == null) throw new SQLException("Unable to find LinuxGroup: " + name);
         return group;
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        AOServer ao=table.connector.aoServers.get(ao_server);
+        AOServer ao=table.connector.getAoServers().get(ao_server);
         if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return ao;
     }
@@ -104,7 +104,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
             if(cr.linux_server_group==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
         }
 
-        for(EmailList el : table.connector.emailLists.getRows()) {
+        for(EmailList el : table.connector.getEmailLists().getRows()) {
             if(el.linux_server_group==pkey) reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
         }
 

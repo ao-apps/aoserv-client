@@ -108,7 +108,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
      */
     public Server get(String server) throws SQLException, IOException {
         // Is it the exact hostname of an ao_server?
-        AOServer aoServer = connector.aoServers.get(server);
+        AOServer aoServer = connector.getAoServers().get(server);
         if(aoServer!=null) return aoServer.getServer();
 
         // Is if a package/name combo?
@@ -116,7 +116,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         if(slashPos!=-1) {
             String packageName = server.substring(0, slashPos);
             String name = server.substring(slashPos+1);
-            Package pk = connector.packages.get(packageName);
+            Package pk = connector.getPackages().get(packageName);
             if(pk==null) return null;
             return pk.getServer(name);
         }
@@ -124,7 +124,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         // Is it an exact server pkey
         try {
             int pkey = Integer.parseInt(server);
-            return connector.servers.get(pkey);
+            return connector.getServers().get(pkey);
         } catch(NumberFormatException err) {
             return null;
         }

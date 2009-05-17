@@ -30,7 +30,6 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     private boolean enabled;
     private boolean quota_enabled;
 
-    @Override
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
@@ -51,7 +50,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        AOServer ao=table.connector.aoServers.get(ao_server);
+        AOServer ao=table.connector.getAoServers().get(ao_server);
         if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return ao;
     }
@@ -62,7 +61,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     
     @Override
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BACKUP_PARTITIONS;
+        return SchemaTable.TableID.BACKUP_PARTITIONS;
     }
 
     @Override

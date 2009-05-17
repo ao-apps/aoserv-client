@@ -87,7 +87,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
     }
 
     public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
-        OperatingSystemVersion osv=table.connector.operatingSystemVersions.get(operating_system_version);
+        OperatingSystemVersion osv=table.connector.getOperatingSystemVersions().get(operating_system_version);
         if(osv==null) throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
         return osv;
     }
@@ -101,7 +101,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
     }
     
     public DistroFileType getType() throws SQLException {
-        DistroFileType fileType=table.connector.distroFileTypes.get(type);
+        DistroFileType fileType=table.connector.getDistroFileTypes().get(type);
         if(fileType==null) throw new SQLException("Unable to find DistroFileType: "+type);
         return fileType;
     }
@@ -113,13 +113,13 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
     public LinuxAccount getLinuxAccount() throws SQLException {
         if(table==null) throw new NullPointerException("table is null");
         if(table.connector==null) throw new NullPointerException("table.connector is null");
-        LinuxAccount linuxAccount=table.connector.linuxAccounts.get(linux_account);
+        LinuxAccount linuxAccount=table.connector.getLinuxAccounts().get(linux_account);
         if(linuxAccount==null) throw new SQLException("Unable to find LinuxAccount: "+linux_account);
         return linuxAccount;
     }
 
     public LinuxGroup getLinuxGroup() throws SQLException {
-        LinuxGroup linuxGroup=table.connector.linuxGroups.get(linux_group);
+        LinuxGroup linuxGroup=table.connector.getLinuxGroups().get(linux_group);
         if(linuxGroup==null) throw new SQLException("Unable to find LinuxGroup: "+linux_group);
         return linuxGroup;
     }

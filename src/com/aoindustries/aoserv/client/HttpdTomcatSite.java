@@ -56,7 +56,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         int debug,
         String workDir
     ) throws IOException, SQLException {
-        return table.connector.httpdTomcatContexts.addHttpdTomcatContext(
+        return table.connector.getHttpdTomcatContexts().addHttpdTomcatContext(
             this,
             className,
             cookies,
@@ -103,33 +103,33 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
     }
 
     public HttpdJBossSite getHttpdJBossSite() throws SQLException, IOException {
-        return table.connector.httpdJBossSites.get(pkey);
+        return table.connector.getHttpdJBossSites().get(pkey);
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
-        HttpdSite obj=table.connector.httpdSites.get(pkey);
+        HttpdSite obj=table.connector.getHttpdSites().get(pkey);
         if(obj==null) throw new SQLException("Unable to find HttpdSite: "+pkey);
         return obj;
     }
 
     public HttpdTomcatContext getHttpdTomcatContext(String path) throws IOException, SQLException {
-        return table.connector.httpdTomcatContexts.getHttpdTomcatContext(this, path);
+        return table.connector.getHttpdTomcatContexts().getHttpdTomcatContext(this, path);
     }
 
     public List<HttpdTomcatContext> getHttpdTomcatContexts() throws IOException, SQLException {
-        return table.connector.httpdTomcatContexts.getHttpdTomcatContexts(this);
+        return table.connector.getHttpdTomcatContexts().getHttpdTomcatContexts(this);
     }
 
     public HttpdTomcatSharedSite getHttpdTomcatSharedSite() throws IOException, SQLException {
-        return table.connector.httpdTomcatSharedSites.get(pkey);
+        return table.connector.getHttpdTomcatSharedSites().get(pkey);
     }
 
     public HttpdTomcatStdSite getHttpdTomcatStdSite() throws IOException, SQLException {
-        return table.connector.httpdTomcatStdSites.get(pkey);
+        return table.connector.getHttpdTomcatStdSites().get(pkey);
     }
 
     public HttpdTomcatVersion getHttpdTomcatVersion() throws SQLException, IOException {
-        HttpdTomcatVersion obj=table.connector.httpdTomcatVersions.get(version);
+        HttpdTomcatVersion obj=table.connector.getHttpdTomcatVersions().get(version);
         if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
         if(
             obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
@@ -151,7 +151,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
     }
 
     public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
-        return table.connector.httpdWorkers.getHttpdWorkers(this);
+        return table.connector.getHttpdWorkers().getHttpdWorkers(this);
     }
 
     public SchemaTable.TableID getTableID() {

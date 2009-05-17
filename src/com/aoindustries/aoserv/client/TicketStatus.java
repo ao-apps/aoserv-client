@@ -5,10 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * The <code>TicketStatus</code> of a <code>Ticket</code> changes
@@ -16,61 +18,79 @@ import java.sql.*;
  *
  * @see  Ticket
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> {
 
-    static final int COLUMN_STATUS=0;
+    static final int COLUMN_STATUS = 0;
+    static final int COLUMN_SORT_ORDER = 1;
     static final String COLUMN_STATUS_name = "status";
+    static final String COLUMN_SORT_ORDER_name = "sort_order";
 
     /**
      * The different ticket statuses.
      */
     public static final String
-        NEW="New",
-        UNDERWAY="Underway",
-        BOUNCED="Bounced",
-        ADMIN_HOLD="Admin Hold",
-        CLIENT_HOLD="Client Hold",
-        ADMIN_KILL="Admin Kill",
-        CLIENT_KILL="Client Kill",
-        COMPLETED="Completed"
+        JUNK="junk",
+        DELETED="deleted",
+        CLOSED="closed",
+        BOUNCED="bounced",
+        HOLD="hold",
+        OPEN="open"
     ;
 
-    private String description;
+    private short sort_order;
 
     Object getColumnImpl(int i) {
-	if(i==COLUMN_STATUS) return pkey;
-	if(i==1) return description;
-	throw new IllegalArgumentException("Invalid index: "+i);
+        if(i==COLUMN_STATUS) return pkey;
+        if(i==1) return sort_order;
+        throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public String getDescription() {
-	return description;
+    public short getSortOrder() {
+        return sort_order;
     }
 
     public String getStatus() {
-	return pkey;
+        return pkey;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TICKET_STATI;
+        return SchemaTable.TableID.TICKET_STATI;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	description = result.getString(2);
+        pkey = result.getString(1);
+        sort_order = result.getShort(2);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	description=in.readUTF();
+        pkey = in.readUTF().intern();
+        sort_order = in.readShort();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(description);
+        out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeShort(sort_order);
+    }
+
+    @Override
+    String toStringImpl() {
+        return toString(Locale.getDefault());
+    }
+
+    /**
+     * Localized toString.
+     */
+    public String toString(Locale userLocale) {
+        return ApplicationResourcesAccessor.getMessage(userLocale, "TicketStatus."+pkey+".toString");
+    }
+
+    /**
+     * Localized description.
+     */
+    public String getDescription(Locale userLocale) {
+        return ApplicationResourcesAccessor.getMessage(userLocale, "TicketStatus."+pkey+".description");
     }
 }

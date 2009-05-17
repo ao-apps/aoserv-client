@@ -47,13 +47,13 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
     }
 
     public SchemaColumn getForeignColumn(AOServConnector connector) throws SQLException, IOException {
-        SchemaColumn obj=connector.schemaColumns.get(foreign_column);
+        SchemaColumn obj=connector.getSchemaColumns().get(foreign_column);
         if(obj==null) throw new SQLException("Unable to find SchemaColumn: "+foreign_column);
         return obj;
     }
 
     public SchemaColumn getKeyColumn(AOServConnector connector) throws SQLException, IOException {
-        SchemaColumn obj=connector.schemaColumns.get(key_column);
+        SchemaColumn obj=connector.getSchemaColumns().get(key_column);
         if(obj==null) throw new SQLException("Unable to find SchemaColumn: "+key_column);
         return obj;
     }

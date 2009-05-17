@@ -71,11 +71,11 @@ final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> 
     }
 
     public List<Technology> getTechnologies(AOServConnector connector) throws IOException, SQLException {
-	return connector.technologies.getTechnologies(this);
+	return connector.getTechnologies().getTechnologies(this);
     }
 
     public TechnologyVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
-	return connector.technologyVersions.getTechnologyVersion(this, version, osv);
+	return connector.getTechnologyVersions().getTechnologyVersion(this, version, osv);
     }
 
     public void init(ResultSet result) throws SQLException {

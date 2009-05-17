@@ -18,7 +18,7 @@ import java.sql.SQLException;
 final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServer> {
 
     VirtualServerTable(AOServConnector connector) {
-	super(connector, VirtualServer.class);
+        super(connector, VirtualServer.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -41,6 +41,6 @@ final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.VIRTUAL_SERVERS;
+        return SchemaTable.TableID.VIRTUAL_SERVERS;
     }
 }

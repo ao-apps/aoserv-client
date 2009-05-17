@@ -39,7 +39,7 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
     }
 
     public NetBind getNetBind() throws IOException, SQLException {
-        NetBind nb=table.connector.netBinds.get(pkey);
+        NetBind nb=table.connector.getNetBinds().get(pkey);
         if(nb==null) throw new SQLException("Unable to find NetBind: "+pkey);
         return nb;
     }
@@ -57,7 +57,7 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
     }
     
     public NetPort getDestinationPort() throws SQLException {
-        NetPort np=table.connector.netPorts.get(destination_port);
+        NetPort np=table.connector.getNetPorts().get(destination_port);
         if(np==null) throw new SQLException("Unable to find NetPort: "+destination_port);
         return np;
     }

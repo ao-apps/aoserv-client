@@ -51,13 +51,13 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
     }
 
     public LinuxAccount getLinuxAccount() throws SQLException {
-        LinuxAccount usernameObject = table.connector.usernames.get(username).getLinuxAccount();
+        LinuxAccount usernameObject = table.connector.getUsernames().get(username).getLinuxAccount();
         if (usernameObject == null) throw new SQLException("Unable to find LinuxAccount: " + username);
         return usernameObject;
     }
 
     public LinuxGroup getLinuxGroup() throws SQLException {
-        LinuxGroup groupNameObject = table.connector.linuxGroups.get(group_name);
+        LinuxGroup groupNameObject = table.connector.getLinuxGroups().get(group_name);
         if (groupNameObject == null) throw new SQLException("Unable to find LinuxGroup: " + group_name);
         return groupNameObject;
     }

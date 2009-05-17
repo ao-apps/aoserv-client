@@ -121,7 +121,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         List<String> prefixes=new ArrayList<String>();
 
         // Home directories
-        for(LinuxServerAccount lsa : connector.linuxServerAccounts.getRows()) {
+        for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
             if(lsa.getLinuxAccount().getType().getName().equals(LinuxAccountType.USER) && lsa.getDisableLog()==null) {
                 String dir=lsa.getHome();
                 if(!prefixes.contains(dir)) prefixes.add(dir);
@@ -129,13 +129,13 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         }
 
         // HttpdSites
-        for(HttpdSite site : connector.httpdSites.getRows()) {
+        for(HttpdSite site : connector.getHttpdSites().getRows()) {
             String dir=site.getInstallDirectory();
             if(site.getDisableLog()==null && !prefixes.contains(dir)) prefixes.add(dir);
         }
 
         // HttpdSharedTomcats
-        for(HttpdSharedTomcat tomcat : connector.httpdSharedTomcats.getRows()) {
+        for(HttpdSharedTomcat tomcat : connector.getHttpdSharedTomcats().getRows()) {
             String dir=tomcat.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+tomcat.getName();
             if(tomcat.getDisableLog()==null && !prefixes.contains(dir)) prefixes.add(dir);
         }

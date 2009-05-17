@@ -62,7 +62,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     public HttpdSiteBind getHttpdSiteBind() throws SQLException, IOException {
-	HttpdSiteBind obj=table.connector.httpdSiteBinds.get(httpd_site_bind);
+	HttpdSiteBind obj=table.connector.getHttpdSiteBinds().get(httpd_site_bind);
 	if(obj==null) throw new SQLException("Unable to find HttpdSiteBind: "+httpd_site_bind);
 	return obj;
     }

@@ -83,7 +83,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         String authUserFile,
         String require
     ) throws IOException, SQLException {
-        return table.connector.httpdSiteAuthenticatedLocationTable.addHttpdSiteAuthenticatedLocation(
+        return table.connector.getHttpdSiteAuthenticatedLocationTable().addHttpdSiteAuthenticatedLocation(
             this,
             path,
             isRegularExpression,
@@ -153,34 +153,34 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
     public List<HttpdSiteAuthenticatedLocation> getHttpdSiteAuthenticatedLocations() throws IOException, SQLException {
-        return table.connector.httpdSiteAuthenticatedLocationTable.getHttpdSiteAuthenticatedLocations(this);
+        return table.connector.getHttpdSiteAuthenticatedLocationTable().getHttpdSiteAuthenticatedLocations(this);
     }
 
     public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
-        return table.connector.httpdSiteBinds.getHttpdSiteBinds(this);
+        return table.connector.getHttpdSiteBinds().getHttpdSiteBinds(this);
     }
 
     public List<HttpdSiteBind> getHttpdSiteBinds(HttpdServer server) throws SQLException, IOException {
-        return table.connector.httpdSiteBinds.getHttpdSiteBinds(this, server);
+        return table.connector.getHttpdSiteBinds().getHttpdSiteBinds(this, server);
     }
 
     public HttpdStaticSite getHttpdStaticSite() throws IOException, SQLException {
-        return table.connector.httpdStaticSites.get(pkey);
+        return table.connector.getHttpdStaticSites().get(pkey);
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws IOException, SQLException {
-        return table.connector.httpdTomcatSites.get(pkey);
+        return table.connector.getHttpdTomcatSites().get(pkey);
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
         // May be filtered
-        LinuxAccount obj=table.connector.linuxAccounts.get(linuxAccount);
+        LinuxAccount obj=table.connector.getLinuxAccounts().get(linuxAccount);
         if(obj==null) return null;
 
         LinuxServerAccount lsa = obj.getLinuxServerAccount(getAOServer());
@@ -189,7 +189,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        LinuxGroup obj=table.connector.linuxGroups.get(linuxGroup);
+        LinuxGroup obj=table.connector.getLinuxGroups().get(linuxGroup);
         if(obj==null) throw new SQLException("Unable to find LinuxGroup: "+linuxGroup);
         LinuxServerGroup lsg = obj.getLinuxServerGroup(getAOServer());
         if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup+" on "+ao_server);
@@ -197,7 +197,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public Package getPackage() throws SQLException, IOException {
-        Package obj=table.connector.packages.get(packageName);
+        Package obj=table.connector.getPackages().get(packageName);
         if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
         return obj;
     }
@@ -207,7 +207,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         if(binds.isEmpty()) return null;
 
         // Find the first one that binds to the default HTTP port, if one exists
-        NetPort httpPort=table.connector.protocols.get(Protocol.HTTP).getPort(table.connector);
+        NetPort httpPort=table.connector.getProtocols().get(Protocol.HTTP).getPort(table.connector);
 
         int index=-1;
         for(int c=0;c<binds.size();c++) {
@@ -223,7 +223,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        AOServer obj=table.connector.aoServers.get(ao_server);
+        AOServer obj=table.connector.getAoServers().get(ao_server);
         if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
         return obj;
     }

@@ -46,13 +46,13 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     }
 
     public EmailAddress getEmailAddress() throws SQLException, IOException {
-	EmailAddress emailAddressObject = table.connector.emailAddresses.get(email_address);
+	EmailAddress emailAddressObject = table.connector.getEmailAddresses().get(email_address);
 	if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 	return emailAddressObject;
     }
 
     public EmailList getEmailList() throws SQLException, IOException {
-	EmailList emailListObject = table.connector.emailLists.get(email_list);
+	EmailList emailListObject = table.connector.getEmailLists().get(email_list);
 	if (emailListObject == null) throw new SQLException("Unable to find EmailList: " + email_list);
 	return emailListObject;
     }
@@ -77,7 +77,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be used as the list for a majordomo list
-        for(MajordomoList ml : table.connector.majordomoLists.getRows()) {
+        for(MajordomoList ml : table.connector.getMajordomoLists().getRows()) {
             if(ml.getListListAddress().pkey==pkey) {
                 EmailDomain ed=ml.getMajordomoServer().getDomain();
                 reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));

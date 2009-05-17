@@ -467,7 +467,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
             for(int c=0;c<orderBys.length;c++) {
                 sortOrders[c] = orderBys[c].getOrder();
             }
-            connector.schemaTypes.sort(list, sortExpressions, sortOrders);
+            connector.getSchemaTypes().sort(list, sortExpressions, sortOrders);
         }
     }
 
@@ -538,7 +538,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
                 if(castPos==-1) castPos=expr.length();
                 int typeNameEnd=Math.min(joinPos, castPos);
                 String typeName=expr.substring(2, typeNameEnd);
-                SchemaType type=connector.schemaTypes.get(typeName);
+                SchemaType type=connector.getSchemaTypes().get(typeName);
                 if(type==null) throw new IllegalArgumentException("Unable to find SchemaType: "+typeName);
 
                 sql=new SQLCast(sql, type);
@@ -568,7 +568,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     }
 
     final public SchemaTable getTableSchema() throws IOException, SQLException {
-        return connector.schemaTables.get(getTableID());
+        return connector.getSchemaTables().get(getTableID());
     }
 
     final public String getTableName() throws IOException, SQLException {

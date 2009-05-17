@@ -152,12 +152,12 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 
     public MySQLDatabase getMySQLDatabase() throws IOException, SQLException {
         // May be null due to filtering or a recently removed table
-	return table.connector.mysqlDatabases.get(mysql_database);
+	return table.connector.getMysqlDatabases().get(mysql_database);
     }
 
     public MySQLServerUser getMySQLServerUser() throws IOException, SQLException {
         // May be null due to filtering or a recently removed table
-	return table.connector.mysqlServerUsers.get(mysql_server_user);
+	return table.connector.getMysqlServerUsers().get(mysql_server_user);
     }
 
     public SchemaTable.TableID getTableID() {

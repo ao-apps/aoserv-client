@@ -5,17 +5,16 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * Each <code>Ticket</code> is of a specific <code>TicketType</code>.
  *
  * @see  Ticket
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -24,80 +23,53 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
     static final int COLUMN_TYPE=0;
     static final String COLUMN_TYPE_name = "type";
 
-    private String description;
-    boolean client_view;
-
     /**
      * The types of <code>Ticket</code>s.
      */
     public static final String
-        NONE="",
-        ACCOUNTING="Accounting",
-        AOSERV="AOServ",
-        CGI="CGI",
-        CVS="CVS",
-        CONTROL_PANEL="Control Panel",
-        DNS="DNS/Host Names",
-        JAVA_VIRTUAL_MACHINE="Java Virtual Machine",
-        EMAIL="Email",
-        INTERBASE="InterBase",
-        LOGGING="Logging/Stats",
-        NOTE_INSTALL_NOTE="NOTE: Install Note",
-        MYSQL="MySQL",
-        PERFORMANCE="Performance",
-        PHP="PHP",
-        POSTGRESQL="PostgreSQL",
-        SHELL_ACCOUNT="Shell Account",
-        TICKETS="Tickets",
-        WEBSITES="Websites",
-        XML="XML",
-        TODO_EVENT="TODO: Event",
-        TODO_HARDWARE="TODO: Hardware",
-        TODO_MONITORING="TODO: Monitoring",
-        TODO_PAYMENT="TODO: Payment",
-        TODO_RELIABILITY="TODO: Reliability",
-        TODO_SECURITY="TODO: Security",
-        TODO_SUPPORT_TOOLS="TODO: Support Tools"
+        SUPPORT="support",
+        PROJECTS="projects",
+        INTERNAL="internal"
     ;
 
     Object getColumnImpl(int i) {
-	if(i==COLUMN_TYPE) return pkey;
-	if(i==1) return description;
-	if(i==2) return client_view?Boolean.TRUE:Boolean.FALSE;
-	throw new IllegalArgumentException("Invalid index: "+i);
+        if(i==COLUMN_TYPE) return pkey;
+        throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public String getDescription() {
-	return description;
+    @Override
+    String toStringImpl() {
+        return toString(Locale.getDefault());
+    }
+
+    /**
+     * Localized toString.
+     */
+    public String toString(Locale userLocale) {
+        return ApplicationResourcesAccessor.getMessage(userLocale, "TicketType."+pkey+".toString");
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TICKET_TYPES;
+        return SchemaTable.TableID.TICKET_TYPES;
     }
 
     public String getType() {
-	return pkey;
+        return pkey;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	description = result.getString(2);
-	client_view = result.getBoolean(3);
-    }
-
-    public boolean isClientViewable() {
-	return client_view;
+        pkey = result.getString(1);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	description=in.readUTF();
-	client_view=in.readBoolean();
+        pkey=in.readUTF().intern();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(description);
-	out.writeBoolean(client_view);
+        out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) {
+            out.writeUTF(pkey); // description
+            out.writeBoolean(false); // client_view
+        }
     }
 }

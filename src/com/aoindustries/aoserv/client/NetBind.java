@@ -47,7 +47,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     private boolean monitoring_enabled;
 
     public Protocol getAppProtocol() throws SQLException {
-	Protocol obj=table.connector.protocols.get(app_protocol);
+	Protocol obj=table.connector.getProtocols().get(app_protocol);
 	if(obj==null) throw new SQLException("Unable to find Protocol: "+app_protocol);
 	return obj;
     }
@@ -193,51 +193,51 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     }
     
     public AOServer getAOServerByDaemonNetBind() throws IOException, SQLException {
-        return table.connector.aoServers.getAOServerByDaemonNetBind(this);
+        return table.connector.getAoServers().getAOServerByDaemonNetBind(this);
     }
 
     public AOServer getAOServerByJilterNetBind() throws IOException, SQLException {
-        return table.connector.aoServers.getAOServerByJilterNetBind(this);
+        return table.connector.getAoServers().getAOServerByJilterNetBind(this);
     }
 
     public HttpdBind getHttpdBind() throws IOException, SQLException {
-        return table.connector.httpdBinds.get(pkey);
+        return table.connector.getHttpdBinds().get(pkey);
     }
 
     public HttpdJBossSite getHttpdJBossSiteByJNPPort() throws IOException, SQLException {
-        return table.connector.httpdJBossSites.getHttpdJBossSiteByJNPPort(this);
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByJNPPort(this);
     }
 
     public HttpdJBossSite getHttpdJBossSiteByWebserverPort() throws IOException, SQLException {
-        return table.connector.httpdJBossSites.getHttpdJBossSiteByWebserverPort(this);
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByWebserverPort(this);
     }
 
     public HttpdJBossSite getHttpdJBossSiteByRMIPort() throws IOException, SQLException {
-        return table.connector.httpdJBossSites.getHttpdJBossSiteByRMIPort(this);
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByRMIPort(this);
     }
 
     public HttpdJBossSite getHttpdJBossSiteByHypersonicPort() throws IOException, SQLException {
-        return table.connector.httpdJBossSites.getHttpdJBossSiteByHypersonicPort(this);
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByHypersonicPort(this);
     }
 
     public HttpdJBossSite getHttpdJBossSiteByJMXPort() throws IOException, SQLException {
-        return table.connector.httpdJBossSites.getHttpdJBossSiteByJMXPort(this);
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByJMXPort(this);
     }
 
     public HttpdWorker getHttpdWorker() throws IOException, SQLException {
-        return table.connector.httpdWorkers.getHttpdWorker(this);
+        return table.connector.getHttpdWorkers().getHttpdWorker(this);
     }
 
     public HttpdSharedTomcat getHttpdSharedTomcatByShutdownPort() throws SQLException, IOException {
-        return table.connector.httpdSharedTomcats.getHttpdSharedTomcatByShutdownPort(this);
+        return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcatByShutdownPort(this);
     }
     
     public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
-        return table.connector.httpdTomcatStdSites.getHttpdTomcatStdSiteByShutdownPort(this);
+        return table.connector.getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
     }
 
     public IPAddress getIPAddress() throws SQLException, IOException {
-        IPAddress obj=table.connector.ipAddresses.get(ip_address);
+        IPAddress obj=table.connector.getIpAddresses().get(ip_address);
         if(obj==null) throw new SQLException("Unable to find IPAddress: "+ip_address);
         return obj;
     }
@@ -247,36 +247,36 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     }
 
     public NetProtocol getNetProtocol() throws SQLException {
-        NetProtocol obj=table.connector.netProtocols.get(net_protocol);
+        NetProtocol obj=table.connector.getNetProtocols().get(net_protocol);
         if(obj==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
         return obj;
     }
 
     public NetTcpRedirect getNetTcpRedirect() throws IOException, SQLException {
-        return table.connector.netTcpRedirects.get(pkey);
+        return table.connector.getNetTcpRedirects().get(pkey);
     }
 
     public Package getPackage() throws IOException, SQLException {
         // May be filtered
-        return table.connector.packages.get(packageName);
+        return table.connector.getPackages().get(packageName);
     }
     
     public PostgresServer getPostgresServer() throws IOException, SQLException {
-        return table.connector.postgresServers.getPostgresServer(this);
+        return table.connector.getPostgresServers().getPostgresServer(this);
     }
 
     public PrivateFTPServer getPrivateFTPServer() throws IOException, SQLException {
-        return table.connector.privateFTPServers.get(pkey);
+        return table.connector.getPrivateFTPServers().get(pkey);
     }
 
     public NetPort getPort() throws SQLException {
-        NetPort obj=table.connector.netPorts.get(port);
+        NetPort obj=table.connector.getNetPorts().get(port);
         if(obj==null) throw new SQLException("Unable to find NetPort: "+port);
         return obj;
     }
 
     public Server getServer() throws SQLException, IOException {
-        Server obj=table.connector.servers.get(server);
+        Server obj=table.connector.getServers().get(server);
         if(obj==null) throw new SQLException("Unable to find Server: "+server);
         return obj;
     }
@@ -322,7 +322,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         if(getPackage()==null) reasons.add(new CannotRemoveReason<Package>("Unable to access package: "+packageName));
 
         // ao_servers
-        for(AOServer ao : conn.aoServers.getRows()) {
+        for(AOServer ao : conn.getAoServers().getRows()) {
             if(
                 pkey==ao.daemon_bind
                 || pkey==ao.daemon_connect_bind
@@ -331,7 +331,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         }
 
         // httpd_binds
-        for(HttpdBind hb : conn.httpdBinds.getRows()) {
+        for(HttpdBind hb : conn.getHttpdBinds().getRows()) {
             if(equals(hb.getNetBind())) {
                 HttpdServer hs=hb.getHttpdServer();
                 reasons.add(new CannotRemoveReason<HttpdBind>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hb));
@@ -339,7 +339,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         }
 
         // httpd_jboss_sites
-        for(HttpdJBossSite hjb : conn.httpdJBossSites.getRows()) {
+        for(HttpdJBossSite hjb : conn.getHttpdJBossSites().getRows()) {
             HttpdSite hs=hjb.getHttpdTomcatSite().getHttpdSite();
             if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
             if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
@@ -349,18 +349,18 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         }
         
         // httpd_shared_tomcats
-        for(HttpdSharedTomcat hst : conn.httpdSharedTomcats.getRows()) {
+        for(HttpdSharedTomcat hst : conn.getHttpdSharedTomcats().getRows()) {
             if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
         }
         
         // httpd_tomcat_std_sites
-        for(HttpdTomcatStdSite hts : conn.httpdTomcatStdSites.getRows()) {
+        for(HttpdTomcatStdSite hts : conn.getHttpdTomcatStdSites().getRows()) {
             HttpdSite hs=hts.getHttpdTomcatSite().getHttpdSite();
             if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdTomcatStdSite>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
         }
 
         // httpd_workers
-        for(HttpdWorker hw : conn.httpdWorkers.getRows()) {
+        for(HttpdWorker hw : conn.getHttpdWorkers().getRows()) {
             if(equals(hw.getNetBind())) {
                 HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
                 if(hst!=null) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
@@ -374,12 +374,12 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         }
         
         // mysql_servers
-        for(MySQLServer ms : conn.mysqlServers.getRows()) {
+        for(MySQLServer ms : conn.getMysqlServers().getRows()) {
             if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<MySQLServer>("Used for MySQL server "+ms.getName()+" on "+ms.getAOServer().getHostname(), ms));
         }
 
         // postgres_servers
-        for(PostgresServer ps : conn.postgresServers.getRows()) {
+        for(PostgresServer ps : conn.getPostgresServers().getRows()) {
             if(equals(ps.getNetBind())) reasons.add(new CannotRemoveReason<PostgresServer>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getAOServer().getHostname(), ps));
         }
 

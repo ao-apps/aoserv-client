@@ -31,8 +31,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
      * are constant for one release.
      */
     public enum TableID {
-        ACTION_TYPES,
-        ACTIONS,
         AO_SERVER_DAEMON_HOSTS,
         AO_SERVERS,
         AOSERV_PERMISSIONS,
@@ -47,6 +45,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         BANK_TRANSACTIONS,
         BANKS,
         BLACKHOLE_EMAIL_ADDRESSES,
+        BRANDS,
         BUSINESS_ADMINISTRATORS,
         BUSINESS_ADMINISTRATOR_PERMISSIONS,
         BUSINESS_PROFILES,
@@ -108,6 +107,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         HTTPD_TOMCAT_VERSIONS,
         HTTPD_WORKERS,
         IP_ADDRESSES,
+        LANGUAGES,
         LINUX_ACC_ADDRESSES,
         LINUX_ACCOUNT_TYPES,
         LINUX_ACCOUNTS,
@@ -161,6 +161,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         PROCESSOR_TYPES,
         PROTOCOLS,
         RACKS,
+        RESELLERS,
         RESOURCES,
         SCHEMA_COLUMNS,
         SCHEMA_FOREIGN_KEYS,
@@ -177,6 +178,11 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         TECHNOLOGY_CLASSES,
         TECHNOLOGY_NAMES,
         TECHNOLOGY_VERSIONS,
+        TICKET_ACTION_TYPES,
+        TICKET_ACTIONS,
+        TICKET_ASSIGNMENTS,
+        TICKET_BRAND_CATEGORIES,
+        TICKET_CATEGORIES,
         TICKET_PRIORITIES,
         TICKET_STATI,
         TICKET_TYPES,
@@ -232,7 +238,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
     }
 
     public List<AOSHCommand> getAOSHCommands(AOServConnector connector) throws IOException, SQLException {
-        return connector.aoshCommands.getAOSHCommands(this);
+        return connector.getAoshCommands().getAOSHCommands(this);
     }
 
     Object getColumnImpl(int i) {
@@ -274,19 +280,19 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
     }
 
     public SchemaColumn getSchemaColumn(AOServConnector connector, String name) throws IOException, SQLException {
-        return connector.schemaColumns.getSchemaColumn(this, name);
+        return connector.getSchemaColumns().getSchemaColumn(this, name);
     }
 
     public SchemaColumn getSchemaColumn(AOServConnector connector, int index) throws IOException, SQLException {
-        return connector.schemaColumns.getSchemaColumn(this, index);
+        return connector.getSchemaColumns().getSchemaColumn(this, index);
     }
 
     public List<SchemaColumn> getSchemaColumns(AOServConnector connector) throws IOException, SQLException {
-        return connector.schemaColumns.getSchemaColumns(this);
+        return connector.getSchemaColumns().getSchemaColumns(this);
     }
 
     public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector connector) throws IOException, SQLException {
-        return connector.schemaForeignKeys.getSchemaForeignKeys(this);
+        return connector.getSchemaForeignKeys().getSchemaForeignKeys(this);
     }
 
     public TableID getTableID() {

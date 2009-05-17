@@ -47,8 +47,7 @@ final public class HttpdTomcatVersionTable extends GlobalTableIntegerKey<HttpdTo
 
     public HttpdTomcatVersion getHttpdTomcatVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {
 	return get(
-            connector
-            .technologyNames
+            connector.getTechnologyNames()
             .get(HttpdTomcatVersion.TECHNOLOGY_NAME)
             .getTechnologyVersion(connector, version, osv)
             .getPkey()

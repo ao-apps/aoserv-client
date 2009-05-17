@@ -68,7 +68,7 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
     }
 
     public SignupRequest getSignupRequest() throws SQLException, IOException {
-	SignupRequest sr = table.connector.signupRequests.get(request);
+	SignupRequest sr = table.connector.getSignupRequests().get(request);
 	if (sr == null) throw new SQLException("Unable to find SignupRequest: " + request);
 	return sr;
     }

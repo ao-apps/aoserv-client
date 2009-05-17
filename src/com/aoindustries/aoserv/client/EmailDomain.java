@@ -43,7 +43,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     String packageName;
 
     public int addEmailAddress(String address) throws SQLException, IOException {
-	return table.connector.emailAddresses.addEmailAddress(address, this);
+	return table.connector.getEmailAddresses().addEmailAddress(address, this);
     }
 
     public void addMajordomoServer(
@@ -51,7 +51,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         LinuxServerGroup linuxServerGroup,
         MajordomoVersion majordomoVersion
     ) throws IOException, SQLException {
-        table.connector.majordomoServers.addMajordomoServer(
+        table.connector.getMajordomoServers().addMajordomoServer(
             this,
             linuxServerAccount,
             linuxServerGroup,
@@ -74,25 +74,25 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     }
 
     public EmailAddress getEmailAddress(String address) throws IOException, SQLException {
-	return table.connector.emailAddresses.getEmailAddress(address, this);
+	return table.connector.getEmailAddresses().getEmailAddress(address, this);
     }
 
     public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
-	return table.connector.emailAddresses.getEmailAddresses(this);
+	return table.connector.getEmailAddresses().getEmailAddresses(this);
     }
 
     public MajordomoServer getMajordomoServer() throws IOException, SQLException {
-	return table.connector.majordomoServers.get(pkey);
+	return table.connector.getMajordomoServers().get(pkey);
     }
 
     public Package getPackage() throws SQLException, IOException {
-	Package packageObject = table.connector.packages.get(packageName);
+	Package packageObject = table.connector.getPackages().get(packageName);
 	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 	return packageObject;
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-	AOServer ao=table.connector.aoServers.get(ao_server);
+	AOServer ao=table.connector.getAoServers().get(ao_server);
 	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return ao;
     }

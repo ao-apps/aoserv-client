@@ -82,7 +82,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
     }
 
     public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
-        FailoverFileReplication ffr=table.connector.failoverFileReplications.get(replication);
+        FailoverFileReplication ffr=table.connector.getFailoverFileReplications().get(replication);
         if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
         return ffr;
     }

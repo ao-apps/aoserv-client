@@ -89,7 +89,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         boolean canAlterRoutine,
         boolean canExecute
     ) throws IOException, SQLException {
-	return table.connector.mysqlDBUsers.addMySQLDBUser(
+	return table.connector.getMysqlDBUsers().addMySQLDBUser(
             this,
             msu,
             canSelect,
@@ -211,15 +211,15 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public MySQLDBUser getMySQLDBUser(MySQLServerUser msu) throws IOException, SQLException {
-	return table.connector.mysqlDBUsers.getMySQLDBUser(this, msu);
+	return table.connector.getMysqlDBUsers().getMySQLDBUser(this, msu);
     }
 
     public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
-        return table.connector.mysqlDBUsers.getMySQLDBUsers(this);
+        return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
     }
 
     public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
-        return table.connector.mysqlDBUsers.getMySQLServerUsers(this);
+        return table.connector.getMysqlDBUsers().getMySQLServerUsers(this);
     }
 
     public String getName() {
@@ -227,13 +227,13 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public Package getPackage() throws SQLException, IOException {
-	Package obj=table.connector.packages.get(packageName);
+	Package obj=table.connector.getPackages().get(packageName);
 	if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
 	return obj;
     }
 
     public MySQLServer getMySQLServer() throws SQLException, IOException {
-	MySQLServer obj=table.connector.mysqlServers.get(mysql_server);
+	MySQLServer obj=table.connector.getMysqlServers().get(mysql_server);
 	if(obj==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
 	return obj;
     }

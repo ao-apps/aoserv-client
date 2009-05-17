@@ -72,26 +72,26 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         }
 
         // Resource constants used later
-        final Resource httpdResource=connector.resources.get(Resource.HTTPD);
+        final Resource httpdResource=connector.getResources().get(Resource.HTTPD);
         if(httpdResource==null) throw new AssertionError("httpdResource is null");
-        final Resource javavmResource=connector.resources.get(Resource.JAVAVM);
+        final Resource javavmResource=connector.getResources().get(Resource.JAVAVM);
         if(javavmResource==null) throw new AssertionError("javavmResource is null");
-        final Resource ipResource=connector.resources.get(Resource.IP);
+        final Resource ipResource=connector.getResources().get(Resource.IP);
         if(ipResource==null) throw new AssertionError("ipResource is null");
-        final Resource mysqlReplicationResource=connector.resources.get(Resource.MYSQL_REPLICATION);
+        final Resource mysqlReplicationResource=connector.getResources().get(Resource.MYSQL_REPLICATION);
         if(mysqlReplicationResource==null) throw new AssertionError("mysqlReplicationResource is null");
-        final Resource popResource=connector.resources.get(Resource.POP);
+        final Resource popResource=connector.getResources().get(Resource.POP);
         if(popResource==null) throw new AssertionError("popResource is null");
-        final Resource siteResource=connector.resources.get(Resource.SITE);
+        final Resource siteResource=connector.getResources().get(Resource.SITE);
         if(siteResource==null) throw new AssertionError("siteResource is null");
-        final Resource userResource=connector.resources.get(Resource.USER);
+        final Resource userResource=connector.getResources().get(Resource.USER);
         if(userResource==null) throw new AssertionError("userResource is null");
 
         // Preprocess resources counts
         Map<Package,Integer> popsPerPackage=new HashMap<Package,Integer>();
         Map<Package,Integer> usersPerPackage=new HashMap<Package,Integer>();
         {
-            for(LinuxServerAccount lsa : connector.linuxServerAccounts.getRows()) {
+            for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
                 String username=lsa.username;
                 if(!username.equals(LinuxAccount.MAIL)) {
                     Map<Package,Integer> map;
@@ -109,7 +109,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         Map<Package,Integer> javavmsPerPackage=new HashMap<Package,Integer>();
         {
             // HttpdSharedTomcats
-            for(HttpdSharedTomcat hst : connector.httpdSharedTomcats.getRows()) {
+            for(HttpdSharedTomcat hst : connector.getHttpdSharedTomcats().getRows()) {
                 LinuxServerGroup lsg=hst.getLinuxServerGroup();
                 LinuxGroup lg=lsg.getLinuxGroup();
                 Package pack=lg.getPackage();
@@ -118,7 +118,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                 else javavmsPerPackage.put(pack, I=Integer.valueOf(I.intValue()+1));
             }
             // HttpdJBossSites
-            for(HttpdJBossSite hjs : connector.httpdJBossSites.getRows()) {
+            for(HttpdJBossSite hjs : connector.getHttpdJBossSites().getRows()) {
                 HttpdTomcatSite hts=hjs.getHttpdTomcatSite();
                 HttpdSite hs=hts.getHttpdSite();
                 Package pack=hs.getPackage();
@@ -127,7 +127,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                 else javavmsPerPackage.put(pack, I=Integer.valueOf(I.intValue()+1));
             }
             // HttpdTomcatStdSites
-            for(HttpdTomcatStdSite htss : connector.httpdTomcatStdSites.getRows()) {
+            for(HttpdTomcatStdSite htss : connector.getHttpdTomcatStdSites().getRows()) {
                 HttpdTomcatSite hts=htss.getHttpdTomcatSite();
                 HttpdSite hs=hts.getHttpdSite();
                 Package pack=hs.getPackage();
@@ -137,7 +137,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
             }
         }
 
-	for(Package pack : connector.packages.getRows()) {
+	for(Package pack : connector.getPackages().getRows()) {
             Business business=pack.getBusiness();
             // Only bill when active
             if(business.getCanceled()==-1) {

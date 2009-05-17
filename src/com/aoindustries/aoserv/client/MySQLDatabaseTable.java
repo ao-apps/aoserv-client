@@ -162,7 +162,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
     }
 
     public boolean isValidDatabaseName(String name) throws IOException, SQLException {
-	return isValidDatabaseName(name, connector.mysqlReservedWords.getRows());
+	return isValidDatabaseName(name, connector.getMysqlReservedWords().getRows());
     }
 
     public static boolean isValidDatabaseName(String name, List<?> reservedWords) {

@@ -5,14 +5,16 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>MasterUser</code> is a <code>BusinessAdministrator</code> who
  * has greater permissions.  Their access is secure on a per-<code>Server</code>
- * basis, and may also include full access to DNS, tickets, backups, and other
+ * basis, and may also include full access to DNS, backups, and other
  * systems.
  *
  * @see  BusinessAdministrator
@@ -34,7 +36,6 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
         can_access_bank_account,
         can_invalidate_tables,
         can_access_admin_web,
-        is_ticket_admin,
         is_dns_admin
     ;
 
@@ -51,7 +52,7 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
     }
 
     public BusinessAdministrator getBusinessAdministrator() throws SQLException {
-	BusinessAdministrator obj=table.connector.businessAdministrators.get(pkey);
+	BusinessAdministrator obj=table.connector.getBusinessAdministrators().get(pkey);
 	if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+pkey);
 	return obj;
     }
@@ -64,8 +65,7 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
             case 3: return can_access_bank_account?Boolean.TRUE:Boolean.FALSE;
             case 4: return can_invalidate_tables?Boolean.TRUE:Boolean.FALSE;
             case 5: return can_access_admin_web?Boolean.TRUE:Boolean.FALSE;
-            case 6: return is_ticket_admin?Boolean.TRUE:Boolean.FALSE;
-            case 7: return is_dns_admin?Boolean.TRUE:Boolean.FALSE;
+            case 6: return is_dns_admin?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -75,52 +75,46 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getString(1);
-	is_active=result.getBoolean(2);
-	can_access_accounting=result.getBoolean(3);
-	can_access_bank_account=result.getBoolean(4);
-	can_invalidate_tables=result.getBoolean(5);
-	can_access_admin_web=result.getBoolean(6);
-	is_ticket_admin=result.getBoolean(7);
-	is_dns_admin=result.getBoolean(8);
+        pkey=result.getString(1);
+        is_active=result.getBoolean(2);
+        can_access_accounting=result.getBoolean(3);
+        can_access_bank_account=result.getBoolean(4);
+        can_invalidate_tables=result.getBoolean(5);
+        can_access_admin_web=result.getBoolean(6);
+        is_dns_admin=result.getBoolean(7);
     }
 
     public boolean isActive() {
-	return is_active;
+        return is_active;
     }
 
     public boolean isDNSAdmin() {
-	return is_dns_admin;
-    }
-
-    public boolean isTicketAdmin() {
-	return is_ticket_admin;
+        return is_dns_admin;
     }
 
     public boolean isWebAdmin() {
-	return can_access_admin_web;
+        return can_access_admin_web;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	is_active=in.readBoolean();
-	can_access_accounting=in.readBoolean();
-	can_access_bank_account=in.readBoolean();
-	can_invalidate_tables=in.readBoolean();
-	can_access_admin_web=in.readBoolean();
-	is_ticket_admin=in.readBoolean();
-	is_dns_admin=in.readBoolean();
+        pkey=in.readUTF().intern();
+        is_active=in.readBoolean();
+        can_access_accounting=in.readBoolean();
+        can_access_bank_account=in.readBoolean();
+        can_invalidate_tables=in.readBoolean();
+        can_access_admin_web=in.readBoolean();
+        is_dns_admin=in.readBoolean();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeBoolean(is_active);
-	out.writeBoolean(can_access_accounting);
-	out.writeBoolean(can_access_bank_account);
-	out.writeBoolean(can_invalidate_tables);
-	out.writeBoolean(can_access_admin_web);
-	out.writeBoolean(is_ticket_admin);
-	out.writeBoolean(is_dns_admin);
+        out.writeUTF(pkey);
+        out.writeBoolean(is_active);
+        out.writeBoolean(can_access_accounting);
+        out.writeBoolean(can_access_bank_account);
+        out.writeBoolean(can_invalidate_tables);
+        out.writeBoolean(can_access_admin_web);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // is_ticket_admin
+        out.writeBoolean(is_dns_admin);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)<0) out.writeBoolean(false);
     }
 }

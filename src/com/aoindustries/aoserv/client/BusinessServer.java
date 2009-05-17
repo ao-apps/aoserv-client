@@ -68,7 +68,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public Business getBusiness() throws SQLException {
-	Business obj=table.connector.businesses.get(accounting);
+	Business obj=table.connector.getBusinesses().get(accounting);
 	if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
 	return obj;
     }
@@ -90,7 +90,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public Server getServer() throws IOException, SQLException {
-	Server obj=table.connector.servers.get(server);
+	Server obj=table.connector.getServers().get(server);
 	if(obj==null) throw new SQLException("Unable to find Server: "+server);
 	return obj;
     }
@@ -144,7 +144,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         AOServer ao=se.getAOServer();
 
         // No children should be able to access the server
-        List<Business> bus=table.connector.businesses.getRows();
+        List<Business> bus=table.connector.getBusinesses().getRows();
         for(int c=0;c<bus.size();c++) {
             if(bu.isBusinessOrParentOf(bus.get(c))) {
                 Business bu2=bus.get(c);

@@ -78,7 +78,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         String name,
         Package pack
     ) throws IOException, SQLException {
-	return table.connector.mysqlDatabases.addMySQLDatabase(
+	return table.connector.getMysqlDatabases().addMySQLDatabase(
             name,
             this,
             pack
@@ -143,7 +143,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public TechnologyVersion getVersion() throws SQLException, IOException {
-	TechnologyVersion obj=table.connector.technologyVersions.get(version);
+	TechnologyVersion obj=table.connector.getTechnologyVersions().get(version);
 	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+version);
         if(
             obj.getOperatingSystemVersion(table.connector).getPkey()
@@ -155,7 +155,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-	AOServer ao=table.connector.aoServers.get(ao_server);
+	AOServer ao=table.connector.getAoServers().get(ao_server);
 	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return ao;
     }
@@ -165,39 +165,39 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public NetBind getNetBind() throws SQLException, IOException {
-        NetBind nb=table.connector.netBinds.get(net_bind);
+        NetBind nb=table.connector.getNetBinds().get(net_bind);
         if(nb==null) throw new SQLException("Unable to find NetBind: "+net_bind);
         return nb;
     }
 
     public Package getPackage() throws SQLException, IOException {
-        Package pk=table.connector.packages.get(packageName);
+        Package pk=table.connector.getPackages().get(packageName);
         if(pk==null) throw new SQLException("Unable to find Package: "+packageName);
         return pk;
     }
 
     public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
-	return table.connector.mysqlDatabases.getMySQLDatabase(name, this);
+	return table.connector.getMysqlDatabases().getMySQLDatabase(name, this);
     }
 
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return table.connector.failoverMySQLReplications.getFailoverMySQLReplications(this);
+        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
     }
 
     public List<MySQLDatabase> getMySQLDatabases() throws IOException, SQLException {
-	return table.connector.mysqlDatabases.getMySQLDatabases(this);
+	return table.connector.getMysqlDatabases().getMySQLDatabases(this);
     }
 
     public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
-	return table.connector.mysqlDBUsers.getMySQLDBUsers(this);
+	return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
     }
 
     public MySQLServerUser getMySQLServerUser(String username) throws IOException, SQLException {
-	return table.connector.mysqlServerUsers.getMySQLServerUser(username, this);
+	return table.connector.getMysqlServerUsers().getMySQLServerUser(username, this);
     }
 
     public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
-	return table.connector.mysqlServerUsers.getMySQLServerUsers(this);
+	return table.connector.getMysqlServerUsers().getMySQLServerUsers(this);
     }
 
     public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
@@ -223,7 +223,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
-	return table.connector.mysqlDatabases.isMySQLDatabaseNameAvailable(name, this);
+	return table.connector.getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {

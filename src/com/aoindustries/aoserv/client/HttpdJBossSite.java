@@ -47,37 +47,37 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
     }
 
     public HttpdJBossVersion getHttpdJBossVersion() throws SQLException, IOException {
-	HttpdJBossVersion obj=table.connector.httpdJBossVersions.get(version);
+	HttpdJBossVersion obj=table.connector.getHttpdJBossVersions().get(version);
 	if(obj==null) throw new SQLException("Unable to find HttpdJBossVersion: "+version);
 	return obj;
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-	HttpdTomcatSite obj=table.connector.httpdTomcatSites.get(pkey);
+	HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(pkey);
 	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
 	return obj;
     }
 
     public NetBind getHypersonicBind() throws IOException, SQLException {
-	NetBind obj=table.connector.netBinds.get(hypersonicBind);
+	NetBind obj=table.connector.getNetBinds().get(hypersonicBind);
 	if(obj==null) throw new SQLException("Unable to find NetBind: "+hypersonicBind);
 	return obj;
     }
 
     public NetBind getJmxBind() throws IOException, SQLException {
-	NetBind obj=table.connector.netBinds.get(jmxBind);
+	NetBind obj=table.connector.getNetBinds().get(jmxBind);
 	if(obj==null) throw new SQLException("Unable to find NetBind: "+jmxBind);
 	return obj;
     }
 
     public NetBind getJnpBind() throws IOException, SQLException {
-	NetBind obj=table.connector.netBinds.get(jnpBind);
+	NetBind obj=table.connector.getNetBinds().get(jnpBind);
 	if(obj==null) throw new SQLException("Unable to find NetBind: "+jnpBind);
 	return obj;
     }
 
     public NetBind getRmiBind() throws SQLException, IOException {
-	NetBind obj=table.connector.netBinds.get(rmiBind);
+	NetBind obj=table.connector.getNetBinds().get(rmiBind);
 	if(obj==null) throw new SQLException("Unable to find NetBind: "+rmiBind);
 	return obj;
     }
@@ -87,7 +87,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
     }
 
     public NetBind getWebserverBind() throws IOException, SQLException {
-	NetBind obj=table.connector.netBinds.get(webserverBind);
+	NetBind obj=table.connector.getNetBinds().get(webserverBind);
 	if(obj==null) throw new SQLException("Unable to find NetBind: "+webserverBind);
 	return obj;
     }

@@ -628,7 +628,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
     }
 
     private static String getZoneForHostname(AOServConnector conn, String hostname) throws IOException, IllegalArgumentException, SQLException {
-        return conn.dnsZones.getHostTLD(hostname);
+        return conn.getDnsZones().getHostTLD(hostname);
     }
 
     public int compareTo(Object value1, Object value2) throws IllegalArgumentException, SQLException, UnknownHostException {

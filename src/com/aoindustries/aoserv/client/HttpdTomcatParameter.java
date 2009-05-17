@@ -54,7 +54,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
     }
 
     public HttpdTomcatContext getHttpdTomcatContext() throws SQLException, IOException {
-	HttpdTomcatContext obj=table.connector.httpdTomcatContexts.get(tomcat_context);
+	HttpdTomcatContext obj=table.connector.getHttpdTomcatContexts().get(tomcat_context);
 	if(obj==null) throw new SQLException("Unable to find HttpdTomcatContext: "+tomcat_context);
 	return obj;
     }

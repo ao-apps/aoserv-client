@@ -6,38 +6,35 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.util.WrappedException;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * The table containing all of the possible types of actions that may
  * be performed on a ticket.
  *
- * @see Action
+ * @see TicketAction
  * @see Ticket
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
-final public class ActionTypeTable extends GlobalTableStringKey<ActionType> {
+final public class TicketActionTypeTable extends GlobalTableStringKey<TicketActionType> {
 
-    ActionTypeTable(AOServConnector connector) {
-	super(connector, ActionType.class);
+    TicketActionTypeTable(AOServConnector connector) {
+        super(connector, TicketActionType.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(ActionType.COLUMN_DESCRIPTION_name, ASCENDING)
+        new OrderBy(TicketActionType.COLUMN_TYPE_name, ASCENDING)
     };
     @Override
     OrderBy[] getDefaultOrderBy() {
         return defaultOrderBy;
     }
 
-    public ActionType get(Object type) {
+    public TicketActionType get(Object type) {
         try {
-            return getUniqueRow(ActionType.COLUMN_TYPE, type);
+            return getUniqueRow(TicketActionType.COLUMN_TYPE, type);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -46,6 +43,6 @@ final public class ActionTypeTable extends GlobalTableStringKey<ActionType> {
     }
 
     public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.ACTION_TYPES;
+        return SchemaTable.TableID.TICKET_ACTION_TYPES;
     }
 }

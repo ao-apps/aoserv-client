@@ -13,14 +13,12 @@ import java.sql.SQLException;
 /**
  * @see  TicketPriority
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class TicketPriorityTable extends GlobalTableStringKey<TicketPriority> {
 
     TicketPriorityTable(AOServConnector connector) {
-	super(connector, TicketPriority.class);
+        super(connector, TicketPriority.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -32,7 +30,7 @@ final public class TicketPriorityTable extends GlobalTableStringKey<TicketPriori
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TICKET_PRIORITIES;
+        return SchemaTable.TableID.TICKET_PRIORITIES;
     }
 
     public TicketPriority get(Object pkey) {
@@ -43,5 +41,9 @@ final public class TicketPriorityTable extends GlobalTableStringKey<TicketPriori
         } catch(SQLException err) {
             throw new WrappedException(err);
         }
+    }
+
+    public TicketPriority get(String priority) throws IOException, SQLException {
+        return getUniqueRow(TicketPriority.COLUMN_PRIORITY, priority);
     }
 }

@@ -94,222 +94,772 @@ abstract public class AOServConnector {
 
     private final Object testConnectLock=new Object();
 
-    public final ActionTypeTable actionTypes;
-    public ActionTypeTable getActionTypes() {return actionTypes;}
+    private final AOServerDaemonHostTable aoServerDaemonHosts;
+    public AOServerDaemonHostTable getAoServerDaemonHosts() {return aoServerDaemonHosts;}
 
-    public final ActionTable actions;
-    public ActionTable getActions() {return actions;}
-
-    public final AOServerDaemonHostTable aoServerDaemonHosts;
-
-    public final AOServerTable aoServers;
+    private final AOServerTable aoServers;
     public AOServerTable getAoServers() {return aoServers;}
 
-    public final AOServPermissionTable aoservPermissions;
+    private final AOServPermissionTable aoservPermissions;
     public AOServPermissionTable getAoservPermissions() {return aoservPermissions;}
 
-    public final AOServProtocolTable aoservProtocols;
+    private final AOServProtocolTable aoservProtocols;
+    public AOServProtocolTable getAoservProtocols() {
+        return aoservProtocols;
+    }
 
-    public final AOSHCommandTable aoshCommands;
-    public final ArchitectureTable architectures;
-    public final BackupPartitionTable backupPartitions;
-    public final BackupReportTable backupReports;
-    public final BackupRetentionTable backupRetentions;
-    public final BankAccountTable bankAccounts;
-    public final BankTransactionTypeTable bankTransactionTypes;
-    public final BankTransactionTable bankTransactions;
-    public final BankTable banks;
-    public final BlackholeEmailAddressTable blackholeEmailAddresses;
-    public final BusinessAdministratorTable businessAdministrators;
+    private final AOSHCommandTable aoshCommands;
+    public AOSHCommandTable getAoshCommands() {
+        return aoshCommands;
+    }
 
-    public final BusinessAdministratorPermissionTable businessAdministratorPermissions;
+    private final ArchitectureTable architectures;
+    public ArchitectureTable getArchitectures() {
+        return architectures;
+    }
+
+    private final BackupPartitionTable backupPartitions;
+    public BackupPartitionTable getBackupPartitions() {
+        return backupPartitions;
+    }
+
+    private final BackupReportTable backupReports;
+    public BackupReportTable getBackupReports() {
+        return backupReports;
+    }
+
+    private final BackupRetentionTable backupRetentions;
+    public BackupRetentionTable getBackupRetentions() {
+        return backupRetentions;
+    }
+
+    private final BankAccountTable bankAccounts;
+    public BankAccountTable getBankAccounts() {
+        return bankAccounts;
+    }
+
+    private final BankTransactionTypeTable bankTransactionTypes;
+    public BankTransactionTypeTable getBankTransactionTypes() {
+        return bankTransactionTypes;
+    }
+
+    private final BankTransactionTable bankTransactions;
+    public BankTransactionTable getBankTransactions() {
+        return bankTransactions;
+    }
+
+    private final BankTable banks;
+    public BankTable getBanks() {
+        return banks;
+    }
+
+    private final BlackholeEmailAddressTable blackholeEmailAddresses;
+    public BlackholeEmailAddressTable getBlackholeEmailAddresses() {
+        return blackholeEmailAddresses;
+    }
+
+    private final BrandTable brands;
+    public BrandTable getBrands() {
+        return brands;
+    }
+
+    private final BusinessAdministratorTable businessAdministrators;
+    public BusinessAdministratorTable getBusinessAdministrators() {
+        return businessAdministrators;
+    }
+
+    private final BusinessAdministratorPermissionTable businessAdministratorPermissions;
     public BusinessAdministratorPermissionTable getBusinessAdministratorPermissions() {return businessAdministratorPermissions;}
 
-    public final BusinessProfileTable businessProfiles;
-    public final BusinessTable businesses;
-    public final BusinessServerTable businessServers;
-    public final ClientJvmProfileTable clientJvmProfiles;
-    public final CountryCodeTable countryCodes;
+    private final BusinessProfileTable businessProfiles;
+    public BusinessProfileTable getBusinessProfiles() {
+        return businessProfiles;
+    }
 
-    public final CreditCardProcessorTable creditCardProcessors;
+    private final BusinessTable businesses;
+    public BusinessTable getBusinesses() {
+        return businesses;
+    }
+
+    private final BusinessServerTable businessServers;
+    public BusinessServerTable getBusinessServers() {
+        return businessServers;
+    }
+
+    private final ClientJvmProfileTable clientJvmProfiles;
+    public ClientJvmProfileTable getClientJvmProfiles() {
+        return clientJvmProfiles;
+    }
+
+    private final CountryCodeTable countryCodes;
+    public CountryCodeTable getCountryCodes() {
+        return countryCodes;
+    }
+
+    private final CreditCardProcessorTable creditCardProcessors;
     public CreditCardProcessorTable getCreditCardProcessors() {return creditCardProcessors;}
 
-    public final CreditCardTransactionTable creditCardTransactions;
+    private final CreditCardTransactionTable creditCardTransactions;
     public CreditCardTransactionTable getCreditCardTransactions() {return creditCardTransactions;}
 
-    public final CreditCardTable creditCards;
+    private final CreditCardTable creditCards;
     public CreditCardTable getCreditCards() {return creditCards;}
 
-    public final CvsRepositoryTable cvsRepositories;
-    public final DaemonProfileTable daemonProfiles;
-    public final DisableLogTable disableLogs;
-    
-    public final DistroFileTypeTable distroFileTypes;
-    public final DistroFileTable distroFiles;
-    public final DNSForbiddenZoneTable dnsForbiddenZones;
-    public final DNSRecordTable dnsRecords;
-    public final DNSTLDTable dnsTLDs;
-    public final DNSTypeTable dnsTypes;
-    public final DNSZoneTable dnsZones;
-    public final EmailAddressTable emailAddresses;
-    public final EmailAttachmentBlockTable emailAttachmentBlocks;
-    public final EmailAttachmentTypeTable emailAttachmentTypes;
-    public final EmailDomainTable emailDomains;
-    public final EmailForwardingTable emailForwardings;
-    public final EmailListAddressTable emailListAddresses;
-    public final EmailListTable emailLists;
-    public final EmailPipeAddressTable emailPipeAddresses;
-    public final EmailPipeTable emailPipes;
-    public final EmailSmtpRelayTypeTable emailSmtpRelayTypes;
-    public final EmailSmtpRelayTable emailSmtpRelays;
-    public final EmailSpamAssassinIntegrationModeTable emailSpamAssassinIntegrationModes;
+    private final CvsRepositoryTable cvsRepositories;
+    public CvsRepositoryTable getCvsRepositories() {
+        return cvsRepositories;
+    }
 
-    public final EncryptionKeyTable encryptionKeys;
+    private final DaemonProfileTable daemonProfiles;
+    public DaemonProfileTable getDaemonProfiles() {
+        return daemonProfiles;
+    }
+
+    private final DisableLogTable disableLogs;
+    public DisableLogTable getDisableLogs() {
+        return disableLogs;
+    }
+
+    private final DistroFileTypeTable distroFileTypes;
+    public DistroFileTypeTable getDistroFileTypes() {
+        return distroFileTypes;
+    }
+
+    private final DistroFileTable distroFiles;
+    public DistroFileTable getDistroFiles() {
+        return distroFiles;
+    }
+
+    private final DNSForbiddenZoneTable dnsForbiddenZones;
+    public DNSForbiddenZoneTable getDnsForbiddenZones() {
+        return dnsForbiddenZones;
+    }
+
+    private final DNSRecordTable dnsRecords;
+    public DNSRecordTable getDnsRecords() {
+        return dnsRecords;
+    }
+
+    private final DNSTLDTable dnsTLDs;
+    public DNSTLDTable getDnsTLDs() {
+        return dnsTLDs;
+    }
+
+    private final DNSTypeTable dnsTypes;
+    public DNSTypeTable getDnsTypes() {
+        return dnsTypes;
+    }
+
+    private final DNSZoneTable dnsZones;
+    public DNSZoneTable getDnsZones() {
+        return dnsZones;
+    }
+
+    private final EmailAddressTable emailAddresses;
+    public EmailAddressTable getEmailAddresses() {
+        return emailAddresses;
+    }
+
+    private final EmailAttachmentBlockTable emailAttachmentBlocks;
+    public EmailAttachmentBlockTable getEmailAttachmentBlocks() {
+        return emailAttachmentBlocks;
+    }
+
+    private final EmailAttachmentTypeTable emailAttachmentTypes;
+    public EmailAttachmentTypeTable getEmailAttachmentTypes() {
+        return emailAttachmentTypes;
+    }
+
+    private final EmailDomainTable emailDomains;
+    public EmailDomainTable getEmailDomains() {
+        return emailDomains;
+    }
+
+    private final EmailForwardingTable emailForwardings;
+    public EmailForwardingTable getEmailForwardings() {
+        return emailForwardings;
+    }
+
+    private final EmailListAddressTable emailListAddresses;
+    public EmailListAddressTable getEmailListAddresses() {
+        return emailListAddresses;
+    }
+
+    private final EmailListTable emailLists;
+    public EmailListTable getEmailLists() {
+        return emailLists;
+    }
+
+    private final EmailPipeAddressTable emailPipeAddresses;
+    public EmailPipeAddressTable getEmailPipeAddresses() {
+        return emailPipeAddresses;
+    }
+
+    private final EmailPipeTable emailPipes;
+    public EmailPipeTable getEmailPipes() {
+        return emailPipes;
+    }
+
+    private final EmailSmtpRelayTypeTable emailSmtpRelayTypes;
+    public EmailSmtpRelayTypeTable getEmailSmtpRelayTypes() {
+        return emailSmtpRelayTypes;
+    }
+
+    private final EmailSmtpRelayTable emailSmtpRelays;
+    public EmailSmtpRelayTable getEmailSmtpRelays() {
+        return emailSmtpRelays;
+    }
+
+    private final EmailSpamAssassinIntegrationModeTable emailSpamAssassinIntegrationModes;
+    public EmailSpamAssassinIntegrationModeTable getEmailSpamAssassinIntegrationModes() {
+        return emailSpamAssassinIntegrationModes;
+    }
+
+    private final EncryptionKeyTable encryptionKeys;
     public EncryptionKeyTable getEncryptionKeys() {return encryptionKeys;}
 
-    public final ExpenseCategoryTable expenseCategories;
-    public final FailoverFileLogTable failoverFileLogs;
-    public final FailoverFileReplicationTable failoverFileReplications;
-    public final FailoverFileScheduleTable failoverFileSchedules;
+    private final ExpenseCategoryTable expenseCategories;
+    public ExpenseCategoryTable getExpenseCategories() {
+        return expenseCategories;
+    }
 
-    public final FailoverMySQLReplicationTable failoverMySQLReplications;
+    private final FailoverFileLogTable failoverFileLogs;
+    public FailoverFileLogTable getFailoverFileLogs() {
+        return failoverFileLogs;
+    }
+
+    private final FailoverFileReplicationTable failoverFileReplications;
+    public FailoverFileReplicationTable getFailoverFileReplications() {
+        return failoverFileReplications;
+    }
+
+    private final FailoverFileScheduleTable failoverFileSchedules;
+    public FailoverFileScheduleTable getFailoverFileSchedules() {
+        return failoverFileSchedules;
+    }
+
+    private final FailoverMySQLReplicationTable failoverMySQLReplications;
     public FailoverMySQLReplicationTable getFailoverMySQLReplications() {return failoverMySQLReplications;}
 
-    public final FileBackupSettingTable fileBackupSettings;
-    public final FTPGuestUserTable ftpGuestUsers;
-    public final HttpdBindTable httpdBinds;
-    public final HttpdJBossSiteTable httpdJBossSites;
-    public final HttpdJBossVersionTable httpdJBossVersions;
-    public final HttpdJKCodeTable httpdJKCodes;
-    public final HttpdJKProtocolTable httpdJKProtocols;
-    public final HttpdServerTable httpdServers;
-    public final HttpdSharedTomcatTable httpdSharedTomcats;
-    public final HttpdSiteAuthenticatedLocationTable httpdSiteAuthenticatedLocationTable;
-    public final HttpdSiteBindTable httpdSiteBinds;
-    public final HttpdSiteURLTable httpdSiteURLs;
+    private final FileBackupSettingTable fileBackupSettings;
+    public FileBackupSettingTable getFileBackupSettings() {
+        return fileBackupSettings;
+    }
 
-    public final HttpdSiteTable httpdSites;
+    private final FTPGuestUserTable ftpGuestUsers;
+    public FTPGuestUserTable getFtpGuestUsers() {
+        return ftpGuestUsers;
+    }
+
+    private final HttpdBindTable httpdBinds;
+    public HttpdBindTable getHttpdBinds() {
+        return httpdBinds;
+    }
+
+    private final HttpdJBossSiteTable httpdJBossSites;
+    public HttpdJBossSiteTable getHttpdJBossSites() {
+        return httpdJBossSites;
+    }
+
+    private final HttpdJBossVersionTable httpdJBossVersions;
+    public HttpdJBossVersionTable getHttpdJBossVersions() {
+        return httpdJBossVersions;
+    }
+
+    private final HttpdJKCodeTable httpdJKCodes;
+    public HttpdJKCodeTable getHttpdJKCodes() {
+        return httpdJKCodes;
+    }
+
+    private final HttpdJKProtocolTable httpdJKProtocols;
+    public HttpdJKProtocolTable getHttpdJKProtocols() {
+        return httpdJKProtocols;
+    }
+
+    private final HttpdServerTable httpdServers;
+    public HttpdServerTable getHttpdServers() {
+        return httpdServers;
+    }
+
+    private final HttpdSharedTomcatTable httpdSharedTomcats;
+    public HttpdSharedTomcatTable getHttpdSharedTomcats() {
+        return httpdSharedTomcats;
+    }
+
+    private final HttpdSiteAuthenticatedLocationTable httpdSiteAuthenticatedLocationTable;
+    public HttpdSiteAuthenticatedLocationTable getHttpdSiteAuthenticatedLocationTable() {
+        return httpdSiteAuthenticatedLocationTable;
+    }
+
+    private final HttpdSiteBindTable httpdSiteBinds;
+    public HttpdSiteBindTable getHttpdSiteBinds() {
+        return httpdSiteBinds;
+    }
+
+    private final HttpdSiteURLTable httpdSiteURLs;
+    public HttpdSiteURLTable getHttpdSiteURLs() {
+        return httpdSiteURLs;
+    }
+
+    private final HttpdSiteTable httpdSites;
     public HttpdSiteTable getHttpdSites() {return httpdSites;}
 
-    public final HttpdStaticSiteTable httpdStaticSites;
-    public final HttpdTomcatContextTable httpdTomcatContexts;
-    public final HttpdTomcatDataSourceTable httpdTomcatDataSources;
-    public final HttpdTomcatParameterTable httpdTomcatParameters;
-    public final HttpdTomcatSiteTable httpdTomcatSites;
-    public final HttpdTomcatSharedSiteTable httpdTomcatSharedSites;
-    public final HttpdTomcatStdSiteTable httpdTomcatStdSites;
-    public final HttpdTomcatVersionTable httpdTomcatVersions;
-    public final HttpdWorkerTable httpdWorkers;
-    public final IPAddressTable ipAddresses;
-    public final LinuxAccAddressTable linuxAccAddresses;
-    public final LinuxAccountTypeTable linuxAccountTypes;
-    public final LinuxAccountTable linuxAccounts;
-    public final LinuxGroupAccountTable linuxGroupAccounts;
-    public final LinuxGroupTypeTable linuxGroupTypes;
-    public final LinuxGroupTable linuxGroups;
-    public final LinuxIDTable linuxIDs;
-    public final LinuxServerAccountTable linuxServerAccounts;
-    public final LinuxServerGroupTable linuxServerGroups;
-    public final MajordomoListTable majordomoLists;
-    public final MajordomoServerTable majordomoServers;
-    public final MajordomoVersionTable majordomoVersions;
-    public final MasterHistoryTable masterHistory;
-    public final MasterHostTable masterHosts;
-    public final MasterProcessTable masterProcesses;
-    public final MasterServerProfileTable masterServerProfiles;
-    public final MasterServerStatTable masterServerStats;
-    public final MasterServerTable masterServers;
-    public final MasterUserTable masterUsers;
-    public final MonthlyChargeTable monthlyCharges;
-    public final MySQLDatabaseTable mysqlDatabases;
-    public final MySQLDBUserTable mysqlDBUsers;
-    public final MySQLReservedWordTable mysqlReservedWords;
-    public final MySQLServerUserTable mysqlServerUsers;
+    private final HttpdStaticSiteTable httpdStaticSites;
+    public HttpdStaticSiteTable getHttpdStaticSites() {
+        return httpdStaticSites;
+    }
 
-    public final MySQLServerTable mysqlServers;
+    private final HttpdTomcatContextTable httpdTomcatContexts;
+    public HttpdTomcatContextTable getHttpdTomcatContexts() {
+        return httpdTomcatContexts;
+    }
+
+    private final HttpdTomcatDataSourceTable httpdTomcatDataSources;
+    public HttpdTomcatDataSourceTable getHttpdTomcatDataSources() {
+        return httpdTomcatDataSources;
+    }
+
+    private final HttpdTomcatParameterTable httpdTomcatParameters;
+    public HttpdTomcatParameterTable getHttpdTomcatParameters() {
+        return httpdTomcatParameters;
+    }
+
+    private final HttpdTomcatSiteTable httpdTomcatSites;
+    public HttpdTomcatSiteTable getHttpdTomcatSites() {
+        return httpdTomcatSites;
+    }
+
+    private final HttpdTomcatSharedSiteTable httpdTomcatSharedSites;
+    public HttpdTomcatSharedSiteTable getHttpdTomcatSharedSites() {
+        return httpdTomcatSharedSites;
+    }
+
+    private final HttpdTomcatStdSiteTable httpdTomcatStdSites;
+    public HttpdTomcatStdSiteTable getHttpdTomcatStdSites() {
+        return httpdTomcatStdSites;
+    }
+
+    private final HttpdTomcatVersionTable httpdTomcatVersions;
+    public HttpdTomcatVersionTable getHttpdTomcatVersions() {
+        return httpdTomcatVersions;
+    }
+
+    private final HttpdWorkerTable httpdWorkers;
+    public HttpdWorkerTable getHttpdWorkers() {
+        return httpdWorkers;
+    }
+
+    private final IPAddressTable ipAddresses;
+    public IPAddressTable getIpAddresses() {
+        return ipAddresses;
+    }
+
+    private final LanguageTable languages;
+    public LanguageTable getLanguages() {
+        return languages;
+    }
+
+    private final LinuxAccAddressTable linuxAccAddresses;
+    public LinuxAccAddressTable getLinuxAccAddresses() {
+        return linuxAccAddresses;
+    }
+
+    private final LinuxAccountTypeTable linuxAccountTypes;
+    public LinuxAccountTypeTable getLinuxAccountTypes() {
+        return linuxAccountTypes;
+    }
+
+    private final LinuxAccountTable linuxAccounts;
+    public LinuxAccountTable getLinuxAccounts() {
+        return linuxAccounts;
+    }
+
+    private final LinuxGroupAccountTable linuxGroupAccounts;
+    public LinuxGroupAccountTable getLinuxGroupAccounts() {
+        return linuxGroupAccounts;
+    }
+
+    private final LinuxGroupTypeTable linuxGroupTypes;
+    public LinuxGroupTypeTable getLinuxGroupTypes() {
+        return linuxGroupTypes;
+    }
+
+    private final LinuxGroupTable linuxGroups;
+    public LinuxGroupTable getLinuxGroups() {
+        return linuxGroups;
+    }
+
+    private final LinuxIDTable linuxIDs;
+    public LinuxIDTable getLinuxIDs() {
+        return linuxIDs;
+    }
+
+    private final LinuxServerAccountTable linuxServerAccounts;
+    public LinuxServerAccountTable getLinuxServerAccounts() {
+        return linuxServerAccounts;
+    }
+
+    private final LinuxServerGroupTable linuxServerGroups;
+    public LinuxServerGroupTable getLinuxServerGroups() {
+        return linuxServerGroups;
+    }
+
+    private final MajordomoListTable majordomoLists;
+    public MajordomoListTable getMajordomoLists() {
+        return majordomoLists;
+    }
+
+    private final MajordomoServerTable majordomoServers;
+    public MajordomoServerTable getMajordomoServers() {
+        return majordomoServers;
+    }
+
+    private final MajordomoVersionTable majordomoVersions;
+    public MajordomoVersionTable getMajordomoVersions() {
+        return majordomoVersions;
+    }
+
+    private final MasterHistoryTable masterHistory;
+    public MasterHistoryTable getMasterHistory() {
+        return masterHistory;
+    }
+
+    private final MasterHostTable masterHosts;
+    public MasterHostTable getMasterHosts() {
+        return masterHosts;
+    }
+
+    private final MasterProcessTable masterProcesses;
+    public MasterProcessTable getMasterProcesses() {
+        return masterProcesses;
+    }
+
+    private final MasterServerProfileTable masterServerProfiles;
+    public MasterServerProfileTable getMasterServerProfiles() {
+        return masterServerProfiles;
+    }
+
+    private final MasterServerStatTable masterServerStats;
+    public MasterServerStatTable getMasterServerStats() {
+        return masterServerStats;
+    }
+
+    private final MasterServerTable masterServers;
+    public MasterServerTable getMasterServers() {
+        return masterServers;
+    }
+
+    private final MasterUserTable masterUsers;
+    public MasterUserTable getMasterUsers() {
+        return masterUsers;
+    }
+
+    private final MonthlyChargeTable monthlyCharges;
+    public MonthlyChargeTable getMonthlyCharges() {
+        return monthlyCharges;
+    }
+
+    private final MySQLDatabaseTable mysqlDatabases;
+    public MySQLDatabaseTable getMysqlDatabases() {
+        return mysqlDatabases;
+    }
+
+    private final MySQLDBUserTable mysqlDBUsers;
+    public MySQLDBUserTable getMysqlDBUsers() {
+        return mysqlDBUsers;
+    }
+
+    private final MySQLReservedWordTable mysqlReservedWords;
+    public MySQLReservedWordTable getMysqlReservedWords() {
+        return mysqlReservedWords;
+    }
+
+    private final MySQLServerUserTable mysqlServerUsers;
+    public MySQLServerUserTable getMysqlServerUsers() {
+        return mysqlServerUsers;
+    }
+
+    private final MySQLServerTable mysqlServers;
     public MySQLServerTable getMysqlServers() {return mysqlServers;}
 
-    public final MySQLUserTable mysqlUsers;
-    public final NetBindTable netBinds;
-    public final NetDeviceIDTable netDeviceIDs;
-    public final NetDeviceTable netDevices;
-    public final NetPortTable netPorts;
-    public final NetProtocolTable netProtocols;
-    public final NetTcpRedirectTable netTcpRedirects;
-    public final NoticeLogTable noticeLogs;
-    public final NoticeTypeTable noticeTypes;
-    public final OperatingSystemVersionTable operatingSystemVersions;
-    public final OperatingSystemTable operatingSystems;
-    public final PackageCategoryTable packageCategories;
-    public final PackageDefinitionLimitTable packageDefinitionLimits;
-    public final PackageDefinitionTable packageDefinitions;
+    private final MySQLUserTable mysqlUsers;
+    public MySQLUserTable getMysqlUsers() {
+        return mysqlUsers;
+    }
 
-    public final PackageTable packages;
+    private final NetBindTable netBinds;
+    public NetBindTable getNetBinds() {
+        return netBinds;
+    }
+
+    private final NetDeviceIDTable netDeviceIDs;
+    public NetDeviceIDTable getNetDeviceIDs() {
+        return netDeviceIDs;
+    }
+
+    private final NetDeviceTable netDevices;
+    public NetDeviceTable getNetDevices() {
+        return netDevices;
+    }
+
+    private final NetPortTable netPorts;
+    public NetPortTable getNetPorts() {
+        return netPorts;
+    }
+
+    private final NetProtocolTable netProtocols;
+    public NetProtocolTable getNetProtocols() {
+        return netProtocols;
+    }
+
+    private final NetTcpRedirectTable netTcpRedirects;
+    public NetTcpRedirectTable getNetTcpRedirects() {
+        return netTcpRedirects;
+    }
+
+    private final NoticeLogTable noticeLogs;
+    public NoticeLogTable getNoticeLogs() {
+        return noticeLogs;
+    }
+
+    private final NoticeTypeTable noticeTypes;
+    public NoticeTypeTable getNoticeTypes() {
+        return noticeTypes;
+    }
+
+    private final OperatingSystemVersionTable operatingSystemVersions;
+    public OperatingSystemVersionTable getOperatingSystemVersions() {
+        return operatingSystemVersions;
+    }
+
+    private final OperatingSystemTable operatingSystems;
+    public OperatingSystemTable getOperatingSystems() {
+        return operatingSystems;
+    }
+
+    private final PackageCategoryTable packageCategories;
+    public PackageCategoryTable getPackageCategories() {
+        return packageCategories;
+    }
+
+    private final PackageDefinitionLimitTable packageDefinitionLimits;
+    public PackageDefinitionLimitTable getPackageDefinitionLimits() {
+        return packageDefinitionLimits;
+    }
+
+    private final PackageDefinitionTable packageDefinitions;
+    public PackageDefinitionTable getPackageDefinitions() {
+        return packageDefinitions;
+    }
+
+    private final PackageTable packages;
     public PackageTable getPackages() {return packages;}
-
-    public final PaymentTypeTable paymentTypes;
     
-    public final PhysicalServerTable physicalServers;
+    private final PaymentTypeTable paymentTypes;
+    public PaymentTypeTable getPaymentTypes() {
+        return paymentTypes;
+    }
+
+    private final PhysicalServerTable physicalServers;
     public PhysicalServerTable getPhysicalServers() {return physicalServers;}
 
-    public final PostgresDatabaseTable postgresDatabases;
-    public final PostgresEncodingTable postgresEncodings;
-    public final PostgresReservedWordTable postgresReservedWords;
-    public final PostgresServerUserTable postgresServerUsers;
+    private final PostgresDatabaseTable postgresDatabases;
+    public PostgresDatabaseTable getPostgresDatabases() {
+        return postgresDatabases;
+    }
 
-    public final PostgresServerTable postgresServers;
+    private final PostgresEncodingTable postgresEncodings;
+    public PostgresEncodingTable getPostgresEncodings() {
+        return postgresEncodings;
+    }
+
+    private final PostgresReservedWordTable postgresReservedWords;
+    public PostgresReservedWordTable getPostgresReservedWords() {
+        return postgresReservedWords;
+    }
+
+    private final PostgresServerUserTable postgresServerUsers;
+    public PostgresServerUserTable getPostgresServerUsers() {
+        return postgresServerUsers;
+    }
+
+    private final PostgresServerTable postgresServers;
     public PostgresServerTable getPostgresServers() {return postgresServers;}
 
-    public final PostgresUserTable postgresUsers;
-    public final PostgresVersionTable postgresVersions;
-    public final PrivateFTPServerTable privateFTPServers;
+    private final PostgresUserTable postgresUsers;
+    public PostgresUserTable getPostgresUsers() {
+        return postgresUsers;
+    }
 
-    public final ProcessorTypeTable processorTypes;
+    private final PostgresVersionTable postgresVersions;
+    public PostgresVersionTable getPostgresVersions() {
+        return postgresVersions;
+    }
+
+    private final PrivateFTPServerTable privateFTPServers;
+    public PrivateFTPServerTable getPrivateFTPServers() {
+        return privateFTPServers;
+    }
+
+    private final ProcessorTypeTable processorTypes;
     public ProcessorTypeTable getProcessorTypes() {return processorTypes;}
     
-    public final ProtocolTable protocols;
-    
-    public final RackTable racks;
+    private final ProtocolTable protocols;
+    public ProtocolTable getProtocols() {
+        return protocols;
+    }
+
+    private final RackTable racks;
     public RackTable getRacks() {return racks;}
 
-    public final ResourceTable resources;
-    public final SchemaColumnTable schemaColumns;
-    public final SchemaForeignKeyTable schemaForeignKeys;
-    public final SchemaTableTable schemaTables;
-    public final SchemaTypeTable schemaTypes;
-    public final ServerFarmTable serverFarms;
-    public final ServerTable servers;
-    public final ShellTable shells;
+    private final ResellerTable resellers;
+    public ResellerTable getResellers() {
+        return resellers;
+    }
 
-    public final SignupRequestOptionTable signupRequestOptions;
+    private final ResourceTable resources;
+    public ResourceTable getResources() {
+        return resources;
+    }
+
+    private final SchemaColumnTable schemaColumns;
+    public SchemaColumnTable getSchemaColumns() {
+        return schemaColumns;
+    }
+
+    private final SchemaForeignKeyTable schemaForeignKeys;
+    public SchemaForeignKeyTable getSchemaForeignKeys() {
+        return schemaForeignKeys;
+    }
+
+    private final SchemaTableTable schemaTables;
+    public SchemaTableTable getSchemaTables() {
+        return schemaTables;
+    }
+
+    private final SchemaTypeTable schemaTypes;
+    public SchemaTypeTable getSchemaTypes() {
+        return schemaTypes;
+    }
+
+    private final ServerFarmTable serverFarms;
+    public ServerFarmTable getServerFarms() {
+        return serverFarms;
+    }
+
+    private final ServerTable servers;
+    public ServerTable getServers() {
+        return servers;
+    }
+
+    private final ShellTable shells;
+    public ShellTable getShells() {
+        return shells;
+    }
+
+    private final SignupRequestOptionTable signupRequestOptions;
     public SignupRequestOptionTable getSignupRequestOptions() {return signupRequestOptions;}
 
-    public final SignupRequestTable signupRequests;
+    private final SignupRequestTable signupRequests;
     public SignupRequestTable getSignupRequests() {return signupRequests;}
 
-    public final SpamEmailMessageTable spamEmailMessages;
-    public final SystemEmailAliasTable systemEmailAliases;
-    public final TechnologyTable technologies;
-    public final TechnologyClassTable technologyClasses;
-    public final TechnologyNameTable technologyNames;
-    public final TechnologyVersionTable technologyVersions;
-    public final TicketPriorityTable ticketPriorities;
-    public final TicketStatusTable ticketStatuses;
-    public final TicketTypeTable ticketTypes;
-    public final TicketTable tickets;
-    public final TimeZoneTable timeZones;
-    public final TransactionTypeTable transactionTypes;
-    public final TransactionTable transactions;
-    public final USStateTable usStates;
-    public final UsernameTable usernames;
+    private final SpamEmailMessageTable spamEmailMessages;
+    public SpamEmailMessageTable getSpamEmailMessages() {
+        return spamEmailMessages;
+    }
 
-    public final VirtualDiskTable virtualDisks;
+    private final SystemEmailAliasTable systemEmailAliases;
+    public SystemEmailAliasTable getSystemEmailAliases() {
+        return systemEmailAliases;
+    }
+
+    private final TechnologyTable technologies;
+    public TechnologyTable getTechnologies() {
+        return technologies;
+    }
+
+    private final TechnologyClassTable technologyClasses;
+    public TechnologyClassTable getTechnologyClasses() {
+        return technologyClasses;
+    }
+
+    private final TechnologyNameTable technologyNames;
+    public TechnologyNameTable getTechnologyNames() {
+        return technologyNames;
+    }
+
+    private final TechnologyVersionTable technologyVersions;
+    public TechnologyVersionTable getTechnologyVersions() {
+        return technologyVersions;
+    }
+
+    private final TicketActionTypeTable ticketActionTypes;
+    public TicketActionTypeTable getTicketActionTypes() {return ticketActionTypes;}
+
+    private final TicketActionTable ticketActions;
+    public TicketActionTable getTicketActions() {return ticketActions;}
+
+    private final TicketAssignmentTable ticketAssignments;
+    public TicketAssignmentTable getTicketAssignments() {return ticketAssignments;}
+
+    private final TicketBrandCategoryTable ticketBrandCategories;
+    public TicketBrandCategoryTable getTicketBrandCategories() {return ticketBrandCategories;}
+
+    private final TicketCategoryTable ticketCategories;
+    public TicketCategoryTable getTicketCategories() {return ticketCategories;}
+
+    private final TicketPriorityTable ticketPriorities;
+    public TicketPriorityTable getTicketPriorities() {
+        return ticketPriorities;
+    }
+
+    private final TicketStatusTable ticketStatuses;
+    public TicketStatusTable getTicketStatuses() {
+        return ticketStatuses;
+    }
+
+    private final TicketTypeTable ticketTypes;
+    public TicketTypeTable getTicketTypes() {
+        return ticketTypes;
+    }
+
+    private final TicketTable tickets;
+    public TicketTable getTickets() {
+        return tickets;
+    }
+
+    private final TimeZoneTable timeZones;
+    public TimeZoneTable getTimeZones() {
+        return timeZones;
+    }
+
+    private final TransactionTypeTable transactionTypes;
+    public TransactionTypeTable getTransactionTypes() {
+        return transactionTypes;
+    }
+
+    private final TransactionTable transactions;
+    public TransactionTable getTransactions() {
+        return transactions;
+    }
+
+    private final USStateTable usStates;
+    public USStateTable getUsStates() {
+        return usStates;
+    }
+
+    private final UsernameTable usernames;
+    public UsernameTable getUsernames() {
+        return usernames;
+    }
+
+    private final VirtualDiskTable virtualDisks;
     public VirtualDiskTable getVirtualDisks() {return virtualDisks;}
 
-    public final VirtualServerTable virtualServers;
+    private final VirtualServerTable virtualServers;
     public VirtualServerTable getVirtualServers() {return virtualServers;}
 
-    public final WhoisHistoryTable whoisHistory;
+    private final WhoisHistoryTable whoisHistory;
     public WhoisHistoryTable getWhoisHistory() {return whoisHistory;}
 
     public final SimpleAOClient simpleAOClient;
@@ -345,8 +895,6 @@ abstract public class AOServConnector {
 
         // These must match the table IDs in SchemaTable
         ArrayList<AOServTable> newTables = new ArrayList<AOServTable>();
-        newTables.add(actionTypes=new ActionTypeTable(this));
-        newTables.add(actions=new ActionTable(this));
         newTables.add(aoServerDaemonHosts=new AOServerDaemonHostTable(this));
         newTables.add(aoServers=new AOServerTable(this));
         newTables.add(aoservPermissions=new AOServPermissionTable(this));
@@ -361,6 +909,7 @@ abstract public class AOServConnector {
         newTables.add(bankTransactions=new BankTransactionTable(this));
         newTables.add(banks=new BankTable(this));
         newTables.add(blackholeEmailAddresses=new BlackholeEmailAddressTable(this));
+        newTables.add(brands=new BrandTable(this));
         newTables.add(businessAdministrators=new BusinessAdministratorTable(this));
         newTables.add(businessAdministratorPermissions=new BusinessAdministratorPermissionTable(this));
         newTables.add(businessProfiles=new BusinessProfileTable(this));
@@ -422,6 +971,7 @@ abstract public class AOServConnector {
         newTables.add(httpdTomcatVersions=new HttpdTomcatVersionTable(this));
         newTables.add(httpdWorkers=new HttpdWorkerTable(this));
         newTables.add(ipAddresses=new IPAddressTable(this));
+        newTables.add(languages=new LanguageTable(this));
         newTables.add(linuxAccAddresses=new LinuxAccAddressTable(this));
         newTables.add(linuxAccountTypes=new LinuxAccountTypeTable(this));
         newTables.add(linuxAccounts=new LinuxAccountTable(this));
@@ -475,6 +1025,7 @@ abstract public class AOServConnector {
         newTables.add(processorTypes=new ProcessorTypeTable(this));
         newTables.add(protocols=new ProtocolTable(this));
         newTables.add(racks=new RackTable(this));
+        newTables.add(resellers=new ResellerTable(this));
         newTables.add(resources=new ResourceTable(this));
         newTables.add(schemaColumns=new SchemaColumnTable(this));
         newTables.add(schemaForeignKeys=new SchemaForeignKeyTable(this));
@@ -491,6 +1042,11 @@ abstract public class AOServConnector {
         newTables.add(technologyClasses=new TechnologyClassTable(this));
         newTables.add(technologyNames=new TechnologyNameTable(this));
         newTables.add(technologyVersions=new TechnologyVersionTable(this));
+        newTables.add(ticketActionTypes=new TicketActionTypeTable(this));
+        newTables.add(ticketActions=new TicketActionTable(this));
+        newTables.add(ticketAssignments=new TicketAssignmentTable(this));
+        newTables.add(ticketBrandCategories=new TicketBrandCategoryTable(this));
+        newTables.add(ticketCategories=new TicketCategoryTable(this));
         newTables.add(ticketPriorities=new TicketPriorityTable(this));
         newTables.add(ticketStatuses=new TicketStatusTable(this));
         newTables.add(ticketTypes=new TicketTypeTable(this));
@@ -1079,6 +1635,55 @@ abstract public class AOServConnector {
             CompressedDataInputStream in=connection.getInputStream();
             int code=in.readByte();
             if(code==AOServProtocol.DONE) return in.readUTF();
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
+        }
+    }
+
+    /**
+     * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery).
+     */
+    final String requestLongStringQuery(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readLongUTF();
+            AOServProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+        } catch(IOException err) {
+            connection.close();
+            throw err;
+        } finally {
+            releaseConnection(connection);
+        }
+    }
+
+    /**
+     * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery) or <code>null</code>.
+     * Supports nulls.
+     */
+    final String requestNullLongStringQuery(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        AOServConnection connection=getConnection();
+        try {
+            CompressedDataOutputStream out=connection.getOutputStream();
+            out.writeCompressedInt(commID.ordinal());
+            writeParams(params, out);
+            out.flush();
+
+            CompressedDataInputStream in=connection.getInputStream();
+            int code=in.readByte();
+            if(code==AOServProtocol.DONE) return in.readNullLongUTF();
             AOServProtocol.checkResult(code, in);
             throw new IOException("Unexpected response code: "+code);
         } catch(IOException err) {

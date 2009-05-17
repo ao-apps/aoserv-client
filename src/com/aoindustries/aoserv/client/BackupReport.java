@@ -77,13 +77,13 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
     }
 
     public Server getServer() throws SQLException, IOException {
-        Server se=table.connector.servers.get(server);
+        Server se=table.connector.getServers().get(server);
         if(se==null) throw new SQLException("Unable to find Server: "+server);
         return se;
     }
 
     public Package getPackage() throws IOException, SQLException {
-        Package pk=table.connector.packages.get(packageNum);
+        Package pk=table.connector.getPackages().get(packageNum);
         if(pk==null) throw new SQLException("Unable to find Package: "+packageNum);
         return pk;
     }

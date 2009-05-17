@@ -51,7 +51,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
     }
     
     public EmailSmtpRelay getEmailSmtpRelay() throws SQLException, IOException {
-	EmailSmtpRelay er=table.connector.emailSmtpRelays.get(email_relay);
+	EmailSmtpRelay er=table.connector.getEmailSmtpRelays().get(email_relay);
 	if(er==null) throw new SQLException("Unable to find EmailSmtpRelay: "+email_relay);
 	return er;
     }

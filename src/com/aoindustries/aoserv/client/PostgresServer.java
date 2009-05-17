@@ -61,7 +61,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         PostgresEncoding encoding,
         boolean enablePostgis
     ) throws IOException, SQLException {
-	return table.connector.postgresDatabases.addPostgresDatabase(
+	return table.connector.getPostgresDatabases().addPostgresDatabase(
             name,
             this,
             datdba,
@@ -114,7 +114,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     public PostgresVersion getPostgresVersion() throws SQLException, IOException {
-	PostgresVersion obj=table.connector.postgresVersions.get(version);
+	PostgresVersion obj=table.connector.getPostgresVersions().get(version);
 	if(obj==null) throw new SQLException("Unable to find PostgresVersion: "+version);
         if(
             obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
@@ -126,7 +126,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-	AOServer ao=table.connector.aoServers.get(ao_server);
+	AOServer ao=table.connector.getAoServers().get(ao_server);
 	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 	return ao;
     }
@@ -136,25 +136,25 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
     
     public NetBind getNetBind() throws SQLException, IOException {
-        NetBind nb=table.connector.netBinds.get(net_bind);
+        NetBind nb=table.connector.getNetBinds().get(net_bind);
         if(nb==null) throw new SQLException("Unable to find NetBind: "+net_bind);
         return nb;
     }
     
     public PostgresDatabase getPostgresDatabase(String name) throws IOException, SQLException {
-	return table.connector.postgresDatabases.getPostgresDatabase(name, this);
+	return table.connector.getPostgresDatabases().getPostgresDatabase(name, this);
     }
 
     public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
-	return table.connector.postgresDatabases.getPostgresDatabases(this);
+	return table.connector.getPostgresDatabases().getPostgresDatabases(this);
     }
 
     public PostgresServerUser getPostgresServerUser(String username) throws IOException, SQLException {
-	return table.connector.postgresServerUsers.getPostgresServerUser(username, this);
+	return table.connector.getPostgresServerUsers().getPostgresServerUser(username, this);
     }
 
     public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
-	return table.connector.postgresServerUsers.getPostgresServerUsers(this);
+	return table.connector.getPostgresServerUsers().getPostgresServerUsers(this);
     }
 
     public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
@@ -194,7 +194,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     public boolean isPostgresDatabaseNameAvailable(String name) throws IOException, SQLException {
-	return table.connector.postgresDatabases.isPostgresDatabaseNameAvailable(name, this);
+	return table.connector.getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {

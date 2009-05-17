@@ -45,7 +45,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-	AOServer ao=table.connector.aoServers.get(aoServer);
+	AOServer ao=table.connector.getAoServers().get(aoServer);
 	if(ao==null) throw new SQLException("Unable to find AOServer: "+aoServer);
 	return ao;
     }

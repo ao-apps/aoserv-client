@@ -84,7 +84,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
         if(command.equalsIgnoreCase(AOSHCommand.HELP) || command.equals("?")) {
             int argCount=args.length;
             if(argCount==1) {
-                SchemaTableTable schemaTableTable=connector.schemaTables;
+                SchemaTableTable schemaTableTable=connector.getSchemaTables();
                 for(int c=-1;c<numTables;c++) {
                     SchemaTable schemaTable=c==-1?null:schemaTableTable.get(c);
                     String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
@@ -94,7 +94,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
                 out.flush();
             } else if(argCount==2) {
                 if(args[1].equals("syntax")) {
-                    SchemaTableTable schemaTableTable=connector.schemaTables;
+                    SchemaTableTable schemaTableTable=connector.getSchemaTables();
                     for(int c=-1;c<numTables;c++) {
                         SchemaTable schemaTable=c==-1?null:schemaTableTable.get(c);
                         String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');

@@ -60,11 +60,11 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
     public static final int MAX_LENGTH=255;
 
     public int addLinuxAccount(LinuxAccount account) throws IOException, SQLException {
-        return table.connector.linuxGroupAccounts.addLinuxGroupAccount(this, account);
+        return table.connector.getLinuxGroupAccounts().addLinuxGroupAccount(this, account);
     }
 
     public int addLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-        return table.connector.linuxServerGroups.addLinuxServerGroup(this, aoServer);
+        return table.connector.getLinuxServerGroups().addLinuxServerGroup(this, aoServer);
     }
 
     Object getColumnImpl(int i) {
@@ -77,17 +77,17 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
     }
 
     public LinuxGroupType getLinuxGroupType() throws SQLException {
-        LinuxGroupType typeObject = table.connector.linuxGroupTypes.get(type);
+        LinuxGroupType typeObject = table.connector.getLinuxGroupTypes().get(type);
         if (typeObject == null) throw new SQLException("Unable to find LinuxGroupType: " + type);
         return typeObject;
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-        return table.connector.linuxServerGroups.getLinuxServerGroup(aoServer, pkey);
+        return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
     }
 
     public List<LinuxServerGroup> getLinuxServerGroups() throws IOException, SQLException {
-        return table.connector.linuxServerGroups.getLinuxServerGroups(this);
+        return table.connector.getLinuxServerGroups().getLinuxServerGroups(this);
     }
 
     public String getName() {
@@ -96,7 +96,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
     public Package getPackage() throws IOException, SQLException {
         // null OK because data may be filtered at this point, like the linux group 'mail'
-        return table.connector.packages.get(packageName);
+        return table.connector.getPackages().get(packageName);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -156,7 +156,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be the primary group for any linux accounts
-        for(LinuxGroupAccount lga : table.connector.linuxGroupAccounts.getRows()) {
+        for(LinuxGroupAccount lga : table.connector.getLinuxGroupAccounts().getRows()) {
             if(lga.isPrimary() && equals(lga.getLinuxGroup())) {
                 reasons.add(new CannotRemoveReason<LinuxGroupAccount>("Used as primary group for Linux account "+lga.getLinuxAccount().getUsername().getUsername(), lga));
             }

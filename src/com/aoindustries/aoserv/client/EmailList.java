@@ -47,7 +47,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     int disable_log;
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
-        return table.connector.emailListAddresses.addEmailListAddress(address, this);
+        return table.connector.getEmailListAddresses().addEmailListAddress(address, this);
     }
 
     public boolean canDisable() {
@@ -107,27 +107,27 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
     public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
-        return table.connector.emailListAddresses.getEmailAddresses(this);
+        return table.connector.getEmailListAddresses().getEmailAddresses(this);
     }
 
     public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
-        return table.connector.emailListAddresses.getEmailListAddresses(this);
+        return table.connector.getEmailListAddresses().getEmailListAddresses(this);
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        LinuxServerAccount linuxServerAccountObject = table.connector.linuxServerAccounts.get(linux_server_account);
+        LinuxServerAccount linuxServerAccountObject = table.connector.getLinuxServerAccounts().get(linux_server_account);
         if (linuxServerAccountObject == null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
         return linuxServerAccountObject;
     }
 
     public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        LinuxServerGroup linuxServerGroupObject = table.connector.linuxServerGroups.get(linux_server_group);
+        LinuxServerGroup linuxServerGroupObject = table.connector.getLinuxServerGroups().get(linux_server_group);
         if (linuxServerGroupObject == null) throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
         return linuxServerGroupObject;
     }
@@ -144,7 +144,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     public MajordomoList getMajordomoList() throws IOException, SQLException {
-        return table.connector.majordomoLists.get(pkey);
+        return table.connector.getMajordomoLists().get(pkey);
     }
 
     public String getPath() {

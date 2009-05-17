@@ -38,7 +38,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     private int quota_gid;
 
     public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws IOException, SQLException {
-	return table.connector.failoverFileLogs.addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
+	return table.connector.getFailoverFileLogs().addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
     }
 
     public int getBitRate() {
@@ -71,17 +71,17 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     public List<FailoverFileSchedule> getFailoverFileSchedules() throws IOException, SQLException {
-        return table.connector.failoverFileSchedules.getFailoverFileSchedules(this);
+        return table.connector.getFailoverFileSchedules().getFailoverFileSchedules(this);
     }
 
     public Server getServer() throws SQLException, IOException {
-        Server se=table.connector.servers.get(server);
+        Server se=table.connector.getServers().get(server);
         if(se==null) throw new SQLException("Unable to find Server: "+server);
         return se;
     }
 
     public BackupPartition getBackupPartition() throws SQLException, IOException {
-        BackupPartition bp = table.connector.backupPartitions.get(backup_partition);
+        BackupPartition bp = table.connector.getBackupPartitions().get(backup_partition);
         if(bp==null) throw new SQLException("Unable to find BackupPartition: "+backup_partition);
         return bp;
     }
@@ -92,11 +92,11 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
      * are sorted by start_time descending (most recent at index zero).
      */
     public List<FailoverFileLog> getFailoverFileLogs(int maxRows) throws IOException, SQLException {
-        return table.connector.failoverFileLogs.getFailoverFileLogs(this, maxRows);
+        return table.connector.getFailoverFileLogs().getFailoverFileLogs(this, maxRows);
     }
 
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return table.connector.failoverMySQLReplications.getFailoverMySQLReplications(this);
+        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
     }
 
     public boolean getUseCompression() {
@@ -104,7 +104,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
     
     public BackupRetention getRetention() throws SQLException, IOException {
-        BackupRetention br=table.connector.backupRetentions.get(retention);
+        BackupRetention br=table.connector.getBackupRetentions().get(retention);
         if(br==null) throw new SQLException("Unable to find BackupRetention: "+retention);
         return br;
     }
@@ -142,7 +142,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
      */
     public LinuxID getQuotaGID() throws SQLException {
         if(quota_gid==-1) return null;
-        LinuxID lid = table.connector.linuxIDs.get(quota_gid);
+        LinuxID lid = table.connector.getLinuxIDs().get(quota_gid);
         if(lid==null) throw new SQLException("Unable to find LinuxID: "+quota_gid);
         return lid;
     }
@@ -212,22 +212,22 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     public int addFileBackupSetting(String path, boolean backupEnabled) throws IOException, SQLException {
-        return table.connector.fileBackupSettings.addFileBackupSetting(this, path, backupEnabled);
+        return table.connector.getFileBackupSettings().addFileBackupSetting(this, path, backupEnabled);
     }
 
     public FileBackupSetting getFileBackupSetting(String path) throws IOException, SQLException {
-        return table.connector.fileBackupSettings.getFileBackupSetting(this, path);
+        return table.connector.getFileBackupSettings().getFileBackupSetting(this, path);
     }
 
     public List<FileBackupSetting> getFileBackupSettings() throws IOException, SQLException {
-        return table.connector.fileBackupSettings.getFileBackupSettings(this);
+        return table.connector.getFileBackupSettings().getFileBackupSettings(this);
     }
     
     public void setFailoverFileSchedules(List<Short> hours, List<Short> minutes) throws IOException, SQLException {
-        table.connector.failoverFileSchedules.setFailoverFileSchedules(this, hours, minutes);
+        table.connector.getFailoverFileSchedules().setFailoverFileSchedules(this, hours, minutes);
     }
 
     public void setFileBackupSettings(List<String> paths, List<Boolean> backupEnableds) throws IOException, SQLException {
-        table.connector.fileBackupSettings.setFileBackupSettings(this, paths, backupEnableds);
+        table.connector.getFileBackupSettings().setFileBackupSettings(this, paths, backupEnableds);
     }
 }

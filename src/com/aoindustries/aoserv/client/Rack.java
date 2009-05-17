@@ -43,7 +43,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
     }
 
     public ServerFarm getServerFarm() throws SQLException {
-	ServerFarm sf=table.connector.serverFarms.get(farm);
+	ServerFarm sf=table.connector.getServerFarms().get(farm);
 	if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
 	return sf;
     }

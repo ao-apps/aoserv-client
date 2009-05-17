@@ -366,7 +366,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 
     public SchemaTable getSchemaTable(AOServConnector connector) throws SQLException, IOException {
         if(table_name==null) return null;
-        SchemaTable obj=connector.schemaTables.get(table_name);
+        SchemaTable obj=connector.getSchemaTables().get(table_name);
         if(obj==null) throw new SQLException("Unable to find SchemaTable: "+table_name);
         return obj;
     }

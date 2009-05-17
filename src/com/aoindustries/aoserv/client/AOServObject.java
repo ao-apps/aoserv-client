@@ -125,7 +125,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
     public abstract SchemaTable.TableID getTableID();
 
     final public SchemaTable getTableSchema(AOServConnector connector) throws IOException, SQLException {
-        return connector.schemaTables.get(getTableID());
+        return connector.getSchemaTables().get(getTableID());
     }
 
     @Override

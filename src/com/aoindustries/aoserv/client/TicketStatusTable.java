@@ -24,7 +24,7 @@ final public class TicketStatusTable extends GlobalTableStringKey<TicketStatus> 
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(TicketStatus.COLUMN_STATUS_name, ASCENDING)
+        new OrderBy(TicketStatus.COLUMN_SORT_ORDER_name, ASCENDING)
     };
     @Override
     OrderBy[] getDefaultOrderBy() {
@@ -32,7 +32,7 @@ final public class TicketStatusTable extends GlobalTableStringKey<TicketStatus> 
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TICKET_STATI;
+        return SchemaTable.TableID.TICKET_STATI;
     }
 
     public TicketStatus get(Object pkey) {
@@ -43,5 +43,9 @@ final public class TicketStatusTable extends GlobalTableStringKey<TicketStatus> 
         } catch(SQLException err) {
             throw new WrappedException(err);
         }
+    }
+
+    public TicketStatus get(String status) throws IOException, SQLException {
+        return getUniqueRow(TicketStatus.COLUMN_STATUS, status);
     }
 }

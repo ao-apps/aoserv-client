@@ -103,9 +103,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_40("1.40"),
         VERSION_1_41("1.41"),
         VERSION_1_42("1.42"),
-        VERSION_1_43("1.43");
+        VERSION_1_43("1.43"),
+        VERSION_1_44("1.44");
 
-        public static final Version CURRENT_VERSION = VERSION_1_43;
+        public static final Version CURRENT_VERSION = VERSION_1_44;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -400,7 +401,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE,
         GET_AO_SERVER_SYSTEM_TIME_MILLIS,
         GET_AO_SERVER_LVM_REPORT,
-        GET_AO_SERVER_HDD_MODEL_REPORT
+        GET_AO_SERVER_HDD_MODEL_REPORT,
+        GET_TICKET_DETAILS,
+        GET_TICKET_RAW_EMAIL,
+        GET_TICKET_INTERNAL_NOTES
     }
 
     /**

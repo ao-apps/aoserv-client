@@ -41,7 +41,7 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
     }
 
     public MasterUser getMasterUser() throws SQLException {
-	MasterUser obj=table.connector.masterUsers.get(username);
+	MasterUser obj=table.connector.getMasterUsers().get(username);
 	if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
 	return obj;
     }

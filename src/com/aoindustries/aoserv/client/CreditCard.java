@@ -138,13 +138,13 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
      * Gets the processor that is storing the credit card numbers.
      */
     public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
-        CreditCardProcessor ccp = table.connector.creditCardProcessors.get(processorId);
+        CreditCardProcessor ccp = table.connector.getCreditCardProcessors().get(processorId);
         if(ccp==null) throw new SQLException("Unable to find CreditCardProcessor: "+processorId);
         return ccp;
     }
 
     public Business getBusiness() throws SQLException {
-        Business business = table.connector.businesses.get(accounting);
+        Business business = table.connector.getBusinesses().get(accounting);
         if (business == null) throw new SQLException("Unable to find Business: " + accounting);
         return business;
     }
@@ -274,7 +274,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     public CountryCode getCountryCode() throws SQLException {
-        CountryCode countryCodeObj = table.connector.countryCodes.get(this.countryCode);
+        CountryCode countryCodeObj = table.connector.getCountryCodes().get(this.countryCode);
         if (countryCodeObj == null) throw new SQLException("Unable to find CountryCode: " + this.countryCode);
         return countryCodeObj;
     }
@@ -284,7 +284,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     public BusinessAdministrator getCreatedBy() throws SQLException {
-        BusinessAdministrator business_administrator = table.connector.usernames.get(createdBy).getBusinessAdministrator();
+        BusinessAdministrator business_administrator = table.connector.getUsernames().get(createdBy).getBusinessAdministrator();
         if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + createdBy);
         return business_administrator;
     }
@@ -314,28 +314,28 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
     public EncryptionKey getEncryptionCardNumberFrom() throws SQLException, IOException {
         if(encryption_card_number_from==-1) return null;
-        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_card_number_from);
+        EncryptionKey ek = table.connector.getEncryptionKeys().get(encryption_card_number_from);
         if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_card_number_from);
         return ek;
     }
 
     public EncryptionKey getEncryptionCardNumberRecipient() throws SQLException, IOException {
         if(encryption_card_number_recipient==-1) return null;
-        EncryptionKey er = table.connector.encryptionKeys.get(encryption_card_number_recipient);
+        EncryptionKey er = table.connector.getEncryptionKeys().get(encryption_card_number_recipient);
         if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_card_number_recipient);
         return er;
     }
 
     public EncryptionKey getEncryptionExpirationFrom() throws SQLException, IOException {
         if(encryption_expiration_from==-1) return null;
-        EncryptionKey ek = table.connector.encryptionKeys.get(encryption_expiration_from);
+        EncryptionKey ek = table.connector.getEncryptionKeys().get(encryption_expiration_from);
         if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_expiration_from);
         return ek;
     }
 
     public EncryptionKey getEncryptionExpirationRecipient() throws SQLException, IOException {
         if(encryption_expiration_recipient==-1) return null;
-        EncryptionKey er = table.connector.encryptionKeys.get(encryption_expiration_recipient);
+        EncryptionKey er = table.connector.getEncryptionKeys().get(encryption_expiration_recipient);
         if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_expiration_recipient);
         return er;
     }

@@ -47,13 +47,13 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
     }
 
     public EmailAddress getEmailAddress() throws SQLException, IOException {
-	EmailAddress emailAddressObject = table.connector.emailAddresses.get(email_address);
+	EmailAddress emailAddressObject = table.connector.getEmailAddresses().get(email_address);
 	if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 	return emailAddressObject;
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-	LinuxServerAccount lsa = table.connector.linuxServerAccounts.get(linux_server_account);
+	LinuxServerAccount lsa = table.connector.getLinuxServerAccounts().get(linux_server_account);
 	if(lsa == null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
 	return lsa;
     }

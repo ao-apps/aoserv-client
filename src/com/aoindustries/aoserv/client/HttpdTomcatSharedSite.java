@@ -62,11 +62,11 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
 
     public HttpdSharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
 	// May be null when filtered
-	return table.connector.httpdSharedTomcats.get(httpd_shared_tomcat);
+	return table.connector.getHttpdSharedTomcats().get(httpd_shared_tomcat);
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-	HttpdTomcatSite obj=table.connector.httpdTomcatSites.get(pkey);
+	HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(pkey);
 	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
 	return obj;
     }

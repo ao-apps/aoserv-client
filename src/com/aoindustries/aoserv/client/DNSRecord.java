@@ -68,7 +68,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     
     public IPAddress getDHCPAddress() throws SQLException, IOException {
         if(dhcpAddress==-1) return null;
-        IPAddress ia=table.connector.ipAddresses.get(dhcpAddress);
+        IPAddress ia=table.connector.getIpAddresses().get(dhcpAddress);
         if(ia==null) throw new SQLException("Unable to find IPAddress: "+dhcpAddress);
         return ia;
     }
@@ -125,13 +125,13 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     }
 
     public DNSType getType() throws SQLException {
-	DNSType obj=table.connector.dnsTypes.get(type);
+	DNSType obj=table.connector.getDnsTypes().get(type);
 	if(obj==null) throw new SQLException("Unable to find DNSType: "+type);
 	return obj;
     }
 
     public DNSZone getZone() throws SQLException {
-	DNSZone obj=table.connector.dnsZones.get(zone);
+	DNSZone obj=table.connector.getDnsZones().get(zone);
 	if(obj==null) throw new SQLException("Unable to find DNSZone: "+zone);
 	return obj;
     }

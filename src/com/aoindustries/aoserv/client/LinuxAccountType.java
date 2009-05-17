@@ -106,7 +106,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
     public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException {
 	String[] paths=getShellList(pkey);
 
-	ShellTable shellTable=connector.shells;
+	ShellTable shellTable=connector.getShells();
 	int len=paths.length;
 	List<Shell> shells=new ArrayList<Shell>(len);
 	for(int c=0;c<len;c++) {

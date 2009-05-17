@@ -79,15 +79,15 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     }
     
     public IPAddress getIPAddress(String ipAddress) throws IOException, SQLException {
-	return table.connector.ipAddresses.getIPAddress(this, ipAddress);
+	return table.connector.getIpAddresses().getIPAddress(this, ipAddress);
     }
 
     public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-	return table.connector.ipAddresses.getIPAddresses(this);
+	return table.connector.getIpAddresses().getIPAddresses(this);
     }
 
     public NetDeviceID getNetDeviceID() throws SQLException {
-	NetDeviceID ndi=table.connector.netDeviceIDs.get(device_id);
+	NetDeviceID ndi=table.connector.getNetDeviceIDs().get(device_id);
 	if(ndi==null) new SQLException("Unable to find NetDeviceID: "+device_id);
 	return ndi;
     }
@@ -158,7 +158,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     }
 
     public Server getServer() throws SQLException, IOException {
-	Server se=table.connector.servers.get(server);
+	Server se=table.connector.getServers().get(server);
 	if(se==null) throw new SQLException("Unable to find Server: "+server);
 	return se;
     }

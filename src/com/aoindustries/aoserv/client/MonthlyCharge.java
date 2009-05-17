@@ -90,13 +90,13 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     }
 
     public BusinessAdministrator getCreatedBy() throws SQLException {
-        BusinessAdministrator createdByObject = table.connector.usernames.get(created_by).getBusinessAdministrator();
+        BusinessAdministrator createdByObject = table.connector.getUsernames().get(created_by).getBusinessAdministrator();
         if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
         return createdByObject;
     }
 
     public Business getBusiness() throws SQLException {
-        Business bu=table.connector.businesses.get(accounting);
+        Business bu=table.connector.getBusinesses().get(accounting);
         if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
         return bu;
     }
@@ -106,7 +106,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     }
 
     public Package getPackage() throws SQLException, IOException {
-	Package packageObject = table.connector.packages.get(packageName);
+	Package packageObject = table.connector.getPackages().get(packageName);
   	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 	return packageObject;
     }
@@ -133,7 +133,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     }
 
     public TransactionType getType() throws SQLException {
-        TransactionType typeObject = table.connector.transactionTypes.get(type);
+        TransactionType typeObject = table.connector.getTransactionTypes().get(type);
         if (typeObject == null) throw new SQLException("Unable to find TransactionType: " + type);
         return typeObject;
     }

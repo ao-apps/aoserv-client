@@ -47,8 +47,7 @@ final public class PostgresVersionTable extends GlobalTableIntegerKey<PostgresVe
 
     public PostgresVersion getPostgresVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {
 	return get(
-            connector
-            .technologyNames
+            connector.getTechnologyNames()
             .get(PostgresVersion.TECHNOLOGY_NAME)
             .getTechnologyVersion(connector, version, osv)
             .getPkey()

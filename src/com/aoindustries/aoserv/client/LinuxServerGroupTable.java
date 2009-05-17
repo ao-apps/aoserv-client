@@ -162,7 +162,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 
         // Find the primary group for the account
         LinuxAccount linuxAccount=account.getLinuxAccount();
-        LinuxGroup linuxGroup=connector.linuxGroupAccounts.getPrimaryGroup(linuxAccount);
+        LinuxGroup linuxGroup=connector.getLinuxGroupAccounts().getPrimaryGroup(linuxAccount);
         if(linuxGroup==null) throw new SQLException("Unable to find primary LinuxGroup for username="+linuxAccount.pkey);
         LinuxServerGroup lsg=getLinuxServerGroup(account.getAOServer(), linuxGroup.pkey);
         if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup.pkey+" on "+account.ao_server);

@@ -41,13 +41,13 @@ final public class Technology extends GlobalObjectIntegerKey<Technology> {
     }
 
     public TechnologyClass getTechnologyClass(AOServConnector connector) throws SQLException {
-        TechnologyClass technologyClass = connector.technologyClasses.get(clazz);
+        TechnologyClass technologyClass = connector.getTechnologyClasses().get(clazz);
         if (technologyClass == null) throw new SQLException("Unable to find TechnologyClass: " + clazz);
         return technologyClass;
     }
 
     public TechnologyName getTechnologyName(AOServConnector connector) throws SQLException {
-        TechnologyName technologyName = connector.technologyNames.get(name);
+        TechnologyName technologyName = connector.getTechnologyNames().get(name);
         if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
         return technologyName;
     }

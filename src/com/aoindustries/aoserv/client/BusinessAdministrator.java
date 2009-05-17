@@ -30,8 +30,6 @@ import java.util.Locale;
  *
  * @see  Business
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class BusinessAdministrator extends CachedObjectStringKey<BusinessAdministrator> implements PasswordProtected, Removable, Disablable {
@@ -68,6 +66,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     ;
     int disable_log;
     boolean can_switch_users;
+    private String support_code;
 
     public int arePasswordsSet() throws IOException, SQLException {
         return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
@@ -111,7 +110,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         String contact_emails,
         String contact_phone_numbers
     ) throws IOException, SQLException {
-	return table.connector.tickets.addTicket(
+	return table.connector.getTickets().addTicket(
             business,
             this,
             ticket_type,
@@ -133,7 +132,11 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     public boolean canSwitchUsers() {
         return can_switch_users;
     }
-    
+
+    public String getSupportCode() {
+        return support_code;
+    }
+
     public boolean canSwitchUser(BusinessAdministrator other) throws SQLException, IOException {
         if(getDisableLog()!=null || other.getDisableLog()!=null) return false;
         Business business=getUsername().getPackage().getBusiness();
@@ -212,12 +215,16 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
     }
 
-    public List<Action> getActions() throws IOException, SQLException {
-        return table.connector.actions.getActions(this);
+    public List<TicketAction> getTicketActions() throws IOException, SQLException {
+        return table.connector.getTicketActions().getActions(this);
+    }
+
+    public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
+        return table.connector.getTicketAssignments().getTicketAssignments(this);
     }
 
     public String getAddress1() {
-	return address1;
+        return address1;
     }
 
     public String getAddress2() {
@@ -259,13 +266,14 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
             case 18: return zip;
             case 19: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 20: return can_switch_users?Boolean.TRUE:Boolean.FALSE;
+            case 21: return support_code;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
     public CountryCode getCountry() throws SQLException {
         if(country == null) return null;
-        CountryCode countryCode=table.connector.countryCodes.get(country);
+        CountryCode countryCode=table.connector.getCountryCodes().get(country);
         if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
         return countryCode;
     }
@@ -275,16 +283,12 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public List<Ticket> getCreatedTickets() throws IOException, SQLException {
-        return table.connector.tickets.getCreatedTickets(this);
-    }
-
-    public List<Ticket> getClosedTickets() throws IOException, SQLException {
-        return table.connector.tickets.getClosedTickets(this);
+        return table.connector.getTickets().getCreatedTickets(this);
     }
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
@@ -302,11 +306,11 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public MasterUser getMasterUser() {
-	return table.connector.masterUsers.get(pkey);
+	return table.connector.getMasterUsers().get(pkey);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
-	return table.connector.monthlyCharges.getMonthlyCharges(this, null);
+	return table.connector.getMonthlyCharges().getMonthlyCharges(this, null);
     }
 
     public String getName() {
@@ -332,20 +336,16 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return SchemaTable.TableID.BUSINESS_ADMINISTRATORS;
     }
 
-    public List<Ticket> getTickets() throws IOException, SQLException {
-	return table.connector.tickets.getTickets(this);
-    }
-
     public String getTitle() {
-	return title;
+        return title;
     }
 
     public List<Transaction> getTransactions() throws IOException, SQLException {
-        return table.connector.transactions.getTransactions(this);
+        return table.connector.getTransactions().getTransactions(this);
     }
 
      public Username getUsername() throws SQLException {
-        Username usernameObject = table.connector.usernames.get(pkey);
+        Username usernameObject = table.connector.getUsernames().get(pkey);
         if (usernameObject == null) throw new SQLException("Username not found: " + pkey);
         return usernameObject;
     }
@@ -394,15 +394,6 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	;
     }
 
-    public boolean isActiveTicketAdmin() {
-	MasterUser user=getMasterUser();
-	return 
-            user!=null
-            && user.isActive()
-            && user.isTicketAdmin()
-	;
-    }
-
     public boolean isActiveWebAdmin() {
 	MasterUser user=getMasterUser();
 	return 
@@ -441,53 +432,55 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	password = result.getString(2).trim();
+        pkey = result.getString(1);
+        password = result.getString(2).trim();
         name = result.getString(3);
-	title = result.getString(4);
-	String S=result.getString(5);
-	birthday = S==null?-1:SQLUtility.getDate(S.substring(0,10)).getTime();
-	isPreferred = result.getBoolean(6);
-	isPrivate = result.getBoolean(7);
-	created = result.getTimestamp(8).getTime();
-	work_phone = result.getString(9);
-	home_phone = result.getString(10);
-	cell_phone = result.getString(11);
-	fax = result.getString(12);
-	email = result.getString(13);
-	address1 = result.getString(14);
-	address2 = result.getString(15);
-	city = result.getString(16);
-	state = result.getString(17);
-	country = result.getString(18);
-	zip = result.getString(19);
+        title = result.getString(4);
+        String S=result.getString(5);
+        birthday = S==null?-1:SQLUtility.getDate(S.substring(0,10)).getTime();
+        isPreferred = result.getBoolean(6);
+        isPrivate = result.getBoolean(7);
+        created = result.getTimestamp(8).getTime();
+        work_phone = result.getString(9);
+        home_phone = result.getString(10);
+        cell_phone = result.getString(11);
+        fax = result.getString(12);
+        email = result.getString(13);
+        address1 = result.getString(14);
+        address2 = result.getString(15);
+        city = result.getString(16);
+        state = result.getString(17);
+        country = result.getString(18);
+        zip = result.getString(19);
         disable_log=result.getInt(20);
         if(result.wasNull()) disable_log=-1;
         can_switch_users=result.getBoolean(21);
+        support_code = result.getString(22);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	password=in.readUTF();
-	name=in.readUTF();
-	title=in.readNullUTF();
-	birthday=in.readLong();
-	isPreferred=in.readBoolean();
-	isPrivate=in.readBoolean();
-	created=in.readLong();
-	work_phone=in.readUTF();
-	home_phone=in.readNullUTF();
-	cell_phone=in.readNullUTF();
-	fax=in.readNullUTF();
-	email=in.readUTF();
-	address1=in.readNullUTF();
-	address2=in.readNullUTF();
-	city=in.readNullUTF();
-	state=StringUtility.intern(in.readNullUTF());
-	country=StringUtility.intern(in.readNullUTF());
-	zip=in.readNullUTF();
+        pkey=in.readUTF().intern();
+        password=in.readUTF();
+        name=in.readUTF();
+        title=in.readNullUTF();
+        birthday=in.readLong();
+        isPreferred=in.readBoolean();
+        isPrivate=in.readBoolean();
+        created=in.readLong();
+        work_phone=in.readUTF();
+        home_phone=in.readNullUTF();
+        cell_phone=in.readNullUTF();
+        fax=in.readNullUTF();
+        email=in.readUTF();
+        address1=in.readNullUTF();
+        address2=in.readNullUTF();
+        city=in.readNullUTF();
+        state=StringUtility.intern(in.readNullUTF());
+        country=StringUtility.intern(in.readNullUTF());
+        zip=in.readNullUTF();
         disable_log=in.readCompressedInt();
         can_switch_users=in.readBoolean();
+        support_code = in.readNullUTF();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -497,14 +490,11 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
         if(equals(conn.getThisBusinessAdministrator())) reasons.add(new CannotRemoveReason<BusinessAdministrator>("Not allowed to remove self", this));
         
-        List<Action> actions=getActions();
-        if(!actions.isEmpty()) reasons.add(new CannotRemoveReason<Action>("Author of "+actions.size()+" ticket "+(actions.size()==1?"action":"actions"), actions));
+        List<TicketAction> actions=getTicketActions();
+        if(!actions.isEmpty()) reasons.add(new CannotRemoveReason<TicketAction>("Author of "+actions.size()+" ticket "+(actions.size()==1?"action":"actions"), actions));
 
         List<Ticket> tickets=getCreatedTickets();
         if(!tickets.isEmpty()) reasons.add(new CannotRemoveReason<Ticket>("Author of "+tickets.size()+' '+(tickets.size()==1?"ticket":"tickets"), tickets));
-        
-        tickets=getClosedTickets();
-        if(!tickets.isEmpty()) reasons.add(new CannotRemoveReason<Ticket>("Closed "+tickets.size()+' '+(tickets.size()==1?"ticket":"tickets"), tickets));
         
         List<Transaction> trs=getTransactions();
         if(!trs.isEmpty()) reasons.add(new CannotRemoveReason<Transaction>("Created "+trs.size()+' '+(trs.size()==1?"transaction":"transactions"), trs));
@@ -598,27 +588,28 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(password);
-	out.writeUTF(name);
-	out.writeNullUTF(title);
-	out.writeLong(birthday);
-	out.writeBoolean(isPreferred);
-	out.writeBoolean(isPrivate);
-	out.writeLong(created);
-	out.writeUTF(work_phone);
-	out.writeNullUTF(home_phone);
-	out.writeNullUTF(cell_phone);
-	out.writeNullUTF(fax);
-	out.writeUTF(email);
-	out.writeNullUTF(address1);
-	out.writeNullUTF(address2);
-	out.writeNullUTF(city);
-	out.writeNullUTF(state);
-	out.writeNullUTF(country);
-	out.writeNullUTF(zip);
+        out.writeUTF(pkey);
+        out.writeUTF(password);
+        out.writeUTF(name);
+        out.writeNullUTF(title);
+        out.writeLong(birthday);
+        out.writeBoolean(isPreferred);
+        out.writeBoolean(isPrivate);
+        out.writeLong(created);
+        out.writeUTF(work_phone);
+        out.writeNullUTF(home_phone);
+        out.writeNullUTF(cell_phone);
+        out.writeNullUTF(fax);
+        out.writeUTF(email);
+        out.writeNullUTF(address1);
+        out.writeNullUTF(address2);
+        out.writeNullUTF(city);
+        out.writeNullUTF(state);
+        out.writeNullUTF(country);
+        out.writeNullUTF(zip);
         out.writeCompressedInt(disable_log);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)>=0) out.writeBoolean(can_switch_users);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(support_code);
     }
 
     /**
@@ -648,7 +639,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public List<BusinessAdministratorPermission> getPermissions() throws IOException, SQLException {
-        return table.connector.businessAdministratorPermissions.getPermissions(this);
+        return table.connector.getBusinessAdministratorPermissions().getPermissions(this);
     }
     
     /**
@@ -669,6 +660,6 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      * Checks if this business administrator has the provided permission.
      */
     public boolean hasPermission(String permission) throws IOException, SQLException {
-        return table.connector.businessAdministratorPermissions.hasPermission(this, permission);
+        return table.connector.getBusinessAdministratorPermissions().hasPermission(this, permission);
     }
 }

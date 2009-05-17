@@ -57,7 +57,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     int disable_log;
 
     public int addPostgresServerUser(PostgresServer postgresServer) throws IOException, SQLException {
-        return table.connector.postgresServerUsers.addPostgresServerUser(pkey, postgresServer);
+        return table.connector.getPostgresServerUsers().addPostgresServerUser(pkey, postgresServer);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
@@ -124,7 +124,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
@@ -134,7 +134,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     }
 
     public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
-        return table.connector.postgresServerUsers.getPostgresServerUsers(this);
+        return table.connector.getPostgresServerUsers().getPostgresServerUsers(this);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -142,7 +142,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     }
 
     public Username getUsername() throws SQLException {
-        Username username=table.connector.usernames.get(this.pkey);
+        Username username=table.connector.getUsernames().get(this.pkey);
         if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
         return username;
     }

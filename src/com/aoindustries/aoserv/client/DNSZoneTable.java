@@ -43,7 +43,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
     }
 
     private List<String> getDNSTLDs() throws IOException, SQLException {
-        List<DNSTLD> tlds=connector.dnsTLDs.getRows();
+        List<DNSTLD> tlds=connector.getDnsTLDs().getRows();
         List<String> strings=new ArrayList<String>(tlds.size());
         for(DNSTLD tld : tlds) strings.add(tld.getDomain());
         return strings;

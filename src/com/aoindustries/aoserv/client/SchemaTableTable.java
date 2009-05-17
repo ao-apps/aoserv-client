@@ -68,7 +68,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
         if (command.equalsIgnoreCase(AOSHCommand.DESC) || command.equalsIgnoreCase(AOSHCommand.DESCRIBE)) {
             if(AOSH.checkParamCount(AOSHCommand.DESCRIBE, args, 1, err)) {
                 String tableName=args[1];
-                SchemaTable table=connector.schemaTables.get(tableName);
+                SchemaTable table=connector.getSchemaTables().get(tableName);
                 if(table!=null) {
                     table.printDescription(connector, out, isInteractive);
                     out.flush();
@@ -86,7 +86,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                     // Is a select count(*)
                     if ("from".equalsIgnoreCase(args[2])) {
                         String tableName = args[3];
-                        SchemaTable table = connector.schemaTables.get(tableName);
+                        SchemaTable table = connector.getSchemaTables().get(tableName);
                         if (table != null) {
                             Object[] titles = { "count" };
                             Object[] values = { Integer.valueOf(table.getAOServTable(connector).size())};
@@ -125,7 +125,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                     tableName = args[++c];
                     c++;
 
-                    SchemaTable schemaTable=connector.schemaTables.get(tableName);
+                    SchemaTable schemaTable=connector.getSchemaTables().get(tableName);
                     if(schemaTable!=null) {
                         // Substitute any * columnName and ,
                         for(int d=0;d<columnNames.size();d++) {
@@ -214,7 +214,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                             boolean[] orders=new boolean[exprs.length];
                             for(int d=0;d<orders.length;d++) orders[d]=sortOrders.get(d).booleanValue();
                             rows = new ArrayList<AOServObject>(rows);
-                            connector.schemaTypes.sort(rows, exprs, orders);
+                            connector.getSchemaTypes().sort(rows, exprs, orders);
                         }
 
                         // Convert the results

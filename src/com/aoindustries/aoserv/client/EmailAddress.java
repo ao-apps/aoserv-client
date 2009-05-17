@@ -40,7 +40,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     int domain;
 
     public int addEmailForwarding(String destination) throws IOException, SQLException {
-        return table.connector.emailForwardings.addEmailForwarding(this, destination);
+        return table.connector.getEmailForwardings().addEmailForwarding(this, destination);
     }
 
     public String getAddress() {
@@ -48,7 +48,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     }
 
     public BlackholeEmailAddress getBlackholeEmailAddress() throws IOException, SQLException {
-	return table.connector.blackholeEmailAddresses.get(pkey);
+	return table.connector.getBlackholeEmailAddresses().get(pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -61,65 +61,65 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     }
 
     public EmailDomain getDomain() throws SQLException, IOException {
-	EmailDomain domainObject = table.connector.emailDomains.get(domain);
+	EmailDomain domainObject = table.connector.getEmailDomains().get(domain);
 	if (domainObject == null) throw new SQLException("Unable to find EmailDomain: " + domain);
 	return domainObject;
     }
 
     public List<EmailForwarding> getEmailForwardings() throws IOException, SQLException {
-	return table.connector.emailForwardings.getEmailForwardings(this);
+	return table.connector.getEmailForwardings().getEmailForwardings(this);
     }
 
     public List<EmailForwarding> getEnabledEmailForwardings() throws SQLException, IOException {
-	return table.connector.emailForwardings.getEnabledEmailForwardings(this);
+	return table.connector.getEmailForwardings().getEnabledEmailForwardings(this);
     }
 
     public EmailForwarding getEmailForwarding(String destination) throws IOException, SQLException {
-	return table.connector.emailForwardings.getEmailForwarding(this, destination);
+	return table.connector.getEmailForwardings().getEmailForwarding(this, destination);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-	return table.connector.emailListAddresses.getEmailLists(this);
+	return table.connector.getEmailListAddresses().getEmailLists(this);
     }
 
     public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
-	return table.connector.emailListAddresses.getEmailListAddresses(this);
+	return table.connector.getEmailListAddresses().getEmailListAddresses(this);
     }
 
     public List<EmailListAddress> getEnabledEmailListAddresses() throws IOException, SQLException {
-	return table.connector.emailListAddresses.getEnabledEmailListAddresses(this);
+	return table.connector.getEmailListAddresses().getEnabledEmailListAddresses(this);
     }
 
     public EmailListAddress getEmailListAddress(EmailList list) throws IOException, SQLException {
-        return table.connector.emailListAddresses.getEmailListAddress(this, list);
+        return table.connector.getEmailListAddresses().getEmailListAddress(this, list);
     }
 
     public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-	return table.connector.emailPipeAddresses.getEmailPipes(this);
+	return table.connector.getEmailPipeAddresses().getEmailPipes(this);
     }
 
     public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
-	return table.connector.emailPipeAddresses.getEmailPipeAddresses(this);
+	return table.connector.getEmailPipeAddresses().getEmailPipeAddresses(this);
     }
 
     public List<EmailPipeAddress> getEnabledEmailPipeAddresses() throws IOException, SQLException {
-	return table.connector.emailPipeAddresses.getEnabledEmailPipeAddresses(this);
+	return table.connector.getEmailPipeAddresses().getEnabledEmailPipeAddresses(this);
     }
 
     public EmailPipeAddress getEmailPipeAddress(EmailPipe pipe) throws IOException, SQLException {
-        return table.connector.emailPipeAddresses.getEmailPipeAddress(this, pipe);
+        return table.connector.getEmailPipeAddresses().getEmailPipeAddress(this, pipe);
     }
 
     public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
-	return table.connector.linuxAccAddresses.getLinuxServerAccounts(this);
+	return table.connector.getLinuxAccAddresses().getLinuxServerAccounts(this);
     }
 
     public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
-	return table.connector.linuxAccAddresses.getLinuxAccAddresses(this);
+	return table.connector.getLinuxAccAddresses().getLinuxAccAddresses(this);
     }
 
     public LinuxAccAddress getLinuxAccAddress(LinuxServerAccount lsa) throws IOException, SQLException {
-        return table.connector.linuxAccAddresses.getLinuxAccAddress(this, lsa);
+        return table.connector.getLinuxAccAddresses().getLinuxAccAddress(this, lsa);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -189,14 +189,14 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 
         for(EmailForwarding ef : getEmailForwardings()) reasons.addAll(ef.getCannotRemoveReasons());
 
-        for(EmailListAddress ela : table.connector.emailListAddresses.getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons());
+        for(EmailListAddress ela : table.connector.getEmailListAddresses().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons());
 
         for(EmailPipeAddress epa : getEmailPipeAddresses()) reasons.addAll(epa.getCannotRemoveReasons());
 
         for(LinuxAccAddress laa : getLinuxAccAddresses()) reasons.addAll(laa.getCannotRemoveReasons());
 
         // Cannot be used as any part of a majordomo list
-        for(MajordomoList ml : table.connector.majordomoLists.getRows()) {
+        for(MajordomoList ml : table.connector.getMajordomoLists().getRows()) {
             if(
                 ml.owner_listname_add==pkey
                 || ml.listname_owner_add==pkey
@@ -208,7 +208,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         }
         
         // Cannot be used as any part of a majordomo server
-        for(MajordomoServer ms : table.connector.majordomoServers.getRows()) {
+        for(MajordomoServer ms : table.connector.getMajordomoServers().getRows()) {
             if(
                 ms.owner_majordomo_add==pkey
                 || ms.majordomo_owner_add==pkey

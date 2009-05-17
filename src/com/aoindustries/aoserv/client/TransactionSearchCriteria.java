@@ -190,7 +190,7 @@ final public class TransactionSearchCriteria implements Streamable {
     }
 
     public List<Transaction> getTransactions(AOServConnector connector) throws IOException, SQLException {
-	return connector.transactions.getTransactions(this);
+	return connector.getTransactions().getTransactions(this);
     }
 
     public int getTransID() {

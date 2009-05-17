@@ -91,7 +91,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
                 String username = linuxServerAccount.username;
 
                 // Must also have a non-primary entry in the LinuxGroupAccounts that is also a group on this server
-                LinuxGroupAccount linuxGroupAccount = connector.linuxGroupAccounts.getLinuxGroupAccount(groupName, username);
+                LinuxGroupAccount linuxGroupAccount = connector.getLinuxGroupAccounts().getLinuxGroupAccount(groupName, username);
                 if (linuxGroupAccount != null && !linuxGroupAccount.is_primary) matches.add(linuxServerAccount);
             }
         }
@@ -174,7 +174,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         LinuxServerAccount badPasswordLSA=null;
         LinuxServerAccount disabledLSA=null;
 
-        List<EmailDomain> domains=connector.emailDomains.getRows();
+        List<EmailDomain> domains=connector.getEmailDomains().getRows();
         int domainsLen=domains.size();
         for(int c=0;c<domainsLen;c++) {
             EmailDomain ed=domains.get(c);

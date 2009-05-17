@@ -56,7 +56,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	String destination,
         int ttl
     ) throws IOException, SQLException {
-	return table.connector.dnsRecords.addDNSRecord(this, domain, type, mx_priority, destination, ttl);
+	return table.connector.getDnsRecords().addDNSRecord(this, domain, type, mx_priority, destination, ttl);
     }
 
     public void dump(PrintWriter out) throws SQLException, IOException {
@@ -64,7 +64,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public DNSType[] getAllowedDNSTypes() {
-	DNSTypeTable tt=table.connector.dnsTypes;
+	DNSTypeTable tt=table.connector.getDnsTypes();
 	if(isArpa()) {
             DNSType[] types={
                 tt.get(DNSType.NS),
@@ -116,11 +116,11 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public List<DNSRecord> getDNSRecords() throws IOException, SQLException {
-	return table.connector.dnsRecords.getDNSRecords(this);
+	return table.connector.getDnsRecords().getDNSRecords(this);
     }
 
     public List<DNSRecord> getDNSRecords(String domain, DNSType type) throws IOException, SQLException {
-        return table.connector.dnsRecords.getDNSRecords(this, domain, type);
+        return table.connector.getDnsRecords().getDNSRecords(this, domain, type);
     }
 
     public String getFile() {
@@ -132,7 +132,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public Package getPackage() throws SQLException, IOException {
-	Package obj=table.connector.packages.get(packageName);
+	Package obj=table.connector.getPackages().get(packageName);
 	if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
 	return obj;
     }

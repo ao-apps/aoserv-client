@@ -148,7 +148,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 
     public BusinessAdministrator getAuthenticatedBusinessAdministrator() {
         // Null OK when filtered
-        return table.connector.businessAdministrators.get(authenticated_user);
+        return table.connector.getBusinessAdministrators().get(authenticated_user);
     }
 
     public String getEffectiveUser() {
@@ -156,7 +156,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
     }
     
     public BusinessAdministrator getEffectiveBusinessAdministrator() throws SQLException {
-        BusinessAdministrator ba=table.connector.businessAdministrators.get(effective_user);
+        BusinessAdministrator ba=table.connector.getBusinessAdministrators().get(effective_user);
         if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+effective_user);
         return ba;
     }

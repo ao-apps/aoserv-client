@@ -60,7 +60,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
     }
 
     public NetBind getNetBind() throws SQLException, IOException {
-        NetBind nb=table.connector.netBinds.get(pkey);
+        NetBind nb=table.connector.getNetBinds().get(pkey);
         if(nb==null) throw new SQLException("Unable to find NetBind: "+pkey);
         return nb;
     }
@@ -70,7 +70,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        LinuxServerAccount lsa=table.connector.linuxServerAccounts.get(pub_linux_server_account);
+        LinuxServerAccount lsa=table.connector.getLinuxServerAccounts().get(pub_linux_server_account);
         if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+pub_linux_server_account);
         return lsa;
     }

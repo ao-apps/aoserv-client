@@ -40,7 +40,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 
     public Package getOwner() throws IOException, SQLException {
         // May be filtered
-        return table.connector.packages.get(owner);
+        return table.connector.getPackages().get(owner);
     }
 
     public boolean useRestrictedSmtpPort() {

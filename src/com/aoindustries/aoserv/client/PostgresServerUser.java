@@ -81,17 +81,17 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 
     public DisableLog getDisableLog() throws IOException, SQLException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
     public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
-        return table.connector.postgresDatabases.getPostgresDatabases(this);
+        return table.connector.getPostgresDatabases().getPostgresDatabases(this);
     }
 
     public PostgresUser getPostgresUser() throws SQLException {
-	PostgresUser obj=table.connector.postgresUsers.get(username);
+	PostgresUser obj=table.connector.getPostgresUsers().get(username);
 	if(obj==null) throw new SQLException("Unable to find PostgresUser: "+username);
 	return obj;
     }
@@ -102,7 +102,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 
     public PostgresServer getPostgresServer() throws IOException, SQLException{
         // May be filtered
-	return table.connector.postgresServers.get(postgres_server);
+	return table.connector.getPostgresServers().get(postgres_server);
     }
 
     public SchemaTable.TableID getTableID() {

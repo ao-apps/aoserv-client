@@ -62,7 +62,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
     }
 
     public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-	TechnologyVersion obj=connector.technologyVersions.get(pkey);
+	TechnologyVersion obj=connector.getTechnologyVersions().get(pkey);
 	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
 	return obj;
     }

@@ -64,7 +64,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
 
     public Server getServer() throws SQLException, IOException {
-        Server se=table.connector.servers.get(pkey);
+        Server se=table.connector.getServers().get(pkey);
         if(se==null) new SQLException("Unable to find Server: "+pkey);
         return se;
     }
@@ -97,7 +97,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
      */
     public ProcessorType getMinimumProcessorType() {
         if(minimumProcessorType==null) return null;
-        ProcessorType pt = table.connector.processorTypes.get(minimumProcessorType);
+        ProcessorType pt = table.connector.getProcessorTypes().get(minimumProcessorType);
         if(pt==null) new SQLException("Unable to find ProcessorType: "+minimumProcessorType);
         return pt;
     }
@@ -106,7 +106,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
      * Gets the minimum processor architecture.
      */
     public Architecture getMinimumProcessorArchitecture() {
-        Architecture a = table.connector.architectures.get(minimumProcessorArchitecture);
+        Architecture a = table.connector.getArchitectures().get(minimumProcessorArchitecture);
         if(a==null) new SQLException("Unable to find Architecture: "+minimumProcessorArchitecture);
         return a;
     }
@@ -246,7 +246,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
     
     public List<VirtualDisk> getVirtualDisks() throws IOException, SQLException {
-        return table.connector.virtualDisks.getVirtualDisks(this);
+        return table.connector.getVirtualDisks().getVirtualDisks(this);
     }
     
     /**

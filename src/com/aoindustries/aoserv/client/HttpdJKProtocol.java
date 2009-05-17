@@ -38,7 +38,7 @@ final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol
     }
 
     public Protocol getProtocol(AOServConnector connector) throws SQLException {
-	Protocol protocol=connector.protocols.get(pkey);
+	Protocol protocol=connector.getProtocols().get(pkey);
 	if(protocol==null) throw new SQLException("Unable to find Protocol: "+pkey);
 	return protocol;
     }

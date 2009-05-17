@@ -126,7 +126,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        DisableLog obj=table.connector.disableLogs.get(disable_log);
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
         if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
@@ -136,11 +136,11 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     }
 
     public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
-        return table.connector.mysqlDBUsers.getMySQLDBUsers(this);
+        return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
     }
 
     public MySQLUser getMySQLUser() throws SQLException {
-	MySQLUser obj=table.connector.mysqlUsers.get(username);
+	MySQLUser obj=table.connector.getMysqlUsers().get(username);
 	if(obj==null) throw new SQLException("Unable to find MySQLUser: "+username);
 	return obj;
     }
@@ -167,7 +167,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 
     public MySQLServer getMySQLServer() throws IOException, SQLException{
         // May be filtered
-	return table.connector.mysqlServers.get(mysql_server);
+	return table.connector.getMysqlServers().get(mysql_server);
     }
 
     public SchemaTable.TableID getTableID() {
