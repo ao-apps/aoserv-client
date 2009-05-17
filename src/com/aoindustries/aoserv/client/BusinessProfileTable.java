@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -105,18 +104,8 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
         return pkey;
     }
 
-    public BusinessProfile get(Object pkey) {
-        try {
-            return get(((Integer)pkey).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public BusinessProfile get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(BusinessProfile.COLUMN_PKEY, pkey);
+        return getUniqueRow(BusinessProfile.COLUMN_PKEY, pkey);
     }
 
     /**

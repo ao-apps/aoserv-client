@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -42,18 +41,8 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
         return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
     }
 
-    public HttpdSiteURL get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdSiteURL.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdSiteURL get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdSiteURL.COLUMN_PKEY, pkey);
+        return getUniqueRow(HttpdSiteURL.COLUMN_PKEY, pkey);
     }
 
     List<HttpdSiteURL> getHttpdSiteURLs(HttpdSiteBind bind) throws IOException, SQLException {

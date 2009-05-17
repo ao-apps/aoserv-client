@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  DNSForbiddenZone
@@ -31,14 +29,8 @@ final public class DNSForbiddenZoneTable extends GlobalTableStringKey<DNSForbidd
         return defaultOrderBy;
     }
 
-    public DNSForbiddenZone get(Object pkey) {
-        try {
-            return getUniqueRow(DNSForbiddenZone.COLUMN_ZONE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public DNSForbiddenZone get(String zone) throws IOException, SQLException {
+        return getUniqueRow(DNSForbiddenZone.COLUMN_ZONE, zone);
     }
 
     public SchemaTable.TableID getTableID() {

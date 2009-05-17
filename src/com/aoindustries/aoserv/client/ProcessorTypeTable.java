@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 
 /*
  * Copyright 2008-2009 by AO Industries, Inc.,
@@ -29,14 +28,8 @@ final public class ProcessorTypeTable extends GlobalTableStringKey<ProcessorType
         return defaultOrderBy;
     }
 
-    public ProcessorType get(Object type) {
-        try {
-            return getUniqueRow(ProcessorType.COLUMN_TYPE, type);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public ProcessorType get(String type) throws IOException, SQLException {
+        return getUniqueRow(ProcessorType.COLUMN_TYPE, type);
     }
 
     public SchemaTable.TableID getTableID() {

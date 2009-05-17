@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  NoticeType
@@ -31,14 +29,8 @@ final public class NoticeTypeTable extends GlobalTableStringKey<NoticeType> {
         return defaultOrderBy;
     }
 
-    public NoticeType get(Object pkey) {
-        try {
-            return getUniqueRow(NoticeType.COLUMN_TYPE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public NoticeType get(String type) throws IOException, SQLException {
+        return getUniqueRow(NoticeType.COLUMN_TYPE, type);
     }
 
     public SchemaTable.TableID getTableID() {

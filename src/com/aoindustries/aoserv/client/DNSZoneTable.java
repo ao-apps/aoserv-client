@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,14 +31,8 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
         return defaultOrderBy;
     }
 
-    public DNSZone get(Object pkey) {
-        try {
-            return getUniqueRow(DNSZone.COLUMN_ZONE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public DNSZone get(String zone) throws IOException, SQLException {
+        return getUniqueRow(DNSZone.COLUMN_ZONE, zone);
     }
 
     private List<String> getDNSTLDs() throws IOException, SQLException {

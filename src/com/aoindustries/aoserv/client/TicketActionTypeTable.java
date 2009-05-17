@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -32,14 +31,8 @@ final public class TicketActionTypeTable extends GlobalTableStringKey<TicketActi
         return defaultOrderBy;
     }
 
-    public TicketActionType get(Object type) {
-        try {
-            return getUniqueRow(TicketActionType.COLUMN_TYPE, type);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public TicketActionType get(String type) throws IOException, SQLException {
+        return getUniqueRow(TicketActionType.COLUMN_TYPE, type);
     }
 
     public SchemaTable.TableID getTableID() {

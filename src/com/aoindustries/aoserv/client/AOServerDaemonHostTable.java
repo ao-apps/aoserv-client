@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,18 +31,8 @@ public final class AOServerDaemonHostTable extends CachedTableIntegerKey<AOServe
         return defaultOrderBy;
     }
 
-    public AOServerDaemonHost get(Object pkey) {
-        try {
-            return getUniqueRow(AOServerDaemonHost.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public AOServerDaemonHost get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(AOServerDaemonHost.COLUMN_PKEY, pkey);
+        return getUniqueRow(AOServerDaemonHost.COLUMN_PKEY, pkey);
     }
 
     List<AOServerDaemonHost> getAOServerDaemonHosts(AOServer aoServer) throws IOException, SQLException {

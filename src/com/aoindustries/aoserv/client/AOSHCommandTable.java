@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -154,13 +153,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> im
         }
     }
 
-    public AOSHCommand get(Object command) {
-        try {
-            return getUniqueRow(AOSHCommand.COLUMN_COMMAND, command);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public AOSHCommand get(String command) throws IOException, SQLException {
+        return getUniqueRow(AOSHCommand.COLUMN_COMMAND, command);
     }
 }

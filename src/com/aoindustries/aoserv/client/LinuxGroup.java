@@ -76,7 +76,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         }
     }
 
-    public LinuxGroupType getLinuxGroupType() throws SQLException {
+    public LinuxGroupType getLinuxGroupType() throws SQLException, IOException {
         LinuxGroupType typeObject = table.connector.getLinuxGroupTypes().get(type);
         if (typeObject == null) throw new SQLException("Unable to find LinuxGroupType: " + type);
         return typeObject;

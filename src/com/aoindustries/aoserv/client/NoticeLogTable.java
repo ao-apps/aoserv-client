@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -53,18 +52,8 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	);
     }
 
-    public NoticeLog get(Object pkey) {
-        try {
-            return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public NoticeLog get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
+    	return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
     }
 
     List<NoticeLog> getNoticeLogs(Business bu) throws IOException, SQLException {

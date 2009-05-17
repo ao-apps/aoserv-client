@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -30,16 +29,6 @@ final public class TicketActionTable extends CachedTableIntegerKey<TicketAction>
     @Override
     OrderBy[] getDefaultOrderBy() {
         return defaultOrderBy;
-    }
-
-    public TicketAction get(Object pkey) {
-        try {
-            return getUniqueRow(TicketAction.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
     }
 
     public TicketAction get(int pkey) throws IOException, SQLException {

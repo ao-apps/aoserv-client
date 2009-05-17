@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 
 /*
@@ -33,14 +32,8 @@ final public class AOServPermissionTable extends GlobalTableStringKey<AOServPerm
         return defaultOrderBy;
     }
 
-    public AOServPermission get(Object name) {
-        try {
-            return getUniqueRow(AOServPermission.COLUMN_NAME, name);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public AOServPermission get(String name) throws IOException, SQLException {
+        return getUniqueRow(AOServPermission.COLUMN_NAME, name);
     }
 
     public AOServPermission get(AOServPermission.Permission permission) throws IOException, SQLException {

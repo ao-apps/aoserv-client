@@ -124,13 +124,13 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	return SchemaTable.TableID.DNS_RECORDS;
     }
 
-    public DNSType getType() throws SQLException {
+    public DNSType getType() throws SQLException, IOException {
 	DNSType obj=table.connector.getDnsTypes().get(type);
 	if(obj==null) throw new SQLException("Unable to find DNSType: "+type);
 	return obj;
     }
 
-    public DNSZone getZone() throws SQLException {
+    public DNSZone getZone() throws SQLException, IOException {
 	DNSZone obj=table.connector.getDnsZones().get(zone);
 	if(obj==null) throw new SQLException("Unable to find DNSZone: "+zone);
 	return obj;

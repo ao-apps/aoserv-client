@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 
 /*
@@ -32,14 +31,8 @@ final public class ProtocolTable extends GlobalTableStringKey<Protocol> {
         return defaultOrderBy;
     }
 
-    public Protocol get(Object pkey) {
-        try {
-            return getUniqueRow(Protocol.COLUMN_PROTOCOL, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Protocol get(String protocol) throws IOException, SQLException {
+        return getUniqueRow(Protocol.COLUMN_PROTOCOL, protocol);
     }
 
     public SchemaTable.TableID getTableID() {

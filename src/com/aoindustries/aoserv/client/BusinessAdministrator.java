@@ -125,7 +125,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         );
     }
 
-    public boolean canDisable() throws SQLException {
+    public boolean canDisable() throws SQLException, IOException {
         return disable_log==-1 && !equals(table.connector.getThisBusinessAdministrator());
     }
     
@@ -271,7 +271,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         }
     }
 
-    public CountryCode getCountry() throws SQLException {
+    public CountryCode getCountry() throws SQLException, IOException {
         if(country == null) return null;
         CountryCode countryCode=table.connector.getCountryCodes().get(country);
         if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
@@ -305,7 +305,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return home_phone;
     }
 
-    public MasterUser getMasterUser() {
+    public MasterUser getMasterUser() throws IOException, SQLException {
 	return table.connector.getMasterUsers().get(pkey);
     }
 
@@ -358,7 +358,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return zip;
     }
 
-    public boolean isActiveAccounting() {
+    public boolean isActiveAccounting() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
 	return 
             user!=null
@@ -367,7 +367,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	;
     }
 
-    public boolean isActiveBankAccounting() {
+    public boolean isActiveBankAccounting() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
 	return 
             user!=null
@@ -376,7 +376,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	;
     }
 
-    public boolean isActiveDNSAdmin() {
+    public boolean isActiveDNSAdmin() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
 	return 
             user!=null
@@ -385,7 +385,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	;
     }
 
-    public boolean isActiveTableInvalidator() {
+    public boolean isActiveTableInvalidator() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
 	return 
             user!=null
@@ -394,7 +394,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	;
     }
 
-    public boolean isActiveWebAdmin() {
+    public boolean isActiveWebAdmin() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
 	return 
             user!=null

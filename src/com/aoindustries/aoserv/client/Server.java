@@ -89,11 +89,11 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         return table.connector.getAoServers().get(pkey);
     }
 
-    public PhysicalServer getPhysicalServer() {
+    public PhysicalServer getPhysicalServer() throws IOException, SQLException {
         return table.connector.getPhysicalServers().get(pkey);
     }
 
-    public VirtualServer getVirtualServer() {
+    public VirtualServer getVirtualServer() throws IOException, SQLException {
         return table.connector.getVirtualServers().get(pkey);
     }
 
@@ -136,7 +136,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
         return monitoring_enabled;
     }
 
-    public ServerFarm getServerFarm() throws SQLException {
+    public ServerFarm getServerFarm() throws SQLException, IOException {
 	ServerFarm sf=table.connector.getServerFarms().get(farm);
 	if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
 	return sf;

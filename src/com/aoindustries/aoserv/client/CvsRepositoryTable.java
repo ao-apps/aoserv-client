@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.sort.AutoSort;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,18 +53,8 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	);
     }
 
-    public CvsRepository get(Object pkey) {
-        try {
-            return getUniqueRow(CvsRepository.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public CvsRepository get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(CvsRepository.COLUMN_PKEY, pkey);
+    	return getUniqueRow(CvsRepository.COLUMN_PKEY, pkey);
     }
 
     /**

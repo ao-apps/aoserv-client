@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,8 +15,6 @@ import java.util.List;
 
 /**
  * A <code>CvsRepository</code> represents on repository directory for the CVS pserver.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -172,14 +169,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         return Collections.emptyList();
     }
 
-    public void remove() {
-        try {
-            table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public void remove() throws IOException, SQLException {
+        table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
     public void setMode(long mode) throws IOException, SQLException {

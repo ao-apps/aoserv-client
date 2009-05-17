@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  MySQLReservedWord
@@ -31,14 +29,8 @@ final public class MySQLReservedWordTable extends GlobalTableStringKey<MySQLRese
         return defaultOrderBy;
     }
 
-    public MySQLReservedWord get(Object pkey) {
-        try {
-            return getUniqueRow(MySQLReservedWord.COLUMN_WORD, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public MySQLReservedWord get(String word) throws IOException, SQLException {
+        return getUniqueRow(MySQLReservedWord.COLUMN_WORD, word);
     }
 
     public SchemaTable.TableID getTableID() {

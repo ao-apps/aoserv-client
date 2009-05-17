@@ -37,7 +37,7 @@ final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public Protocol getProtocol(AOServConnector connector) throws SQLException {
+    public Protocol getProtocol(AOServConnector connector) throws SQLException, IOException {
 	Protocol protocol=connector.getProtocols().get(pkey);
 	if(protocol==null) throw new SQLException("Unable to find Protocol: "+pkey);
 	return protocol;

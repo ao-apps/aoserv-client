@@ -5,8 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,18 +32,8 @@ final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
         return defaultOrderBy;
     }
 
-    public WhoisHistory get(Object pkey) {
-        try {
-            return getUniqueRow(WhoisHistory.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public WhoisHistory get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(WhoisHistory.COLUMN_PKEY, pkey);
+        return getUniqueRow(WhoisHistory.COLUMN_PKEY, pkey);
     }
 
     @Override

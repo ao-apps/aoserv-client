@@ -174,13 +174,13 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
         return cct==null ? null : cct.getAuthorizationApprovalCode();
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
 	Business business = table.connector.getBusinesses().get(accounting);
 	if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 	return business;
     }
     
-    public Business getSourceBusiness() throws SQLException {
+    public Business getSourceBusiness() throws SQLException, IOException {
 	Business business = table.connector.getBusinesses().get(source_accounting);
 	if (business == null) throw new SQLException("Unable to find Business: " + source_accounting);
 	return business;
@@ -245,7 +245,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return payment_info;
     }
 
-    public PaymentType getPaymentType() throws SQLException {
+    public PaymentType getPaymentType() throws SQLException, IOException {
 	if (payment_type == null) return null;
 	PaymentType paymentType = table.connector.getPaymentTypes().get(payment_type);
 	if (paymentType == null) throw new SQLException("Unable to find PaymentType: " + payment_type);
@@ -294,7 +294,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return transid;
     }
 
-    public TransactionType getType() throws SQLException {
+    public TransactionType getType() throws SQLException, IOException {
         TransactionType tt = table.connector.getTransactionTypes().get(type);
         if (tt == null) throw new SQLException("Unable to find TransactionType: " + type);
         return tt;

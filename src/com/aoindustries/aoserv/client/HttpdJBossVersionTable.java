@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  HttpdJBossVersion
@@ -31,18 +29,8 @@ final public class HttpdJBossVersionTable extends GlobalTableIntegerKey<HttpdJBo
         return defaultOrderBy;
     }
 
-    public HttpdJBossVersion get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdJBossVersion.COLUMN_VERSION, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdJBossVersion get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdJBossVersion.COLUMN_VERSION, pkey);
+    	return getUniqueRow(HttpdJBossVersion.COLUMN_VERSION, pkey);
     }
 
     public HttpdJBossVersion getHttpdJBossVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {

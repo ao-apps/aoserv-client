@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -37,18 +36,8 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
         return defaultOrderBy;
     }
 
-    public HttpdSiteBind get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdSiteBind.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdSiteBind get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdSiteBind.COLUMN_PKEY, pkey);
+        return getUniqueRow(HttpdSiteBind.COLUMN_PKEY, pkey);
     }
 
     List<HttpdSiteBind> getHttpdSiteBinds(HttpdSite site) throws IOException, SQLException {

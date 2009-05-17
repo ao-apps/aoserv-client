@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -90,18 +89,8 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
         return pkey;
     }
 
-    public HttpdJBossSite get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdJBossSite.COLUMN_TOMCAT_SITE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdJBossSite get(int pkey) throws SQLException, IOException {
-	return getUniqueRow(HttpdJBossSite.COLUMN_TOMCAT_SITE, pkey);
+        return getUniqueRow(HttpdJBossSite.COLUMN_TOMCAT_SITE, pkey);
     }
 
     HttpdJBossSite getHttpdJBossSiteByRMIPort(NetBind nb) throws IOException, SQLException {

@@ -6,15 +6,11 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  HttpdTomcatSite
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -37,18 +33,8 @@ final public class HttpdTomcatSiteTable extends CachedTableIntegerKey<HttpdTomca
 	return SchemaTable.TableID.HTTPD_TOMCAT_SITES;
     }
 
-    public HttpdTomcatSite get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdTomcatSite.COLUMN_HTTPD_SITE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdTomcatSite get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdTomcatSite.COLUMN_HTTPD_SITE, pkey);
+        return getUniqueRow(HttpdTomcatSite.COLUMN_HTTPD_SITE, pkey);
     }
 
     @Override

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -56,18 +55,8 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 	);
     }
 
-    public DNSRecord get(Object pkey) {
-        try {
-            return getUniqueRow(DNSRecord.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public DNSRecord get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(DNSRecord.COLUMN_PKEY, pkey);
+    	return getUniqueRow(DNSRecord.COLUMN_PKEY, pkey);
     }
 
     List<DNSRecord> getDNSRecords(DNSZone dnsZone) throws IOException, SQLException {

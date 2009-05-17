@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 
 /*
@@ -35,13 +34,7 @@ final public class TechnologyClassTable extends GlobalTableStringKey<TechnologyC
 	return SchemaTable.TableID.TECHNOLOGY_CLASSES;
     }
 
-    public TechnologyClass get(Object pkey) {
-        try {
-            return getUniqueRow(TechnologyClass.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public TechnologyClass get(String name) throws IOException, SQLException {
+        return getUniqueRow(TechnologyClass.COLUMN_NAME, name);
     }
 }

@@ -40,13 +40,13 @@ final public class Technology extends GlobalObjectIntegerKey<Technology> {
 	return SchemaTable.TableID.TECHNOLOGIES;
     }
 
-    public TechnologyClass getTechnologyClass(AOServConnector connector) throws SQLException {
+    public TechnologyClass getTechnologyClass(AOServConnector connector) throws SQLException, IOException {
         TechnologyClass technologyClass = connector.getTechnologyClasses().get(clazz);
         if (technologyClass == null) throw new SQLException("Unable to find TechnologyClass: " + clazz);
         return technologyClass;
     }
 
-    public TechnologyName getTechnologyName(AOServConnector connector) throws SQLException {
+    public TechnologyName getTechnologyName(AOServConnector connector) throws SQLException, IOException {
         TechnologyName technologyName = connector.getTechnologyNames().get(name);
         if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
         return technologyName;

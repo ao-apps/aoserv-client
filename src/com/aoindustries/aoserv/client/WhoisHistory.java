@@ -60,7 +60,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
         return time;
     }
     
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
 	Business business = table.connector.getBusinesses().get(accounting);
 	if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 	return business;

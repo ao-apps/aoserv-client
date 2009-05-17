@@ -54,7 +54,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	return billing_email;
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
 	Business obj=table.connector.getBusinesses().get(accounting);
 	if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
 	return obj;
@@ -78,7 +78,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	return create_time;
     }
 
-    public NoticeType getNoticeType() throws SQLException {
+    public NoticeType getNoticeType() throws SQLException, IOException {
 	NoticeType obj=table.connector.getNoticeTypes().get(notice_type);
 	if(obj==null) throw new SQLException("Unable to find NoticeType: "+notice_type);
 	return obj;

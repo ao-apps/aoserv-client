@@ -5,11 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  AOServProtocol
@@ -32,14 +29,8 @@ final public class AOServProtocolTable extends GlobalTableStringKey<AOServProtoc
         return defaultOrderBy;
     }
 
-    public AOServProtocol get(Object version) {
-        try {
-            return getUniqueRow(AOServProtocol.COLUMN_VERSION, version);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public AOServProtocol get(String version) throws IOException, SQLException {
+        return getUniqueRow(AOServProtocol.COLUMN_VERSION, version);
     }
 
     public SchemaTable.TableID getTableID() {

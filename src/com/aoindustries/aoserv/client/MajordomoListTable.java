@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -46,18 +45,8 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
         );
     }
 
-    public MajordomoList get(Object pkey) {
-        try {
-            return getUniqueRow(MajordomoList.COLUMN_EMAIL_LIST, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public MajordomoList get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(MajordomoList.COLUMN_EMAIL_LIST, pkey);
+    	return getUniqueRow(MajordomoList.COLUMN_EMAIL_LIST, pkey);
     }
 
     MajordomoList getMajordomoList(MajordomoServer ms, String listName) throws IOException, SQLException {

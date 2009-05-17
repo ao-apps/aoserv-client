@@ -34,6 +34,10 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
         return 2;
     }
 
+    /**
+     * Supports both Integer (num) and String (type) keys.
+     */
+    @Override
     public SchemaType get(Object pkey) {
         try {
             if(pkey instanceof Integer) return get(((Integer)pkey).intValue());

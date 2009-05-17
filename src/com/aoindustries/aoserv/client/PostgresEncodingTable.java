@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -33,18 +32,8 @@ final public class PostgresEncodingTable extends GlobalTableIntegerKey<PostgresE
         return defaultOrderBy;
     }
 
-    public PostgresEncoding get(Object pkey) {
-        try {
-            return getUniqueRow(PostgresEncoding.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public PostgresEncoding get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(PostgresEncoding.COLUMN_PKEY, pkey);
+    	return getUniqueRow(PostgresEncoding.COLUMN_PKEY, pkey);
     }
 
     List<PostgresEncoding> getPostgresEncodings(PostgresVersion version) throws IOException, SQLException {

@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  Architecture
@@ -31,14 +29,8 @@ final public class ArchitectureTable extends GlobalTableStringKey<Architecture> 
         return defaultOrderBy;
     }
 
-    public Architecture get(Object name) {
-        try {
-            return getUniqueRow(Architecture.COLUMN_NAME, name);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Architecture get(String name) throws IOException, SQLException {
+        return getUniqueRow(Architecture.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {

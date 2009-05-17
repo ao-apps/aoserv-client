@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  LinuxAccountType
@@ -31,14 +29,8 @@ final public class LinuxAccountTypeTable extends GlobalTableStringKey<LinuxAccou
         return defaultOrderBy;
     }
 
-    public LinuxAccountType get(Object pkey) {
-        try {
-            return getUniqueRow(LinuxAccountType.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public LinuxAccountType get(String name) throws IOException, SQLException {
+        return getUniqueRow(LinuxAccountType.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {

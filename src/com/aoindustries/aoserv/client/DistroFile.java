@@ -100,7 +100,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         return optional;
     }
     
-    public DistroFileType getType() throws SQLException {
+    public DistroFileType getType() throws SQLException, IOException {
         DistroFileType fileType=table.connector.getDistroFileTypes().get(type);
         if(fileType==null) throw new SQLException("Unable to find DistroFileType: "+type);
         return fileType;
@@ -110,7 +110,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         return mode;
     }
     
-    public LinuxAccount getLinuxAccount() throws SQLException {
+    public LinuxAccount getLinuxAccount() throws SQLException, IOException {
         if(table==null) throw new NullPointerException("table is null");
         if(table.connector==null) throw new NullPointerException("table.connector is null");
         LinuxAccount linuxAccount=table.connector.getLinuxAccounts().get(linux_account);
@@ -118,7 +118,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         return linuxAccount;
     }
 
-    public LinuxGroup getLinuxGroup() throws SQLException {
+    public LinuxGroup getLinuxGroup() throws SQLException, IOException {
         LinuxGroup linuxGroup=table.connector.getLinuxGroups().get(linux_group);
         if(linuxGroup==null) throw new SQLException("Unable to find LinuxGroup: "+linux_group);
         return linuxGroup;

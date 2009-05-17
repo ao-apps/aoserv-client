@@ -7,10 +7,8 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  DisableLog
@@ -69,18 +67,8 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
         return result;
     }
 
-    public DisableLog get(Object pkey) {
-        try {
-            return getUniqueRow(DisableLog.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public DisableLog get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(DisableLog.COLUMN_PKEY, pkey);
+        return getUniqueRow(DisableLog.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {

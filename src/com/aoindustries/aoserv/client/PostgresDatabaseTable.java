@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -57,18 +56,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added);
     }
 
-    public PostgresDatabase get(Object pkey) {
-        try {
-            return getUniqueRow(PostgresDatabase.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public PostgresDatabase get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(PostgresDatabase.COLUMN_PKEY, pkey);
+    	return getUniqueRow(PostgresDatabase.COLUMN_PKEY, pkey);
     }
 
     PostgresDatabase getPostgresDatabase(String name, PostgresServer postgresServer) throws IOException, SQLException {

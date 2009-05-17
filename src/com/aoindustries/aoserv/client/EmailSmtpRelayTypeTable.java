@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  EmailSmtpRelayType
@@ -31,17 +29,11 @@ final public class EmailSmtpRelayTypeTable extends GlobalTableStringKey<EmailSmt
         return defaultOrderBy;
     }
 
-    public EmailSmtpRelayType get(Object pkey) {
-        try {
-            return getUniqueRow(EmailSmtpRelayType.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public EmailSmtpRelayType get(String name) throws IOException, SQLException {
+        return getUniqueRow(EmailSmtpRelayType.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.EMAIL_SMTP_RELAY_TYPES;
+        return SchemaTable.TableID.EMAIL_SMTP_RELAY_TYPES;
     }
 }

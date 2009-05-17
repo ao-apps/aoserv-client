@@ -135,7 +135,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return table.connector.getBackupReports().getBackupReports(this);
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
 	Business accountingObject = table.connector.getBusinesses().get(accounting);
 	if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
 	return accountingObject;

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -64,18 +63,8 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
         );
     }
 
-    public HttpdTomcatDataSource get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdTomcatDataSource.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdTomcatDataSource get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdTomcatDataSource.COLUMN_PKEY, pkey);
+    	return getUniqueRow(HttpdTomcatDataSource.COLUMN_PKEY, pkey);
     }
 
     List<HttpdTomcatDataSource> getHttpdTomcatDataSources(HttpdTomcatContext htc) throws IOException, SQLException {

@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * For AO Industries use only.
@@ -31,17 +29,11 @@ final public class BankTransactionTypeTable extends CachedTableStringKey<BankTra
         return defaultOrderBy;
     }
 
-    public BankTransactionType get(Object name) {
-        try {
-            return getUniqueRow(BankTransactionType.COLUMN_NAME, name);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public BankTransactionType get(String name) throws IOException, SQLException {
+        return getUniqueRow(BankTransactionType.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BANK_TRANSACTION_TYPES;
+        return SchemaTable.TableID.BANK_TRANSACTION_TYPES;
     }
 }

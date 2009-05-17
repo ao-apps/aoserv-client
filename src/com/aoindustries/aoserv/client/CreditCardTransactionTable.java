@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -163,18 +162,8 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
         return pkey;
     }
 
-    public CreditCardTransaction get(Object pkey) {
-        try {
-            return getUniqueRow(CreditCardTransaction.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public CreditCardTransaction get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(CreditCardTransaction.COLUMN_PKEY, pkey);
+    	return getUniqueRow(CreditCardTransaction.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {

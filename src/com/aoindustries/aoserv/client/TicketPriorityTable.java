@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -31,16 +30,6 @@ final public class TicketPriorityTable extends GlobalTableStringKey<TicketPriori
 
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.TICKET_PRIORITIES;
-    }
-
-    public TicketPriority get(Object pkey) {
-        try {
-            return getUniqueRow(TicketPriority.COLUMN_PRIORITY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
     }
 
     public TicketPriority get(String priority) throws IOException, SQLException {

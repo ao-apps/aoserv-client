@@ -143,7 +143,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return ccp;
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
         Business business = table.connector.getBusinesses().get(accounting);
         if (business == null) throw new SQLException("Unable to find Business: " + accounting);
         return business;
@@ -273,7 +273,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return postalCode;
     }
 
-    public CountryCode getCountryCode() throws SQLException {
+    public CountryCode getCountryCode() throws SQLException, IOException {
         CountryCode countryCodeObj = table.connector.getCountryCodes().get(this.countryCode);
         if (countryCodeObj == null) throw new SQLException("Unable to find CountryCode: " + this.countryCode);
         return countryCodeObj;

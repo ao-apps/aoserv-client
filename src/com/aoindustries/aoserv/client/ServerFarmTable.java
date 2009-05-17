@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
@@ -31,14 +30,8 @@ final public class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
         return defaultOrderBy;
     }
 
-    public ServerFarm get(Object name) {
-        try {
-            return getUniqueRow(ServerFarm.COLUMN_NAME, name);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public ServerFarm get(String name) throws IOException, SQLException {
+        return getUniqueRow(ServerFarm.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {

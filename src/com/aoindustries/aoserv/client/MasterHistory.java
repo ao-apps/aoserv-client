@@ -96,7 +96,7 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         return authenticated_user;
     }
     
-    public BusinessAdministrator getAuthenticatedBusinessAdministrator() {
+    public BusinessAdministrator getAuthenticatedBusinessAdministrator() throws IOException, SQLException {
         // Null OK if filtered
         return table.connector.getBusinessAdministrators().get(authenticated_user);
     }
@@ -105,7 +105,7 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         return effective_user;
     }
     
-    public BusinessAdministrator getEffectiveBusinessAdministrator() throws SQLException {
+    public BusinessAdministrator getEffectiveBusinessAdministrator() throws SQLException, IOException {
         BusinessAdministrator ba=table.connector.getBusinessAdministrators().get(effective_user);
         if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+effective_user);
         return ba;

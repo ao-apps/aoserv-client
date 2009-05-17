@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,18 +33,8 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         return defaultOrderBy;
     }
 
-    public MonthlyCharge get(Object pkey) {
-        try {
-            return getUniqueRow(MonthlyCharge.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public MonthlyCharge get(int pkey) throws SQLException, IOException {
-	return getUniqueRow(MonthlyCharge.COLUMN_PKEY, pkey);
+        return getUniqueRow(MonthlyCharge.COLUMN_PKEY, pkey);
     }
 
     /**

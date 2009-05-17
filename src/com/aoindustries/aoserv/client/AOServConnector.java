@@ -1367,7 +1367,7 @@ abstract public class AOServConnector {
      *                           <code>BusinessAdministrator</code> was not
      *                           found
      */
-    final public BusinessAdministrator getThisBusinessAdministrator() throws SQLException {
+    final public BusinessAdministrator getThisBusinessAdministrator() throws SQLException, IOException {
         BusinessAdministrator obj=businessAdministrators.get(connectAs);
         if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+connectAs);
         return obj;

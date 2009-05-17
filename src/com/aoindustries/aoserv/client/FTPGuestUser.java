@@ -33,7 +33,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
         throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public LinuxAccount getLinuxAccount() throws SQLException {
+    public LinuxAccount getLinuxAccount() throws SQLException, IOException {
 	LinuxAccount obj = table.connector.getLinuxAccounts().get(pkey);
 	if (obj == null) throw new SQLException("Unable to find LinuxAccount: " + pkey);
 	return obj;

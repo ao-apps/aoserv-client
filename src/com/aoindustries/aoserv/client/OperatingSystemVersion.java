@@ -85,7 +85,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         }
     }
 
-    public OperatingSystem getOperatingSystem(AOServConnector conn) {
+    public OperatingSystem getOperatingSystem(AOServConnector conn) throws IOException, SQLException {
         return conn.getOperatingSystems().get(operating_system);
     }
 
@@ -97,7 +97,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         return version_name;
     }
 
-    public Architecture getArchitecture(AOServConnector connector) throws SQLException {
+    public Architecture getArchitecture(AOServConnector connector) throws SQLException, IOException {
         Architecture ar=connector.getArchitectures().get(architecture);
         if(ar==null) throw new SQLException("Unable to find Architecture: "+architecture);
         return ar;

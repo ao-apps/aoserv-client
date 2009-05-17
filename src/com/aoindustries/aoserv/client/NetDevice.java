@@ -86,10 +86,10 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	return table.connector.getIpAddresses().getIPAddresses(this);
     }
 
-    public NetDeviceID getNetDeviceID() throws SQLException {
-	NetDeviceID ndi=table.connector.getNetDeviceIDs().get(device_id);
-	if(ndi==null) new SQLException("Unable to find NetDeviceID: "+device_id);
-	return ndi;
+    public NetDeviceID getNetDeviceID() throws SQLException, IOException {
+        NetDeviceID ndi=table.connector.getNetDeviceIDs().get(device_id);
+        if(ndi==null) new SQLException("Unable to find NetDeviceID: "+device_id);
+        return ndi;
     }
 
     public String getNetwork() {

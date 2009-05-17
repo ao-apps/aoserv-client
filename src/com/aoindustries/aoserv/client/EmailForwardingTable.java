@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -49,18 +48,8 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 	);
     }
 
-    public EmailForwarding get(Object pkey) {
-        try {
-            return getUniqueRow(EmailForwarding.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public EmailForwarding get(int pkey) throws SQLException, IOException {
-	return getUniqueRow(EmailForwarding.COLUMN_PKEY, pkey);
+    	return getUniqueRow(EmailForwarding.COLUMN_PKEY, pkey);
     }
 
     List<EmailForwarding> getEmailForwarding(Business business) throws SQLException, IOException {

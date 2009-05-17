@@ -56,7 +56,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         return usernameObject;
     }
 
-    public LinuxGroup getLinuxGroup() throws SQLException {
+    public LinuxGroup getLinuxGroup() throws SQLException, IOException {
         LinuxGroup groupNameObject = table.connector.getLinuxGroups().get(group_name);
         if (groupNameObject == null) throw new SQLException("Unable to find LinuxGroup: " + group_name);
         return groupNameObject;

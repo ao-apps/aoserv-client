@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -35,18 +34,8 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
         return defaultOrderBy;
     }
 
-    public IPAddress get(Object pkey) {
-        try {
-            return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public IPAddress get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
+        return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
     }
 
     IPAddress getIPAddress(NetDevice device, String ipAddress) throws IOException, SQLException {

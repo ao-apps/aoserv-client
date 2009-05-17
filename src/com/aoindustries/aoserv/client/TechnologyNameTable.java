@@ -1,7 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -35,13 +33,7 @@ final public class TechnologyNameTable extends GlobalTableStringKey<TechnologyNa
 	return SchemaTable.TableID.TECHNOLOGY_NAMES;
     }
 
-    public TechnologyName get(Object pkey) {
-        try {
-            return getUniqueRow(TechnologyName.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public TechnologyName get(String name) throws IOException, SQLException {
+        return getUniqueRow(TechnologyName.COLUMN_NAME, name);
     }
 }

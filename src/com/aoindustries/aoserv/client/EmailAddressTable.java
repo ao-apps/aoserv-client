@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -44,18 +43,8 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
 	);
     }
 
-    public EmailAddress get(Object pkey) {
-        try {
-            return get(((Integer)pkey).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public EmailAddress get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(EmailAddress.COLUMN_PKEY, pkey);
+        return getUniqueRow(EmailAddress.COLUMN_PKEY, pkey);
     }
 
     EmailAddress getEmailAddress(String address, EmailDomain domain) throws IOException, SQLException {

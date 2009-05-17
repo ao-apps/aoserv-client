@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * For AO Industries use only.
@@ -31,14 +29,8 @@ final public class DistroFileTypeTable extends GlobalTableStringKey<DistroFileTy
         return defaultOrderBy;
     }
 
-    public DistroFileType get(Object type) {
-        try {
-            return getUniqueRow(DistroFileType.COLUMN_TYPE, type);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public DistroFileType get(String type) throws IOException, SQLException {
+        return getUniqueRow(DistroFileType.COLUMN_TYPE, type);
     }
 
     public SchemaTable.TableID getTableID() {

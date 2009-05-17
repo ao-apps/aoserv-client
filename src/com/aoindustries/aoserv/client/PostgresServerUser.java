@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import com.aoindustries.util.IntList;
 import java.io.*;
 import java.sql.*;
@@ -90,7 +89,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         return table.connector.getPostgresDatabases().getPostgresDatabases(this);
     }
 
-    public PostgresUser getPostgresUser() throws SQLException {
+    public PostgresUser getPostgresUser() throws SQLException, IOException {
 	PostgresUser obj=table.connector.getPostgresUsers().get(username);
 	if(obj==null) throw new SQLException("Unable to find PostgresUser: "+username);
 	return obj;
@@ -216,7 +215,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         out.writeNullUTF(predisable_password);
     }
 
-    public boolean canSetPassword() throws SQLException {
+    public boolean canSetPassword() throws SQLException, IOException {
         return disable_log==-1 && getPostgresUser().canSetPassword();
     }
 }

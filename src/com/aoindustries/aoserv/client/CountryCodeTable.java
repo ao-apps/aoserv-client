@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -31,14 +30,8 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
         return defaultOrderBy;
     }
 
-    public CountryCode get(Object code) {
-        try {
-            return getUniqueRow(CountryCode.COLUMN_CODE, code);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public CountryCode get(String code) throws IOException, SQLException {
+        return getUniqueRow(CountryCode.COLUMN_CODE, code);
     }
 
     public List<CountryCode> getCountryCodesByPriority(int prioritySize, int[] priorityCounter) throws IOException, SQLException {

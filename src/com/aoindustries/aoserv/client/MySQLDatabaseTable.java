@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -53,18 +52,8 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_MYSQL_DATABASE_NAME, template_base, template_added);
     }
 
-    public MySQLDatabase get(Object pkey) {
-        try {
-            return getUniqueRow(MySQLDatabase.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public MySQLDatabase get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(MySQLDatabase.COLUMN_PKEY, pkey);
+    	return getUniqueRow(MySQLDatabase.COLUMN_PKEY, pkey);
     }
 
     MySQLDatabase getMySQLDatabase(String name, MySQLServer ms) throws IOException, SQLException {

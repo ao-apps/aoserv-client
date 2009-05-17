@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -33,18 +32,8 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
         return defaultOrderBy;
     }
 
-    public BackupPartition get(Object pkey) {
-        try {
-            return get(((Integer)pkey).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public BackupPartition get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(BackupPartition.COLUMN_PKEY, pkey);
+        return getUniqueRow(BackupPartition.COLUMN_PKEY, pkey);
     }
 
     List<BackupPartition> getBackupPartitions(AOServer ao) throws IOException, SQLException {

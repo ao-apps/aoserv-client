@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 
 /*
@@ -31,14 +30,8 @@ final public class ResourceTable extends GlobalTableStringKey<Resource> {
         return defaultOrderBy;
     }
 
-    public Resource get(Object pkey) {
-        try {
-            return getUniqueRow(Resource.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Resource get(String name) throws IOException, SQLException {
+        return getUniqueRow(Resource.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {

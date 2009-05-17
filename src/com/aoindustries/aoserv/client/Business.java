@@ -467,7 +467,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * Gets the <code>Business</code> the is responsible for paying the bills created by this business.
      */
-    public Business getAccountingBusiness() throws SQLException {
+    public Business getAccountingBusiness() throws SQLException, IOException {
         Business bu=this;
         while(bu.bill_parent) {
             bu=bu.getParentBusiness();
@@ -617,7 +617,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return table.connector.getPackages().getPackages(this);
     }
 
-    public Business getParentBusiness() {
+    public Business getParentBusiness() throws IOException, SQLException {
         if(parent==null) return null;
         // The parent business might not be found, even when the value is set.  This is normal due
         // to filtering.
@@ -665,7 +665,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * @deprecated  Please use <code>isBusinessOrParentOf</code> instead.
      */
-    public boolean isBusinessOrParent(Business other) {
+    public boolean isBusinessOrParent(Business other) throws IOException, SQLException {
         return isBusinessOrParentOf(other);
     }
 
@@ -674,7 +674,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * or a parent of it.  This is often used for access control between
      * accounts.
      */
-    public boolean isBusinessOrParentOf(Business other) {
+    public boolean isBusinessOrParentOf(Business other) throws IOException, SQLException {
         while(other!=null) {
             if(equals(other)) return true;
             other=other.getParentBusiness();

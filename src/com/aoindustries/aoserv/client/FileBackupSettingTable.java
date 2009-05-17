@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -47,18 +46,8 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
         );
     }
 
-    public FileBackupSetting get(Object pkey) {
-        try {
-            return getUniqueRow(FileBackupSetting.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public FileBackupSetting get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(FileBackupSetting.COLUMN_PKEY, pkey);
+        return getUniqueRow(FileBackupSetting.COLUMN_PKEY, pkey);
     }
 
     FileBackupSetting getFileBackupSetting(FailoverFileReplication ffr, String path) throws IOException, SQLException {

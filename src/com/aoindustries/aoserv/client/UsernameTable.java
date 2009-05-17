@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -39,16 +38,6 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
             packageObject.name,
             username
 	);
-    }
-
-    public Username get(Object pkey) {
-        try {
-            return getUniqueRow(Username.COLUMN_USERNAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
     }
 
     public Username get(String username) throws IOException, SQLException {

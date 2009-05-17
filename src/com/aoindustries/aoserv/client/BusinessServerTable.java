@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,18 +35,8 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 	return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey);
     }
 
-    public BusinessServer get(Object pkey) {
-        try {
-            return get(((Integer)pkey).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public BusinessServer get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(BusinessServer.COLUMN_PKEY, pkey);
+        return getUniqueRow(BusinessServer.COLUMN_PKEY, pkey);
     }
 
     List<BusinessServer> getBusinessServers(Business bu) throws IOException, SQLException {

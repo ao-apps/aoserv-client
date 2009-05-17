@@ -41,7 +41,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
     int net_bind;
     int tomcat_site;
 
-    public HttpdJKCode getCode() throws SQLException {
+    public HttpdJKCode getCode() throws SQLException, IOException {
 	HttpdJKCode obj=table.connector.getHttpdJKCodes().get(code);
 	if(obj==null) throw new SQLException("Unable to find HttpdJKCode: "+code);
 	return obj;

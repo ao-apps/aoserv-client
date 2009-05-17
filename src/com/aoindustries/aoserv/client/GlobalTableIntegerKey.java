@@ -5,9 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  GlobalObjectIntegerKey
@@ -19,6 +19,21 @@ import java.util.*;
 public abstract class GlobalTableIntegerKey<V extends GlobalObjectIntegerKey<V>> extends GlobalTable<Integer,V> {
 
     GlobalTableIntegerKey(AOServConnector connector, Class<V> clazz) {
-	super(connector, clazz);
+        super(connector, clazz);
     }
+
+    /**
+     * Gets the object with the provided key.  The key must be an Integer.
+     */
+    public V get(Object pkey) {
+        try {
+            return get(((Integer)pkey).intValue());
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    abstract public V get(int pkey) throws IOException, SQLException;
 }

@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  HttpdJKProtocol
@@ -31,14 +29,8 @@ final public class HttpdJKProtocolTable extends GlobalTableStringKey<HttpdJKProt
         return defaultOrderBy;
     }
 
-    public HttpdJKProtocol get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdJKProtocol.COLUMN_PROTOCOL, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public HttpdJKProtocol get(String protocol) throws IOException, SQLException {
+        return getUniqueRow(HttpdJKProtocol.COLUMN_PROTOCOL, protocol);
     }
 
     public SchemaTable.TableID getTableID() {

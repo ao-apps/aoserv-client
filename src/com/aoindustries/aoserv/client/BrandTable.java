@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -31,16 +30,6 @@ final public class BrandTable extends CachedTableStringKey<Brand> {
     /**
      * Gets a <code>Brand</code> from the database.
      */
-    public Brand get(Object accounting) {
-        try {
-            return getUniqueRow(Brand.COLUMN_ACCOUNTING, accounting);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public Brand get(String accounting) throws IOException, SQLException {
         return getUniqueRow(Brand.COLUMN_ACCOUNTING, accounting);
     }

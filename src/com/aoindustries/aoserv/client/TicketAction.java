@@ -78,7 +78,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return time;
     }
 
-    public TicketActionType getTicketActionType() throws SQLException {
+    public TicketActionType getTicketActionType() throws SQLException, IOException {
         TicketActionType type=table.connector.getTicketActionTypes().get(action_type);
         if(type==null) throw new SQLException("Unable to find TicketActionType: "+action_type);
         return type;

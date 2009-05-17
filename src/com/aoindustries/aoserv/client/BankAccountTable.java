@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * For AO Industries use only.
@@ -20,7 +18,7 @@ import java.util.*;
 final public class BankAccountTable extends CachedTableStringKey<BankAccount> {
 
     BankAccountTable(AOServConnector connector) {
-	super(connector, BankAccount.class);
+        super(connector, BankAccount.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -31,17 +29,11 @@ final public class BankAccountTable extends CachedTableStringKey<BankAccount> {
         return defaultOrderBy;
     }
 
-    public BankAccount get(Object name) {
-        try {
-            return getUniqueRow(BankAccount.COLUMN_NAME, name);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public BankAccount get(String name) throws IOException, SQLException {
+        return getUniqueRow(BankAccount.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BANK_ACCOUNTS;
+        return SchemaTable.TableID.BANK_ACCOUNTS;
     }
 }

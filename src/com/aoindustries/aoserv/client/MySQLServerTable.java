@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -50,18 +49,8 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 	);
     }
 
-    public MySQLServer get(Object pkey) {
-        try {
-            return getUniqueRow(MySQLServer.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public MySQLServer get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(MySQLServer.COLUMN_PKEY, pkey);
+        return getUniqueRow(MySQLServer.COLUMN_PKEY, pkey);
     }
 
     MySQLServer getMySQLServer(NetBind nb) throws IOException, SQLException {

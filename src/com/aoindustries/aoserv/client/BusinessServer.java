@@ -67,7 +67,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         return can_control_xvfb;
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
 	Business obj=table.connector.getBusinesses().get(accounting);
 	if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
 	return obj;

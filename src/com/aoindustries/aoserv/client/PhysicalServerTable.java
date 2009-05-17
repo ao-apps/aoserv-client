@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 
 /*
  * Copyright 2008-2009 by AO Industries, Inc.,
@@ -30,14 +29,8 @@ final public class PhysicalServerTable extends CachedTableIntegerKey<PhysicalSer
         return defaultOrderBy;
     }
 
-    public PhysicalServer get(Object server) {
-        try {
-            return getUniqueRow(PhysicalServer.COLUMN_SERVER, server);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public PhysicalServer get(int server) throws IOException, SQLException {
+        return getUniqueRow(PhysicalServer.COLUMN_SERVER, server);
     }
 
     public SchemaTable.TableID getTableID() {

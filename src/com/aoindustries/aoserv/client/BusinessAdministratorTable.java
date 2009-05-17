@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -105,14 +104,8 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
     /**
      * Gets one BusinessAdministrator from the database.
      */
-    public BusinessAdministrator get(Object username) {
-        try {
-            return getUniqueRow(BusinessAdministrator.COLUMN_USERNAME, username);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public BusinessAdministrator get(String username) throws IOException, SQLException {
+        return getUniqueRow(BusinessAdministrator.COLUMN_USERNAME, username);
     }
 
     public SchemaTable.TableID getTableID() {

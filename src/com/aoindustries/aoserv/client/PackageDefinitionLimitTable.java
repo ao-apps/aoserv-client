@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -40,18 +39,8 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
         return getIndexedRows(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION, packageDefinition.pkey);
     }
 
-    public PackageDefinitionLimit get(Object pkey) {
-        try {
-            return getUniqueRow(PackageDefinitionLimit.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public PackageDefinitionLimit get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(PackageDefinitionLimit.COLUMN_PKEY, pkey);
+    	return getUniqueRow(PackageDefinitionLimit.COLUMN_PKEY, pkey);
     }
 
     PackageDefinitionLimit getPackageDefinitionLimit(PackageDefinition packageDefinition, Resource resource) throws IOException, SQLException {

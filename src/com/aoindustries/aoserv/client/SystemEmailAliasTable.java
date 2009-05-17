@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,18 +35,8 @@ final public class SystemEmailAliasTable extends CachedTableIntegerKey<SystemEma
         return getIndexedRows(SystemEmailAlias.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    public SystemEmailAlias get(Object pkey) {
-        try {
-            return getUniqueRow(SystemEmailAlias.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public SystemEmailAlias get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(SystemEmailAlias.COLUMN_PKEY, pkey);
+    	return getUniqueRow(SystemEmailAlias.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {

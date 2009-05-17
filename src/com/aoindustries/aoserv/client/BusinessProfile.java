@@ -59,7 +59,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	return StringUtility.splitStringCommaSpace(billingEmail);
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
 	Business business=table.connector.getBusinesses().get(accounting);
         if (business == null) throw new SQLException("Unable to find Business: " + accounting);
         return business;
@@ -94,7 +94,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
         }
     }
 
-    public CountryCode getCountry() throws SQLException {
+    public CountryCode getCountry() throws SQLException, IOException {
         CountryCode countryCode = table.connector.getCountryCodes().get(country);
         if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
         return countryCode;

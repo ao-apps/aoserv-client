@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 
 /*
@@ -31,14 +30,8 @@ final public class PostgresReservedWordTable extends GlobalTableStringKey<Postgr
         return defaultOrderBy;
     }
 
-    public PostgresReservedWord get(Object pkey) {
-        try {
-            return getUniqueRow(PostgresReservedWord.COLUMN_WORD, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public PostgresReservedWord get(String word) throws IOException, SQLException {
+        return getUniqueRow(PostgresReservedWord.COLUMN_WORD, word);
     }
 
     public SchemaTable.TableID getTableID() {

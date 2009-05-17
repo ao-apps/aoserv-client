@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -34,18 +33,8 @@ final public class BlackholeEmailAddressTable extends CachedTableIntegerKey<Blac
         return defaultOrderBy;
     }
 
-    public BlackholeEmailAddress get(Object address) {
-        try {
-            return get(((Integer)address).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public BlackholeEmailAddress get(int address) throws IOException, SQLException {
-	return getUniqueRow(BlackholeEmailAddress.COLUMN_EMAIL_ADDRESS, address);
+    	return getUniqueRow(BlackholeEmailAddress.COLUMN_EMAIL_ADDRESS, address);
     }
 
     List<BlackholeEmailAddress> getBlackholeEmailAddresses(AOServer ao) throws IOException, SQLException {

@@ -59,7 +59,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     /**
      * Gets the rack this server is part of or <code>null</code> if not in a rack.
      */
-    public Rack getRack() throws SQLException {
+    public Rack getRack() throws SQLException, IOException {
         if(rack==-1) return null;
         Rack ra = table.connector.getRacks().get(rack);
         if(ra==null) throw new SQLException("Unable to find Rack: "+rack);
@@ -84,7 +84,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     /**
      * Gets the processor type or <code>null</code> if not applicable.
      */
-    public ProcessorType getProcessorType() throws SQLException {
+    public ProcessorType getProcessorType() throws SQLException, IOException {
         if(processorType==null) return null;
         ProcessorType pt = table.connector.getProcessorTypes().get(processorType);
         if(pt==null) throw new SQLException("Unable to find ProcessorType: "+processorType);

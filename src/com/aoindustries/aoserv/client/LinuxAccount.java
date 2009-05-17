@@ -148,7 +148,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return obj;
     }
 
-    public FTPGuestUser getFTPGuestUser() {
+    public FTPGuestUser getFTPGuestUser() throws IOException, SQLException {
         return table.connector.getFtpGuestUsers().get(pkey);
     }
 
@@ -184,7 +184,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return table.connector.getLinuxGroupAccounts().getPrimaryGroup(this);
     }
 
-    public Shell getShell() throws SQLException {
+    public Shell getShell() throws SQLException, IOException {
         Shell shellObject = table.connector.getShells().get(shell);
         if (shellObject == null) throw new SQLException("Unable to find Shell: " + shell);
         return shellObject;
@@ -194,7 +194,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return SchemaTable.TableID.LINUX_ACCOUNTS;
     }
 
-    public LinuxAccountType getType() {
+    public LinuxAccountType getType() throws IOException, SQLException {
         LinuxAccountType typeObject = table.connector.getLinuxAccountTypes().get(type);
         if (typeObject == null) throw new IllegalArgumentException(new SQLException("Unable to find LinuxAccountType: " + type));
         return typeObject;
@@ -398,7 +398,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         ;
     }
     
-    public boolean canSetPassword() {
+    public boolean canSetPassword() throws IOException, SQLException {
         return disable_log==-1 && getType().canSetPassword();
     }
 

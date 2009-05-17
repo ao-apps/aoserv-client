@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
@@ -35,13 +34,7 @@ final public class ShellTable extends GlobalTableStringKey<Shell> {
 	return SchemaTable.TableID.SHELLS;
     }
 
-    public Shell get(Object pkey) {
-        try {
-            return getUniqueRow(Shell.COLUMN_PATH, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Shell get(String path) throws IOException, SQLException {
+        return getUniqueRow(Shell.COLUMN_PATH, path);
     }
 }

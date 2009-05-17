@@ -33,6 +33,10 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
         return null;
     }
 
+    /**
+     * Supports Integer (table_id), String(name), and SchemaTable.TableID (table_id) keys.
+     */
+    @Override
     public SchemaTable get(Object pkey) {
         try {
             if(pkey instanceof Integer) return get(((Integer)pkey).intValue());

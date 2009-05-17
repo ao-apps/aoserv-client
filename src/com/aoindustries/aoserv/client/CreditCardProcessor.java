@@ -37,7 +37,7 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
     private int encryption_from;
     private int encryption_recipient;
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
         Business business = table.connector.getBusinesses().get(accounting);
         if (business == null) throw new SQLException("Unable to find Business: " + accounting);
         return business;

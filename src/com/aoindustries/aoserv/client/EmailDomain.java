@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -158,24 +157,18 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         return reasons;
     }
 
-    public void remove() {
-        try {
-            table.connector.requestUpdateIL(
-                AOServProtocol.CommandID.REMOVE,
-                SchemaTable.TableID.EMAIL_DOMAINS,
-                pkey
-            );
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public void remove() throws IOException, SQLException {
+        table.connector.requestUpdateIL(
+            AOServProtocol.CommandID.REMOVE,
+            SchemaTable.TableID.EMAIL_DOMAINS,
+            pkey
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-	out.writeUTF(domain);
-	out.writeCompressedInt(ao_server);
-	out.writeUTF(packageName);
+        out.writeUTF(domain);
+        out.writeCompressedInt(ao_server);
+        out.writeUTF(packageName);
     }
 }

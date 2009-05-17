@@ -9,7 +9,6 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -133,18 +132,8 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
         return pkey;
     }
 
-    public CreditCard get(Object pkey) {
-        try {
-            return getUniqueRow(CreditCard.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public CreditCard get(int pkey) throws SQLException, IOException {
-	return getUniqueRow(CreditCard.COLUMN_PKEY, pkey);
+        return getUniqueRow(CreditCard.COLUMN_PKEY, pkey);
     }
 
     List<CreditCard> getCreditCards(Business business) throws IOException, SQLException {

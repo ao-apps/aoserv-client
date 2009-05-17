@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -93,14 +92,8 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     /**
      * Gets one <code>Business</code> from the database.
      */
-    public Business get(Object accounting) {
-        try {
-            return getUniqueRow(Business.COLUMN_ACCOUNTING, accounting);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Business get(String accounting) throws IOException, SQLException {
+        return getUniqueRow(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     List<Business> getChildBusinesses(Business business) throws IOException, SQLException {

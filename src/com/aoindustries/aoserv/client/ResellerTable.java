@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -26,19 +25,6 @@ final public class ResellerTable extends CachedTableStringKey<Reseller> {
     @Override
     OrderBy[] getDefaultOrderBy() {
         return defaultOrderBy;
-    }
-
-    /**
-     * Gets a <code>Reseller</code> from the database.
-     */
-    public Reseller get(Object accounting) {
-        try {
-            return getUniqueRow(Reseller.COLUMN_ACCOUNTING, accounting);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
     }
 
     /**

@@ -95,7 +95,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     /**
      * Gets the minimum processor type or <code>null</code> if none.
      */
-    public ProcessorType getMinimumProcessorType() {
+    public ProcessorType getMinimumProcessorType() throws IOException, SQLException {
         if(minimumProcessorType==null) return null;
         ProcessorType pt = table.connector.getProcessorTypes().get(minimumProcessorType);
         if(pt==null) new SQLException("Unable to find ProcessorType: "+minimumProcessorType);
@@ -105,7 +105,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     /**
      * Gets the minimum processor architecture.
      */
-    public Architecture getMinimumProcessorArchitecture() {
+    public Architecture getMinimumProcessorArchitecture() throws IOException, SQLException {
         Architecture a = table.connector.getArchitectures().get(minimumProcessorArchitecture);
         if(a==null) new SQLException("Unable to find Architecture: "+minimumProcessorArchitecture);
         return a;

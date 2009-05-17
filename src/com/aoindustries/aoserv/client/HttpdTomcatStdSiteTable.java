@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -90,18 +89,8 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
         return pkey;
     }
 
-    public HttpdTomcatStdSite get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdTomcatStdSite.COLUMN_TOMCAT_SITE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdTomcatStdSite get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdTomcatStdSite.COLUMN_TOMCAT_SITE, pkey);
+        return getUniqueRow(HttpdTomcatStdSite.COLUMN_TOMCAT_SITE, pkey);
     }
 
     public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort(NetBind nb) throws IOException, SQLException {

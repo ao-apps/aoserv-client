@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -28,14 +27,8 @@ final public class LanguageTable extends GlobalTableStringKey<Language> {
         return defaultOrderBy;
     }
 
-    public Language get(Object code) {
-        try {
-            return getUniqueRow(Language.COLUMN_CODE, code);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Language get(String code) throws IOException, SQLException {
+        return getUniqueRow(Language.COLUMN_CODE, code);
     }
 
     public SchemaTable.TableID getTableID() {

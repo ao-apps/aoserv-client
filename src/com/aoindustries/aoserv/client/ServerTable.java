@@ -84,6 +84,9 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         return pkey;
     }
 
+    /**
+     * Supports both Integer (pkey) and String (server) keys.
+     */
     @Override
     public Server get(Object pkey) {
         try {
@@ -131,7 +134,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
     }
 
     public Server get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(Server.COLUMN_PKEY, pkey);
+        return getUniqueRow(Server.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {

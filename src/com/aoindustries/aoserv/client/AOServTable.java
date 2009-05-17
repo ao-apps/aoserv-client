@@ -61,12 +61,12 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
     /**
      * The list of <code>ProgressListener</code>s.
      */
-    List<ProgressListener> progressListeners=new ArrayList<ProgressListener>();
+    final List<ProgressListener> progressListeners = new ArrayList<ProgressListener>();
 
     /**
      * All of the table load listeners.
      */
-    List<TableLoadListenerEntry> _loadListeners=new ArrayList<TableLoadListenerEntry>();
+    final List<TableLoadListenerEntry> _loadListeners = new ArrayList<TableLoadListenerEntry>();
 
     protected AOServTable(AOServConnector connector, Class<V> clazz) {
         this.connector=connector;

@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 
 /*
@@ -31,27 +30,11 @@ final public class SignupRequestOptionTable extends CachedTableIntegerKey<Signup
         return defaultOrderBy;
     }
 
-    public SignupRequestOption get(Object pkey) {
-        try {
-            return getUniqueRow(SignupRequestOption.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    public SignupRequestOption get(int pkey) {
-        try {
-            return getUniqueRow(SignupRequestOption.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public SignupRequestOption get(int pkey) throws IOException, SQLException {
+        return getUniqueRow(SignupRequestOption.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.SIGNUP_REQUEST_OPTIONS;
+    	return SchemaTable.TableID.SIGNUP_REQUEST_OPTIONS;
     }
 }

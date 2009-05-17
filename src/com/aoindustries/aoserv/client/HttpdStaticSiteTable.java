@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  HttpdStaticSite
@@ -32,18 +30,8 @@ final public class HttpdStaticSiteTable extends CachedTableIntegerKey<HttpdStati
         return defaultOrderBy;
     }
 
-    public HttpdStaticSite get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdStaticSite.COLUMN_HTTPD_SITE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdStaticSite get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdStaticSite.COLUMN_HTTPD_SITE, pkey);
+    	return getUniqueRow(HttpdStaticSite.COLUMN_HTTPD_SITE, pkey);
     }
 
     public SchemaTable.TableID getTableID() {

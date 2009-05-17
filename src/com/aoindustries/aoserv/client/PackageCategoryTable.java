@@ -5,15 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  PackageCategory
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -31,14 +27,8 @@ public final class PackageCategoryTable extends GlobalTableStringKey<PackageCate
         return defaultOrderBy;
     }
 
-    public PackageCategory get(Object pkey) {
-        try {
-            return getUniqueRow(PackageCategory.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public PackageCategory get(String name) throws IOException, SQLException {
+        return getUniqueRow(PackageCategory.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {

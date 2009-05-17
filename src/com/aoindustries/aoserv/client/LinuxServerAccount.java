@@ -337,7 +337,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         return junk_email_retention;
     }
     
-    public EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode() throws SQLException {
+    public EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode() throws SQLException, IOException {
         EmailSpamAssassinIntegrationMode esaim=table.connector.getEmailSpamAssassinIntegrationModes().get(sa_integration_mode);
         if(esaim==null) throw new SQLException("Unable to find EmailSpamAssassinIntegrationMode: "+sa_integration_mode);
         return esaim;

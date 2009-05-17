@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  PaymentType
@@ -31,17 +29,11 @@ final public class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
         return defaultOrderBy;
     }
 
-    public PaymentType get(Object pkey) {
-        try {
-            return getUniqueRow(PaymentType.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public PaymentType get(String name) throws IOException, SQLException {
+        return getUniqueRow(PaymentType.COLUMN_NAME, name);
     }
 
-    public PaymentType getCreditCardType(String card_number) throws SQLException {
+    public PaymentType getCreditCardType(String card_number) throws SQLException, IOException {
 	// Build the list of numbers
 	StringBuilder numbers = new StringBuilder();
 

@@ -133,7 +133,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         return Username.groupPasswordsSet(pps);
     }
 
-    public boolean canDisable() {
+    public boolean canDisable() throws IOException, SQLException {
         if(disable_log!=-1) return false;
         LinuxAccount la=getLinuxAccount();
         if(la!=null && la.disable_log==-1) return false;
@@ -153,7 +153,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     /**
      * Checks the strength of a password as used by this <code>Username</code>.
      */
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException, SQLException {
 	BusinessAdministrator ba=getBusinessAdministrator();
 	if(ba!=null) {
             PasswordChecker.Result[] results=ba.checkPassword(userLocale, password);
@@ -189,7 +189,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
-    public BusinessAdministrator getBusinessAdministrator() {
+    public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
 	return table.connector.getBusinessAdministrators().get(pkey);
     }
 
@@ -209,11 +209,11 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         return obj;
     }
 
-    public LinuxAccount getLinuxAccount() {
+    public LinuxAccount getLinuxAccount() throws IOException, SQLException {
 	return table.connector.getLinuxAccounts().get(pkey);
     }
 
-    public MySQLUser getMySQLUser() {
+    public MySQLUser getMySQLUser() throws IOException, SQLException {
 	return table.connector.getMysqlUsers().get(pkey);
     }
 
@@ -223,7 +223,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	return packageObject;
     }
 
-    public PostgresUser getPostgresUser() {
+    public PostgresUser getPostgresUser() throws IOException, SQLException {
 	return table.connector.getPostgresUsers().get(pkey);
 
     }
@@ -253,7 +253,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         if(result.wasNull()) disable_log=-1;
     }
 
-    public boolean isUsed() {
+    public boolean isUsed() throws IOException, SQLException {
 	return
             getLinuxAccount()!=null
             || getBusinessAdministrator()!=null
@@ -369,7 +369,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	if(pu!=null) pu.setPassword(password);
     }
 
-    public boolean canSetPassword() {
+    public boolean canSetPassword() throws IOException, SQLException {
         if(disable_log!=-1) return false;
 
         BusinessAdministrator ba=getBusinessAdministrator();

@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,14 +30,8 @@ final public class TicketAssignmentTable extends CachedTableIntegerKey<TicketAss
         return defaultOrderBy;
     }
 
-    public TicketAssignment get(Object pkey) {
-        try {
-            return getUniqueRow(TicketAssignment.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public TicketAssignment get(int pkey) throws IOException, SQLException {
+        return getUniqueRow(TicketAssignment.COLUMN_PKEY, pkey);
     }
 
     List<TicketAssignment> getTicketAssignments(Ticket ticket) throws IOException, SQLException {

@@ -11,7 +11,6 @@ import com.aoindustries.security.AccountDisabledException;
 import com.aoindustries.security.BadPasswordException;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -64,18 +63,8 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         }
     }
 
-    public LinuxServerAccount get(Object pkey) {
-        try {
-            return getUniqueRow(LinuxServerAccount.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public LinuxServerAccount get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(LinuxServerAccount.COLUMN_PKEY, pkey);
+        return getUniqueRow(LinuxServerAccount.COLUMN_PKEY, pkey);
     }
 
     List<LinuxServerAccount> getAlternateLinuxServerAccounts(LinuxServerGroup group) throws SQLException, IOException {

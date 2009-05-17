@@ -9,12 +9,9 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * For AO Industries use only.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */

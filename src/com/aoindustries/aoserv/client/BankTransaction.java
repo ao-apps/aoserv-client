@@ -46,7 +46,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	;
     }
 
-    public MasterUser getAdministrator() throws SQLException {
+    public MasterUser getAdministrator() throws SQLException, IOException {
 	MasterUser obj = table.connector.getMasterUsers().get(administrator);
 	if (obj == null) throw new SQLException("Unable to find MasterUser: " + administrator);
 	return obj;
@@ -56,13 +56,13 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return amount;
     }
 
-    public BankAccount getBankAccount() throws SQLException {
+    public BankAccount getBankAccount() throws SQLException, IOException {
 	BankAccount bankAccountObject = table.connector.getBankAccounts().get(bankAccount);
         if (bankAccountObject == null) throw new SQLException("BankAccount not found: " + bankAccount);
         return bankAccountObject;
     }
 
-    public BankTransactionType getBankTransactionType() throws SQLException {
+    public BankTransactionType getBankTransactionType() throws SQLException, IOException {
         BankTransactionType typeObject = table.connector.getBankTransactionTypes().get(type);
         if (typeObject == null) throw new SQLException("BankTransactionType not found: " + type);
         return typeObject;
@@ -93,7 +93,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return description;
     }
 
-    public ExpenseCategory getExpenseCategory() throws SQLException {
+    public ExpenseCategory getExpenseCategory() throws SQLException, IOException {
 	if(expenseCode==null) return null;
 	ExpenseCategory cat=table.connector.getExpenseCategories().get(expenseCode);
 	if (cat == null) throw new SQLException("ExpenseCategory not found: " + expenseCode);

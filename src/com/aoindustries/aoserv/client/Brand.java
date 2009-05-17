@@ -101,7 +101,7 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         }
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
         Business bu = table.connector.getBusinesses().get(pkey);
         if(bu==null) throw new SQLException("Unable to find Business: "+pkey);
         return bu;

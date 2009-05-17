@@ -5,15 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  USState
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -35,13 +31,7 @@ final public class USStateTable extends GlobalTableStringKey<USState> {
 	return SchemaTable.TableID.US_STATES;
     }
 
-    public USState get(Object pkey) {
-        try {
-            return getUniqueRow(USState.COLUMN_CODE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public USState get(String code) throws IOException, SQLException {
+        return getUniqueRow(USState.COLUMN_CODE, code);
     }
 }

@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
@@ -33,16 +32,6 @@ final public class TicketStatusTable extends GlobalTableStringKey<TicketStatus> 
 
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.TICKET_STATI;
-    }
-
-    public TicketStatus get(Object pkey) {
-        try {
-            return getUniqueRow(TicketStatus.COLUMN_STATUS, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
     }
 
     public TicketStatus get(String status) throws IOException, SQLException {

@@ -10,7 +10,6 @@ import com.aoindustries.sql.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * A <code>PackageDefinitionLimit</code> stores one limit that is part of a <code>PackageDefinition</code>.
@@ -84,7 +83,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         return pd;
     }
     
-    public Resource getResource() throws SQLException {
+    public Resource getResource() throws SQLException, IOException {
         Resource r=table.connector.getResources().get(resource);
         if(r==null) throw new SQLException("Unable to find Resource: "+resource);
         return r;
@@ -102,7 +101,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         return additional_rate;
     }
     
-    public TransactionType getAdditionalTransactionType() throws SQLException {
+    public TransactionType getAdditionalTransactionType() throws SQLException, IOException {
         if(additional_transaction_type==null) return null;
         TransactionType tt=table.connector.getTransactionTypes().get(additional_transaction_type);
         if(tt==null) throw new SQLException("Unable to find TransactionType: "+additional_transaction_type);

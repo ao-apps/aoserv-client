@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -32,18 +31,12 @@ final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
         return defaultOrderBy;
     }
 
-    public VirtualDisk get(Object pkey) {
-        try {
-            return getUniqueRow(VirtualDisk.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public VirtualDisk get(int pkey) throws IOException, SQLException {
+        return getUniqueRow(VirtualDisk.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.VIRTUAL_DISKS;
+        return SchemaTable.TableID.VIRTUAL_DISKS;
     }
     
     List<VirtualDisk> getVirtualDisks(VirtualServer vs) throws IOException, SQLException {

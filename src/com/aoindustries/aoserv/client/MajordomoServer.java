@@ -125,7 +125,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	return SchemaTable.TableID.MAJORDOMO_SERVERS;
     }
 
-    public MajordomoVersion getVersion() throws SQLException {
+    public MajordomoVersion getVersion() throws SQLException, IOException {
 	MajordomoVersion obj=table.connector.getMajordomoVersions().get(version);
 	if(obj==null) throw new SQLException("Unable to find MajordomoVersion: "+version);
 	return obj;

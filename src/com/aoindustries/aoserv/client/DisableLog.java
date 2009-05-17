@@ -58,7 +58,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
         Business bu=table.connector.getBusinesses().get(accounting);
         if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
         return bu;
@@ -72,7 +72,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         return disabled_by;
     }
 
-    public BusinessAdministrator getDisabledBy() {
+    public BusinessAdministrator getDisabledBy() throws IOException, SQLException {
         // May be filtered
         return table.connector.getBusinessAdministrators().get(disabled_by);
     }

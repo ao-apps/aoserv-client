@@ -109,7 +109,7 @@ final public class AOSH extends ShellInterpreter {
         return "aosh";
     }
 
-    protected String getPrompt() throws SQLException {
+    protected String getPrompt() throws SQLException, IOException {
         return '['+connector.getThisBusinessAdministrator().toString()+'@'+connector.getHostname()+"]$ ";
     }
 

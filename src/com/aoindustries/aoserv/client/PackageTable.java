@@ -46,6 +46,10 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	);
     }
 
+    /**
+     * Supports both Integer (pkey) and String (name) keys.
+     */
+    @Override
     public Package get(Object pkey) {
         try {
             if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
@@ -59,11 +63,11 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
     }
 
     public Package get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(Package.COLUMN_PKEY, pkey);
+        return getUniqueRow(Package.COLUMN_PKEY, pkey);
     }
 
-    public Package get(String packageName) throws IOException, SQLException {
-	return getUniqueRow(Package.COLUMN_NAME, packageName);
+    public Package get(String name) throws IOException, SQLException {
+        return getUniqueRow(Package.COLUMN_NAME, name);
     }
 
     public String generatePackageName(String template) throws IOException, SQLException {

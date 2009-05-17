@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -37,18 +36,12 @@ final public class BusinessAdministratorPermissionTable extends CachedTableInteg
         return defaultOrderBy;
     }
 
-    public BusinessAdministratorPermission get(Object pkey) {
-        try {
-            return getUniqueRow(BusinessAdministratorPermission.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public BusinessAdministratorPermission get(int pkey) throws IOException, SQLException {
+        return getUniqueRow(BusinessAdministratorPermission.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
+        return SchemaTable.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
     }
 
     List<BusinessAdministratorPermission> getPermissions(BusinessAdministrator ba) throws IOException, SQLException {

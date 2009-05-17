@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -48,16 +47,6 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
     @Override
     OrderBy[] getDefaultOrderBy() {
         return null;
-    }
-
-    public SchemaColumn get(Object pkey) {
-        try {
-            return get(((Integer)pkey).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
     }
 
     public SchemaColumn get(int pkey) throws IOException, SQLException {

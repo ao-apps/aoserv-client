@@ -32,6 +32,10 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
         return defaultOrderBy;
     }
 
+    /**
+     * Supports both Integer (server) and String (hostname) keys.
+     */
+    @Override
     public AOServer get(Object pkey) {
         try {
             if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
@@ -45,11 +49,11 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
     }
 
     public AOServer get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(AOServer.COLUMN_SERVER, pkey);
+        return getUniqueRow(AOServer.COLUMN_SERVER, pkey);
     }
 
     public AOServer get(String hostname) throws IOException, SQLException {
-	return getUniqueRow(AOServer.COLUMN_HOSTNAME, hostname);
+        return getUniqueRow(AOServer.COLUMN_HOSTNAME, hostname);
     }
 
     AOServer getAOServerByDaemonNetBind(NetBind nb) throws IOException, SQLException {

@@ -389,7 +389,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         return er;
     }
 
-    public BusinessAdministrator getCompletedBy() {
+    public BusinessAdministrator getCompletedBy() throws IOException, SQLException {
         if(completed_by==null) return null;
         // May be filtered, null is OK
         return table.connector.getBusinessAdministrators().get(completed_by);

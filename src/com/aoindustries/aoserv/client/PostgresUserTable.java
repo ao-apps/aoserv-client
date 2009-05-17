@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -40,14 +39,8 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
         );
     }
 
-    public PostgresUser get(Object pkey) {
-        try {
-            return getUniqueRow(PostgresUser.COLUMN_USERNAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public PostgresUser get(String username) throws IOException, SQLException {
+        return getUniqueRow(PostgresUser.COLUMN_USERNAME, username);
     }
 
     List<PostgresUser> getPostgresUsers(Package pack) throws SQLException, IOException {

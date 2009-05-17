@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -288,14 +287,8 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         }
     }
     
-    public LinuxAccount get(Object pkey) {
-        try {
-            return getUniqueRow(LinuxAccount.COLUMN_USERNAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public LinuxAccount get(String username) throws IOException, SQLException {
+        return getUniqueRow(LinuxAccount.COLUMN_USERNAME, username);
     }
 
     public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {

@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  DNSType
@@ -31,14 +29,8 @@ final public class DNSTypeTable extends GlobalTableStringKey<DNSType> {
         return defaultOrderBy;
     }
 
-    public DNSType get(Object pkey) {
-        try {
-            return getUniqueRow(DNSType.COLUMN_TYPE, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public DNSType get(String type) throws IOException, SQLException {
+        return getUniqueRow(DNSType.COLUMN_TYPE, type);
     }
 
     public SchemaTable.TableID getTableID() {

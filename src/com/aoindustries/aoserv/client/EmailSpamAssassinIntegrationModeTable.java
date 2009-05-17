@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  EmailSpamAssassinIntegrationMode
@@ -31,15 +29,10 @@ public final class EmailSpamAssassinIntegrationModeTable extends GlobalTableStri
         return defaultOrderBy;
     }
 
-    public EmailSpamAssassinIntegrationMode get(Object pkey) {
-        try {
-            return getUniqueRow(EmailSpamAssassinIntegrationMode.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public EmailSpamAssassinIntegrationMode get(String name) throws IOException, SQLException {
+        return getUniqueRow(EmailSpamAssassinIntegrationMode.COLUMN_NAME, name);
     }
+
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
     }

@@ -5,10 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * All of the operating systems referenced from other tables.
@@ -33,14 +31,8 @@ final public class OperatingSystemTable extends GlobalTableStringKey<OperatingSy
         return defaultOrderBy;
     }
 
-    public OperatingSystem get(Object pkey) {
-        try {
-            return getUniqueRow(OperatingSystem.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public OperatingSystem get(String name) throws IOException, SQLException {
+        return getUniqueRow(OperatingSystem.COLUMN_NAME, name);
     }
 
     public SchemaTable.TableID getTableID() {

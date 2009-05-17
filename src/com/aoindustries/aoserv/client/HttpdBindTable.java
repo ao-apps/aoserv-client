@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -40,18 +39,8 @@ final public class HttpdBindTable extends CachedTableIntegerKey<HttpdBind> {
         return getIndexedRows(HttpdBind.COLUMN_HTTPD_SERVER, server.pkey);
     }
 
-    public HttpdBind get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdBind.COLUMN_NET_BIND, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdBind get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdBind.COLUMN_NET_BIND, pkey);
+    	return getUniqueRow(HttpdBind.COLUMN_NET_BIND, pkey);
     }
 
     public SchemaTable.TableID getTableID() {

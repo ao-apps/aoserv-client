@@ -51,7 +51,7 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 	return can_invalidate_tables;
     }
 
-    public BusinessAdministrator getBusinessAdministrator() throws SQLException {
+    public BusinessAdministrator getBusinessAdministrator() throws SQLException, IOException {
 	BusinessAdministrator obj=table.connector.getBusinessAdministrators().get(pkey);
 	if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+pkey);
 	return obj;

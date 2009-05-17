@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -44,18 +43,8 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 	return pkey;
     }
 
-    public EmailPipe get(Object pkey) {
-        try {
-            return getUniqueRow(EmailPipe.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public EmailPipe get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(EmailPipe.COLUMN_PKEY, pkey);
+    	return getUniqueRow(EmailPipe.COLUMN_PKEY, pkey);
     }
 
     List<EmailPipe> getEmailPipes(Package pack) throws IOException, SQLException {

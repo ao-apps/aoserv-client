@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -63,7 +62,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	printZoneFile(out);
     }
 
-    public DNSType[] getAllowedDNSTypes() {
+    public DNSType[] getAllowedDNSTypes() throws IOException, SQLException {
 	DNSTypeTable tt=table.connector.getDnsTypes();
 	if(isArpa()) {
             DNSType[] types={

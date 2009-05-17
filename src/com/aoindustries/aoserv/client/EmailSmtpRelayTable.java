@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -69,18 +68,8 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
         return pkey;
     }
 
-    public EmailSmtpRelay get(Object pkey) {
-        try {
-            return getUniqueRow(EmailSmtpRelay.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public EmailSmtpRelay get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(EmailSmtpRelay.COLUMN_PKEY, pkey);
+    	return getUniqueRow(EmailSmtpRelay.COLUMN_PKEY, pkey);
     }
 
     EmailSmtpRelay getEmailSmtpRelay(Package pk, AOServer ao, String host) throws IOException, SQLException {

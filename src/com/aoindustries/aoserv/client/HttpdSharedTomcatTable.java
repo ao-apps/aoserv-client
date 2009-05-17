@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -82,18 +81,8 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SHARED_TOMCAT_NAME, template);
     }
 
-    public HttpdSharedTomcat get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdSharedTomcat.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdSharedTomcat get(int pkey) throws SQLException, IOException {
-	return getUniqueRow(HttpdSharedTomcat.COLUMN_PKEY, pkey);
+    	return getUniqueRow(HttpdSharedTomcat.COLUMN_PKEY, pkey);
     }
 
     HttpdSharedTomcat getHttpdSharedTomcat(HttpdWorker hw) throws SQLException, IOException {

@@ -103,7 +103,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	return !type.equals(EMAIL);
     }
 
-    public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException {
+    public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
 	String[] paths=getShellList(pkey);
 
 	ShellTable shellTable=connector.getShells();

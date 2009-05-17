@@ -1,7 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
-
 /*
  * Copyright 2008-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -30,17 +28,11 @@ final public class RackTable extends CachedTableIntegerKey<Rack> {
         return defaultOrderBy;
     }
 
-    public Rack get(Object pkey) {
-        try {
-            return getUniqueRow(Rack.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Rack get(int pkey) throws IOException, SQLException {
+        return getUniqueRow(Rack.COLUMN_PKEY, pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.RACKS;
+    	return SchemaTable.TableID.RACKS;
     }
 }

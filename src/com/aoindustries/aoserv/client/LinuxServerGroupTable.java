@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -54,18 +53,8 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         }
     }
 
-    public LinuxServerGroup get(Object pkey) {
-        try {
-            return getUniqueRow(LinuxServerGroup.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public LinuxServerGroup get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(LinuxServerGroup.COLUMN_PKEY, pkey);
+    	return getUniqueRow(LinuxServerGroup.COLUMN_PKEY, pkey);
     }
 
     LinuxServerGroup getLinuxServerGroup(AOServer aoServer, Business business) throws IOException, SQLException {

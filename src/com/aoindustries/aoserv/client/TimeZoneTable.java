@@ -1,6 +1,5 @@
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 
 /*
@@ -37,13 +36,7 @@ final public class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
         return SchemaTable.TableID.TIME_ZONES;
     }
 
-    public TimeZone get(Object pkey) {
-        try {
-            return getUniqueRow(TimeZone.COLUMN_NAME, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public TimeZone get(String name) throws IOException, SQLException {
+        return getUniqueRow(TimeZone.COLUMN_NAME, name);
     }
 }

@@ -97,7 +97,7 @@ final public class SimpleAOClient {
         this(AOServConnector.getConnector(username, password, errorHandler));
     }
 
-    private Architecture getArchitecture(String architecture) throws IllegalArgumentException {
+    private Architecture getArchitecture(String architecture) throws IllegalArgumentException, IOException, SQLException {
         Architecture ar=connector.getArchitectures().get(architecture);
         if(ar==null) throw new IllegalArgumentException("Unable to find Architecture: "+architecture);
         return ar;
@@ -109,13 +109,13 @@ final public class SimpleAOClient {
         return ao;
     }
 
-    private Business getBusiness(String accounting) throws IllegalArgumentException {
+    private Business getBusiness(String accounting) throws IllegalArgumentException, IOException, SQLException {
         Business bu=connector.getBusinesses().get(accounting);
         if(bu==null) throw new IllegalArgumentException("Unable to find Business: "+accounting);
         return bu;
     }
 
-    private DNSZone getDNSZone(String zone) throws IllegalArgumentException {
+    private DNSZone getDNSZone(String zone) throws IllegalArgumentException, IOException, SQLException {
         DNSZone dz=connector.getDnsZones().get(zone);
         if(dz==null) throw new IllegalArgumentException("Unable to find DNSZone: "+zone);
         return dz;
@@ -139,7 +139,7 @@ final public class SimpleAOClient {
         return el;
     }
 
-    private EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode(String mode) throws IllegalArgumentException {
+    private EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode(String mode) throws IllegalArgumentException, IOException, SQLException {
         EmailSpamAssassinIntegrationMode esaim=connector.getEmailSpamAssassinIntegrationModes().get(mode);
         if(esaim==null) throw new IllegalArgumentException("Unable to find EmailSpamAssassinIntegrationMode: "+mode);
         return esaim;
@@ -169,7 +169,7 @@ final public class SimpleAOClient {
         return la;
     }
 
-    private LinuxGroup getLinuxGroup(String name) throws IllegalArgumentException {
+    private LinuxGroup getLinuxGroup(String name) throws IllegalArgumentException, IOException, SQLException {
         LinuxGroup lg=connector.getLinuxGroups().get(name);
         if(lg==null) throw new IllegalArgumentException("Unable to find LinuxGroup: "+name);
         return lg;
@@ -224,7 +224,7 @@ final public class SimpleAOClient {
         return nd;
     }
 
-    private OperatingSystem getOperatingSystem(String name) throws IllegalArgumentException {
+    private OperatingSystem getOperatingSystem(String name) throws IllegalArgumentException, IOException, SQLException {
         OperatingSystem os=connector.getOperatingSystems().get(name);
         if(os==null) throw new IllegalArgumentException("Unable to find OperatingSystem: "+name);
         return os;
@@ -279,7 +279,7 @@ final public class SimpleAOClient {
         return se;
     }
 
-    private ServerFarm getServerFarm(String name) throws IllegalArgumentException {
+    private ServerFarm getServerFarm(String name) throws IllegalArgumentException, SQLException, IOException {
         ServerFarm sf=connector.getServerFarms().get(name);
         if(sf==null) throw new IllegalArgumentException("Unable to find ServerFarm: "+name);
         return sf;

@@ -104,7 +104,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	return host;
     }
     
-    public EmailSmtpRelayType getType() throws SQLException {
+    public EmailSmtpRelayType getType() throws SQLException, IOException {
         EmailSmtpRelayType esrt=table.connector.getEmailSmtpRelayTypes().get(type);
         if(esrt==null) throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
         return esrt;

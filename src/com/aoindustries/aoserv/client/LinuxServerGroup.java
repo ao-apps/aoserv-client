@@ -63,7 +63,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         return created;
     }
 
-    public LinuxGroup getLinuxGroup() throws SQLException {
+    public LinuxGroup getLinuxGroup() throws SQLException, IOException {
         LinuxGroup group = table.connector.getLinuxGroups().get(name);
         if (group == null) throw new SQLException("Unable to find LinuxGroup: " + name);
         return group;

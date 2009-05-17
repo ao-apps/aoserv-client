@@ -260,7 +260,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return table.connector.getNetBinds().get(daemon_connect_bind);
     }
     
-    public TimeZone getTimeZone() throws SQLException {
+    public TimeZone getTimeZone() throws SQLException, IOException {
         TimeZone tz=table.connector.getTimeZones().get(time_zone);
         if(tz==null) throw new SQLException("Unable to find TimeZone: "+time_zone);
         return tz;
@@ -327,7 +327,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return monitoring_load_critical;
     }
 
-    public NetDeviceID getDaemonDeviceID() throws SQLException {
+    public NetDeviceID getDaemonDeviceID() throws SQLException, IOException {
         NetDeviceID ndi=table.connector.getNetDeviceIDs().get(daemon_device_id);
         if(ndi==null) throw new SQLException("Unable to find NetDeviceID: "+daemon_device_id);
         return ndi;

@@ -75,7 +75,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         }
     }
 
-    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) {
+    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
         return connector.getHttpdJKProtocols().get(pkey);
     }
 
@@ -87,7 +87,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         return is_user_service;
     }
 
-    public NetProtocol getNetProtocol(AOServConnector connector) throws SQLException {
+    public NetProtocol getNetProtocol(AOServConnector connector) throws SQLException, IOException {
         NetProtocol np=connector.getNetProtocols().get(net_protocol);
         if(np==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
         return np;

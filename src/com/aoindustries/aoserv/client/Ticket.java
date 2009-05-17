@@ -180,20 +180,20 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         return re;
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
         if(accounting==null) return null;
         Business bu = table.connector.getBusinesses().get(accounting);
         if (bu == null) throw new SQLException("Unable to find Business: " + accounting);
         return bu;
     }
 
-    public Language getLanguage() throws SQLException {
+    public Language getLanguage() throws SQLException, IOException {
         Language la = table.connector.getLanguages().get(language);
         if(la==null) throw new SQLException("Unable to find Language: "+language);
         return la;
     }
 
-    public BusinessAdministrator getCreatedBy() {
+    public BusinessAdministrator getCreatedBy() throws IOException, SQLException {
         if(created_by==null) return null;
         // Data may be filtered by APIs
         return table.connector.getBusinessAdministrators().get(created_by);

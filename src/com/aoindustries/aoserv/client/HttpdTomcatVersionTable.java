@@ -5,15 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * @see  HttpdTomcatVersion
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -31,18 +27,8 @@ final public class HttpdTomcatVersionTable extends GlobalTableIntegerKey<HttpdTo
         return defaultOrderBy;
     }
 
-    public HttpdTomcatVersion get(Object pkey) {
-        try {
-            return getUniqueRow(HttpdTomcatVersion.COLUMN_VERSION, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public HttpdTomcatVersion get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(HttpdTomcatVersion.COLUMN_VERSION, pkey);
+    	return getUniqueRow(HttpdTomcatVersion.COLUMN_VERSION, pkey);
     }
 
     public HttpdTomcatVersion getHttpdTomcatVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {

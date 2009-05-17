@@ -139,7 +139,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
     }
 
-    public MySQLUser getMySQLUser() throws SQLException {
+    public MySQLUser getMySQLUser() throws SQLException, IOException {
 	MySQLUser obj=table.connector.getMysqlUsers().get(username);
 	if(obj==null) throw new SQLException("Unable to find MySQLUser: "+username);
 	return obj;
@@ -289,7 +289,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) out.writeCompressedInt(max_user_connections);
     }
 
-    public boolean canSetPassword() throws SQLException {
+    public boolean canSetPassword() throws SQLException, IOException {
         return disable_log==-1 && getMySQLUser().canSetPassword();
     }
 }

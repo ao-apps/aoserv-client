@@ -69,7 +69,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return table.connector.getBrands().get(brand);
     }
 
-    public PackageCategory getPackageCategory() throws SQLException {
+    public PackageCategory getPackageCategory() throws SQLException, IOException {
         PackageCategory pc=table.connector.getPackageCategories().get(category);
         if(pc==null) throw new SQLException("Unable to find PackageCategory: "+category);
         return pc;
@@ -147,7 +147,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return setup_fee;
     }
     
-    public TransactionType getSetupFeeTransactionType() throws SQLException {
+    public TransactionType getSetupFeeTransactionType() throws SQLException, IOException {
         if(setup_fee_transaction_type==null) return null;
         TransactionType tt=table.connector.getTransactionTypes().get(setup_fee_transaction_type);
         if(tt==null) throw new SQLException("Unable to find TransactionType: "+setup_fee_transaction_type);
@@ -158,7 +158,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return monthly_rate;
     }
     
-    public TransactionType getMonthlyRateTransactionType() throws SQLException {
+    public TransactionType getMonthlyRateTransactionType() throws SQLException, IOException {
         if(monthly_rate_transaction_type==null) return null;
         TransactionType tt=table.connector.getTransactionTypes().get(monthly_rate_transaction_type);
         if(tt==null) throw new SQLException("Unable to find TransactionType: "+monthly_rate_transaction_type);

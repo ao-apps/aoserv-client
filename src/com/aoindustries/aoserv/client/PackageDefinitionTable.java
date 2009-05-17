@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -90,18 +89,8 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
         return pkey;
     }
 
-    public PackageDefinition get(Object pkey) {
-        try {
-                return getUniqueRow(PackageDefinition.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public PackageDefinition get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(PackageDefinition.COLUMN_PKEY, pkey);
+    	return getUniqueRow(PackageDefinition.COLUMN_PKEY, pkey);
     }
 
     PackageDefinition getPackageDefinition(Brand brand, PackageCategory category, String name, String version) throws IOException, SQLException {

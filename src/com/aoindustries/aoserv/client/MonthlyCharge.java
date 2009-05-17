@@ -95,13 +95,13 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
         return createdByObject;
     }
 
-    public Business getBusiness() throws SQLException {
+    public Business getBusiness() throws SQLException, IOException {
         Business bu=table.connector.getBusinesses().get(accounting);
         if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
         return bu;
     }
 
-    public String getDescription() throws SQLException {
+    public String getDescription() throws SQLException, IOException {
 	return description == null ? getType().getDescription() : description;
     }
 
@@ -132,7 +132,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	return SchemaTable.TableID.MONTHLY_CHARGES;
     }
 
-    public TransactionType getType() throws SQLException {
+    public TransactionType getType() throws SQLException, IOException {
         TransactionType typeObject = table.connector.getTransactionTypes().get(type);
         if (typeObject == null) throw new SQLException("Unable to find TransactionType: " + type);
         return typeObject;

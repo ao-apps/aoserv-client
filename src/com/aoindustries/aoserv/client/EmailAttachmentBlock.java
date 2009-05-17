@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Collections;
@@ -49,7 +48,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
 	return lsa;
     }
 
-    public EmailAttachmentType getEmailAttachmentType() throws SQLException {
+    public EmailAttachmentType getEmailAttachmentType() throws SQLException, IOException {
         EmailAttachmentType eat=table.connector.getEmailAttachmentTypes().get(extension);
         if(eat==null) throw new SQLException("Unable to find EmailAttachmentType: " + extension);
 	return eat;

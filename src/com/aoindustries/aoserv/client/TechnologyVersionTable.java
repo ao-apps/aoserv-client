@@ -54,18 +54,8 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
         }
     }
 
-    public TechnologyVersion get(Object pkey) {
-        try {
-            return getUniqueRow(TechnologyVersion.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public TechnologyVersion get(int pkey) throws IOException, SQLException {
-	return getUniqueRow(TechnologyVersion.COLUMN_PKEY, pkey);
+    	return getUniqueRow(TechnologyVersion.COLUMN_PKEY, pkey);
     }
 
     public long getMaximumUpdatedTime() throws IOException, SQLException {

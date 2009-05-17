@@ -46,7 +46,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     private boolean open_firewall;
     private boolean monitoring_enabled;
 
-    public Protocol getAppProtocol() throws SQLException {
+    public Protocol getAppProtocol() throws SQLException, IOException {
 	Protocol obj=table.connector.getProtocols().get(app_protocol);
 	if(obj==null) throw new SQLException("Unable to find Protocol: "+app_protocol);
 	return obj;
@@ -246,7 +246,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return monitoring_enabled;
     }
 
-    public NetProtocol getNetProtocol() throws SQLException {
+    public NetProtocol getNetProtocol() throws SQLException, IOException {
         NetProtocol obj=table.connector.getNetProtocols().get(net_protocol);
         if(obj==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
         return obj;
