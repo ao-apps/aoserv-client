@@ -136,7 +136,7 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
                             err.flush();
                         } else {
                             out.println(
-                                connector.simpleAOClient.addEmailPipeAddress(
+                                connector.getSimpleAOClient().addEmailPipeAddress(
                                     addr.substring(0, pos),
                                     addr.substring(pos+1),
                                     AOSH.parseInt(args[c+1], "pkey")
@@ -157,7 +157,7 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
                     err.println(addr);
                     err.flush();
                 } else {
-                    connector.simpleAOClient.removeEmailPipeAddress(
+                    connector.getSimpleAOClient().removeEmailPipeAddress(
                         addr.substring(0, pos),
                         addr.substring(pos+1),
                         AOSH.parseInt(args[2], "pkey")

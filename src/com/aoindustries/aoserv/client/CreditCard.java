@@ -283,7 +283,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	return created;
     }
 
-    public BusinessAdministrator getCreatedBy() throws SQLException {
+    public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
         BusinessAdministrator business_administrator = table.connector.getUsernames().get(createdBy).getBusinessAdministrator();
         if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + createdBy);
         return business_administrator;

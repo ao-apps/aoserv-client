@@ -49,13 +49,13 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
         return t;
     }
 
-    public Reseller getReseller() {
-        Reseller r = table.connector.resellers.get(reseller);
+    public Reseller getReseller() throws IOException, SQLException {
+        Reseller r = table.connector.getResellers().get(reseller);
         if(r==null) throw new SQLException("Unable to find Reseller: "+reseller);
         return r;
     }
 
-    public BusinessAdministrator getBusinessAdministrator() {
+    public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
         Username un=table.connector.getUsernames().get(administrator);
         if(un==null) return null;
         return un.getBusinessAdministrator();

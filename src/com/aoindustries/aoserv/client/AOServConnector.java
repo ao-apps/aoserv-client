@@ -862,7 +862,7 @@ abstract public class AOServConnector {
     private final WhoisHistoryTable whoisHistory;
     public WhoisHistoryTable getWhoisHistory() {return whoisHistory;}
 
-    public final SimpleAOClient simpleAOClient;
+    private final SimpleAOClient simpleAOClient;
     public SimpleAOClient getSimpleAOClient() {return simpleAOClient;}
 
     /**

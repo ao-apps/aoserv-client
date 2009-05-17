@@ -75,7 +75,7 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_PIPE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_PIPE, args, 3, err)) {
-                int pkey=connector.simpleAOClient.addEmailPipe(
+                int pkey=connector.getSimpleAOClient().addEmailPipe(
                     args[1],
                     args[2],
                     args[3]
@@ -87,7 +87,7 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_EMAIL_PIPE)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_EMAIL_PIPE, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disableEmailPipe(
+                    connector.getSimpleAOClient().disableEmailPipe(
                         AOSH.parseInt(args[1], "pkey"),
                         args[2]
                     )
@@ -97,12 +97,12 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_EMAIL_PIPE)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_EMAIL_PIPE, args, 1, err)) {
-                connector.simpleAOClient.enableEmailPipe(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().enableEmailPipe(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_EMAIL_PIPE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_EMAIL_PIPE, args, 1, err)) {
-                connector.simpleAOClient.removeEmailPipe(
+                connector.getSimpleAOClient().removeEmailPipe(
                     AOSH.parseInt(args[1], "pkey")
                 );
             }

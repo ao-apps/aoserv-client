@@ -118,7 +118,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_IP_ADDRESS_USED)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_IP_ADDRESS_USED, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.isIPAddressUsed(
+                    connector.getSimpleAOClient().isIPAddressUsed(
                         args[1],
                         args[2],
                         args[3]
@@ -129,7 +129,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.MOVE_IP_ADDRESS)) {
             if(AOSH.checkParamCount(AOSHCommand.MOVE_IP_ADDRESS, args, 4, err)) {
-                connector.simpleAOClient.moveIPAddress(
+                connector.getSimpleAOClient().moveIPAddress(
                     args[1],
                     args[2],
                     args[3],
@@ -139,7 +139,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_DHCP_ADDRESS)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_DHCP_ADDRESS, args, 2, err)) {
-                connector.simpleAOClient.setIPAddressDHCPAddress(
+                connector.getSimpleAOClient().setIPAddressDHCPAddress(
                     AOSH.parseInt(args[1], "ip_address"),
                     args[2]
                 );
@@ -147,7 +147,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_HOSTNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_HOSTNAME, args, 4, err)) {
-                connector.simpleAOClient.setIPAddressHostname(
+                connector.getSimpleAOClient().setIPAddressHostname(
                     args[1],
                     args[2],
                     args[3],
@@ -157,7 +157,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_PACKAGE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_PACKAGE, args, 4, err)) {
-                connector.simpleAOClient.setIPAddressPackage(
+                connector.getSimpleAOClient().setIPAddressPackage(
                     args[1],
                     args[2],
                     args[3],

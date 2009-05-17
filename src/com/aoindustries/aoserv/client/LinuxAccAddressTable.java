@@ -133,7 +133,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
                     err.println(addr);
                     err.flush();
                 } else {
-                    int pkey=connector.simpleAOClient.addLinuxAccAddress(
+                    int pkey=connector.getSimpleAOClient().addLinuxAccAddress(
                         addr.substring(0, pos),
                         addr.substring(pos+1),
                         args[2],
@@ -153,7 +153,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
                     err.println(addr);
                     err.flush();
                 } else {
-                    connector.simpleAOClient.removeLinuxAccAddress(
+                    connector.getSimpleAOClient().removeLinuxAccAddress(
                         addr.substring(0, pos),
                         addr.substring(pos+1),
                         args[2],

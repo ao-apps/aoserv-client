@@ -94,7 +94,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_SPAM_EMAIL_MESSAGE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_SPAM_EMAIL_MESSAGE, args, 2, err)) {
-                int pkey=connector.simpleAOClient.addSpamEmailMessage(
+                int pkey=connector.getSimpleAOClient().addSpamEmailMessage(
                     AOSH.parseInt(args[1], "email_relay"),
                     args[2]
                 );

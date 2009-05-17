@@ -132,7 +132,7 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
                             err.println(addr);
                             err.flush();
                         } else {
-                            connector.simpleAOClient.removeEmailAddress(
+                            connector.getSimpleAOClient().removeEmailAddress(
                                 addr.substring(0, pos),
                                 addr.substring(pos+1),
                                 args[c+1]

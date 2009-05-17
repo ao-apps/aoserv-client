@@ -120,7 +120,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
         if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_LIST, args, 4, err)) {
                 out.println(
-                    connector.simpleAOClient.addEmailList(
+                    connector.getSimpleAOClient().addEmailList(
                         args[1],
                         args[2],
                         args[3],
@@ -154,7 +154,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_EMAIL_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_EMAIL_LIST, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.disableEmailList(
+                    connector.getSimpleAOClient().disableEmailList(
                         args[1],
                         args[2],
                         args[3]
@@ -165,23 +165,23 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_EMAIL_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_EMAIL_LIST, args, 2, err)) {
-                connector.simpleAOClient.enableEmailList(args[1], args[2]);
+                connector.getSimpleAOClient().enableEmailList(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_EMAIL_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_EMAIL_LIST, args, 2, err)) {
-                out.println(connector.simpleAOClient.getEmailListAddressList(args[1], args[2]));
+                out.println(connector.getSimpleAOClient().getEmailListAddressList(args[1], args[2]));
                 out.flush();
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_EMAIL_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_EMAIL_LIST, args, 2, err)) {
-                connector.simpleAOClient.removeEmailList(args[1], args[2]);
+                connector.getSimpleAOClient().removeEmailList(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_EMAIL_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_EMAIL_LIST, args, 3, err)) {
-                connector.simpleAOClient.setEmailListAddressList(args[1], args[2], args[3]);
+                connector.getSimpleAOClient().setEmailListAddressList(args[1], args[2], args[3]);
             }
             return true;
         }

@@ -65,7 +65,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_GROUP)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_GROUP, args, 3, err)) {
-                connector.simpleAOClient.addLinuxGroup(
+                connector.getSimpleAOClient().addLinuxGroup(
                     args[1],
                     args[2],
                     args[3]
@@ -87,7 +87,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         } else if(command.equalsIgnoreCase(AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE, args, 1, err)) {
                 try {
-                    out.println(connector.simpleAOClient.isLinuxGroupNameAvailable(args[1]));
+                    out.println(connector.getSimpleAOClient().isLinuxGroupNameAvailable(args[1]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE+": ");
@@ -98,7 +98,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_GROUP)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_GROUP, args, 1, err)) {
-                connector.simpleAOClient.removeLinuxGroup(
+                connector.getSimpleAOClient().removeLinuxGroup(
                     args[1]
                 );
             }

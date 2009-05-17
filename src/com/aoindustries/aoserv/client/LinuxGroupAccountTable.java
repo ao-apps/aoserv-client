@@ -131,7 +131,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_GROUP_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-                connector.simpleAOClient.addLinuxGroupAccount(
+                connector.getSimpleAOClient().addLinuxGroupAccount(
                     args[1],
                     args[2]
                 );
@@ -139,7 +139,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_GROUP_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-                connector.simpleAOClient.removeLinuxGroupAccount(
+                connector.getSimpleAOClient().removeLinuxGroupAccount(
                     args[1],
                     args[2]
                 );
@@ -147,7 +147,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_PRIMARY_LINUX_GROUP_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_PRIMARY_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-                connector.simpleAOClient.setPrimaryLinuxGroupAccount(
+                connector.getSimpleAOClient().setPrimaryLinuxGroupAccount(
                     args[1],
                     args[2]
                 );

@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,9 +44,9 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
     /**
      * Gets the parent category or <code>null</code> if this is a top-level category.
      */
-    public TicketCategory getParent() {
+    public TicketCategory getParent() throws IOException, SQLException {
         if(parent==-1) return null;
-        TicketCategory tc = table.connector.ticketCategories.get(parent);
+        TicketCategory tc = table.connector.getTicketCategories().get(parent);
         if(tc==null) throw new SQLException("Unable to find TicketCategory: "+parent);
         return tc;
     }
@@ -73,7 +74,13 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
 
     @Override
     String toStringImpl() {
-        return parent==-1 ? name : (getParent()+"/"+name);
+        try {
+            return parent==-1 ? name : (getParent()+"/"+name);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
@@ -83,10 +90,10 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
     }
 
     public List<TicketBrandCategory> getTicketBrandCategorys() throws IOException, SQLException {
-        return table.connector.ticketBrandCategories.getTicketBrandCategorys(this);
+        return table.connector.getTicketBrandCategories().getTicketBrandCategories(this);
     }
 
-    public List<TicketBrandCategory> getChildrenCategories() throws IOException, SQLException {
-        return table.connector.ticketCategories.getChildrenCategories(this);
+    public List<TicketCategory> getChildrenCategories() throws IOException, SQLException {
+        return table.connector.getTicketCategories().getChildrenCategories(this);
     }
 }

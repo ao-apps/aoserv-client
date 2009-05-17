@@ -56,7 +56,7 @@ final public class HttpdTomcatSiteTable extends CachedTableIntegerKey<HttpdTomca
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.START_JVM)) {
             if(AOSH.checkParamCount(AOSHCommand.START_JVM, args, 2, err)) {
-                String message=connector.simpleAOClient.startJVM(args[1], args[2]);
+                String message=connector.getSimpleAOClient().startJVM(args[1], args[2]);
                 if(message!=null) {
                     err.println("aosh: "+AOSHCommand.START_JVM+": "+message);
                     err.flush();
@@ -65,7 +65,7 @@ final public class HttpdTomcatSiteTable extends CachedTableIntegerKey<HttpdTomca
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_JVM)) {
             if(AOSH.checkParamCount(AOSHCommand.STOP_JVM, args, 2, err)) {
-                String message=connector.simpleAOClient.stopJVM(args[1], args[2]);
+                String message=connector.getSimpleAOClient().stopJVM(args[1], args[2]);
                 if(message!=null) {
                     err.println("aosh: "+AOSHCommand.STOP_JVM+": "+message);
                     err.flush();

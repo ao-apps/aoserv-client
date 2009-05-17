@@ -267,7 +267,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_SERVER_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_SERVER_ACCOUNT, args, 3, err)) {
-                int pkey=connector.simpleAOClient.addLinuxServerAccount(
+                int pkey=connector.getSimpleAOClient().addLinuxServerAccount(
                     args[1],
                     args[2],
                     args[3]
@@ -278,7 +278,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, args, 3, err)) {
-                boolean result=connector.simpleAOClient.compareLinuxServerAccountPassword(
+                boolean result=connector.getSimpleAOClient().compareLinuxServerAccountPassword(
                     args[1],
                     args[2],
                     args[3]
@@ -289,7 +289,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.COPY_HOME_DIRECTORY)) {
             if(AOSH.checkParamCount(AOSHCommand.COPY_HOME_DIRECTORY, args, 3, err)) {
-                long byteCount=connector.simpleAOClient.copyHomeDirectory(
+                long byteCount=connector.getSimpleAOClient().copyHomeDirectory(
                     args[1],
                     args[2],
                     args[3]
@@ -303,7 +303,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.COPY_LINUX_SERVER_ACCOUNT_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, args, 4, err)) {
-                connector.simpleAOClient.copyLinuxServerAccountPassword(
+                connector.getSimpleAOClient().copyLinuxServerAccountPassword(
                     args[1],
                     args[2],
                     args[3],
@@ -314,7 +314,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         } else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_LINUX_SERVER_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_LINUX_SERVER_ACCOUNT, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.disableLinuxServerAccount(
+                    connector.getSimpleAOClient().disableLinuxServerAccount(
                         args[1],
                         args[2],
                         args[3]
@@ -325,13 +325,13 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_LINUX_SERVER_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_LINUX_SERVER_ACCOUNT, args, 2, err)) {
-                connector.simpleAOClient.enableLinuxServerAccount(args[1], args[2]);
+                connector.getSimpleAOClient().enableLinuxServerAccount(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_CRON_TABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_CRON_TABLE, args, 2, err)) {
                 out.print(
-                    connector.simpleAOClient.getCronTable(
+                    connector.getSimpleAOClient().getCronTable(
                         args[1],
                         args[2]
                     )
@@ -343,7 +343,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             if(AOSH.checkMinParamCount(AOSHCommand.GET_IMAP_FOLDER_SIZES, args, 3, err)) {
                 String[] folderNames=new String[args.length-3];
                 System.arraycopy(args, 3, folderNames, 0, folderNames.length);
-                long[] sizes=connector.simpleAOClient.getImapFolderSizes(args[1], args[2], folderNames);
+                long[] sizes=connector.getSimpleAOClient().getImapFolderSizes(args[1], args[2], folderNames);
                 for(int c=0;c<folderNames.length;c++) {
                     out.print(folderNames[c]);
                     out.print('\t');
@@ -355,7 +355,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_INBOX_ATTRIBUTES)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_INBOX_ATTRIBUTES, args, 2, err)) {
-                InboxAttributes attr=connector.simpleAOClient.getInboxAttributes(args[1], args[2]);
+                InboxAttributes attr=connector.getSimpleAOClient().getInboxAttributes(args[1], args[2]);
                 out.print("System Time..: ");
                 out.println(attr==null ? "Server Unavailable" : SQLUtility.getDateTime(attr.getSystemTime()));
                 out.print("File Size....: ");
@@ -373,7 +373,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         } else if(command.equalsIgnoreCase(AOSHCommand.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.isLinuxServerAccountPasswordSet(
+                    connector.getSimpleAOClient().isLinuxServerAccountPasswordSet(
                         args[1],
                         args[2]
                     )
@@ -384,7 +384,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         } else if(command.equalsIgnoreCase(AOSHCommand.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.isLinuxServerAccountProcmailManual(
+                    connector.getSimpleAOClient().isLinuxServerAccountProcmailManual(
                         args[1],
                         args[2]
                     )
@@ -394,7 +394,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_SERVER_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_SERVER_ACCOUNT, args, 2, err)) {
-                connector.simpleAOClient.removeLinuxServerAccount(
+                connector.getSimpleAOClient().removeLinuxServerAccount(
                     args[1],
                     args[2]
                 );
@@ -402,7 +402,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_AUTORESPONDER)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_AUTORESPONDER, args, 7, err)) {
-                connector.simpleAOClient.setAutoresponder(
+                connector.getSimpleAOClient().setAutoresponder(
                     args[1],
                     args[2],
                     args[3],
@@ -415,7 +415,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_CRON_TABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_CRON_TABLE, args, 3, err)) {
-                connector.simpleAOClient.setCronTable(
+                connector.getSimpleAOClient().setCronTable(
                     args[1],
                     args[2],
                     args[3]
@@ -424,7 +424,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setLinuxServerAccountJunkEmailRetention(
+                connector.getSimpleAOClient().setLinuxServerAccountJunkEmailRetention(
                     args[1],
                     args[2],
                     args[3]==null||args[3].length()==0?-1:AOSH.parseInt(args[3], "junk_email_retention")
@@ -433,7 +433,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_PASSWORD, args, 3, err)) {
-                connector.simpleAOClient.setLinuxServerAccountPassword(
+                connector.getSimpleAOClient().setLinuxServerAccountPassword(
                     args[1],
                     args[2],
                     args[3]
@@ -442,7 +442,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_INTEGRATION_MODE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_INTEGRATION_MODE, args, 3, err)) {
-                connector.simpleAOClient.setLinuxServerAccountSpamAssassinIntegrationMode(
+                connector.getSimpleAOClient().setLinuxServerAccountSpamAssassinIntegrationMode(
                     args[1],
                     args[2],
                     args[3]
@@ -451,7 +451,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, args, 3, err)) {
-                connector.simpleAOClient.setLinuxServerAccountSpamAssassinRequiredScore(
+                connector.getSimpleAOClient().setLinuxServerAccountSpamAssassinRequiredScore(
                     args[1],
                     args[2],
                     AOSH.parseFloat(args[3], "required_score")
@@ -460,7 +460,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, args, 3, err)) {
-                connector.simpleAOClient.setLinuxServerAccountTrashEmailRetention(
+                connector.getSimpleAOClient().setLinuxServerAccountTrashEmailRetention(
                     args[1],
                     args[2],
                     args[3]==null||args[3].length()==0?-1:AOSH.parseInt(args[3], "trash_email_retention")
@@ -469,7 +469,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_USE_INBOX)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, args, 3, err)) {
-                connector.simpleAOClient.setLinuxServerAccountUseInbox(
+                connector.getSimpleAOClient().setLinuxServerAccountUseInbox(
                     args[1],
                     args[2],
                     AOSH.parseBoolean(args[3], "use_inbox")

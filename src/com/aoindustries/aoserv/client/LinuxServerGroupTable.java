@@ -178,7 +178,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_SERVER_GROUP)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_SERVER_GROUP, args, 2, err)) {
-                int pkey=connector.simpleAOClient.addLinuxServerGroup(
+                int pkey=connector.getSimpleAOClient().addLinuxServerGroup(
                     args[1],
                     args[2]
                 );
@@ -188,7 +188,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_SERVER_GROUP)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_SERVER_GROUP, args, 2, err)) {
-                connector.simpleAOClient.removeLinuxServerGroup(
+                connector.getSimpleAOClient().removeLinuxServerGroup(
                     args[1],
                     args[2]
                 );

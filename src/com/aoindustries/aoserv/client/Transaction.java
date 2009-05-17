@@ -11,7 +11,6 @@ import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 
 /**
  * Each <code>Business</code> has an account of all the
@@ -187,7 +186,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return business;
     }
 
-    public BusinessAdministrator getBusinessAdministrator() throws SQLException {
+    public BusinessAdministrator getBusinessAdministrator() throws SQLException, IOException {
         Username un=table.connector.getUsernames().get(username);
         // May be filtered
         if(un==null) return null;

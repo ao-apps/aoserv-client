@@ -50,7 +50,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         }
     }
 
-    public LinuxAccount getLinuxAccount() throws SQLException {
+    public LinuxAccount getLinuxAccount() throws SQLException, IOException {
         LinuxAccount usernameObject = table.connector.getUsernames().get(username).getLinuxAccount();
         if (usernameObject == null) throw new SQLException("Unable to find LinuxAccount: " + username);
         return usernameObject;

@@ -168,7 +168,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DB_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DB_USER, args, 19, err)) {
-                int pkey=connector.simpleAOClient.addMySQLDBUser(
+                int pkey=connector.getSimpleAOClient().addMySQLDBUser(
                     args[1],
                     args[2],
                     args[3],
@@ -195,7 +195,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_DB_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_DB_USER, args, 4, err)) {
-                connector.simpleAOClient.removeMySQLDBUser(
+                connector.getSimpleAOClient().removeMySQLDBUser(
                     args[1],
                     args[2],
                     args[3],
@@ -205,7 +205,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_MYSQL_DB_USER_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_MYSQL_DB_USER_REBUILD, args, 1, err)) {
-                connector.simpleAOClient.waitForMySQLDBUserRebuild(args[1]);
+                connector.getSimpleAOClient().waitForMySQLDBUserRebuild(args[1]);
             }
             return true;
 	}

@@ -100,7 +100,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_DOMAIN)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_DOMAIN, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.addEmailDomain(
+                    connector.getSimpleAOClient().addEmailDomain(
                         args[1],
                         args[2],
                         args[3]
@@ -124,7 +124,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE, args, 2, err)) {
                 try {
-                    out.println(connector.simpleAOClient.isEmailDomainAvailable(args[1], args[2]));
+                    out.println(connector.getSimpleAOClient().isEmailDomainAvailable(args[1], args[2]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE+": ");
@@ -135,7 +135,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_EMAIL_DOMAIN)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_EMAIL_DOMAIN, args, 2, err)) {
-                connector.simpleAOClient.removeEmailDomain(
+                connector.getSimpleAOClient().removeEmailDomain(
                     args[1], args[2]
                 );
             }

@@ -93,7 +93,7 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_POSTGRES_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_POSTGRES_SERVER_USER, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.addPostgresServerUser(
+                    connector.getSimpleAOClient().addPostgresServerUser(
                         args[1],
                         args[2],
                         args[3]
@@ -105,7 +105,7 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_POSTGRES_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_POSTGRES_SERVER_USER, args, 4, err)) {
                 out.println(
-                    connector.simpleAOClient.disablePostgresServerUser(
+                    connector.getSimpleAOClient().disablePostgresServerUser(
                         args[1],
                         args[2],
                         args[3],
@@ -117,13 +117,13 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_POSTGRES_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_POSTGRES_SERVER_USER, args, 3, err)) {
-                connector.simpleAOClient.enablePostgresServerUser(args[1], args[2], args[3]);
+                connector.getSimpleAOClient().enablePostgresServerUser(args[1], args[2], args[3]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_POSTGRES_SERVER_USER_PASSWORD_SET)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_POSTGRES_SERVER_USER_PASSWORD_SET, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.isPostgresServerUserPasswordSet(
+                    connector.getSimpleAOClient().isPostgresServerUserPasswordSet(
                         args[1],
                         args[2],
                         args[3]
@@ -134,7 +134,7 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_POSTGRES_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_POSTGRES_SERVER_USER, args, 3, err)) {
-                connector.simpleAOClient.removePostgresServerUser(
+                connector.getSimpleAOClient().removePostgresServerUser(
                     args[1],
                     args[2],
                     args[3]
@@ -143,7 +143,7 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_POSTGRES_SERVER_USER_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_POSTGRES_SERVER_USER_PASSWORD, args, 4, err)) {
-                connector.simpleAOClient.setPostgresServerUserPassword(
+                connector.getSimpleAOClient().setPostgresServerUserPassword(
                     args[1],
                     args[2],
                     args[3],

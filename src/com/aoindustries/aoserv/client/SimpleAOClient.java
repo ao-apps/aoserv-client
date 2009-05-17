@@ -163,7 +163,7 @@ final public class SimpleAOClient {
         return ia;
     }
 
-    private LinuxAccount getLinuxAccount(String username) throws IllegalArgumentException {
+    private LinuxAccount getLinuxAccount(String username) throws IllegalArgumentException, IOException, SQLException {
         LinuxAccount la=getUsername(username).getLinuxAccount();
         if(la==null) throw new IllegalArgumentException("Unable to find LinuxAccount: "+username);
         return la;
@@ -206,7 +206,7 @@ final public class SimpleAOClient {
         return msu;
     }
 
-    private MySQLUser getMySQLUser(String username) throws IllegalArgumentException {
+    private MySQLUser getMySQLUser(String username) throws IllegalArgumentException, IOException, SQLException {
         MySQLUser mu=getUsername(username).getMySQLUser();
         if(mu==null) throw new IllegalArgumentException("Unable to find MySQLUser: "+username);
         return mu;
@@ -267,7 +267,7 @@ final public class SimpleAOClient {
         return psu;
     }
 
-    private PostgresUser getPostgresUser(String username) throws IllegalArgumentException {
+    private PostgresUser getPostgresUser(String username) throws IllegalArgumentException, IOException, SQLException {
         PostgresUser pu=getUsername(username).getPostgresUser();
         if(pu==null) throw new IllegalArgumentException("Unable to find PostgresUser: "+username);
         return pu;
@@ -285,7 +285,7 @@ final public class SimpleAOClient {
         return sf;
     }
 
-    private Username getUsername(String username) throws IllegalArgumentException {
+    private Username getUsername(String username) throws IllegalArgumentException, IOException, SQLException {
         Username un=connector.getUsernames().get(username);
         if(un==null) throw new IllegalArgumentException("Unable to find Username: "+username);
         return un;
@@ -638,7 +638,7 @@ final public class SimpleAOClient {
         String ip,
         int ttl
     ) throws IllegalArgumentException, IOException, SQLException {
-        if(!connector.dnsZones.checkDNSZone(zone)) throw new IllegalArgumentException("Invalid zone: "+zone);
+        if(!connector.getDnsZones().checkDNSZone(zone)) throw new IllegalArgumentException("Invalid zone: "+zone);
         checkIPAddress(ip);
         getPackage(packageName).addDNSZone(zone, ip, ttl);
     }
@@ -2783,7 +2783,7 @@ final public class SimpleAOClient {
     public void checkDNSZone(
         String zone
     ) throws IllegalArgumentException, IOException, SQLException {
-        if(!connector.dnsZones.checkDNSZone(zone)) throw new IllegalArgumentException("Invalid DNS zone: "+zone);
+        if(!connector.getDnsZones().checkDNSZone(zone)) throw new IllegalArgumentException("Invalid DNS zone: "+zone);
     }
 
     /**
@@ -2951,7 +2951,7 @@ final public class SimpleAOClient {
     public void checkMySQLDatabaseName(
         String name
     ) throws IllegalArgumentException, IOException, SQLException {
-        if(!connector.mysqlDatabases.isValidDatabaseName(name)) throw new IllegalArgumentException("Invalid MySQL database name: "+name);
+        if(!connector.getMysqlDatabases().isValidDatabaseName(name)) throw new IllegalArgumentException("Invalid MySQL database name: "+name);
     }
 
     /**
@@ -3044,7 +3044,7 @@ final public class SimpleAOClient {
     public void checkPostgresDatabaseName(
         String name
     ) throws IllegalArgumentException, IOException, SQLException {
-        if(!connector.postgresDatabases.isValidDatabaseName(name)) throw new IllegalArgumentException("Invalid PostgreSQL database name: "+name);
+        if(!connector.getPostgresDatabases().isValidDatabaseName(name)) throw new IllegalArgumentException("Invalid PostgreSQL database name: "+name);
     }
 
     /**

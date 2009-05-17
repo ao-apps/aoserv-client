@@ -90,7 +90,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DATABASE, args, 4, err)) {
-                int pkey=connector.simpleAOClient.addMySQLDatabase(
+                int pkey=connector.getSimpleAOClient().addMySQLDatabase(
                     args[1],
                     args[2],
                     args[3],
@@ -103,7 +103,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_DATABASE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_DATABASE_NAME, args, 1, err)) {
                 try {
-                    connector.simpleAOClient.checkMySQLDatabaseName(args[1]);
+                    connector.getSimpleAOClient().checkMySQLDatabaseName(args[1]);
                     out.println("true");
                     out.flush();
                 } catch(IllegalArgumentException iae) {
@@ -116,7 +116,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	} else if(command.equalsIgnoreCase(AOSHCommand.DUMP_MYSQL_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.DUMP_MYSQL_DATABASE, args, 3, err)) {
                 try {
-                    connector.simpleAOClient.dumpMySQLDatabase(args[1], args[2], args[3], out);
+                    connector.getSimpleAOClient().dumpMySQLDatabase(args[1], args[2], args[3], out);
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.DUMP_MYSQL_DATABASE+": ");
@@ -127,14 +127,14 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_MYSQL_DATABASE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_MYSQL_DATABASE_NAME, args, 2, err)) {
-                out.println(connector.simpleAOClient.generateMySQLDatabaseName(args[1], args[2]));
+                out.println(connector.getSimpleAOClient().generateMySQLDatabaseName(args[1], args[2]));
                 out.flush();
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE, args, 3, err)) {
                 try {
-                    out.println(connector.simpleAOClient.isMySQLDatabaseNameAvailable(args[1], args[2], args[3]));
+                    out.println(connector.getSimpleAOClient().isMySQLDatabaseNameAvailable(args[1], args[2], args[3]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE+": ");
@@ -145,12 +145,12 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_DATABASE, args, 3, err)) {
-                connector.simpleAOClient.removeMySQLDatabase(args[1], args[2], args[3]);
+                connector.getSimpleAOClient().removeMySQLDatabase(args[1], args[2], args[3]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_MYSQL_DATABASE_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_MYSQL_DATABASE_REBUILD, args, 1, err)) {
-                connector.simpleAOClient.waitForMySQLDatabaseRebuild(args[1]);
+                connector.getSimpleAOClient().waitForMySQLDatabaseRebuild(args[1]);
             }
             return true;
 	}

@@ -64,11 +64,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         }
     }
 
-    public Brand getBrand() {
+    public Brand getBrand() throws IOException, SQLException {
         // May be filtered
         return table.connector.getBrands().get(brand);
     }
-    
+
     public PackageCategory getPackageCategory() throws SQLException {
         PackageCategory pc=table.connector.getPackageCategories().get(category);
         if(pc==null) throw new SQLException("Unable to find PackageCategory: "+category);

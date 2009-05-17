@@ -76,7 +76,7 @@ final public class BlackholeEmailAddressTable extends CachedTableIntegerKey<Blac
                     err.println(addr);
                     err.flush();
                 } else {
-                    connector.simpleAOClient.removeBlackholeEmailAddress(
+                    connector.getSimpleAOClient().removeBlackholeEmailAddress(
                         addr.substring(0, pos),
                         addr.substring(pos+1),
                         args[2]

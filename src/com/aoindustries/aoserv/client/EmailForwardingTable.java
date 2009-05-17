@@ -134,7 +134,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
                             err.flush();
                         } else {
                             out.println(
-                                connector.simpleAOClient.addEmailForwarding(
+                                connector.getSimpleAOClient().addEmailForwarding(
                                     addr.substring(0, pos),
                                     addr.substring(pos+1),
                                     args[c+1],
@@ -197,7 +197,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
                     err.println(addr);
                     err.flush();
                 } else {
-                    connector.simpleAOClient.removeEmailForwarding(
+                    connector.getSimpleAOClient().removeEmailForwarding(
                         addr.substring(0, pos),
                         addr.substring(pos+1),
                         args[2],

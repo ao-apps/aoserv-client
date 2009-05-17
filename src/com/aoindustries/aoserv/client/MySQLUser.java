@@ -276,7 +276,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return SchemaTable.TableID.MYSQL_USERS;
     }
 
-    public Username getUsername() throws SQLException {
+    public Username getUsername() throws SQLException, IOException {
         Username obj=table.connector.getUsernames().get(pkey);
         if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
         return obj;

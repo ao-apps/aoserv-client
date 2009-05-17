@@ -100,7 +100,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_SERVER, args, 2, err)) {
-                int pkey=connector.simpleAOClient.addBusinessServer(
+                int pkey=connector.getSimpleAOClient().addBusinessServer(
                     args[1],
                     args[2]
                 );
@@ -110,7 +110,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_BUSINESS_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_BUSINESS_SERVER, args, 2, err)) {
-                connector.simpleAOClient.removeBusinessServer(
+                connector.getSimpleAOClient().removeBusinessServer(
                     args[1],
                     args[2]
                 );
@@ -118,7 +118,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_DEFAULT_BUSINESS_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_DEFAULT_BUSINESS_SERVER, args, 2, err)) {
-                connector.simpleAOClient.setDefaultBusinessServer(
+                connector.getSimpleAOClient().setDefaultBusinessServer(
                     args[1],
                     args[2]
                 );

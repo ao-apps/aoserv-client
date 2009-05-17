@@ -295,31 +295,6 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	);
     }
 
-    public int addPackageDefinition(
-        PackageCategory category,
-        String name,
-        String version,
-        String display,
-        String description,
-        int setupFee,
-        TransactionType setupFeeTransactionType,
-        int monthlyRate,
-        TransactionType monthlyRateTransactionType
-    ) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().addPackageDefinition(
-            this,
-            category,
-            name,
-            version,
-            display,
-            description,
-            setupFee,
-            setupFeeTransactionType,
-            monthlyRate,
-            monthlyRateTransactionType
-        );
-    }
-
     public int addTransaction(
         Business sourceBusiness,
 	BusinessAdministrator business_administrator,
@@ -642,27 +617,19 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return table.connector.getPackages().getPackages(this);
     }
 
-    public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().getPackageDefinition(this, category, name, version);
-    }
-
-    public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
-    }
-
     public Business getParentBusiness() {
         if(parent==null) return null;
-	// The parent business might not be found, even when the value is set.  This is normal due
-	// to filtering.
-	return table.connector.getBusinesses().get(parent);
+        // The parent business might not be found, even when the value is set.  This is normal due
+        // to filtering.
+        return table.connector.getBusinesses().get(parent);
     }
 
     public List<EmailDomain> getEmailDomains() throws SQLException, IOException {
-	return table.connector.getEmailDomains().getEmailDomains(this);
+        return table.connector.getEmailDomains().getEmailDomains(this);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BUSINESSES;
+        return SchemaTable.TableID.BUSINESSES;
     }
 
     /**

@@ -142,7 +142,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
                             err.flush();
                         } else {
                             out.println(
-                                connector.simpleAOClient.addEmailListAddress(
+                                connector.getSimpleAOClient().addEmailListAddress(
                                     addr.substring(0, pos),
                                     addr.substring(pos+1),
                                     args[c+1],
@@ -164,7 +164,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
                     err.println(addr);
                     err.flush();
                 } else {
-                    connector.simpleAOClient.removeEmailListAddress(
+                    connector.getSimpleAOClient().removeEmailListAddress(
                         addr.substring(0, pos),
                         addr.substring(pos+1),
                         args[2],

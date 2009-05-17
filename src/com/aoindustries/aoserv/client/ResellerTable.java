@@ -42,6 +42,13 @@ final public class ResellerTable extends CachedTableStringKey<Reseller> {
     }
 
     /**
+     * Gets a <code>Reseller</code> from the database.
+     */
+    public Reseller get(String accounting) throws IOException, SQLException {
+        return getUniqueRow(Reseller.COLUMN_ACCOUNTING, accounting);
+    }
+
+    /**
      * Gets a <code>Reseller</code> given its brand.
      */
     Reseller getReseller(Brand brand) throws IOException, SQLException {

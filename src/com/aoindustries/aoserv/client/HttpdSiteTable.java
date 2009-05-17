@@ -131,7 +131,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_HTTPD_SITE)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_HTTPD_SITE, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.disableHttpdSite(
+                    connector.getSimpleAOClient().disableHttpdSite(
                         args[1],
                         args[2],
                         args[3]
@@ -142,18 +142,18 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_HTTPD_SITE)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_HTTPD_SITE, args, 2, err)) {
-                connector.simpleAOClient.enableHttpdSite(args[1], args[2]);
+                connector.getSimpleAOClient().enableHttpdSite(args[1], args[2]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_SITE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_SITE_NAME, args, 1, err)) {
-                out.println(connector.simpleAOClient.generateSiteName(args[1]));
+                out.println(connector.getSimpleAOClient().generateSiteName(args[1]));
                 out.flush();
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_AWSTATS_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_AWSTATS_FILE, args, 4, err)) {
-                connector.simpleAOClient.getAWStatsFile(
+                connector.getSimpleAOClient().getAWStatsFile(
                     args[1],
                     args[2],
                     args[3],
@@ -165,7 +165,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
             return true;
         /*} else if(command.equalsIgnoreCase(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE, args, 4, err)) {
-                connector.simpleAOClient.initializeHttpdSitePasswdFile(
+                connector.getSimpleAOClient().initializeHttpdSitePasswdFile(
                     args[1],
                     args[2],
                     args[3],
@@ -176,23 +176,23 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
          */
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_SITE_NAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_SITE_NAME_AVAILABLE, args, 1, err)) {
-                out.println(connector.simpleAOClient.isSiteNameAvailable(args[1]));
+                out.println(connector.getSimpleAOClient().isSiteNameAvailable(args[1]));
                 out.flush();
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_HTTPD_SITE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_HTTPD_SITE, args, 2, err)) {
-                connector.simpleAOClient.removeHttpdSite(args[1], args[2]);
+                connector.getSimpleAOClient().removeHttpdSite(args[1], args[2]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_SERVER_ADMIN)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_SERVER_ADMIN, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSiteServerAdmin(args[1], args[2], args[3]);
+                connector.getSimpleAOClient().setHttpdSiteServerAdmin(args[1], args[2], args[3]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_IS_MANUAL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_IS_MANUAL, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSiteIsManual(
+                connector.getSimpleAOClient().setHttpdSiteIsManual(
                     args[1],
                     args[2],
                     AOSH.parseBoolean(args[3], "is_manual")
@@ -201,7 +201,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_HTTPD_SITE_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_HTTPD_SITE_REBUILD, args, 1, err)) {
-                connector.simpleAOClient.waitForHttpdSiteRebuild(args[1]);
+                connector.getSimpleAOClient().waitForHttpdSiteRebuild(args[1]);
             }
             return true;
 	} else return false;

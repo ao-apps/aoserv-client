@@ -344,7 +344,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         return table.connector.getTransactions().getTransactions(this);
     }
 
-     public Username getUsername() throws SQLException {
+     public Username getUsername() throws SQLException, IOException {
         Username usernameObject = table.connector.getUsernames().get(pkey);
         if (usernameObject == null) throw new SQLException("Username not found: " + pkey);
         return usernameObject;

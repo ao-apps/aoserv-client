@@ -127,7 +127,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_SMTP_RELAY)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_SMTP_RELAY, args, 5, err)) {
                 String S=args[5].trim();
-                int pkey=connector.simpleAOClient.addEmailSmtpRelay(
+                int pkey=connector.getSimpleAOClient().addEmailSmtpRelay(
                     args[1],
                     args[2],
                     args[3],
@@ -141,7 +141,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_EMAIL_SMTP_RELAY)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_EMAIL_SMTP_RELAY, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disableEmailSmtpRelay(
+                    connector.getSimpleAOClient().disableEmailSmtpRelay(
                         AOSH.parseInt(args[1], "pkey"),
                         args[2]
                     )
@@ -151,12 +151,12 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_EMAIL_SMTP_RELAY)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_EMAIL_SMTP_RELAY, args, 1, err)) {
-                connector.simpleAOClient.enableEmailSmtpRelay(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().enableEmailSmtpRelay(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REFRESH_EMAIL_SMTP_RELAY)) {
             if(AOSH.checkParamCount(AOSHCommand.REFRESH_EMAIL_SMTP_RELAY, args, 1, err)) {
-                connector.simpleAOClient.refreshEmailSmtpRelay(
+                connector.getSimpleAOClient().refreshEmailSmtpRelay(
                     AOSH.parseInt(args[1], "pkey"),
                     args[2].trim().length()==0?EmailSmtpRelay.NO_EXPIRATION:AOSH.parseLong(args[2], "min_duration")
                 );
@@ -164,7 +164,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_EMAIL_SMTP_RELAY)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_EMAIL_SMTP_RELAY, args, 1, err)) {
-                connector.simpleAOClient.removeEmailSmtpRelay(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().removeEmailSmtpRelay(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
 	}

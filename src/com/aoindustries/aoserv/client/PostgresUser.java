@@ -141,7 +141,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         return SchemaTable.TableID.POSTGRES_USERS;
     }
 
-    public Username getUsername() throws SQLException {
+    public Username getUsername() throws SQLException, IOException {
         Username username=table.connector.getUsernames().get(this.pkey);
         if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
         return username;

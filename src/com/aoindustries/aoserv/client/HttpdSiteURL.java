@@ -72,55 +72,55 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     public String getURL() throws SQLException, IOException {
-	HttpdSiteBind siteBind=getHttpdSiteBind();
-	NetBind netBind=siteBind.getHttpdBind().getNetBind();
-	NetPort port=netBind.getPort();
-	StringBuilder url=new StringBuilder();
-	String protocol;
-	if(siteBind.getSSLCertFile()==null) {
+        HttpdSiteBind siteBind=getHttpdSiteBind();
+        NetBind netBind=siteBind.getHttpdBind().getNetBind();
+        NetPort port=netBind.getPort();
+        StringBuilder url=new StringBuilder();
+        String protocol;
+        if(siteBind.getSSLCertFile()==null) {
             // If HTTP
             url.append("http://");
             protocol=Protocol.HTTP;
-	} else {
+    	} else {
             // Otherwise must be HTTPS
             url.append("https://");
             protocol=Protocol.HTTPS;
-	}
+    	}
         url.append(hostname);
-	if(!port.equals(table.connector.protocols.get(protocol).getPort(table.connector))) url.append(':').append(port.getPort());
-	url.append('/');
-	return url.toString();
+        if(!port.equals(table.connector.getProtocols().get(protocol).getPort(table.connector))) url.append(':').append(port.getPort());
+        url.append('/');
+        return url.toString();
     }
 
     public String getURLNoSlash() throws SQLException, IOException {
-	HttpdSiteBind siteBind=getHttpdSiteBind();
-	NetBind netBind=siteBind.getHttpdBind().getNetBind();
-	NetPort port=netBind.getPort();
-	StringBuilder url=new StringBuilder();
-	String protocol;
-	if(siteBind.getSSLCertFile()==null) {
+        HttpdSiteBind siteBind=getHttpdSiteBind();
+        NetBind netBind=siteBind.getHttpdBind().getNetBind();
+        NetPort port=netBind.getPort();
+        StringBuilder url=new StringBuilder();
+        String protocol;
+        if(siteBind.getSSLCertFile()==null) {
             // If HTTP
             url.append("http://");
             protocol=Protocol.HTTP;
-	} else {
+    	} else {
             // Otherwise must be HTTPS
             url.append("https://");
             protocol=Protocol.HTTPS;
-	}
+    	}
         url.append(hostname);
-	if(!port.equals(table.connector.protocols.get(protocol).getPort(table.connector))) url.append(':').append(port.getPort());
-	return url.toString();
+        if(!port.equals(table.connector.getProtocols().get(protocol).getPort(table.connector))) url.append(':').append(port.getPort());
+        return url.toString();
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	httpd_site_bind=result.getInt(2);
-	hostname=result.getString(3);
-	isPrimary=result.getBoolean(4);
+        pkey=result.getInt(1);
+        httpd_site_bind=result.getInt(2);
+        hostname=result.getString(3);
+        isPrimary=result.getBoolean(4);
     }
 
     public boolean isPrimary() {
-	return isPrimary;
+    	return isPrimary;
     }
 
     public boolean isTestURL() throws SQLException, IOException {
@@ -129,10 +129,10 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	httpd_site_bind=in.readCompressedInt();
-	hostname=in.readUTF();
-	isPrimary=in.readBoolean();
+        pkey=in.readCompressedInt();
+        httpd_site_bind=in.readCompressedInt();
+        hostname=in.readUTF();
+        isPrimary=in.readBoolean();
     }
 
     public void remove() throws IOException, SQLException {
@@ -145,13 +145,13 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 
     @Override
     String toStringImpl() {
-	return hostname;
+        return hostname;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(httpd_site_bind);
-	out.writeUTF(hostname);
-	out.writeBoolean(isPrimary);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(httpd_site_bind);
+        out.writeUTF(hostname);
+        out.writeBoolean(isPrimary);
     }
 }

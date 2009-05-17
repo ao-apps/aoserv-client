@@ -153,7 +153,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_CVS_REPOSITORY)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_CVS_REPOSITORY, args, 5, err)) {
-                int pkey=connector.simpleAOClient.addCvsRepository(
+                int pkey=connector.getSimpleAOClient().addCvsRepository(
                     args[1],
                     args[2],
                     args[3],
@@ -167,7 +167,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_CVS_REPOSITORY)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_CVS_REPOSITORY, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disableCvsRepository(
+                    connector.getSimpleAOClient().disableCvsRepository(
                         AOSH.parseInt(args[1], "pkey"),
                         args[2]
                     )
@@ -177,12 +177,12 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_CVS_REPOSITORY)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_CVS_REPOSITORY, args, 1, err)) {
-                connector.simpleAOClient.enableCvsRepository(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().enableCvsRepository(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_CVS_REPOSITORY)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_CVS_REPOSITORY, args, 2, err)) {
-                connector.simpleAOClient.removeCvsRepository(
+                connector.getSimpleAOClient().removeCvsRepository(
                     args[1],
                     args[2]
                 );
@@ -190,7 +190,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_CVS_REPOSITORY_MODE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_CVS_REPOSITORY_MODE, args, 3, err)) {
-                connector.simpleAOClient.setCvsRepositoryMode(
+                connector.getSimpleAOClient().setCvsRepositoryMode(
                     args[1],
                     args[2],
                     AOSH.parseOctalLong(args[3], "mode")

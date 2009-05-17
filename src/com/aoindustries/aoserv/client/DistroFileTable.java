@@ -90,7 +90,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.START_DISTRO)) {
             if(AOSH.checkParamCount(AOSHCommand.START_DISTRO, args, 2, err)) {
-                connector.simpleAOClient.startDistro(
+                connector.getSimpleAOClient().startDistro(
                     args[1],
                     AOSH.parseBoolean(args[2], "include_user")
                 );

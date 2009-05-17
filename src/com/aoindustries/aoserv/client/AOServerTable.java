@@ -99,7 +99,7 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.GET_MRTG_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_MRTG_FILE, args, 2, err)) {
-                connector.simpleAOClient.getMrtgFile(
+                connector.getSimpleAOClient().getMrtgFile(
                     args[1],
                     args[2],
                     new WriterOutputStream(out)
@@ -109,84 +109,84 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.RESTART_APACHE)) {
             if(AOSH.checkParamCount(AOSHCommand.RESTART_APACHE, args, 1, err)) {
-                connector.simpleAOClient.restartApache(
+                connector.getSimpleAOClient().restartApache(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.RESTART_CRON)) {
             if(AOSH.checkParamCount(AOSHCommand.RESTART_CRON, args, 1, err)) {
-                connector.simpleAOClient.restartCron(
+                connector.getSimpleAOClient().restartCron(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.RESTART_XFS)) {
             if(AOSH.checkParamCount(AOSHCommand.RESTART_XFS, args, 1, err)) {
-                connector.simpleAOClient.restartXfs(
+                connector.getSimpleAOClient().restartXfs(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.RESTART_XVFB)) {
             if(AOSH.checkParamCount(AOSHCommand.RESTART_XVFB, args, 1, err)) {
-                connector.simpleAOClient.restartXvfb(
+                connector.getSimpleAOClient().restartXvfb(
                     args[1]
                 );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.START_APACHE)) {
             if(AOSH.checkParamCount(AOSHCommand.START_APACHE, args, 1, err)) {
-                connector.simpleAOClient.startApache(
+                connector.getSimpleAOClient().startApache(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.START_CRON)) {
             if(AOSH.checkParamCount(AOSHCommand.START_CRON, args, 1, err)) {
-                connector.simpleAOClient.startCron(
+                connector.getSimpleAOClient().startCron(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.START_XFS)) {
             if(AOSH.checkParamCount(AOSHCommand.START_XFS, args, 1, err)) {
-                connector.simpleAOClient.startXfs(
+                connector.getSimpleAOClient().startXfs(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.START_XVFB)) {
             if(AOSH.checkParamCount(AOSHCommand.START_XVFB, args, 1, err)) {
-                connector.simpleAOClient.startXvfb(
+                connector.getSimpleAOClient().startXvfb(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_APACHE)) {
             if(AOSH.checkParamCount(AOSHCommand.STOP_APACHE, args, 1, err)) {
-                connector.simpleAOClient.stopApache(
+                connector.getSimpleAOClient().stopApache(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_CRON)) {
             if(AOSH.checkParamCount(AOSHCommand.STOP_CRON, args, 1, err)) {
-                connector.simpleAOClient.stopCron(
+                connector.getSimpleAOClient().stopCron(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_XFS)) {
             if(AOSH.checkParamCount(AOSHCommand.STOP_XFS, args, 1, err)) {
-                connector.simpleAOClient.stopXfs(
+                connector.getSimpleAOClient().stopXfs(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_XVFB)) {
             if(AOSH.checkParamCount(AOSHCommand.STOP_XVFB, args, 1, err)) {
-                connector.simpleAOClient.stopXvfb(
+                connector.getSimpleAOClient().stopXvfb(
                     args[1]
                 );
             }

@@ -5,13 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.WrappedException;
-import com.aoindustries.util.sort.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  PackageDefinition
@@ -27,7 +28,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(PackageDefinition.COLUMN_BRAND_name, ASCENDING),
         new OrderBy(PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
         new OrderBy(PackageDefinition.COLUMN_MONTHLY_RATE_name, ASCENDING),
         new OrderBy(PackageDefinition.COLUMN_NAME_name, ASCENDING),
@@ -39,7 +40,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
     }
 
     int addPackageDefinition(
-        Business business,
+        Brand brand,
         PackageCategory category,
         String name,
         String version,
@@ -57,7 +58,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
             CompressedDataOutputStream out=connection.getOutputStream();
             out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
             out.writeCompressedInt(SchemaTable.TableID.PACKAGE_DEFINITIONS.ordinal());
-            out.writeUTF(business.pkey);
+            out.writeUTF(brand.pkey);
             out.writeUTF(category.pkey);
             out.writeUTF(name);
             out.writeUTF(version);
@@ -103,15 +104,15 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	return getUniqueRow(PackageDefinition.COLUMN_PKEY, pkey);
     }
 
-    PackageDefinition getPackageDefinition(Business business, PackageCategory category, String name, String version) throws IOException, SQLException {
-        String accounting=business.pkey;
+    PackageDefinition getPackageDefinition(Brand brand, PackageCategory category, String name, String version) throws IOException, SQLException {
+        String accounting=brand.pkey;
         String categoryName=category.pkey;
         List<PackageDefinition> pds=getRows();
         int size=pds.size();
         for(int c=0;c<size;c++) {
             PackageDefinition pd=pds.get(c);
             if(
-                pd.accounting.equals(accounting)
+                pd.brand.equals(accounting)
                 && pd.category.equals(categoryName)
                 && pd.name.equals(name)
                 && pd.version.equals(version)
@@ -120,24 +121,24 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
         return null;
     }
 
-    List<PackageDefinition> getPackageDefinitions(Business business, PackageCategory category) throws IOException, SQLException {
-	String accounting=business.pkey;
+    List<PackageDefinition> getPackageDefinitions(Brand brand, PackageCategory category) throws IOException, SQLException {
+        String accounting=brand.pkey;
         String categoryName=category.pkey;
 
-	List<PackageDefinition> cached=getRows();
-	List<PackageDefinition> matches=new ArrayList<PackageDefinition>();
-	int size=cached.size();
-	for(int c=0;c<size;c++) {
+        List<PackageDefinition> cached=getRows();
+        List<PackageDefinition> matches=new ArrayList<PackageDefinition>();
+        int size=cached.size();
+        for(int c=0;c<size;c++) {
             PackageDefinition pd=cached.get(c);
             if(
-                pd.accounting.equals(accounting)
+                pd.brand.equals(accounting)
                 && pd.category.equals(categoryName)
             ) matches.add(pd);
-	}
-	return matches;
+        }
+        return matches;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.PACKAGE_DEFINITIONS;
+        return SchemaTable.TableID.PACKAGE_DEFINITIONS;
     }
 }

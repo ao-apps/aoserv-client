@@ -51,8 +51,12 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
         }
     }
 
+    public Username get(String username) throws IOException, SQLException {
+        return getUniqueRow(Username.COLUMN_USERNAME, username);
+    }
+
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.USERNAMES;
+        return SchemaTable.TableID.USERNAMES;
     }
 
     List<Username> getUsernames(Package pack) throws IOException, SQLException {
@@ -64,7 +68,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_USERNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_USERNAME, args, 2, err)) {
-                connector.simpleAOClient.addUsername(
+                connector.getSimpleAOClient().addUsername(
                     args[1],
                         args[2]
                 );
@@ -72,7 +76,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ARE_USERNAME_PASSWORDS_SET)) {
             if(AOSH.checkParamCount(AOSHCommand.ARE_USERNAME_PASSWORDS_SET, args, 1, err)) {
-                int result=connector.simpleAOClient.areUsernamePasswordsSet(args[1]);
+                int result=connector.getSimpleAOClient().areUsernamePasswordsSet(args[1]);
                 if(result==PasswordProtected.NONE) out.println("none");
                 else if(result==PasswordProtected.SOME) out.println("some");
                 else if(result==PasswordProtected.ALL) out.println("all");
@@ -94,7 +98,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_USERNAME_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_USERNAME_PASSWORD, args, 2, err)) {
-                PasswordChecker.Result[] results = connector.simpleAOClient.checkUsernamePassword(args[1], args[2]);
+                PasswordChecker.Result[] results = connector.getSimpleAOClient().checkUsernamePassword(args[1], args[2]);
                 if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
                     PasswordChecker.printResults(results, out);
                     out.flush();
@@ -104,7 +108,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_USERNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_USERNAME, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disableUsername(
+                    connector.getSimpleAOClient().disableUsername(
                         args[1],
                         args[2]
                     )
@@ -114,13 +118,13 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_USERNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_USERNAME, args, 1, err)) {
-                connector.simpleAOClient.enableUsername(args[1]);
+                connector.getSimpleAOClient().enableUsername(args[1]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_USERNAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_USERNAME_AVAILABLE, args, 1, err)) {
                 try {
-                    out.println(connector.simpleAOClient.isUsernameAvailable(args[1]));
+                    out.println(connector.getSimpleAOClient().isUsernameAvailable(args[1]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_USERNAME_AVAILABLE+": ");
@@ -131,12 +135,12 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_USERNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_USERNAME, args, 1, err)) {
-                connector.simpleAOClient.removeUsername(args[1]);
+                connector.getSimpleAOClient().removeUsername(args[1]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_USERNAME_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_USERNAME_PASSWORD, args, 2, err)) {
-                connector.simpleAOClient.setUsernamePassword(args[1], args[2]);
+                connector.getSimpleAOClient().setUsernamePassword(args[1], args[2]);
             }
             return true;
 	}

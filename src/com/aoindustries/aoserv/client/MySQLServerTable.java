@@ -111,7 +111,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
             if(AOSH.checkParamCount(AOSHCommand.IS_MYSQL_SERVER_NAME_AVAILABLE, args, 2, err)) {
                 try {
                     out.println(
-                        connector.simpleAOClient.isMySQLServerNameAvailable(
+                        connector.getSimpleAOClient().isMySQLServerNameAvailable(
                             args[1],
                             args[2]
                         )
@@ -126,7 +126,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.RESTART_MYSQL)) {
             if(AOSH.checkParamCount(AOSHCommand.RESTART_MYSQL, args, 2, err)) {
-                connector.simpleAOClient.restartMySQL(
+                connector.getSimpleAOClient().restartMySQL(
                     args[1],
                     args[2]
                 );
@@ -134,7 +134,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.START_MYSQL)) {
             if(AOSH.checkParamCount(AOSHCommand.START_MYSQL, args, 2, err)) {
-                connector.simpleAOClient.startMySQL(
+                connector.getSimpleAOClient().startMySQL(
                     args[1],
                     args[2]
                 );
@@ -142,7 +142,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_MYSQL)) {
             if(AOSH.checkParamCount(AOSHCommand.STOP_MYSQL, args, 2, err)) {
-                connector.simpleAOClient.stopMySQL(
+                connector.getSimpleAOClient().stopMySQL(
                     args[1],
                     args[2]
                 );
@@ -150,7 +150,7 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_MYSQL_SERVER_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_MYSQL_SERVER_REBUILD, args, 1, err)) {
-                connector.simpleAOClient.waitForMySQLServerRebuild(args[1]);
+                connector.getSimpleAOClient().waitForMySQLServerRebuild(args[1]);
             }
             return true;
 	}

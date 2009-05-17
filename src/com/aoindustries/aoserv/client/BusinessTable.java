@@ -149,7 +149,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS, args, 8, err)) {
                 try {
-                    connector.simpleAOClient.addBusiness(
+                    connector.getSimpleAOClient().addBusiness(
                         args[1],
                         args[2],
                         args[3],
@@ -168,7 +168,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.CANCEL_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.CANCEL_BUSINESS, args, 2, err)) {
-                connector.simpleAOClient.cancelBusiness(args[1], args[2]);
+                connector.getSimpleAOClient().cancelBusiness(args[1], args[2]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_ACCOUNTING)) {
@@ -186,7 +186,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_BUSINESS, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disableBusiness(
+                    connector.getSimpleAOClient().disableBusiness(
                         args[1],
                         args[2]
                     )
@@ -196,25 +196,25 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_BUSINESS, args, 1, err)) {
-                connector.simpleAOClient.enableBusiness(args[1]);
+                connector.getSimpleAOClient().enableBusiness(args[1]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_ACCOUNTING)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_ACCOUNTING, args, 1, err)) {
-                out.println(connector.simpleAOClient.generateAccountingCode(args[1]));
+                out.println(connector.getSimpleAOClient().generateAccountingCode(args[1]));
                 out.flush();
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.GET_ROOT_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_ROOT_BUSINESS, args, 0, err)) {
-                out.println(connector.simpleAOClient.getRootBusiness());
+                out.println(connector.getSimpleAOClient().getRootBusiness());
                 out.flush();
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_ACCOUNTING_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_ACCOUNTING_AVAILABLE, args, 1, err)) {
                 try {
-                    out.println(connector.simpleAOClient.isAccountingAvailable(args[1]));
+                    out.println(connector.getSimpleAOClient().isAccountingAvailable(args[1]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_ACCOUNTING_AVAILABLE+": ");
@@ -225,7 +225,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.MOVE_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.MOVE_BUSINESS, args, 3, err)) {
-                connector.simpleAOClient.moveBusiness(
+                connector.getSimpleAOClient().moveBusiness(
                     args[1],
                     args[2],
                     args[3],
@@ -236,7 +236,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_BUSINESS_ACCOUNTING)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_BUSINESS_ACCOUNTING, args, 2, err)) {
-                connector.simpleAOClient.setBusinessAccounting(args[1], args[2]);
+                connector.getSimpleAOClient().setBusinessAccounting(args[1], args[2]);
             }
             return true;
 	} else return false;

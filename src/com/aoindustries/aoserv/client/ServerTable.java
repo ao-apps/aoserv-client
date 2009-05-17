@@ -154,7 +154,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BACKUP_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BACKUP_SERVER, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.addBackupServer(
+                    connector.getSimpleAOClient().addBackupServer(
                         args[1],
                         args[2],
                         args[3],

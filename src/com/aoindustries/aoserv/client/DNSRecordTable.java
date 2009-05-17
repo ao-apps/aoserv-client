@@ -100,7 +100,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_DNS_RECORD)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_DNS_RECORD, args, 6, err)) {
-                int pkey=connector.simpleAOClient.addDNSRecord(
+                int pkey=connector.getSimpleAOClient().addDNSRecord(
                     args[1],
                     args[2],
                     args[3],
@@ -114,7 +114,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_DNS_RECORD)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_DNS_RECORD, args, 1, err)) {
-                connector.simpleAOClient.removeDNSRecord(
+                connector.getSimpleAOClient().removeDNSRecord(
                     AOSH.parseInt(args[1], "pkey")
                 );
             }

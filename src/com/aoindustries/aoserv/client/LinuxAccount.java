@@ -200,7 +200,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return typeObject;
     }
 
-    public Username getUsername() throws SQLException {
+    public Username getUsername() throws SQLException, IOException {
         Username usernameObject = table.connector.getUsernames().get(pkey);
         if (usernameObject == null) throw new SQLException("Unable to find Username: " + pkey);
         return usernameObject;

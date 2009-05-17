@@ -184,7 +184,7 @@ final public class AOSH extends ShellInterpreter {
                 }
             }
             if(tableID>=0) {
-                connector.simpleAOClient.invalidate(tableID, args.length>2?args[2]:null);
+                connector.getSimpleAOClient().invalidate(tableID, args.length>2?args[2]:null);
             } else {
                 err.print("aosh: "+AOSHCommand.INVALIDATE+": unable to find table: ");
                 err.println(tableName);
@@ -340,7 +340,7 @@ final public class AOSH extends ShellInterpreter {
 
     private void ping(String[] args) throws IOException, SQLException {
         if(checkParamCount(AOSHCommand.PING, args, 0, err)) {
-            out.print(connector.simpleAOClient.ping());
+            out.print(connector.getSimpleAOClient().ping());
             out.println(" ms");
             out.flush();
         }
@@ -453,7 +453,7 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    private void whoami(String[] args) throws SQLException {
+    private void whoami(String[] args) throws SQLException, IOException {
         if(args.length==1) {
             out.println(connector.getThisBusinessAdministrator().getUsername().getUsername());
             out.flush();

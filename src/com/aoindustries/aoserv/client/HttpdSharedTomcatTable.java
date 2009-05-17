@@ -147,7 +147,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
             if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_SHARED_TOMCAT, args, 7, err)) {
                 // Create an array of all the alternate hostnames
                 out.println(
-                    connector.simpleAOClient.addHttpdSharedTomcat(
+                    connector.getSimpleAOClient().addHttpdSharedTomcat(
                         args[1],
                         args[2],
                         args[3],
@@ -175,7 +175,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_HTTPD_SHARED_TOMCAT)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_HTTPD_SHARED_TOMCAT, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.disableHttpdSharedTomcat(
+                    connector.getSimpleAOClient().disableHttpdSharedTomcat(
                         args[1],
                         args[2],
                         args[3]
@@ -186,29 +186,29 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_HTTPD_SHARED_TOMCAT)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_HTTPD_SHARED_TOMCAT, args, 2, err)) {
-                connector.simpleAOClient.enableHttpdSharedTomcat(args[1], args[2]);
+                connector.getSimpleAOClient().enableHttpdSharedTomcat(args[1], args[2]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_SHARED_TOMCAT_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_SHARED_TOMCAT_NAME, args, 1, err)) {
-                out.println(connector.simpleAOClient.generateSharedTomcatName(args[1]));
+                out.println(connector.getSimpleAOClient().generateSharedTomcatName(args[1]));
                 out.flush();
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_SHARED_TOMCAT_NAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_SHARED_TOMCAT_NAME_AVAILABLE, args, 1, err)) {
-                out.println(connector.simpleAOClient.isSharedTomcatNameAvailable(args[1]));
+                out.println(connector.getSimpleAOClient().isSharedTomcatNameAvailable(args[1]));
                 out.flush();
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_HTTPD_SHARED_TOMCAT)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_HTTPD_SHARED_TOMCAT, args, 2, err)) {
-                connector.simpleAOClient.removeHttpdSharedTomcat(args[1], args[2]);
+                connector.getSimpleAOClient().removeHttpdSharedTomcat(args[1], args[2]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, args, 3, err)) {
-                connector.simpleAOClient.setHttpdSharedTomcatIsManual(
+                connector.getSimpleAOClient().setHttpdSharedTomcatIsManual(
                     args[1],
                     args[2],
                     AOSH.parseBoolean(args[3], "is_manual")

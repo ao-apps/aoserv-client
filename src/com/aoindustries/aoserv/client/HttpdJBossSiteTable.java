@@ -177,7 +177,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
                 String[] altHostnames=new String[args.length-13];
                 System.arraycopy(args, 13, altHostnames, 0, args.length-13);
                 out.println(
-                    connector.simpleAOClient.addHttpdJBossSite(
+                    connector.getSimpleAOClient().addHttpdJBossSite(
                         args[1],
                         args[2],
                         args[3],

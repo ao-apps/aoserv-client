@@ -71,14 +71,14 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_USER, args, 1, err)) {
-                connector.simpleAOClient.addMySQLUser(
+                connector.getSimpleAOClient().addMySQLUser(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ARE_MYSQL_USER_PASSWORDS_SET)) {
             if(AOSH.checkParamCount(AOSHCommand.ARE_MYSQL_USER_PASSWORDS_SET, args, 1, err)) {
-                int result=connector.simpleAOClient.areMySQLUserPasswordsSet(args[1]);
+                int result=connector.getSimpleAOClient().areMySQLUserPasswordsSet(args[1]);
                 if(result==PasswordProtected.NONE) out.println("none");
                 else if(result==PasswordProtected.SOME) out.println("some");
                 else if(result==PasswordProtected.ALL) out.println("all");
@@ -103,7 +103,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_MYSQL_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_MYSQL_USER, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disableMySQLUser(
+                    connector.getSimpleAOClient().disableMySQLUser(
                         args[1],
                         args[2]
                     )
@@ -113,19 +113,19 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_MYSQL_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_MYSQL_USER, args, 1, err)) {
-                connector.simpleAOClient.enableMySQLUser(args[1]);
+                connector.getSimpleAOClient().enableMySQLUser(args[1]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_USER, args, 1, err)) {
-                connector.simpleAOClient.removeMySQLUser(
+                connector.getSimpleAOClient().removeMySQLUser(
                     args[1]
                 );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_MYSQL_USER_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_MYSQL_USER_PASSWORD, args, 2, err)) {
-                connector.simpleAOClient.setMySQLUserPassword(
+                connector.getSimpleAOClient().setMySQLUserPassword(
                     args[1],
                     args[2]
                 );
@@ -133,7 +133,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_MYSQL_USER_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_MYSQL_USER_REBUILD, args, 1, err)) {
-                connector.simpleAOClient.waitForMySQLUserRebuild(args[1]);
+                connector.getSimpleAOClient().waitForMySQLUserRebuild(args[1]);
             }
             return true;
         }

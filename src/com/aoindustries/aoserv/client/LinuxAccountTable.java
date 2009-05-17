@@ -333,7 +333,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_ACCOUNT, args, 8, err)) {
-                connector.simpleAOClient.addLinuxAccount(
+                connector.getSimpleAOClient().addLinuxAccount(
                     args[1],
                     args[2],
                     args[3],
@@ -347,7 +347,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.ARE_LINUX_ACCOUNT_PASSWORDS_SET)) {
             if(AOSH.checkParamCount(AOSHCommand.ARE_LINUX_ACCOUNT_PASSWORDS_SET, args, 1, err)) {
-                int result=connector.simpleAOClient.areLinuxAccountPasswordsSet(args[1]);
+                int result=connector.getSimpleAOClient().areLinuxAccountPasswordsSet(args[1]);
                 if(result==PasswordProtected.NONE) out.println("none");
                 else if(result==PasswordProtected.SOME) out.println("some");
                 else if(result==PasswordProtected.ALL) out.println("all");
@@ -368,7 +368,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
-                PasswordChecker.Result[] results = connector.simpleAOClient.checkLinuxAccountPassword(args[1], args[2]);
+                PasswordChecker.Result[] results = connector.getSimpleAOClient().checkLinuxAccountPassword(args[1], args[2]);
                 if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
                     PasswordChecker.printResults(results, out);
                     out.flush();
@@ -383,7 +383,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         } else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_LINUX_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_LINUX_ACCOUNT, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disableLinuxAccount(
+                    connector.getSimpleAOClient().disableLinuxAccount(
                         args[1],
                         args[2]
                     )
@@ -393,53 +393,53 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_LINUX_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_LINUX_ACCOUNT, args, 1, err)) {
-                connector.simpleAOClient.enableLinuxAccount(args[1]);
+                connector.getSimpleAOClient().enableLinuxAccount(args[1]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_PASSWORD, args, 0, err)) {
-                out.println(connector.simpleAOClient.generatePassword());
+                out.println(connector.getSimpleAOClient().generatePassword());
                 out.flush();
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_ACCOUNT)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_ACCOUNT, args, 1, err)) {
-                connector.simpleAOClient.removeLinuxAccount(args[1]);
+                connector.getSimpleAOClient().removeLinuxAccount(args[1]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_HOME_PHONE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_HOME_PHONE, args, 2, err)) {
-                connector.simpleAOClient.setLinuxAccountHomePhone(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountHomePhone(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_NAME, args, 2, err)) {
-                connector.simpleAOClient.setLinuxAccountName(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountName(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_LOCATION)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_LOCATION, args, 2, err)) {
-                connector.simpleAOClient.setLinuxAccountOfficeLocation(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountOfficeLocation(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_PHONE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_PHONE, args, 2, err)) {
-                connector.simpleAOClient.setLinuxAccountOfficePhone(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountOfficePhone(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
-                connector.simpleAOClient.setLinuxAccountPassword(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountPassword(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_SHELL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_SHELL, args, 2, err)) {
-                connector.simpleAOClient.setLinuxAccountShell(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountShell(args[1], args[2]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_LINUX_ACCOUNT_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_LINUX_ACCOUNT_REBUILD, args, 1, err)) {
-                connector.simpleAOClient.waitForLinuxAccountRebuild(args[1]);
+                connector.getSimpleAOClient().waitForLinuxAccountRebuild(args[1]);
             }
             return true;
         }

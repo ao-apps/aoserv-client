@@ -381,4 +381,37 @@ final public class Brand extends CachedObjectStringKey<Brand> {
     public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
         return table.connector.getTicketBrandCategories().getTicketBrandCategories(this);
     }
+
+    public int addPackageDefinition(
+        PackageCategory category,
+        String name,
+        String version,
+        String display,
+        String description,
+        int setupFee,
+        TransactionType setupFeeTransactionType,
+        int monthlyRate,
+        TransactionType monthlyRateTransactionType
+    ) throws IOException, SQLException {
+        return table.connector.getPackageDefinitions().addPackageDefinition(
+            this,
+            category,
+            name,
+            version,
+            display,
+            description,
+            setupFee,
+            setupFeeTransactionType,
+            monthlyRate,
+            monthlyRateTransactionType
+        );
+    }
+
+    public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
+        return table.connector.getPackageDefinitions().getPackageDefinition(this, category, name, version);
+    }
+
+    public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
+        return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
+    }
 }

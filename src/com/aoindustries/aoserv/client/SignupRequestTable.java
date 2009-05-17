@@ -25,7 +25,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(SignupRequest.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(SignupRequest.COLUMN_BRAND_name, ASCENDING),
         new OrderBy(SignupRequest.COLUMN_TIME_name, ASCENDING)
     };
     @Override
@@ -56,7 +56,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
      * and the first key flagged to use as signup_recipient as the recipient.
      */
     public int addSignupRequest(
-        Business business,
+        Brand brand,
         String ip_address,
         PackageDefinition package_definition,
         String business_name,
@@ -120,18 +120,8 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
         if(billing_zip.indexOf('\n')!=-1) throw new IllegalArgumentException("billing_zip may not contain '\n'");
 
         // Find the from and recipient keys
-        EncryptionKey from = null;
-        EncryptionKey recipient = null;
-        String accounting = business.getAccounting();
-        for(EncryptionKey encryptionKey : connector.getEncryptionKeys().getRows()) {
-            if(encryptionKey.accounting.equals(accounting)) {
-                if(from==null && encryptionKey.getSignupFrom()) from = encryptionKey;
-                if(recipient==null && encryptionKey.getSignupRecipient()) recipient = encryptionKey;
-                if(from!=null && recipient!=null) break;
-            }
-        }
-        if(from==null) throw new SQLException("Unable to find signup from for accounting="+accounting);
-        if(recipient==null) throw new SQLException("Unable to find signup recipient for accounting="+accounting);
+        EncryptionKey from = brand.getSignupEncryptionFrom();
+        EncryptionKey recipient = brand.getSignupEncryptionRecipient();
 
         // Encrypt the message
         String plaintext =
@@ -155,7 +145,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
             CompressedDataOutputStream out=connection.getOutputStream();
             out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
             out.writeCompressedInt(SchemaTable.TableID.SIGNUP_REQUESTS.ordinal());
-            out.writeUTF(accounting);
+            out.writeUTF(brand.pkey);
             out.writeUTF(ip_address);
             out.writeCompressedInt(package_definition.getPkey());
             out.writeUTF(business_name);

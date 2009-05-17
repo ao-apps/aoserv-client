@@ -192,7 +192,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
                 else if(args[11].equals("W")) pc=Transaction.WAITING_CONFIRMATION;
                 else if(args[11].equals("N")) pc=Transaction.NOT_CONFIRMED;
                 else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: "+args[11]);
-                int transid=connector.simpleAOClient.addTransaction(
+                int transid=connector.getSimpleAOClient().addTransaction(
                     args[1],
                     args[2],
                     args[3],

@@ -110,7 +110,7 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_SERVER_USER, args, 4, err)) {
-                int pkey=connector.simpleAOClient.addMySQLServerUser(
+                int pkey=connector.getSimpleAOClient().addMySQLServerUser(
                     args[1],
                     args[2],
                     args[3],
@@ -123,7 +123,7 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_MYSQL_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_MYSQL_SERVER_USER, args, 4, err)) {
                 out.println(
-                    connector.simpleAOClient.disableMySQLServerUser(
+                    connector.getSimpleAOClient().disableMySQLServerUser(
                         args[1],
                         args[2],
                         args[3],
@@ -135,7 +135,7 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_MYSQL_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_MYSQL_SERVER_USER, args, 3, err)) {
-                connector.simpleAOClient.enableMySQLServerUser(
+                connector.getSimpleAOClient().enableMySQLServerUser(
                     args[1],
                     args[2],
                     args[3]
@@ -145,7 +145,7 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_MYSQL_SERVER_USER_PASSWORD_SET)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_MYSQL_SERVER_USER_PASSWORD_SET, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.isMySQLServerUserPasswordSet(
+                    connector.getSimpleAOClient().isMySQLServerUserPasswordSet(
                         args[1],
                         args[2],
                         args[3]
@@ -156,7 +156,7 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_SERVER_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_SERVER_USER, args, 3, err)) {
-                connector.simpleAOClient.removeMySQLServerUser(
+                connector.getSimpleAOClient().removeMySQLServerUser(
                     args[1],
                     args[2],
                     args[3]
@@ -165,7 +165,7 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_MYSQL_SERVER_USER_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_MYSQL_SERVER_USER_PASSWORD, args, 4, err)) {
-                connector.simpleAOClient.setMySQLServerUserPassword(
+                connector.getSimpleAOClient().setMySQLServerUserPassword(
                     args[1],
                     args[2],
                     args[3],

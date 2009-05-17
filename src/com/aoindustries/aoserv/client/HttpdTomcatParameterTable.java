@@ -91,7 +91,7 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_PARAMETER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_PARAMETER, args, 7, err)) {
                 out.println(
-                    connector.simpleAOClient.addHttpdTomcatParameter(
+                    connector.getSimpleAOClient().addHttpdTomcatParameter(
                         args[1],
                         args[2],
                         args[3],
@@ -106,12 +106,12 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_HTTPD_TOMCAT_PARAMETER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_HTTPD_TOMCAT_PARAMETER, args, 1, err)) {
-                connector.simpleAOClient.removeHttpdTomcatParameter(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().removeHttpdTomcatParameter(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.UPDATE_HTTPD_TOMCAT_PARAMETER)) {
             if(AOSH.checkParamCount(AOSHCommand.UPDATE_HTTPD_TOMCAT_PARAMETER, args, 8, err)) {
-                connector.simpleAOClient.updateHttpdTomcatParameter(
+                connector.getSimpleAOClient().updateHttpdTomcatParameter(
                     args[1],
                     args[2],
                     args[3],

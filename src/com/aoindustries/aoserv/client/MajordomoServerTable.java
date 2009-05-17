@@ -84,7 +84,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_SERVER, args, 5, err)) {
-                connector.simpleAOClient.addMajordomoServer(
+                connector.getSimpleAOClient().addMajordomoServer(
                     args[1],
                     args[2],
                     args[3],
@@ -95,7 +95,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MAJORDOMO_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_MAJORDOMO_SERVER, args, 2, err)) {
-                connector.simpleAOClient.removeMajordomoServer(
+                connector.getSimpleAOClient().removeMajordomoServer(
                     args[1],
                     args[2]
                 );

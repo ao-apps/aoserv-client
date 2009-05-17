@@ -92,18 +92,18 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_SITE_URL)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_SITE_URL, args, 2, err)) {
-                out.println(connector.simpleAOClient.addHttpdSiteURL(AOSH.parseInt(args[1], "httpd_site_bind_pkey"), args[2]));
+                out.println(connector.getSimpleAOClient().addHttpdSiteURL(AOSH.parseInt(args[1], "httpd_site_bind_pkey"), args[2]));
                 out.flush();
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_HTTPD_SITE_URL)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_HTTPD_SITE_URL, args, 1, err)) {
-                connector.simpleAOClient.removeHttpdSiteURL(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().removeHttpdSiteURL(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_PRIMARY_HTTPD_SITE_URL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_PRIMARY_HTTPD_SITE_URL, args, 1, err)) {
-                connector.simpleAOClient.setPrimaryHttpdSiteURL(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().setPrimaryHttpdSiteURL(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
 	} else return false;

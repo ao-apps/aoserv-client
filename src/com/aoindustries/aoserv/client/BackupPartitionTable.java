@@ -71,7 +71,7 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 	String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {
-                long size=connector.simpleAOClient.getBackupPartitionTotalSize(
+                long size=connector.getSimpleAOClient().getBackupPartitionTotalSize(
                     args[1],
                     args[2]
                 );
@@ -82,7 +82,7 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_BACKUP_PARTITION_USED_SIZE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_BACKUP_PARTITION_USED_SIZE, args, 2, err)) {
-                long size=connector.simpleAOClient.getBackupPartitionUsedSize(
+                long size=connector.getSimpleAOClient().getBackupPartitionUsedSize(
                     args[1],
                     args[2]
                 );

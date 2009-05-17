@@ -35,7 +35,7 @@ final public class Reseller extends CachedObjectStringKey<Reseller> {
         }
     }
 
-    public Brand getBrand() throws SQLException {
+    public Brand getBrand() throws SQLException, IOException {
         Brand br = table.connector.getBrands().get(pkey);
         if(br==null) throw new SQLException("Unable to find Brand: "+pkey);
         return br;

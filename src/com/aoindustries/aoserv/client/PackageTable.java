@@ -89,7 +89,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
             if(AOSH.checkParamCount(AOSHCommand.ADD_PACKAGE, args, 3, err)) {
                 try {
                     out.println(
-                        connector.simpleAOClient.addPackage(
+                        connector.getSimpleAOClient().addPackage(
                             args[1],
                             args[2],
                             AOSH.parseInt(args[3], "package_definition")
@@ -118,7 +118,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_PACKAGE)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_PACKAGE, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disablePackage(
+                    connector.getSimpleAOClient().disablePackage(
                         args[1],
                         args[2]
                     )
@@ -128,19 +128,19 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_PACKAGE)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_PACKAGE, args, 1, err)) {
-                connector.simpleAOClient.enablePackage(args[1]);
+                connector.getSimpleAOClient().enablePackage(args[1]);
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_PACKAGE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_PACKAGE_NAME, args, 1, err)) {
-                out.println(connector.simpleAOClient.generatePackageName(args[1]));
+                out.println(connector.getSimpleAOClient().generatePackageName(args[1]));
                 out.flush();
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_PACKAGE_NAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_PACKAGE_NAME_AVAILABLE, args, 1, err)) {
                 try {
-                    out.println(connector.simpleAOClient.isPackageNameAvailable(args[1]));
+                    out.println(connector.getSimpleAOClient().isPackageNameAvailable(args[1]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_PACKAGE_NAME_AVAILABLE+": ");

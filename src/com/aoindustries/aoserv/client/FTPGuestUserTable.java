@@ -70,14 +70,14 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_FTP_GUEST_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_FTP_GUEST_USER, args, 1, err)) {
-                connector.simpleAOClient.addFTPGuestUser(
+                connector.getSimpleAOClient().addFTPGuestUser(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_FTP_GUEST_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_FTP_GUEST_USER, args, 1, err)) {
-                connector.simpleAOClient.removeFTPGuestUser(
+                connector.getSimpleAOClient().removeFTPGuestUser(
                     args[1]
                 );
             }

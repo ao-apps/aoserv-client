@@ -64,7 +64,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
     static final int COLUMN_CREATED_BY = 4;
     static final String COLUMN_PKEY_name = "pkey";
 
-    Object getColumnImpl(int i) {
+    Object getColumnImpl(int i) throws IOException, SQLException {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return reseller;
@@ -174,7 +174,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         return pkey;
     }
 
-    public Reseller getReseller() throws SQLException {
+    public Reseller getReseller() throws SQLException, IOException {
         Reseller re = table.connector.getResellers().get(reseller);
         if (re == null) throw new SQLException("Unable to find Reseller: " + reseller);
         return re;
@@ -220,7 +220,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         return summary;
     }
 
-    synchronized public String getDetails() throws IOException {
+    synchronized public String getDetails() throws IOException, SQLException {
         if(!detailsLoaded) {
             details = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_DETAILS, pkey);
             detailsLoaded = true;
@@ -228,7 +228,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         return details;
     }
 
-    synchronized public String getRawEmail() throws IOException {
+    synchronized public String getRawEmail() throws IOException, SQLException {
         if(!rawEmailLoaded) {
             raw_email = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_RAW_EMAIL, pkey);
             rawEmailLoaded = true;
@@ -271,7 +271,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         return contact_phone_numbers;
     }
 
-    synchronized public String getInternalNotes() throws IOException {
+    synchronized public String getInternalNotes() throws IOException, SQLException {
         if(!internalNotesLoaded) {
             internal_notes = table.connector.requestLongStringQuery(AOServProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, pkey);
             detailsLoaded = true;

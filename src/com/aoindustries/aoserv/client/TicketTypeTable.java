@@ -8,13 +8,9 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @see  TicketType
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -46,18 +42,7 @@ final public class TicketTypeTable extends GlobalTableStringKey<TicketType> {
         return getUniqueRow(TicketType.COLUMN_TYPE, type);
     }
 
-    public List<TicketType> getClientViewableTicketTypes() throws IOException, SQLException {
-	List<TicketType> cached = getRows();
-	int size = cached.size();
-        List<TicketType> matches=new ArrayList<TicketType>(size);
-	for (int i=0;i<size;i++) {
-            TicketType tick = cached.get(i);
-            if (tick.client_view) matches.add(tick);
-	}
-	return matches;
-    }
-
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TICKET_TYPES;
+    	return SchemaTable.TableID.TICKET_TYPES;
     }
 }

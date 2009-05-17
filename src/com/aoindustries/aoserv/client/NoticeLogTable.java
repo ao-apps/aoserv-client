@@ -80,7 +80,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_NOTICE_LOG)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_NOTICE_LOG, args, 6, err)) {
-                connector.simpleAOClient.addNoticeLog(
+                connector.getSimpleAOClient().addNoticeLog(
                     args[1],
                     args[2],
                     args[3],

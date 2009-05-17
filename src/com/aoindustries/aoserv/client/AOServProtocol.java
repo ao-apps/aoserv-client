@@ -404,7 +404,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_AO_SERVER_HDD_MODEL_REPORT,
         GET_TICKET_DETAILS,
         GET_TICKET_RAW_EMAIL,
-        GET_TICKET_INTERNAL_NOTES
+        GET_TICKET_INTERNAL_NOTES,
+        GET_TICKET_ACTION_OLD_VALUE,
+        GET_TICKET_ACTION_DETAILS,
+        GET_TICKET_ACTION_RAW_EMAIL
     }
 
     /**

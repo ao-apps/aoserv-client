@@ -87,7 +87,7 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_LIST, args, 3, err)) {
-                int pkey=connector.simpleAOClient.addMajordomoList(
+                int pkey=connector.getSimpleAOClient().addMajordomoList(
                     args[1],
                     args[2],
                     args[3]
@@ -110,24 +110,24 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INFO_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INFO_FILE, args, 3, err)) {
-                out.println(connector.simpleAOClient.getMajordomoInfoFile(args[1], args[2], args[3]));
+                out.println(connector.getSimpleAOClient().getMajordomoInfoFile(args[1], args[2], args[3]));
                 out.flush();
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INTRO_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INTRO_FILE, args, 3, err)) {
-                out.println(connector.simpleAOClient.getMajordomoIntroFile(args[1], args[2], args[3]));
+                out.println(connector.getSimpleAOClient().getMajordomoIntroFile(args[1], args[2], args[3]));
                 out.flush();
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INFO_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INFO_FILE, args, 4, err)) {
-                connector.simpleAOClient.setMajordomoInfoFile(args[1], args[2], args[3], args[4]);
+                connector.getSimpleAOClient().setMajordomoInfoFile(args[1], args[2], args[3], args[4]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INTRO_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INTRO_FILE, args, 4, err)) {
-                connector.simpleAOClient.setMajordomoIntroFile(args[1], args[2], args[3], args[4]);
+                connector.getSimpleAOClient().setMajordomoIntroFile(args[1], args[2], args[3], args[4]);
             }
             return true;
         }

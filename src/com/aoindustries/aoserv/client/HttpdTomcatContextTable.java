@@ -131,7 +131,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_CONTEXT)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_CONTEXT, args, 14, err)) {
                 out.println(
-                    connector.simpleAOClient.addHttpdTomcatContext(
+                    connector.getSimpleAOClient().addHttpdTomcatContext(
                         args[1],
                         args[2],
                         args[3],
@@ -153,12 +153,12 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_HTTPD_TOMCAT_CONTEXT)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_HTTPD_TOMCAT_CONTEXT, args, 1, err)) {
-                connector.simpleAOClient.removeHttpdTomcatContext(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().removeHttpdTomcatContext(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES, args, 15, err)) {
-                connector.simpleAOClient.setHttpdTomcatContextAttributes(
+                connector.getSimpleAOClient().setHttpdTomcatContextAttributes(
                     args[1],
                     args[2],
                     args[3],

@@ -41,6 +41,10 @@ final public class BrandTable extends CachedTableStringKey<Brand> {
         }
     }
 
+    public Brand get(String accounting) throws IOException, SQLException {
+        return getUniqueRow(Brand.COLUMN_ACCOUNTING, accounting);
+    }
+
     /**
      * Gets a <code>Brand</code> given its business.
      */

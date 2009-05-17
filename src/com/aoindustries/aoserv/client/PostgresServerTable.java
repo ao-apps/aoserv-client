@@ -112,7 +112,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
             if(AOSH.checkParamCount(AOSHCommand.IS_POSTGRES_SERVER_NAME_AVAILABLE, args, 2, err)) {
                 try {
                     out.println(
-                        connector.simpleAOClient.isPostgresServerNameAvailable(
+                        connector.getSimpleAOClient().isPostgresServerNameAvailable(
                             args[1],
                             args[2]
                         )
@@ -127,7 +127,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.RESTART_POSTGRESQL)) {
             if(AOSH.checkParamCount(AOSHCommand.RESTART_POSTGRESQL, args, 2, err)) {
-                connector.simpleAOClient.restartPostgreSQL(
+                connector.getSimpleAOClient().restartPostgreSQL(
                     args[1],
                     args[2]
                 );
@@ -135,7 +135,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.START_POSTGRESQL)) {
             if(AOSH.checkParamCount(AOSHCommand.START_POSTGRESQL, args, 2, err)) {
-                connector.simpleAOClient.startPostgreSQL(
+                connector.getSimpleAOClient().startPostgreSQL(
                     args[1],
                     args[2]
                 );
@@ -143,7 +143,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.STOP_POSTGRESQL)) {
             if(AOSH.checkParamCount(AOSHCommand.STOP_POSTGRESQL, args, 2, err)) {
-                connector.simpleAOClient.stopPostgreSQL(
+                connector.getSimpleAOClient().stopPostgreSQL(
                     args[1],
                     args[2]
                 );
@@ -151,7 +151,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_POSTGRES_SERVER_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_POSTGRES_SERVER_REBUILD, args, 1, err)) {
-                connector.simpleAOClient.waitForPostgresServerRebuild(args[1]);
+                connector.getSimpleAOClient().waitForPostgresServerRebuild(args[1]);
             }
             return true;
 	}

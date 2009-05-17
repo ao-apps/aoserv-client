@@ -117,12 +117,12 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_TICKET, args, 11, err)) {
-                int pkey=connector.simpleAOClient.addTicket(
+                int pkey=connector.getSimpleAOClient().addTicket(
                     args[1],
                     args[2],
                     args[3],
                     args[4],
-                    args[5].length()==0?Ticket.NO_DEADLINE:AOSH.parseDate(args[5], "deadline"),
+                    args[5].length()==0?-1:AOSH.parseDate(args[5], "deadline"),
                     args[6],
                     args[7],
                     args[8],
@@ -136,7 +136,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET_WORK)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_TICKET_WORK, args, 3, err)) {
-                connector.simpleAOClient.addTicketWork(
+                connector.getSimpleAOClient().addTicketWork(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3]
@@ -145,7 +145,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.BOUNCE_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.BOUNCE_TICKET, args, 3, err)) {
-                connector.simpleAOClient.bounceTicket(
+                connector.getSimpleAOClient().bounceTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3]
@@ -154,7 +154,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_ADMIN_PRIORITY)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_ADMIN_PRIORITY, args, 4, err)) {
-                connector.simpleAOClient.changeTicketAdminPriority(
+                connector.getSimpleAOClient().changeTicketAdminPriority(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3],
@@ -164,7 +164,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_CLIENT_PRIORITY)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_CLIENT_PRIORITY, args, 4, err)) {
-                connector.simpleAOClient.changeTicketClientPriority(
+                connector.getSimpleAOClient().changeTicketClientPriority(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3],
@@ -174,9 +174,9 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_DEADLINE)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_DEADLINE, args, 4, err)) {
-                connector.simpleAOClient.changeTicketDeadline(
+                connector.getSimpleAOClient().changeTicketDeadline(
                     AOSH.parseInt(args[1], "ticket_id"),
-                    args[2].length()==0?Ticket.NO_DEADLINE:AOSH.parseDate(args[2], "deadline"),
+                    args[2].length()==0?-1:AOSH.parseDate(args[2], "deadline"),
                     args[3],
                     args[4]
                 );
@@ -184,7 +184,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_TECHNOLOGY)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_TECHNOLOGY, args, 4, err)) {
-                connector.simpleAOClient.changeTicketTechnology(
+                connector.getSimpleAOClient().changeTicketTechnology(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3],
@@ -194,7 +194,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_TYPE)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_TYPE, args, 4, err)) {
-                connector.simpleAOClient.changeTicketType(
+                connector.getSimpleAOClient().changeTicketType(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3],
@@ -204,7 +204,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.COMPLETE_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.COMPLETE_TICKET, args, 3, err)) {
-                connector.simpleAOClient.completeTicket(
+                connector.getSimpleAOClient().completeTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3]
@@ -213,7 +213,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.HOLD_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.HOLD_TICKET, args, 2, err)) {
-                connector.simpleAOClient.holdTicket(
+                connector.getSimpleAOClient().holdTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2]
                 );
@@ -221,7 +221,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.KILL_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.KILL_TICKET, args, 3, err)) {
-                connector.simpleAOClient.killTicket(
+                connector.getSimpleAOClient().killTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3]
@@ -230,7 +230,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
     	} else if(command.equalsIgnoreCase(AOSHCommand.REACTIVATE_TICKET)) {
             if(AOSH.checkParamCount(AOSHCommand.REACTIVATE_TICKET, args, 3, err)) {
-                connector.simpleAOClient.reactivateTicket(
+                connector.getSimpleAOClient().reactivateTicket(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3]

@@ -180,7 +180,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.DECLINE_CREDIT_CARD)) {
             if(AOSH.checkParamCount(AOSHCommand.DECLINE_CREDIT_CARD, args, 2, err)) {
-                connector.simpleAOClient.declineCreditCard(
+                connector.getSimpleAOClient().declineCreditCard(
                     AOSH.parseInt(args[1], "pkey"),
                     args[2]
                 );
@@ -188,7 +188,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_CREDIT_CARD)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_CREDIT_CARD, args, 1, err)) {
-                connector.simpleAOClient.removeCreditCard(
+                connector.getSimpleAOClient().removeCreditCard(
                     AOSH.parseInt(args[1], "pkey")
                 );
             }

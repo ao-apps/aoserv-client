@@ -81,7 +81,7 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
         if(command.equalsIgnoreCase(AOSHCommand.ADD_FILE_BACKUP_SETTING)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_FILE_BACKUP_SETTING, args, 3, err)) {
                 out.println(
-                    connector.simpleAOClient.addFileBackupSetting(
+                    connector.getSimpleAOClient().addFileBackupSetting(
                         AOSH.parseInt(args[1], "replication"),
                         args[2],
                         AOSH.parseBoolean(args[3], "backup_enabled")
@@ -92,7 +92,7 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_FILE_BACKUP_SETTING)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_FILE_BACKUP_SETTING, args, 2, err)) {
-                connector.simpleAOClient.removeFileBackupSetting(
+                connector.getSimpleAOClient().removeFileBackupSetting(
                     AOSH.parseInt(args[1], "replication"),
                     args[2]
                 );
@@ -100,7 +100,7 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_FILE_BACKUP_SETTING)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_FILE_BACKUP_SETTING, args, 3, err)) {
-                connector.simpleAOClient.setFileBackupSetting(
+                connector.getSimpleAOClient().setFileBackupSetting(
                     AOSH.parseInt(args[1], "replication"),
                     args[2],
                     AOSH.parseBoolean(args[3], "backup_enabled")

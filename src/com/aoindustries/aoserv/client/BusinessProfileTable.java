@@ -149,7 +149,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_PROFILE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_PROFILE, args, 16, err)) {
                 try {
-                    connector.simpleAOClient.addBusinessProfile(
+                    connector.getSimpleAOClient().addBusinessProfile(
                         args[1],
                         args[2],
                         AOSH.parseBoolean(args[3], "is_secure"),

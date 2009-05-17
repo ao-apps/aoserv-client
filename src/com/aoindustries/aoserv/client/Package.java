@@ -164,7 +164,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return created;
     }
 
-    public BusinessAdministrator getCreatedBy() throws SQLException {
+    public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
 	BusinessAdministrator createdByObject = table.connector.getUsernames().get(created_by).getBusinessAdministrator();
 	if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
 	return createdByObject;

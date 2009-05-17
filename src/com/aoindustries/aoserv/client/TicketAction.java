@@ -46,7 +46,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     private boolean rawEmailLoaded;
     private String raw_email;
 
-    Object getColumnImpl(int i) {
+    Object getColumnImpl(int i) throws IOException, SQLException {
         switch(i) {
             case COLUMN_PKEY: return pkey;
             case COLUMN_TICKET: return ticket;
@@ -68,7 +68,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return t;
     }
 
-    public BusinessAdministrator getBusinessAdministrator() {
+    public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
         Username un=table.connector.getUsernames().get(administrator);
         if(un==null) return null;
         return un.getBusinessAdministrator();
@@ -84,7 +84,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return type;
     }
 
-    synchronized public String getOldValue() {
+    synchronized public String getOldValue() throws IOException, SQLException {
         if(!oldValueLoaded) {
             old_value = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
             oldValueLoaded = true;
@@ -100,7 +100,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return summary;
     }
 
-    synchronized public String getDetails() {
+    synchronized public String getDetails() throws IOException, SQLException {
         if(!detailsLoaded) {
             details = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_ACTION_DETAILS, pkey);
             detailsLoaded = true;
@@ -108,7 +108,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return details;
     }
 
-    synchronized public String getRawEmail() {
+    synchronized public String getRawEmail() throws IOException, SQLException {
         if(!rawEmailLoaded) {
             raw_email = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_ACTION_RAW_EMAIL, pkey);
             rawEmailLoaded = true;

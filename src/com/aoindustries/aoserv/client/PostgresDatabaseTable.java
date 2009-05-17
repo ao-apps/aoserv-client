@@ -107,7 +107,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_POSTGRES_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_POSTGRES_DATABASE, args, 5, err)) {
-                int pkey=connector.simpleAOClient.addPostgresDatabase(
+                int pkey=connector.getSimpleAOClient().addPostgresDatabase(
                     args[1],
                     args[2],
                     args[3],
@@ -122,7 +122,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_POSTGRES_DATABASE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_POSTGRES_DATABASE_NAME, args, 1, err)) {
                 try {
-                    connector.simpleAOClient.checkPostgresDatabaseName(args[1]);
+                    connector.getSimpleAOClient().checkPostgresDatabaseName(args[1]);
                     out.println("true");
                     out.flush();
                 } catch(IllegalArgumentException iae) {
@@ -135,7 +135,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	} else if(command.equalsIgnoreCase(AOSHCommand.DUMP_POSTGRES_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.DUMP_POSTGRES_DATABASE, args, 3, err)) {
                 try {
-                    connector.simpleAOClient.dumpPostgresDatabase(args[1], args[2], args[3], out);
+                    connector.getSimpleAOClient().dumpPostgresDatabase(args[1], args[2], args[3], out);
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.DUMP_POSTGRES_DATABASE+": ");
@@ -146,7 +146,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_POSTGRES_DATABASE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_POSTGRES_DATABASE_NAME, args, 2, err)) {
-                out.println(connector.simpleAOClient.generatePostgresDatabaseName(args[1], args[2]));
+                out.println(connector.getSimpleAOClient().generatePostgresDatabaseName(args[1], args[2]));
                 out.flush();
             }
             return true;
@@ -154,7 +154,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
             if(AOSH.checkParamCount(AOSHCommand.IS_POSTGRES_DATABASE_NAME_AVAILABLE, args, 3, err)) {
                 try {
                     out.println(
-                        connector.simpleAOClient.isPostgresDatabaseNameAvailable(
+                        connector.getSimpleAOClient().isPostgresDatabaseNameAvailable(
                             args[1],
                             args[2],
                             args[3]
@@ -170,12 +170,12 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_POSTGRES_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_POSTGRES_DATABASE, args, 3, err)) {
-                connector.simpleAOClient.removePostgresDatabase(args[1], args[2], args[3]);
+                connector.getSimpleAOClient().removePostgresDatabase(args[1], args[2], args[3]);
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_POSTGRES_DATABASE_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_POSTGRES_DATABASE_REBUILD, args, 1, err)) {
-                connector.simpleAOClient.waitForPostgresDatabaseRebuild(args[1]);
+                connector.getSimpleAOClient().waitForPostgresDatabaseRebuild(args[1]);
             }
             return true;
 	}

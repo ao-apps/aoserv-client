@@ -249,7 +249,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         out.writeLong(completed_time);
     }
 
-    public Brand getBrand() throws SQLException {
+    public Brand getBrand() throws SQLException, IOException {
         Brand br = table.connector.getBrands().get(brand);
         if(br == null) throw new SQLException("Unable to find Brand: " + brand);
         return br;

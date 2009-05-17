@@ -130,7 +130,7 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
                 String[] altHostnames=new String[args.length-14];
                 System.arraycopy(args, 14, altHostnames, 0, args.length-14);
                 out.println(
-                    connector.simpleAOClient.addHttpdTomcatSharedSite(
+                    connector.getSimpleAOClient().addHttpdTomcatSharedSite(
                         args[1],
                         args[2],
                         args[3],

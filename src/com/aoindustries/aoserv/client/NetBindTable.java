@@ -184,7 +184,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_NET_BIND)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_NET_BIND, args, 9, err)) {
-                connector.simpleAOClient.addNetBind(
+                connector.getSimpleAOClient().addNetBind(
                     args[1],
                     args[2],
                     args[3],
@@ -199,14 +199,14 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_NET_BIND)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_NET_BIND, args, 1, err)) {
-                connector.simpleAOClient.removeNetBind(
+                connector.getSimpleAOClient().removeNetBind(
                     AOSH.parseInt(args[1], "pkey")
                 );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_NET_BIND_MONITORING_ENABLED)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_NET_BIND_MONITORING_ENABLED, args, 2, err)) {
-                connector.simpleAOClient.setNetBindMonitoringEnabled(
+                connector.getSimpleAOClient().setNetBindMonitoringEnabled(
                     AOSH.parseInt(args[1], "pkey"),
                     AOSH.parseBoolean(args[2], "enabled")
                 );
@@ -214,7 +214,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_NET_BIND_OPEN_FIREWALL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_NET_BIND_OPEN_FIREWALL, args, 2, err)) {
-                connector.simpleAOClient.setNetBindOpenFirewall(
+                connector.getSimpleAOClient().setNetBindOpenFirewall(
                     AOSH.parseInt(args[1], "pkey"),
                     AOSH.parseBoolean(args[2], "open_firewall")
                 );

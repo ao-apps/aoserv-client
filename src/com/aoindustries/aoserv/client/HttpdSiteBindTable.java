@@ -79,7 +79,7 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
 	if(command.equalsIgnoreCase(AOSHCommand.DISABLE_HTTPD_SITE_BIND)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_HTTPD_SITE_BIND, args, 2, err)) {
                 out.println(
-                    connector.simpleAOClient.disableHttpdSiteBind(
+                    connector.getSimpleAOClient().disableHttpdSiteBind(
                         AOSH.parseInt(args[1], "pkey"),
                         args[2]
                     )
@@ -89,12 +89,12 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_HTTPD_SITE_BIND)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_HTTPD_SITE_BIND, args, 1, err)) {
-                connector.simpleAOClient.enableHttpdSiteBind(AOSH.parseInt(args[1], "pkey"));
+                connector.getSimpleAOClient().enableHttpdSiteBind(AOSH.parseInt(args[1], "pkey"));
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_BIND_IS_MANUAL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_BIND_IS_MANUAL, args, 2, err)) {
-                connector.simpleAOClient.setHttpdSiteBindIsManual(
+                connector.getSimpleAOClient().setHttpdSiteBindIsManual(
                     AOSH.parseInt(args[1], "pkey"),
                     AOSH.parseBoolean(args[2], "is_manual")
                 );
@@ -102,7 +102,7 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, args, 2, err)) {
-                connector.simpleAOClient.setHttpdSiteBindRedirectToPrimaryHostname(
+                connector.getSimpleAOClient().setHttpdSiteBindRedirectToPrimaryHostname(
                     AOSH.parseInt(args[1], "pkey"),
                     AOSH.parseBoolean(args[2], "redirect_to_primary_hostname")
                 );

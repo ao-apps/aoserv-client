@@ -167,7 +167,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_DNS_ZONE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_DNS_ZONE, args, 4, err)) {
-                connector.simpleAOClient.addDNSZone(
+                connector.getSimpleAOClient().addDNSZone(
                     args[1],
                     args[2],
                     args[3],
@@ -178,7 +178,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_DNS_ZONE)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_DNS_ZONE, args, 1, err)) {
                 try {
-                    connector.simpleAOClient.checkDNSZone(
+                    connector.getSimpleAOClient().checkDNSZone(
                         args[1]
                     );
                     out.println("true");
@@ -192,7 +192,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_DNS_ZONE_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_DNS_ZONE_AVAILABLE, args, 1, err)) {
                 try {
-                    out.println(connector.simpleAOClient.isDNSZoneAvailable(args[1]));
+                    out.println(connector.getSimpleAOClient().isDNSZoneAvailable(args[1]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_DNS_ZONE_AVAILABLE+": ");
@@ -203,7 +203,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.PRINT_ZONE_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.PRINT_ZONE_FILE, args, 1, err)) {
-                connector.simpleAOClient.printZoneFile(
+                connector.getSimpleAOClient().printZoneFile(
                     args[1],
                     out
                 );
@@ -212,14 +212,14 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_DNS_ZONE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_DNS_ZONE, args, 1, err)) {
-                connector.simpleAOClient.removeDNSZone(
+                connector.getSimpleAOClient().removeDNSZone(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_DNS_ZONE_TTL)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_DNS_ZONE, args, 2, err)) {
-                connector.simpleAOClient.setDNSZoneTTL(
+                connector.getSimpleAOClient().setDNSZoneTTL(
                     args[1],
                     AOSH.parseInt(args[2], "ttl")
                 );

@@ -22,7 +22,7 @@ final public class SignupRequestOptionTable extends CachedTableIntegerKey<Signup
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(SignupRequestOption.COLUMN_REQUEST_name+'.'+SignupRequest.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(SignupRequestOption.COLUMN_REQUEST_name+'.'+SignupRequest.COLUMN_BRAND_name, ASCENDING),
         new OrderBy(SignupRequestOption.COLUMN_REQUEST_name+'.'+SignupRequest.COLUMN_TIME_name, ASCENDING),
         new OrderBy(SignupRequestOption.COLUMN_NAME_name, ASCENDING)
     };

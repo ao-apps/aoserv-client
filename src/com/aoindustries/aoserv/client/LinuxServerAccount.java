@@ -301,7 +301,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         return home;
     }
 
-    public LinuxAccount getLinuxAccount() throws SQLException {
+    public LinuxAccount getLinuxAccount() throws SQLException, IOException {
         Username usernameObj=table.connector.getUsernames().get(username);
         if(usernameObj==null) throw new SQLException("Unable to find Username: "+username);
         LinuxAccount linuxAccountObject = usernameObj.getLinuxAccount();
@@ -642,7 +642,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         }
     }
 
-    public boolean canSetPassword() throws SQLException {
+    public boolean canSetPassword() throws IOException, SQLException {
         return disable_log==-1 && getLinuxAccount().canSetPassword();
     }
     
