@@ -33,18 +33,16 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
         return defaultOrderBy;
     }
 
-    int addTicket(
+    public int addTicket(
         Business business,
-        BusinessAdministrator businessAdministratorObj,
-        String ticket_type,
+        Language language,
+        TicketCategory category,
+        TicketType ticketType,
+        String summary,
         String details,
-        long deadline,
-        String client_priority,
-        String admin_priority,
-        String technology,
-        BusinessAdministrator assigned_to,
-        String contact_emails,
-        String contact_phone_numbers
+        TicketPriority clientPriority,
+        String contactEmails,
+        String contactPhoneNumbers
     ) throws IOException, SQLException {
         int pkey;
         IntList invalidateList;
@@ -53,17 +51,15 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             CompressedDataOutputStream out=connection.getOutputStream();
             out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
             out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
-            out.writeBoolean(business!=null); if(business!=null) out.writeUTF(business.pkey);
-            out.writeUTF(businessAdministratorObj.pkey);
-            out.writeUTF(ticket_type);
-            out.writeUTF(details);
-            out.writeLong(deadline);
-            out.writeUTF(client_priority);
-            out.writeUTF(admin_priority==null ? "" : admin_priority);
-            out.writeBoolean(technology!=null); if(technology!=null) out.writeUTF(technology);
-            out.writeBoolean(assigned_to!=null); if(assigned_to!=null) out.writeUTF(assigned_to.pkey);
-            out.writeUTF(contact_emails);
-            out.writeUTF(contact_phone_numbers);
+            out.writeNullUTF(business==null ? null : business.pkey);
+            out.writeUTF(language.pkey);
+            out.writeCompressedInt(category==null ? -1 : category.pkey);
+            out.writeUTF(ticketType.pkey);
+            out.writeUTF(summary);
+            out.writeNullLongUTF(details);
+            out.writeUTF(clientPriority.pkey);
+            out.writeUTF(contactEmails);
+            out.writeUTF(contactPhoneNumbers);
             out.flush();
 
             CompressedDataInputStream in=connection.getInputStream();
@@ -105,19 +101,17 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET)) {
-            if(AOSH.checkParamCount(AOSHCommand.ADD_TICKET, args, 11, err)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_TICKET, args, 9, err)) {
                 int pkey=connector.getSimpleAOClient().addTicket(
                     args[1],
                     args[2],
                     args[3],
                     args[4],
-                    args[5].length()==0?-1:AOSH.parseDate(args[5], "deadline"),
+                    args[5],
                     args[6],
                     args[7],
                     args[8],
-                    args[9].length()==0?null:args[9],
-                    args[10],
-                    args[11]
+                    args[9]
                 );
                 out.println(pkey);
                 out.flush();
@@ -154,26 +148,6 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
     	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_CLIENT_PRIORITY)) {
             if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_CLIENT_PRIORITY, args, 4, err)) {
                 connector.getSimpleAOClient().changeTicketClientPriority(
-                    AOSH.parseInt(args[1], "ticket_id"),
-                    args[2],
-                    args[3],
-                    args[4]
-                );
-            }
-            return true;
-    	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_DEADLINE)) {
-            if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_DEADLINE, args, 4, err)) {
-                connector.getSimpleAOClient().changeTicketDeadline(
-                    AOSH.parseInt(args[1], "ticket_id"),
-                    args[2].length()==0?-1:AOSH.parseDate(args[2], "deadline"),
-                    args[3],
-                    args[4]
-                );
-            }
-            return true;
-    	} else if(command.equalsIgnoreCase(AOSHCommand.CHANGE_TICKET_TECHNOLOGY)) {
-            if(AOSH.checkParamCount(AOSHCommand.CHANGE_TICKET_TECHNOLOGY, args, 4, err)) {
-                connector.getSimpleAOClient().changeTicketTechnology(
                     AOSH.parseInt(args[1], "ticket_id"),
                     args[2],
                     args[3],

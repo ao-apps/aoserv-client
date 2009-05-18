@@ -9,6 +9,7 @@ import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.ErrorHandler;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StandardErrorHandler;
+import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -163,6 +164,12 @@ final public class SimpleAOClient {
         return ia;
     }
 
+    private Language getLanguage(String code) throws IllegalArgumentException, IOException, SQLException {
+        Language la = connector.getLanguages().get(code);
+        if(la==null) throw new IllegalArgumentException("Unable to find Language: "+code);
+        return la;
+    }
+
     private LinuxAccount getLinuxAccount(String username) throws IllegalArgumentException, IOException, SQLException {
         LinuxAccount la=getUsername(username).getLinuxAccount();
         if(la==null) throw new IllegalArgumentException("Unable to find LinuxAccount: "+username);
@@ -283,6 +290,35 @@ final public class SimpleAOClient {
         ServerFarm sf=connector.getServerFarms().get(name);
         if(sf==null) throw new IllegalArgumentException("Unable to find ServerFarm: "+name);
         return sf;
+    }
+
+    /**
+     * Gets the ticket category in "/ path" form.
+     */
+    private TicketCategory getTicketCategory(String path) throws IllegalArgumentException, IOException, SQLException {
+        TicketCategory tc = null;
+        for(String name : StringUtility.splitString(path, '/')) {
+            TicketCategory newTc = connector.getTicketCategories().getTicketCategory(tc, name);
+            if(newTc==null) {
+                if(tc==null) throw new IllegalArgumentException("Unable to find top-level TicketCategory: "+name);
+                else throw new IllegalArgumentException("Unable to TicketCategory: "+name+" in "+tc);
+            }
+            tc = newTc;
+        }
+        if(tc==null) throw new IllegalArgumentException("Unable to find TicketCategory: "+path);
+        return tc;
+    }
+
+    private TicketPriority getTicketPriority(String priority) throws IllegalArgumentException, IOException, SQLException {
+        TicketPriority tp = connector.getTicketPriorities().get(priority);
+        if(tp==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
+        return tp;
+    }
+
+    private TicketType getTicketType(String type) throws IllegalArgumentException, IOException, SQLException {
+        TicketType tt = connector.getTicketTypes().get(type);
+        if(tt==null) throw new IllegalArgumentException("Unable to find TicketType: "+type);
+        return tt;
     }
 
     private Username getUsername(String username) throws IllegalArgumentException, IOException, SQLException {
@@ -418,7 +454,8 @@ final public class SimpleAOClient {
         String city,
         String state,
         String country,
-        String zip
+        String zip,
+        boolean enableEmailSupport
     ) throws IllegalArgumentException, IOException, SQLException {
         Username usernameObj=getUsername(username);
         checkBusinessAdministratorUsername(username);
@@ -437,7 +474,8 @@ final public class SimpleAOClient {
             city,
             state,
             country,
-            zip
+            zip,
+            enableEmailSupport
         );
     }
 
@@ -2192,55 +2230,25 @@ final public class SimpleAOClient {
      */
     public int addTicket(
         String accounting,
-        String business_administrator,
-        String ticket_type,
+        String language,
+        String category,
+        String ticketType,
+        String summary,
         String details,
-        long deadline,
-        String client_priority,
-        String admin_priority,
-        String technology,
-        String assigned_to,
-        String contact_emails,
-        String contact_phone_numbers
+        String clientPriority,
+        String contactEmails,
+        String contactPhoneNumbers
     ) throws IllegalArgumentException, IOException, SQLException {
-        Business business;
-        if(accounting==null || accounting.length()==0) business=null;
-        else business=getBusiness(accounting);
-        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-        if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
-        TicketType tt=connector.getTicketTypes().get(ticket_type);
-        if(tt==null) throw new IllegalArgumentException("Unable to find TicketType: "+ticket_type);
-        TicketPriority clp=connector.getTicketPriorities().get(client_priority);
-        if(clp==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+client_priority);
-        TicketPriority adp;
-        if(admin_priority==null || admin_priority.length()==0) adp=null;
-        else {
-            adp=connector.getTicketPriorities().get(admin_priority);
-            if(adp==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+admin_priority);
-        }
-        TechnologyName tn;
-        if(technology!=null && technology.length()>0) {
-            tn=connector.getTechnologyNames().get(technology);
-            if(tn==null) throw new IllegalArgumentException("Unable to find TechnologyName: "+technology);
-        } else tn=null;
-        BusinessAdministrator assignedBA;
-        if(assigned_to==null) assignedBA=null;
-        else {
-            assignedBA=connector.getBusinessAdministrators().get(assigned_to);
-            if(assignedBA==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+assigned_to);
-        }
-
-        return pe.addTicket(
-            business,
-            ticket_type,
-            details,
-            deadline,
-            client_priority,
-            admin_priority,
-            tn==null?null:tn.pkey,
-            assignedBA,
-            contact_emails,
-            contact_phone_numbers
+        return connector.getTickets().addTicket(
+            (accounting==null || accounting.length()==0) ? null : getBusiness(accounting),
+            getLanguage(language),
+            (category==null || category.length()==0) ? null : getTicketCategory(category),
+            getTicketType(ticketType),
+            summary,
+            (details==null || details.length()==0) ? null : details,
+            getTicketPriority(clientPriority),
+            contactEmails,
+            contactPhoneNumbers
         );
     }
 
@@ -2596,79 +2604,6 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeClientPriority(pr, pe, comments);
-    }
-
-    /**
-     * Changes the deadline of a <code>Ticket</code>.
-     *
-     * @param  ticket_id  the pkey of the <code>Ticket</code>
-     * @param  deadline  the new deadline or <code>Ticket.NO_DEADLINE</code> for none
-     * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
-     *					making the change
-     * @param  comments  the details of the change
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code> or
-     *					<code>BusinessAdministrator</code>
-     *
-     * @see  Ticket#actChangeDeadline
-     * @see  Ticket#NO_DEADLINE
-     * @see  #addTicket
-     * @see  TicketPriority
-     * @see  Action
-     */
-    public void changeTicketDeadline(
-        int ticket_id,
-        long deadline,
-        String business_administrator,
-        String comments
-    ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.getTickets().get(ticket_id);
-        if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-        if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
-        ti.actChangeDeadline(deadline, pe, comments);
-    }
-
-    /**
-     * Changes the technology associated with a <code>Ticket</code>.
-     *
-     * @param  ticket_id  the pkey of the <code>Ticket</code>
-     * @param  technology  the name of the new <code>TechnologyName</code> or <code>null</code> for none
-     * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
-     *					making the change
-     * @param  comments  the details of the change
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code>,
-     *					<code>TechnologyName</code>, or <code>BusinessAdministrator</code>
-     *
-     * @see  Ticket#actChangeTechnology
-     * @see  TechnologyName
-     * @see  #addTicket
-     * @see  TicketPriority
-     * @see  Action
-     */
-    public void changeTicketTechnology(
-        int ticket_id,
-        String technology,
-        String business_administrator,
-        String comments
-    ) throws IllegalArgumentException, IOException, SQLException {
-        Ticket ti=connector.getTickets().get(ticket_id);
-        if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-        TechnologyName tn;
-        if(technology!=null && technology.length()>0) {
-            tn=connector.getTechnologyNames().get(technology);
-            if(tn==null) throw new IllegalArgumentException("Unable to find TechnologyName: "+technology);
-        } else tn=null;
-        BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-        if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
-        ti.actChangeTechnology(tn, pe, comments);
     }
 
     /**

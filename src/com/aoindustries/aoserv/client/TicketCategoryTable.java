@@ -41,4 +41,23 @@ final public class TicketCategoryTable extends CachedTableIntegerKey<TicketCateg
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.TICKET_CATEGORIES;
     }
+
+    /**
+     * Gets the category with the provided parent and name.
+     * Parent may be <code>null</code> for top-level categories.
+     */
+    public TicketCategory getTicketCategory(TicketCategory parent, String name) throws IOException, SQLException {
+        if(parent==null) {
+            // Search all top-level
+            for(TicketCategory tc : getRows()) {
+                if(tc.parent==-1 && tc.name.equals(name)) return tc;
+            }
+        } else {
+            // Use indexing from above
+            for(TicketCategory child : getChildrenCategories(parent)) {
+                if(child.name.equals(name)) return child;
+            }
+        }
+        return null;
+    }
 }

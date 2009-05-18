@@ -72,59 +72,6 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
-    public int addTicket(
-	Business business,
-	TicketType ticket_typeObj,
-	String details,
-	long deadline,
-	TicketPriority client_priorityObj,
-	TicketPriority admin_priorityObj,
-	TechnologyName technologyObj,
-        BusinessAdministrator assignedTo,
-        String contact_emails,
-        String contact_phone_numbers
-    ) throws IOException, SQLException {
-	return addTicket(
-            business,
-            ticket_typeObj.pkey,
-            details,
-            deadline,
-            client_priorityObj.pkey,
-            admin_priorityObj==null ? null : admin_priorityObj.pkey,
-            technologyObj==null?null:technologyObj.pkey,
-            assignedTo,
-            contact_emails,
-            contact_phone_numbers
-	);
-    }
-
-    public int addTicket(
-	Business business,
-	String ticket_type,
-	String details,
-	long deadline,
-	String client_priority,
-	String admin_priority,
-	String technology,
-        BusinessAdministrator assignedTo,
-        String contact_emails,
-        String contact_phone_numbers
-    ) throws IOException, SQLException {
-	return table.connector.getTickets().addTicket(
-            business,
-            this,
-            ticket_type,
-            details,
-            deadline,
-            client_priority,
-            admin_priority,
-            technology,
-            assignedTo,
-            contact_emails,
-            contact_phone_numbers
-        );
-    }
-
     public boolean canDisable() throws SQLException, IOException {
         return disable_log==-1 && !equals(table.connector.getThisBusinessAdministrator());
     }
@@ -151,7 +98,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
-	return checkPassword(userLocale, pkey, password);
+        return checkPassword(userLocale, pkey, password);
     }
 
     /**

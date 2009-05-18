@@ -173,15 +173,20 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         TEST_CONNECTION,
         // Other commands
         ADD_FILE_BACKUPS,
-        BACKUP_INTERBASE_DATABASE,
-        BACKUP_MYSQL_DATABASE,
-        BACKUP_POSTGRES_DATABASE,
+        @Deprecated
+        UNUSED_BACKUP_INTERBASE_DATABASE, // No longer used
+        @Deprecated
+        UNUSED_BACKUP_MYSQL_DATABASE, // No longer used
+        @Deprecated
+        UNUSED_BACKUP_POSTGRES_DATABASE, // No longer used
         BOUNCE_TICKET,
         CANCEL_BUSINESS,
         CHANGE_TICKET_ADMIN_PRIORITY,
         CHANGE_TICKET_CLIENT_PRIORITY,
-        CHANGE_TICKET_DEADLINE,
-        CHANGE_TICKET_TECHNOLOGY,
+        @Deprecated
+        UNUSED_CHANGE_TICKET_DEADLINE, // No longer used
+        @Deprecated
+        UNUSED_CHANGE_TICKET_TECHNOLOGY, // No longer used
         CHANGE_TICKET_TYPE,
         COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD,
         COMPLETE_TICKET,
@@ -189,7 +194,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         COPY_LINUX_SERVER_ACCOUNT_PASSWORD,
         CREDIT_CARD_DECLINED,
         DISABLE,
-        DUMP_INTERBASE_DATABASE,
+        @Deprecated
+        UNUSED_DUMP_INTERBASE_DATABASE, // No longer used
         DUMP_MYSQL_DATABASE,
         DUMP_POSTGRES_DATABASE,
         ENABLE,
@@ -200,8 +206,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         FIND_OR_ADD_BACKUP_DATAS,
         FLAG_FILE_BACKUPS_AS_DELETED,
         GENERATE_ACCOUNTING_CODE,
-        GENERATE_INTERBASE_DATABASE_NAME,
-        GENERATE_INTERBASE_DB_GROUP_NAME,
+        @Deprecated
+        UNUSED_GENERATE_INTERBASE_DATABASE_NAME, // No longer used
+        @Deprecated
+        UNUSED_GENERATE_INTERBASE_DB_GROUP_NAME, // No longer used
         GENERATE_MYSQL_DATABASE_NAME,
         GENERATE_PACKAGE_NAME,
         GENERATE_POSTGRES_DATABASE_NAME,
@@ -209,11 +217,15 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GENERATE_SITE_NAME,
         GET_ACCOUNT_BALANCE_BEFORE,
         GET_ACCOUNT_BALANCE,
-        GET_ACTIONS_TICKET,
+        @Deprecated
+        UNUSED_GET_ACTIONS_TICKET, // No longer used
         GET_AUTORESPONDER_CONTENT,
-        GET_BACKUP_DATA,
-        GET_BACKUP_DATA_PKEYS,
-        GET_BACKUP_DATAS_PKEYS,
+        @Deprecated
+        UNUSED_GET_BACKUP_DATA, // No longer used
+        @Deprecated
+        UNUSED_GET_BACKUP_DATA_PKEYS, // No longer used
+        @Deprecated
+        UNUSED_GET_BACKUP_DATAS_PKEYS, // No longer used
         GET_BACKUP_PARTITION_DISK_TOTAL_SIZE,
         GET_BACKUP_PARTITION_DISK_USED_SIZE,
         GET_BANK_TRANSACTIONS_ACCOUNT,
@@ -222,12 +234,18 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_CONFIRMED_ACCOUNT_BALANCE,
         GET_CRON_TABLE,
         GET_EMAIL_LIST_ADDRESS_LIST,
-        GET_FILE_BACKUPS_PKEYS,
-        GET_FILE_BACKUPS_SERVER,
-        GET_FILE_BACKUP_CHILDREN,
-        GET_FILE_BACKUP_SET_SERVER,
-        GET_FILE_BACKUP_VERSIONS,
-        GET_FILENAME_FOR_BACKUP_DATA,
+        @Deprecated
+        UNUSED_GET_FILE_BACKUPS_PKEYS, // No longer used
+        @Deprecated
+        UNUSED_GET_FILE_BACKUPS_SERVER, // No longer used
+        @Deprecated
+        UNUSED_GET_FILE_BACKUP_CHILDREN, // No longer used
+        @Deprecated
+        UNUSED_GET_FILE_BACKUP_SET_SERVER, // No longer used
+        @Deprecated
+        UNUSED_GET_FILE_BACKUP_VERSIONS, // No longer used
+        @Deprecated
+        UNUSED_GET_FILENAME_FOR_BACKUP_DATA, // No longer used
         GET_INBOX_ATTRIBUTES,
         GET_LATEST_FILE_BACKUP_SET,
         GET_MAJORDOMO_INFO_FILE,
@@ -236,19 +254,25 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_PENDING_PAYMENTS,
         GET_ROOT_BUSINESS,
         GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY,
-        GET_TICKETS_BUSINESS_ADMINISTRATOR,
-        GET_TICKETS_BUSINESS,
+        @Deprecated
+        UNUSED_GET_TICKETS_BUSINESS_ADMINISTRATOR, // No longer used
+        @Deprecated
+        UNUSED_GET_TICKETS_BUSINESS, // No longer used
         GET_TRANSACTIONS_BUSINESS,
         GET_TRANSACTIONS_SEARCH,
         HOLD_TICKET,
+        @Deprecated
         UNUSED_INITIALIZE_HTTPD_SITE_PASSWD_FILE, // No longer used
         IS_ACCOUNTING_AVAILABLE,
         IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET,
         IS_DNS_ZONE_AVAILABLE,
         IS_EMAIL_DOMAIN_AVAILABLE,
-        IS_INTERBASE_DATABASE_NAME_AVAILABLE,
-        IS_INTERBASE_DB_GROUP_NAME_AVAILABLE,
-        IS_INTERBASE_SERVER_USER_PASSWORD_SET,
+        @Deprecated
+        UNUSED_IS_INTERBASE_DATABASE_NAME_AVAILABLE, // No longer used
+        @Deprecated
+        UNUSED_IS_INTERBASE_DB_GROUP_NAME_AVAILABLE, // No longer used
+        @Deprecated
+        UNUSED_IS_INTERBASE_SERVER_USER_PASSWORD_SET, // No longer used
         IS_LINUX_GROUP_NAME_AVAILABLE,
         IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET,
         IS_MYSQL_DATABASE_NAME_AVAILABLE,
@@ -264,19 +288,25 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         MOVE_IP_ADDRESS,
         REACTIVATE_TICKET,
         REFRESH_EMAIL_SMTP_RELAY,
-        REMOVE_EXPIRED_FILE_BACKUPS,
-        REMOVE_EXPIRED_MYSQL_BACKUPS,
-        REMOVE_EXPIRED_POSTGRES_BACKUPS,
-        REMOVE_UNUSED_BACKUP_DATAS,
+        @Deprecated
+        UNUSED_REMOVE_EXPIRED_FILE_BACKUPS, // No longer used
+        @Deprecated
+        UNUSED_REMOVE_EXPIRED_MYSQL_BACKUPS, // No longer used
+        @Deprecated
+        UNUSED_REMOVE_EXPIRED_POSTGRES_BACKUPS, // No longer used
+        @Deprecated
+        UNUSED_REMOVE_UNUSED_BACKUP_DATAS, // No longer used
         REQUEST_DAEMON_ACCESS,
         RESTART_APACHE,
         RESTART_CRON,
-        RESTART_INTERBASE,
+        @Deprecated
+        UNUSED_RESTART_INTERBASE, // No longer used
         RESTART_MYSQL,
         RESTART_POSTGRESQL,
         RESTART_XFS,
         RESTART_XVFB,
-        SEND_BACKUP_DATA,
+        @Deprecated
+        UNUSED_SEND_BACKUP_DATA, // No longer used
         SET_AUTORESPONDER,
         SET_BACKUP_RETENTION,
         SET_BUSINESS_ACCOUNTING,
@@ -293,7 +323,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         SET_HTTPD_SITE_IS_MANUAL,
         SET_HTTPD_SITE_SERVER_ADMIN,
         SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
-        SET_INTERBASE_SERVER_USER_PASSWORD,
+        @Deprecated
+        UNUSED_SET_INTERBASE_SERVER_USER_PASSWORD, // No longer used
         SET_IP_ADDRESS_DHCP_ADDRESS,
         SET_IP_ADDRESS_HOSTNAME,
         SET_IP_ADDRESS_PACKAGE,
@@ -320,7 +351,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         START_APACHE,
         START_CRON,
         START_DISTRO,
-        START_INTERBASE,
+        @Deprecated
+        UNUSED_START_INTERBASE, // No longer used
         START_JVM,
         START_MYSQL,
         START_POSTGRESQL,
@@ -328,7 +360,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         START_XVFB,
         STOP_APACHE,
         STOP_CRON,
-        STOP_INTERBASE,
+        @Deprecated
+        UNUSED_STOP_INTERBASE, // No longer used
         STOP_JVM,
         STOP_MYSQL,
         STOP_POSTGRESQL,
@@ -341,13 +374,19 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         ADD_BACKUP_SERVER,
         SET_NET_BIND_OPEN_FIREWALL,
         SET_NET_BIND_MONITORING,
-        GET_BACKUP_DATAS_FOR_BACKUP_PARTITION,
-        REMOVE_EXPIRED_INTERBASE_BACKUPS,
-        SET_INTERBASE_SERVER_USER_PREDISABLE_PASSWORD,
+        @Deprecated
+        UNUSED_GET_BACKUP_DATAS_FOR_BACKUP_PARTITION, // No longer used
+        @Deprecated
+        UNUSED_REMOVE_EXPIRED_INTERBASE_BACKUPS, // No longer used
+        @Deprecated
+        UNUSED_SET_INTERBASE_SERVER_USER_PREDISABLE_PASSWORD, // No longer used
         GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR,
-        GET_ACTIONS_BUSINESS_ADMINISTRATOR,
-        GET_TICKETS_CREATED_BUSINESS_ADMINISTRATOR,
-        GET_TICKETS_CLOSED_BUSINESS_ADMINISTRATOR,
+        @Deprecated
+        UNUSED_GET_ACTIONS_BUSINESS_ADMINISTRATOR, // No longer used
+        @Deprecated
+        UNUSED_GET_TICKETS_CREATED_BUSINESS_ADMINISTRATOR, // No longer used
+        @Deprecated
+        UNUSED_GET_TICKETS_CLOSED_BUSINESS_ADMINISTRATOR, // No longer used
         GET_MASTER_ENTROPY,
         GET_MASTER_ENTROPY_NEEDED,
         ADD_MASTER_ENTROPY,

@@ -42,21 +42,22 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     int disable_log;
 
     public void addBusinessAdministrator(
-	String name,
-	String title,
-	long birthday,
-	boolean isPrivate,
-	String workPhone,
-	String homePhone,
-	String cellPhone,
-	String fax,
-	String email,
-	String address1,
-	String address2,
-	String city,
-	String state,
-	String country,
-	String zip
+        String name,
+        String title,
+        long birthday,
+        boolean isPrivate,
+        String workPhone,
+        String homePhone,
+        String cellPhone,
+        String fax,
+        String email,
+        String address1,
+        String address2,
+        String city,
+        String state,
+        String country,
+        String zip,
+        boolean enableEmailSupport
     ) throws IOException, SQLException {
 	    table.connector.getBusinessAdministrators().addBusinessAdministrator(
             this,
@@ -74,30 +75,31 @@ final public class Username extends CachedObjectStringKey<Username> implements P
             city,
             state,
             country,
-            zip
-	);
+            zip,
+            enableEmailSupport
+    	);
     }
 
     public void addLinuxAccount(
         LinuxGroup primaryGroup,
-	String name,
-	String office_location,
-	String office_phone,
-	String home_phone,
-	LinuxAccountType typeObject,
-	Shell shellObject
+        String name,
+        String office_location,
+        String office_phone,
+        String home_phone,
+        LinuxAccountType typeObject,
+        Shell shellObject
     ) throws IOException, SQLException {
-	addLinuxAccount(primaryGroup.getName(), name, office_location, office_phone, home_phone, typeObject.pkey, shellObject.pkey);
+        addLinuxAccount(primaryGroup.getName(), name, office_location, office_phone, home_phone, typeObject.pkey, shellObject.pkey);
     }
 
     public void addLinuxAccount(
         String primaryGroup,
-	String name,
-	String office_location,
-	String office_phone,
-	String home_phone,
-	String type,
-	String shell
+        String name,
+        String office_location,
+        String office_phone,
+        String home_phone,
+        String type,
+        String shell
     ) throws IOException, SQLException {
 	    table.connector.getLinuxAccounts().addLinuxAccount(
             this,
@@ -108,7 +110,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
             home_phone,
             type,
             shell
-	);
+    	);
     }
 
     public void addMySQLUser() throws IOException, SQLException {

@@ -758,10 +758,14 @@ abstract public class AOServConnector {
     }
 
     private final SignupRequestOptionTable signupRequestOptions;
-    public SignupRequestOptionTable getSignupRequestOptions() {return signupRequestOptions;}
+    public SignupRequestOptionTable getSignupRequestOptions() {
+        return signupRequestOptions;
+    }
 
     private final SignupRequestTable signupRequests;
-    public SignupRequestTable getSignupRequests() {return signupRequests;}
+    public SignupRequestTable getSignupRequests() {
+        return signupRequests;
+    }
 
     private final SpamEmailMessageTable spamEmailMessages;
     public SpamEmailMessageTable getSpamEmailMessages() {
@@ -794,19 +798,29 @@ abstract public class AOServConnector {
     }
 
     private final TicketActionTypeTable ticketActionTypes;
-    public TicketActionTypeTable getTicketActionTypes() {return ticketActionTypes;}
+    public TicketActionTypeTable getTicketActionTypes() {
+        return ticketActionTypes;
+    }
 
     private final TicketActionTable ticketActions;
-    public TicketActionTable getTicketActions() {return ticketActions;}
+    public TicketActionTable getTicketActions() {
+        return ticketActions;
+    }
 
     private final TicketAssignmentTable ticketAssignments;
-    public TicketAssignmentTable getTicketAssignments() {return ticketAssignments;}
+    public TicketAssignmentTable getTicketAssignments() {
+        return ticketAssignments;
+    }
 
     private final TicketBrandCategoryTable ticketBrandCategories;
-    public TicketBrandCategoryTable getTicketBrandCategories() {return ticketBrandCategories;}
+    public TicketBrandCategoryTable getTicketBrandCategories() {
+        return ticketBrandCategories;
+    }
 
     private final TicketCategoryTable ticketCategories;
-    public TicketCategoryTable getTicketCategories() {return ticketCategories;}
+    public TicketCategoryTable getTicketCategories() {
+        return ticketCategories;
+    }
 
     private final TicketPriorityTable ticketPriorities;
     public TicketPriorityTable getTicketPriorities() {

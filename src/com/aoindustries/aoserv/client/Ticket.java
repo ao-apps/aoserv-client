@@ -303,39 +303,6 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_CLIENT_PRIORITY, pkey, priority.pkey, business_administrator.pkey, comments);
     }
 
-    public void actChangeDeadline(long deadline, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_DEADLINE, pkey, deadline, business_administrator.pkey, comments);
-    }
-
-    public void actChangeTechnology(TechnologyName technology, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out = connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.CHANGE_TICKET_TECHNOLOGY.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeBoolean(technology!=null);
-            if(technology!=null) out.writeUTF(technology.pkey);
-            out.writeUTF(business_administrator.pkey);
-            out.writeUTF(comments);
-            out.flush();
-
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
-            }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
-    }
-
     public void actChangeTicketType(TicketType ticket_type, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
     }

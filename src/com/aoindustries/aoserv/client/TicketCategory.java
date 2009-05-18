@@ -29,8 +29,8 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
     static final String COLUMN_PARENT_name = "parent";
     static final String COLUMN_NAME_name = "name";
 
-    private int parent;
-    private String name;
+    int parent;
+    String name;
 
     Object getColumnImpl(int i) {
         switch(i) {

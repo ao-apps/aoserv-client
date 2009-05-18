@@ -5,16 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * @see  BusinessAdministrator
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -48,7 +49,8 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
         String city,
         String state,
         String country,
-        String zip
+        String zip,
+        boolean enableEmailSupport
     ) throws IOException, SQLException {
         // Create the new profile
         IntList invalidateList;
@@ -83,6 +85,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
             out.writeBoolean(country!=null); if(country!=null) out.writeUTF(country);
             if(zip!=null && zip.length()==0) zip=null;
             out.writeBoolean(zip!=null); if(zip!=null) out.writeUTF(zip);
+            out.writeBoolean(enableEmailSupport);
             out.flush();
 
             CompressedDataInputStream in=connection.getInputStream();
@@ -117,7 +120,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_ADMINISTRATOR)) {
-            if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_ADMINISTRATOR, args, 16, err)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_ADMINISTRATOR, args, 17, err)) {
                 connector.getSimpleAOClient().addBusinessAdministrator(
                     args[1],
                     args[2],
@@ -134,7 +137,8 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
                     args[13],
                     args[14],
                     args[15],
-                    args[16]
+                    args[16],
+                    AOSH.parseBoolean(args[17], "enable_email_support")
                 );
             }
             return true;
