@@ -92,6 +92,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
             pkey
@@ -100,6 +101,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 
     void setAsPrimary() throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
             pkey
         );

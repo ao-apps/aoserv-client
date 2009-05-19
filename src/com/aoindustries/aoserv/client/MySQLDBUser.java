@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -218,11 +217,12 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DB_USERS,
             pkey
-	);
+    	);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

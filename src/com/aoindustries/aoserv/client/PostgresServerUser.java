@@ -38,7 +38,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     private String predisable_password;
 
     public int arePasswordsSet() throws IOException, SQLException {
-        return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+        return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
     public boolean canDisable() {
@@ -60,11 +60,11 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     }*/
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_SERVER_USERS, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -139,64 +139,62 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_SERVER_USERS,
             pkey
-	);
+    	);
     }
 
-    public void setPassword(String password) throws IOException, SQLException {
+    public void setPassword(final String password) throws IOException, SQLException {
         AOServConnector connector=table.connector;
         if(!connector.isSecure()) throw new IOException("Passwords for PostgreSQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PASSWORD.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeBoolean(password!=null); if(password!=null) out.writeUTF(password);
-            out.flush();
-
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code!=AOServProtocol.DONE) {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+        connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PASSWORD.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeBoolean(password!=null); if(password!=null) out.writeUTF(password);
+                }
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code!=AOServProtocol.DONE) {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+                public void afterRelease() {
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
+        );
     }
 
-    public void setPredisablePassword(String password) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnector connector=table.connector;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeNullUTF(password);
-            out.flush();
-
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+    public void setPredisablePassword(final String password) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeNullUTF(password);
+                }
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
+        );
     }
 
     @Override

@@ -36,67 +36,69 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
     }
 
     int addMySQLDBUser(
-	MySQLDatabase md,
-	MySQLServerUser msu,
-	boolean canSelect,
-	boolean canInsert,
-	boolean canUpdate,
-	boolean canDelete,
-	boolean canCreate,
-	boolean canDrop,
-	boolean canIndex,
-	boolean canAlter,
-        boolean canCreateTempTable,
-        boolean canLockTables,
-        boolean canCreateView,
-        boolean canShowView,
-        boolean canCreateRoutine,
-        boolean canAlterRoutine,
-        boolean canExecute
+        final MySQLDatabase md,
+        final MySQLServerUser msu,
+        final boolean canSelect,
+        final boolean canInsert,
+        final boolean canUpdate,
+        final boolean canDelete,
+        final boolean canCreate,
+        final boolean canDrop,
+        final boolean canIndex,
+        final boolean canAlter,
+        final boolean canCreateTempTable,
+        final boolean canLockTables,
+        final boolean canCreateView,
+        final boolean canShowView,
+        final boolean canCreateRoutine,
+        final boolean canAlterRoutine,
+        final boolean canExecute
     ) throws IOException, SQLException {
-        int pkey;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.MYSQL_DB_USERS.ordinal());
-            out.writeCompressedInt(md.pkey);
-            out.writeCompressedInt(msu.pkey);
-            out.writeBoolean(canSelect);
-            out.writeBoolean(canInsert);
-            out.writeBoolean(canUpdate);
-            out.writeBoolean(canDelete);
-            out.writeBoolean(canCreate);
-            out.writeBoolean(canDrop);
-            out.writeBoolean(canIndex);
-            out.writeBoolean(canAlter);
-            out.writeBoolean(canCreateTempTable);
-            out.writeBoolean(canLockTables);
-            out.writeBoolean(canCreateView);
-            out.writeBoolean(canShowView);
-            out.writeBoolean(canCreateRoutine);
-            out.writeBoolean(canAlterRoutine);
-            out.writeBoolean(canExecute);
-            out.flush();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.MYSQL_DB_USERS.ordinal());
+                    out.writeCompressedInt(md.pkey);
+                    out.writeCompressedInt(msu.pkey);
+                    out.writeBoolean(canSelect);
+                    out.writeBoolean(canInsert);
+                    out.writeBoolean(canUpdate);
+                    out.writeBoolean(canDelete);
+                    out.writeBoolean(canCreate);
+                    out.writeBoolean(canDrop);
+                    out.writeBoolean(canIndex);
+                    out.writeBoolean(canAlter);
+                    out.writeBoolean(canCreateTempTable);
+                    out.writeBoolean(canLockTables);
+                    out.writeBoolean(canCreateView);
+                    out.writeBoolean(canShowView);
+                    out.writeBoolean(canCreateRoutine);
+                    out.writeBoolean(canAlterRoutine);
+                    out.writeBoolean(canExecute);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public MySQLDBUser get(int pkey) throws IOException, SQLException {
@@ -203,6 +205,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
+            true,
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_DB_USERS,
             aoServer.pkey

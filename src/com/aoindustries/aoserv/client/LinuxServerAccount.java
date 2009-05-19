@@ -107,37 +107,43 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         return getLinuxAccount().checkPassword(userLocale, password);
     }
 
-    public long copyHomeDirectory(AOServer toServer) throws IOException, SQLException {
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.COPY_HOME_DIRECTORY.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeCompressedInt(toServer.pkey);
-            out.flush();
+    public long copyHomeDirectory(final AOServer toServer) throws IOException, SQLException {
+        return table.connector.requestResult(
+            false,
+            new AOServConnector.ResultRequest<Long>() {
+                long result;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.COPY_HOME_DIRECTORY.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeCompressedInt(toServer.pkey);
+                }
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, in);
-            return in.readLong();
-        } catch(IOException err) {
-                connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code!=AOServProtocol.DONE) {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                    result = in.readLong();
+                }
+
+                public Long afterRelease() {
+                    return result;
+                }
+            }
+        );
     }
 
     public void copyPassword(LinuxServerAccount other) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.pkey);
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -173,7 +179,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public String getAutoresponderContent() throws IOException, SQLException {
-        String content=table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AUTORESPONDER_CONTENT, pkey);
+        String content=table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AUTORESPONDER_CONTENT, pkey);
         if(content.length()==0) return null;
         return content;
     }
@@ -197,7 +203,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
     
     public String getCronTable() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_CRON_TABLE, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_CRON_TABLE, pkey);
     }
 
     /**
@@ -233,62 +239,68 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public InboxAttributes getInboxAttributes() throws IOException, SQLException {
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.GET_INBOX_ATTRIBUTES.ordinal());
-            out.writeCompressedInt(pkey);
-            out.flush();
+        return table.connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<InboxAttributes>() {
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                InboxAttributes attr;
-                if(in.readBoolean()) {
-                    attr=new InboxAttributes(table.connector, this);
-                    attr.read(in);
-                } else attr=null;
-                return attr;
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                InboxAttributes result;
+
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.GET_INBOX_ATTRIBUTES.ordinal());
+                    out.writeCompressedInt(pkey);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        InboxAttributes attr;
+                        if(in.readBoolean()) {
+                            attr=new InboxAttributes(table.connector, LinuxServerAccount.this);
+                            attr.read(in);
+                        } else attr=null;
+                        result = attr;
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public InboxAttributes afterRelease() {
+                    return result;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+        );
     }
 
-    public long[] getImapFolderSizes(String[] folderNames) throws IOException, SQLException {
-        long[] sizes=new long[folderNames.length];
+    public long[] getImapFolderSizes(final String[] folderNames) throws IOException, SQLException {
+        final long[] sizes=new long[folderNames.length];
         if(sizes.length>0) {
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream out=connection.getOutputStream();
-                out.writeCompressedInt(AOServProtocol.CommandID.GET_IMAP_FOLDER_SIZES.ordinal());
-                out.writeCompressedInt(pkey);
-                out.writeCompressedInt(folderNames.length);
-                for(int c=0;c<folderNames.length;c++) out.writeUTF(folderNames[c]);
-                out.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                int code=in.readByte();
-                if(code==AOServProtocol.DONE) {
-                    for(int c=0;c<folderNames.length;c++) {
-                        sizes[c]=in.readLong();
+            table.connector.requestUpdate(
+                true,
+                new AOServConnector.UpdateRequest() {
+                    public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                        out.writeCompressedInt(AOServProtocol.CommandID.GET_IMAP_FOLDER_SIZES.ordinal());
+                        out.writeCompressedInt(pkey);
+                        out.writeCompressedInt(folderNames.length);
+                        for(int c=0;c<folderNames.length;c++) out.writeUTF(folderNames[c]);
                     }
-                } else {
-                    AOServProtocol.checkResult(code, in);
-                    throw new IOException("Unexpected response code: "+code);
+
+                    public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                        int code=in.readByte();
+                        if(code==AOServProtocol.DONE) {
+                            for(int c=0;c<folderNames.length;c++) {
+                                sizes[c]=in.readLong();
+                            }
+                        } else {
+                            AOServProtocol.checkResult(code, in);
+                            throw new IOException("Unexpected response code: "+code);
+                        }
+                    }
+
+                    public void afterRelease() {
+                    }
                 }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
-            }
+            );
         }
         return sizes;
     }
@@ -410,11 +422,11 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public int isProcmailManual() throws IOException, SQLException {
-        return table.connector.requestIntQuery(AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
+        return table.connector.requestIntQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
-        return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+        return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -495,6 +507,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_SERVER_ACCOUNTS,
             pkey
@@ -502,104 +515,107 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public void setImapFolderSubscribed(String folder, boolean subscribed) throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.SET_IMAP_FOLDER_SUBSCRIBED, pkey, folder, subscribed);
+        table.connector.requestUpdate(true, AOServProtocol.CommandID.SET_IMAP_FOLDER_SUBSCRIBED, pkey, folder, subscribed);
     }
 
     public void setCronTable(String cronTable) throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.SET_CRON_TABLE, pkey, cronTable);
+        table.connector.requestUpdate(true, AOServProtocol.CommandID.SET_CRON_TABLE, pkey, cronTable);
     }
 
     public void setPassword(String password) throws IOException, SQLException {
         AOServConnector connector=table.connector;
         if(!connector.isSecure()) throw new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
-        connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
+        connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
     }
 
     public void setAutoresponder(
-        LinuxAccAddress from,
-        String subject,
-        String content,
-        boolean enabled
+        final LinuxAccAddress from,
+        final String subject,
+        final String content,
+        final boolean enabled
     ) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_AUTORESPONDER.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeCompressedInt(from==null?-1:from.getPkey());
-            out.writeBoolean(subject!=null);
-            if(subject!=null) out.writeUTF(subject);
-            out.writeBoolean(content!=null);
-            if(content!=null) out.writeUTF(content);
-            out.writeBoolean(enabled);
-            out.flush();
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_AUTORESPONDER.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeCompressedInt(from==null?-1:from.getPkey());
+                    out.writeBoolean(subject!=null);
+                    if(subject!=null) out.writeUTF(subject);
+                    out.writeBoolean(content!=null);
+                    if(content!=null) out.writeUTF(content);
+                    out.writeBoolean(enabled);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 
     public void setTrashEmailRetention(int days) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, pkey, days);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, pkey, days);
     }
 
     public void setJunkEmailRetention(int days) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, pkey, days);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, pkey, days);
     }
 
     public void setEmailSpamAssassinIntegrationMode(EmailSpamAssassinIntegrationMode mode) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE, pkey, mode.pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE, pkey, mode.pkey);
     }
 
     public void setSpamAssassinRequiredScore(float required_score) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, required_score);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, required_score);
     }
 
     public void setSpamAssassinDiscardScore(int discard_score) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE, pkey, discard_score);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE, pkey, discard_score);
     }
 
     public void setUseInbox(boolean useInbox) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
     }
 
-    public void setPredisablePassword(String password) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnector connector=table.connector;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeNullUTF(password);
-            out.flush();
+    public void setPredisablePassword(final String password) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeNullUTF(password);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
+        );
     }
 
     @Override
@@ -647,7 +663,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
     
     public boolean passwordMatches(String password) throws IOException, SQLException {
-        return table.connector.requestBooleanQuery(AOServProtocol.CommandID.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
+        return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
     }
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {

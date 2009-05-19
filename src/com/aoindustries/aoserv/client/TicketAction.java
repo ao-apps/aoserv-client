@@ -86,7 +86,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 
     synchronized public String getOldValue() throws IOException, SQLException {
         if(!oldValueLoaded) {
-            old_value = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
+            old_value = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
             oldValueLoaded = true;
         }
         return old_value;
@@ -102,7 +102,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 
     synchronized public String getDetails() throws IOException, SQLException {
         if(!detailsLoaded) {
-            details = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_ACTION_DETAILS, pkey);
+            details = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_DETAILS, pkey);
             detailsLoaded = true;
         }
         return details;
@@ -110,7 +110,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 
     synchronized public String getRawEmail() throws IOException, SQLException {
         if(!rawEmailLoaded) {
-            raw_email = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_ACTION_RAW_EMAIL, pkey);
+            raw_email = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_RAW_EMAIL, pkey);
             rawEmailLoaded = true;
         }
         return raw_email;

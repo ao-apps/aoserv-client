@@ -210,15 +210,15 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     public void restartPostgreSQL() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_POSTGRESQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_POSTGRESQL, pkey);
     }
 
     public void startPostgreSQL() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.START_POSTGRESQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_POSTGRESQL, pkey);
     }
 
     public void stopPostgreSQL() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
     }
 
     @Override

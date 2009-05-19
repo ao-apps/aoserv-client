@@ -38,6 +38,7 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
         String listName
     ) throws IOException, SQLException {
         return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MAJORDOMO_LISTS,
             majordomoServer.pkey,

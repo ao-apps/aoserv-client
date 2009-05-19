@@ -29,10 +29,11 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
         return null;
     }
 
+    /*
     @Override
     protected int getMaxConnectionsPerThread() {
         return 2;
-    }
+    }*/
 
     /**
      * Supports both Integer (num) and String (type) keys.

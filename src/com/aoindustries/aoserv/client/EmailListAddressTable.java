@@ -35,12 +35,13 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
     }
 
     int addEmailListAddress(EmailAddress emailAddressObject, EmailList emailListObject) throws IOException, SQLException {
-	return connector.requestIntQueryIL(
+    	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
             emailAddressObject.pkey,
             emailListObject.pkey
-	);
+    	);
     }
 
     public EmailListAddress get(int pkey) throws IOException, SQLException {

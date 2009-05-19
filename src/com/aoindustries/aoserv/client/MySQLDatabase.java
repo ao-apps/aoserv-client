@@ -111,57 +111,57 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public void dump(PrintWriter out) throws IOException, SQLException {
-	dump((Writer)out);
+        dump((Writer)out);
     }
 
-    public void dump(Writer out) throws IOException, SQLException {
-        // Create the new profile
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream masterOut=connection.getOutputStream();
-            masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
-            masterOut.writeCompressedInt(pkey);
-            masterOut.flush();
+    public void dump(final Writer out) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            false,
+            new AOServConnector.UpdateRequest() {
+                public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+                    masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
+                    masterOut.writeCompressedInt(pkey);
+                }
 
-            CompressedDataInputStream masterIn=connection.getInputStream();
-            /*int code;
-            byte[] buff=BufferManager.getBytes();
-            try {
-                char[] chars=BufferManager.getChars();
-                try {
-                    while((code=masterIn.readByte())==AOServProtocol.NEXT) {
-                        int len=masterIn.readShort();
-                        masterIn.readFully(buff, 0, len);
-                        for(int c=0;c<len;c++) chars[c]=(char)buff[c];
-                        out.write(chars, 0, len);
+                public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+                    /*int code;
+                    byte[] buff=BufferManager.getBytes();
+                    try {
+                        char[] chars=BufferManager.getChars();
+                        try {
+                            while((code=masterIn.readByte())==AOServProtocol.NEXT) {
+                                int len=masterIn.readShort();
+                                masterIn.readFully(buff, 0, len);
+                                for(int c=0;c<len;c++) chars[c]=(char)buff[c];
+                                out.write(chars, 0, len);
+                            }
+                        } finally {
+                            BufferManager.release(chars);
+                        }
+                    } finally {
+                        BufferManager.release(buff);
                     }
-                } finally {
-                    BufferManager.release(chars);
-                }
-            } finally {
-                BufferManager.release(buff);
-            }
-            if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);*/
-            Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8");
-            try {
-                char[] chars=BufferManager.getChars();
-                try {
-                    int len;
-                    while((len=nestedIn.read(chars, 0, BufferManager.BUFFER_SIZE))!=-1) {
-                        out.write(chars, 0, len);
+                    if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);*/
+                    Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8");
+                    try {
+                        char[] chars=BufferManager.getChars();
+                        try {
+                            int len;
+                            while((len=nestedIn.read(chars, 0, BufferManager.BUFFER_SIZE))!=-1) {
+                                out.write(chars, 0, len);
+                            }
+                        } finally {
+                            BufferManager.release(chars);
+                        }
+                    } finally {
+                        nestedIn.close();
                     }
-                } finally {
-                    BufferManager.release(chars);
                 }
-            } finally {
-                nestedIn.close();
+
+                public void afterRelease() {
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+        );
     }
 
     Object getColumnImpl(int i) {
@@ -264,11 +264,12 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DATABASES,
             pkey
-	);
+    	);
     }
 
     @Override

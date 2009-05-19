@@ -52,11 +52,11 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_PIPES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_PIPES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_PIPES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_PIPES, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -119,11 +119,12 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_PIPES,
             pkey
-	);
+    	);
     }
 
     @Override

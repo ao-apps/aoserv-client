@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -222,7 +221,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     synchronized public String getDetails() throws IOException, SQLException {
         if(!detailsLoaded) {
-            details = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_DETAILS, pkey);
+            details = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_DETAILS, pkey);
             detailsLoaded = true;
         }
         return details;
@@ -230,7 +229,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     synchronized public String getRawEmail() throws IOException, SQLException {
         if(!rawEmailLoaded) {
-            raw_email = table.connector.requestNullLongStringQuery(AOServProtocol.CommandID.GET_TICKET_RAW_EMAIL, pkey);
+            raw_email = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_RAW_EMAIL, pkey);
             rawEmailLoaded = true;
         }
         return raw_email;
@@ -273,7 +272,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     synchronized public String getInternalNotes() throws IOException, SQLException {
         if(!internalNotesLoaded) {
-            internal_notes = table.connector.requestLongStringQuery(AOServProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, pkey);
+            internal_notes = table.connector.requestLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, pkey);
             detailsLoaded = true;
         }
         return internal_notes;
@@ -292,55 +291,55 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     // <editor-fold desc="Ticket Actions">
     public void actBounceTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
     public void actChangeAdminPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
     }
 
     public void actChangeClientPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_CLIENT_PRIORITY, pkey, priority.pkey, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_CLIENT_PRIORITY, pkey, priority.pkey, business_administrator.pkey, comments);
     }
 
     public void actChangeTicketType(TicketType ticket_type, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
     }
 
     public void actAssignTo(BusinessAdministrator assignedTo, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
     }
 
     public void actSetContactEmails(String contactEmails, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_CONTACT_EMAILS, pkey, contactEmails, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_CONTACT_EMAILS, pkey, contactEmails, business_administrator.pkey, comments);
     }
 
     public void actSetContactPhoneNumbers(String contactPhoneNumbers, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers, business_administrator.pkey, comments);
     }
 
     public void actCompleteTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.COMPLETE_TICKET, pkey, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.COMPLETE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
     public void actHoldTicket(String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.HOLD_TICKET, pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.HOLD_TICKET, pkey, comments);
     }
 
     public void actKillTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.KILL_TICKET, pkey, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.KILL_TICKET, pkey, business_administrator.pkey, comments);
     }
 
     public void actReactivateTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.pkey, comments);
     }
 
     public void actWorkEntry(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);
     }
 
     public void setBusiness(Business business, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_TICKET_BUSINESS, pkey, business==null?"":business.getAccounting(), business_administrator.pkey, comments);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_BUSINESS, pkey, business==null?"":business.getAccounting(), business_administrator.pkey, comments);
     }
     // </editor-fold>
 }

@@ -33,19 +33,20 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
     }
 
     public int addEmailList(
-	String path,
-	LinuxServerAccount linuxAccountObject,
-	LinuxServerGroup linuxGroupObject
+        String path,
+        LinuxServerAccount linuxAccountObject,
+        LinuxServerGroup linuxGroupObject
     ) throws IllegalArgumentException, IOException, SQLException {
-	if (!EmailList.isValidRegularPath(path)) throw new IllegalArgumentException("Invalid list path: " + path);
+    	if (!EmailList.isValidRegularPath(path)) throw new IllegalArgumentException("Invalid list path: " + path);
 
-	return connector.requestIntQueryIL(
+    	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_LISTS,
             path,
             linuxAccountObject.pkey,
             linuxGroupObject.pkey
-	);
+    	);
     }
 
     public EmailList get(int pkey) throws IOException, SQLException {

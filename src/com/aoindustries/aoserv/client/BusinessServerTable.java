@@ -32,7 +32,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
     }
 
     int addBusinessServer(Business business, Server server) throws IOException, SQLException {
-	return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey);
+    	return connector.requestIntQueryIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey);
     }
 
     public BusinessServer get(int pkey) throws IOException, SQLException {

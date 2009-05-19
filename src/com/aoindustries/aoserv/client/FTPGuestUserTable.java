@@ -32,11 +32,12 @@ final public class FTPGuestUserTable extends CachedTableStringKey<FTPGuestUser> 
     }
 
     void addFTPGuestUser(String username) throws IOException, SQLException {
-	connector.requestUpdateIL(
+    	connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.FTP_GUEST_USERS,
             username
-	);
+        );
     }
 
     List<FTPGuestUser> getFTPGuestUsers(AOServer aoServer) throws IOException, SQLException {

@@ -39,54 +39,56 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
     }
 
     int addPackageDefinition(
-        Brand brand,
-        PackageCategory category,
-        String name,
-        String version,
-        String display,
-        String description,
-        int setupFee,
-        TransactionType setupFeeTransactionType,
-        int monthlyRate,
-        TransactionType monthlyRateTransactionType
+        final Brand brand,
+        final PackageCategory category,
+        final String name,
+        final String version,
+        final String display,
+        final String description,
+        final int setupFee,
+        final TransactionType setupFeeTransactionType,
+        final int monthlyRate,
+        final TransactionType monthlyRateTransactionType
     ) throws IOException, SQLException {
-        int pkey;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.PACKAGE_DEFINITIONS.ordinal());
-            out.writeUTF(brand.pkey);
-            out.writeUTF(category.pkey);
-            out.writeUTF(name);
-            out.writeUTF(version);
-            out.writeUTF(display);
-            out.writeUTF(description);
-            out.writeCompressedInt(setupFee);
-            out.writeBoolean(setupFeeTransactionType!=null);
-            if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.pkey);
-            out.writeCompressedInt(monthlyRate);
-            out.writeUTF(monthlyRateTransactionType.pkey);
-            out.flush();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unknown response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.PACKAGE_DEFINITIONS.ordinal());
+                    out.writeUTF(brand.pkey);
+                    out.writeUTF(category.pkey);
+                    out.writeUTF(name);
+                    out.writeUTF(version);
+                    out.writeUTF(display);
+                    out.writeUTF(description);
+                    out.writeCompressedInt(setupFee);
+                    out.writeBoolean(setupFeeTransactionType!=null);
+                    if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.pkey);
+                    out.writeCompressedInt(monthlyRate);
+                    out.writeUTF(monthlyRateTransactionType.pkey);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unknown response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public PackageDefinition get(int pkey) throws IOException, SQLException {

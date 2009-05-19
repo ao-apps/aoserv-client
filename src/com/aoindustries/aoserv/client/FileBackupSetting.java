@@ -77,11 +77,12 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+        table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FILE_BACKUP_SETTINGS,
             pkey
-	);
+    	);
     }
 
     public void setSettings(
@@ -89,6 +90,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
         boolean backupEnabled
     ) throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
             pkey,
             path,

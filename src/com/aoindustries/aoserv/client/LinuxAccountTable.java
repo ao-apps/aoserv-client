@@ -34,51 +34,56 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
     }
 
     void addLinuxAccount(
-	Username usernameObject,
-        String primaryGroup,
-	String name,
-	String office_location,
-	String office_phone,
-	String home_phone,
-	String type,
-	String shell
+    	final Username usernameObject,
+        final String primaryGroup,
+        final String name,
+        String office_location,
+        String office_phone,
+        String home_phone,
+        final String type,
+        final String shell
     ) throws IOException, SQLException {
         String validity=LinuxAccount.checkGECOS(name, "full name");
         if(validity!=null) throw new SQLException(validity);
 
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
-            out.writeUTF(usernameObject.pkey);
-            out.writeUTF(primaryGroup);
-            out.writeUTF(name);
-            if(office_location!=null && office_location.length()==0) office_location=null;
-            out.writeBoolean(office_location!=null); if(office_location!=null) out.writeUTF(office_location);
-            if(office_phone!=null && office_phone.length()==0) office_phone=null;
-            out.writeBoolean(office_phone!=null); if(office_phone!=null) out.writeUTF(office_phone);
-            if(home_phone!=null && home_phone.length()==0) home_phone=null;
-            out.writeBoolean(home_phone!=null); if(home_phone!=null) out.writeUTF(home_phone);
-            out.writeUTF(type);
-            out.writeUTF(shell);
-             out.flush();
+        if(office_location!=null && office_location.length()==0) office_location=null;
+        final String finalOfficeLocation = office_location;
+        if(office_phone!=null && office_phone.length()==0) office_phone=null;
+        final String finalOfficePhone = office_phone;
+        if(home_phone!=null && home_phone.length()==0) home_phone=null;
+        final String finalHomePhone = home_phone;
+        connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
+                    out.writeUTF(usernameObject.pkey);
+                    out.writeUTF(primaryGroup);
+                    out.writeUTF(name);
+                    out.writeBoolean(finalOfficeLocation!=null); if(finalOfficeLocation!=null) out.writeUTF(finalOfficeLocation);
+                    out.writeBoolean(finalOfficePhone!=null); if(finalOfficePhone!=null) out.writeUTF(finalOfficePhone);
+                    out.writeBoolean(finalHomePhone!=null); if(finalHomePhone!=null) out.writeUTF(finalHomePhone);
+                    out.writeUTF(type);
+                    out.writeUTF(shell);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
+        );
     }
     
     private static final String[] CONS = {
@@ -441,6 +446,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
+            true,
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.LINUX_ACCOUNTS,
             aoServer.pkey

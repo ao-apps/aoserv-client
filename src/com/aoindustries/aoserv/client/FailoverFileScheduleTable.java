@@ -49,38 +49,39 @@ final public class FailoverFileScheduleTable extends CachedTableIntegerKey<Failo
 	return SchemaTable.TableID.FAILOVER_FILE_SCHEDULE;
     }
     
-    void setFailoverFileSchedules(FailoverFileReplication ffr, List<Short> hours, List<Short> minutes) throws IOException, SQLException {
+    void setFailoverFileSchedules(final FailoverFileReplication ffr, final List<Short> hours, final List<Short> minutes) throws IOException, SQLException {
         if(hours.size()!=minutes.size()) throw new IllegalArgumentException("hours.size()!=minutes.size(): "+hours.size()+"!="+minutes.size());
 
-        // Create the new profile
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES.ordinal());
-            out.writeCompressedInt(ffr.getPkey());
-            int size = hours.size();
-            out.writeCompressedInt(size);
-            for(int c=0;c<size;c++) {
-                out.writeShort(hours.get(c));
-                out.writeShort(minutes.get(c));
-            }
-            out.flush();
+        connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES.ordinal());
+                    out.writeCompressedInt(ffr.getPkey());
+                    int size = hours.size();
+                    out.writeCompressedInt(size);
+                    for(int c=0;c<size;c++) {
+                        out.writeShort(hours.get(c));
+                        out.writeShort(minutes.get(c));
+                    }
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
+        );
     }
 }

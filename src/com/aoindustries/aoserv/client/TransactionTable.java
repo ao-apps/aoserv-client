@@ -38,55 +38,57 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     }
 
     int addTransaction(
-        Business business,
-        Business sourceBusiness,
-        BusinessAdministrator business_administrator,
-        String type,
-        String description,
-        int quantity,
-        int rate,
-        PaymentType paymentType,
-        String paymentInfo,
-        CreditCardProcessor processor,
-	byte payment_confirmed
+        final Business business,
+        final Business sourceBusiness,
+        final BusinessAdministrator business_administrator,
+        final String type,
+        final String description,
+        final int quantity,
+        final int rate,
+        final PaymentType paymentType,
+        final String paymentInfo,
+        final CreditCardProcessor processor,
+    	final byte payment_confirmed
     ) throws IOException, SQLException {
-        int transid;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
-            out.writeUTF(business.pkey);
-            out.writeUTF(sourceBusiness.pkey);
-            out.writeUTF(business_administrator.pkey);
-            out.writeUTF(type);
-            out.writeUTF(description);
-            out.writeCompressedInt(quantity);
-            out.writeCompressedInt(rate);
-            out.writeBoolean(paymentType!=null); if(paymentType!=null) out.writeUTF(paymentType.pkey);
-            out.writeNullUTF(paymentInfo);
-            out.writeNullUTF(processor==null ? null : processor.getProviderId());
-            out.writeByte(payment_confirmed);
-            out.flush();
+        return connector.requestResult(
+            false,
+            new AOServConnector.ResultRequest<Integer>() {
+                int transid;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                transid=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
+                    out.writeUTF(business.pkey);
+                    out.writeUTF(sourceBusiness.pkey);
+                    out.writeUTF(business_administrator.pkey);
+                    out.writeUTF(type);
+                    out.writeUTF(description);
+                    out.writeCompressedInt(quantity);
+                    out.writeCompressedInt(rate);
+                    out.writeBoolean(paymentType!=null); if(paymentType!=null) out.writeUTF(paymentType.pkey);
+                    out.writeNullUTF(paymentInfo);
+                    out.writeNullUTF(processor==null ? null : processor.getProviderId());
+                    out.writeByte(payment_confirmed);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        transid=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return transid;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return transid;
+        );
     }
 
     @Override
@@ -102,37 +104,37 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	synchronized(this) {
 	    Integer O=accountBalances.get(accounting);
 	    if(O!=null) return O.intValue();
-	    int balance=connector.requestIntQuery(AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting);
+	    int balance=connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting);
 	    accountBalances.put(accounting, Integer.valueOf(balance));
 	    return balance;
 	}
     }
 
     int getAccountBalance(String accounting, long before) throws IOException, SQLException {
-        return connector.requestIntQuery(AOServProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting, before);
+        return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting, before);
     }
 
     int getConfirmedAccountBalance(String accounting) throws IOException, SQLException {
 	synchronized(this) {
 	    Integer O=confirmedAccountBalances.get(accounting);
 	    if(O!=null) return O.intValue();
-	    int balance=connector.requestIntQuery(AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting);
+	    int balance=connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting);
 	    confirmedAccountBalances.put(accounting, Integer.valueOf(balance));
 	    return balance;
 	}
     }
 
     int getConfirmedAccountBalance(String accounting, long before) throws IOException, SQLException {
-	return connector.requestIntQuery(AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting, before);
+        return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting, before);
     }
 
     public List<Transaction> getPendingPayments() throws IOException, SQLException {
-        return getObjects(AOServProtocol.CommandID.GET_PENDING_PAYMENTS);
+        return getObjects(true, AOServProtocol.CommandID.GET_PENDING_PAYMENTS);
     }
 
     public List<Transaction> getRows() throws IOException, SQLException {
         List<Transaction> list=new ArrayList<Transaction>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TRANSACTIONS);
+        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TRANSACTIONS);
         return list;
     }
 
@@ -151,19 +153,19 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     }
 
     public Transaction get(int transid) throws IOException, SQLException {
-        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TRANSACTIONS, transid);
+        return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TRANSACTIONS, transid);
     }
 
     List<Transaction> getTransactions(TransactionSearchCriteria search) throws IOException, SQLException {
-        return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
+        return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
     }
 
     List<Transaction> getTransactions(String accounting) throws IOException, SQLException {
-        return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting);
+        return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting);
     }
 
     List<Transaction> getTransactions(BusinessAdministrator ba) throws IOException, SQLException {
-        return getObjects(AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
+        return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
     }
 
     @Override

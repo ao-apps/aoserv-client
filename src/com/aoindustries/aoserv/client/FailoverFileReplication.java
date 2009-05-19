@@ -46,7 +46,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     public void setBitRate(int bitRate) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
     }
 
     public int getBlockSize() {

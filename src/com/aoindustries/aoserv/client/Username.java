@@ -184,11 +184,11 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
     public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
@@ -350,11 +350,12 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.USERNAMES,
             pkey
-	);
+    	);
     }
 
     public void setPassword(String password) throws SQLException, IOException {

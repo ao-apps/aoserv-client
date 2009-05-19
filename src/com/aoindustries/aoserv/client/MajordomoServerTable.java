@@ -39,6 +39,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         MajordomoVersion majordomoVersion
     ) throws IOException, SQLException {
         connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MAJORDOMO_SERVERS,
             emailDomain.pkey,

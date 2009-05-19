@@ -34,74 +34,84 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
     }
 
     void addBusinessAdministrator(
-        Username username,
-        String name,
+        final Username username,
+        final String name,
         String title,
-        long birthday,
-        boolean isPrivate,
-        String workPhone,
+        final long birthday,
+        final boolean isPrivate,
+        final String workPhone,
         String homePhone,
         String cellPhone,
         String fax,
-        String email,
+        final String email,
         String address1,
         String address2,
         String city,
         String state,
         String country,
         String zip,
-        boolean enableEmailSupport
+        final boolean enableEmailSupport
     ) throws IOException, SQLException {
-        // Create the new profile
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.BUSINESS_ADMINISTRATORS.ordinal());
-            out.writeUTF(username.pkey);
-            out.writeUTF(name);
-            if(title!=null && title.length()==0) title=null;
-            out.writeBoolean(title!=null); if(title!=null) out.writeUTF(title);
-            out.writeLong(birthday);
-            out.writeBoolean(isPrivate);
-            out.writeUTF(workPhone);
-            if(homePhone!=null && homePhone.length()==0) homePhone=null;
-            out.writeBoolean(homePhone!=null); if(homePhone!=null) out.writeUTF(homePhone);
-            if(cellPhone!=null && cellPhone.length()==0) cellPhone=null;
-            out.writeBoolean(cellPhone!=null); if(cellPhone!=null) out.writeUTF(cellPhone);
-            if(fax!=null && fax.length()==0) fax=null;
-            out.writeBoolean(fax!=null); if(fax!=null) out.writeUTF(fax);
-            out.writeUTF(email);
-            if(address1!=null && address1.length()==0) address1=null;
-            out.writeBoolean(address1!=null); if(address1!=null) out.writeUTF(address1);
-            if(address2!=null && address2.length()==0) address2=null;
-            out.writeBoolean(address2!=null); if(address2!=null) out.writeUTF(address2);
-            if(city!=null && city.length()==0) city=null;
-            out.writeBoolean(city!=null); if(city!=null) out.writeUTF(city);
-            if(state!=null && state.length()==0) state=null;
-            out.writeBoolean(state!=null); if(state!=null) out.writeUTF(state);
-            if(country!=null && country.length()==0) country=null;
-            out.writeBoolean(country!=null); if(country!=null) out.writeUTF(country);
-            if(zip!=null && zip.length()==0) zip=null;
-            out.writeBoolean(zip!=null); if(zip!=null) out.writeUTF(zip);
-            out.writeBoolean(enableEmailSupport);
-            out.flush();
+        if(title!=null && title.length()==0) title=null;
+        final String finalTitle = title;
+        if(homePhone!=null && homePhone.length()==0) homePhone=null;
+        final String finalHomePhone = homePhone;
+        if(cellPhone!=null && cellPhone.length()==0) cellPhone=null;
+        final String finalCellPhone = cellPhone;
+        if(fax!=null && fax.length()==0) fax=null;
+        final String finalFax = fax;
+        if(address1!=null && address1.length()==0) address1=null;
+        final String finalAddress1 = address1;
+        if(address2!=null && address2.length()==0) address2=null;
+        final String finalAddress2 = address2;
+        if(city!=null && city.length()==0) city=null;
+        final String finalCity = city;
+        if(state!=null && state.length()==0) state=null;
+        final String finalState = state;
+        if(country!=null && country.length()==0) country=null;
+        final String finalCountry = country;
+        if(zip!=null && zip.length()==0) zip=null;
+        final String finalZip = zip;
+        connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.BUSINESS_ADMINISTRATORS.ordinal());
+                    out.writeUTF(username.pkey);
+                    out.writeUTF(name);
+                    out.writeBoolean(finalTitle!=null); if(finalTitle!=null) out.writeUTF(finalTitle);
+                    out.writeLong(birthday);
+                    out.writeBoolean(isPrivate);
+                    out.writeUTF(workPhone);
+                    out.writeBoolean(finalHomePhone!=null); if(finalHomePhone!=null) out.writeUTF(finalHomePhone);
+                    out.writeBoolean(finalCellPhone!=null); if(finalCellPhone!=null) out.writeUTF(finalCellPhone);
+                    out.writeBoolean(finalFax!=null); if(finalFax!=null) out.writeUTF(finalFax);
+                    out.writeUTF(email);
+                    out.writeBoolean(finalAddress1!=null); if(finalAddress1!=null) out.writeUTF(finalAddress1);
+                    out.writeBoolean(finalAddress2!=null); if(finalAddress2!=null) out.writeUTF(finalAddress2);
+                    out.writeBoolean(finalCity!=null); if(finalCity!=null) out.writeUTF(finalCity);
+                    out.writeBoolean(finalState!=null); if(finalState!=null) out.writeUTF(finalState);
+                    out.writeBoolean(finalCountry!=null); if(finalCountry!=null) out.writeUTF(finalCountry);
+                    out.writeBoolean(finalZip!=null); if(finalZip!=null) out.writeUTF(finalZip);
+                    out.writeBoolean(enableEmailSupport);
+                }
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
+        );
     }
 
     /**

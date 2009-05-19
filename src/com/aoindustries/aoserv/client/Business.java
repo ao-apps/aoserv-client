@@ -337,30 +337,33 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         }
 
         // Now cancel the account
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
-            out.writeUTF(pkey);
-            if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
-            out.writeNullUTF(cancelReason);
-            out.flush();
+        if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
+        final String finalCancelReason = cancelReason;
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
+                    out.writeUTF(pkey);
+                    out.writeNullUTF(finalCancelReason);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 
     public boolean canCancel() throws IOException, SQLException {
@@ -398,11 +401,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
     }
 
     public int getAccountBalance() throws IOException, SQLException {
@@ -995,7 +998,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public void setAccounting(String accounting) throws SQLException, IOException {
         if(!isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
@@ -1032,6 +1035,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      */
     public void setUseMonthlyCreditCard(CreditCard creditCard) throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
             pkey,
             creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPkey())

@@ -79,11 +79,12 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+        table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_ACC_ADDRESSES,
             pkey
-	);
+        );
     }
 
     @Override

@@ -46,7 +46,7 @@ final public class MasterHistoryTable extends AOServTable<Long,MasterHistory> {
 
     public List<MasterHistory> getRows() throws IOException, SQLException {
         List<MasterHistory> list=new ArrayList<MasterHistory>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_HISTORY);
+        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_HISTORY);
         return list;
     }
 

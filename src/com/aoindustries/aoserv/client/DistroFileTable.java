@@ -63,14 +63,14 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
     @Override
     public int getCachedRowCount() throws IOException, SQLException {
         if(isLoaded()) return super.getCachedRowCount();
-        else return connector.requestIntQuery(AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
+        else return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
     }
 
     @Override
     public int size() {
         try {
             if(isLoaded()) return super.size();
-            else return connector.requestIntQuery(AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
+            else return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -99,6 +99,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 
     void startDistro(AOServer server, boolean includeUser) throws IOException, SQLException {
         connector.requestUpdate(
+            true,
             AOServProtocol.CommandID.START_DISTRO,
             server.pkey,
             includeUser

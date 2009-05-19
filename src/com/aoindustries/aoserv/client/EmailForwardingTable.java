@@ -39,13 +39,14 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
     }
 
     int addEmailForwarding(EmailAddress emailAddressObject, String destination) throws IOException, SQLException {
-	if (!EmailAddress.isValidEmailAddress(destination)) throw new SQLException("Invalid destination: " + destination);
-	return connector.requestIntQueryIL(
+        if (!EmailAddress.isValidEmailAddress(destination)) throw new SQLException("Invalid destination: " + destination);
+        return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_FORWARDING,
             emailAddressObject.pkey,
             destination
-	);
+        );
     }
 
     public EmailForwarding get(int pkey) throws SQLException, IOException {

@@ -33,7 +33,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
     }
 
     public String generateSiteName(String template) throws IOException, SQLException {
-	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SITE_NAME, template);
+    	return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_SITE_NAME, template);
     }
 
     public HttpdSite get(int pkey) throws IOException, SQLException {
@@ -197,11 +197,12 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
     }
 
     public boolean isSiteNameAvailable(String sitename) throws IOException, SQLException {
-	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_SITE_NAME_AVAILABLE, sitename);
+        return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_SITE_NAME_AVAILABLE, sitename);
     }
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
-	connector.requestUpdate(
+    	connector.requestUpdate(
+            true,
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.HTTPD_SITES,
             aoServer.pkey

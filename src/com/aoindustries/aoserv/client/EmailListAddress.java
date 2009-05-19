@@ -88,11 +88,12 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     }
     
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
             pkey
-	);
+        );
     }
 
     @Override

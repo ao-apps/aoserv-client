@@ -89,11 +89,11 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -170,11 +170,11 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
     }
 
     public void remove() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
     public void setMode(long mode) throws IOException, SQLException {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

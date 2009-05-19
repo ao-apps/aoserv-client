@@ -34,51 +34,54 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
     }
 
     int addHttpdSharedTomcat(
-	String name,
-        AOServer aoServer,
+    	final String name,
+        final AOServer aoServer,
         HttpdTomcatVersion version,
-	LinuxServerAccount lsa,
-	LinuxServerGroup lsg,
-	boolean isSecure,
-        boolean isOverflow
+        final LinuxServerAccount lsa,
+        final LinuxServerGroup lsg,
+        final boolean isSecure,
+        final boolean isOverflow
     ) throws IOException, SQLException {
-        int pkey;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.HTTPD_SHARED_TOMCATS.ordinal());
-            out.writeUTF(name);
-            out.writeCompressedInt(aoServer.pkey);
-            out.writeCompressedInt(version.getTechnologyVersion(connector).getPkey());
-            out.writeUTF(lsa.username);
-            out.writeUTF(lsg.name);
-            out.writeBoolean(isSecure);
-            out.writeBoolean(isOverflow);
-            out.flush();
+        final int tvPkey = version.getTechnologyVersion(connector).getPkey();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.HTTPD_SHARED_TOMCATS.ordinal());
+                    out.writeUTF(name);
+                    out.writeCompressedInt(aoServer.pkey);
+                    out.writeCompressedInt(tvPkey);
+                    out.writeUTF(lsa.username);
+                    out.writeUTF(lsg.name);
+                    out.writeBoolean(isSecure);
+                    out.writeBoolean(isOverflow);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public String generateSharedTomcatName(String template) throws IOException, SQLException {
-	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_SHARED_TOMCAT_NAME, template);
+    	return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_SHARED_TOMCAT_NAME, template);
     }
 
     public HttpdSharedTomcat get(int pkey) throws SQLException, IOException {
@@ -209,9 +212,10 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
     }
 
     public boolean isSharedTomcatNameAvailable(String name) throws IOException, SQLException {
-	return connector.requestBooleanQuery(
+    	return connector.requestBooleanQuery(
+            true,
             AOServProtocol.CommandID.IS_SHARED_TOMCAT_NAME_AVAILABLE,
             name
-	);
+        );
     }
 }

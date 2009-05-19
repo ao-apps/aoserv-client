@@ -115,11 +115,11 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -331,6 +331,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_ACCOUNTS,
             pkey
@@ -342,19 +343,19 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public void setHomePhone(String phone) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
     }
 
     public void setName(String name) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
     }
 
     public void setOfficeLocation(String location) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
     }
 
     public void setOfficePhone(String phone) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
     }
 
     public void setPassword(String password) throws SQLException, IOException {
@@ -364,7 +365,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public void setShell(Shell shell) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -40,7 +40,7 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
         String authUserFile,
         String require
     ) throws IOException, SQLException {
-        return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, hs.getPkey(), path, isRegularExpression, authName, authGroupFile, authUserFile, require);
+        return connector.requestIntQueryIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, hs.getPkey(), path, isRegularExpression, authName, authGroupFile, authUserFile, require);
     }
 
     public HttpdSiteAuthenticatedLocation get(int pkey) throws IOException, SQLException {

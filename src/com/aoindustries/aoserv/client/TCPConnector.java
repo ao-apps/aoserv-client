@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import com.aoindustries.util.ErrorHandler;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
@@ -49,7 +48,7 @@ public class TCPConnector extends AOServConnector {
                 boolean runMore=true;
                 while(runMore) {
                     try {
-                        AOServConnection conn=getConnection();
+                        AOServConnection conn=getConnection(1);
                         try {
                             CompressedDataOutputStream out=conn.getOutputStream();
                             out.writeCompressedInt(AOServProtocol.CommandID.LISTEN_CACHES.ordinal());
@@ -147,7 +146,7 @@ public class TCPConnector extends AOServConnector {
     final int poolSize;
     final long maxConnectionAge;
 
-    private Object cacheMonitorLock=new Object();
+    final private Object cacheMonitorLock=new Object();
     private long connectionLastUsed;
     private CacheMonitor cacheMonitor;
 
@@ -176,7 +175,7 @@ public class TCPConnector extends AOServConnector {
         }
     }
 
-    final AOServConnection getConnection(int maxConnections) throws IOException {
+    protected final AOServConnection getConnection(int maxConnections) throws IOException {
         if(SwingUtilities.isEventDispatchThread()) {
             errorHandler.reportWarning(
                 new RuntimeException(ApplicationResourcesAccessor.getMessage(Locale.getDefault(), "TCPConnector.getConnection.isEventDispatchThread")),
@@ -184,7 +183,7 @@ public class TCPConnector extends AOServConnector {
             );
         }
         startCacheMonitor();
-	return pool.getConnection(maxConnections);
+    	return pool.getConnection(maxConnections);
     }
 
     public String getProtocol() {
@@ -280,11 +279,11 @@ public class TCPConnector extends AOServConnector {
     }
 
     final public void printConnectionStatsHTML(ChainWriter out) throws IOException {
-	pool.printConnectionStats(out);
+        pool.printConnectionStats(out);
     }
 
-    final void releaseConnection(AOServConnection connection) throws IOException {
-	pool.releaseConnection((SocketConnection)connection);
+    protected final void releaseConnection(AOServConnection connection) throws IOException {
+        pool.releaseConnection((SocketConnection)connection);
     }
 
     public AOServConnector switchUsers(String username) throws IOException {

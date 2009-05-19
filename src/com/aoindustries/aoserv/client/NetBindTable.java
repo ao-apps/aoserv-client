@@ -38,49 +38,51 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
     }
 
     int addNetBind(
-        Server se,
-        Package pk,
-        IPAddress ia,
-        NetPort netPort,
-        NetProtocol netProtocol,
-        Protocol appProtocol,
-        boolean openFirewall,
-        boolean monitoringEnabled
+        final Server se,
+        final Package pk,
+        final IPAddress ia,
+        final NetPort netPort,
+        final NetProtocol netProtocol,
+        final Protocol appProtocol,
+        final boolean openFirewall,
+        final boolean monitoringEnabled
     ) throws IOException, SQLException {
-        int pkey;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.NET_BINDS.ordinal());
-            out.writeCompressedInt(se.pkey);
-            out.writeUTF(pk.name);
-            out.writeCompressedInt(ia.pkey);
-            out.writeCompressedInt(netPort.port);
-            out.writeUTF(netProtocol.pkey);
-            out.writeUTF(appProtocol.pkey);
-            out.writeBoolean(openFirewall);
-            out.writeBoolean(monitoringEnabled);
-            out.flush();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.NET_BINDS.ordinal());
+                    out.writeCompressedInt(se.pkey);
+                    out.writeUTF(pk.name);
+                    out.writeCompressedInt(ia.pkey);
+                    out.writeCompressedInt(netPort.port);
+                    out.writeUTF(netProtocol.pkey);
+                    out.writeUTF(appProtocol.pkey);
+                    out.writeBoolean(openFirewall);
+                    out.writeBoolean(monitoringEnabled);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public NetBind get(int pkey) throws IOException, SQLException {

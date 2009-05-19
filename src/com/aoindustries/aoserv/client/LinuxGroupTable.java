@@ -33,6 +33,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 
     void addLinuxGroup(String name, Package packageObject, String type) throws IOException, SQLException {
         connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_GROUPS,
             name,
@@ -102,6 +103,6 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 
     public boolean isLinuxGroupNameAvailable(String groupname) throws SQLException, IOException {
         if(!LinuxGroup.isValidGroupname(groupname)) throw new SQLException("Invalid groupname: "+groupname);
-        return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_LINUX_GROUP_NAME_AVAILABLE, groupname);
+        return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_LINUX_GROUP_NAME_AVAILABLE, groupname);
     }
 }

@@ -34,6 +34,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
 
     int addSpamEmailMessage(EmailSmtpRelay esr, String message) throws IOException, SQLException {
         return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.SPAM_EMAIL_MESSAGES,
             esr.pkey,
@@ -43,7 +44,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
 
     public List<SpamEmailMessage> getRows() throws IOException, SQLException {
         List<SpamEmailMessage> list=new ArrayList<SpamEmailMessage>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.SPAM_EMAIL_MESSAGES);
+        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.SPAM_EMAIL_MESSAGES);
         return list;
     }
 
@@ -62,7 +63,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
     }
 
     public SpamEmailMessage get(int pkey) throws IOException, SQLException {
-        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.SPAM_EMAIL_MESSAGES, pkey);
+        return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.SPAM_EMAIL_MESSAGES, pkey);
     }
 
     List<SpamEmailMessage> getSpamEmailMessages(EmailSmtpRelay esr) throws IOException, SQLException {
@@ -70,7 +71,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
     }
 
     List<SpamEmailMessage> getSpamEmailMessages(int esr) throws IOException, SQLException {
-        return getObjects(AOServProtocol.CommandID.GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY, esr);
+        return getObjects(true, AOServProtocol.CommandID.GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY, esr);
     }
 
     @Override

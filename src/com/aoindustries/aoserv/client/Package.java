@@ -124,11 +124,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.PACKAGES, dl.pkey, name);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.PACKAGES, dl.pkey, name);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.PACKAGES, name);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.PACKAGES, name);
     }
 
     public List<BackupReport> getBackupReports() throws IOException, SQLException {

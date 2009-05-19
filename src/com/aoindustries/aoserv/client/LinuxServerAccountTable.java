@@ -43,6 +43,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 
     int addLinuxServerAccount(LinuxAccount linuxAccount, AOServer aoServer, String home) throws IOException, SQLException {
         int pkey=connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_SERVER_ACCOUNTS,
             linuxAccount.pkey,

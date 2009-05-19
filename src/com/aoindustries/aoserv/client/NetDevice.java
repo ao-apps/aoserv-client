@@ -248,7 +248,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
      */
     public String getBondingReport() throws IOException, SQLException {
         if(!device_id.startsWith("bond")) return null;
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
     }
     
     /**
@@ -256,6 +256,6 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
      * or <code>null</code> if not an AOServer.
      */
     public String getStatisticsReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_NET_DEVICE_STATISTICS_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_NET_DEVICE_STATISTICS_REPORT, pkey);
     }
 }

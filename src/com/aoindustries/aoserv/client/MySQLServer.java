@@ -237,15 +237,15 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public void restartMySQL() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_MYSQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_MYSQL, pkey);
     }
 
     public void startMySQL() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.START_MYSQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_MYSQL, pkey);
     }
 
     public void stopMySQL() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_MYSQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_MYSQL, pkey);
     }
 
     @Override
@@ -290,29 +290,35 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      * IOException or SQLException.
      */
     public MasterStatus getMasterStatus() throws IOException, SQLException {
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_MASTER_STATUS.ordinal());
-            out.writeCompressedInt(pkey);
-            out.flush();
+        return table.connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<MasterStatus>() {
+                MasterStatus result;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.NEXT) {
-                return new MasterStatus(
-                    in.readNullUTF(),
-                    in.readNullUTF()
-                );
-            } else if(code==AOServProtocol.DONE) {
-                return null;
-            } else AOServProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_MASTER_STATUS.ordinal());
+                    out.writeCompressedInt(pkey);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.NEXT) {
+                        result = new MasterStatus(
+                            in.readNullUTF(),
+                            in.readNullUTF()
+                        );
+                    } else if(code==AOServProtocol.DONE) {
+                        result = null;
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public MasterStatus afterRelease() {
+                    return result;
+                }
+            }
+        );
     }
 }

@@ -70,43 +70,47 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     }
 
     public void dump(PrintWriter out) throws IOException, SQLException {
-	dump((Writer)out);
+        dump((Writer)out);
     }
 
-    public void dump(Writer out) throws IOException, SQLException {
-        // Create the new profile
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream masterOut=connection.getOutputStream();
-            masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
-            masterOut.writeCompressedInt(pkey);
-            masterOut.flush();
+    public void dump(final Writer out) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            false,
+            new AOServConnector.UpdateRequest() {
 
-            CompressedDataInputStream masterIn=connection.getInputStream();
-            int code;
-            byte[] buff=BufferManager.getBytes();
-            try {
-                char[] chars=BufferManager.getChars();
-                try {
-                    while((code=masterIn.readByte())==AOServProtocol.NEXT) {
-                        int len=masterIn.readShort();
-                        masterIn.readFully(buff, 0, len);
-                        for(int c=0;c<len;c++) chars[c]=(char)buff[c];
-                        out.write(chars, 0, len);
-                    }
-                } finally {
-                    BufferManager.release(chars);
+                public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+                    masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
+                    masterOut.writeCompressedInt(pkey);
                 }
-            } finally {
-                BufferManager.release(buff);
+
+                public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+                    int code;
+                    byte[] buff=BufferManager.getBytes();
+                    try {
+                        char[] chars=BufferManager.getChars();
+                        try {
+                            while((code=masterIn.readByte())==AOServProtocol.NEXT) {
+                                int len=masterIn.readShort();
+                                masterIn.readFully(buff, 0, len);
+                                for(int c=0;c<len;c++) chars[c]=(char)buff[c];
+                                out.write(chars, 0, len);
+                            }
+                        } finally {
+                            BufferManager.release(chars);
+                        }
+                    } finally {
+                        BufferManager.release(buff);
+                    }
+                    if(code!=AOServProtocol.DONE) {
+                        AOServProtocol.checkResult(code, masterIn);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                }
             }
-            if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+        );
     }
 
     /**
@@ -230,11 +234,12 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_DATABASES,
             pkey
-	);
+    	);
     }
 
     @Override

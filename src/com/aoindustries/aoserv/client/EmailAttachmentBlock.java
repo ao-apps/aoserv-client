@@ -75,11 +75,12 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     }
 
     public void remove() throws SQLException, IOException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_ATTACHMENT_BLOCKS,
             pkey
-	);
+    	);
     }
 
     @Override

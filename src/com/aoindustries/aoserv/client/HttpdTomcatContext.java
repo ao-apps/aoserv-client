@@ -237,58 +237,59 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public void setAttributes(
-        String className,
-        boolean cookies,
-        boolean crossContext,
-        String docBase,
-        boolean override,
-        String path,
-        boolean privileged,
-        boolean reloadable,
-        boolean useNaming,
-        String wrapperClass,
-        int debug,
-        String workDir
+        final String className,
+        final boolean cookies,
+        final boolean crossContext,
+        final String docBase,
+        final boolean override,
+        final String path,
+        final boolean privileged,
+        final boolean reloadable,
+        final boolean useNaming,
+        final String wrapperClass,
+        final int debug,
+        final String workDir
     ) throws IOException, SQLException {
-        // Create the new profile
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeNullUTF(className);
-            out.writeBoolean(cookies);
-            out.writeBoolean(crossContext);
-            out.writeUTF(docBase);
-            out.writeBoolean(override);
-            out.writeUTF(path);
-            out.writeBoolean(privileged);
-            out.writeBoolean(reloadable);
-            out.writeBoolean(useNaming);
-            out.writeNullUTF(wrapperClass);
-            out.writeCompressedInt(debug);
-            out.writeNullUTF(workDir);
-            out.flush();
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeNullUTF(className);
+                    out.writeBoolean(cookies);
+                    out.writeBoolean(crossContext);
+                    out.writeUTF(docBase);
+                    out.writeBoolean(override);
+                    out.writeUTF(path);
+                    out.writeBoolean(privileged);
+                    out.writeBoolean(reloadable);
+                    out.writeBoolean(useNaming);
+                    out.writeNullUTF(wrapperClass);
+                    out.writeCompressedInt(debug);
+                    out.writeNullUTF(workDir);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 
     public void remove() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

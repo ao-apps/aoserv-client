@@ -159,6 +159,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_DOMAINS,
             pkey

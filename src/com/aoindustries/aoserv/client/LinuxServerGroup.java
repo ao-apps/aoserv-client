@@ -137,6 +137,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_SERVER_GROUPS,
             pkey

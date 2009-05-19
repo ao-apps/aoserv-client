@@ -41,7 +41,8 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
         int sharedBuffers,
         boolean fsync
     ) throws IOException, SQLException {
-	return connector.requestIntQueryIL(
+    	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_SERVERS,
             name,
@@ -51,7 +52,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
             sortMem,
             sharedBuffers,
             fsync
-	);
+        );
     }
 
     public PostgresServer get(int pkey) throws IOException, SQLException {
@@ -148,11 +149,12 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
     }
 
     boolean isPostgresServerNameAvailable(String name, AOServer ao) throws IOException, SQLException {
-	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.pkey);
+    	return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.pkey);
     }
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
+            true,
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.POSTGRES_SERVERS,
             aoServer.pkey

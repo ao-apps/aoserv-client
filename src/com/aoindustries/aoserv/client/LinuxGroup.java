@@ -170,6 +170,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_GROUPS,
             pkey

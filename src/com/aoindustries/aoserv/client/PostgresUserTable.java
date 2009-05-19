@@ -33,6 +33,7 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
 
     void addPostgresUser(String username) throws IOException, SQLException {
         connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_USERS,
             username
@@ -136,6 +137,7 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
+            true,
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.POSTGRES_USERS,
             aoServer.pkey

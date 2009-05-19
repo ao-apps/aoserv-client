@@ -32,12 +32,13 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
     }
 
     void addUsername(Package packageObject, String username) throws IOException, SQLException {
-	connector.requestUpdateIL(
+    	connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.USERNAMES,
             packageObject.name,
             username
-	);
+    	);
     }
 
     public Username get(String username) throws IOException, SQLException {
@@ -145,7 +146,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
 
     public boolean isUsernameAvailable(String username, Locale locale) throws SQLException, IOException {
         String check = Username.checkUsername(username, locale);
-	if(check!=null) throw new SQLException(check);
-	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_USERNAME_AVAILABLE, username);
+        if(check!=null) throw new SQLException(check);
+        return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_USERNAME_AVAILABLE, username);
     }
 }

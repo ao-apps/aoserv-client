@@ -35,7 +35,7 @@ final public class DaemonProfileTable extends AOServTable<Object,DaemonProfile> 
 
     public List<DaemonProfile> getRows() throws IOException, SQLException {
         List<DaemonProfile> list=new ArrayList<DaemonProfile>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.DAEMON_PROFILE);
+        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.DAEMON_PROFILE);
         return list;
     }
 

@@ -42,11 +42,11 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     }
 
     public long getDiskTotalSize() throws IOException, SQLException {
-        return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
+        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
     }
 
     public long getDiskUsedSize() throws IOException, SQLException {
-        return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
+        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
     }
 
     public AOServer getAOServer() throws SQLException, IOException {

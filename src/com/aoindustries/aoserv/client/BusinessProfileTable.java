@@ -34,74 +34,80 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
     }
 
     int addBusinessProfile(
-	Business business,
-	String name,
-	boolean isPrivate,
-	String phone,
-	String fax,
-	String address1,
-	String address2,
-	String city,
-	String state,
-	String country,
-	String zip,
-	boolean sendInvoice,
-	String billingContact,
-	String billingEmail,
-	String technicalContact,
-	String technicalEmail
+        final Business business,
+        final String name,
+        final boolean isPrivate,
+        final String phone,
+        String fax,
+        final String address1,
+        String address2,
+        final String city,
+        String state,
+        final String country,
+        String zip,
+        final boolean sendInvoice,
+        final String billingContact,
+        final String billingEmail,
+        final String technicalContact,
+        final String technicalEmail
     ) throws IOException, SQLException {
+        if(fax!=null && fax.length()==0) fax=null;
+        final String finalFax = fax;
+        if(address2!=null && address2.length()==0) address2=null;
+        final String finalAddress2 = address2;
+        if(state!=null && state.length()==0) state=null;
+        final String finalState = state;
+        if(zip!=null && zip.length()==0) zip=null;
+        final String finalZip = zip;
         // Create the new profile
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        int pkey;
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.BUSINESS_PROFILES.ordinal());
-            out.writeUTF(business.getAccounting());
-            out.writeUTF(name);
-            out.writeBoolean(isPrivate);
-            out.writeUTF(phone);
-            if(fax!=null && fax.length()==0) fax=null;
-            out.writeBoolean(fax!=null);
-            if(fax!=null) out.writeUTF(fax);
-            out.writeUTF(address1);
-            if(address2!=null && address2.length()==0) address2=null;
-            out.writeBoolean(address2!=null);
-            if(address2!=null) out.writeUTF(address2);
-            out.writeUTF(city);
-            if(state!=null && state.length()==0) state=null;
-            out.writeBoolean(state!=null);
-            if(state!=null) out.writeUTF(state);
-            out.writeUTF(country);
-            if(zip!=null && zip.length()==0) zip=null;
-            out.writeBoolean(zip!=null);
-            if(zip!=null) out.writeUTF(zip);
-            out.writeBoolean(sendInvoice);
-            out.writeUTF(billingContact);
-            out.writeUTF(billingEmail);
-            out.writeUTF(technicalContact);
-            out.writeUTF(technicalEmail);
-            out.flush();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.BUSINESS_PROFILES.ordinal());
+                    out.writeUTF(business.getAccounting());
+                    out.writeUTF(name);
+                    out.writeBoolean(isPrivate);
+                    out.writeUTF(phone);
+                    out.writeBoolean(finalFax!=null);
+                    if(finalFax!=null) out.writeUTF(finalFax);
+                    out.writeUTF(address1);
+                    out.writeBoolean(finalAddress2!=null);
+                    if(finalAddress2!=null) out.writeUTF(finalAddress2);
+                    out.writeUTF(city);
+                    out.writeBoolean(finalState!=null);
+                    if(finalState!=null) out.writeUTF(finalState);
+                    out.writeUTF(country);
+                    out.writeBoolean(finalZip!=null);
+                    if(finalZip!=null) out.writeUTF(finalZip);
+                    out.writeBoolean(sendInvoice);
+                    out.writeUTF(billingContact);
+                    out.writeUTF(billingEmail);
+                    out.writeUTF(technicalContact);
+                    out.writeUTF(technicalEmail);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public BusinessProfile get(int pkey) throws IOException, SQLException {

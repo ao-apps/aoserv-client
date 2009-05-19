@@ -34,13 +34,14 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
     }
 
     int addEmailAddress(String address, EmailDomain domainObject) throws SQLException, IOException {
-	if (!EmailAddress.isValidFormat(address)) throw new SQLException("Invalid email address: " + address);
-	return connector.requestIntQueryIL(
+        if (!EmailAddress.isValidFormat(address)) throw new SQLException("Invalid email address: " + address);
+        return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_ADDRESSES,
             address,
             domainObject.pkey
-	);
+    	);
     }
 
     public EmailAddress get(int pkey) throws IOException, SQLException {

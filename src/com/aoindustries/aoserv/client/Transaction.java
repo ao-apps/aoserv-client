@@ -76,90 +76,96 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
     private byte payment_confirmed;
 
-    public void approved(int creditCardTransaction) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_APPROVED.ordinal());
-            out.writeCompressedInt(transid);
-            out.writeCompressedInt(creditCardTransaction);
-            out.flush();
+    public void approved(final int creditCardTransaction) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_APPROVED.ordinal());
+                    out.writeCompressedInt(transid);
+                    out.writeCompressedInt(creditCardTransaction);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 
-    public void declined(int creditCardTransaction) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_DECLINED.ordinal());
-            out.writeCompressedInt(transid);
-            out.writeCompressedInt(creditCardTransaction);
-            out.flush();
+    public void declined(final int creditCardTransaction) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_DECLINED.ordinal());
+                    out.writeCompressedInt(transid);
+                    out.writeCompressedInt(creditCardTransaction);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 
-    public void held(int creditCardTransaction) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_HELD.ordinal());
-            out.writeCompressedInt(transid);
-            out.writeCompressedInt(creditCardTransaction);
-            out.flush();
+    public void held(final int creditCardTransaction) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_HELD.ordinal());
+                    out.writeCompressedInt(transid);
+                    out.writeCompressedInt(creditCardTransaction);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 
     @Override
     boolean equalsImpl(Object O) {
-	return
+    	return
             O instanceof Transaction
             && ((Transaction)O).transid==transid
-	;
+        ;
     }
 
     /**

@@ -34,6 +34,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 
     int addLinuxServerGroup(LinuxGroup linuxGroup, AOServer aoServer) throws IOException, SQLException {
         int pkey=connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_SERVER_GROUPS,
             linuxGroup.pkey,

@@ -43,6 +43,7 @@ final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<Httpd
         String description
     ) throws IOException, SQLException {
         return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS,
             htc.pkey,

@@ -65,11 +65,11 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
     }
 
     /**
@@ -77,7 +77,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
      * The list is obtained from a file on the server that hosts the list.
      */
     public String getAddressList() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
     }
 
     /**
@@ -206,6 +206,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_LISTS,
             pkey
@@ -213,7 +214,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     public void setAddressList(String addresses) throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
+        table.connector.requestUpdate(true, AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

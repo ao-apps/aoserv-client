@@ -46,7 +46,7 @@ final public class MasterServerProfileTable extends AOServTable<String,MasterSer
 
     public List<MasterServerProfile> getRows() throws IOException, SQLException {
         List<MasterServerProfile> list=new ArrayList<MasterServerProfile>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_SERVER_PROFILE);
+        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.MASTER_SERVER_PROFILE);
         return list;
     }
 

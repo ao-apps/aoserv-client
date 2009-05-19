@@ -35,26 +35,26 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
     }
 
     int addCreditCard(
-        CreditCardProcessor processor,
-	Business business,
-        String groupName,
-        String cardInfo,
-        String providerUniqueId,
-        String firstName,
-        String lastName,
-        String companyName,
-        String email,
-        String phone,
-        String fax,
-        String customerTaxId,
-        String streetAddress1,
-        String streetAddress2,
-        String city,
-        String state,
-        String postalCode,
-        CountryCode countryCode,
-        String principalName,
-        String description,
+        final CreditCardProcessor processor,
+        final Business business,
+        final String groupName,
+        final String cardInfo,
+        final String providerUniqueId,
+        final String firstName,
+        final String lastName,
+        final String companyName,
+        final String email,
+        final String phone,
+        final String fax,
+        final String customerTaxId,
+        final String streetAddress1,
+        final String streetAddress2,
+        final String city,
+        final String state,
+        final String postalCode,
+        final CountryCode countryCode,
+        final String principalName,
+        final String description,
         // Encrypted values
         String card_number,
         byte expiration_month,
@@ -67,10 +67,10 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
         if(!connector.isSecure()) throw new IOException("Credit cards may only be added when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 
         // Encrypt if currently configured to
-        EncryptionKey encryptionFrom = processor.getEncryptionFrom();
-        EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
-        String encryptedCardNumber;
-        String encryptedExpiration;
+        final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
+        final EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
+        final String encryptedCardNumber;
+        final String encryptedExpiration;
         if(encryptionFrom!=null && encryptionRecipient!=null) {
             // Encrypt the card number and expiration
             encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, CreditCard.randomize(card_number));
@@ -80,56 +80,58 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
             encryptedExpiration = null;
         }
 
-        int pkey;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.CREDIT_CARDS.ordinal());
-            out.writeUTF(processor.pkey);
-            out.writeUTF(business.pkey);
-            out.writeNullUTF(groupName);
-            out.writeUTF(cardInfo);
-            out.writeUTF(providerUniqueId);
-            out.writeUTF(firstName);
-            out.writeUTF(lastName);
-            out.writeNullUTF(companyName);
-            out.writeNullUTF(email);
-            out.writeNullUTF(phone);
-            out.writeNullUTF(fax);
-            out.writeNullUTF(customerTaxId);
-            out.writeUTF(streetAddress1);
-            out.writeNullUTF(streetAddress2);
-            out.writeUTF(city);
-            out.writeNullUTF(state);
-            out.writeNullUTF(postalCode);
-            out.writeUTF(countryCode.pkey);
-            out.writeNullUTF(principalName);
-            out.writeNullUTF(description);
-            out.writeNullUTF(encryptedCardNumber);
-            out.writeNullUTF(encryptedExpiration);
-            out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
-            out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
-            out.flush();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unknown response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.CREDIT_CARDS.ordinal());
+                    out.writeUTF(processor.pkey);
+                    out.writeUTF(business.pkey);
+                    out.writeNullUTF(groupName);
+                    out.writeUTF(cardInfo);
+                    out.writeUTF(providerUniqueId);
+                    out.writeUTF(firstName);
+                    out.writeUTF(lastName);
+                    out.writeNullUTF(companyName);
+                    out.writeNullUTF(email);
+                    out.writeNullUTF(phone);
+                    out.writeNullUTF(fax);
+                    out.writeNullUTF(customerTaxId);
+                    out.writeUTF(streetAddress1);
+                    out.writeNullUTF(streetAddress2);
+                    out.writeUTF(city);
+                    out.writeNullUTF(state);
+                    out.writeNullUTF(postalCode);
+                    out.writeUTF(countryCode.pkey);
+                    out.writeNullUTF(principalName);
+                    out.writeNullUTF(description);
+                    out.writeNullUTF(encryptedCardNumber);
+                    out.writeNullUTF(encryptedExpiration);
+                    out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
+                    out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unknown response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public CreditCard get(int pkey) throws SQLException, IOException {

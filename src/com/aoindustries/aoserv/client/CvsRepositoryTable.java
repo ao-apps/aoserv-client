@@ -42,7 +42,8 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         LinuxServerGroup lsg,
         long mode
     ) throws IOException, SQLException {
-	return connector.requestIntQueryIL(
+    	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.CVS_REPOSITORIES,
             ao.pkey,
@@ -50,7 +51,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
             lsa.pkey,
             lsg.pkey,
             mode
-	);
+    	);
     }
 
     public CvsRepository get(int pkey) throws IOException, SQLException {

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
@@ -19,8 +18,6 @@ import java.util.List;
  *
  * @see  HttpdSite
  * @see  HttpdTomcatStdSite
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -171,45 +168,57 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
     }
 
     public String startJVM() throws IOException, SQLException {
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.START_JVM.ordinal());
-            out.writeCompressedInt(pkey);
-            out.flush();
+        return table.connector.requestResult(
+            false,
+            new AOServConnector.ResultRequest<String>() {
+                String result;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.START_JVM.ordinal());
+                    out.writeCompressedInt(pkey);
+                }
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) return in.readBoolean()?in.readUTF():null;
-            AOServProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        result = in.readBoolean()?in.readUTF():null;
+                        return;
+                    }
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
+                }
+
+                public String afterRelease() {
+                    return result;
+                }
+            }
+        );
     }
 
     public String stopJVM() throws IOException, SQLException {
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.STOP_JVM.ordinal());
-            out.writeCompressedInt(pkey);
-            out.flush();
+        return table.connector.requestResult(
+            false,
+            new AOServConnector.ResultRequest<String>() {
+                String result;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.STOP_JVM.ordinal());
+                    out.writeCompressedInt(pkey);
+                }
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) return in.readBoolean()?in.readUTF():null;
-            AOServProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        result = in.readBoolean()?in.readUTF():null;
+                        return;
+                    }
+                    AOServProtocol.checkResult(code, in);
+                    throw new IOException("Unexpected response code: "+code);
+                }
+
+                public String afterRelease() {
+                    return result;
+                }
+            }
+        );
     }
 
     @Override

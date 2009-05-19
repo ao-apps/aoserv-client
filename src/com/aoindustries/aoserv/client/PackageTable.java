@@ -37,13 +37,14 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	Business business,
         PackageDefinition packageDefinition
     ) throws IOException, SQLException {
-	return connector.requestIntQueryIL(
+    	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.PACKAGES,
             name,
             business.pkey,
             packageDefinition.pkey
-	);
+    	);
     }
 
     /**
@@ -71,7 +72,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
     }
 
     public String generatePackageName(String template) throws IOException, SQLException {
-	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_PACKAGE_NAME, template);
+    	return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_PACKAGE_NAME, template);
     }
 
     List<Package> getPackages(Business business) throws IOException, SQLException {
@@ -157,7 +158,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
     }
 
     public boolean isPackageNameAvailable(String packageName) throws SQLException, IOException {
-	if(!Package.isValidPackageName(packageName)) throw new SQLException("Invalid package name: "+packageName);
-	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_PACKAGE_NAME_AVAILABLE, packageName);
+        if(!Package.isValidPackageName(packageName)) throw new SQLException("Invalid package name: "+packageName);
+        return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_PACKAGE_NAME_AVAILABLE, packageName);
     }
 }

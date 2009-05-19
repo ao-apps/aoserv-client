@@ -220,50 +220,54 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
+    /*
     protected int getMaxConnectionsPerThread() {
         return 1;
-    }
+    }*/
 
-    @SuppressWarnings({"unchecked"})
-    protected V getObject(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
-        AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(commID.ordinal());
-            AOServConnector.writeParams(params, out);
-            out.flush();
+    protected V getObject(boolean allowRetry, final AOServProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
+        return connector.requestResult(
+            allowRetry,
+            new AOServConnector.ResultRequest<V>() {
+                V result;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.NEXT) {
-                V obj=getNewObject();
-                obj.read(in);
-                if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
-                return obj;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(commID.ordinal());
+                    AOServConnector.writeParams(params, out);
+                }
+
+                @SuppressWarnings({"unchecked"})
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.NEXT) {
+                        V obj=getNewObject();
+                        obj.read(in);
+                        if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
+                        result = obj;
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        result = null;
+                    }
+                }
+
+                public V afterRelease() {
+                    return result;
+                }
             }
-            AOServProtocol.checkResult(code, in);
-            return null;
-        } catch(RuntimeException err) {
-            connection.close();
-            throw err;
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
+        );
     }
 
-    protected List<V> getObjects(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+    protected List<V> getObjects(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         List<V> list=new ArrayList<V>();
-        getObjects(list, commID, params);
+        getObjects(allowRetry, list, commID, params);
         return list;
     }
 
-    protected void getObjects(List<V> list, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+    protected void getObjects(boolean allowRetry, final List<V> list, final AOServProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
+        final int initialSize = list.size();
         // Get a snapshot of all listeners
-        ProgressListener[] listeners=getProgressListeners();
-        int listenerCount=listeners==null?0:listeners.length;
+        final ProgressListener[] listeners=getProgressListeners();
+        final int listenerCount=listeners==null?0:listeners.length;
         int[] progressScales=null;
         int[] lastProgresses=null;
         if(listeners!=null) {
@@ -271,9 +275,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
             for(int c=0;c<listenerCount;c++) progressScales[c]=listeners[c].getScale();
             lastProgresses=new int[listenerCount];
         }
+        final int[] finalProgressScales = progressScales;
+        final int[] finalLastProgresses = lastProgresses;
         // Get a snapshot of all load listeners
-        TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
-        int loadCount=loadListeners==null?0:loadListeners.length;
+        final TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
+        final int loadCount=loadListeners==null?0:loadListeners.length;
         // Start the progresses at zero
         for(int c=0;c<listenerCount;c++) listeners[c].progressChanged(0, progressScales[c], this);
         // Tell each load listener that we are starting
@@ -282,173 +288,166 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
             entry.param=entry.listener.tableLoadStarted(this, entry.param);
         }
 
-        AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
         try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(commID.ordinal());
-            out.writeBoolean(listeners!=null);
-            AOServConnector.writeParams(params, out);
-            out.flush();
+            connector.requestUpdate(
+                allowRetry,
+                new AOServConnector.UpdateRequest() {
 
-            getObjects0(
-                list,
-                connection,
-                listeners,
-                progressScales,
-                lastProgresses,
-                loadListeners
-            );
-        } catch(RuntimeException err) {
-            connection.close();
-            throw err;
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
+                    public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                        out.writeCompressedInt(commID.ordinal());
+                        out.writeBoolean(listeners!=null);
+                        AOServConnector.writeParams(params, out);
+                    }
 
-        sortIfNeeded(list);
-    }
+                    @SuppressWarnings({"unchecked"})
+                    public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                        // Remove anything that was added during a previous attempt
+                        while(list.size()>initialSize) list.remove(list.size()-1);
+                        // Load the data
+                        int code=listeners==null?AOServProtocol.NEXT:in.readByte();
+                        if(code==AOServProtocol.NEXT) {
+                            int size;
+                            if(listeners==null) {
+                                size=0;
+                            } else {
+                                size=in.readCompressedInt();
+                            }
+                            int objCount=0;
+                            while((code=in.readByte())==AOServProtocol.NEXT) {
+                                V obj=getNewObject();
+                                obj.read(in);
+                                if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
 
-    protected List<V> getObjects(AOServProtocol.CommandID commID, Streamable param1) throws IOException, SQLException {
-        List<V> list=new ArrayList<V>();
-        getObjects(list, commID, param1);
-        return list;
-    }
+                                // Sort and add
+                                list.add(obj);
 
-    @SuppressWarnings({"unchecked"})
-    private void getObjects0(
-        List<V> list,
-        AOServConnection connection,
-        ProgressListener[] listeners,
-        int[] progressScales,
-        int[] lastProgresses,
-        TableLoadListenerEntry[] loadListeners
-    ) throws IOException, SQLException {
-        int listenerCount=listeners==null?0:listeners.length;
-        int loadCount=loadListeners==null?0:loadListeners.length;
+                                // Notify of progress changes
+                                objCount++;
+                                if(listeners!=null) {
+                                    for(int c=0;c<listenerCount;c++) {
+                                        int currentProgress=(int)(((long)objCount)*finalProgressScales[c]/size);
+                                        if(currentProgress!=finalLastProgresses[c]) listeners[c].progressChanged(finalLastProgresses[c]=currentProgress, finalProgressScales[c], AOServTable.this);
+                                    }
+                                }
 
-        CompressedDataInputStream in=connection.getInputStream();
-        int code=listeners==null?AOServProtocol.NEXT:in.readByte();
-        if(code==AOServProtocol.NEXT) {
-            int size;
-            if(listeners==null) {
-                size=0;
-            } else {
-                size=in.readCompressedInt();
-            }
-            int objCount=0;
-            while((code=in.readByte())==AOServProtocol.NEXT) {
-                V obj=getNewObject();
-                obj.read(in);
-                if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
+                                // Tell each load listener of the new object
+                                for(int c=0;c<loadCount;c++) {
+                                    TableLoadListenerEntry entry=loadListeners[c];
+                                    entry.param=entry.listener.tableRowLoaded(AOServTable.this, obj, objCount-1, entry.param);
+                                }
+                            }
+                            AOServProtocol.checkResult(code, in);
+                            if(listenerCount>0 && size!=objCount) throw new IOException("Unexpected number of objects returned: expected="+size+", returned="+objCount);
+                            // Show at final progress scale, just in case previous algorithm did not get the scale there.
+                            for(int c=0;c<listenerCount;c++) if(finalLastProgresses[c]!=finalProgressScales[c]) listeners[c].progressChanged(finalLastProgresses[c]=finalProgressScales[c], finalProgressScales[c], AOServTable.this);
 
-                // Sort and add
-                list.add(obj);
+                            // Tell each load listener that we are done
+                            for(int c=0;c<loadCount;c++) {
+                                TableLoadListenerEntry entry=loadListeners[c];
+                                entry.param=entry.listener.tableLoadCompleted(AOServTable.this, entry.param);
+                            }
+                        } else {
+                            AOServProtocol.checkResult(code, in);
+                            throw new IOException("Unexpected response code: "+code);
+                        }
+                    }
 
-                // Notify of progress changes
-                objCount++;
-                if(listeners!=null) {
-                    for(int c=0;c<listenerCount;c++) {
-                        int currentProgress=(int)(((long)objCount)*progressScales[c]/size);
-                        if(currentProgress!=lastProgresses[c]) listeners[c].progressChanged(lastProgresses[c]=currentProgress, progressScales[c], this);
+                    public void afterRelease() {
+                        try {
+                            sortIfNeeded(list);
+                        } catch(IOException err) {
+                            throw new WrappedException(err);
+                        } catch(SQLException err) {
+                            throw new WrappedException(err);
+                        }
                     }
                 }
-
-                // Tell each load listener of the new object
-                for(int c=0;c<loadCount;c++) {
-                    TableLoadListenerEntry entry=loadListeners[c];
-                    entry.param=entry.listener.tableRowLoaded(this, obj, objCount-1, entry.param);
-                }
-            }
-            AOServProtocol.checkResult(code, in);
-            if(listenerCount>0 && size!=objCount) throw new IOException("Unexpected number of objects returned: expected="+size+", returned="+objCount);
-            // Show at final progress scale, just in case previous algorithm did not get the scale there.
-            for(int c=0;c<listenerCount;c++) if(lastProgresses[c]!=progressScales[c]) listeners[c].progressChanged(lastProgresses[c]=progressScales[c], progressScales[c], this);
-
-            // Tell each load listener that we are done
-            for(int c=0;c<loadCount;c++) {
-                TableLoadListenerEntry entry=loadListeners[c];
-                entry.param=entry.listener.tableLoadCompleted(this, entry.param);
-            }
-        } else {
-            AOServProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            );
+        } catch(WrappedException err) {
+            Throwable cause = err.getCause();
+            if(cause instanceof IOException) throw (IOException)cause;
+            if(cause instanceof SQLException) throw (SQLException)cause;
+            throw err;
         }
     }
 
-    protected List<V> getObjectsNoProgress(AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+    protected List<V> getObjects(boolean allowRetry, AOServProtocol.CommandID commID, Streamable param1) throws IOException, SQLException {
         List<V> list=new ArrayList<V>();
-        getObjectsNoProgress(list, commID, params);
+        getObjects(allowRetry, list, commID, param1);
         return list;
     }
 
-    protected void getObjectsNoProgress(List<V> list, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+    protected List<V> getObjectsNoProgress(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        List<V> list=new ArrayList<V>();
+        getObjectsNoProgress(allowRetry, list, commID, params);
+        return list;
+    }
+
+    protected void getObjectsNoProgress(boolean allowRetry, final List<V> list, final AOServProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
+        final int initialSize = list.size();
         // Get a snapshot of all load listeners
-        TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
-        int loadCount=loadListeners==null?0:loadListeners.length;
+        final TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
+        final int loadCount=loadListeners==null?0:loadListeners.length;
         // Tell each load listener that we are starting
         for(int c=0;c<loadCount;c++) {
             TableLoadListenerEntry entry=loadListeners[c];
             entry.param=entry.listener.tableLoadStarted(this, entry.param);
         }
 
-        AOServConnection connection=connector.getConnection(getMaxConnectionsPerThread());
         try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(commID.ordinal());
-            AOServConnector.writeParams(params, out);
-            out.flush();
+            connector.requestUpdate(
+                allowRetry,
+                new AOServConnector.UpdateRequest() {
 
-            getObjectsNoProgress0(
-                list,
-                connection,
-                loadListeners
+                    public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                        out.writeCompressedInt(commID.ordinal());
+                        AOServConnector.writeParams(params, out);
+                    }
+
+                    @SuppressWarnings({"unchecked"})
+                    public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                        // Remove anything that was added during a previous attempt
+                        while(list.size()>initialSize) list.remove(list.size()-1);
+                        // Load the data
+                        int objCount=0;
+                        int code;
+                        while((code=in.readByte())==AOServProtocol.NEXT) {
+                            V obj=getNewObject();
+                            obj.read(in);
+                            if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
+                            list.add(obj);
+
+                            // Tell each load listener of the new object
+                            for(int c=0;c<loadCount;c++) {
+                                TableLoadListenerEntry entry=loadListeners[c];
+                                entry.param=entry.listener.tableRowLoaded(AOServTable.this, obj, objCount-1, entry.param);
+                            }
+                        }
+                        AOServProtocol.checkResult(code, in);
+
+                        // Tell each load listener that we are done
+                        for(int c=0;c<loadCount;c++) {
+                            TableLoadListenerEntry entry=loadListeners[c];
+                            entry.param=entry.listener.tableLoadCompleted(AOServTable.this, entry.param);
+                        }
+                    }
+
+                    public void afterRelease() {
+                        try {
+                            sortIfNeeded(list);
+                        } catch(IOException err) {
+                            throw new WrappedException(err);
+                        } catch(SQLException err) {
+                            throw new WrappedException(err);
+                        }
+                    }
+                }
             );
-        } catch(RuntimeException err) {
-            connection.close();
+        } catch(WrappedException err) {
+            Throwable cause = err.getCause();
+            if(cause instanceof IOException) throw (IOException)cause;
+            if(cause instanceof SQLException) throw (SQLException)cause;
             throw err;
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-
-        sortIfNeeded(list);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    private void getObjectsNoProgress0(
-        List<V> list,
-        AOServConnection connection,
-        TableLoadListenerEntry[] loadListeners
-    ) throws IOException, SQLException {
-        int loadCount=loadListeners==null?0:loadListeners.length;
-
-        // Load the data
-        CompressedDataInputStream in=connection.getInputStream();
-        int objCount=0;
-        int code;
-        while((code=in.readByte())==AOServProtocol.NEXT) {
-            V obj=getNewObject();
-            obj.read(in);
-            if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
-            list.add(obj);
-
-            // Tell each load listener of the new object
-            for(int c=0;c<loadCount;c++) {
-                TableLoadListenerEntry entry=loadListeners[c];
-                entry.param=entry.listener.tableRowLoaded(this, obj, objCount-1, entry.param);
-            }
-        }
-        AOServProtocol.checkResult(code, in);
-
-        // Tell each load listener that we are done
-        for(int c=0;c<loadCount;c++) {
-            TableLoadListenerEntry entry=loadListeners[c];
-            entry.param=entry.listener.tableLoadCompleted(this, entry.param);
         }
     }
 

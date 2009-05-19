@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
@@ -79,7 +78,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     int max_user_connections;
 
     public int arePasswordsSet() throws IOException, SQLException {
-        return table.connector.requestBooleanQuery(AOServProtocol.CommandID.IS_MYSQL_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+        return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_MYSQL_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
     public boolean canDisable() {
@@ -101,11 +100,11 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     }
 */
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.MYSQL_SERVER_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.MYSQL_SERVER_USERS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.MYSQL_SERVER_USERS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.MYSQL_SERVER_USERS, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -189,9 +188,9 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	username=in.readUTF().intern();
-	mysql_server=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        username=in.readUTF().intern();
+        mysql_server=in.readCompressedInt();
         host=StringUtility.intern(in.readNullUTF());
         disable_log=in.readCompressedInt();
         predisable_password=in.readNullUTF();
@@ -208,64 +207,67 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_SERVER_USERS,
             pkey
-	);
+    	);
     }
 
-    public void setPassword(String password) throws IOException, SQLException {
+    public void setPassword(final String password) throws IOException, SQLException {
         AOServConnector connector=table.connector;
         if(!connector.isSecure()) throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PASSWORD.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeNullUTF(password);
-            out.flush();
+        connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PASSWORD.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeNullUTF(password);
+                }
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code!=AOServProtocol.DONE) {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code!=AOServProtocol.DONE) {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
+        );
     }
 
-    public void setPredisablePassword(String password) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnector connector=table.connector;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeNullUTF(password);
-            out.flush();
+    public void setPredisablePassword(final String password) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-            else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeNullUTF(password);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
+        );
     }
 
     @Override
@@ -274,11 +276,11 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(username);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(username);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
         else out.writeCompressedInt(mysql_server);
-	out.writeNullUTF(host);
+        out.writeNullUTF(host);
         out.writeCompressedInt(disable_log);
         out.writeNullUTF(predisable_password);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {

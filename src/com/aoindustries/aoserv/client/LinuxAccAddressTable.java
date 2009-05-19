@@ -35,12 +35,13 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
     }
 
     int addLinuxAccAddress(EmailAddress emailAddressObject, LinuxServerAccount lsa) throws IOException, SQLException {
-	return connector.requestIntQueryIL(
+    	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_ACC_ADDRESSES,
             emailAddressObject.pkey,
             lsa.pkey
-	);
+    	);
     }
 
     public LinuxAccAddress get(int pkey) throws IOException, SQLException {

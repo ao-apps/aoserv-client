@@ -34,38 +34,40 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
         return defaultOrderBy;
     }
 
-    int addEmailSmtpRelay(Package pack, AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
-        int pkey;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
-            out.writeUTF(pack.name);
-            out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);
-            out.writeUTF(host);
-            out.writeUTF(type.pkey);
-            out.writeLong(duration);
-            out.flush();
+    int addEmailSmtpRelay(final Package pack, final AOServer aoServer, final String host, final EmailSmtpRelayType type, final long duration) throws IOException, SQLException {
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
+                    out.writeUTF(pack.name);
+                    out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);
+                    out.writeUTF(host);
+                    out.writeUTF(type.pkey);
+                    out.writeLong(duration);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public EmailSmtpRelay get(int pkey) throws IOException, SQLException {

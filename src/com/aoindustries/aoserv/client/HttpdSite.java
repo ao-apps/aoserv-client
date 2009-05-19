@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import com.aoindustries.util.BufferManager;
 import java.io.*;
 import java.sql.*;
@@ -115,11 +114,11 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
     /**
@@ -326,15 +325,15 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
     public void setIsManual(boolean isManual) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
     }
 
     public void setServerAdmin(String address) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
     }
 
     @Override
@@ -367,34 +366,35 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_129)>=0) out.writeNullUTF(awstatsSkipFiles);
     }
 
-    public void getAWStatsFile(String path, String queryString, OutputStream out) throws IOException, SQLException {
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream masterOut=connection.getOutputStream();
-            masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_AWSTATS_FILE.ordinal());
-            masterOut.writeCompressedInt(pkey);
-            masterOut.writeUTF(path);
-            masterOut.writeUTF(queryString==null ? "" : queryString);
-            masterOut.flush();
-
-            CompressedDataInputStream in=connection.getInputStream();
-            byte[] buff=BufferManager.getBytes();
-            try {
-                int code;
-                while((code=in.readByte())==AOServProtocol.NEXT) {
-                    int len=in.readShort();
-                    in.readFully(buff, 0, len);
-                    out.write(buff, 0, len);
+    public void getAWStatsFile(final String path, final String queryString, final OutputStream out) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            false,
+            new AOServConnector.UpdateRequest() {
+                public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+                    masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_AWSTATS_FILE.ordinal());
+                    masterOut.writeCompressedInt(pkey);
+                    masterOut.writeUTF(path);
+                    masterOut.writeUTF(queryString==null ? "" : queryString);
                 }
-                AOServProtocol.checkResult(code, in);
-            } finally {
-                BufferManager.release(buff);
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    byte[] buff=BufferManager.getBytes();
+                    try {
+                        int code;
+                        while((code=in.readByte())==AOServProtocol.NEXT) {
+                            int len=in.readShort();
+                            in.readFully(buff, 0, len);
+                            out.write(buff, 0, len);
+                        }
+                        AOServProtocol.checkResult(code, in);
+                    } finally {
+                        BufferManager.release(buff);
+                    }
+                }
+
+                public void afterRelease() {
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+        );
     }
 }

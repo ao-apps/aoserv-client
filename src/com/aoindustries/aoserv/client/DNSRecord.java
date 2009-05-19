@@ -166,7 +166,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_RECORDS, pkey);
+    	table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_RECORDS, pkey);
     }
 
     @Override

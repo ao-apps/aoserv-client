@@ -81,11 +81,12 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
     }
     
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_FORWARDING,
             pkey
-	);
+    	);
     }
 
     @Override

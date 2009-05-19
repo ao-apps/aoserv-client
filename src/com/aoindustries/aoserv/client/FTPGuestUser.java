@@ -56,11 +56,12 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FTP_GUEST_USERS,
             pkey
-	);
+    	);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

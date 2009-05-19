@@ -35,53 +35,55 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
     }
 
     public int addBackupServer(
-        String hostname,
-        ServerFarm farm,
-        Package owner,
-        String description,
-        int backup_hour,
-        OperatingSystemVersion os_version,
-        String username,
-        String password,
-        String contact_phone,
-        String contact_email
+        final String hostname,
+        final ServerFarm farm,
+        final Package owner,
+        final String description,
+        final int backup_hour,
+        final OperatingSystemVersion os_version,
+        final String username,
+        final String password,
+        final String contact_phone,
+        final String contact_email
     ) throws IOException, SQLException {
         // Create the new profile
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        int pkey;
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD_BACKUP_SERVER.ordinal());
-            out.writeUTF(hostname);
-            out.writeUTF(farm.getName());
-            out.writeCompressedInt(owner.getPkey());
-            out.writeUTF(description);
-            out.writeCompressedInt(backup_hour);
-            out.writeCompressedInt(os_version.getPkey());
-            out.writeUTF(username);
-            out.writeUTF(password);
-            out.writeUTF(contact_phone);
-            out.writeUTF(contact_email);
-            out.flush();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD_BACKUP_SERVER.ordinal());
+                    out.writeUTF(hostname);
+                    out.writeUTF(farm.getName());
+                    out.writeCompressedInt(owner.getPkey());
+                    out.writeUTF(description);
+                    out.writeCompressedInt(backup_hour);
+                    out.writeCompressedInt(os_version.getPkey());
+                    out.writeUTF(username);
+                    out.writeUTF(password);
+                    out.writeUTF(contact_phone);
+                    out.writeUTF(contact_email);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     /**

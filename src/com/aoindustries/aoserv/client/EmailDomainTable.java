@@ -33,14 +33,15 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
     }
 
     int addEmailDomain(String domain, AOServer ao, Package packageObject) throws SQLException, IOException {
-	if (!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid domain format: " + domain);
-	return connector.requestIntQueryIL(
+        if (!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid domain format: " + domain);
+        return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_DOMAINS,
             domain,
             ao.pkey,
             packageObject.name
-	);
+    	);
     }
 
     public EmailDomain get(int pkey) throws IOException, SQLException {
@@ -134,7 +135,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
     }
 
     boolean isEmailDomainAvailable(AOServer aoServer, String domain) throws SQLException, IOException {
-	if(!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid EmailDomain: "+domain);
-	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_EMAIL_DOMAIN_AVAILABLE, aoServer.pkey, domain);
+        if(!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid EmailDomain: "+domain);
+        return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_EMAIL_DOMAIN_AVAILABLE, aoServer.pkey, domain);
     }
 }

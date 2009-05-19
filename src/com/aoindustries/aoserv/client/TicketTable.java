@@ -34,51 +34,53 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
     }
 
     public int addTicket(
-        Business business,
-        Language language,
-        TicketCategory category,
-        TicketType ticketType,
-        String summary,
-        String details,
-        TicketPriority clientPriority,
-        String contactEmails,
-        String contactPhoneNumbers
+        final Business business,
+        final Language language,
+        final TicketCategory category,
+        final TicketType ticketType,
+        final String summary,
+        final String details,
+        final TicketPriority clientPriority,
+        final String contactEmails,
+        final String contactPhoneNumbers
     ) throws IOException, SQLException {
-        int pkey;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
-            out.writeNullUTF(business==null ? null : business.pkey);
-            out.writeUTF(language.pkey);
-            out.writeCompressedInt(category==null ? -1 : category.pkey);
-            out.writeUTF(ticketType.pkey);
-            out.writeUTF(summary);
-            out.writeNullLongUTF(details);
-            out.writeUTF(clientPriority.pkey);
-            out.writeUTF(contactEmails);
-            out.writeUTF(contactPhoneNumbers);
-            out.flush();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
+                    out.writeNullUTF(business==null ? null : business.pkey);
+                    out.writeUTF(language.pkey);
+                    out.writeCompressedInt(category==null ? -1 : category.pkey);
+                    out.writeUTF(ticketType.pkey);
+                    out.writeUTF(summary);
+                    out.writeNullLongUTF(details);
+                    out.writeUTF(clientPriority.pkey);
+                    out.writeUTF(contactEmails);
+                    out.writeUTF(contactPhoneNumbers);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public SchemaTable.TableID getTableID() {

@@ -152,11 +152,12 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MAJORDOMO_SERVERS,
             pkey
-	);
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {

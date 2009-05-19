@@ -190,41 +190,47 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
      * IOException or SQLException.
      */
     public SlaveStatus getSlaveStatus() throws IOException, SQLException {
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_SLAVE_STATUS.ordinal());
-            out.writeCompressedInt(pkey);
-            out.flush();
+        return table.connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<SlaveStatus>() {
+                SlaveStatus result;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.NEXT) {
-                return new SlaveStatus(
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF(),
-                    in.readNullUTF()
-                );
-            } else if(code==AOServProtocol.DONE) {
-                return null;
-            } else AOServProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_SLAVE_STATUS.ordinal());
+                    out.writeCompressedInt(pkey);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.NEXT) {
+                        result = new SlaveStatus(
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF(),
+                            in.readNullUTF()
+                        );
+                    } else if(code==AOServProtocol.DONE) {
+                        result = null;
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public SlaveStatus afterRelease() {
+                    return result;
+                }
+            }
+        );
     }
 }

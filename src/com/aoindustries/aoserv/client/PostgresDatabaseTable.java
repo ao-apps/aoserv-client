@@ -40,7 +40,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
         PostgresEncoding encoding,
         boolean enablePostgis
     ) throws IOException, SQLException {
-	int pkey=connector.requestIntQueryIL(
+    	int pkey=connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_DATABASES,
             name,
@@ -48,12 +49,12 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
             datdba.pkey,
             encoding.pkey,
             enablePostgis
-	);
-	return pkey;
+        );
+    	return pkey;
     }
 
     public String generatePostgresDatabaseName(String template_base, String template_added) throws IOException, SQLException {
-	return connector.requestStringQuery(AOServProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added);
+    	return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added);
     }
 
     public PostgresDatabase get(int pkey) throws IOException, SQLException {
@@ -172,7 +173,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
     }
 
     boolean isPostgresDatabaseNameAvailable(String name, PostgresServer postgresServer) throws IOException, SQLException {
-	return connector.requestBooleanQuery(
+    	return connector.requestBooleanQuery(
+            true,
             AOServProtocol.CommandID.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
             name,
             postgresServer.pkey
@@ -206,6 +208,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
+            true,
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.POSTGRES_DATABASES,
             aoServer.pkey

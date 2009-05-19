@@ -39,14 +39,15 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
         int maxConnections
     ) throws SQLException, IOException {
         if(!version.name.equals(TechnologyName.MYSQL)) throw new SQLException("TechnologyVersion must have name of "+TechnologyName.MYSQL+": "+version.name);
-	return connector.requestIntQueryIL(
+    	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.MYSQL_SERVERS,
             name,
             aoServer.pkey,
             version.pkey,
             maxConnections
-	);
+    	);
     }
 
     public MySQLServer get(int pkey) throws IOException, SQLException {
@@ -147,11 +148,12 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
     }
 
     boolean isMySQLServerNameAvailable(String name, AOServer ao) throws IOException, SQLException {
-	return connector.requestBooleanQuery(AOServProtocol.CommandID.IS_MYSQL_SERVER_NAME_AVAILABLE, name, ao.pkey);
+    	return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_MYSQL_SERVER_NAME_AVAILABLE, name, ao.pkey);
     }
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
+            true,
             AOServProtocol.CommandID.WAIT_FOR_REBUILD,
             SchemaTable.TableID.MYSQL_SERVERS,
             aoServer.pkey

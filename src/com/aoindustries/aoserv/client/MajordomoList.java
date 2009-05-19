@@ -121,14 +121,14 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
      * Gets the info file for the list.
      */
     public String getInfoFile() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
     }
 
     /**
      * Gets the intro file for the list.
      */
     public String getIntroFile() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
     }
 
     public EmailPipeAddress getListPipeAddress() throws SQLException, IOException {
@@ -223,11 +223,11 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     }
 
     public void setInfoFile(String file) throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
+        table.connector.requestUpdate(true, AOServProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
     }
 
     public void setIntroFile(String file) throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
+        table.connector.requestUpdate(true, AOServProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
     }
 
     @Override

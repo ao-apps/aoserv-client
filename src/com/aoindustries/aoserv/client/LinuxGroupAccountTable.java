@@ -43,10 +43,11 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
     }
 
     int addLinuxGroupAccount(
-	LinuxGroup groupNameObject,
-	LinuxAccount usernameObject
+        LinuxGroup groupNameObject,
+        LinuxAccount usernameObject
     ) throws IOException, SQLException {
         int pkey=connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
             groupNameObject.pkey,

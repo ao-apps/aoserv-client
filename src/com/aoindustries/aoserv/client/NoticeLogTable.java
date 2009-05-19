@@ -40,7 +40,8 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	String type,
 	int transid
     ) throws IOException, SQLException {
-	connector.requestUpdateIL(
+    	connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.NOTICE_LOG,
             accounting,
@@ -49,7 +50,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
             balance,
             type,
             transid
-	);
+    	);
     }
 
     public NoticeLog get(int pkey) throws IOException, SQLException {

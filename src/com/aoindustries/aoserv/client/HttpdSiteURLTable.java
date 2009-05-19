@@ -38,7 +38,7 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
     }
 
     int addHttpdSiteURL(HttpdSiteBind hsb, String hostname) throws IOException, SQLException {
-        return connector.requestIntQueryIL(AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
+        return connector.requestIntQueryIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
     }
 
     public HttpdSiteURL get(int pkey) throws IOException, SQLException {

@@ -34,59 +34,61 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
     }
 
     int addHttpdJBossSite(
-	AOServer aoServer,
-	String siteName,
-	Package packageObj,
-	LinuxAccount siteUser,
-	LinuxGroup siteGroup,
-	String serverAdmin,
-	boolean useApache,
-	IPAddress ipAddress,
-	String primaryHttpHostname,
-	String[] altHttpHostnames,
-	int jBossVersion,
-	String contentSrc
+        final AOServer aoServer,
+        final String siteName,
+        final Package packageObj,
+        final LinuxAccount siteUser,
+        final LinuxGroup siteGroup,
+        final String serverAdmin,
+        final boolean useApache,
+        final IPAddress ipAddress,
+        final String primaryHttpHostname,
+        final String[] altHttpHostnames,
+        final int jBossVersion,
+        final String contentSrc
     ) throws IOException, SQLException {
-        int pkey;
-        IntList invalidateList;
-        AOServConnection connection=connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
-            out.writeCompressedInt(SchemaTable.TableID.HTTPD_JBOSS_SITES.ordinal());
-            out.writeCompressedInt(aoServer.pkey);
-            out.writeUTF(siteName);
-            out.writeUTF(packageObj.name);
-            out.writeUTF(siteUser.pkey);
-            out.writeUTF(siteGroup.pkey);
-            out.writeUTF(serverAdmin);
-            out.writeBoolean(useApache);
-            out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);
-            out.writeUTF(primaryHttpHostname);
-            out.writeCompressedInt(altHttpHostnames.length);
-            for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
-            out.writeCompressedInt(jBossVersion);
-            out.writeBoolean(contentSrc!=null);
-            if (contentSrc!=null) out.writeUTF(contentSrc);
-            out.flush();
+        return connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                pkey=in.readCompressedInt();
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unknown response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.HTTPD_JBOSS_SITES.ordinal());
+                    out.writeCompressedInt(aoServer.pkey);
+                    out.writeUTF(siteName);
+                    out.writeUTF(packageObj.name);
+                    out.writeUTF(siteUser.pkey);
+                    out.writeUTF(siteGroup.pkey);
+                    out.writeUTF(serverAdmin);
+                    out.writeBoolean(useApache);
+                    out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);
+                    out.writeUTF(primaryHttpHostname);
+                    out.writeCompressedInt(altHttpHostnames.length);
+                    for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
+                    out.writeCompressedInt(jBossVersion);
+                    out.writeBoolean(contentSrc!=null);
+                    if (contentSrc!=null) out.writeUTF(contentSrc);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unknown response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            connector.releaseConnection(connection);
-        }
-        connector.tablesUpdated(invalidateList);
-        return pkey;
+        );
     }
 
     public HttpdJBossSite get(int pkey) throws SQLException, IOException {

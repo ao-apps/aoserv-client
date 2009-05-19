@@ -249,11 +249,11 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
+    	table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
     }
 
     public void setAsDefault() throws IOException, SQLException {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
+    	table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

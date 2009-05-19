@@ -250,7 +250,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     }
 
     public void moveTo(Server server) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.MOVE_IP_ADDRESS, ip_address, server.pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.MOVE_IP_ADDRESS, ip_address, server.pkey);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -273,7 +273,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
      * Sets the hostname for this <code>IPAddress</code>.
      */
     public void setHostname(String hostname) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
     }
 
     /**
@@ -283,11 +283,11 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     public void setPackage(Package pk) throws IOException, SQLException {
         if(isUsed()) throw new SQLException("Unable to set Package, IPAddress in use: #"+pkey);
 
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_IP_ADDRESS_PACKAGE, pkey, pk.name);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_PACKAGE, pkey, pk.name);
     }
 
     public void setDHCPAddress(String ipAddress) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

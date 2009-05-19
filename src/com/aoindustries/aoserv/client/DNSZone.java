@@ -290,11 +290,11 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_ZONES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_ZONES, pkey);
     }
     
     public void setTTL(int ttl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_DNS_ZONE_TTL, pkey, ttl);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_DNS_ZONE_TTL, pkey, ttl);
         this.ttl=ttl;
     }
 

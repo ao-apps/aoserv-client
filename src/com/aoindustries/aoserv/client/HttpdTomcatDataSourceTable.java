@@ -48,6 +48,7 @@ final public class HttpdTomcatDataSourceTable extends CachedTableIntegerKey<Http
         String validationQuery
     ) throws IOException, SQLException {
         return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES,
             htc.pkey,

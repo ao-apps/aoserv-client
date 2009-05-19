@@ -98,7 +98,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
     }
 
     public void remove() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS, pkey);
     }
 
     public void update(
@@ -108,6 +108,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
         String description
     ) throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.UPDATE_HTTPD_TOMCAT_PARAMETER,
             pkey,
             name,

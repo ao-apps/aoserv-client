@@ -43,7 +43,8 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 	String destination,
         int ttl
     ) throws IOException, SQLException {
-	return connector.requestIntQueryIL(
+    	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.DNS_RECORDS,
             zone.pkey,
@@ -52,7 +53,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
             mx_priority,
             destination,
             ttl
-	);
+    	);
     }
 
     public DNSRecord get(int pkey) throws IOException, SQLException {

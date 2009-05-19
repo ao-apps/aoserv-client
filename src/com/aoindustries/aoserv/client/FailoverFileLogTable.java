@@ -45,6 +45,7 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
         boolean isSuccessful
     ) throws IOException, SQLException {
     	return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.FAILOVER_FILE_LOG,
             replication.pkey,
@@ -68,18 +69,18 @@ final public class FailoverFileLogTable extends AOServTable<Integer,FailoverFile
     }
 
     public FailoverFileLog get(int pkey) throws IOException, SQLException {
-        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.FAILOVER_FILE_LOG, pkey);
+        return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.FAILOVER_FILE_LOG, pkey);
     }
 
     public List<FailoverFileLog> getRows() throws IOException, SQLException {
         List<FailoverFileLog> list=new ArrayList<FailoverFileLog>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.FAILOVER_FILE_LOG);
+        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.FAILOVER_FILE_LOG);
         return list;
     }
 
     List<FailoverFileLog> getFailoverFileLogs(FailoverFileReplication replication, int maxRows) throws IOException, SQLException {
         List<FailoverFileLog> list=new ArrayList<FailoverFileLog>();
-        getObjectsNoProgress(list, AOServProtocol.CommandID.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.pkey, maxRows);
+        getObjectsNoProgress(true, list, AOServProtocol.CommandID.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.pkey, maxRows);
         return list;
     }
 

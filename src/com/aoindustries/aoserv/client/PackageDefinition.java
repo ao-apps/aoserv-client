@@ -91,40 +91,42 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return table.connector.getPackageDefinitionLimits().getPackageDefinitionLimits(this);
     }
 
-    public void setLimits(PackageDefinitionLimit[] limits) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeCompressedInt(limits.length);
-            for(int c=0;c<limits.length;c++) {
-                PackageDefinitionLimit limit=limits[c];
-                out.writeUTF(limit.resource);
-                out.writeCompressedInt(limit.soft_limit);
-                out.writeCompressedInt(limit.hard_limit);
-                out.writeCompressedInt(limit.additional_rate);
-                out.writeBoolean(limit.additional_transaction_type!=null);
-                if(limit.additional_transaction_type!=null) out.writeUTF(limit.additional_transaction_type);
-            }
-            out.flush();
+    public void setLimits(final PackageDefinitionLimit[] limits) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unknown response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeCompressedInt(limits.length);
+                    for(int c=0;c<limits.length;c++) {
+                        PackageDefinitionLimit limit=limits[c];
+                        out.writeUTF(limit.resource);
+                        out.writeCompressedInt(limit.soft_limit);
+                        out.writeCompressedInt(limit.hard_limit);
+                        out.writeCompressedInt(limit.additional_rate);
+                        out.writeBoolean(limit.additional_transaction_type!=null);
+                        if(limit.additional_transaction_type!=null) out.writeUTF(limit.additional_transaction_type);
+                    }
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unknown response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 
     public String getName() {
@@ -170,11 +172,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     }
     
     public int copy() throws IOException, SQLException {
-        return table.connector.requestIntQueryIL(AOServProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
+        return table.connector.requestIntQueryIL(true, AOServProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
     }
 
     public void setActive(boolean active) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
     }
 
     public boolean isApproved() {
@@ -247,58 +249,61 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     }
     
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+        table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.PACKAGE_DEFINITIONS,
             pkey
-	);
+    	);
     }
 
     public void update(
-        Business business,
-        PackageCategory category,
-        String name,
-        String version,
-        String display,
-        String description,
-        int setupFee,
-        TransactionType setupFeeTransactionType,
-        int monthlyRate,
-        TransactionType monthlyRateTransactionType
+        final Brand brand,
+        final PackageCategory category,
+        final String name,
+        final String version,
+        final String display,
+        final String description,
+        final int setupFee,
+        final TransactionType setupFeeTransactionType,
+        final int monthlyRate,
+        final TransactionType monthlyRateTransactionType
     ) throws IOException, SQLException {
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeUTF(business.pkey);
-            out.writeUTF(category.pkey);
-            out.writeUTF(name);
-            out.writeUTF(version);
-            out.writeUTF(display);
-            out.writeUTF(description);
-            out.writeCompressedInt(setupFee);
-            out.writeBoolean(setupFeeTransactionType!=null);
-            if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.pkey);
-            out.writeCompressedInt(monthlyRate);
-            out.writeUTF(monthlyRateTransactionType.pkey);
-            out.flush();
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unknown response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeUTF(brand.pkey);
+                    out.writeUTF(category.pkey);
+                    out.writeUTF(name);
+                    out.writeUTF(version);
+                    out.writeUTF(display);
+                    out.writeUTF(description);
+                    out.writeCompressedInt(setupFee);
+                    out.writeBoolean(setupFeeTransactionType!=null);
+                    if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.pkey);
+                    out.writeCompressedInt(monthlyRate);
+                    out.writeUTF(monthlyRateTransactionType.pkey);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unknown response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 }

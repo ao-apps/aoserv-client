@@ -33,14 +33,15 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
     }
 
     int addEmailPipe(AOServer ao, String path, Package packageObject) throws IOException, SQLException {
-	int pkey=connector.requestIntQueryIL(
+    	int pkey=connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_PIPES,
             ao.pkey,
             path,
             packageObject.name
-	);
-	return pkey;
+        );
+        return pkey;
     }
 
     public EmailPipe get(int pkey) throws IOException, SQLException {

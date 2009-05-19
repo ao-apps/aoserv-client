@@ -44,7 +44,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
     }
 
     public BackupReport get(int pkey) throws IOException, SQLException {
-        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BACKUP_REPORTS, pkey);
+        return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BACKUP_REPORTS, pkey);
     }
 
     List<BackupReport> getBackupReports(Package pk) throws IOException, SQLException {
@@ -73,12 +73,12 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 
     public List<BackupReport> getRows() throws IOException, SQLException {
         List<BackupReport> list=new ArrayList<BackupReport>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BACKUP_REPORTS);
+        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BACKUP_REPORTS);
         return list;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BACKUP_REPORTS;
+        return SchemaTable.TableID.BACKUP_REPORTS;
     }
 
     protected BackupReport getUniqueRowImpl(int col, Object value) {

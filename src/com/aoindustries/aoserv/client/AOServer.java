@@ -9,6 +9,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Date;
@@ -487,7 +488,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     private static final Map<Integer,Object> mrtgLocks = new HashMap<Integer,Object>();
 
-    public void getMrtgFile(String filename, OutputStream out) throws IOException, SQLException {
+    public void getMrtgFile(final String filename, final OutputStream out) throws IOException, SQLException {
         // Only one MRTG graph per server at a time, if don't get the lock in 15 seconds, return an error
         synchronized(mrtgLocks) {
             long startTime = System.currentTimeMillis();
@@ -510,33 +511,34 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
 
         try {
-            AOServConnection connection=table.connector.getConnection();
-            try {
-                CompressedDataOutputStream masterOut=connection.getOutputStream();
-                masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_MRTG_FILE.ordinal());
-                masterOut.writeCompressedInt(pkey);
-                masterOut.writeUTF(filename);
-                masterOut.flush();
-
-                CompressedDataInputStream in=connection.getInputStream();
-                byte[] buff=BufferManager.getBytes();
-                try {
-                    int code;
-                    while((code=in.readByte())==AOServProtocol.NEXT) {
-                        int len=in.readShort();
-                        in.readFully(buff, 0, len);
-                        out.write(buff, 0, len);
+            table.connector.requestUpdate(
+                false,
+                new AOServConnector.UpdateRequest() {
+                    public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+                        masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_MRTG_FILE.ordinal());
+                        masterOut.writeCompressedInt(pkey);
+                        masterOut.writeUTF(filename);
                     }
-                    AOServProtocol.checkResult(code, in);
-                } finally {
-                    BufferManager.release(buff);
+
+                    public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                        byte[] buff=BufferManager.getBytes();
+                        try {
+                            int code;
+                            while((code=in.readByte())==AOServProtocol.NEXT) {
+                                int len=in.readShort();
+                                in.readFully(buff, 0, len);
+                                out.write(buff, 0, len);
+                            }
+                            AOServProtocol.checkResult(code, in);
+                        } finally {
+                            BufferManager.release(buff);
+                        }
+                    }
+
+                    public void afterRelease() {
+                    }
                 }
-            } catch(IOException err) {
-                connection.close();
-                throw err;
-            } finally {
-                table.connector.releaseConnection(connection);
-            }
+            );
         } finally {
             synchronized(mrtgLocks) {
                 mrtgLocks.remove(pkey);
@@ -706,23 +708,24 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public void restartApache() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_APACHE, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_APACHE, pkey);
     }
 
     public void restartCron() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_CRON, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_CRON, pkey);
     }
 
     public void restartXfs() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_XFS, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_XFS, pkey);
     }
 
     public void restartXvfb() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.RESTART_XVFB, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_XVFB, pkey);
     }
 
     public long requestDaemonAccess(int daemonCommandCode, int param1) throws IOException, SQLException {
         return table.connector.requestLongQuery(
+            true,
             AOServProtocol.CommandID.REQUEST_DAEMON_ACCESS,
             pkey,
             daemonCommandCode,
@@ -731,15 +734,15 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public void setLastDistroTime(long distroTime) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
     }
 
     public void startApache() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.START_APACHE, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_APACHE, pkey);
     }
 
     public void startCron() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.START_CRON, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_CRON, pkey);
     }
 
     public void startDistro(boolean includeUser) throws IOException, SQLException {
@@ -747,27 +750,27 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public void startXfs() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.START_XFS, pkey);
+        table.connector.requestUpdate(false,AOServProtocol.CommandID.START_XFS, pkey);
     }
 
     public void startXvfb() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.START_XVFB, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_XVFB, pkey);
     }
 
     public void stopApache() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_APACHE, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_APACHE, pkey);
     }
 
     public void stopCron() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_CRON, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_CRON, pkey);
     }
 
     public void stopXfs() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_XFS, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_XFS, pkey);
     }
 
     public void stopXvfb() throws IOException, SQLException {
-        table.connector.requestUpdate(AOServProtocol.CommandID.STOP_XVFB, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_XVFB, pkey);
     }
 
     @Override
@@ -873,14 +876,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      * Gets the 3ware RAID report.
      */
     public String get3wareRaidReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_3WARE_RAID_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_3WARE_RAID_REPORT, pkey);
     }
 
     /**
      * Gets the MD RAID report.
      */
     public String getMdRaidReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
     }
 
     public static class DrbdReport {
@@ -1003,7 +1006,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      * Gets the DRBD report.
      */
     public List<DrbdReport> getDrbdReport(Locale locale) throws IOException, SQLException, ParseException {
-        String report = table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey);
+        String report = table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey);
         List<String> lines = StringUtility.splitLines(report);
         int lineNum = 0;
         List<DrbdReport> reports = new ArrayList<DrbdReport>(lines.size());
@@ -1864,41 +1867,50 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     /**
      * Gets the LVM report.
      */
-    public LvmReport getLvmReport(Locale locale) throws IOException, SQLException, ParseException {
-        String vgs;
-        String pvs;
-        String lvs;
-        AOServConnection connection=table.connector.getConnection();
+    public LvmReport getLvmReport(final Locale locale) throws IOException, SQLException, ParseException {
         try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.GET_AO_SERVER_LVM_REPORT.ordinal());
-            out.writeCompressedInt(pkey);
-            out.flush();
-
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                vgs = in.readUTF();
-                pvs = in.readUTF();
-                lvs = in.readUTF();
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: "+code);
-            }
-        } catch(IOException err) {
-            connection.close();
+            return table.connector.requestResult(
+                true,
+                new AOServConnector.ResultRequest<LvmReport>() {
+                    String vgs;
+                    String pvs;
+                    String lvs;
+                    public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                        out.writeCompressedInt(AOServProtocol.CommandID.GET_AO_SERVER_LVM_REPORT.ordinal());
+                        out.writeCompressedInt(pkey);
+                    }
+                    public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                        int code=in.readByte();
+                        if(code==AOServProtocol.DONE) {
+                            vgs = in.readUTF();
+                            pvs = in.readUTF();
+                            lvs = in.readUTF();
+                        } else {
+                            AOServProtocol.checkResult(code, in);
+                            throw new IOException("Unexpected response code: "+code);
+                        }
+                    }
+                    public LvmReport afterRelease() {
+                        try {
+                            return new LvmReport(locale, vgs, pvs, lvs);
+                        } catch(ParseException err) {
+                            throw new WrappedException(err);
+                        }
+                    }
+                }
+            );
+        } catch(WrappedException err) {
+            Throwable cause = err.getCause();
+            if(cause instanceof ParseException) throw (ParseException)cause;
             throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
         }
-        return new LvmReport(locale, vgs, pvs, lvs);
     }
 
     /**
      * Gets the hard drive temperature report.
      */
     public String getHddTempReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_HDD_TEMP_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_TEMP_REPORT, pkey);
     }
 
     /**
@@ -1906,7 +1918,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      * is the device name and the value is the model name.
      */
     public Map<String,String> getHddModelReport(Locale locale) throws IOException, SQLException, ParseException {
-        String report = table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
+        String report = table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
         List<String> lines = StringUtility.splitLines(report);
         int lineNum = 0;
         Map<String,String> results = new HashMap<String,String>(lines.size()*4/3+1);
@@ -1939,27 +1951,27 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      * Gets the filesystem states report.
      */
     public String getFilesystemsCsvReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
     }
     
     /**
      * Gets the output of /proc/loadavg
      */
     public String getLoadAvgReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_LOADAVG_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_LOADAVG_REPORT, pkey);
     }
     
     /**
      * Gets the output of /proc/meminfo
      */
     public String getMemInfoReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
     }
     
     /**
      * Gets the current system time in milliseconds.
      */
     public long getSystemTimeMillis() throws IOException, SQLException {
-        return table.connector.requestLongQuery(AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
+        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
     }
 }

@@ -138,7 +138,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
     }
 
     public void remove() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
     }
 
     public void update(
@@ -153,6 +153,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         String validationQuery
     ) throws IOException, SQLException {
         table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
             pkey,
             name,

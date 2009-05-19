@@ -35,12 +35,13 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
     }
 
     int addEmailPipeAddress(EmailAddress emailAddressObject, EmailPipe emailPipeObject) throws IOException, SQLException {
-	return connector.requestIntQueryIL(
+        return connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.EMAIL_PIPE_ADDRESSES,
             emailAddressObject.pkey,
             emailPipeObject.pkey
-	);
+        );
     }
 
     public EmailPipeAddress get(int pkey) throws IOException, SQLException {

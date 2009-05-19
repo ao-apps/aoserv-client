@@ -96,11 +96,11 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
     public String getInstallDirectory() throws SQLException, IOException {
@@ -274,11 +274,11 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
     public void setIsManual(boolean isManual) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
     }
 
     @Override

@@ -62,11 +62,11 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_SMTP_RELAYS, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -175,11 +175,12 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     }
 
     public void refresh(long minDuration) throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REFRESH_EMAIL_SMTP_RELAY,
             pkey,
             minDuration
-	);
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -187,11 +188,12 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_SMTP_RELAYS,
             pkey
-	);
+    	);
     }
 
     @Override

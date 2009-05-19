@@ -8,7 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -27,6 +28,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
      * The types of <code>Ticket</code>s.
      */
     public static final String
+        CONTACT="contact",
         SUPPORT="support",
         PROJECTS="projects",
         INTERNAL="internal"

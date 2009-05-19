@@ -127,11 +127,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
      * Flags a card as declined.
      */
     public void declined(String reason) throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.CREDIT_CARD_DECLINED,
             pkey,
             reason
-	);
+    	);
     }
 
     /**
@@ -427,7 +428,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     public void remove() throws IOException, SQLException {
-	table.connector.requestUpdateIL(AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
+    	table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
     }
 
     @Override
@@ -510,7 +511,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         CountryCode countryCode,
         String description
     ) throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.UPDATE_CREDIT_CARD,
             pkey,
             firstName,
@@ -536,16 +538,16 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
      * in the master database.
      */
     public void updateCardNumberAndExpiration(
-        String maskedCardNumber,
+        final String maskedCardNumber,
         String cardNumber,
         byte expirationMonth,
         short expirationYear
     ) throws IOException, SQLException {
         CreditCardProcessor processor = getCreditCardProcessor();
-        EncryptionKey encryptionFrom = processor.getEncryptionFrom();
-        EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
-        String encryptedCardNumber;
-        String encryptedExpiration;
+        final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
+        final EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
+        final String encryptedCardNumber;
+        final String encryptedExpiration;
         if(encryptionFrom!=null && encryptionRecipient!=null) {
             // Encrypt the card number and expiration
             encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, randomize(cardNumber));
@@ -555,34 +557,36 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             encryptedExpiration = null;
         }
 
-        IntList invalidateList;
-        AOServConnection connection=table.connector.getConnection();
-        try {
-            CompressedDataOutputStream out=connection.getOutputStream();
-            out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION.ordinal());
-            out.writeCompressedInt(pkey);
-            out.writeUTF(maskedCardNumber);
-            out.writeNullUTF(encryptedCardNumber);
-            out.writeNullUTF(encryptedExpiration);
-            out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
-            out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
-            out.flush();
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
 
-            CompressedDataInputStream in=connection.getInputStream();
-            int code=in.readByte();
-            if(code==AOServProtocol.DONE) {
-                invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-                AOServProtocol.checkResult(code, in);
-                throw new IOException("Unknown response code: "+code);
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeUTF(maskedCardNumber);
+                    out.writeNullUTF(encryptedCardNumber);
+                    out.writeNullUTF(encryptedExpiration);
+                    out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
+                    out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unknown response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
             }
-        } catch(IOException err) {
-            connection.close();
-            throw err;
-        } finally {
-            table.connector.releaseConnection(connection);
-        }
-        table.connector.tablesUpdated(invalidateList);
+        );
     }
 
     /**
@@ -600,6 +604,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             // Encrypt the expiration
             String encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
             table.connector.requestUpdateIL(
+                true,
                 AOServProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
                 pkey,
                 encryptedExpiration,
@@ -613,7 +618,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
      * Reactivates a credit card.
      */
     public void reactivate() throws IOException, SQLException {
-	table.connector.requestUpdateIL(
+    	table.connector.requestUpdateIL(
+            true,
             AOServProtocol.CommandID.REACTIVATE_CREDIT_CARD,
             pkey
         );

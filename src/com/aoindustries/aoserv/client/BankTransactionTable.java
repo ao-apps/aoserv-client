@@ -43,16 +43,16 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
     }
 
     public BankTransaction get(int transid) throws IOException, SQLException {
-        return getObject(AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BANK_TRANSACTIONS, transid);
+        return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BANK_TRANSACTIONS, transid);
     }
 
     List<BankTransaction> getBankTransactions(BankAccount account) throws IOException, SQLException {
-	return getObjects(AOServProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
+    	return getObjects(true, AOServProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
     }
 
     public List<BankTransaction> getRows() throws IOException, SQLException {
         List<BankTransaction> list=new ArrayList<BankTransaction>();
-        getObjects(list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BANK_TRANSACTIONS);
+        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BANK_TRANSACTIONS);
         return list;
     }
 

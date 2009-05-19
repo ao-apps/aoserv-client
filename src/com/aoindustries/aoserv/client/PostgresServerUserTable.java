@@ -34,13 +34,14 @@ final public class PostgresServerUserTable extends CachedTableIntegerKey<Postgre
     }
 
     int addPostgresServerUser(String username, PostgresServer postgresServer) throws IOException, SQLException {
-	int pkey=connector.requestIntQueryIL(
+    	int pkey=connector.requestIntQueryIL(
+            true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.POSTGRES_SERVER_USERS,
             username,
             postgresServer.pkey
-	);
-	return pkey;
+    	);
+    	return pkey;
     }
 
     public PostgresServerUser get(int pkey) throws IOException, SQLException {
