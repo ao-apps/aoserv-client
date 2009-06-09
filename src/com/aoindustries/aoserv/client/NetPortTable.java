@@ -5,8 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
 import java.util.*;
 
 /**
@@ -60,8 +58,8 @@ final public class NetPortTable extends AOServTable<Integer,NetPort> {
     }
 
     public NetPort get(int port) {
-	if(port>=1 && port<=65535) return new NetPort(port);
-	return null;
+        if(port>=1 && port<=65535) return new NetPort(port);
+        return null;
     }
 
     @Override

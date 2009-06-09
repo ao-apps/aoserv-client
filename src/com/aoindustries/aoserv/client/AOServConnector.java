@@ -61,7 +61,12 @@ abstract public class AOServConnector {
         192,
         256,
         384,
-        512
+        512,
+        768,
+        1024,
+        1536,
+        2048,
+        3072
     };
 
     /**
@@ -1116,7 +1121,11 @@ abstract public class AOServConnector {
      */
     @Override
     final public boolean equals(Object O) {
-        return super.equals(O);
+        if(O==null) return false;
+        return
+            (O instanceof AOServConnector) && // This is just to get rid of the NetBeans 6.5 warning about not checking type of parameter
+            this==O
+        ;
     }
     
     /**

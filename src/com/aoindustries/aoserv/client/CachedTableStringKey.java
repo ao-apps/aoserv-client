@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -25,14 +24,8 @@ public abstract class CachedTableStringKey<V extends CachedObjectStringKey<V>> e
     /**
      * Gets the object with the provided key.  The key must be a string.
      */
-    public V get(Object pkey) {
-        try {
-            return get((String)pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public V get(Object pkey) throws IOException, SQLException {
+        return get((String)pkey);
     }
 
     abstract public V get(String pkey) throws IOException, SQLException;

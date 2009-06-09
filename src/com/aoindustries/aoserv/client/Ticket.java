@@ -290,9 +290,10 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
     // </editor-fold>
 
     // <editor-fold desc="Ticket Actions">
+    /*
     public void actBounceTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.pkey, comments);
-    }
+    }*/
 
     public void actChangeAdminPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
@@ -318,21 +319,25 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers, business_administrator.pkey, comments);
     }
 
+    /*
     public void actCompleteTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.COMPLETE_TICKET, pkey, business_administrator.pkey, comments);
-    }
+    }*/
 
+    /*
     public void actHoldTicket(String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.HOLD_TICKET, pkey, comments);
-    }
+    }*/
 
+    /*
     public void actKillTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.KILL_TICKET, pkey, business_administrator.pkey, comments);
-    }
+    }*/
 
+    /*
     public void actReactivateTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.pkey, comments);
-    }
+    }*/
 
     public void actWorkEntry(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);

@@ -179,7 +179,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         UNUSED_BACKUP_MYSQL_DATABASE, // No longer used
         @Deprecated
         UNUSED_BACKUP_POSTGRES_DATABASE, // No longer used
-        BOUNCE_TICKET,
+        @Deprecated
+        UNUSED_BOUNCE_TICKET, // No longer used
         CANCEL_BUSINESS,
         CHANGE_TICKET_ADMIN_PRIORITY,
         CHANGE_TICKET_CLIENT_PRIORITY,
@@ -189,7 +190,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         UNUSED_CHANGE_TICKET_TECHNOLOGY, // No longer used
         CHANGE_TICKET_TYPE,
         COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD,
-        COMPLETE_TICKET,
+        @Deprecated
+        UNUSED_COMPLETE_TICKET, // No longer used
         COPY_HOME_DIRECTORY,
         COPY_LINUX_SERVER_ACCOUNT_PASSWORD,
         CREDIT_CARD_DECLINED,
@@ -260,7 +262,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         UNUSED_GET_TICKETS_BUSINESS, // No longer used
         GET_TRANSACTIONS_BUSINESS,
         GET_TRANSACTIONS_SEARCH,
-        HOLD_TICKET,
+        @Deprecated
+        UNUSED_HOLD_TICKET, // No longer used
         @Deprecated
         UNUSED_INITIALIZE_HTTPD_SITE_PASSWD_FILE, // No longer used
         IS_ACCOUNTING_AVAILABLE,
@@ -284,9 +287,11 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         IS_SITE_NAME_AVAILABLE,
         IS_SHARED_TOMCAT_NAME_AVAILABLE,
         IS_USERNAME_AVAILABLE,
-        KILL_TICKET,
+        @Deprecated
+        UNUSED_KILL_TICKET, // No longer used
         MOVE_IP_ADDRESS,
-        REACTIVATE_TICKET,
+        @Deprecated
+        UNUSED_REACTIVATE_TICKET, // No longer used
         REFRESH_EMAIL_SMTP_RELAY,
         @Deprecated
         UNUSED_REMOVE_EXPIRED_FILE_BACKUPS, // No longer used

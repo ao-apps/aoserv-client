@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -52,14 +51,8 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
 	return SchemaTable.TableID.SPAM_EMAIL_MESSAGES;
     }
 
-    public SpamEmailMessage get(Object pkey) {
-        try {
-            return get(((Integer)pkey).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public SpamEmailMessage get(Object pkey) throws IOException, SQLException {
+        return get(((Integer)pkey).intValue());
     }
 
     public SpamEmailMessage get(int pkey) throws IOException, SQLException {
@@ -85,7 +78,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
         throw new UnsupportedOperationException("Not an indexed column: "+col);
     }
 
-    protected SpamEmailMessage getUniqueRowImpl(int col, Object value) {
+    protected SpamEmailMessage getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         if(col!=SpamEmailMessage.COLUMN_PKEY) throw new IllegalArgumentException("Not a unique column: "+col);
         return get(value);
     }

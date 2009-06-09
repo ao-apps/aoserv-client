@@ -2228,6 +2228,7 @@ final public class SimpleAOClient {
      * @see  TicketPriority
      * @see  TicketType
      */
+    /*
     public int addTicket(
         String accounting,
         String language,
@@ -2250,7 +2251,7 @@ final public class SimpleAOClient {
             contactEmails,
             contactPhoneNumbers
         );
-    }
+    }*/
 
     /**
      * Adds a work entry to a <code>Ticket</code> when a <code>Ticket</code> is worked on,
@@ -2271,6 +2272,7 @@ final public class SimpleAOClient {
      * @see  #addTicket
      * @see  Action
      */
+    /*
     public void addTicketWork(
         int ticket_id,
         String business_administrator,
@@ -2281,7 +2283,7 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actWorkEntry(pe, comments);
-    }
+    }*/
 
     /**
      * Adds a new <code>Transaction</code> to a <code>Business</code>.
@@ -2500,6 +2502,7 @@ final public class SimpleAOClient {
      * @see  #addTicket
      * @see  Action
      */
+    /*
     public void bounceTicket(
         int ticket_id,
         String business_administrator,
@@ -2510,7 +2513,7 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actBounceTicket(pe, comments);
-    }
+    }*/
 
     /**
      * Cancels a <code>Business</code>.  The <code>Business</code> must already be disabled.
@@ -2551,6 +2554,7 @@ final public class SimpleAOClient {
      * @see  TicketPriority
      * @see  Action
      */
+    /*
     public void changeTicketAdminPriority(
         int ticket_id,
         String priority,
@@ -2569,7 +2573,7 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeAdminPriority(pr, pe, comments);
-    }
+    }*/
 
     /**
      * Changes the client's priority of a <code>Ticket</code>.
@@ -2591,6 +2595,7 @@ final public class SimpleAOClient {
      * @see  TicketPriority
      * @see  Action
      */
+    /*
     public void changeTicketClientPriority(
         int ticket_id,
         String priority,
@@ -2604,7 +2609,7 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeClientPriority(pr, pe, comments);
-    }
+    }*/
 
     /**
      * Changes the <code>TicketType</code> of a <code>Ticket</code>.
@@ -2627,6 +2632,7 @@ final public class SimpleAOClient {
      * @see  TicketPriority
      * @see  Action
      */
+    /*
     public void changeTicketType(
         int ticket_id,
         String type,
@@ -2640,7 +2646,7 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeTicketType(tt, pe, comments);
-    }
+    }*/
 
     /**
      * Checks the format of an accounting code, which is the unique
@@ -3188,6 +3194,7 @@ final public class SimpleAOClient {
      * @see  #addTicket
      * @see  Action
      */
+    /*
     public void completeTicket(
         int ticket_id,
         String business_administrator,
@@ -3198,7 +3205,7 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actCompleteTicket(pe, comments);
-    }
+    }*/
 
     /**
      * Copies the contents of user's home directory from one server to another.
@@ -4741,6 +4748,7 @@ final public class SimpleAOClient {
      * @see  #addTicket
      * @see  Action
      */
+    /*
     public void holdTicket(
         int ticket_id,
         String comments
@@ -4748,7 +4756,7 @@ final public class SimpleAOClient {
         Ticket ti=connector.getTickets().get(ticket_id);
         if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
         ti.actHoldTicket(comments);
-    }
+    }*/
 
     /**
      * Initializes the password files for an <code>HttpdSite</code>.  These files are
@@ -5250,6 +5258,7 @@ final public class SimpleAOClient {
      * @see  #addTicket
      * @see  Action
      */
+    /*
     public void killTicket(
         int ticket_id,
         String business_administrator,
@@ -5260,7 +5269,7 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actKillTicket(pe, comments);
-    }
+    }*/
 
     /**
      * Moves all resources for one <code>Business</code> from one <code>Server</code>
@@ -5359,6 +5368,7 @@ final public class SimpleAOClient {
      * @see  #addTicket
      * @see  Action
      */
+    /*
     public void reactivateTicket(
         int ticket_id,
         String business_administrator,
@@ -5369,7 +5379,7 @@ final public class SimpleAOClient {
         BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actReactivateTicket(pe, comments);
-    }
+    }*/
 
     /**
      * Refreshes the time window for SMTP server access by resetting the expiration to 24 hours from the current time.

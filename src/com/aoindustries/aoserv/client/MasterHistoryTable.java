@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,14 +28,8 @@ final public class MasterHistoryTable extends AOServTable<Long,MasterHistory> {
         return null;
     }
 
-    public MasterHistory get(Object commandID) {
-        try {
-            return get(((Long)commandID).longValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public MasterHistory get(Object commandID) throws IOException, SQLException {
+        return get(((Long)commandID).longValue());
     }
 
     public MasterHistory get(long commandID) throws IOException, SQLException {
@@ -54,7 +47,7 @@ final public class MasterHistoryTable extends AOServTable<Long,MasterHistory> {
 	return SchemaTable.TableID.MASTER_HISTORY;
     }
 
-    protected MasterHistory getUniqueRowImpl(int col, Object value) {
+    protected MasterHistory getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
         return get(value);
     }

@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -28,14 +27,8 @@ final public class MasterProcessTable extends AOServTable<Long,MasterProcess> {
         return null;
     }
 
-    public MasterProcess get(Object pid) {
-        try {
-            return get(((Long)pid).longValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public MasterProcess get(Object pid) throws IOException, SQLException {
+        return get(((Long)pid).longValue());
     }
 
     public MasterProcess get(long pid) throws IOException, SQLException {
@@ -53,7 +46,7 @@ final public class MasterProcessTable extends AOServTable<Long,MasterProcess> {
 	return SchemaTable.TableID.MASTER_PROCESSES;
     }
 
-    protected MasterProcess getUniqueRowImpl(int col, Object value) {
+    protected MasterProcess getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
         return get(value);
     }

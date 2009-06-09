@@ -5,9 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.util.AbstractList;
+import java.util.List;
 
 /**
  * <code>LinuxID</code>s are not transferred over the network.  Instead,
@@ -32,6 +31,7 @@ final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
             return 65536;
         }
         
+        @Override
         public int indexOf(Object o) {
             if(o!=null && (o instanceof LinuxID)) {
                 return ((LinuxID)o).getID();
@@ -39,6 +39,7 @@ final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
             return -1;
         }
 
+        @Override
         public int lastIndexOf(Object o) {
             return indexOf(o);
         }
@@ -59,7 +60,7 @@ final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
     }
 
     public LinuxID get(int id) {
-	if(id>=0 && id<=65535) return new LinuxID(id);
+        if(id>=0 && id<=65535) return new LinuxID(id);
         return null;
     }
 
@@ -70,7 +71,7 @@ final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
 
     @Override
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.LINUX_IDS;
+        return SchemaTable.TableID.LINUX_IDS;
     }
 
     @Override
@@ -81,6 +82,6 @@ final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
 
     @Override
     public boolean isLoaded() {
-	return true;
+        return true;
     }
 }

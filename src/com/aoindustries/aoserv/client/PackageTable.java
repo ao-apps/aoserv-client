@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -51,16 +50,10 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
      * Supports both Integer (pkey) and String (name) keys.
      */
     @Override
-    public Package get(Object pkey) {
-        try {
-            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-            if(pkey instanceof String) return get((String)pkey);
-            throw new IllegalArgumentException("pkey must be either an Integer or a String");
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Package get(Object pkey) throws IOException, SQLException {
+        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+        if(pkey instanceof String) return get((String)pkey);
+        throw new IllegalArgumentException("pkey must be either an Integer or a String");
     }
 
     public Package get(int pkey) throws IOException, SQLException {

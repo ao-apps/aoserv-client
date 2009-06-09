@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 
@@ -30,14 +29,8 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
         return defaultOrderBy;
     }
 
-    public DistroFile get(Object pkey) {
-        try {
-            return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public DistroFile get(Object pkey) throws IOException, SQLException {
+        return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
     }
 
     public DistroFile get(int pkey) throws IOException, SQLException {
@@ -67,15 +60,9 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
     }
 
     @Override
-    public int size() {
-        try {
-            if(isLoaded()) return super.size();
-            else return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public int size() throws IOException, SQLException {
+        if(isLoaded()) return super.size();
+        else return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
     }
 
     public SchemaTable.TableID getTableID() {

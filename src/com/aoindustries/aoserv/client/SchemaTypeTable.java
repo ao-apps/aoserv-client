@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.sort.AutoSort;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -39,16 +38,10 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
      * Supports both Integer (num) and String (type) keys.
      */
     @Override
-    public SchemaType get(Object pkey) {
-        try {
-            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-            else if(pkey instanceof String) return get((String)pkey);
-            else throw new IllegalArgumentException("Must be an Integer or a String");
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public SchemaType get(Object pkey) throws IOException, SQLException {
+        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+        else if(pkey instanceof String) return get((String)pkey);
+        else throw new IllegalArgumentException("Must be an Integer or a String");
     }
 
     public SchemaType get(int num) throws IOException, SQLException {

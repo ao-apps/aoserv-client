@@ -37,7 +37,7 @@ import java.util.Set;
  *
  * @see  AOServObject
  */
-abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<K,V>, Iterable<V>, Table<V> {
+abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iterable<V>, Table<V> {
 
     final AOServConnector connector;
     //final SimpleAOClient client;
@@ -778,81 +778,124 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Map<
         }
     }
 
-    // Map methods
-    public Set<Entry<K,V>> entrySet() {
-        try {
-            return new EntrySet<K,V>(getRows());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+    /**
+     * Gets a Map-compatible view of this table.
+     */
+    public Map<K,V> getMap() {
+        return map;
+    }
+
+    /**
+     * Gets the value for the associated key or <code>null</code> if the data
+     * doesn't exist or is filtered.
+     */
+    // TODO: Rename me
+    abstract public V get(Object key) throws IOException, SQLException;
+
+    private final Map<K,V> map = new Map<K,V>() {
+        // Map methods
+        public V get(Object key) {
+            try {
+                return AOServTable.this.get(key);
+            } catch(IOException err) {
+                throw new WrappedException(err);
+            } catch(SQLException err) {
+                throw new WrappedException(err);
+            }
         }
-    }
 
-    public Collection<V> values() {
-        try {
-            return getRows();
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+        public Set<Entry<K,V>> entrySet() {
+            try {
+                return new EntrySet<K,V>(getRows());
+            } catch(IOException err) {
+                throw new WrappedException(err);
+            } catch(SQLException err) {
+                throw new WrappedException(err);
+            }
         }
-    }
 
-    public Set<K> keySet() {
-        try {
-            return new KeySet<K,V>(getRows());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+        public Collection<V> values() {
+            try {
+                return getRows();
+            } catch(IOException err) {
+                throw new WrappedException(err);
+            } catch(SQLException err) {
+                throw new WrappedException(err);
+            }
         }
-    }
 
-    public void clear() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void putAll(Map<? extends K, ? extends V> t) {
-        throw new UnsupportedOperationException();
-    }
-
-    public V remove(Object key) {
-        throw new UnsupportedOperationException();
-    }
-    
-    public V put(K key, V value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public boolean containsValue(Object value) {
-        V aoObj=(V)value;
-        Object key=aoObj.getKey();
-        return containsKey(key);
-    }
-
-    public boolean containsKey(Object key) {
-        return get(key)!=null;
-    }
-
-    public boolean isEmpty() {
-        try {
-            return getRows().isEmpty();
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+        public Set<K> keySet() {
+            try {
+                return new KeySet<K,V>(getRows());
+            } catch(IOException err) {
+                throw new WrappedException(err);
+            } catch(SQLException err) {
+                throw new WrappedException(err);
+            }
         }
+
+        public void clear() {
+            throw new UnsupportedOperationException();
+        }
+
+        public void putAll(Map<? extends K, ? extends V> t) {
+            throw new UnsupportedOperationException();
+        }
+
+        public V remove(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        public V put(K key, V value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @SuppressWarnings({"unchecked"})
+        public boolean containsValue(Object value) {
+            V aoObj=(V)value;
+            Object key=aoObj.getKey();
+            return containsKey(key);
+        }
+
+        public boolean containsKey(Object key) {
+            try {
+                return AOServTable.this.get(key)!=null;
+            } catch(IOException err) {
+                throw new WrappedException(err);
+            } catch(SQLException err) {
+                throw new WrappedException(err);
+            }
+        }
+
+        public boolean isEmpty() {
+            try {
+                return getRows().isEmpty();
+            } catch(IOException err) {
+                throw new WrappedException(err);
+            } catch(SQLException err) {
+                throw new WrappedException(err);
+            }
+        }
+
+        public int size() {
+            try {
+                return AOServTable.this.size();
+            } catch(IOException err) {
+                throw new WrappedException(err);
+            } catch(SQLException err) {
+                throw new WrappedException(err);
+            }
+        }
+    };
+
+    public int size() throws IOException, SQLException {
+        return getRows().size();
     }
 
-    public int size() {
-        try {
-            return getRows().size();
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    /**
+     * This is size for JavaBeans compatibility.
+     */
+    final public int getSize() throws IOException, SQLException {
+        return size();
     }
 }

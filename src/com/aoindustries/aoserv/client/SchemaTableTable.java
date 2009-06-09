@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -37,17 +36,11 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
      * Supports Integer (table_id), String(name), and SchemaTable.TableID (table_id) keys.
      */
     @Override
-    public SchemaTable get(Object pkey) {
-        try {
-            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-            else if(pkey instanceof String) return get((String)pkey);
-            else if(pkey instanceof SchemaTable.TableID) return get((SchemaTable.TableID)pkey);
-            else throw new IllegalArgumentException("Must be an Integer or a String");
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public SchemaTable get(Object pkey) throws IOException, SQLException {
+        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+        else if(pkey instanceof String) return get((String)pkey);
+        else if(pkey instanceof SchemaTable.TableID) return get((SchemaTable.TableID)pkey);
+        else throw new IllegalArgumentException("Must be an Integer, a String, or a SchemaTable.TableID");
     }
 
     public SchemaTable get(int table_id) throws IOException, SQLException {

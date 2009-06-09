@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,14 +32,8 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
         return defaultOrderBy;
     }
 
-    public BackupReport get(Object pkey) {
-        try {
-            return get(((Integer)pkey).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public BackupReport get(Object pkey) throws IOException, SQLException {
+        return get(((Integer)pkey).intValue());
     }
 
     public BackupReport get(int pkey) throws IOException, SQLException {
@@ -81,7 +74,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
         return SchemaTable.TableID.BACKUP_REPORTS;
     }
 
-    protected BackupReport getUniqueRowImpl(int col, Object value) {
+    protected BackupReport getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         if(col!=BackupReport.COLUMN_PKEY) throw new IllegalArgumentException("Not a unique column: "+col);
         return get(value);
     }

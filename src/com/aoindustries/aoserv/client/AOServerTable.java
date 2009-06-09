@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -36,16 +35,10 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
      * Supports both Integer (server) and String (hostname) keys.
      */
     @Override
-    public AOServer get(Object pkey) {
-        try {
-            if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-            else if(pkey instanceof String) return get((String)pkey);
-            else throw new IllegalArgumentException("Must be an Integer or a String");
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public AOServer get(Object pkey) throws IOException, SQLException {
+        if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
+        else if(pkey instanceof String) return get((String)pkey);
+        else throw new IllegalArgumentException("Must be an Integer or a String");
     }
 
     public AOServer get(int pkey) throws IOException, SQLException {

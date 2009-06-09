@@ -7,10 +7,8 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -99,6 +97,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
         return getIndexedRows(Ticket.COLUMN_CREATED_BY, ba.pkey);
     }
 
+    /*
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
@@ -204,5 +203,5 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
             return true;
         }
         return false;
-    }
+    }*/
 }

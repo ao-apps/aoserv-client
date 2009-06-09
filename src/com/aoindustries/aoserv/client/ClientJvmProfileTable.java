@@ -35,7 +35,7 @@ final public class ClientJvmProfileTable extends AOServTable<String,ClientJvmPro
     }
 
     public ClientJvmProfile get(Object pkey) {
-        return get((String)pkey);
+        throw new UnsupportedOperationException("There is no unique key on the ClientJvmProfile table");
     }
 
     public List<ClientJvmProfile> getRows() throws SQLException, IOException {

@@ -30,15 +30,15 @@ final public class BackupRetentionTable extends GlobalTable<Short,BackupRetentio
         return defaultOrderBy;
     }
 
-    public BackupRetention get(Object days) {
+    public BackupRetention get(Object days) throws IOException, SQLException {
         return get((Short)days);
     }
 
     public BackupRetention get(short days) throws IOException, SQLException {
-	return getUniqueRow(BackupRetention.COLUMN_DAYS, days);
+        return getUniqueRow(BackupRetention.COLUMN_DAYS, days);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BACKUP_RETENTIONS;
+        return SchemaTable.TableID.BACKUP_RETENTIONS;
     }
 }

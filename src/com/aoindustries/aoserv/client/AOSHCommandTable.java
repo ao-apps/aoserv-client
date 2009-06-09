@@ -22,14 +22,14 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> implements Map<String,AOSHCommand> {
+final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> {
 
     private static final String GLOBAL_COMMANDS="[[GLOBAL]]";
 
     private final Map<String,List<AOSHCommand>> tableCommands=new HashMap<String,List<AOSHCommand>>();
 
     AOSHCommandTable(AOServConnector connector) {
-	super(connector, AOSHCommand.class);
+        super(connector, AOSHCommand.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {

@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -28,20 +27,14 @@ final public class MasterServerStatTable extends AOServTable<String,MasterServer
         return null;
     }
 
-    public MasterServerStat get(Object name) {
-        try {
-            List<MasterServerStat> table=getRows();
-            int size=table.size();
-            for(int c=0;c<size;c++) {
-                MasterServerStat mss=table.get(c);
-                if(mss.name.equals(name)) return mss;
-            }
-            return null;
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
+    public MasterServerStat get(Object name) throws IOException, SQLException {
+        List<MasterServerStat> table=getRows();
+        int size=table.size();
+        for(int c=0;c<size;c++) {
+            MasterServerStat mss=table.get(c);
+            if(mss.name.equals(name)) return mss;
         }
+        return null;
     }
 
     public List<MasterServerStat> getRows() throws IOException, SQLException {
@@ -54,7 +47,7 @@ final public class MasterServerStatTable extends AOServTable<String,MasterServer
 	return SchemaTable.TableID.MASTER_SERVER_STATS;
     }
 
-    protected MasterServerStat getUniqueRowImpl(int col, Object value) {
+    protected MasterServerStat getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
         return get(value);
     }

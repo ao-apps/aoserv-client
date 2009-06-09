@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,14 +72,8 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
     }
 
     @Override
-    String toStringImpl() {
-        try {
-            return parent==-1 ? name : (getParent()+"/"+name);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    String toStringImpl() throws IOException, SQLException {
+        return parent==-1 ? name : (getParent()+"/"+name);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

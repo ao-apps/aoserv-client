@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -142,14 +141,8 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	return SchemaTable.TableID.TRANSACTIONS;
     }
 
-    public Transaction get(Object transid) {
-        try {
-            return get(((Integer)transid).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public Transaction get(Object transid) throws IOException, SQLException {
+        return get(((Integer)transid).intValue());
     }
 
     public Transaction get(int transid) throws IOException, SQLException {
@@ -179,7 +172,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         throw new UnsupportedOperationException("Not an indexed column: "+col);
     }
 
-    protected Transaction getUniqueRowImpl(int col, Object value) {
+    protected Transaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         if(col!=Transaction.COLUMN_TRANSID) throw new IllegalArgumentException("Not a unique column: "+col);
         return get(value);
     }

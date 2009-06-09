@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -32,14 +31,8 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
         return defaultOrderBy;
     }
 
-    public BankTransaction get(Object transid) {
-        try {
-            return get(((Integer)transid).intValue());
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+    public BankTransaction get(Object transid) throws IOException, SQLException {
+        return get(((Integer)transid).intValue());
     }
 
     public BankTransaction get(int transid) throws IOException, SQLException {
@@ -60,7 +53,7 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 	return SchemaTable.TableID.BANK_TRANSACTIONS;
     }
 
-    protected BankTransaction getUniqueRowImpl(int col, Object value) {
+    protected BankTransaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
         return get(value);
     }
