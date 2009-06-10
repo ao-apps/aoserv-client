@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Locale;
 
 /**
  * <code>TicketAction</code>s represent a complete history of the changes that have been made to a ticket.
@@ -39,6 +40,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     private String action_type;
     private boolean oldValueLoaded;
     private String old_value;
+    private boolean newValueLoaded;
+    private String new_value;
     private String from_address;
     private String summary;
     private boolean detailsLoaded;
@@ -68,10 +71,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return t;
     }
 
-    public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
-        Username un=table.connector.getUsernames().get(administrator);
-        if(un==null) return null;
-        return un.getBusinessAdministrator();
+    public BusinessAdministrator getAdministrator() throws IOException, SQLException {
+        return table.connector.getBusinessAdministrators().get(administrator);
     }
 
     public long getTime() {
@@ -92,12 +93,24 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return old_value;
     }
 
+    synchronized public String getNewValue() throws IOException, SQLException {
+        if(!newValueLoaded) {
+            new_value = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_NEW_VALUE, pkey);
+            newValueLoaded = true;
+        }
+        return new_value;
+    }
+
     public String getFromAddress() {
         return from_address;
     }
 
-    public String getSummary() {
-        return summary;
+    /**
+     * Gets the summary for the provided Locale, may be generated for certain action types.
+     */
+    public String getSummary(Locale userLocale) throws IOException, SQLException {
+        if(summary!=null) return summary;
+        return summary!=null ? summary : getTicketActionType().generateSummary(table.connector, userLocale, getOldValue(), getNewValue());
     }
 
     synchronized public String getDetails() throws IOException, SQLException {
@@ -128,6 +141,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         time = temp == null ? -1 : temp.getTime();
         action_type = result.getString(5);
         // Loaded only when needed: old_value = result.getString(6);
+        // Loaded only when needed: new_value = result.getString(6);
         from_address = result.getString(6);
         summary = result.getString(7);
         // Loaded only when needed: details = result.getString(9);
@@ -141,7 +155,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         time = in.readLong();
         action_type = in.readUTF().intern();
         from_address = in.readNullUTF();
-        summary = in.readUTF();
+        summary = in.readNullUTF();
     }
 
     @Override
@@ -156,6 +170,6 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         out.writeLong(time);
         out.writeUTF(action_type);
         out.writeNullUTF(from_address);
-        out.writeUTF(summary);
+        out.writeNullUTF(summary);
     }
 }

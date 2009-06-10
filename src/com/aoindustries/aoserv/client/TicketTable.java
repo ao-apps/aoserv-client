@@ -24,7 +24,8 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(Ticket.COLUMN_PKEY_name, ASCENDING)
+        new OrderBy(Ticket.COLUMN_OPEN_DATE_name, DESCENDING),
+        new OrderBy(Ticket.COLUMN_PKEY_name, DESCENDING)
     };
     @Override
     OrderBy[] getDefaultOrderBy() {

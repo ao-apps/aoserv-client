@@ -52,8 +52,12 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         get_mysql_master_status,
         get_mysql_slave_status,
         // postgres_server_users
-        set_postgres_server_user_password;
-        
+        set_postgres_server_user_password,
+        // tickets
+        add_ticket,
+        edit_ticket
+        ;
+
         /**
          * Gets the permission display value in the JVM-default locale.
          */

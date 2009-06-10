@@ -31,7 +31,16 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
 
     private boolean visible_admin_only;
 
-    /* TODO: public static final String
+    public static final String
+        SET_BUSINESS="set_business",
+        SET_CONTACT_EMAILS="set_contact_emails",
+        SET_CONTACT_PHONE_NUMBERS="set_contact_phone_numbers",
+        SET_CLIENT_PRIORITY="set_client_priority",
+        SET_SUMMARY="set_summary",
+        ADD_ANNOTATION="add_annotation",
+        SET_STATUS="set_status"
+    ;
+    /* TODO:
         ADMIN_HOLD="AH",
         ADMIN_KILL="AK",
         ADMIN_PRIORITY_CHANGE="AP",
@@ -45,12 +54,11 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
         REACTIVATE_TICKET="RE",
         TECHNOLOGY_CHANGE="TC",
         DEADLINE_CHANGE="DL",
-        SET_BUSINESS="SB",
         SET_CONTACT_EMAILS="SE",
         SET_CONTACT_PHONES="SP",
         TYPE_CHANGE="TY",
         WORK_ENTRY="WK"
-    ;*/
+    */
 
     @Override
     Object getColumnImpl(int i) {
@@ -94,5 +102,35 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
         out.writeBoolean(visible_admin_only);
+    }
+
+    /**
+     * Generates a locale-specific summary.
+     */
+    String generateSummary(AOServConnector connector, Locale userLocale, String oldValue, String newValue) throws IOException, SQLException {
+        // Substitute translated values for oldValue and newValue on certain types
+        if(pkey.equals(SET_CLIENT_PRIORITY)) {
+            /* TODO: if(oldValue!=null) {
+                TicketPriority clientPriority = conn.getTicketPriorities().get(oldValue);
+                if(clientPriority!=null) oldValue = clientPriority.toString(userLocale);
+             * TODO: newValue, too
+            }*/
+        } else if(pkey.equals(SET_STATUS)) {
+            if(oldValue!=null) {
+                TicketStatus status = connector.getTicketStatuses().get(oldValue);
+                if(status!=null) oldValue = status.toString(userLocale);
+            }
+            if(newValue!=null) {
+                TicketStatus status = connector.getTicketStatuses().get(newValue);
+                if(status!=null) newValue = status.toString(userLocale);
+            }
+        }
+        if(oldValue==null) {
+            if(newValue==null) return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.null.null");
+            return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.null.notNull", newValue);
+        } else {
+            if(newValue==null) return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.notNull.null", oldValue);
+            return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.notNull.notNull", oldValue, newValue);
+        }
     }
 }

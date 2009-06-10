@@ -869,7 +869,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
         public boolean isEmpty() {
             try {
-                return getRows().isEmpty();
+                return AOServTable.this.isEmpty();
             } catch(IOException err) {
                 throw new WrappedException(err);
             } catch(SQLException err) {
@@ -887,6 +887,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
             }
         }
     };
+
+    public boolean isEmpty() throws IOException, SQLException {
+        return getRows().isEmpty();
+    }
 
     public int size() throws IOException, SQLException {
         return getRows().size();
