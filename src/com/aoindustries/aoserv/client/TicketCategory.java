@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @see  Ticket
@@ -71,9 +72,28 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
         name = in.readUTF().intern();
     }
 
+    private String slashPath = null;
+    synchronized public String getSlashPath() throws IOException, SQLException {
+        if(slashPath==null) slashPath = parent==-1 ? name : (getParent().getSlashPath()+'/'+name);
+        return slashPath;
+    }
+
+    private String dotPath = null;
+    synchronized public String getDotPath() throws IOException, SQLException {
+        if(dotPath==null) dotPath = parent==-1 ? name : (getParent().getDotPath()+'.'+name);
+        return dotPath;
+    }
+
     @Override
     String toStringImpl() throws IOException, SQLException {
-        return parent==-1 ? name : (getParent()+"/"+name);
+        return toString(Locale.getDefault());
+    }
+
+    /**
+     * Localized toString.
+     */
+    public String toString(Locale userLocale) throws IOException, SQLException {
+        return ApplicationResourcesAccessor.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

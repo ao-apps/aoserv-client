@@ -38,27 +38,11 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
         SET_CLIENT_PRIORITY="set_client_priority",
         SET_SUMMARY="set_summary",
         ADD_ANNOTATION="add_annotation",
-        SET_STATUS="set_status"
+        SET_STATUS="set_status",
+        SET_ADMIN_PRIORITY="set_admin_priority",
+        ASSIGN="assign",
+        SET_CATEGORY="set_category"
     ;
-    /* TODO:
-        ADMIN_HOLD="AH",
-        ADMIN_KILL="AK",
-        ADMIN_PRIORITY_CHANGE="AP",
-        ASSIGNED="AS",
-        BOUNCED="BO",
-        CLIENT_HOLD="CH",
-        CLIENT_KILLED="CK",
-        CLIENT_PRIORITY_CHANGE="CP",
-        COMPLETE_TICKET="CO",
-        OPEN_TICKET="OP",
-        REACTIVATE_TICKET="RE",
-        TECHNOLOGY_CHANGE="TC",
-        DEADLINE_CHANGE="DL",
-        SET_CONTACT_EMAILS="SE",
-        SET_CONTACT_PHONES="SP",
-        TYPE_CHANGE="TY",
-        WORK_ENTRY="WK"
-    */
 
     @Override
     Object getColumnImpl(int i) {

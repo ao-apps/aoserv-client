@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,6 +39,16 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     private String administrator;
     private long time;
     private String action_type;
+    private String old_accounting;
+    private String new_accounting;
+    private String old_priority;
+    private String new_priority;
+    private String old_status;
+    private String new_status;
+    private String old_assigned_to;
+    private String new_assigned_to;
+    private int old_category;
+    private int new_category;
     private boolean oldValueLoaded;
     private String old_value;
     private boolean newValueLoaded;
@@ -56,11 +67,22 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
             case COLUMN_ADMINISTRATOR: return administrator;
             case COLUMN_TIME: return new java.sql.Date(time);
             case 4: return action_type;
-            case 5: return getOldValue();
-            case 6: return from_address;
-            case 7: return summary;
-            case 8: return getDetails();
-            case 9: return getRawEmail();
+            case 5: return old_accounting;
+            case 6: return new_accounting;
+            case 7: return old_priority;
+            case 8: return new_priority;
+            case 9: return old_status;
+            case 10: return new_status;
+            case 11: return old_assigned_to;
+            case 12: return new_assigned_to;
+            case 13: return old_category==-1 ? null : Integer.valueOf(old_category);
+            case 14: return new_category==-1 ? null : Integer.valueOf(new_category);
+            case 15: return getOldValue();
+            case 16: return getNewValue();
+            case 17: return from_address;
+            case 18: return summary;
+            case 19: return getDetails();
+            case 20: return getRawEmail();
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -85,9 +107,92 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return type;
     }
 
+    /**
+     * May be null due to filtering
+     */
+    public Business getOldBusiness() throws IOException, SQLException {
+        if(old_accounting==null) return null;
+        return table.connector.getBusinesses().get(old_accounting);
+    }
+
+    /**
+     * May be null due to filtering
+     */
+    public Business getNewBusiness() throws IOException, SQLException {
+        if(new_accounting==null) return null;
+        return table.connector.getBusinesses().get(new_accounting);
+    }
+
+    public TicketPriority getOldPriority() throws IOException, SQLException {
+        if(old_priority==null) return null;
+        TicketPriority tp = table.connector.getTicketPriorities().get(old_priority);
+        if(tp==null) throw new SQLException("Unable to find TicketPriority: "+old_priority);
+        return tp;
+    }
+
+    public TicketPriority getNewPriority() throws IOException, SQLException {
+        if(new_priority==null) return null;
+        TicketPriority tp = table.connector.getTicketPriorities().get(new_priority);
+        if(tp==null) throw new SQLException("Unable to find TicketPriority: "+new_priority);
+        return tp;
+    }
+
+    public TicketStatus getOldStatus() throws IOException, SQLException {
+        if(old_status==null) return null;
+        TicketStatus ts = table.connector.getTicketStatuses().get(old_status);
+        if(ts==null) throw new SQLException("Unable to find TicketStatus: "+old_status);
+        return ts;
+    }
+
+    public TicketStatus getNewStatus() throws IOException, SQLException {
+        if(new_status==null) return null;
+        TicketStatus ts = table.connector.getTicketStatuses().get(new_status);
+        if(ts==null) throw new SQLException("Unable to find TicketStatus: "+new_status);
+        return ts;
+    }
+
+    /**
+     * May be null due to filtering
+     */
+    public BusinessAdministrator getOldAssignedTo() throws IOException, SQLException {
+        if(old_assigned_to==null) return null;
+        return table.connector.getBusinessAdministrators().get(old_assigned_to);
+    }
+
+    /**
+     * May be null due to filtering
+     */
+    public BusinessAdministrator getNewAssignedTo() throws IOException, SQLException {
+        if(new_assigned_to==null) return null;
+        return table.connector.getBusinessAdministrators().get(new_assigned_to);
+    }
+
+    public TicketCategory getOldCategory() throws IOException, SQLException {
+        if(old_category==-1) return null;
+        TicketCategory tc = table.connector.getTicketCategories().get(old_category);
+        if(tc==null) throw new SQLException("Unable to find TicketCategory: "+old_category);
+        return tc;
+    }
+
+    public TicketCategory getNewCategory() throws IOException, SQLException {
+        if(new_category==-1) return null;
+        TicketCategory tc = table.connector.getTicketCategories().get(new_category);
+        if(tc==null) throw new SQLException("Unable to find TicketCategory: "+new_category);
+        return tc;
+    }
+
     synchronized public String getOldValue() throws IOException, SQLException {
         if(!oldValueLoaded) {
-            old_value = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
+            // Only perform the query for action types that have old values
+            if(
+                action_type.equals(TicketActionType.SET_CONTACT_EMAILS)
+                || action_type.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
+                || action_type.equals(TicketActionType.SET_SUMMARY)
+            ) {
+                old_value = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
+            } else {
+                old_value = null;
+            }
             oldValueLoaded = true;
         }
         return old_value;
@@ -95,7 +200,16 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 
     synchronized public String getNewValue() throws IOException, SQLException {
         if(!newValueLoaded) {
-            new_value = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_NEW_VALUE, pkey);
+            // Only perform the query for action types that have new values
+            if(
+                action_type.equals(TicketActionType.SET_CONTACT_EMAILS)
+                || action_type.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
+                || action_type.equals(TicketActionType.SET_SUMMARY)
+            ) {
+                new_value = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_NEW_VALUE, pkey);
+            } else {
+                new_value = null;
+            }
             newValueLoaded = true;
         }
         return new_value;
@@ -110,12 +224,52 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
      */
     public String getSummary(Locale userLocale) throws IOException, SQLException {
         if(summary!=null) return summary;
-        return summary!=null ? summary : getTicketActionType().generateSummary(table.connector, userLocale, getOldValue(), getNewValue());
+        final String oldValue;
+        final String newValue;
+        if(action_type.equals(TicketActionType.SET_BUSINESS)) {
+            oldValue = old_accounting;
+            newValue = new_accounting;
+        } else if(
+            action_type.equals(TicketActionType.SET_CLIENT_PRIORITY)
+            || action_type.equals(TicketActionType.SET_ADMIN_PRIORITY)
+        ) {
+            oldValue = old_priority;
+            newValue = new_priority;
+        } else if(action_type.equals(TicketActionType.SET_STATUS)) {
+            oldValue = getOldStatus().toString(userLocale);
+            newValue = getNewStatus().toString(userLocale);
+        } else if(action_type.equals(TicketActionType.ASSIGN)) {
+            BusinessAdministrator oldAssignedTo = getOldAssignedTo();
+            BusinessAdministrator newAssignedTo = getNewAssignedTo();
+            oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? ApplicationResourcesAccessor.getMessage(userLocale, "TicketAction.old_assigned_to.filtered") : null;
+            newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? ApplicationResourcesAccessor.getMessage(userLocale, "TicketAction.new_assigned_to.filtered") : null;
+        } else if(action_type.equals(TicketActionType.SET_CATEGORY)) {
+            TicketCategory oldCategory = getOldCategory();
+            TicketCategory newCategory = getNewCategory();
+            oldValue = oldCategory!=null ? oldCategory.toString(userLocale) : null;
+            newValue = newCategory!=null ? newCategory.toString(userLocale) : null;
+        } else if(
+            action_type.equals(TicketActionType.SET_CONTACT_EMAILS)
+            || action_type.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
+            || action_type.equals(TicketActionType.SET_SUMMARY)
+            || action_type.equals(TicketActionType.ADD_ANNOTATION)
+        ) {
+            oldValue = getOldValue();
+            newValue = getNewValue();
+        } else {
+            throw new SQLException("Unexpected value for action_type: "+action_type);
+        }
+        return getTicketActionType().generateSummary(table.connector, userLocale, oldValue, newValue);
     }
 
     synchronized public String getDetails() throws IOException, SQLException {
         if(!detailsLoaded) {
-            details = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_DETAILS, pkey);
+            // Only perform the query for action types that have details
+            if(action_type.equals(TicketActionType.ADD_ANNOTATION)) {
+                details = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_DETAILS, pkey);
+            } else {
+                details = null;
+            }
             detailsLoaded = true;
         }
         return details;
@@ -123,7 +277,12 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 
     synchronized public String getRawEmail() throws IOException, SQLException {
         if(!rawEmailLoaded) {
-            raw_email = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_RAW_EMAIL, pkey);
+            // Only perform the query for action types that may have raw email
+            if(action_type.equals(TicketActionType.ADD_ANNOTATION)) {
+                raw_email = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_RAW_EMAIL, pkey);
+            } else {
+                raw_email = null;
+            }
             rawEmailLoaded = true;
         }
         return raw_email;
@@ -134,18 +293,31 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        ticket = result.getInt(2);
-        administrator = result.getString(3);
-        Timestamp temp = result.getTimestamp(4);
+        int pos = 1;
+        pkey = result.getInt(pos++);
+        ticket = result.getInt(pos++);
+        administrator = result.getString(pos++);
+        Timestamp temp = result.getTimestamp(pos++);
         time = temp == null ? -1 : temp.getTime();
-        action_type = result.getString(5);
-        // Loaded only when needed: old_value = result.getString(6);
-        // Loaded only when needed: new_value = result.getString(6);
-        from_address = result.getString(6);
-        summary = result.getString(7);
-        // Loaded only when needed: details = result.getString(9);
-        // Loaded only when needed: raw_email = result.getString(10);
+        action_type = result.getString(pos++);
+        old_accounting = result.getString(pos++);
+        new_accounting = result.getString(pos++);
+        old_priority = result.getString(pos++);
+        new_priority = result.getString(pos++);
+        old_status = result.getString(pos++);
+        new_status = result.getString(pos++);
+        old_assigned_to = result.getString(pos++);
+        new_assigned_to = result.getString(pos++);
+        old_category = result.getInt(pos++);
+        if(result.wasNull()) old_category = -1;
+        new_category = result.getInt(pos++);
+        if(result.wasNull()) new_category = -1;
+        // Loaded only when needed: old_value = result.getString(pos++);
+        // Loaded only when needed: new_value = result.getString(pos++);
+        from_address = result.getString(pos++);
+        summary = result.getString(pos++);
+        // Loaded only when needed: details = result.getString(pos++);
+        // Loaded only when needed: raw_email = result.getString(pos++);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -154,8 +326,22 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         administrator = in.readUTF().intern();
         time = in.readLong();
         action_type = in.readUTF().intern();
+        old_accounting = StringUtility.intern(in.readNullUTF());
+        new_accounting = StringUtility.intern(in.readNullUTF());
+        old_priority = StringUtility.intern(in.readNullUTF());
+        new_priority = StringUtility.intern(in.readNullUTF());
+        old_status = StringUtility.intern(in.readNullUTF());
+        new_status = StringUtility.intern(in.readNullUTF());
+        old_assigned_to = StringUtility.intern(in.readNullUTF());
+        new_assigned_to = StringUtility.intern(in.readNullUTF());
+        old_category = in.readCompressedInt();
+        new_category = in.readCompressedInt();
+        // Loaded only when needed: old_value
+        // Loaded only when needed: new_value
         from_address = in.readNullUTF();
         summary = in.readNullUTF();
+        // Loaded only when needed: details
+        // Loaded only when needed: raw_email
     }
 
     @Override
@@ -169,7 +355,21 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         out.writeUTF(administrator);
         out.writeLong(time);
         out.writeUTF(action_type);
+        out.writeNullUTF(old_accounting);
+        out.writeNullUTF(new_accounting);
+        out.writeNullUTF(old_priority);
+        out.writeNullUTF(new_priority);
+        out.writeNullUTF(old_status);
+        out.writeNullUTF(new_status);
+        out.writeNullUTF(old_assigned_to);
+        out.writeNullUTF(new_assigned_to);
+        out.writeCompressedInt(old_category);
+        out.writeCompressedInt(new_category);
+        // Loaded only when needed: old_value
+        // Loaded only when needed: new_value
         out.writeNullUTF(from_address);
         out.writeNullUTF(summary);
+        // Loaded only when needed: details
+        // Loaded only when needed: raw_email
     }
 }
