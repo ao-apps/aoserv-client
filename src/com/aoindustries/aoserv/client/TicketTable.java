@@ -33,6 +33,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
     }
 
     public int addTicket(
+        final Brand brand,
         final Business business,
         final Language language,
         final TicketCategory category,
@@ -52,6 +53,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
+                    out.writeUTF(brand.pkey);
                     out.writeNullUTF(business==null ? null : business.pkey);
                     out.writeUTF(language.pkey);
                     out.writeCompressedInt(category==null ? -1 : category.pkey);

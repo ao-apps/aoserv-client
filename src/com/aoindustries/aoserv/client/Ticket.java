@@ -28,6 +28,7 @@ import java.util.List;
 final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     // <editor-fold desc="Fields">
+    private String brand;
     private String reseller;
     private String accounting;
     private String language;
@@ -54,39 +55,40 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
     // <editor-fold desc="Object implementation">
     @Override
     String toStringImpl() {
-        return pkey+"|"+accounting+'|'+status+"->"+reseller;
+        return pkey+"|"+brand+'/'+accounting+'|'+status+"->"+reseller;
     }
     // </editor-fold>
 
     // <editor-fold desc="AOServObject implementation">
     static final int COLUMN_PKEY = 0;
-    static final int COLUMN_ACCOUNTING = 2;
-    static final int COLUMN_CREATED_BY = 4;
-    static final int COLUMN_OPEN_DATE = 11;
+    static final int COLUMN_ACCOUNTING = 3;
+    static final int COLUMN_CREATED_BY = 5;
+    static final int COLUMN_OPEN_DATE = 12;
     static final String COLUMN_PKEY_name = "pkey";
     static final String COLUMN_OPEN_DATE_name = "open_date";
 
     Object getColumnImpl(int i) throws IOException, SQLException {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return reseller;
+            case 1: return brand;
+            case 2: return reseller;
             case COLUMN_ACCOUNTING: return accounting;
-            case 3: return language;
+            case 4: return language;
             case COLUMN_CREATED_BY: return created_by;
-            case 5: return category==-1 ? null : category;
-            case 6: return ticket_type;
-            case 7: return from_address;
-            case 8: return summary;
-            case 9: return getDetails();
-            case 10: return getRawEmail();
+            case 6: return category==-1 ? null : category;
+            case 7: return ticket_type;
+            case 8: return from_address;
+            case 9: return summary;
+            case 10: return getDetails();
+            case 11: return getRawEmail();
             case COLUMN_OPEN_DATE: return new java.sql.Date(open_date);
-            case 12: return client_priority;
-            case 13: return admin_priority;
-            case 14: return status;
-            case 15: return status_timeout==-1 ? null : new java.sql.Date(status_timeout);
-            case 16: return contact_emails;
-            case 17: return contact_phone_numbers;
-            case 18: return getInternalNotes();
+            case 13: return client_priority;
+            case 14: return admin_priority;
+            case 15: return status;
+            case 16: return status_timeout==-1 ? null : new java.sql.Date(status_timeout);
+            case 17: return contact_emails;
+            case 18: return contact_phone_numbers;
+            case 19: return getInternalNotes();
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -98,6 +100,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
     public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey = result.getInt(pos++);
+        brand = result.getString(pos++);
         reseller = result.getString(pos++);
         accounting = result.getString(pos++);
         language = result.getString(pos++);
@@ -119,6 +122,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey = in.readCompressedInt();
+        brand = in.readUTF().intern();
         reseller = in.readUTF().intern();
         accounting = StringUtility.intern(in.readNullUTF());
         language = in.readUTF().intern();
@@ -138,6 +142,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) out.writeUTF(accounting==null ? "" : accounting);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_126)>=0) out.writeNullUTF(accounting);
@@ -174,6 +179,12 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
     // <editor-fold desc="Accessors">
     public int getTicketID() {
         return pkey;
+    }
+
+    public Brand getBrand() throws IOException, SQLException {
+        Brand br = table.connector.getBrands().get(brand);
+        if(br==null) throw new SQLException("Unable to find Brand: "+brand);
+        return br;
     }
 
     public Reseller getReseller() throws SQLException, IOException {

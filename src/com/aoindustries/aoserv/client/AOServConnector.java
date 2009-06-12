@@ -74,6 +74,25 @@ abstract public class AOServConnector {
      */
     private static final int RETRY_ATTEMPTS = retryAttemptDelays.length + 1;
 
+    /**
+     * Certain errors will not be retried.
+     */
+    private static boolean isImmediateFail(Throwable T) {
+        String message = T.getMessage();
+        return
+            (
+                (T instanceof IOException)
+                && message!=null
+                && (
+                    message.equals("Connection attempted with invalid password")
+                    || message.equals("Connection attempted with empty password")
+                    || message.equals("Connection attempted with empty connect username")
+                    || message.startsWith("Unable to find BusinessAdministrator: ")
+                )
+            )
+        ;
+    }
+
     /*private static final String[] profileTitles={
         "Method",
         "Parameter",
@@ -1566,13 +1585,13 @@ abstract public class AOServConnector {
                 }
                 return resultRequest.afterRelease();
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1611,13 +1630,13 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1656,13 +1675,13 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1709,13 +1728,13 @@ abstract public class AOServConnector {
                 tablesUpdated(invalidateList);
                 return result;
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1754,13 +1773,13 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1799,13 +1818,13 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1852,13 +1871,13 @@ abstract public class AOServConnector {
                 tablesUpdated(invalidateList);
                 return result;
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1897,13 +1916,13 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1945,13 +1964,13 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -1994,13 +2013,13 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -2061,13 +2080,13 @@ abstract public class AOServConnector {
                 updateRequest.afterRelease();
                 return;
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -2105,13 +2124,13 @@ abstract public class AOServConnector {
                 }
                 return;
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
@@ -2155,13 +2174,13 @@ abstract public class AOServConnector {
                 tablesUpdated(invalidateList);
                 return;
             } catch(RuntimeException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
-                if(attempt>=attempts) throw err;
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
                 errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {

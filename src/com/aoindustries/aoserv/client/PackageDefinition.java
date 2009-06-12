@@ -26,13 +26,13 @@ import java.util.List;
 public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefinition> implements Removable {
 
     static final int COLUMN_PKEY=0;
-    static final String COLUMN_BRAND_name = "brand";
+    static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_CATEGORY_name = "category";
     static final String COLUMN_MONTHLY_RATE_name = "monthly_rate";
     static final String COLUMN_NAME_name = "name";
     static final String COLUMN_VERSION_name = "version";
 
-    String brand;
+    String accounting;
     String category;
     String name;
     String version;
@@ -48,7 +48,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return brand;
+            case 1: return accounting;
             case 2: return category;
             case 3: return name;
             case 4: return version;
@@ -64,9 +64,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         }
     }
 
-    public Brand getBrand() throws IOException, SQLException {
-        // May be filtered
-        return table.connector.getBrands().get(brand);
+    /**
+     * May be null if filtered.
+     */
+    public Business getBusiness() throws IOException, SQLException {
+        return table.connector.getBusinesses().get(accounting);
     }
 
     public PackageCategory getPackageCategory() throws SQLException, IOException {
@@ -189,7 +191,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
-        brand=result.getString(2);
+        accounting=result.getString(2);
         category=result.getString(3);
         name=result.getString(4);
         version=result.getString(5);
@@ -206,7 +208,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-        brand=in.readUTF().intern();
+        accounting=in.readUTF().intern();
         category=in.readUTF().intern();
         name=in.readUTF();
         version=in.readUTF();
@@ -227,7 +229,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version aoservVersion) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeUTF(brand);
+        out.writeUTF(accounting);
         out.writeUTF(category);
         out.writeUTF(name);
         out.writeUTF(version);
@@ -258,7 +260,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     }
 
     public void update(
-        final Brand brand,
+        final Business business,
         final PackageCategory category,
         final String name,
         final String version,
@@ -277,7 +279,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION.ordinal());
                     out.writeCompressedInt(pkey);
-                    out.writeUTF(brand.pkey);
+                    out.writeUTF(business.pkey);
                     out.writeUTF(category.pkey);
                     out.writeUTF(name);
                     out.writeUTF(version);

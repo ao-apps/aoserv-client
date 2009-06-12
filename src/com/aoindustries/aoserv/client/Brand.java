@@ -32,8 +32,10 @@ final public class Brand extends CachedObjectStringKey<Brand> {
     private String nameserver3;
     private String nameserver4;
     private int smtp_linux_server_account;
+    private String smtp_host;
     private String smtp_password;
     private int imap_linux_server_account;
+    private String imap_host;
     private String imap_password;
     private int support_email_address;
     private String support_email_display;
@@ -69,34 +71,36 @@ final public class Brand extends CachedObjectStringKey<Brand> {
             case 3: return nameserver3;
             case 4: return nameserver4;
             case 5: return smtp_linux_server_account;
-            case 6: return smtp_password;
-            case 7: return imap_linux_server_account;
-            case 8: return imap_password;
-            case 9: return support_email_address;
-            case 10: return support_email_display;
-            case 11: return signup_email_address;
-            case 12: return signup_email_display;
-            case 13: return ticket_encryption_from;
-            case 14: return ticket_encryption_recipient;
-            case 15: return signup_encryption_from;
-            case 16: return signup_encryption_recipient;
-            case 17: return support_toll_free;
-            case 18: return support_day_phone;
-            case 19: return support_emergency_phone1;
-            case 20: return support_emergency_phone2;
-            case 21: return support_fax;
-            case 22: return support_mailing_address1;
-            case 23: return support_mailing_address2;
-            case 24: return support_mailing_address3;
-            case 25: return support_mailing_address4;
-            case 26: return english_enabled;
-            case 27: return japanese_enabled;
-            case 28: return aoweb_struts_http_url_base;
-            case 29: return aoweb_struts_https_url_base;
-            case 30: return aoweb_struts_google_verify_content;
-            case 31: return aoweb_struts_noindex;
-            case 32: return aoweb_struts_google_analytics_new_tracking_code;
-            case 33: return aoweb_struts_signup_admin_address;
+            case 6: return smtp_host;
+            case 7: return smtp_password;
+            case 8: return imap_linux_server_account;
+            case 9: return imap_host;
+            case 10: return imap_password;
+            case 11: return support_email_address;
+            case 12: return support_email_display;
+            case 13: return signup_email_address;
+            case 14: return signup_email_display;
+            case 15: return ticket_encryption_from;
+            case 16: return ticket_encryption_recipient;
+            case 17: return signup_encryption_from;
+            case 18: return signup_encryption_recipient;
+            case 19: return support_toll_free;
+            case 20: return support_day_phone;
+            case 21: return support_emergency_phone1;
+            case 22: return support_emergency_phone2;
+            case 23: return support_fax;
+            case 24: return support_mailing_address1;
+            case 25: return support_mailing_address2;
+            case 26: return support_mailing_address3;
+            case 27: return support_mailing_address4;
+            case 28: return english_enabled;
+            case 29: return japanese_enabled;
+            case 30: return aoweb_struts_http_url_base;
+            case 31: return aoweb_struts_https_url_base;
+            case 32: return aoweb_struts_google_verify_content;
+            case 33: return aoweb_struts_noindex;
+            case 34: return aoweb_struts_google_analytics_new_tracking_code;
+            case 35: return aoweb_struts_signup_admin_address;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -123,10 +127,18 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         return nameserver4;
     }
 
-    public LinuxServerAccount getSmtpLinuxServerAccount() throws SQLException, IOException {
+    public LinuxServerAccount getSmtpLinuxServerAccount() throws IOException, SQLException {
         LinuxServerAccount lsa = table.connector.getLinuxServerAccounts().get(smtp_linux_server_account);
         if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+smtp_linux_server_account);
         return lsa;
+    }
+
+    /**
+     * Gets the host that should be used for SMTP.  Will use the hostname
+     * of the SmtpLinuxServerAccount's AOServer if smtp_host is null.
+     */
+    public String getSmtpHost() throws IOException, SQLException {
+        return smtp_host!=null ? smtp_host : getSmtpLinuxServerAccount().getAOServer().getHostname();
     }
 
     public String getSmtpPassword() {
@@ -137,6 +149,14 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         LinuxServerAccount lsa = table.connector.getLinuxServerAccounts().get(imap_linux_server_account);
         if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+imap_linux_server_account);
         return lsa;
+    }
+
+    /**
+     * Gets the host that should be used for IMAP.  Will use the hostname
+     * of the ImapLinuxServerAccount's AOServer if imap_host is null.
+     */
+    public String getImapHost() throws IOException, SQLException {
+        return imap_host!=null ? imap_host : getImapLinuxServerAccount().getAOServer().getHostname();
     }
 
     public String getImapPassword() {
@@ -267,8 +287,10 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         nameserver3 = result.getString(pos++);
         nameserver4 = result.getString(pos++);
         smtp_linux_server_account = result.getInt(pos++);
+        smtp_host = result.getString(pos++);
         smtp_password = result.getString(pos++);
         imap_linux_server_account = result.getInt(pos++);
+        imap_host = result.getString(pos++);
         imap_password = result.getString(pos++);
         support_email_address = result.getInt(pos++);
         support_email_display = result.getString(pos++);
@@ -304,8 +326,10 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         nameserver3 = in.readNullUTF();
         nameserver4 = in.readNullUTF();
         smtp_linux_server_account = in.readCompressedInt();
+        smtp_host = in.readNullUTF();
         smtp_password = in.readUTF();
         imap_linux_server_account = in.readCompressedInt();
+        imap_host = in.readNullUTF();
         imap_password = in.readUTF();
         support_email_address = in.readCompressedInt();
         support_email_display = in.readUTF();
@@ -341,8 +365,10 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         out.writeNullUTF(nameserver3);
         out.writeNullUTF(nameserver4);
         out.writeCompressedInt(smtp_linux_server_account);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(smtp_host);
         out.writeUTF(smtp_password);
         out.writeCompressedInt(imap_linux_server_account);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(imap_host);
         out.writeUTF(imap_password);
         out.writeCompressedInt(support_email_address);
         out.writeUTF(support_email_display);
@@ -380,38 +406,5 @@ final public class Brand extends CachedObjectStringKey<Brand> {
 
     public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
         return table.connector.getTicketBrandCategories().getTicketBrandCategories(this);
-    }
-
-    public int addPackageDefinition(
-        PackageCategory category,
-        String name,
-        String version,
-        String display,
-        String description,
-        int setupFee,
-        TransactionType setupFeeTransactionType,
-        int monthlyRate,
-        TransactionType monthlyRateTransactionType
-    ) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().addPackageDefinition(
-            this,
-            category,
-            name,
-            version,
-            display,
-            description,
-            setupFee,
-            setupFeeTransactionType,
-            monthlyRate,
-            monthlyRateTransactionType
-        );
-    }
-
-    public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().getPackageDefinition(this, category, name, version);
-    }
-
-    public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
     }
 }

@@ -27,7 +27,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PackageDefinition.COLUMN_BRAND_name, ASCENDING),
+        new OrderBy(PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
         new OrderBy(PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
         new OrderBy(PackageDefinition.COLUMN_MONTHLY_RATE_name, ASCENDING),
         new OrderBy(PackageDefinition.COLUMN_NAME_name, ASCENDING),
@@ -39,7 +39,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
     }
 
     int addPackageDefinition(
-        final Brand brand,
+        final Business business,
         final PackageCategory category,
         final String name,
         final String version,
@@ -59,7 +59,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.PACKAGE_DEFINITIONS.ordinal());
-                    out.writeUTF(brand.pkey);
+                    out.writeUTF(business.pkey);
                     out.writeUTF(category.pkey);
                     out.writeUTF(name);
                     out.writeUTF(version);
@@ -95,15 +95,15 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
     	return getUniqueRow(PackageDefinition.COLUMN_PKEY, pkey);
     }
 
-    PackageDefinition getPackageDefinition(Brand brand, PackageCategory category, String name, String version) throws IOException, SQLException {
-        String accounting=brand.pkey;
+    PackageDefinition getPackageDefinition(Business business, PackageCategory category, String name, String version) throws IOException, SQLException {
+        String accounting=business.pkey;
         String categoryName=category.pkey;
         List<PackageDefinition> pds=getRows();
         int size=pds.size();
         for(int c=0;c<size;c++) {
             PackageDefinition pd=pds.get(c);
             if(
-                pd.brand.equals(accounting)
+                pd.accounting.equals(accounting)
                 && pd.category.equals(categoryName)
                 && pd.name.equals(name)
                 && pd.version.equals(version)
@@ -112,8 +112,8 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
         return null;
     }
 
-    List<PackageDefinition> getPackageDefinitions(Brand brand, PackageCategory category) throws IOException, SQLException {
-        String accounting=brand.pkey;
+    List<PackageDefinition> getPackageDefinitions(Business business, PackageCategory category) throws IOException, SQLException {
+        String accounting=business.pkey;
         String categoryName=category.pkey;
 
         List<PackageDefinition> cached=getRows();
@@ -122,7 +122,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
         for(int c=0;c<size;c++) {
             PackageDefinition pd=cached.get(c);
             if(
-                pd.brand.equals(accounting)
+                pd.accounting.equals(accounting)
                 && pd.category.equals(categoryName)
             ) matches.add(pd);
         }
