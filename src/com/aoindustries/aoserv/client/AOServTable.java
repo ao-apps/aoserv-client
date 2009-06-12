@@ -93,7 +93,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
     /**
      * Registers a <code>TableListener</code> to be notified when
-     * the cached data for this table expires.  Repetative incoming
+     * the cached data for this table expires.  Repitative incoming
      * requests will be batched into fewer events, in increments
      * provided by batchTime.  If batchTime is 0, the event is immediately
      * and always distributed.  Batched events are performed in

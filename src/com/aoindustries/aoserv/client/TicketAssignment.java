@@ -56,9 +56,12 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
     }
 
     public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
-        Username un=table.connector.getUsernames().get(administrator);
-        if(un==null) return null;
-        return un.getBusinessAdministrator();
+        BusinessAdministrator ba = table.connector.getBusinessAdministrators().get(administrator);
+        if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+administrator);
+        return ba;
+        //Username un=table.connector.getUsernames().get(administrator);
+        //if(un==null) return null;
+        //return un.getBusinessAdministrator();
     }
 
     public SchemaTable.TableID getTableID() {

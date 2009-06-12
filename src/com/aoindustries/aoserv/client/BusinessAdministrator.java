@@ -32,7 +32,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator extends CachedObjectStringKey<BusinessAdministrator> implements PasswordProtected, Removable, Disablable {
+final public class BusinessAdministrator extends CachedObjectStringKey<BusinessAdministrator> implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> {
 
     static final int COLUMN_USERNAME=0;
     static final String COLUMN_USERNAME_name = "username";
@@ -621,5 +621,17 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      */
     public boolean hasPermission(String permission) throws IOException, SQLException {
         return table.connector.getBusinessAdministratorPermissions().hasPermission(this, permission);
+    }
+
+    /**
+     * Sorts by username.
+     *
+     * TODO: Consider handling comparisons at the AOServTable and making all
+     * AOServObject's comparable.  We could then return things as sets where
+     * appropriate.  Maybe have getMap, getList, getSet, and getSortedSet
+     * as appropriate?
+     */
+    public int compareTo(BusinessAdministrator o) {
+        return pkey.compareToIgnoreCase(o.pkey);
     }
 }
