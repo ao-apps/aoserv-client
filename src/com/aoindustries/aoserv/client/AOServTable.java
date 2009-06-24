@@ -107,9 +107,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
         if(batchTime<0) throw new IllegalArgumentException("batchTime<0: "+batchTime);
 
         synchronized(eventLock) {
-            if(tableListeners==null) {
-                tableListeners=new ArrayList<TableListenerEntry>();
-            }
+            if(tableListeners==null) tableListeners=new ArrayList<TableListenerEntry>();
             if(batchTime>0 && thread==null) thread=new TableEventThread(this);
 
             tableListeners.add(new TableListenerEntry(listener, batchTime));
@@ -680,8 +678,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
      * objects being notified when the data is updated.
      */
     final public void removeTableListener(TableListener listener) {
-        if(tableListeners!=null) {
-            synchronized(eventLock) {
+        synchronized(eventLock) {
+            if(tableListeners!=null) {
                 int size=tableListeners.size();
                 for(int c=0;c<size;c++) {
                     TableListenerEntry entry=tableListeners.get(c);
@@ -730,28 +728,39 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
     }
 
     void tableUpdated() {
-        // Notify all immediate listeners
-        if(tableListeners!=null) {
-            Iterator<TableListenerEntry> I=tableListeners.iterator();
-            while(I.hasNext()) {
-                TableListenerEntry entry=I.next();
-                if(entry.delay<=0) {
-                    entry.listener.tableUpdated(this);
+        // try {
+            // System.out.println("DEBUG: AOServTable: tableUpdated: "+this.getTableName());
+        // } catch(IOException err) {
+            // connector.errorHandler.reportError(err, null);
+        // } catch(SQLException err) {
+            // connector.errorHandler.reportError(err, null);
+        // }
+        synchronized(eventLock) {
+            // Notify all immediate listeners
+            if(tableListeners!=null) {
+                Iterator<TableListenerEntry> I=tableListeners.iterator();
+                while(I.hasNext()) {
+                    TableListenerEntry entry=I.next();
+                    if(entry.delay<=0) {
+                        entry.listener.tableUpdated(this);
+                    }
                 }
             }
-        }
 
-        long time=System.currentTimeMillis();
-
-        // Notify the batching thread of the update
-        synchronized(eventLock) {
+            // Notify the batching thread of the update
             if(tableListeners!=null) {
                 int size=tableListeners.size();
+                boolean modified = false;
                 for(int c=0;c<size;c++) {
                     TableListenerEntry entry=tableListeners.get(c);
-                    if(entry.delay>0 && entry.delayStart==-1) entry.delayStart=time;
+                    if(entry.delay>0 && entry.delayStart==-1) {
+                        entry.delayStart=System.currentTimeMillis();
+                        modified = true;
+                    } else {
+                        // System.out.println("DEBUG: "+getTableID()+": Batched event");
+                    }
                 }
-                eventLock.notify();
+                if(modified) eventLock.notify();
             }
         }
     }

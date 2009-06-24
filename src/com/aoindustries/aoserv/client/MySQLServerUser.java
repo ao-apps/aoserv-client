@@ -123,6 +123,10 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         }
     }
 
+    public boolean isDisabled() {
+        return disable_log!=-1;
+    }
+
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.getDisableLogs().get(disable_log);

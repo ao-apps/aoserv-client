@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 
@@ -20,7 +19,7 @@ import java.sql.*;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> {
+final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> implements Comparable<TicketPriority> {
 
     static final int COLUMN_PRIORITY=0;
     static final String COLUMN_PRIORITY_name = "priority";
@@ -58,5 +57,9 @@ final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> 
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeUTF(pkey);
+    }
+
+    public int compareTo(TicketPriority o) {
+        return pkey.compareTo(o.pkey);
     }
 }

@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.*;
 
 /**
  * <code>AOServTable</code> events with a delay greater
@@ -23,19 +22,23 @@ public class TableEventThread extends Thread {
     private final AOServTable table;
 
     public TableEventThread(AOServTable table) {
-	super("TableEventThread #"+table.getTableID()+" - "+table.getClass().getName());
-	this.table=table;
-	setDaemon(true);
-	start();
+        super("TableEventThread ("+table.getTableID()+") - "+table.getClass().getName());
+        this.table=table;
+        setDaemon(true);
+        start();
+        // System.out.println("DEBUG: Started TableEventThread: "+getName());
     }
 
+    @Override
     public void run() {
-	while (table.thread==this) {
+        OUTER_LOOP :
+        while(true) {
             try {
-                synchronized (table.eventLock) {
-                    if(table.thread==this) {
+                synchronized(table.eventLock) {
+                    while(true) {
+                        if(table.thread!=this) break OUTER_LOOP;
                         long time = System.currentTimeMillis();
-                        // Run anything that should be ran, calculating the maximum sleep time
+                        // Run anything that should be ran, calculating the minimum sleep time
                         // for the next wait period.
                         long minTime = Long.MAX_VALUE;
                         int size = table.tableListeners.size();
@@ -53,6 +56,7 @@ public class TableEventThread extends Thread {
                                     if (time >= endTime) {
                                         // Ready to run
                                         entry.delayStart = -1;
+                                        // System.out.println("DEBUG: Started TableEventThread: run: "+getName()+" calling tableUpdated on "+entry.listener);
                                         entry.listener.tableUpdated(table);
                                     } else {
                                         // Remaining delay
@@ -62,7 +66,13 @@ public class TableEventThread extends Thread {
                                 }
                             }
                         }
-                        table.eventLock.wait(minTime);
+                        if(minTime==Long.MAX_VALUE) {
+                            // System.out.println("DEBUG: TableEventThread: run: "+getName()+" size="+size+", waiting indefinitely");
+                            table.eventLock.wait();
+                        } else {
+                            // System.out.println("DEBUG: TableEventThread: run: "+getName()+" size="+size+", waiting for "+minTime+" ms");
+                            table.eventLock.wait(minTime);
+                        }
                     }
                 }
             } catch (ThreadDeath TD) {
@@ -70,6 +80,6 @@ public class TableEventThread extends Thread {
             } catch (Throwable T) {
                 table.connector.errorHandler.reportError(T, null);
             }
-	}
+        }
     }
 }

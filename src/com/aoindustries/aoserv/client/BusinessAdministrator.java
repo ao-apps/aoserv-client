@@ -85,7 +85,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public boolean canSwitchUser(BusinessAdministrator other) throws SQLException, IOException {
-        if(getDisableLog()!=null || other.getDisableLog()!=null) return false;
+        if(isDisabled() || other.isDisabled()) return false;
         Business business=getUsername().getPackage().getBusiness();
         Business otherBusiness=other.getUsername().getPackage().getBusiness();
         return !business.equals(otherBusiness) && business.isBusinessOrParentOf(otherBusiness);
@@ -231,6 +231,10 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
     public List<Ticket> getCreatedTickets() throws IOException, SQLException {
         return table.connector.getTickets().getCreatedTickets(this);
+    }
+
+    public boolean isDisabled() {
+        return disable_log!=-1;
     }
 
     public DisableLog getDisableLog() throws SQLException, IOException {

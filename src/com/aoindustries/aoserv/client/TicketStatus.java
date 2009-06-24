@@ -20,7 +20,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> {
+final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> implements Comparable<TicketStatus> {
 
     static final int COLUMN_STATUS = 0;
     static final int COLUMN_SORT_ORDER = 1;
@@ -92,5 +92,13 @@ final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> {
      */
     public String getDescription(Locale userLocale) {
         return ApplicationResourcesAccessor.getMessage(userLocale, "TicketStatus."+pkey+".description");
+    }
+
+    public int compareTo(TicketStatus o) {
+        short sortOrder1 = sort_order;
+        short sortOrder2 = o.sort_order;
+        if(sortOrder1<sortOrder2) return -1;
+        if(sortOrder1>sortOrder2) return 1;
+        return 0;
     }
 }

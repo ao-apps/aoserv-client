@@ -40,7 +40,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
      */
     public boolean canStop() throws SQLException, IOException {
         HttpdSharedTomcat hst=getHttpdSharedTomcat();
-        return getHttpdSharedTomcat()!=null && hst.getDisableLog()==null;
+        return getHttpdSharedTomcat()!=null && !hst.isDisabled();
     }
 
     /**
@@ -49,7 +49,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
      */
     public boolean canStart() throws SQLException, IOException {
         HttpdSharedTomcat hst=getHttpdSharedTomcat();
-        return getHttpdSharedTomcat()==null || hst.getDisableLog()==null;
+        return getHttpdSharedTomcat()==null || !hst.isDisabled();
     }
 
     Object getColumnImpl(int i) {

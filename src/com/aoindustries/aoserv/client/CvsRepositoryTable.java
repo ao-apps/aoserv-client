@@ -112,7 +112,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 
         // Home directories
         for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
-            if(lsa.getLinuxAccount().getType().getName().equals(LinuxAccountType.USER) && lsa.getDisableLog()==null) {
+            if(lsa.getLinuxAccount().getType().getName().equals(LinuxAccountType.USER) && !lsa.isDisabled()) {
                 String dir=lsa.getHome();
                 if(!prefixes.contains(dir)) prefixes.add(dir);
             }
@@ -121,13 +121,13 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         // HttpdSites
         for(HttpdSite site : connector.getHttpdSites().getRows()) {
             String dir=site.getInstallDirectory();
-            if(site.getDisableLog()==null && !prefixes.contains(dir)) prefixes.add(dir);
+            if(!site.isDisabled() && !prefixes.contains(dir)) prefixes.add(dir);
         }
 
         // HttpdSharedTomcats
         for(HttpdSharedTomcat tomcat : connector.getHttpdSharedTomcats().getRows()) {
             String dir=tomcat.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+tomcat.getName();
-            if(tomcat.getDisableLog()==null && !prefixes.contains(dir)) prefixes.add(dir);
+            if(!tomcat.isDisabled() && !prefixes.contains(dir)) prefixes.add(dir);
         }
         
         // The global directory

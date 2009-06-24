@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Business extends CachedObjectStringKey<Business> implements Disablable {
+final public class Business extends CachedObjectStringKey<Business> implements Disablable, Comparable<Business> {
 
     static final int COLUMN_ACCOUNTING=0;
     static final String COLUMN_ACCOUNTING_name = "accounting";
@@ -513,7 +513,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<Business> getChildBusinesses() throws IOException, SQLException {
-	return table.connector.getBusinesses().getChildBusinesses(this);
+        return table.connector.getBusinesses().getChildBusinesses(this);
     }
 
     Object getColumnImpl(int i) {
@@ -562,6 +562,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public Server getDefaultServer() throws IOException, SQLException {
         // May be null when the account is canceled or not using servers
 	return table.connector.getBusinessServers().getDefaultServer(this);
+    }
+
+    public boolean isDisabled() {
+        return disable_log!=-1;
     }
 
     public DisableLog getDisableLog() throws SQLException, IOException {
@@ -681,6 +685,21 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         while(other!=null) {
             if(equals(other)) return true;
             other=other.getParentBusiness();
+        }
+        return false;
+    }
+
+    /**
+     * Determines if this <code>Business</code> is a parent of the other business.
+     * This is often used for access control between accounts.
+     */
+    public boolean isParentOf(Business other) throws IOException, SQLException {
+        if(other!=null) {
+            other=other.getParentBusiness();
+            while(other!=null) {
+                if(equals(other)) return true;
+                other=other.getParentBusiness();
+            }
         }
         return false;
     }
@@ -1087,5 +1106,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
         return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
+    }
+
+    public int compareTo(Business o) {
+        return pkey.compareTo(o.pkey);
     }
 }

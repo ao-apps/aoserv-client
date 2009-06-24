@@ -84,6 +84,7 @@ public class TCPConnector extends AOServConnector {
                                     }
                                 }
                                 tableList.clear();
+                                boolean isSynchronous = in.readBoolean();
                                 int size=in.readCompressedInt();
                                 if(size!=-1) {
                                     for(int c=0;c<size;c++) {
@@ -93,14 +94,16 @@ public class TCPConnector extends AOServConnector {
                                 }
                                 // No tables listed for "ping"
                                 if(!tableList.isEmpty()) tablesUpdated(tableList);
-                                out.writeBoolean(true);
-                                out.flush();
+                                if(isSynchronous) {
+                                    out.writeBoolean(true);
+                                    out.flush();
+                                }
                             }
                         } finally {
                             conn.close();
                             releaseConnection(conn);
                         }
-                    } catch(IOException err) {
+                    } catch(Exception err) {
                         errorHandler.reportError(err, null);
                         try {
                             sleep(60000);

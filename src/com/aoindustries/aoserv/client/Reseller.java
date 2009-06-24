@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,5 +68,34 @@ final public class Reseller extends CachedObjectStringKey<Reseller> {
 
     public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
         return table.connector.getTicketAssignments().getTicketAssignments(this);
+    }
+
+    /**
+     * Gets the immediate parent of this reseller or <code>null</code> if none available.
+     */
+    public Reseller getParentReseller() throws IOException, SQLException {
+        Business bu = getBrand().getBusiness();
+        if(bu==null) return null;
+        Business parent = bu.getParentBusiness();
+        while(parent!=null) {
+            Brand parentBrand = parent.getBrand();
+            if(parentBrand!=null) {
+                Reseller parentReseller = parentBrand.getReseller();
+                if(parentReseller!=null) return parentReseller;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The children of the resller are any resellers that have their closest parent
+     * business (that is a reseller) equal to this one.
+     */
+    public List<Reseller> getChildResellers() throws IOException, SQLException {
+        List<Reseller> children = new ArrayList<Reseller>();
+        for(Reseller reseller : table.connector.getResellers().getRows()) {
+            if(!reseller.equals(this) && this.equals(reseller.getParentReseller())) children.add(reseller);
+        }
+        return children;
     }
 }

@@ -78,6 +78,10 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         }
     }
 
+    public boolean isDisabled() {
+        return disable_log!=-1;
+    }
+
     public DisableLog getDisableLog() throws IOException, SQLException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.getDisableLogs().get(disable_log);

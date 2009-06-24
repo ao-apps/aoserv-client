@@ -181,23 +181,26 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         return pkey;
     }
 
+    /**
+     * May be filtered.
+     */
     public Brand getBrand() throws IOException, SQLException {
-        Brand br = table.connector.getBrands().get(brand);
-        if(br==null) throw new SQLException("Unable to find Brand: "+brand);
-        return br;
+        return table.connector.getBrands().get(brand);
     }
 
+    /**
+     * May be filtered.
+     */
     public Reseller getReseller() throws SQLException, IOException {
-        Reseller re = table.connector.getResellers().get(reseller);
-        if (re == null) throw new SQLException("Unable to find Reseller: " + reseller);
-        return re;
+        return table.connector.getResellers().get(reseller);
     }
 
+    /**
+     * May be null if not set or filtered.
+     */
     public Business getBusiness() throws SQLException, IOException {
         if(accounting==null) return null;
-        Business bu = table.connector.getBusinesses().get(accounting);
-        if (bu == null) throw new SQLException("Unable to find Business: " + accounting);
-        return bu;
+        return table.connector.getBusinesses().get(accounting);
     }
 
     public Language getLanguage() throws SQLException, IOException {

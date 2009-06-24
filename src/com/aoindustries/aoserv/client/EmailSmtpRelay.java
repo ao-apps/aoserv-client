@@ -89,6 +89,10 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	return created;
     }
 
+    public boolean isDisabled() {
+        return disable_log!=-1;
+    }
+
     public DisableLog getDisableLog() throws IOException, SQLException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.getDisableLogs().get(disable_log);

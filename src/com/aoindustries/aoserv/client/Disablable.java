@@ -17,6 +17,13 @@ import java.sql.SQLException;
  */
 public interface Disablable {
 
+    /**
+     * Checks if this object is disabled.  This should execute very quickly (not
+     * incur any round-trip to any database) and thus does not throw any checked
+     * exceptions.
+     */
+    boolean isDisabled();
+
     DisableLog getDisableLog() throws IOException, SQLException;
 
     boolean canDisable() throws IOException, SQLException;

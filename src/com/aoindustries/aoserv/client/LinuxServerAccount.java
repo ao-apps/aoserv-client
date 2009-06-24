@@ -97,6 +97,10 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         return true;
     }
 
+    public boolean isDisabled() {
+        return disable_log!=-1;
+    }
+
     public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;

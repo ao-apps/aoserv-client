@@ -75,7 +75,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
      * with this site.
      */
     public boolean canStop() throws SQLException, IOException {
-        if(getHttpdSite().getDisableLog()!=null) return false;
+        if(getHttpdSite().isDisabled()) return false;
         HttpdTomcatSharedSite shr=getHttpdTomcatSharedSite();
         if(shr!=null) return shr.canStop();
         return true;
@@ -86,7 +86,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
      * with this site.
      */
     public boolean canStart() throws SQLException, IOException {
-        if(getHttpdSite().getDisableLog()!=null) return false;
+        if(getHttpdSite().isDisabled()) return false;
         HttpdTomcatSharedSite shr=getHttpdTomcatSharedSite();
         if(shr!=null) return shr.canStart();
         return true;

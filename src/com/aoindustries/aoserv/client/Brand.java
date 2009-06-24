@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -105,7 +106,7 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         }
     }
 
-    public Business getBusiness() throws SQLException, IOException {
+    public Business getBusiness() throws IOException, SQLException {
         Business bu = table.connector.getBusinesses().get(pkey);
         if(bu==null) throw new SQLException("Unable to find Business: "+pkey);
         return bu;
@@ -406,5 +407,31 @@ final public class Brand extends CachedObjectStringKey<Brand> {
 
     public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
         return table.connector.getTicketBrandCategories().getTicketBrandCategories(this);
+    }
+
+    /**
+     * Gets the immediate parent of this brand or <code>null</code> if none available.
+     */
+    public Brand getParentBrand() throws IOException, SQLException {
+        Business bu = getBusiness();
+        if(bu==null) return null;
+        Business parent = bu.getParentBusiness();
+        while(parent!=null) {
+            Brand parentBrand = parent.getBrand();
+            if(parentBrand!=null) return parentBrand;
+        }
+        return null;
+    }
+
+    /**
+     * The children of the brand are any brands that have their closest parent
+     * business (that is a brand) equal to this one.
+     */
+    public List<Brand> getChildBrands() throws IOException, SQLException {
+        List<Brand> children = new ArrayList<Brand>();
+        for(Brand brand : table.connector.getBrands().getRows()) {
+            if(!brand.equals(this) && this.equals(brand.getParentBrand())) children.add(brand);
+        }
+        return children;
     }
 }
