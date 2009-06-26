@@ -115,7 +115,7 @@ final public class SocketConnectionPool extends AOPool {
             }
 
             // Show the table statistics
-            out.print("  <TR><TH colspan=2><FONT size=+1>AOServ Tables</FONT></TH></TR>\n"
+            out.print("  <TR><TH colspan='2'><FONT size=+1>AOServ Tables</FONT></TH></TR>\n"
                     + "  <TR><TD>Total Tables:</TD><TD>").print(numTables).print("</TD></TR>\n"
                     + "  <TR><TD>Loaded:</TD><TD>").print(totalLoaded).print("</TD></TR>\n"
                     + "  <TR><TD>Caches:</TD><TD>").print(totalCaches).print("</TD></TR>\n"
@@ -126,7 +126,7 @@ final public class SocketConnectionPool extends AOPool {
                     + "</TABLE>\n"
                     + "<BR><BR>\n"
                     + "<TABLE>\n"
-                    + "  <TR><TH colspan=2><FONT size=+1>TCP Connection Pool</FONT></TH></TR>\n"
+                    + "  <TR><TH colspan='2'><FONT size=+1>TCP Connection Pool</FONT></TH></TR>\n"
                     + "  <TR><TD>Host:</TD><TD>").print(connector.hostname).print("</TD></TR>\n"
                     + "  <TR><TD>Port:</TD><TD>").print(connector.port).print("</TD></TR>\n"
                     + "  <TR><TD>Connected As:</TD><TD>").print(connector.connectAs).print("</TD></TR>\n"

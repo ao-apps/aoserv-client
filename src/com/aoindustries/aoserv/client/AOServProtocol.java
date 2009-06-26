@@ -107,9 +107,11 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_44("1.44"),
         VERSION_1_45("1.45"),
         VERSION_1_46("1.46"),
-        VERSION_1_47("1.47");
+        VERSION_1_47("1.47"),
+        VERSION_1_48("1.48"),
+        VERSION_1_49("1.49");
 
-        public static final Version CURRENT_VERSION = VERSION_1_47;
+        public static final Version CURRENT_VERSION = VERSION_1_49;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -457,7 +459,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_TICKET_ACTION_RAW_EMAIL,
         GET_TICKET_ACTION_NEW_VALUE,
         SET_TICKET_SUMMARY,
-        ADD_TICKET_ANNOTATION
+        ADD_TICKET_ANNOTATION,
+        SET_TICKET_STATUS,
+        SET_TICKET_INTERNAL_NOTES
     }
 
     /**

@@ -43,6 +43,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     private String new_accounting;
     private String old_priority;
     private String new_priority;
+    private String old_type;
+    private String new_type;
     private String old_status;
     private String new_status;
     private String old_assigned_to;
@@ -71,18 +73,20 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
             case 6: return new_accounting;
             case 7: return old_priority;
             case 8: return new_priority;
-            case 9: return old_status;
-            case 10: return new_status;
-            case 11: return old_assigned_to;
-            case 12: return new_assigned_to;
-            case 13: return old_category==-1 ? null : Integer.valueOf(old_category);
-            case 14: return new_category==-1 ? null : Integer.valueOf(new_category);
-            case 15: return getOldValue();
-            case 16: return getNewValue();
-            case 17: return from_address;
-            case 18: return summary;
-            case 19: return getDetails();
-            case 20: return getRawEmail();
+            case 9: return old_type;
+            case 10: return new_type;
+            case 11: return old_status;
+            case 12: return new_status;
+            case 13: return old_assigned_to;
+            case 14: return new_assigned_to;
+            case 15: return old_category==-1 ? null : Integer.valueOf(old_category);
+            case 16: return new_category==-1 ? null : Integer.valueOf(new_category);
+            case 17: return getOldValue();
+            case 18: return getNewValue();
+            case 19: return from_address;
+            case 20: return summary;
+            case 21: return getDetails();
+            case 22: return getRawEmail();
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -137,6 +141,20 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return tp;
     }
 
+    public TicketType getOldType() throws IOException, SQLException {
+        if(old_type==null) return null;
+        TicketType tt = table.connector.getTicketTypes().get(old_type);
+        if(tt==null) throw new SQLException("Unable to find TicketType: "+old_type);
+        return tt;
+    }
+
+    public TicketType getNewType() throws IOException, SQLException {
+        if(new_type==null) return null;
+        TicketType tt = table.connector.getTicketTypes().get(new_type);
+        if(tt==null) throw new SQLException("Unable to find TicketType: "+new_type);
+        return tt;
+    }
+
     public TicketStatus getOldStatus() throws IOException, SQLException {
         if(old_status==null) return null;
         TicketStatus ts = table.connector.getTicketStatuses().get(old_status);
@@ -188,6 +206,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
                 action_type.equals(TicketActionType.SET_CONTACT_EMAILS)
                 || action_type.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
                 || action_type.equals(TicketActionType.SET_SUMMARY)
+                || action_type.equals(TicketActionType.SET_INTERNAL_NOTES)
             ) {
                 old_value = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
             } else {
@@ -205,6 +224,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
                 action_type.equals(TicketActionType.SET_CONTACT_EMAILS)
                 || action_type.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
                 || action_type.equals(TicketActionType.SET_SUMMARY)
+                || action_type.equals(TicketActionType.SET_INTERNAL_NOTES)
             ) {
                 new_value = table.connector.requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_NEW_VALUE, pkey);
             } else {
@@ -235,6 +255,9 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         ) {
             oldValue = old_priority;
             newValue = new_priority;
+        } else if(action_type.equals(TicketActionType.SET_TYPE)) {
+            oldValue = getOldType().toString(userLocale);
+            newValue = getNewType().toString(userLocale);
         } else if(action_type.equals(TicketActionType.SET_STATUS)) {
             oldValue = getOldStatus().toString(userLocale);
             newValue = getNewStatus().toString(userLocale);
@@ -252,8 +275,10 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
             action_type.equals(TicketActionType.SET_CONTACT_EMAILS)
             || action_type.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
             || action_type.equals(TicketActionType.SET_SUMMARY)
+            || action_type.equals(TicketActionType.SET_INTERNAL_NOTES)
             || action_type.equals(TicketActionType.ADD_ANNOTATION)
         ) {
+            // These either have no old/new value or their value is not altered in any way
             oldValue = getOldValue();
             newValue = getNewValue();
         } else {
@@ -304,6 +329,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         new_accounting = result.getString(pos++);
         old_priority = result.getString(pos++);
         new_priority = result.getString(pos++);
+        old_type = result.getString(pos++);
+        new_type = result.getString(pos++);
         old_status = result.getString(pos++);
         new_status = result.getString(pos++);
         old_assigned_to = result.getString(pos++);
@@ -330,6 +357,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         new_accounting = StringUtility.intern(in.readNullUTF());
         old_priority = StringUtility.intern(in.readNullUTF());
         new_priority = StringUtility.intern(in.readNullUTF());
+        old_type = StringUtility.intern(in.readNullUTF());
+        new_type = StringUtility.intern(in.readNullUTF());
         old_status = StringUtility.intern(in.readNullUTF());
         new_status = StringUtility.intern(in.readNullUTF());
         old_assigned_to = StringUtility.intern(in.readNullUTF());
@@ -359,6 +388,10 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         out.writeNullUTF(new_accounting);
         out.writeNullUTF(old_priority);
         out.writeNullUTF(new_priority);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_49)>=0) {
+            out.writeNullUTF(old_type);
+            out.writeNullUTF(new_type);
+        }
         out.writeNullUTF(old_status);
         out.writeNullUTF(new_status);
         out.writeNullUTF(old_assigned_to);

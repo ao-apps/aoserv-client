@@ -51,7 +51,12 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
     /**
      * The lock used for cache event handling.
      */
-    final Object eventLock=new Object();
+    final Object eventLock=new Object() {
+        @Override
+        public String toString() {
+            return "EventLock - "+getTableID();
+        }
+    };
 
     /**
      * The thread that is performing the batched updates.

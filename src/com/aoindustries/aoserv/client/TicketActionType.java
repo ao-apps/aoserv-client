@@ -41,7 +41,9 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
         SET_STATUS="set_status",
         SET_ADMIN_PRIORITY="set_admin_priority",
         ASSIGN="assign",
-        SET_CATEGORY="set_category"
+        SET_CATEGORY="set_category",
+        SET_INTERNAL_NOTES="set_internal_notes",
+        SET_TYPE="set_type"
     ;
 
     @Override
@@ -92,23 +94,6 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
      * Generates a locale-specific summary.
      */
     String generateSummary(AOServConnector connector, Locale userLocale, String oldValue, String newValue) throws IOException, SQLException {
-        // Substitute translated values for oldValue and newValue on certain types
-        if(pkey.equals(SET_CLIENT_PRIORITY)) {
-            /* TODO: if(oldValue!=null) {
-                TicketPriority clientPriority = conn.getTicketPriorities().get(oldValue);
-                if(clientPriority!=null) oldValue = clientPriority.toString(userLocale);
-             * TODO: newValue, too
-            }*/
-        } else if(pkey.equals(SET_STATUS)) {
-            if(oldValue!=null) {
-                TicketStatus status = connector.getTicketStatuses().get(oldValue);
-                if(status!=null) oldValue = status.toString(userLocale);
-            }
-            if(newValue!=null) {
-                TicketStatus status = connector.getTicketStatuses().get(newValue);
-                if(status!=null) newValue = status.toString(userLocale);
-            }
-        }
         if(oldValue==null) {
             if(newValue==null) return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.null.null");
             return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.null.notNull", newValue);

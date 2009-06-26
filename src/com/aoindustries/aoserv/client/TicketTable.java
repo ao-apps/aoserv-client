@@ -38,6 +38,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
         final Language language,
         final TicketCategory category,
         final TicketType ticketType,
+        final String fromAddress,
         final String summary,
         final String details,
         final TicketPriority clientPriority,
@@ -58,6 +59,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
                     out.writeUTF(language.pkey);
                     out.writeCompressedInt(category==null ? -1 : category.pkey);
                     out.writeUTF(ticketType.pkey);
+                    out.writeNullUTF(fromAddress);
                     out.writeUTF(summary);
                     out.writeNullLongUTF(details);
                     out.writeUTF(clientPriority.pkey);

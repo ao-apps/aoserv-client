@@ -290,7 +290,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
     synchronized public String getInternalNotes() throws IOException, SQLException {
         if(!internalNotesLoaded) {
             internal_notes = table.connector.requestLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, pkey);
-            detailsLoaded = true;
+            internalNotesLoaded = true;
         }
         return internal_notes;
     }
@@ -354,10 +354,6 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         );
     }
 
-    public void actChangeTicketType(TicketType ticket_type, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
-    }
-
     public void actAssignTo(BusinessAdministrator assignedTo, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
     }
@@ -394,8 +390,76 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);
     }
 
-    public void setBusiness(Business business) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_BUSINESS, pkey, business==null?"":business.getAccounting());
+    /**
+     * Updates the ticket business if the old business matches the current value.
+     *
+     * @return <code>true</code> if successfully updated or <code>false</code> if oldBusiness doesn't match the current business.
+     */
+    public boolean setBusiness(Business oldBusiness, Business newBusiness) throws IOException, SQLException {
+        return table.connector.requestBooleanQueryIL(
+            true,
+            AOServProtocol.CommandID.SET_TICKET_BUSINESS,
+            pkey,
+            oldBusiness==null ? "" : oldBusiness.getAccounting(),
+            newBusiness==null ? "" : newBusiness.getAccounting()
+        );
+    }
+
+    /**
+     * Updates the ticket type if the old value matches the current value.
+     *
+     * @return <code>true</code> if successfully updated or <code>false</code> if oldType doesn't match the current type.
+     */
+    public boolean setTicketType(TicketType oldType, TicketType newType) throws IOException, SQLException {
+        return table.connector.requestBooleanQueryIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, oldType.pkey, newType.pkey);
+        // table.connector.requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
+   }
+
+    /**
+     * Updates the ticket status if the old status matches the current value.
+     *
+     * @return <code>true</code> if successfully updated or <code>false</code> if oldStatus doesn't match the current status.
+     */
+    public boolean setStatus(TicketStatus oldStatus, TicketStatus newStatus, long statusTimeout) throws IOException, SQLException {
+        return table.connector.requestBooleanQueryIL(true, AOServProtocol.CommandID.SET_TICKET_STATUS, pkey, oldStatus.pkey, newStatus.pkey, statusTimeout);
+    }
+
+    /**
+     * Updates the internal notes if the old value matches the current value.
+     *
+     * @return <code>true</code> if successfully updated or <code>false</code> if oldInternalNotes doesn't match the current internal notes.
+     */
+    public boolean setInternalNotes(final String oldInternalNotes, final String newInternalNotes) throws IOException, SQLException {
+        return table.connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<Boolean>() {
+                boolean result;
+                IntList invalidateList;
+
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_TICKET_INTERNAL_NOTES.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeLongUTF(oldInternalNotes);
+                    out.writeLongUTF(newInternalNotes);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code = in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        result = in.readBoolean();
+                        invalidateList = AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Boolean afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                    return result;
+                }
+            }
+        );
     }
     // </editor-fold>
 }

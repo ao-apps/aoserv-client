@@ -1648,6 +1648,59 @@ abstract public class AOServConnector {
         }
     }
 
+    final boolean requestBooleanQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+        int attempt = 1;
+        int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
+        while(true) {
+            try {
+                boolean result;
+                IntList invalidateList;
+                AOServConnection connection=getConnection(1);
+                try {
+                    CompressedDataOutputStream out=connection.getOutputStream();
+                    out.writeCompressedInt(commID.ordinal());
+                    writeParams(params, out);
+                    out.flush();
+
+                    CompressedDataInputStream in=connection.getInputStream();
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        result = in.readBoolean();
+                        invalidateList=readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                } catch(RuntimeException err) {
+                    connection.close();
+                    throw err;
+                } catch(IOException err) {
+                    connection.close();
+                    throw err;
+                } finally {
+                    releaseConnection(connection);
+                }
+                tablesUpdated(invalidateList);
+                return result;
+            } catch(RuntimeException err) {
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
+            } catch(IOException err) {
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
+            } catch(SQLException err) {
+                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
+            }
+            try {
+                Thread.sleep(retryAttemptDelays[attempt-1]);
+            } catch(InterruptedException err) {
+                errorHandler.reportWarning(err, null);
+            }
+            attempt++;
+        }
+    }
+
     final int requestIntQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
