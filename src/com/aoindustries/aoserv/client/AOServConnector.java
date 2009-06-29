@@ -88,6 +88,7 @@ abstract public class AOServConnector {
                     || message.equals("Connection attempted with empty password")
                     || message.equals("Connection attempted with empty connect username")
                     || message.startsWith("Unable to find BusinessAdministrator: ")
+                    || message.startsWith("Not allowed to switch users from ")
                 )
             )
         ;
