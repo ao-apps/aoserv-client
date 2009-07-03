@@ -5,11 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.AOPool;
+import com.aoindustries.io.ChainWriter;
+import com.aoindustries.util.EncodingUtils;
+import com.aoindustries.util.ErrorHandler;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Connections made by <code>TCPConnector</code> or any
@@ -76,7 +77,7 @@ final public class SocketConnectionPool extends AOPool {
      */
     private static final int numTables = SchemaTable.TableID.values().length;
 
-    protected void printConnectionStats(ChainWriter out) throws IOException {
+    protected void printConnectionStats(Appendable out) throws IOException {
         try {
             // Create statistics on the caches
             int totalLoaded=0;
@@ -115,33 +116,41 @@ final public class SocketConnectionPool extends AOPool {
             }
 
             // Show the table statistics
-            out.print("  <TR><TH colspan='2'><FONT size=+1>AOServ Tables</FONT></TH></TR>\n"
-                    + "  <TR><TD>Total Tables:</TD><TD>").print(numTables).print("</TD></TR>\n"
-                    + "  <TR><TD>Loaded:</TD><TD>").print(totalLoaded).print("</TD></TR>\n"
-                    + "  <TR><TD>Caches:</TD><TD>").print(totalCaches).print("</TD></TR>\n"
-                    + "  <TR><TD>Active:</TD><TD>").print(totalActive).print("</TD></TR>\n"
-                    + "  <TR><TD>Hashed:</TD><TD>").print(totalHashed).print("</TD></TR>\n"
-                    + "  <TR><TD>Indexes:</TD><TD>").print(totalIndexed).print("</TD></TR>\n"
-                    + "  <TR><TD>Total Rows:</TD><TD>").print(totalRows).print("</TD></TR>\n"
-                    + "</TABLE>\n"
-                    + "<BR><BR>\n"
-                    + "<TABLE>\n"
-                    + "  <TR><TH colspan='2'><FONT size=+1>TCP Connection Pool</FONT></TH></TR>\n"
-                    + "  <TR><TD>Host:</TD><TD>").print(connector.hostname).print("</TD></TR>\n"
-                    + "  <TR><TD>Port:</TD><TD>").print(connector.port).print("</TD></TR>\n"
-                    + "  <TR><TD>Connected As:</TD><TD>").print(connector.connectAs).print("</TD></TR>\n"
-                    + "  <TR><TD>Authenticated As:</TD><TD>").print(connector.authenticateAs).print("</TD></TR>\n"
-                    + "  <TR><TD>Password:</TD><TD>");
+            out.append("  <tr><th colspan='2'><span style='font-size:large;'>AOServ Tables</span></th></tr>\n"
+                    + "  <tr><td>Total Tables:</td><td>").append(Integer.toString(numTables)).append("</td></tr>\n"
+                    + "  <tr><td>Loaded:</td><td>").append(Integer.toString(totalLoaded)).append("</td></tr>\n"
+                    + "  <tr><td>Caches:</td><td>").append(Integer.toString(totalCaches)).append("</td></tr>\n"
+                    + "  <tr><td>Active:</td><td>").append(Integer.toString(totalActive)).append("</td></tr>\n"
+                    + "  <tr><td>Hashed:</td><td>").append(Integer.toString(totalHashed)).append("</td></tr>\n"
+                    + "  <tr><td>Indexes:</td><td>").append(Integer.toString(totalIndexed)).append("</td></tr>\n"
+                    + "  <tr><td>Total Rows:</td><td>").append(Integer.toString(totalRows)).append("</td></tr>\n"
+                    + "</table>\n"
+                    + "<br /><br />\n"
+                    + "<table>\n"
+                    + "  <tr><th colspan='2'><span style='font-size:large;'>TCP Connection Pool</span></th></tr>\n"
+                    + "  <tr><td>Host:</td><td>");
+            EncodingUtils.encodeHtml(connector.hostname, out);
+            out.append("</td></tr>\n"
+                    + "  <tr><td>Port:</td><td>").append(Integer.toString(connector.port)).append("</td></tr>\n"
+                    + "  <tr><td>Connected As:</td><td>");
+            EncodingUtils.encodeHtml(connector.connectAs, out);
+            out.append("</td></tr>\n"
+                    + "  <tr><td>Authenticated As:</td><td>");
+            EncodingUtils.encodeHtml(connector.authenticateAs, out);
+            out.append("</td></tr>\n"
+                    + "  <tr><td>Password:</td><td>");
             String password=connector.password;
             int len=password.length();
-            for(int c=0;c<len;c++) out.print('*');
-            out.print("</TD></TR>\n");
+            for(int c=0;c<len;c++) {
+                out.append('*');
+            }
+            out.append("</td></tr>\n");
         } catch(SQLException err) {
             throw new IOException(err);
         }
     }
 
-    void printStatisticsHTML(ChainWriter out) throws IOException {
+    void printStatisticsHTML(Appendable out) throws IOException {
 	try {
             printStatisticsHTMLImp(out);
 	} catch(Exception err) {

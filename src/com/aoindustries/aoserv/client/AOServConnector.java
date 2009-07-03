@@ -1495,7 +1495,7 @@ abstract public class AOServConnector {
         return (int)timeSpan;
     }
 
-    abstract public void printConnectionStatsHTML(ChainWriter out) throws IOException;
+    abstract public void printConnectionStatsHTML(Appendable out) throws IOException;
 
     /**
      * Releases a connection to the server.  This will either close the

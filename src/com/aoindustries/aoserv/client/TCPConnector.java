@@ -281,7 +281,7 @@ public class TCPConnector extends AOServConnector {
         }
     }
 
-    final public void printConnectionStatsHTML(ChainWriter out) throws IOException {
+    final public void printConnectionStatsHTML(Appendable out) throws IOException {
         pool.printConnectionStats(out);
     }
 

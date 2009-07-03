@@ -5,11 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
 import com.aoindustries.util.BufferManager;
-import com.aoindustries.util.zip.*;
-import java.io.*;
-import java.util.*;
+import com.aoindustries.util.EncodingUtils;
+import com.aoindustries.util.zip.CorrectedGZIPInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
 
 /**
  * Performs password checking for all password protected
@@ -292,51 +294,42 @@ final public class PasswordChecker {
 	return String.valueOf(year);
     }
     
+    private static final String EOL = System.getProperty("line.separator");
+
     /**
      * Prints the results in the provided locale.
      */
-    public static void printResults(Result[] results, PrintWriter out) {
+    public static void printResults(Result[] results, Appendable out) throws IOException {
         for(int c=0;c<NUM_CATEGORIES;c++) {
-            out.print(results[c].getCategory());
-            out.print(": ");
-            out.println(results[c].getResult());
+            out.append(results[c].getCategory());
+            out.append(": ");
+            out.append(results[c].getResult());
+            out.append(EOL);
         }
     }
 
     /**
      * Prints the results in the provided locale in HTML format.
      */
-    public static void printResultsHtml(Result[] results, ChainWriter out) {
-        out.print("    <TABLE border='0' cellspacing='0' cellpadding='4'>\n");
+    public static void printResultsHtml(Result[] results, Appendable out) throws IOException {
+        out.append("    <table style='border:0px;' cellspacing='0' cellpadding='4'>\n");
         for(int c=0;c<NUM_CATEGORIES;c++) {
-            out
-                .print("      <TR><TD nowrap>")
-                .print(results[c].getCategory())
-                .print(":</TD><TD nowrap>")
-                .print(results[c].getResult())
-                .print("</TD></TR>\n")
-            ;
+            out.append("      <tr><td style='white-space:nowrap'>");
+            EncodingUtils.encodeHtml(results[c].getCategory(), out);
+            out.append(":</td><td style='white-space:nowrap'>");
+            EncodingUtils.encodeHtml(results[c].getResult(), out);
+            out.append("</td></tr>\n");
         }
-        out.print("    </TABLE>\n");
+        out.append("    </table>\n");
     }
 
     /**
      * Gets the results in the provided locale in HTML format.
      */
-    public static String getResultsHtml(Result[] results) {
-        StringBuilder SB = new StringBuilder();
-        SB.append("    <TABLE border='0' cellspacing='0' cellpadding='4'>\n");
-        for(int c=0;c<NUM_CATEGORIES;c++) {
-            SB
-                .append("      <TR><TD nowrap>")
-                .append(results[c].getCategory())
-                .append(":</TD><TD nowrap>")
-                .append(results[c].getResult())
-                .append("</TD></TR>\n")
-            ;
-        }
-        SB.append("    </TABLE>\n");
-        return SB.toString();
+    public static String getResultsHtml(Result[] results) throws IOException {
+        StringBuilder out = new StringBuilder();
+        printResultsHtml(results, out);
+        return out.toString();
     }
 
     /**
