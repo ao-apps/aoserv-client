@@ -5427,7 +5427,7 @@ final public class SimpleAOClient {
         BlackholeEmailAddress bea=addr.getBlackholeEmailAddress();
         if(bea==null) throw new IllegalArgumentException("Unable to find BlackholeEmailAddress: "+address+'@'+domain+" on "+aoServer);
         bea.remove();
-        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**
@@ -5645,7 +5645,7 @@ final public class SimpleAOClient {
         EmailForwarding ef=addr.getEmailForwarding(destination);
         if(ef==null) throw new IllegalArgumentException("Unable to find EmailForwarding: "+address+'@'+domain+"->"+destination+" on "+aoServer);
         ef.remove();
-        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**
@@ -5699,7 +5699,7 @@ final public class SimpleAOClient {
         EmailListAddress ela=addr.getEmailListAddress(el);
         if(ela==null) throw new IllegalArgumentException("Unable to find EmailListAddress: "+address+'@'+domain+"->"+path+" on "+aoServer);
         ela.remove();
-        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**
@@ -5756,7 +5756,7 @@ final public class SimpleAOClient {
         EmailPipeAddress epa=addr.getEmailPipeAddress(ep);
         if(epa==null) throw new IllegalArgumentException("Unable to find EmailPipeAddress: "+address+'@'+domain+"->"+ep);
         epa.remove();
-        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**
@@ -5931,7 +5931,7 @@ final public class SimpleAOClient {
         LinuxAccAddress laa=addr.getLinuxAccAddress(lsa);
         if(laa==null) throw new IllegalArgumentException("Unable to find LinuxAccAddress: "+address+'@'+domain+"->"+username+" on "+aoServer);
         laa.remove();
-        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**

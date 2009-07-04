@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.LocalizedToString;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +28,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
     /**
      * The possible permissions.
      */
-    public enum Permission {
+    public enum Permission implements LocalizedToString {
         // business_administrators
         set_business_administrator_password,
         // businesses
@@ -70,7 +71,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
          * Gets the permission display value in the provided locale.
          */
         public String toString(Locale userLocale) {
-            return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+name()+".display");
+            return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+name()+".toString");
         }
     }
 
@@ -85,11 +86,9 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         }
     }
 
-    /**
-     * Gets the locale-specific short display value for this permission.
-     */
-    public String getDisplay(Locale userLocale) {
-        return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+pkey+".display");
+    @Override
+    String toStringImpl(Locale userLocale) {
+        return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+pkey+".toString");
     }
 
     /**
@@ -115,11 +114,6 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readUTF().intern();
         sort_order = in.readShort();
-    }
-
-    @Override
-    String toStringImpl() {
-        return pkey;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

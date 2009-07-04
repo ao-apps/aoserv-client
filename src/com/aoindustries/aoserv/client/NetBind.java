@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * All listening network ports must be registered as a <code>NetBind</code>.  The
@@ -313,7 +314,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         monitoring_enabled=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServConnector conn=table.connector;

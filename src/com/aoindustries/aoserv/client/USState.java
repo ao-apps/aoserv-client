@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A <code>USState</code> represents State of the
@@ -57,7 +58,7 @@ final public class USState extends GlobalObjectStringKey<USState> {
 	name=in.readUTF();
     }
 
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return name;
     }
 

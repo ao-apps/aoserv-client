@@ -6,9 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * AO Industries provides greater reliability through the use of multiple network locations.
@@ -77,7 +77,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return description;
     }
 

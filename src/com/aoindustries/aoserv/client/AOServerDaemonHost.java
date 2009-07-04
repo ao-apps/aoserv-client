@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A limited number of hosts may connect to a <code>AOServer</code>'s daemon,
@@ -67,7 +68,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return aoServer+'|'+host;
     }
 

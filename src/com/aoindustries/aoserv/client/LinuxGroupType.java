@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * Each <code>LinuxGroup</code>'s use is limited by which
@@ -73,7 +74,8 @@ final public class LinuxGroupType extends GlobalObjectStringKey<LinuxGroupType> 
 	description=in.readUTF();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl(Locale userLocale) {
 	return description;
     }
 

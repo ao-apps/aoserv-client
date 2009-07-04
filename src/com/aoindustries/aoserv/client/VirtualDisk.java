@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * A <code>VirtualDisk</code> is a block device for a <code>VirtualServer</code>.
@@ -126,8 +127,8 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     }
 
     @Override
-    protected String toStringImpl() throws SQLException, IOException {
-        return getVirtualServer().toStringImpl()+":/dev/"+device;
+    protected String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getVirtualServer().toStringImpl(userLocale)+":/dev/"+device;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

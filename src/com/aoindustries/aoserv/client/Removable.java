@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Flags an <code>AOServObject</code>s as being able to be removed
@@ -26,7 +27,7 @@ public interface Removable {
      *
      * @return  an empty <code>List<CannotRemoveReason></code> if this object may be removed, or a list of descriptions
      */
-    List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException;
+    List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException;
 
     /**
      * Removes this object, and all dependant objects, from the system.

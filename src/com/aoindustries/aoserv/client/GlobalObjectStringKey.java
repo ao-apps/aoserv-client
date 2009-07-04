@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import java.util.Locale;
+
 /*
  * Copyright 2006-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -34,7 +36,7 @@ public abstract class GlobalObjectStringKey<T extends GlobalObjectStringKey<T>> 
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return pkey;
     }
 }

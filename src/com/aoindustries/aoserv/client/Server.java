@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>Server</code> stores the details about a single, physical server.
@@ -173,9 +174,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     @Override
-    protected String toStringImpl() throws IOException, SQLException {
+    protected String toStringImpl(Locale userLocale) throws IOException, SQLException {
         AOServer aoServer = getAOServer();
-        if(aoServer!=null) return aoServer.toStringImpl();
+        if(aoServer!=null) return aoServer.toStringImpl(userLocale);
         Package pk = getPackage();
         if(pk!=null) return pk.getName()+'/'+name;
         return Integer.toString(pkey);

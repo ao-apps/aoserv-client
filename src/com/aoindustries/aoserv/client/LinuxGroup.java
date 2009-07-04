@@ -152,7 +152,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         type=in.readUTF().intern();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be the primary group for any linux accounts
@@ -163,7 +163,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         }
 
         // All LinuxServerGroups must be removable
-        for(LinuxServerGroup lsg : getLinuxServerGroups()) reasons.addAll(lsg.getCannotRemoveReasons());
+        for(LinuxServerGroup lsg : getLinuxServerGroups()) reasons.addAll(lsg.getCannotRemoveReasons(userLocale));
 
         return reasons;
     }

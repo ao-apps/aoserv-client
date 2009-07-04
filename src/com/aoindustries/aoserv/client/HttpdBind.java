@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * Each <code>HttpdServer</code> may listen for network connections on
@@ -67,10 +68,10 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         HttpdServer server=getHttpdServer();
         NetBind bind=getNetBind();
-        return server.toString()+'|'+bind.toString();
+        return server.toStringImpl(userLocale)+'|'+bind.toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -107,7 +107,7 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 	param_ip=in.readBoolean();
     }
 
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return description;
     }
 

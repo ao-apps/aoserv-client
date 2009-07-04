@@ -136,7 +136,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                                 }
                             } else {
                                 if(columnName.indexOf(',')!=-1) {
-                                    String[] tcolumns=StringUtility.splitString(columnName.toString(), ',');
+                                    String[] tcolumns=StringUtility.splitString(columnName, ',');
                                     int addPos=d--;
                                     int numAdded=0;
                                     for (int e = 0; e < tcolumns.length; e++) {

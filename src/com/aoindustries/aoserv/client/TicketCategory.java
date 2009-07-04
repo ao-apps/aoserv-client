@@ -85,14 +85,7 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
     }
 
     @Override
-    String toStringImpl() throws IOException, SQLException {
-        return toString(Locale.getDefault());
-    }
-
-    /**
-     * Localized toString.
-     */
-    public String toString(Locale userLocale) throws IOException, SQLException {
+    String toStringImpl(Locale userLocale) throws IOException, SQLException {
         return ApplicationResourcesAccessor.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");
     }
 

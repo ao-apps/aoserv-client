@@ -218,7 +218,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         enable_postgis=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         
         PostgresServer ps=getPostgresServer();
@@ -243,7 +243,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return name;
     }
 

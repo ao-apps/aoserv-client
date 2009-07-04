@@ -95,7 +95,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         created=in.readLong();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServer ao=getAOServer();
@@ -145,7 +145,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return name;
     }
 

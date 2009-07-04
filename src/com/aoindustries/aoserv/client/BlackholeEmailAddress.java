@@ -11,6 +11,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Any email sent to a <code>BlackholeEmailAddress</code> is piped
@@ -51,7 +52,7 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
 	pkey=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
     
@@ -65,8 +66,8 @@ final public class BlackholeEmailAddress extends CachedObjectIntegerKey<Blackhol
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getEmailAddress().toString();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getEmailAddress().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -10,6 +10,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * When a user successfully logs into either the POP3 or
@@ -187,7 +188,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         );
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 
@@ -201,7 +202,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     }
 
     @Override
-    protected String toStringImpl() throws SQLException, IOException {
+    protected String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return packageName+" "+getType().getVerb()+" from "+host+" to "+getAOServer().getHostname();
     }
 

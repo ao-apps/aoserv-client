@@ -76,14 +76,7 @@ final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> impl
     }
 
     @Override
-    String toStringImpl() {
-        return toString(Locale.getDefault());
-    }
-
-    /**
-     * Localized toString.
-     */
-    public String toString(Locale userLocale) {
+    String toStringImpl(Locale userLocale) {
         return ApplicationResourcesAccessor.getMessage(userLocale, "TicketStatus."+pkey+".toString");
     }
 

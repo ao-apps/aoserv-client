@@ -256,7 +256,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	packageName=in.readUTF().intern();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(name.equals(MYSQL)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+MYSQL, this));
         if(name.equals(INFORMATION_SCHEMA) && getMySQLServer().getVersion().getVersion().startsWith("5.0.")) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+INFORMATION_SCHEMA, this));
@@ -273,7 +273,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return name;
     }
 

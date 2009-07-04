@@ -180,20 +180,20 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	domain=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Everything using this address must be removable
         BlackholeEmailAddress bea=getBlackholeEmailAddress();
-        if(bea!=null) reasons.addAll(bea.getCannotRemoveReasons());
+        if(bea!=null) reasons.addAll(bea.getCannotRemoveReasons(userLocale));
 
-        for(EmailForwarding ef : getEmailForwardings()) reasons.addAll(ef.getCannotRemoveReasons());
+        for(EmailForwarding ef : getEmailForwardings()) reasons.addAll(ef.getCannotRemoveReasons(userLocale));
 
-        for(EmailListAddress ela : table.connector.getEmailListAddresses().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons());
+        for(EmailListAddress ela : table.connector.getEmailListAddresses().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons(userLocale));
 
-        for(EmailPipeAddress epa : getEmailPipeAddresses()) reasons.addAll(epa.getCannotRemoveReasons());
+        for(EmailPipeAddress epa : getEmailPipeAddresses()) reasons.addAll(epa.getCannotRemoveReasons(userLocale));
 
-        for(LinuxAccAddress laa : getLinuxAccAddresses()) reasons.addAll(laa.getCannotRemoveReasons());
+        for(LinuxAccAddress laa : getLinuxAccAddresses()) reasons.addAll(laa.getCannotRemoveReasons(userLocale));
 
         // Cannot be used as any part of a majordomo list
         for(MajordomoList ml : table.connector.getMajordomoLists().getRows()) {
@@ -237,7 +237,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return address+'@'+getDomain().getDomain();
     }
 

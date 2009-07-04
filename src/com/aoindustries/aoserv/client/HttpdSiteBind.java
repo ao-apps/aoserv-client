@@ -208,10 +208,10 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         HttpdSite site=getHttpdSite();
         HttpdBind bind=getHttpdBind();
-        return site.toString()+'|'+bind.toString();
+        return site.toStringImpl(userLocale)+'|'+bind.toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

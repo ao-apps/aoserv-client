@@ -204,7 +204,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         max_user_connections=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(username.equals(MySQLUser.ROOT)) reasons.add(new CannotRemoveReason<MySQLServerUser>("Not allowed to remove the "+MySQLUser.ROOT+" MySQL user", this));
         return reasons;
@@ -275,8 +275,8 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     }
 
     @Override
-    String toStringImpl() throws IOException, SQLException {
-        return username+" on "+getMySQLServer().toString();
+    String toStringImpl(Locale userLocale) throws IOException, SQLException {
+        return username+" on "+getMySQLServer().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

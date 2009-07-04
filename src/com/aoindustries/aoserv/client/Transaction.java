@@ -11,6 +11,7 @@ import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * Each <code>Business</code> has an account of all the
@@ -357,7 +358,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return
             transid
             +"|"

@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -119,7 +120,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     transient private byte expiration_month;
     transient private short expiration_year;
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 
@@ -432,7 +433,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return cardInfo;
     }
 

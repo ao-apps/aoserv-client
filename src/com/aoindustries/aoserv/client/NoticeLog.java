@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A <code>NoticeLog</code> entry is created when a client has been
@@ -119,7 +120,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return pkey+"|"+accounting+'|'+SQLUtility.getDecimal(balance)+'|'+notice_type;
     }
 

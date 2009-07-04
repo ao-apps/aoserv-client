@@ -38,7 +38,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     private String hostname;
     boolean isPrimary;
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         if(isPrimary) reasons.add(new CannotRemoveReason<HttpdSiteURL>("Not allowed to remove the primary URL", this));
@@ -144,7 +144,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return hostname;
     }
 

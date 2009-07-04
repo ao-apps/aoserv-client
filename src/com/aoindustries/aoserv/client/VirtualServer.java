@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>VirtualServer</code> consumes physical resources within the
@@ -216,8 +217,8 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
 
     @Override
-    protected String toStringImpl() throws SQLException, IOException {
-        return getServer().toStringImpl();
+    protected String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getServer().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

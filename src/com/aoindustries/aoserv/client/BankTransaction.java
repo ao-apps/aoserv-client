@@ -10,6 +10,7 @@ import com.aoindustries.sql.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * For AO Industries use only.
@@ -175,7 +176,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return transID+"|"+administrator+'|'+type+'|'+SQLUtility.getDecimal(amount);
     }
 

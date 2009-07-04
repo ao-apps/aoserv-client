@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * An <code>HttpdJBossSite</code> indicates that an <code>HttpdSite</code>
@@ -113,8 +114,8 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getHttpdTomcatSite().toString();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getHttpdTomcatSite().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {

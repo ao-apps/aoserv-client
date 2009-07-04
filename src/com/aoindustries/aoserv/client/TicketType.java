@@ -40,14 +40,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
     }
 
     @Override
-    String toStringImpl() {
-        return toString(Locale.getDefault());
-    }
-
-    /**
-     * Localized toString.
-     */
-    public String toString(Locale userLocale) {
+    String toStringImpl(Locale userLocale) {
         return ApplicationResourcesAccessor.getMessage(userLocale, "TicketType."+pkey+".toString");
     }
 

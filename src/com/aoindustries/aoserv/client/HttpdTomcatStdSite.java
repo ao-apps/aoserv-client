@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * An <code>HttpdStdTomcatSite</code> inicates that a
@@ -75,8 +76,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getHttpdTomcatSite().toString();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getHttpdTomcatSite().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

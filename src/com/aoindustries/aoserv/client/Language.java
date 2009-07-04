@@ -33,14 +33,7 @@ final public class Language extends GlobalObjectStringKey<Language> {
     }
 
     @Override
-    String toStringImpl() {
-        return toString(Locale.getDefault());
-    }
-
-    /**
-     * Localized description.
-     */
-    public String toString(Locale userLocale) {
+    String toStringImpl(Locale userLocale) {
         return ApplicationResourcesAccessor.getMessage(userLocale, "Language."+pkey+".toString");
     }
 

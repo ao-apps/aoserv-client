@@ -129,7 +129,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         can_control_xvfb=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         Business bu=getBusiness();
@@ -157,12 +157,12 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                     for(NetBind nb : pk.getNetBinds()) {
                         if(nb.getServer().equals(se)) {
                             String details=nb.getDetails();
-                            if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toString(), nb));
+                            if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(userLocale), nb));
                             else {
                                 IPAddress ia=nb.getIPAddress();
                                 NetDevice nd=ia.getNetDevice();
-                                if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toString(), nb));
-                                else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toString(), nb));
+                                if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), nb));
+                                else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(userLocale), nb));
                             }
                         }
                     }
@@ -173,7 +173,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                         if(
                             nd!=null
                             && se.equals(nd.getServer())
-                        ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toString(), ia));
+                        ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), ia));
                     }
 
                     if(ao!=null) {

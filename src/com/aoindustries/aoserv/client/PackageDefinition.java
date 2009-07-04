@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>PackageDefinition</code> stores one unique set of resources, limits, and prices.
@@ -223,7 +224,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return display;
     }
 
@@ -243,7 +244,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         out.writeBoolean(approved);
     }
     
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>(1);
         List<Package> packs=getPackages();
         if(!packs.isEmpty()) reasons.add(new CannotRemoveReason<Package>("Used by "+packs.size()+" "+(packs.size()==1?"package":"packages"), packs));

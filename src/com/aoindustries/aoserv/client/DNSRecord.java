@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>DNSRecord</code> is one line of a <code>DNSZone</code>
@@ -161,7 +162,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
         ttl=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 
@@ -170,7 +171,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	StringBuilder SB=new StringBuilder();
 	SB
             .append(zone)

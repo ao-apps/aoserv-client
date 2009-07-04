@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The <code>Ticket</code> system allows clients to submit support
@@ -54,7 +55,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     // <editor-fold desc="Object implementation">
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return pkey+"|"+brand+'/'+accounting+'|'+status+"->"+reseller;
     }
     // </editor-fold>

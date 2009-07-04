@@ -10,6 +10,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An <code>EmailAttachmentBlock</code> restricts one attachment type on one email inbox.
@@ -70,7 +71,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
 	extension=in.readUTF().intern();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 
@@ -84,8 +85,8 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getLinuxServerAccount().toString()+"->"+extension;
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getLinuxServerAccount().toStringImpl(userLocale)+"->"+extension;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * For AO Industries use only.
@@ -82,7 +83,7 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return display;
     }
 

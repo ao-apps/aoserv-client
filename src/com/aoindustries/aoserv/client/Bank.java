@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * For AO Industries use only.
@@ -56,7 +57,7 @@ final public class Bank extends CachedObjectStringKey<Bank> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return display;
     }
 

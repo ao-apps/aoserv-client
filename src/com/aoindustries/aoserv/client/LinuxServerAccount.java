@@ -458,7 +458,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         return table.connector.getEmailLists().getEmailLists(this);
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         if(uid<UnixFile.MINIMUM_USER_UID) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than "+UnixFile.MINIMUM_USER_UID));
@@ -623,7 +623,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return username+" on "+getAOServer().getHostname();
     }
 

@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * Each <code>Thread</code> on the master reports its activities so that
@@ -300,7 +301,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
     }
     
     @Override
-    protected String toStringImpl() {
+    protected String toStringImpl(Locale userLocale) {
         return getCommand();
     }
 

@@ -204,7 +204,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return name + " ("+priority+')';
     }
 

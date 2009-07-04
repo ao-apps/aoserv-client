@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * @see  Ticket
@@ -76,7 +77,7 @@ final public class TicketBrandCategory extends CachedObjectIntegerKey<TicketBran
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return brand+"|"+category+'|'+enabled;
     }
 

@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * Each server may perform TCP redirects via xinetd.
@@ -83,8 +84,8 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getNetBind().toString()+"->"+destination_host+':'+destination_port;
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getNetBind().toStringImpl(userLocale)+"->"+destination_host+':'+destination_port;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

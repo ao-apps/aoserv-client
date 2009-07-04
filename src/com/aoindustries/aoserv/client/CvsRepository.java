@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>CvsRepository</code> represents on repository directory for the CVS pserver.
@@ -169,7 +170,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 

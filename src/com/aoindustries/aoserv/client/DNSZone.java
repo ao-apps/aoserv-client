@@ -283,7 +283,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         ttl=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(pkey.equals(API_ZONE)) reasons.add(new CannotRemoveReason<DNSZone>("Not allowed to remove the API Zone: "+API_ZONE));
         return reasons;

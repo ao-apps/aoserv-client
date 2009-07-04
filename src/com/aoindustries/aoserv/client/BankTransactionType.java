@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * For AO Industries use only.
@@ -73,7 +74,8 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
 	isNegative=in.readBoolean();
     }
 
-    String toStringImpl() {
+    @Override
+    String toStringImpl(Locale userLocale) {
 	return display;
     }
 

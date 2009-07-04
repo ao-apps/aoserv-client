@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * <code>BackupPartition</code> stores backup data.
@@ -65,7 +66,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return getAOServer().getHostname()+":"+path;
     }
 

@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * Represents MySQL replication for one A <code>FailoverFileReplication</code>.
@@ -69,8 +70,8 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
     }
 
     @Override
-    String toStringImpl() throws IOException, SQLException {
-        return getMySQLServer().getName()+", "+getFailoverFileReplication().toString();
+    String toStringImpl(Locale userLocale) throws IOException, SQLException {
+        return getMySQLServer().getName()+", "+getFailoverFileReplication().toString(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

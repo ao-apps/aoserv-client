@@ -338,7 +338,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         LinuxAccount la=getLinuxAccount();

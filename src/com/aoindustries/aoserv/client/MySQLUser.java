@@ -349,7 +349,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(pkey.equals(ROOT)) reasons.add(new CannotRemoveReason<MySQLUser>("Not allowed to remove the "+ROOT+" MySQL user", this));
         return reasons;

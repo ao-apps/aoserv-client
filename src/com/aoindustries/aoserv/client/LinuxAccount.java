@@ -322,12 +322,12 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // All LinuxServerAccounts must be removable
         for(LinuxServerAccount lsa : getLinuxServerAccounts()) {
-            reasons.addAll(lsa.getCannotRemoveReasons());
+            reasons.addAll(lsa.getCannotRemoveReasons(userLocale));
         }
 
         return reasons;

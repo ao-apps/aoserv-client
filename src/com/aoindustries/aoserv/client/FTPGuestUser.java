@@ -10,6 +10,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * If a <code>LinuxAccount</code> has a <code>FTPGuestUser</code> attached to it,
@@ -51,7 +52,7 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
 	pkey=in.readUTF().intern();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 

@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A <code>FailoverFileSchedule</code> controls which time of day (in server
@@ -83,9 +84,9 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         StringBuilder SB = new StringBuilder();
-        SB.append(getFailoverFileReplication().toString());
+        SB.append(getFailoverFileReplication().toStringImpl(userLocale));
         SB.append('@');
         if(hour<10) SB.append('0');
         SB.append(hour);

@@ -11,6 +11,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Any incoming email addressed to a <code>EmailList</code> is immediately
@@ -204,7 +205,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 

@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * Logs the whois history for each account and domain combination.
@@ -107,7 +108,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return pkey+"|"+accounting+'|'+zone+'|'+new java.sql.Date(time);
     }
 

@@ -11,6 +11,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>PostgresServer</code> corresponds to a unique PostgreSQL install
@@ -222,7 +223,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return name+" on "+getAOServer().getHostname();
     }
 

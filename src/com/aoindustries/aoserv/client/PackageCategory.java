@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A <code>PackageCategory</code> represents one type of service
@@ -68,7 +69,7 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
         display=in.readUTF();
     }
 
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return display;
     }
 

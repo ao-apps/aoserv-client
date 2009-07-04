@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Meta-data for every field of every <code>AOServObject</code> is available as
@@ -181,7 +182,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return table_name+'.'+column_name;
     }
 

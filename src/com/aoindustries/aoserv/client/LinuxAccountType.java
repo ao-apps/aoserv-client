@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The <code>LinuxAccountType</code> of a <code>LinuxAccount</code>
@@ -181,7 +182,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return description;
     }
 

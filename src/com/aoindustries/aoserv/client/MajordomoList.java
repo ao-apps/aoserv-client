@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A <code>MajordomoList</code> is one list within a <code>MajordomoServer</code>.
@@ -231,7 +232,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return name+'@'+getMajordomoServer().getDomain().domain;
     }
 

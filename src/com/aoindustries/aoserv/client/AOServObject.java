@@ -9,6 +9,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
 import com.aoindustries.table.Row;
+import com.aoindustries.util.LocalizedToString;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -16,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An <code>AOServObject</code> is the lowest level object
@@ -29,7 +31,7 @@ import java.util.List;
  *
  * @see  AOServTable
  */
-abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row, Streamable {
+abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row, Streamable, LocalizedToString {
 
     protected AOServObject() {
     }
@@ -151,8 +153,12 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
     @Override
     final public String toString() {
+        return toString(Locale.getDefault());
+    }
+
+    final public String toString(Locale userLocale) {
         try {
-            return toStringImpl();
+            return toStringImpl(userLocale);
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {
@@ -160,9 +166,10 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
         }
     }
 
-    String toStringImpl() throws IOException, SQLException {
+    String toStringImpl(Locale userLocale) throws IOException, SQLException {
         K pkey=getKey();
         if(pkey==null) return super.toString();
+        if(pkey instanceof LocalizedToString) return ((LocalizedToString)pkey).toString(userLocale);
         return pkey.toString();
     }
 

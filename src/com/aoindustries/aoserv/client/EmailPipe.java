@@ -10,6 +10,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Incoming email addressed to an <code>EmailPipe</code> is piped
@@ -118,7 +119,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
         disable_log=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 
@@ -132,7 +133,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return ao_server+':'+path;
     }
 

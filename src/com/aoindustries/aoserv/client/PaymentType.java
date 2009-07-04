@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * The system can process several different <code>PaymentType</code>s.
@@ -87,7 +88,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 	allowWeb=in.readBoolean();
     }
 
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return description;
     }
 

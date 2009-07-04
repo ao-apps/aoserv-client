@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A <code>Resource</code> is a measurable hardware resource.  A <code>Package</code>
@@ -110,7 +111,7 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	description=in.readUTF();
     }
 
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return description;
     }
 

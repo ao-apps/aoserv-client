@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An <code>HttpdServer</code> represents one running instance of the
@@ -203,7 +204,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return "httpd"+number;
     }
 

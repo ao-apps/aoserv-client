@@ -11,6 +11,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An <code>HttpdSite</code> is one unique set of web content and resides in
@@ -109,7 +110,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         ;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 
@@ -341,7 +342,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return site_name+" on "+getAOServer().getHostname();
     }
 

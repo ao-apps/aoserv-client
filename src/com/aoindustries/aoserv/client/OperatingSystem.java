@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * One type of operating system.
@@ -80,7 +81,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return display;
     }
 

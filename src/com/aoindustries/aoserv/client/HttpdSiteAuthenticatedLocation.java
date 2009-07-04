@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @see  HttpdSite
@@ -77,7 +78,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
     private String auth_user_file;
     private String require;
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 
@@ -177,9 +178,9 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         HttpdSite site=getHttpdSite();
-        return site.toString()+':'+path;
+        return site.toStringImpl(userLocale)+':'+path;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

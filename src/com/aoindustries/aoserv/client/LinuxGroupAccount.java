@@ -84,7 +84,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         is_primary=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(is_primary) reasons.add(new CannotRemoveReason<LinuxGroupAccount>("Not allowed to drop a primary group", this));
         return reasons;
@@ -108,7 +108,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return group_name+'|'+username+(is_primary?"|p":"|a");
     }
 

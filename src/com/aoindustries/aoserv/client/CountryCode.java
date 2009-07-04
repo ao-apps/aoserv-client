@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A <code>CountryCode</code> is a simple wrapper for country
@@ -78,8 +79,8 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
         charge_com_name = in.readNullUTF();
     }
 
-    String toStringImpl() {
-	return getName();
+    String toStringImpl(Locale userLocale) {
+	return name;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -30,7 +30,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
     String path;
     private boolean backup_enabled;
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 

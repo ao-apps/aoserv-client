@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>Resource</code> wraps all the data for an entry in the resource table.
@@ -275,7 +276,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return name;
     }
 

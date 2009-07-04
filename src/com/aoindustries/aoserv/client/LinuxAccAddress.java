@@ -11,6 +11,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>LinuxAccount</code> may have any number of email
@@ -74,7 +75,7 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
 	linux_server_account=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 
@@ -88,8 +89,8 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getEmailAddress().toString()+"->"+getLinuxServerAccount().toString();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getEmailAddress().toStringImpl(userLocale)+"->"+getLinuxServerAccount().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

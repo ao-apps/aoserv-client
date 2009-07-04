@@ -76,7 +76,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
 	destination=in.readUTF();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
     
@@ -90,8 +90,8 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getEmailAddress().toString()+" -> "+destination;
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getEmailAddress().toStringImpl(userLocale)+" -> "+destination;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

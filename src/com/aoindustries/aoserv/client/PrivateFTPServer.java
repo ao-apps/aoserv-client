@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * When a <code>PrivateFTPServer</code> is attached to a
@@ -118,7 +119,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return hostname;
     }
 

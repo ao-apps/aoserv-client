@@ -143,7 +143,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	packageName=in.readUTF().intern();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         MajordomoServer ms=getMajordomoServer();
@@ -152,7 +152,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
             reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
         }
 
-        for(EmailAddress ea : getEmailAddresses()) reasons.addAll(ea.getCannotRemoveReasons());
+        for(EmailAddress ea : getEmailAddresses()) reasons.addAll(ea.getCannotRemoveReasons(userLocale));
 
         return reasons;
     }

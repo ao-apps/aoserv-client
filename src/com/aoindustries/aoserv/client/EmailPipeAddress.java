@@ -70,7 +70,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 	email_pipe=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be used as any part of a majordomo list
@@ -105,8 +105,8 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getEmailAddress()+"->"+getEmailPipe().getPath();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getEmailAddress().toStringImpl(userLocale)+"->"+getEmailPipe().getPath();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

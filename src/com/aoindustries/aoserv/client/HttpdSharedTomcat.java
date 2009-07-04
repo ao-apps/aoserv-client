@@ -84,7 +84,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         ;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         for(HttpdTomcatSharedSite htss : getHttpdTomcatSharedSites()) {
@@ -286,7 +286,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return name+" on "+getAOServer().getHostname();
     }
 

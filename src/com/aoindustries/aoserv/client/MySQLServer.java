@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>MySQLServer</code> corresponds to a unique MySQL install
@@ -249,7 +250,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
         return name+" on "+getAOServer().getHostname();
     }
 

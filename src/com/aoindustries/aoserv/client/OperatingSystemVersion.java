@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * One version of a operating system.
@@ -142,7 +143,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return display;
     }
 

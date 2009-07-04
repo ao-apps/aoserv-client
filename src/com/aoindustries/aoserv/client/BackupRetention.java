@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * The possible backup retention values allowed in the system.
@@ -73,7 +74,7 @@ final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return display;
     }
 

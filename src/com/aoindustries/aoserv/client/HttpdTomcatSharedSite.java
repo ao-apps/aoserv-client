@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * An <code>HttpdTomcatSharedSite</code> is an <code>HttpdTomcatSite</code>
@@ -86,8 +87,8 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getHttpdTomcatSite().toString();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getHttpdTomcatSite().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

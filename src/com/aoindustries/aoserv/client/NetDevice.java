@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Each server has multiple network devices, each listening on different
@@ -211,8 +212,8 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getServer().toString()+'|'+device_id;
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getServer().toStringImpl(userLocale)+'|'+device_id;
     }
 
     @Override

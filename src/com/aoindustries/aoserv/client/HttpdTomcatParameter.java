@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Represents one parameter within a <code>HttpdTomcatContext</code>.
@@ -37,7 +38,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
     private boolean override;
     private String description;
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 

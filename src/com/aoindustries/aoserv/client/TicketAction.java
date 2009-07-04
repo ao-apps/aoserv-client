@@ -256,11 +256,11 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
             oldValue = old_priority;
             newValue = new_priority;
         } else if(action_type.equals(TicketActionType.SET_TYPE)) {
-            oldValue = getOldType().toString(userLocale);
-            newValue = getNewType().toString(userLocale);
+            oldValue = getOldType().toStringImpl(userLocale);
+            newValue = getNewType().toStringImpl(userLocale);
         } else if(action_type.equals(TicketActionType.SET_STATUS)) {
-            oldValue = getOldStatus().toString(userLocale);
-            newValue = getNewStatus().toString(userLocale);
+            oldValue = getOldStatus().toStringImpl(userLocale);
+            newValue = getNewStatus().toStringImpl(userLocale);
         } else if(action_type.equals(TicketActionType.ASSIGN)) {
             BusinessAdministrator oldAssignedTo = getOldAssignedTo();
             BusinessAdministrator newAssignedTo = getNewAssignedTo();
@@ -269,8 +269,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         } else if(action_type.equals(TicketActionType.SET_CATEGORY)) {
             TicketCategory oldCategory = getOldCategory();
             TicketCategory newCategory = getNewCategory();
-            oldValue = oldCategory!=null ? oldCategory.toString(userLocale) : null;
-            newValue = newCategory!=null ? newCategory.toString(userLocale) : null;
+            oldValue = oldCategory!=null ? oldCategory.toStringImpl(userLocale) : null;
+            newValue = newCategory!=null ? newCategory.toStringImpl(userLocale) : null;
         } else if(
             action_type.equals(TicketActionType.SET_CONTACT_EMAILS)
             || action_type.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
@@ -374,7 +374,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return ticket+"|"+pkey+'|'+action_type+'|'+administrator;
     }
 

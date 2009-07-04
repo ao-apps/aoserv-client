@@ -10,6 +10,7 @@ import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * A <code>TransactionType</code> is one type that may be used
@@ -99,7 +100,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 	isCredit=in.readBoolean();
     }
 
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return display;
     }
 

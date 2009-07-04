@@ -73,7 +73,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
 	email_list=in.readCompressedInt();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be used as the list for a majordomo list
@@ -97,8 +97,8 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getEmailAddress().toString()+"->"+getEmailList().getPath();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getEmailAddress().toStringImpl(userLocale)+"->"+getEmailList().getPath();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

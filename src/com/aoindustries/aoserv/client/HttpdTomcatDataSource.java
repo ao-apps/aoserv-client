@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Represents one data source within a <code>HttpdTomcatContext</code>.
@@ -42,7 +43,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
     private int maxWait;
     private String validationQuery;
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 

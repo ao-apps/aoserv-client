@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An <code>HttpdTomcatSite</code> indicates that an <code>HttpdSite</code>
@@ -222,8 +223,8 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getHttpdSite().toStringImpl();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getHttpdSite().toStringImpl(userLocale);
     }
 
     public boolean useApache() {

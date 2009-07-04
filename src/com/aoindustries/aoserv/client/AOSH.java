@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * <code>AOSH</code> is a command interpreter and scripting language
@@ -110,7 +111,7 @@ final public class AOSH extends ShellInterpreter {
     }
 
     protected String getPrompt() throws SQLException, IOException {
-        return '['+connector.getThisBusinessAdministrator().toString()+'@'+connector.getHostname()+"]$ ";
+        return '['+connector.getThisBusinessAdministrator().toString(Locale.getDefault())+'@'+connector.getHostname()+"]$ ";
     }
 
     /** Avoid repeated array copies. */

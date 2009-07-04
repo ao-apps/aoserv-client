@@ -209,10 +209,10 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         execute_priv=in.readBoolean();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        reasons.addAll(getMySQLServerUser().getCannotRemoveReasons());
-        reasons.addAll(getMySQLDatabase().getCannotRemoveReasons());
+        reasons.addAll(getMySQLServerUser().getCannotRemoveReasons(userLocale));
+        reasons.addAll(getMySQLDatabase().getCannotRemoveReasons(userLocale));
         return reasons;
     }
 

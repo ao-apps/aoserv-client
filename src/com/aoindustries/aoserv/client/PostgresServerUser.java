@@ -129,7 +129,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         predisable_password=in.readNullUTF();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         if(username.equals(PostgresUser.POSTGRES)) reasons.add(new CannotRemoveReason<PostgresServerUser>("Not allowed to remove the "+PostgresUser.POSTGRES+" PostgreSQL user", this));
@@ -202,8 +202,8 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     }
 
     @Override
-    String toStringImpl() throws IOException, SQLException {
-        return username+" on "+getPostgresServer().toString();
+    String toStringImpl(Locale userLocale) throws IOException, SQLException {
+        return username+" on "+getPostgresServer().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

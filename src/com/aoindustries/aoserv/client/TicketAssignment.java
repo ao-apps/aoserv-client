@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * @see  Ticket
@@ -83,7 +84,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return ticket+"|"+pkey+'|'+reseller+'|'+administrator;
     }
 

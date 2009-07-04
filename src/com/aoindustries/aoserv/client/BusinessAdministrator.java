@@ -434,7 +434,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         support_code = in.readNullUTF();
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServConnector conn=table.connector;

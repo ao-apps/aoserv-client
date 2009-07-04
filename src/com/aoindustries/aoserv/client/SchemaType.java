@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * A <code>SchemaType</code> is a unique data type used in
@@ -803,7 +804,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
         return type;
     }
 

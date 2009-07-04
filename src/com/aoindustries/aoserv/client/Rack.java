@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * A <code>Rack</code> stores <code>PhysicalServer</code>s.
@@ -90,7 +91,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
     }
 
     @Override
-    protected String toStringImpl() {
+    protected String toStringImpl(Locale userLocale) {
         return name;
     }
 

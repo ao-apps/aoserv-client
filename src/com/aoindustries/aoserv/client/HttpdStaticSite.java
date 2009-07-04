@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * An <code>HttpdStaticSite</code> inicates that an <code>HttpdSite</code>
@@ -49,8 +50,8 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getHttpdSite().toString();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getHttpdSite().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

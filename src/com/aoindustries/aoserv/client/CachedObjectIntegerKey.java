@@ -2,6 +2,7 @@ package com.aoindustries.aoserv.client;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /*
  * Copyright 2006-2009 by AO Industries, Inc.,
@@ -43,7 +44,7 @@ public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>
     }
 
     @Override
-    String toStringImpl() throws IOException, SQLException {
+    String toStringImpl(Locale userLocale) throws IOException, SQLException {
         return Integer.toString(pkey);
     }
 }

@@ -10,6 +10,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>MajordomoServer</code> provides Majordomo functionality for
@@ -60,7 +61,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
         return table.connector.getMajordomoLists().addMajordomoList(this, listName);
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() {
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }
 

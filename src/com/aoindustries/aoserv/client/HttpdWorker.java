@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Locale;
 
 /**
  * An <code>HttpdWorker</code> represents a unique combination of
@@ -100,7 +101,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
     }
 
     @Override
-    String toStringImpl() {
+    String toStringImpl(Locale userLocale) {
 	return pkey+"|"+code;
     }
 

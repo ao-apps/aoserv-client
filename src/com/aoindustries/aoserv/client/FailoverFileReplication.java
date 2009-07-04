@@ -12,6 +12,7 @@ import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Causes a server to replicate itself to another machine on a regular basis.
@@ -184,8 +185,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     }
 
     @Override
-    String toStringImpl() throws SQLException, IOException {
-        return getServer()+"->"+getBackupPartition();
+    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+        return getServer().toStringImpl(userLocale)+"->"+getBackupPartition().toStringImpl(userLocale);
     }
 
     @Override

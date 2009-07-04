@@ -74,14 +74,7 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
     }
 
     @Override
-    String toStringImpl() {
-        return toString(Locale.getDefault());
-    }
-
-    /**
-     * Localized description.
-     */
-    public String toString(Locale userLocale) {
+    String toStringImpl(Locale userLocale) {
         return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".toString");
     }
 

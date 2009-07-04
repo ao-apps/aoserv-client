@@ -774,7 +774,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     @Override
-    protected String toStringImpl() {
+    protected String toStringImpl(Locale userLocale) {
         return hostname;
     }
 
