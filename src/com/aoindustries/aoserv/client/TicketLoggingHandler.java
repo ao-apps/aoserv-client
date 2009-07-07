@@ -12,8 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -83,7 +84,12 @@ final public class TicketLoggingHandler extends Handler {
         if(ticketType==null) throw new SQLException("Unable to find TicketType: "+TicketType.LOGS);
         // Ready to run - create the executors
         
-        systemErrExecutor = Executors.newSingleThreadExecutor(
+        systemErrExecutor = new ThreadPoolExecutor(
+            0,
+            1,
+            60L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>(),
             new ThreadFactory() {
                 public Thread newThread(Runnable r) {
                     Thread thread = new Thread(r);
@@ -94,7 +100,12 @@ final public class TicketLoggingHandler extends Handler {
                 }
             }
         );
-        ticketExecutor = Executors.newSingleThreadExecutor(
+        ticketExecutor = new ThreadPoolExecutor(
+            0,
+            1,
+            60L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>(),
             new ThreadFactory() {
                 public Thread newThread(Runnable r) {
                     Thread thread = new Thread(r);

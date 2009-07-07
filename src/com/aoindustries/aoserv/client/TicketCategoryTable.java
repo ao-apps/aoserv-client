@@ -79,6 +79,16 @@ final public class TicketCategoryTable extends CachedTableIntegerKey<TicketCateg
         return null;
     }
 
+    /**
+     * Gets a ticket category given its dot-separated path or <code>null</code> if not found.
+     */
+    public TicketCategory getTicketCategoryByDotPath(String dotPath) throws IOException, SQLException {
+        for(TicketCategory category : getRows()) {
+            if(category.getDotPath().equals(dotPath)) return category;
+        }
+        return null;
+    }
+
     // <editor-fold defaultstate="collapsed" desc="Tree compatibility">
     private final Tree<TicketCategory> tree = new Tree<TicketCategory>() {
         public List<Node<TicketCategory>> getRootNodes() throws IOException, SQLException {
