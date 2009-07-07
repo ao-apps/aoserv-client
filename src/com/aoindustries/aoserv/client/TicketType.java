@@ -29,6 +29,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
      */
     public static final String
         CONTACT="contact",
+        LOGS="logs",
         SUPPORT="support",
         PROJECTS="projects",
         INTERNAL="internal"
