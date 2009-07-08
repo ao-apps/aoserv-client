@@ -29,6 +29,11 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
     static final String COLUMN_PARENT_name = "parent";
     static final String COLUMN_NAME_name = "name";
 
+    /**
+     * Some conveniences constants for specific categories.
+     */
+    public static final int AOSERV_MASTER_PKEY = 110;
+
     int parent;
     String name;
 
