@@ -1,11 +1,12 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.util.ErrorPrinter;
+import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.logging.ErrorPrinterFormatter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -22,15 +23,24 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 /**
+ * <p>
  * An implementation of <code>Handler</code> that logs to the ticket system.
  * It queues log entries and logs them in the background.  The log entries
  * are added in the order received, regardless of priority.
- *
+ * </p>
+ * <p>
  * Defaults to using ErrorPrinterFormatter to System.err and
  * XMLFormatter to the ticket.  Setting the formatter will only
  * alter the output to System.err and the ticket subject, the ticket details are
  * always created with an XML format.
- *
+ * </p>
+ * <p>
+ * Will first look for any open/hold/bounced ticket that is for the same
+ * brand, business, language, type, level, prefix, classname, method, and category.
+ * If found, it will annotate that ticket.  If not found, it will create a new
+ * ticket.
+ * </p>
+ * 
  * @see ErrorPrinterFormatter
  * 
  * @author  AO Industries, Inc.
@@ -109,7 +119,7 @@ final public class TicketLoggingHandler extends Handler {
             new ThreadFactory() {
                 public Thread newThread(Runnable r) {
                     Thread thread = new Thread(r);
-                    thread.setName("Tiket logger for "+TicketLoggingHandler.this.connector.toString());
+                    thread.setName("Ticket logger for "+TicketLoggingHandler.this.connector.toString());
                     thread.setDaemon(true);
                     thread.setPriority(Thread.NORM_PRIORITY+1);
                     return thread;
@@ -125,9 +135,8 @@ final public class TicketLoggingHandler extends Handler {
         //record.getSourceMethodName();
 
         // Format first to have correct threading information
-        Formatter formatter = getFormatter();
+        final Formatter formatter = getFormatter();
         final String fullReport = formatter.format(record);
-        final String message = formatter.formatMessage(record);
 
         // Queue for System.err output
         systemErrExecutor.submit(
@@ -148,37 +157,74 @@ final public class TicketLoggingHandler extends Handler {
                     @Override
                     public void run() {
                         try {
-                            // The priority depends on the log level
-                            String priorityName;
-                            if(level<=Level.CONFIG.intValue()) priorityName = TicketPriority.LOW;           // FINE < level <= CONFIG
-                            else if(level<=Level.INFO.intValue()) priorityName = TicketPriority.NORMAL;     // CONFIG < level <=INFO
-                            else if(level<=Level.WARNING.intValue()) priorityName = TicketPriority.HIGH;    // INFO < level <=WARNING
-                            else priorityName = TicketPriority.URGENT;                                      // WARNING < level
-                            TicketPriority priority = connector.getTicketPriorities().get(priorityName);
-                            if(priority==null) throw new SQLException("Unable to find TicketPriority: "+priorityName);
-                            // Generate the summary
-                            StringBuilder summary = new StringBuilder(summaryPrefix);
-                            if(summary.length()>0) summary.append(" - ");
-                            summary.append(record.getSequenceNumber());
-                            if(message!=null) {
-                                String trimmedMessage = message.trim();
-                                if(trimmedMessage.length()>0) summary.append(" - ").append(trimmedMessage);
+                            // Generate the summary from level, prefix classname, method
+                            StringBuilder tempSB = new StringBuilder();
+                            tempSB.append('[').append(level).append(']');
+                            if(summaryPrefix!=null && summaryPrefix.length()>0) tempSB.append(' ').append(summaryPrefix);
+                            tempSB.append(" - ").append(record.getSourceClassName()).append(" - ").append(record.getSourceMethodName());
+                            String summary = tempSB.toString();
+                            // Look for an existing ticket to append
+                            Ticket existingTicket = null;
+                            for(Ticket ticket : connector.getTickets()) {
+                                String status = ticket.getStatus().getStatus();
+                                if(
+                                    (
+                                        TicketStatus.OPEN.equals(status)
+                                        || TicketStatus.HOLD.equals(status)
+                                        || TicketStatus.BOUNCED.equals(status)
+                                    ) && brand.equals(ticket.getBrand())
+                                    && business.equals(ticket.getBusiness())
+                                    && language.equals(ticket.getLanguage())
+                                    && ticketType.equals(ticket.getTicketType())
+                                    && ticket.getSummary().equals(summary) // level, prefix, classname, and method
+                                    && StringUtility.equals(category, ticket.getCategory())
+                                ) {
+                                    existingTicket = ticket;
+                                    break;
+                                }
                             }
-                            Throwable thrown = record.getThrown();
-                            if(thrown!=null) summary.append(" - ").append(thrown.toString());
-                            connector.getTickets().addTicket(
-                                brand,
-                                business,
-                                language,
-                                category,
-                                ticketType,
-                                null,
-                                summary.toString(),
-                                fullReport,
-                                priority,
-                                "",
-                                ""
-                            );
+                            if(existingTicket!=null) {
+                                // Generate the annotation summary as localized message + thrown
+                                tempSB.setLength(0);
+                                String message = formatter.formatMessage(record);
+                                if(message!=null && (message=message.trim()).length()>0) tempSB.append(message);
+                                Throwable thrown = record.getThrown();
+                                if(thrown!=null) {
+                                    if(tempSB.length()>0) tempSB.append(" - ");
+                                    String thrownMessage = thrown.getMessage();
+                                    if(thrownMessage!=null) {
+                                        tempSB.append(thrownMessage);
+                                    } else {
+                                        tempSB.append(thrown.toString());
+                                    }
+                                }
+                                existingTicket.addAnnotation(
+                                    tempSB.toString(),
+                                    fullReport
+                                );
+                            } else {
+                                // The priority depends on the log level
+                                String priorityName;
+                                if(level<=Level.CONFIG.intValue()) priorityName = TicketPriority.LOW;           // FINE < level <= CONFIG
+                                else if(level<=Level.INFO.intValue()) priorityName = TicketPriority.NORMAL;     // CONFIG < level <=INFO
+                                else if(level<=Level.WARNING.intValue()) priorityName = TicketPriority.HIGH;    // INFO < level <=WARNING
+                                else priorityName = TicketPriority.URGENT;                                      // WARNING < level
+                                TicketPriority priority = connector.getTicketPriorities().get(priorityName);
+                                if(priority==null) throw new SQLException("Unable to find TicketPriority: "+priorityName);
+                                connector.getTickets().addTicket(
+                                    brand,
+                                    business,
+                                    language,
+                                    category,
+                                    ticketType,
+                                    null,
+                                    summary,
+                                    fullReport,
+                                    priority,
+                                    "",
+                                    ""
+                                );
+                            }
                         } catch(Exception err) {
                             ErrorPrinter.printStackTraces(err);
                         }

@@ -6,9 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.ErrorHandler;
 import com.aoindustries.util.SortedArrayList;
-import com.aoindustries.util.StandardErrorHandler;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,34 +28,11 @@ import java.util.Locale;
  * @see  AOSH
  * @see  AOServConnector
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SimpleAOClient {
 
     final AOServConnector connector;
-
-    /**
-     * @deprecated  Please use method with <code>ErrorHandler</code>
-     *
-     * @see  #SimpleAOClient(ErrorHandler)
-     */
-    public SimpleAOClient() throws IOException {
-        this(new StandardErrorHandler());
-    }
-
-    /**
-     * Creates a new <code>AOServClient</code> using the default
-     * <code>AOServConnector</code>.
-     *
-     * @exception  IOException  if unable to establish a connection
-     *
-     * @see  AOServConnector#getConnector(ErrorHandler)
-     */
-    public SimpleAOClient(ErrorHandler errorHandler) throws IOException {
-        this(AOServConnector.getConnector(errorHandler));
-    }
 
     /**
      * Creates a new <code>AOServClient</code> using the provided
@@ -70,32 +45,8 @@ final public class SimpleAOClient {
      * @see  TCPConnector#getTCPConnector
      * @see  SSLConnector#getSSLConnector
      */
-    public SimpleAOClient(AOServConnector connector) {
+    SimpleAOClient(AOServConnector connector) {
         this.connector=connector;
-    }
-
-    /**
-     * @deprecated  Please use method with <code>ErrorHandler</code>
-     *
-     * @see  #SimpleAOClient(String,String,ErrorHandler)
-     */
-    public SimpleAOClient(String username, String password) throws IOException {
-        this(username, password, new StandardErrorHandler());
-    }
-
-    /**
-     * Creates a new <code>AOServClient</code> using the provided
-     * username and password.
-     *
-     * @param  username  the username to connect with
-     * @param  password  the password to connect with
-     *
-     * @exception  IOException  if unable to establish a connection
-     *
-     * @see  AOServConnector#getConnector(String,String,ErrorHandler)
-     */
-    public SimpleAOClient(String username, String password, ErrorHandler errorHandler) throws IOException {
-        this(AOServConnector.getConnector(username, password, errorHandler));
     }
 
     private Architecture getArchitecture(String architecture) throws IllegalArgumentException, IOException, SQLException {

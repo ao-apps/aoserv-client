@@ -723,7 +723,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
         synchronized(_loadListeners) {
             int size=_loadListeners.size();
             for(int c=0;c<size;c++) {
-                TableLoadListenerEntry entry=(TableLoadListenerEntry)_loadListeners.get(c);
+                TableLoadListenerEntry entry=_loadListeners.get(c);
                 if(entry.listener==listener) {
                     _loadListeners.remove(c);
                     break;
@@ -733,13 +733,6 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
     }
 
     void tableUpdated() {
-        // try {
-            // System.out.println("DEBUG: AOServTable: tableUpdated: "+this.getTableName());
-        // } catch(IOException err) {
-            // connector.errorHandler.reportError(err, null);
-        // } catch(SQLException err) {
-            // connector.errorHandler.reportError(err, null);
-        // }
         synchronized(eventLock) {
             // Notify all immediate listeners
             if(tableListeners!=null) {

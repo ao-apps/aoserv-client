@@ -5,10 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.net.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.logging.Level;
 
 /**
  * A <code>SocketConnection</code> is a single, persistant, un-secured
@@ -67,40 +72,40 @@ final public class SocketConnection extends AOServConnection {
     }
 
     void close() {
-	if(in!=null) {
+        if(in!=null) {
             try {
                 in.close();
             } catch(IOException err) {
-                connector.errorHandler.reportWarning(err, null);
+                connector.logger.log(Level.WARNING, null, err);
             }
-	}
-	if(out!=null) {
+        }
+        if(out!=null) {
             try {
                 out.writeCompressedInt(AOServProtocol.CommandID.QUIT.ordinal());
                 out.flush();
             } catch(SocketException err) {
                 // Normal when the other side has terminated the connection
             } catch(IOException err) {
-                connector.errorHandler.reportWarning(err, null);
+                connector.logger.log(Level.WARNING, null, err);
             }
             try {
                 out.close();
             } catch(IOException err) {
-                connector.errorHandler.reportWarning(err, null);
+                connector.logger.log(Level.WARNING, null, err);
             }
-	}
-	if(socket!=null) {
+        }
+        if(socket!=null) {
             try {
                 socket.close();
             } catch(IOException err) {
-                connector.errorHandler.reportWarning(err, null);
+                connector.logger.log(Level.WARNING, null, err);
             }
-	}
-	isClosed=true;
+        }
+        isClosed=true;
     }
 
     CompressedDataInputStream getInputStream() {
-	return in;
+        return in;
     }
 
     InetAddress getLocalInetAddress() throws IOException {
@@ -108,10 +113,10 @@ final public class SocketConnection extends AOServConnection {
     }
 
     CompressedDataOutputStream getOutputStream() {
-	return out;
+        return out;
     }
 
     boolean isClosed() {
-	return isClosed;
+        return isClosed;
     }
 }

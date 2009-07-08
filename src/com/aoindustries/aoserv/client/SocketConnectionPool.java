@@ -6,11 +6,10 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.AOPool;
-import com.aoindustries.io.ChainWriter;
 import com.aoindustries.util.EncodingUtils;
-import com.aoindustries.util.ErrorHandler;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 /**
  * Connections made by <code>TCPConnector</code> or any
@@ -29,20 +28,20 @@ final public class SocketConnectionPool extends AOPool {
 
     private final TCPConnector connector;
 
-    SocketConnectionPool(TCPConnector connector, ErrorHandler errorHandler) {
-	super(DELAY_TIME, MAX_IDLE_TIME, SocketConnectionPool.class.getName()+"?hostname=" + connector.hostname+"&port="+connector.port+"&connectAs="+connector.connectAs+"&authenticateAs="+connector.authenticateAs, connector.poolSize, connector.maxConnectionAge, errorHandler);
-	this.connector=connector;
+    SocketConnectionPool(TCPConnector connector, Logger logger) {
+        super(DELAY_TIME, MAX_IDLE_TIME, SocketConnectionPool.class.getName()+"?hostname=" + connector.hostname+"&port="+connector.port+"&connectAs="+connector.connectAs+"&authenticateAs="+connector.authenticateAs, connector.poolSize, connector.maxConnectionAge, logger);
+        this.connector=connector;
     }
 
     void close() throws IOException {
-	try {
+        try {
             closeImp();
-	} catch(Exception err) {
+        } catch(Exception err) {
             if(err instanceof IOException) throw (IOException)err;
             IOException ioErr=new IOException();
             ioErr.initCause(err);
             throw ioErr;
-	}
+        }
     }
 
     protected void close(Object O) {

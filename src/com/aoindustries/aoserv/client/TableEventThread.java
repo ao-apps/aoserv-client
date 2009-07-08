@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import java.util.logging.Level;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -78,7 +80,7 @@ public class TableEventThread extends Thread {
             } catch (ThreadDeath TD) {
                 throw TD;
             } catch (Throwable T) {
-                table.connector.errorHandler.reportError(T, null);
+                table.connector.logger.log(Level.SEVERE, null, T);
             }
         }
     }

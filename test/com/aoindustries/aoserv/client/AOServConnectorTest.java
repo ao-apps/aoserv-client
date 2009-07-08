@@ -5,12 +5,11 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 
-import com.aoindustries.util.ErrorHandler;
-import com.aoindustries.util.StandardErrorHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -22,6 +21,8 @@ import junit.framework.TestSuite;
  */
 public class AOServConnectorTest extends TestCase {
 
+    private static final Logger logger = Logger.getLogger(AOServConnectorTest.class.getName());
+
     static final String REGULAR_USER_USERNAME="testuser";
     static final String REGULAR_USER_PASSWORD="T3st1234";
 
@@ -31,11 +32,10 @@ public class AOServConnectorTest extends TestCase {
      * (mandriva20060_svr).
      */
     static List<AOServConnector> getTestConnectors() throws IOException {
-        ErrorHandler errorHandler = new StandardErrorHandler();
         List<AOServConnector> conns = new ArrayList<AOServConnector>();
-        conns.add(AOServConnector.getConnector("aoweb_app", "changeme", errorHandler));
-        conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD, errorHandler));
-        conns.add(AOServConnector.getConnector("mandriva20060_svr", "Ogrol3Veve5", errorHandler));
+        conns.add(AOServConnector.getConnector("aoweb_app", "changeme", logger));
+        conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD, logger));
+        conns.add(AOServConnector.getConnector("mandriva20060_svr", "Ogrol3Veve5", logger));
         return conns;
     }
 

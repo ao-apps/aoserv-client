@@ -5,10 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ShellInterpreter;
-import com.aoindustries.util.StandardErrorHandler;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,6 +16,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
  * <code>AOSH</code> is a command interpreter and scripting language
@@ -28,6 +28,8 @@ import java.util.Locale;
  * @author  AO Industries, Inc.
  */
 final public class AOSH extends ShellInterpreter {
+
+    private static final Logger logger = Logger.getLogger(AOSH.class.getName());
 
     private static final InputStream nullInput=new ByteArrayInputStream(new byte[0]);
 
@@ -200,7 +202,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             String username=getConfigUsername(System.in, err);
             String password=getConfigPassword(System.in, err);
-            AOServConnector connector=AOServConnector.getConnector(username, password, new StandardErrorHandler(err));
+            AOServConnector connector=AOServConnector.getConnector(username, password, logger);
             AOSH aosh=new AOSH(connector, System.in, out, err, args);
             aosh.run();
             if(aosh.isInteractive()) {
@@ -437,7 +439,7 @@ final public class AOSH extends ShellInterpreter {
             try {
                 handleCommand(newArgs);
             } finally {
-                long timeSpan=(long)(System.currentTimeMillis()-startTime);
+                long timeSpan=System.currentTimeMillis()-startTime;
                 int mins=(int)(timeSpan/60000);
                 int secs=(int)(timeSpan%60000);
                 out.println();

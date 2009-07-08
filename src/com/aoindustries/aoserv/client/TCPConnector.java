@@ -5,15 +5,22 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.ErrorHandler;
+import com.aoindustries.io.AOPool;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.net.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -104,22 +111,18 @@ public class TCPConnector extends AOServConnector {
                             releaseConnection(conn);
                         }
                     } catch(Exception err) {
-                        errorHandler.reportError(err, null);
+                        logger.log(Level.SEVERE, null, err);
                         try {
                             sleep(60000);
                         } catch(InterruptedException err2) {
-                            errorHandler.reportWarning(err2, null);
+                            logger.log(Level.WARNING, null, err2);
                         }
                     } finally {
                         clearCaches();
                     }
                 }
-            } catch(IOException err) {
-                errorHandler.reportError(err, null);
-            } catch(SQLException err) {
-                errorHandler.reportError(err, null);
-            } catch(RuntimeException err) {
-                errorHandler.reportError(err, null);
+            } catch(Exception err) {
+                logger.log(Level.SEVERE, null, err);
             } finally {
                 synchronized(cacheMonitorLock) {
                     if(cacheMonitor==this) cacheMonitor=null;
@@ -154,21 +157,21 @@ public class TCPConnector extends AOServConnector {
     private CacheMonitor cacheMonitor;
 
     protected TCPConnector(
-	String hostname,
+        String hostname,
         String local_ip,
-	int port,
-	String connectAs,
-	String authenticateAs,
-	String password,
+        int port,
+        String connectAs,
+        String authenticateAs,
+        String password,
         String daemonServer,
-	int poolSize,
+        int poolSize,
         long maxConnectionAge,
-        ErrorHandler errorHandler
+        Logger logger
     ) throws IOException {
-	super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, errorHandler);
-	this.poolSize=poolSize;
+        super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, logger);
+        this.poolSize=poolSize;
         this.maxConnectionAge=maxConnectionAge;
-	this.pool=new SocketConnectionPool(this, errorHandler);
+        this.pool=new SocketConnectionPool(this, logger);
     }
 
     private void startCacheMonitor() {
@@ -180,17 +183,14 @@ public class TCPConnector extends AOServConnector {
 
     protected final AOServConnection getConnection(int maxConnections) throws IOException {
         if(SwingUtilities.isEventDispatchThread()) {
-            errorHandler.reportWarning(
-                new RuntimeException(ApplicationResourcesAccessor.getMessage(Locale.getDefault(), "TCPConnector.getConnection.isEventDispatchThread")),
-                null
-            );
+            logger.log(Level.WARNING, null, new RuntimeException(ApplicationResourcesAccessor.getMessage(Locale.getDefault(), "TCPConnector.getConnection.isEventDispatchThread")));
         }
         startCacheMonitor();
     	return pool.getConnection(maxConnections);
     }
 
     public String getProtocol() {
-	return PROTOCOL;
+        return PROTOCOL;
     }
 
     Socket getSocket() throws IOException {
@@ -204,22 +204,22 @@ public class TCPConnector extends AOServConnector {
     }
 
     public static synchronized TCPConnector getTCPConnector(
-	String hostname,
+        String hostname,
         String local_ip,
-	int port,
-	String connectAs,
-	String authenticateAs,
-	String password,
+        int port,
+        String connectAs,
+        String authenticateAs,
+        String password,
         String daemonServer,
-	int poolSize,
+        int poolSize,
         long maxConnectionAge,
-        ErrorHandler errorHandler
+        Logger logger
     ) throws IOException {
         if(connectAs==null) throw new NullPointerException("connectAs is null");
         if(authenticateAs==null) throw new NullPointerException("authenticateAs is null");
         if(password==null) throw new NullPointerException("password is null");
-	int size=connectors.size();
-	for(int c=0;c<size;c++) {
+        int size=connectors.size();
+        for(int c=0;c<size;c++) {
             TCPConnector connector=connectors.get(c);
             if(connector==null) throw new NullPointerException("connector is null");
             if(connector.connectAs==null) throw new NullPointerException("connector.connectAs is null");
@@ -236,8 +236,8 @@ public class TCPConnector extends AOServConnector {
                 && connector.poolSize==poolSize
                 && connector.maxConnectionAge==maxConnectionAge
             ) return connector;
-	}
-	TCPConnector newConnector=new TCPConnector(
+        }
+        TCPConnector newConnector=new TCPConnector(
             hostname,
             local_ip,
             port,
@@ -247,10 +247,10 @@ public class TCPConnector extends AOServConnector {
             daemonServer,
             poolSize,
             maxConnectionAge,
-            errorHandler
-	);
-	connectors.add(newConnector);
-	return newConnector;
+            logger
+        );
+        connectors.add(newConnector);
+        return newConnector;
     }
 
     public boolean isSecure() throws UnknownHostException, IOException {
@@ -290,8 +290,8 @@ public class TCPConnector extends AOServConnector {
     }
 
     public AOServConnector switchUsers(String username) throws IOException {
-	if(username.equals(connectAs)) return this;
-	return getTCPConnector(
+        if(username.equals(connectAs)) return this;
+        return getTCPConnector(
             hostname,
             local_ip,
             port,
@@ -301,8 +301,8 @@ public class TCPConnector extends AOServConnector {
             daemonServer,
             poolSize,
             maxConnectionAge,
-            errorHandler
-	);
+            logger
+        );
     }
 
     /**

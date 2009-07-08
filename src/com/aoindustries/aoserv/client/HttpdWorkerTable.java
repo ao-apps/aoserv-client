@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @see  HttpdWorker
@@ -68,10 +69,7 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
                         }
                     }
                 } else {
-                    connector.errorHandler.reportWarning(
-                            new SQLException("HttpdWorker doesn't have either HttpdTomcatSite or HttpdSharedTomcat"),
-                            new Object[] {"pkey="+worker.pkey}
-                    );
+                    connector.logger.log(Level.WARNING, "pkey="+worker.pkey, new SQLException("HttpdWorker doesn't have either HttpdTomcatSite or HttpdSharedTomcat"));
                 }
             }
 	}

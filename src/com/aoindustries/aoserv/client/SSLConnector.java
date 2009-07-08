@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.*;
 import java.security.*;
 import java.util.*;
+import java.util.logging.Logger;
 import javax.net.ssl.*;
 
 /**
@@ -62,9 +63,9 @@ public class SSLConnector extends TCPConnector {
         long maxConnectionAge,
         String trustStorePath,
         String trustStorePassword,
-        ErrorHandler errorHandler
+        Logger logger
     ) throws IOException {
-	super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge, errorHandler);
+        super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge, logger);
         if(
             (
                 SSLConnector.trustStorePath!=null
@@ -126,7 +127,7 @@ public class SSLConnector extends TCPConnector {
         long maxConnectionAge,
         String trustStorePath,
         String trustStorePassword,
-        ErrorHandler errorHandler
+        Logger logger
     ) throws IOException {
         if(connectAs==null) throw new NullPointerException("connectAs is null");
         if(authenticateAs==null) throw new NullPointerException("authenticateAs is null");
@@ -164,16 +165,18 @@ public class SSLConnector extends TCPConnector {
             maxConnectionAge,
             trustStorePath,
             trustStorePassword,
-            errorHandler
+            logger
 	);
 	connectors.add(newConnector);
 	return newConnector;
     }
 
+    @Override
     public boolean isSecure() {
 	return true;
     }
 
+    @Override
     public AOServConnector switchUsers(String username) throws IOException {
 	if(username.equals(connectAs)) return this;
 	return getSSLConnector(
@@ -188,7 +191,7 @@ public class SSLConnector extends TCPConnector {
             maxConnectionAge,
             trustStorePath,
             trustStorePassword,
-            errorHandler
+            logger
 	);
     }
 }

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
@@ -501,7 +502,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                         try {
                             mrtgLocks.wait(startTime + 15000 - currentTime);
                         } catch(InterruptedException err) {
-                            table.connector.errorHandler.reportWarning(err, null);
+                            table.connector.logger.log(Level.WARNING, null, err);
                         }
                     }
                 }

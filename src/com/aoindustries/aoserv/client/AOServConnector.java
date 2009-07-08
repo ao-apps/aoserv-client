@@ -5,15 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.ChainWriter;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
 import com.aoindustries.table.TableListener;
-import com.aoindustries.util.ErrorHandler;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.StandardErrorHandler;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -21,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An <code>AOServConnector</code> provides the connection
@@ -136,14 +135,14 @@ abstract public class AOServConnector {
     
     final String daemonServer;
     
-    final ErrorHandler errorHandler;
+    final Logger logger;
     
     /**
-     * Gets the error handler for this connector.
+     * Gets the logger for this connector.
      */
-    public ErrorHandler getErrorHandler() {
-        return errorHandler;
-    }
+    //public Logger getLogger() {
+    //    return logger;
+    //}
 
     protected final String password;
 
@@ -951,7 +950,7 @@ abstract public class AOServConnector {
         String authenticateAs,
         String password,
         String daemonServer,
-        ErrorHandler errorHandler
+        Logger logger
     ) throws IOException {
         this.hostname=hostname;
         this.local_ip=local_ip;
@@ -960,7 +959,7 @@ abstract public class AOServConnector {
         this.authenticateAs=authenticateAs;
         this.password=password;
         this.daemonServer=daemonServer;
-        this.errorHandler=errorHandler;
+        this.logger=logger;
 
         // These must match the table IDs in SchemaTable
         ArrayList<AOServTable> newTables = new ArrayList<AOServTable>();
@@ -1196,15 +1195,6 @@ abstract public class AOServConnector {
     protected abstract AOServConnection getConnection(int maxConnections) throws IOException;
 
     /**
-     * @deprecated  Please use version with <code>ErrorHandler</code>.
-     *
-     * @see  #getConnector(ErrorHandler)
-     */
-    public static AOServConnector getConnector() throws IOException {
-        return getConnector(new StandardErrorHandler());
-    }
-
-    /**
      * Gets the default <code>AOServConnector</code> as defined in the
      * <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
      * resource.  Each possible protocol is tried, in order, until a
@@ -1215,7 +1205,7 @@ abstract public class AOServConnector {
      *
      * @exception  IOException  if no connection can be established
      */
-    public static AOServConnector getConnector(ErrorHandler errorHandler) throws IOException {
+    public static AOServConnector getConnector(Logger logger) throws IOException {
         String username=AOServClientConfiguration.getUsername();
         String daemonServer=AOServClientConfiguration.getDaemonServer();
         if(daemonServer==null || daemonServer.length()==0) daemonServer=null;
@@ -1224,17 +1214,8 @@ abstract public class AOServConnector {
             username,
             AOServClientConfiguration.getPassword(),
             daemonServer,
-            errorHandler
+            logger
         );
-    }
-
-    /**
-     * @deprecated  Please use version with <code>ErrorHandler</code>.
-     *
-     * @see  #getConnector(String,String,ErrorHandler)
-     */
-    public static AOServConnector getConnector(String username, String password) throws IOException {
-        return getConnector(username, password, new StandardErrorHandler());
     }
 
     /**
@@ -1251,17 +1232,8 @@ abstract public class AOServConnector {
      *
      * @exception  IOException  if no connection can be established
      */
-    public static AOServConnector getConnector(String username, String password, ErrorHandler errorHandler) throws IOException {
-        return getConnector(username, username, password, null, errorHandler);
-    }
-
-    /**
-     * @deprecated  Please use version with <code>ErrorHandler</code>.
-     *
-     * @see  #getConnector(String,String,String,String,ErrorHandler)
-     */
-    public static AOServConnector getConnector(String connectAs, String authenticateAs, String password, String daemonServer) throws IOException {
-        return getConnector(connectAs, authenticateAs, password, daemonServer, new StandardErrorHandler());
+    public static AOServConnector getConnector(String username, String password, Logger logger) throws IOException {
+        return getConnector(username, username, password, null, logger);
     }
 
     /**
@@ -1281,7 +1253,7 @@ abstract public class AOServConnector {
      *
      * @exception  IOException  if no connection can be established
      */
-    public static AOServConnector getConnector(String connectAs, String authenticateAs, String password, String daemonServer, ErrorHandler errorHandler) throws IOException {
+    public static AOServConnector getConnector(String connectAs, String authenticateAs, String password, String daemonServer, Logger logger) throws IOException {
         List<String> protocols=AOServClientConfiguration.getProtocols();
         int size=protocols.size();
         for(int c=0;c<size;c++) {
@@ -1299,7 +1271,7 @@ abstract public class AOServConnector {
                         daemonServer,
                         AOServClientConfiguration.getTcpConnectionPoolSize(),
                         AOServClientConfiguration.getTcpConnectionMaxAge(),
-                        errorHandler
+                        logger
                     );
                 } else if(SSLConnector.PROTOCOL.equals(protocol)) {
                     connector=SSLConnector.getSSLConnector(
@@ -1314,7 +1286,7 @@ abstract public class AOServConnector {
                         AOServClientConfiguration.getSslConnectionMaxAge(),
                         AOServClientConfiguration.getSslTruststorePath(),
                         AOServClientConfiguration.getSslTruststorePassword(),
-                        errorHandler
+                        logger
                     );
                 /*
                 } else if("http".equals(protocol)) {
@@ -1326,7 +1298,7 @@ abstract public class AOServConnector {
 
                 return connector;
             } catch(IOException err) {
-                errorHandler.reportError(err, null);
+                logger.log(Level.SEVERE, null, err);
             }
         }
         throw new IOException("Unable to connect using any of the available protocols.");
@@ -1587,18 +1559,15 @@ abstract public class AOServConnector {
                 return resultRequest.afterRelease();
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -1632,18 +1601,15 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -1685,18 +1651,15 @@ abstract public class AOServConnector {
                 return result;
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -1730,18 +1693,15 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -1783,18 +1743,15 @@ abstract public class AOServConnector {
                 return result;
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -1828,18 +1785,15 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -1873,18 +1827,15 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -1926,18 +1877,15 @@ abstract public class AOServConnector {
                 return result;
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -1971,18 +1919,15 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -2019,18 +1964,15 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -2068,18 +2010,15 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -2135,18 +2074,15 @@ abstract public class AOServConnector {
                 return;
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -2179,18 +2115,15 @@ abstract public class AOServConnector {
                 return;
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }
@@ -2229,18 +2162,15 @@ abstract public class AOServConnector {
                 return;
             } catch(RuntimeException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(IOException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             } catch(SQLException err) {
                 if(attempt>=attempts || isImmediateFail(err)) throw err;
-                errorHandler.reportError(err, new Object[] {"attempt="+attempt, "attempts="+attempts});
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                errorHandler.reportWarning(err, null);
+                logger.log(Level.WARNING, null, err);
             }
             attempt++;
         }

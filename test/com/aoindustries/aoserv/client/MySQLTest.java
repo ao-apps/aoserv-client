@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 
-import com.aoindustries.util.StandardErrorHandler;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -31,7 +31,9 @@ import junit.framework.TestSuite;
  * @author  AO Industries, Inc.
  */
 public class MySQLTest extends TestCase {
-    
+
+    private static final Logger logger = Logger.getLogger(MySQLTest.class.getName());
+
     private AOServConnector conn;
     private Package pack;
     private Username username;
@@ -47,7 +49,7 @@ public class MySQLTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conn=AOServConnector.getConnector(AOServConnectorTest.REGULAR_USER_USERNAME, AOServConnectorTest.REGULAR_USER_PASSWORD, new StandardErrorHandler());
+        conn=AOServConnector.getConnector(AOServConnectorTest.REGULAR_USER_USERNAME, AOServConnectorTest.REGULAR_USER_PASSWORD, logger);
     }
 
     @Override
@@ -281,7 +283,7 @@ public class MySQLTest extends TestCase {
                 //try {
                 //    Thread.sleep(30000);
                 //} catch(InterruptedException err) {
-                //    err.printStackTrace();
+                //    logger...
                 //}
                 fail("Should not be able to connect to database until MySQLDBUser added: "+md);
             }
