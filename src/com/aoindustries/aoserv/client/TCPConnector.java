@@ -11,6 +11,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -109,6 +110,13 @@ public class TCPConnector extends AOServConnector {
                         } finally {
                             conn.close();
                             releaseConnection(conn);
+                        }
+                    } catch(EOFException err) {
+                        logger.log(Level.INFO, null, err);
+                        try {
+                            sleep(60000);
+                        } catch(InterruptedException err2) {
+                            logger.log(Level.WARNING, null, err2);
                         }
                     } catch(Exception err) {
                         logger.log(Level.SEVERE, null, err);
