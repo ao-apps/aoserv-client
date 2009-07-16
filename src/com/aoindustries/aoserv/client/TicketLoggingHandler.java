@@ -155,20 +155,32 @@ final public class TicketLoggingHandler extends QueuedHandler {
         if(message!=null) {
             message = message.trim();
             int eol = message.indexOf('\n');
-            if(eol!=-1) message = message.substring(0, eol).trim();
-            if(message.length()>0) tempSB.append(message);
+            boolean doEllipsis = false;
+            if(eol!=-1) {
+                message = message.substring(0, eol).trim();
+                doEllipsis = true;
+            }
+            if(message.length()>0) {
+                tempSB.append(message);
+                if(doEllipsis) tempSB.append('\u2026');
+            }
         }
         Throwable thrown = record.getThrown();
         if(thrown!=null) {
             if(tempSB.length()>0) tempSB.append(" - ");
             String thrownMessage = thrown.getMessage();
+            boolean doEllipsis = false;
             if(thrownMessage!=null) {
                 thrownMessage = thrownMessage.trim();
                 int eol = thrownMessage.indexOf('\n');
-                if(eol!=-1) thrownMessage = thrownMessage.substring(0, eol).trim();
+                if(eol!=-1) {
+                    thrownMessage = thrownMessage.substring(0, eol).trim();
+                    doEllipsis = true;
+                }
             }
             if(thrownMessage!=null && thrownMessage.length()>0) {
                 tempSB.append(thrownMessage);
+                if(doEllipsis) tempSB.append('\u2026');
             } else {
                 tempSB.append(thrown.toString());
             }

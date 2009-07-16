@@ -76,7 +76,7 @@ abstract public class AOServConnector {
     /**
      * Certain errors will not be retried.
      */
-    private static boolean isImmediateFail(Throwable T) {
+    static boolean isImmediateFail(Throwable T) {
         String message = T.getMessage();
         return
             (

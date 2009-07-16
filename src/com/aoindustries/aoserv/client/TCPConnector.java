@@ -52,7 +52,6 @@ public class TCPConnector extends AOServConnector {
         @Override
         public void run() {
             try {
-                TCPConnector.this.testConnect();
                 boolean runMore=true;
                 while(runMore) {
                     try {
@@ -112,25 +111,29 @@ public class TCPConnector extends AOServConnector {
                             releaseConnection(conn);
                         }
                     } catch(EOFException err) {
-                        logger.log(Level.INFO, null, err);
-                        try {
-                            sleep(60000);
-                        } catch(InterruptedException err2) {
-                            logger.log(Level.WARNING, null, err2);
+                        if(isImmediateFail(err)) runMore = false;
+                        else {
+                            logger.log(Level.INFO, null, err);
+                            try {
+                                sleep(60000);
+                            } catch(InterruptedException err2) {
+                                logger.log(Level.WARNING, null, err2);
+                            }
                         }
                     } catch(Exception err) {
-                        logger.log(Level.SEVERE, null, err);
-                        try {
-                            sleep(60000);
-                        } catch(InterruptedException err2) {
-                            logger.log(Level.WARNING, null, err2);
+                        if(isImmediateFail(err)) runMore = false;
+                        else {
+                            logger.log(Level.SEVERE, null, err);
+                            try {
+                                sleep(60000);
+                            } catch(InterruptedException err2) {
+                                logger.log(Level.WARNING, null, err2);
+                            }
                         }
                     } finally {
                         clearCaches();
                     }
                 }
-            } catch(Exception err) {
-                logger.log(Level.SEVERE, null, err);
             } finally {
                 synchronized(cacheMonitorLock) {
                     if(cacheMonitor==this) cacheMonitor=null;
