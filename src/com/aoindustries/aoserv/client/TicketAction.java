@@ -98,6 +98,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     }
 
     public BusinessAdministrator getAdministrator() throws IOException, SQLException {
+        if(administrator==null) return null;
         return table.connector.getBusinessAdministrators().get(administrator);
     }
 
@@ -350,7 +351,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     public void read(CompressedDataInputStream in) throws IOException {
         pkey = in.readCompressedInt();
         ticket = in.readCompressedInt();
-        administrator = in.readUTF().intern();
+        administrator = StringUtility.intern(in.readNullUTF());
         time = in.readLong();
         action_type = in.readUTF().intern();
         old_accounting = StringUtility.intern(in.readNullUTF());
@@ -381,7 +382,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(ticket);
-        out.writeUTF(administrator);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_50)>=0) out.writeNullUTF(administrator);
+        else out.writeUTF(administrator==null ? "aoadmin" : administrator);
         out.writeLong(time);
         out.writeUTF(action_type);
         out.writeNullUTF(old_accounting);
