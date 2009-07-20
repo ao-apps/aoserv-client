@@ -724,14 +724,35 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_XVFB, pkey);
     }
 
-    public long requestDaemonAccess(int daemonCommandCode, int param1) throws IOException, SQLException {
-        return table.connector.requestLongQuery(
-            true,
-            AOServProtocol.CommandID.REQUEST_DAEMON_ACCESS,
-            pkey,
-            daemonCommandCode,
-            param1
-        );
+    public static class DaemonAccess {
+
+        private final String protocol;
+        private final String host;
+        private final int port;
+        private final long key;
+
+        public DaemonAccess(String protocol, String host, int port, long key) {
+            this.protocol = protocol;
+            this.host = host;
+            this.port = port;
+            this.key = key;
+        }
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public long getKey() {
+            return key;
+        }
     }
 
     public void setLastDistroTime(long distroTime) throws IOException, SQLException {
@@ -1007,8 +1028,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      * Gets the DRBD report.
      */
     public List<DrbdReport> getDrbdReport(Locale locale) throws IOException, SQLException, ParseException {
-        String report = table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey);
-        List<String> lines = StringUtility.splitLines(report);
+        return parseDrbdReport(locale, table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey));
+    }
+
+    /**
+     * Parses a DRBD report.
+     */
+    public static List<DrbdReport> parseDrbdReport(Locale locale, String drbdReport) throws ParseException {
+        List<String> lines = StringUtility.splitLines(drbdReport);
         int lineNum = 0;
         List<DrbdReport> reports = new ArrayList<DrbdReport>(lines.size());
         for(String line : lines) {

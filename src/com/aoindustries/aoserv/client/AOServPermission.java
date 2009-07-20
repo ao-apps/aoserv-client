@@ -56,7 +56,9 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         set_postgres_server_user_password,
         // tickets
         add_ticket,
-        edit_ticket
+        edit_ticket,
+        // virtual_servers
+        vnc_console
         ;
 
         /**

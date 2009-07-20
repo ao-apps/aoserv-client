@@ -110,9 +110,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_47("1.47"),
         VERSION_1_48("1.48"),
         VERSION_1_49("1.49"),
-        VERSION_1_50("1.50");
+        VERSION_1_50("1.50"),
+        VERSION_1_51("1.51");
 
-        public static final Version CURRENT_VERSION = VERSION_1_50;
+        public static final Version CURRENT_VERSION = VERSION_1_51;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -307,7 +308,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         UNUSED_REMOVE_EXPIRED_POSTGRES_BACKUPS, // No longer used
         @Deprecated
         UNUSED_REMOVE_UNUSED_BACKUP_DATAS, // No longer used
-        REQUEST_DAEMON_ACCESS,
+        @Deprecated
+        UNUSED_REQUEST_DAEMON_ACCESS, // No longer used
         RESTART_APACHE,
         RESTART_CRON,
         @Deprecated
@@ -462,7 +464,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         SET_TICKET_SUMMARY,
         ADD_TICKET_ANNOTATION,
         SET_TICKET_STATUS,
-        SET_TICKET_INTERNAL_NOTES
+        SET_TICKET_INTERNAL_NOTES,
+        REQUEST_REPLICATION_DAEMON_ACCESS,
+        REQUEST_VNC_CONSOLE_DAEMON_ACCESS
     }
 
     /**

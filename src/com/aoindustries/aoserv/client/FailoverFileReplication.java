@@ -5,12 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
+import com.aoindustries.io.BitRateProvider;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 
@@ -230,5 +232,35 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 
     public void setFileBackupSettings(List<String> paths, List<Boolean> backupEnableds) throws IOException, SQLException {
         table.connector.getFileBackupSettings().setFileBackupSettings(this, paths, backupEnableds);
+    }
+
+    public AOServer.DaemonAccess requestReplicationDaemonAccess() throws IOException, SQLException {
+        return table.connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<AOServer.DaemonAccess>() {
+                private AOServer.DaemonAccess daemonAccess;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS.ordinal());
+                    out.writeCompressedInt(pkey);
+                }
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        daemonAccess = new AOServer.DaemonAccess(
+                            in.readUTF(),
+                            in.readUTF(),
+                            in.readCompressedInt(),
+                            in.readLong()
+                        );
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+                public AOServer.DaemonAccess afterRelease() {
+                    return daemonAccess;
+                }
+            }
+        );
     }
 }

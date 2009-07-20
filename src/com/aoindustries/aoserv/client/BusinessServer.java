@@ -5,10 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>BusinessServer</code> grants a <code>Business</code> permission to
@@ -40,7 +44,8 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         can_control_mysql,
         can_control_postgresql,
         can_control_xfs,
-        can_control_xvfb
+        can_control_xvfb,
+        can_vnc_console
     ;
     
     public boolean canControlApache() {
@@ -67,32 +72,37 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         return can_control_xvfb;
     }
 
-    public Business getBusiness() throws SQLException, IOException {
-	Business obj=table.connector.getBusinesses().get(accounting);
-	if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
-	return obj;
+    public boolean canVncConsole() {
+        return can_vnc_console;
+    }
+
+    public Business getBusiness() throws IOException, SQLException {
+        Business obj=table.connector.getBusinesses().get(accounting);
+        if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
+        return obj;
     }
 
     Object getColumnImpl(int i) {
         switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_PKEY: return pkey;
             case COLUMN_ACCOUNTING: return accounting;
-            case COLUMN_SERVER: return Integer.valueOf(server);
-            case 3: return is_default?Boolean.TRUE:Boolean.FALSE;
-            case 4: return can_control_apache?Boolean.TRUE:Boolean.FALSE;
-            case 5: return can_control_cron?Boolean.TRUE:Boolean.FALSE;
-            case 6: return can_control_mysql?Boolean.TRUE:Boolean.FALSE;
-            case 7: return can_control_postgresql?Boolean.TRUE:Boolean.FALSE;
-            case 8: return can_control_xfs?Boolean.TRUE:Boolean.FALSE;
-            case 9: return can_control_xvfb?Boolean.TRUE:Boolean.FALSE;
+            case COLUMN_SERVER: return server;
+            case 3: return is_default;
+            case 4: return can_control_apache;
+            case 5: return can_control_cron;
+            case 6: return can_control_mysql;
+            case 7: return can_control_postgresql;
+            case 8: return can_control_xfs;
+            case 9: return can_control_xvfb;
+            case 10: return can_vnc_console;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
     public Server getServer() throws IOException, SQLException {
-	Server obj=table.connector.getServers().get(server);
-	if(obj==null) throw new SQLException("Unable to find Server: "+server);
-	return obj;
+        Server obj=table.connector.getServers().get(server);
+        if(obj==null) throw new SQLException("Unable to find Server: "+server);
+        return obj;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -100,33 +110,35 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	accounting=result.getString(2);
-	server=result.getInt(3);
-	is_default=result.getBoolean(4);
+        pkey=result.getInt(1);
+        accounting=result.getString(2);
+        server=result.getInt(3);
+        is_default=result.getBoolean(4);
         can_control_apache=result.getBoolean(5);
         can_control_cron=result.getBoolean(6);
         can_control_mysql=result.getBoolean(7);
         can_control_postgresql=result.getBoolean(8);
         can_control_xfs=result.getBoolean(9);
         can_control_xvfb=result.getBoolean(10);
+        can_vnc_console = result.getBoolean(11);
     }
 
     public boolean isDefault() {
-	return is_default;
+        return is_default;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	accounting=in.readUTF().intern();
-	server=in.readCompressedInt();
-	is_default=in.readBoolean();
+        pkey=in.readCompressedInt();
+        accounting=in.readUTF().intern();
+        server=in.readCompressedInt();
+        is_default=in.readBoolean();
         can_control_apache=in.readBoolean();
         can_control_cron=in.readBoolean();
         can_control_mysql=in.readBoolean();
         can_control_postgresql=in.readBoolean();
         can_control_xfs=in.readBoolean();
         can_control_xvfb=in.readBoolean();
+        can_vnc_console = in.readBoolean();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
@@ -257,10 +269,10 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(accounting);
-	out.writeCompressedInt(server);
-	out.writeBoolean(is_default);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(accounting);
+        out.writeCompressedInt(server);
+        out.writeBoolean(is_default);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup
         out.writeBoolean(can_control_apache);
         out.writeBoolean(can_control_cron);
@@ -269,5 +281,6 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         out.writeBoolean(can_control_postgresql);
         out.writeBoolean(can_control_xfs);
         out.writeBoolean(can_control_xvfb);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeBoolean(can_vnc_console);
     }
 }

@@ -41,6 +41,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     private boolean primaryPhysicalServerLocked;
     private boolean secondaryPhysicalServerLocked;
     private boolean requires_hvm;
+    private String vnc_password;
 
     Object getColumnImpl(int i) {
         switch(i) {
@@ -60,6 +61,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
             case 13 : return primaryPhysicalServerLocked;
             case 14 : return secondaryPhysicalServerLocked;
             case 15 : return requires_hvm;
+            case 16 : return vnc_password;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -169,6 +171,15 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         return requires_hvm;
     }
 
+    /**
+     * Gets the VNC password for this virtual server or <code>null</code> if VNC is disabled.
+     * The password must be unique between virtual servers because the password is used
+     * behind the scenes to resolve the actual IP and port for VNC proxying.
+     */
+    public String getVncPassword() {
+        return vnc_password;
+    }
+
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.VIRTUAL_SERVERS;
     }
@@ -195,6 +206,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         primaryPhysicalServerLocked = result.getBoolean(pos++);
         secondaryPhysicalServerLocked = result.getBoolean(pos++);
         requires_hvm = result.getBoolean(pos++);
+        vnc_password = result.getString(pos++);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -214,6 +226,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         primaryPhysicalServerLocked = in.readBoolean();
         secondaryPhysicalServerLocked = in.readBoolean();
         requires_hvm = in.readBoolean();
+        vnc_password = in.readNullUTF();
     }
 
     @Override
@@ -244,8 +257,9 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
         out.writeBoolean(secondaryPhysicalServerLocked);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeNullUTF(vnc_password);
     }
-    
+
     public List<VirtualDisk> getVirtualDisks() throws IOException, SQLException {
         return table.connector.getVirtualDisks().getVirtualDisks(this);
     }
@@ -261,5 +275,35 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
             if(vd.getDevice().equals(device)) return vd;
         }
         return null;
+    }
+
+    public AOServer.DaemonAccess requestVncConsoleAccess() throws IOException, SQLException {
+        return table.connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<AOServer.DaemonAccess>() {
+                private AOServer.DaemonAccess daemonAccess;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS.ordinal());
+                    out.writeCompressedInt(pkey);
+                }
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        daemonAccess = new AOServer.DaemonAccess(
+                            in.readUTF(),
+                            in.readUTF(),
+                            in.readCompressedInt(),
+                            in.readLong()
+                        );
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+                public AOServer.DaemonAccess afterRelease() {
+                    return daemonAccess;
+                }
+            }
+        );
     }
 }
