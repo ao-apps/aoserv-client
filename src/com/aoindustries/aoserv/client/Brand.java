@@ -8,6 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -63,6 +65,9 @@ final public class Brand extends CachedObjectStringKey<Brand> {
     private boolean aoweb_struts_noindex;
     private String aoweb_struts_google_analytics_new_tracking_code;
     private String aoweb_struts_signup_admin_address;
+    private int aoweb_struts_vnc_bind;
+    private String aoweb_struts_keystore_type;
+    private String aoweb_struts_keystore_password;
 
     Object getColumnImpl(int i) {
         switch(i) {
@@ -102,6 +107,9 @@ final public class Brand extends CachedObjectStringKey<Brand> {
             case 33: return aoweb_struts_noindex;
             case 34: return aoweb_struts_google_analytics_new_tracking_code;
             case 35: return aoweb_struts_signup_admin_address;
+            case 36: return aoweb_struts_vnc_bind;
+            case 37: return aoweb_struts_keystore_type;
+            case 38: return aoweb_struts_keystore_password;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -256,8 +264,16 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         return aoweb_struts_http_url_base;
     }
 
+    public URL getAowebStrutsHttpURL() throws MalformedURLException {
+        return new URL(aoweb_struts_http_url_base);
+    }
+
     public String getAowebStrutsHttpsUrlBase() {
         return aoweb_struts_https_url_base;
+    }
+
+    public URL getAowebStrutsHttpsURL() throws MalformedURLException {
+        return new URL(aoweb_struts_https_url_base);
     }
 
     public String getAowebStrutsGoogleVerifyContent() {
@@ -274,6 +290,20 @@ final public class Brand extends CachedObjectStringKey<Brand> {
 
     public String getAowebStrutsSignupAdminAddress() {
         return aoweb_struts_signup_admin_address;
+    }
+
+    public NetBind getAowebStrutsVncBind() throws IOException, SQLException {
+        NetBind nb = table.connector.getNetBinds().get(aoweb_struts_vnc_bind);
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+aoweb_struts_vnc_bind);
+        return nb;
+    }
+
+    public String getAowebStrutsKeystoreType() {
+        return aoweb_struts_keystore_type;
+    }
+
+    public String getAowebStrutsKeystorePassword() {
+        return aoweb_struts_keystore_password;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -318,6 +348,9 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         aoweb_struts_noindex = result.getBoolean(pos++);
         aoweb_struts_google_analytics_new_tracking_code = result.getString(pos++);
         aoweb_struts_signup_admin_address = result.getString(pos++);
+        aoweb_struts_vnc_bind = result.getInt(pos++);
+        aoweb_struts_keystore_type = result.getString(pos++);
+        aoweb_struts_keystore_password = result.getString(pos++);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -357,6 +390,9 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         aoweb_struts_noindex = in.readBoolean();
         aoweb_struts_google_analytics_new_tracking_code = in.readNullUTF();
         aoweb_struts_signup_admin_address = in.readUTF();
+        aoweb_struts_vnc_bind = in.readCompressedInt();
+        aoweb_struts_keystore_type = in.readUTF();
+        aoweb_struts_keystore_password = in.readUTF();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
@@ -396,6 +432,11 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         out.writeBoolean(aoweb_struts_noindex);
         out.writeNullUTF(aoweb_struts_google_analytics_new_tracking_code);
         out.writeUTF(aoweb_struts_signup_admin_address);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_52)>=0) out.writeCompressedInt(aoweb_struts_vnc_bind);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_53)>=0) {
+            out.writeUTF(aoweb_struts_keystore_type);
+            out.writeUTF(aoweb_struts_keystore_password);
+        }
     }
 
     /**

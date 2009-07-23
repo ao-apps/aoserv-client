@@ -17,8 +17,6 @@ import java.util.Map;
 /**
  * Constants used in communication between the client and server.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> {
@@ -111,9 +109,11 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_48("1.48"),
         VERSION_1_49("1.49"),
         VERSION_1_50("1.50"),
-        VERSION_1_51("1.51");
+        VERSION_1_51("1.51"),
+        VERSION_1_52("1.52"),
+        VERSION_1_53("1.53");
 
-        public static final Version CURRENT_VERSION = VERSION_1_51;
+        public static final Version CURRENT_VERSION = VERSION_1_53;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {

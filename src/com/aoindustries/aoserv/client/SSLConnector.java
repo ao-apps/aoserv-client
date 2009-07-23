@@ -9,7 +9,6 @@ import com.aoindustries.io.AOPool;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.net.*;
-import java.security.*;
 import java.util.*;
 import java.util.logging.Logger;
 import javax.net.ssl.*;
@@ -25,11 +24,6 @@ import javax.net.ssl.*;
  * @author  AO Industries, Inc.
  */
 public class SSLConnector extends TCPConnector {
-
-    /**
-     * Only loads the SSL provider once.
-     */
-    public final static boolean[] sslProviderLoaded=new boolean[1];
 
     /**
      * The trust store used for this connector.
@@ -92,17 +86,11 @@ public class SSLConnector extends TCPConnector {
     }
 
     Socket getSocket() throws IOException {
-        synchronized(SSLConnector.class) {
-            if(!sslProviderLoaded[0]) {
-                if(trustStorePath!=null && trustStorePath.length()>0) {
-                    System.setProperty("javax.net.ssl.trustStore", trustStorePath);
-                }
-                if(trustStorePassword!=null && trustStorePassword.length()>0) {
-                    System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
-                }
-                Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-                sslProviderLoaded[0]=true;
-            }
+        if(trustStorePath!=null && trustStorePath.length()>0) {
+            System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+        }
+        if(trustStorePassword!=null && trustStorePassword.length()>0) {
+            System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
         }
 
         SSLSocketFactory sslFact=(SSLSocketFactory)SSLSocketFactory.getDefault();
