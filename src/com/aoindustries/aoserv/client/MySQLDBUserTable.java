@@ -52,7 +52,9 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
         final boolean canShowView,
         final boolean canCreateRoutine,
         final boolean canAlterRoutine,
-        final boolean canExecute
+        final boolean canExecute,
+        final boolean canEvent,
+        final boolean canTrigger
     ) throws IOException, SQLException {
         return connector.requestResult(
             true,
@@ -80,6 +82,8 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
                     out.writeBoolean(canCreateRoutine);
                     out.writeBoolean(canAlterRoutine);
                     out.writeBoolean(canExecute);
+                    out.writeBoolean(canEvent);
+                    out.writeBoolean(canTrigger);
                 }
 
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
@@ -158,7 +162,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DB_USER)) {
-            if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DB_USER, args, 19, err)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DB_USER, args, 21, err)) {
                 int pkey=connector.getSimpleAOClient().addMySQLDBUser(
                     args[1],
                     args[2],
@@ -178,7 +182,9 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
                     AOSH.parseBoolean(args[16], "can_show_view"),
                     AOSH.parseBoolean(args[17], "can_create_routine"),
                     AOSH.parseBoolean(args[18], "can_alter_routine"),
-                    AOSH.parseBoolean(args[19], "can_execute")
+                    AOSH.parseBoolean(args[19], "can_execute"),
+                    AOSH.parseBoolean(args[20], "can_event"),
+                    AOSH.parseBoolean(args[21], "can_trigger")
                 );
                 out.println(pkey);
                 out.flush();

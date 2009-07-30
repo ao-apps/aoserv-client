@@ -42,8 +42,10 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      * The supported versions of MySQL.
      */
     public static final String
-        VERSION_5_0_18="5.0.18",
-        VERSION_4_1_18="4.1.18"
+        VERSION_5_1_PREFIX="5.1.",
+        VERSION_5_0_PREFIX="5.0.",
+        VERSION_4_1_PREFIX="4.1.",
+        VERSION_4_0_PREFIX="4.0."
     ;
 
     /**
@@ -56,10 +58,12 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      * preference.  Index <code>0</code> is the most
      * preferred.
      */
-    public static final String[] getPreferredVersions() {
+    public static final String[] getPreferredVersionPrefixes() {
         return new String[] {
-            VERSION_5_0_18,
-            VERSION_4_1_18
+            VERSION_5_1_PREFIX,
+            VERSION_5_0_PREFIX,
+            VERSION_4_1_PREFIX,
+            VERSION_4_0_PREFIX
         };
     }
 
@@ -128,8 +132,8 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     /**
-     * Gets the minor version number in X.X[-max|-source] format.  This corresponds to the installation
-     * directory under /usr/mysql/X.X[-max|-source]
+     * Gets the minor version number in X.X[-max] format.  This corresponds to the installation
+     * directory under /usr/mysql/X.X[-max] or /opt/mysql-X.X[-max]
      */
     public String getMinorVersion() throws SQLException, IOException {
         String techVersion=getVersion().getVersion();
@@ -139,7 +143,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         if(pos2==-1) return techVersion;
         String S = techVersion.substring(0, pos2);
         if(techVersion.endsWith("-max")) return S+"-max";
-        if(techVersion.endsWith("-source")) return S+"-source";
         return S;
     }
 

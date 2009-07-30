@@ -70,7 +70,9 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         show_view_priv,
         create_routine_priv,
         alter_routine_priv,
-        create_user_priv
+        create_user_priv,
+        event_priv,
+        trigger_priv
     ;
 
     int disable_log;
@@ -133,6 +135,14 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     
     public boolean canCreateUser() {
         return create_user_priv;
+    }
+
+    public boolean canEvent() {
+        return event_priv;
+    }
+
+    public boolean canTrigger() {
+        return trigger_priv;
     }
 
     public boolean canCreate() {
@@ -252,7 +262,9 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
             case 24: return create_routine_priv;
             case 25: return alter_routine_priv;
             case 26: return create_user_priv;
-            case 27: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 27: return event_priv;
+            case 28: return trigger_priv;
+            case 29: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -314,7 +326,9 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         create_routine_priv=result.getBoolean(25);
         alter_routine_priv=result.getBoolean(26);
         create_user_priv=result.getBoolean(27);
-        disable_log=result.getInt(28);
+        event_priv=result.getBoolean(28);
+        trigger_priv=result.getBoolean(29);
+        disable_log=result.getInt(30);
         if(result.wasNull()) disable_log=-1;
     }
 
@@ -346,6 +360,8 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         create_routine_priv=in.readBoolean();
         alter_routine_priv=in.readBoolean();
         create_user_priv=in.readBoolean();
+        event_priv=in.readBoolean();
+        trigger_priv=in.readBoolean();
         disable_log=in.readCompressedInt();
     }
 
@@ -399,7 +415,11 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
             out.writeBoolean(create_routine_priv);
             out.writeBoolean(alter_routine_priv);
             out.writeBoolean(create_user_priv);
-        }        
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_54)>=0) {
+            out.writeBoolean(event_priv);
+            out.writeBoolean(trigger_priv);
+        }
         out.writeCompressedInt(disable_log);
     }
 

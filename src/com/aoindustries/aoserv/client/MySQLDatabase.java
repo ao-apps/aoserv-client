@@ -72,24 +72,26 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     String packageName;
 
     public int addMySQLServerUser(
-	MySQLServerUser msu,
-	boolean canSelect,
-	boolean canInsert,
-	boolean canUpdate,
-	boolean canDelete,
-	boolean canCreate,
-	boolean canDrop,
-	boolean canIndex,
-	boolean canAlter,
+        MySQLServerUser msu,
+        boolean canSelect,
+        boolean canInsert,
+        boolean canUpdate,
+        boolean canDelete,
+        boolean canCreate,
+        boolean canDrop,
+        boolean canIndex,
+        boolean canAlter,
         boolean canCreateTempTable,
         boolean canLockTables,
         boolean canCreateView,
         boolean canShowView,
         boolean canCreateRoutine,
         boolean canAlterRoutine,
-        boolean canExecute
+        boolean canExecute,
+        boolean canEvent,
+        boolean canTrigger
     ) throws IOException, SQLException {
-	return table.connector.getMysqlDBUsers().addMySQLDBUser(
+        return table.connector.getMysqlDBUsers().addMySQLDBUser(
             this,
             msu,
             canSelect,
@@ -106,8 +108,10 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             canShowView,
             canCreateRoutine,
             canAlterRoutine,
-            canExecute
-	);
+            canExecute,
+            canEvent,
+            canTrigger
+        );
     }
 
     public void dump(PrintWriter out) throws IOException, SQLException {
@@ -259,7 +263,13 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(name.equals(MYSQL)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+MYSQL, this));
-        if(name.equals(INFORMATION_SCHEMA) && getMySQLServer().getVersion().getVersion().startsWith("5.0.")) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+INFORMATION_SCHEMA, this));
+        if(name.equals(INFORMATION_SCHEMA)) {
+            String version = getMySQLServer().getVersion().getVersion();
+            if(
+                version.startsWith(MySQLServer.VERSION_5_0_PREFIX)
+                || version.startsWith(MySQLServer.VERSION_5_1_PREFIX)
+            ) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+INFORMATION_SCHEMA, this));
+        }
         return reasons;
     }
 

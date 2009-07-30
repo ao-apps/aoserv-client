@@ -559,12 +559,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public MySQLServer getPreferredMySQLServer() throws IOException, SQLException {
         // Look for the most-preferred version that has an instance on the server
         List<MySQLServer> pss=getMySQLServers();
-        String[] preferredVersions=MySQLServer.getPreferredVersions();
-        for(int c=0;c<preferredVersions.length;c++) {
-            String version=preferredVersions[c];
+        String[] preferredVersionPrefixes=MySQLServer.getPreferredVersionPrefixes();
+        for(int c=0;c<preferredVersionPrefixes.length;c++) {
+            String versionPrefix=preferredVersionPrefixes[c];
             for(int d=0;d<pss.size();d++) {
                 MySQLServer ps=pss.get(d);
-                if(ps.getVersion().getVersion().equals(version)) {
+                if(ps.getVersion().getVersion().startsWith(versionPrefix)) {
                     return ps;
                 }
             }

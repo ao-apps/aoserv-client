@@ -111,9 +111,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_50("1.50"),
         VERSION_1_51("1.51"),
         VERSION_1_52("1.52"),
-        VERSION_1_53("1.53");
+        VERSION_1_53("1.53"),
+        VERSION_1_54("1.54");
 
-        public static final Version CURRENT_VERSION = VERSION_1_53;
+        public static final Version CURRENT_VERSION = VERSION_1_54;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {

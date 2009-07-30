@@ -1738,7 +1738,9 @@ final public class SimpleAOClient {
         boolean canShowView,
         boolean canCreateRoutine,
         boolean canAlterRoutine,
-        boolean canExecute
+        boolean canExecute,
+        boolean canEvent,
+        boolean canTrigger
     ) throws IllegalArgumentException, IOException, SQLException {
         MySQLDatabase md=getMySQLDatabase(aoServer, mysqlServer, name);
         return md.addMySQLServerUser(
@@ -1757,7 +1759,9 @@ final public class SimpleAOClient {
             canShowView,
             canCreateRoutine,
             canAlterRoutine,
-            canExecute
+            canExecute,
+            canEvent,
+            canTrigger
         );
     }
 

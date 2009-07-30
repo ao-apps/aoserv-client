@@ -52,7 +52,9 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         show_view_priv,
         create_routine_priv,
         alter_routine_priv,
-        execute_priv
+        execute_priv,
+        event_priv,
+        trigger_priv
     ;
 
     public boolean canAlter() {
@@ -123,6 +125,14 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         return execute_priv;
     }
 
+    public boolean canEvent() {
+        return event_priv;
+    }
+
+    public boolean canTrigger() {
+        return trigger_priv;
+    }
+
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return pkey;
@@ -145,6 +155,8 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
             case 17: return create_routine_priv;
             case 18: return alter_routine_priv;
             case 19: return execute_priv;
+            case 20: return event_priv;
+            case 21: return trigger_priv;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -160,23 +172,23 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MYSQL_DB_USERS;
+        return SchemaTable.TableID.MYSQL_DB_USERS;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	mysql_database=result.getInt(2);
-	mysql_server_user=result.getInt(3);
-	select_priv=result.getBoolean(4);
-	insert_priv=result.getBoolean(5);
-	update_priv=result.getBoolean(6);
-	delete_priv=result.getBoolean(7);
-	create_priv=result.getBoolean(8);
-	drop_priv=result.getBoolean(9);
-	grant_priv=result.getBoolean(10);
-	references_priv=result.getBoolean(11);
-	index_priv=result.getBoolean(12);
-	alter_priv=result.getBoolean(13);
+        pkey=result.getInt(1);
+        mysql_database=result.getInt(2);
+        mysql_server_user=result.getInt(3);
+        select_priv=result.getBoolean(4);
+        insert_priv=result.getBoolean(5);
+        update_priv=result.getBoolean(6);
+        delete_priv=result.getBoolean(7);
+        create_priv=result.getBoolean(8);
+        drop_priv=result.getBoolean(9);
+        grant_priv=result.getBoolean(10);
+        references_priv=result.getBoolean(11);
+        index_priv=result.getBoolean(12);
+        alter_priv=result.getBoolean(13);
         create_tmp_table_priv=result.getBoolean(14);
         lock_tables_priv=result.getBoolean(15);
         create_view_priv=result.getBoolean(16);
@@ -184,22 +196,24 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         create_routine_priv=result.getBoolean(18);
         alter_routine_priv=result.getBoolean(19);
         execute_priv=result.getBoolean(20);
+        event_priv=result.getBoolean(21);
+        trigger_priv=result.getBoolean(22);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	mysql_database=in.readCompressedInt();
-	mysql_server_user=in.readCompressedInt();
-	select_priv=in.readBoolean();
-	insert_priv=in.readBoolean();
-	update_priv=in.readBoolean();
-	delete_priv=in.readBoolean();
-	create_priv=in.readBoolean();
-	drop_priv=in.readBoolean();
-	grant_priv=in.readBoolean();
-	references_priv=in.readBoolean();
-	index_priv=in.readBoolean();
-	alter_priv=in.readBoolean();
+        pkey=in.readCompressedInt();
+        mysql_database=in.readCompressedInt();
+        mysql_server_user=in.readCompressedInt();
+        select_priv=in.readBoolean();
+        insert_priv=in.readBoolean();
+        update_priv=in.readBoolean();
+        delete_priv=in.readBoolean();
+        create_priv=in.readBoolean();
+        drop_priv=in.readBoolean();
+        grant_priv=in.readBoolean();
+        references_priv=in.readBoolean();
+        index_priv=in.readBoolean();
+        alter_priv=in.readBoolean();
         create_tmp_table_priv=in.readBoolean();
         lock_tables_priv=in.readBoolean();
         create_view_priv=in.readBoolean();
@@ -207,6 +221,8 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         create_routine_priv=in.readBoolean();
         alter_routine_priv=in.readBoolean();
         execute_priv=in.readBoolean();
+        event_priv=in.readBoolean();
+        trigger_priv=in.readBoolean();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
@@ -226,19 +242,19 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(mysql_database);
-	out.writeCompressedInt(mysql_server_user);
-	out.writeBoolean(select_priv);
-	out.writeBoolean(insert_priv);
-	out.writeBoolean(update_priv);
-	out.writeBoolean(delete_priv);
-	out.writeBoolean(create_priv);
-	out.writeBoolean(drop_priv);
-	out.writeBoolean(grant_priv);
-	out.writeBoolean(references_priv);
-	out.writeBoolean(index_priv);
-	out.writeBoolean(alter_priv);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(mysql_database);
+        out.writeCompressedInt(mysql_server_user);
+        out.writeBoolean(select_priv);
+        out.writeBoolean(insert_priv);
+        out.writeBoolean(update_priv);
+        out.writeBoolean(delete_priv);
+        out.writeBoolean(create_priv);
+        out.writeBoolean(drop_priv);
+        out.writeBoolean(grant_priv);
+        out.writeBoolean(references_priv);
+        out.writeBoolean(index_priv);
+        out.writeBoolean(alter_priv);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) {
             out.writeBoolean(create_tmp_table_priv);
             out.writeBoolean(lock_tables_priv);
@@ -249,6 +265,10 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
             out.writeBoolean(create_routine_priv);
             out.writeBoolean(alter_routine_priv);
             out.writeBoolean(execute_priv);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_54)>=0) {
+            out.writeBoolean(event_priv);
+            out.writeBoolean(trigger_priv);
         }
     }
 }
