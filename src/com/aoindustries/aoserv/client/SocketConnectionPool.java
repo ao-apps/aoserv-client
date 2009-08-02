@@ -17,11 +17,9 @@ import java.util.logging.Logger;
  *
  * @see  TCPConnector
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class SocketConnectionPool extends AOPool {
+final class SocketConnectionPool extends AOPool<SocketConnection,IOException> {
 
     public static final int DELAY_TIME=3*60*1000;
     public static final int MAX_IDLE_TIME=15*60*1000;
@@ -29,46 +27,20 @@ final public class SocketConnectionPool extends AOPool {
     private final TCPConnector connector;
 
     SocketConnectionPool(TCPConnector connector, Logger logger) {
-        super(DELAY_TIME, MAX_IDLE_TIME, SocketConnectionPool.class.getName()+"?hostname=" + connector.hostname+"&port="+connector.port+"&connectAs="+connector.connectAs+"&authenticateAs="+connector.authenticateAs, connector.poolSize, connector.maxConnectionAge, logger);
+        super(SocketConnection.class, DELAY_TIME, MAX_IDLE_TIME, SocketConnectionPool.class.getName()+"?hostname=" + connector.hostname+"&port="+connector.port+"&connectAs="+connector.connectAs+"&authenticateAs="+connector.authenticateAs, connector.poolSize, connector.maxConnectionAge, logger);
         this.connector=connector;
     }
 
-    void close() throws IOException {
-        try {
-            closeImp();
-        } catch(Exception err) {
-            if(err instanceof IOException) throw (IOException)err;
-            IOException ioErr=new IOException();
-            ioErr.initCause(err);
-            throw ioErr;
-        }
+    protected void close(SocketConnection conn) {
+        conn.close();
     }
 
-    protected void close(Object O) {
-	((SocketConnection)O).close();
+    protected SocketConnection getConnectionObject() throws IOException {
+        return new SocketConnection(connector);
     }
 
-    SocketConnection getConnection() throws IOException {
-        return getConnection(1);
-    }
-
-    SocketConnection getConnection(int maxConnections) throws IOException {
-	try {
-            return (SocketConnection)getConnectionImp(maxConnections);
-	} catch(Exception err) {
-            if(err instanceof IOException) throw (IOException)err;
-            IOException ioErr=new IOException();
-            ioErr.initCause(err);
-            throw ioErr;
-	}
-    }
-
-    protected Object getConnectionObject() throws IOException {
-	return new SocketConnection(connector);
-    }
-
-    protected boolean isClosed(Object O) {
-	return ((SocketConnection)O).isClosed();
+    protected boolean isClosed(SocketConnection conn) {
+        return conn.isClosed();
     }
 
     /**
@@ -149,33 +121,11 @@ final public class SocketConnectionPool extends AOPool {
         }
     }
 
-    void printStatisticsHTML(Appendable out) throws IOException {
-	try {
-            printStatisticsHTMLImp(out);
-	} catch(Exception err) {
-            if(err instanceof IOException) throw (IOException)err;
-            IOException ioErr=new IOException();
-            ioErr.initCause(err);
-            throw ioErr;
-	}
-    }
-
-    void releaseConnection(SocketConnection connection) throws IOException {
-	try {
-            releaseConnectionImp(connection);
-	} catch(Exception err) {
-            if(err instanceof IOException) throw (IOException)err;
-            IOException ioErr=new IOException();
-            ioErr.initCause(err);
-            throw ioErr;
-	}
-    }
-
-    protected void resetConnection(Object O) {
+    protected void resetConnection(SocketConnection conn) {
     }
 
     protected void throwException(String message, Throwable allocateStackTrace) throws IOException {
-	IOException err=new IOException(message);
+        IOException err=new IOException(message);
         err.initCause(allocateStackTrace);
         throw err;
     }
