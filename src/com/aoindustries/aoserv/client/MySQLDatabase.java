@@ -5,11 +5,19 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.BufferManager;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>MySQLDatabase</code> corresponds to a unique MySQL table
@@ -18,8 +26,6 @@ import java.util.*;
  * across the entire system.
  *
  * @see  MySQLDBUser
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -227,37 +233,37 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public Package getPackage() throws SQLException, IOException {
-	Package obj=table.connector.getPackages().get(packageName);
-	if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
-	return obj;
+        Package obj=table.connector.getPackages().get(packageName);
+        if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
+        return obj;
     }
 
     public MySQLServer getMySQLServer() throws SQLException, IOException {
-	MySQLServer obj=table.connector.getMysqlServers().get(mysql_server);
-	if(obj==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
-	return obj;
+        MySQLServer obj=table.connector.getMysqlServers().get(mysql_server);
+        if(obj==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
+        return obj;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MYSQL_DATABASES;
+        return SchemaTable.TableID.MYSQL_DATABASES;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	name=result.getString(2);
-	mysql_server=result.getInt(3);
-	packageName=result.getString(4);
+        pkey=result.getInt(1);
+        name=result.getString(2);
+        mysql_server=result.getInt(3);
+        packageName=result.getString(4);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	name=in.readUTF();
-	mysql_server=in.readCompressedInt();
-	packageName=in.readUTF().intern();
+        pkey=in.readCompressedInt();
+        name=in.readUTF();
+        mysql_server=in.readCompressedInt();
+        packageName=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
@@ -284,18 +290,278 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return name;
+        return name;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(name);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(name);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
         else out.writeCompressedInt(mysql_server);
-	out.writeUTF(packageName);
+        out.writeUTF(packageName);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);
         }
+    }
+
+    public static class TableStatus {
+
+        public enum Engine {
+            MyISAM,
+            InnoDB,
+            HEAP,
+            MEMORY
+        }
+
+        public enum RowFormat {
+            Compact,
+            Dynamic,
+            Fixed
+        }
+
+        public enum Collation {
+            latin1_swedish_ci,
+            utf8_general_ci,
+            utf8_bin
+        }
+
+        private final String name;
+        private final Engine engine;
+        private final Integer version;
+        private final RowFormat rowFormat;
+        private final Long rows;
+        private final Long avgRowLength;
+        private final Long dataLength;
+        private final Long maxDataLength;
+        private final Long indexLength;
+        private final Long dataFree;
+        private final Long autoIncrement;
+        private final String createTime;
+        private final String updateTime;
+        private final String checkTime;
+        private final Collation collation;
+        private final String checksum;
+        private final String createOptions;
+        private final String comment;
+
+        public TableStatus(
+            String name,
+            Engine engine,
+            Integer version,
+            RowFormat rowFormat,
+            Long rows,
+            Long avgRowLength,
+            Long dataLength,
+            Long maxDataLength,
+            Long indexLength,
+            Long dataFree,
+            Long autoIncrement,
+            String createTime,
+            String updateTime,
+            String checkTime,
+            Collation collation,
+            String checksum,
+            String createOptions,
+            String comment
+        ) {
+            this.name = name;
+            this.engine = engine;
+            this.version = version;
+            this.rowFormat = rowFormat;
+            this.rows = rows;
+            this.avgRowLength = avgRowLength;
+            this.dataLength = dataLength;
+            this.maxDataLength = maxDataLength;
+            this.indexLength = indexLength;
+            this.dataFree = dataFree;
+            this.autoIncrement = autoIncrement;
+            this.createTime = createTime;
+            this.updateTime = updateTime;
+            this.checkTime = checkTime;
+            this.collation = collation;
+            this.checksum = checksum;
+            this.createOptions = createOptions;
+            this.comment = comment;
+        }
+
+        /**
+         * @return the name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * @return the engine
+         */
+        public Engine getEngine() {
+            return engine;
+        }
+
+        /**
+         * @return the version
+         */
+        public Integer getVersion() {
+            return version;
+        }
+
+        /**
+         * @return the rowFormat
+         */
+        public RowFormat getRowFormat() {
+            return rowFormat;
+        }
+
+        /**
+         * @return the rows
+         */
+        public Long getRows() {
+            return rows;
+        }
+
+        /**
+         * @return the avgRowLength
+         */
+        public Long getAvgRowLength() {
+            return avgRowLength;
+        }
+
+        /**
+         * @return the dataLength
+         */
+        public Long getDataLength() {
+            return dataLength;
+        }
+
+        /**
+         * @return the maxDataLength
+         */
+        public Long getMaxDataLength() {
+            return maxDataLength;
+        }
+
+        /**
+         * @return the indexLength
+         */
+        public Long getIndexLength() {
+            return indexLength;
+        }
+
+        /**
+         * @return the dataFree
+         */
+        public Long getDataFree() {
+            return dataFree;
+        }
+
+        /**
+         * @return the autoIncrement
+         */
+        public Long getAutoIncrement() {
+            return autoIncrement;
+        }
+
+        /**
+         * @return the createTime
+         */
+        public String getCreateTime() {
+            return createTime;
+        }
+
+        /**
+         * @return the updateTime
+         */
+        public String getUpdateTime() {
+            return updateTime;
+        }
+
+        /**
+         * @return the checkTime
+         */
+        public String getCheckTime() {
+            return checkTime;
+        }
+
+        /**
+         * @return the collation
+         */
+        public Collation getCollation() {
+            return collation;
+        }
+
+        /**
+         * @return the checksum
+         */
+        public String getChecksum() {
+            return checksum;
+        }
+
+        /**
+         * @return the createOptions
+         */
+        public String getCreateOptions() {
+            return createOptions;
+        }
+
+        /**
+         * @return the comment
+         */
+        public String getComment() {
+            return comment;
+        }
+    }
+
+    public List<TableStatus> getTableStatus() throws IOException, SQLException {
+        return table.connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<List<TableStatus>>() {
+                private List<TableStatus> result;
+
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_TABLE_STATUS.ordinal());
+                    out.writeCompressedInt(pkey);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.NEXT) {
+                        int size = in.readCompressedInt();
+                        List<TableStatus> tableStatuses = new ArrayList<TableStatus>(size);
+                        for(int c=0;c<size;c++) {
+                            tableStatuses.add(
+                                new TableStatus(
+                                    in.readUTF(), // name
+                                    in.readNullEnum(TableStatus.Engine.class), // engine
+                                    in.readNullInteger(), // version
+                                    in.readNullEnum(TableStatus.RowFormat.class), // rowFormat
+                                    in.readNullLong(), // rows
+                                    in.readNullLong(), // avgRowLength
+                                    in.readNullLong(), // dataLength
+                                    in.readNullLong(), // maxDataLength
+                                    in.readNullLong(), // indexLength
+                                    in.readNullLong(), // dataFree
+                                    in.readNullLong(), // autoIncrement
+                                    in.readNullUTF(), // createTime
+                                    in.readNullUTF(), // updateTime
+                                    in.readNullUTF(), // checkTime
+                                    in.readNullEnum(TableStatus.Collation.class), // collation
+                                    in.readNullUTF(), // checksum
+                                    in.readNullUTF(), // createOptions
+                                    in.readNullUTF() // comment
+                                )
+                            );
+                        }
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public List<TableStatus> afterRelease() {
+                    return result;
+                }
+            }
+        );
     }
 }

@@ -112,9 +112,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_51("1.51"),
         VERSION_1_52("1.52"),
         VERSION_1_53("1.53"),
-        VERSION_1_54("1.54");
+        VERSION_1_54("1.54"),
+        VERSION_1_55("1.55");
 
-        public static final Version CURRENT_VERSION = VERSION_1_54;
+        public static final Version CURRENT_VERSION = VERSION_1_55;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -467,7 +468,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         SET_TICKET_STATUS,
         SET_TICKET_INTERNAL_NOTES,
         REQUEST_REPLICATION_DAEMON_ACCESS,
-        REQUEST_VNC_CONSOLE_DAEMON_ACCESS
+        REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
+        GET_MYSQL_TABLE_STATUS
     }
 
     /**
