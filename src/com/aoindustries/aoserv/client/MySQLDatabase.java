@@ -308,6 +308,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     public static class TableStatus {
 
         public enum Engine {
+            CSV,
             MyISAM,
             InnoDB,
             HEAP,
@@ -552,6 +553,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
                                 )
                             );
                         }
+                        this.result = tableStatuses;
                     } else {
                         AOServProtocol.checkResult(code, in);
                         throw new IOException("Unexpected response code: "+code);
