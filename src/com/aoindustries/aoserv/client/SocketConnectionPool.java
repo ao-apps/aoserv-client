@@ -27,7 +27,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException> {
     private final TCPConnector connector;
 
     SocketConnectionPool(TCPConnector connector, Logger logger) {
-        super(SocketConnection.class, DELAY_TIME, MAX_IDLE_TIME, SocketConnectionPool.class.getName()+"?hostname=" + connector.hostname+"&port="+connector.port+"&connectAs="+connector.connectAs+"&authenticateAs="+connector.authenticateAs, connector.poolSize, connector.maxConnectionAge, logger);
+        super(DELAY_TIME, MAX_IDLE_TIME, SocketConnectionPool.class.getName()+"?hostname=" + connector.hostname+"&port="+connector.port+"&connectAs="+connector.connectAs+"&authenticateAs="+connector.authenticateAs, connector.poolSize, connector.maxConnectionAge, logger);
         this.connector=connector;
     }
 
@@ -124,9 +124,9 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException> {
     protected void resetConnection(SocketConnection conn) {
     }
 
-    protected void throwException(String message, Throwable allocateStackTrace) throws IOException {
+    protected IOException newException(String message, Throwable cause) {
         IOException err=new IOException(message);
-        err.initCause(allocateStackTrace);
-        throw err;
+        if(cause!=null) err.initCause(cause);
+        return err;
     }
 }
