@@ -469,7 +469,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         SET_TICKET_INTERNAL_NOTES,
         REQUEST_REPLICATION_DAEMON_ACCESS,
         REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
-        GET_MYSQL_TABLE_STATUS
+        GET_MYSQL_TABLE_STATUS,
+        CHECK_MYSQL_TABLES
     }
 
     /**

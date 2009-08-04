@@ -48,6 +48,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         // linux_server_accounts
         set_linux_server_account_password,
         // mysql_databases
+        check_mysql_tables,
         get_mysql_table_status,
         // mysql_server_users
         set_mysql_server_user_password,

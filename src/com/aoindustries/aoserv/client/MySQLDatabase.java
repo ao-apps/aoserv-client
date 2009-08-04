@@ -16,6 +16,9 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -305,15 +308,15 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         }
     }
 
-    public static class TableStatus {
+    public enum Engine {
+        CSV,
+        MyISAM,
+        InnoDB,
+        HEAP,
+        MEMORY
+    }
 
-        public enum Engine {
-            CSV,
-            MyISAM,
-            InnoDB,
-            HEAP,
-            MEMORY
-        }
+    public static class TableStatus {
 
         public enum RowFormat {
             Compact,
@@ -533,7 +536,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
                             tableStatuses.add(
                                 new TableStatus(
                                     in.readUTF(), // name
-                                    in.readNullEnum(TableStatus.Engine.class), // engine
+                                    in.readNullEnum(Engine.class), // engine
                                     in.readNullInteger(), // version
                                     in.readNullEnum(TableStatus.RowFormat.class), // rowFormat
                                     in.readNullLong(), // rows
@@ -565,5 +568,137 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
                 }
             }
         );
+    }
+
+    public static class CheckTableResult {
+
+        public enum MsgType {
+            status,
+            error,
+            info,
+            warning,
+            // From MySQL 5.1
+            note,
+            Error
+        }
+
+        private final String table;
+        private final long duration;
+        private final MsgType msgType;
+        private final String msgText;
+
+        public CheckTableResult(
+            String table,
+            long duration,
+            MsgType msgType,
+            String msgText
+        ) {
+            this.table = table;
+            this.duration = duration;
+            this.msgType = msgType;
+            this.msgText = msgText;
+        }
+
+        /**
+         * @return the table
+         */
+        public String getTable() {
+            return table;
+        }
+
+        /**
+         * @return the duration
+         */
+        public long getDuration() {
+            return duration;
+        }
+
+        /**
+         * @return the msgType
+         */
+        public MsgType getMsgType() {
+            return msgType;
+        }
+
+        /**
+         * @return the msgText
+         */
+        public String getMsgText() {
+            return msgText;
+        }
+    }
+
+    public List<CheckTableResult> checkTables(final Collection<String> tableNames) throws IOException, SQLException {
+        return table.connector.requestResult(
+            true,
+            new AOServConnector.ResultRequest<List<CheckTableResult>>() {
+                private List<CheckTableResult> result;
+
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.CHECK_MYSQL_TABLES.ordinal());
+                    out.writeCompressedInt(pkey);
+                    int size = tableNames.size();
+                    out.writeCompressedInt(size);
+                    int count = 0;
+                    Iterator<String> iter = tableNames.iterator();
+                    while(count<size && iter.hasNext()) {
+                        out.writeUTF(iter.next());
+                        count++;
+                    }
+                    if(count!=size) throw new ConcurrentModificationException("count!=size");
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.NEXT) {
+                        int size = in.readCompressedInt();
+                        List<CheckTableResult> checkTableResults = new ArrayList<CheckTableResult>(size);
+                        for(int c=0;c<size;c++) {
+                            checkTableResults.add(
+                                new CheckTableResult(
+                                    in.readUTF(), // table
+                                    in.readLong(), // duration
+                                    in.readNullEnum(CheckTableResult.MsgType.class), // msgType
+                                    in.readNullUTF() // msgText
+                                )
+                            );
+                        }
+                        this.result = checkTableResults;
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public List<CheckTableResult> afterRelease() {
+                    return result;
+                }
+            }
+        );
+    }
+
+    /**
+     * Determines if a name is safe for use as a table/column name, the name identifier
+     * should be enclosed with backticks (`).
+     */
+    public static boolean isSafeName(String name) {
+        // Must be a-z first, then a-z or 0-9 or _ or -
+        int len = name.length();
+        if (len == 0) return false;
+        // The first character must be [a-z] or [A-Z] or _
+        char ch = name.charAt(0);
+        if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && ch != '_') return false;
+        // The rest may have additional characters
+        for (int c = 1; c < len; c++) {
+            ch = name.charAt(c);
+            if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && (ch < '0' || ch > '9') && ch != '_' && ch != '-') return false;
+        }
+
+        // Also must not be a reserved word
+        /*int size=reservedWords.size();
+        for(int c=0;c<size;c++) {
+            if(name.equalsIgnoreCase(reservedWords.get(c).toString())) return false;
+    	}*/
+    	return true;
     }
 }
