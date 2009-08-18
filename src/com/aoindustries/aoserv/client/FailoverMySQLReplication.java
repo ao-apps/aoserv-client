@@ -31,12 +31,21 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 
     int replication;
     private int mysql_server;
+    private int monitoring_seconds_behind_low;
+    private int monitoring_seconds_behind_medium;
+    private int monitoring_seconds_behind_high;
+    private int monitoring_seconds_behind_critical;
+
 
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_REPLICATION: return Integer.valueOf(replication);
             case COLUMN_MYSQL_SERVER: return mysql_server;
+            case 3: return monitoring_seconds_behind_low==-1 ? null : monitoring_seconds_behind_low;
+            case 4: return monitoring_seconds_behind_medium==-1 ? null : monitoring_seconds_behind_medium;
+            case 5: return monitoring_seconds_behind_high==-1 ? null : monitoring_seconds_behind_high;
+            case 6: return monitoring_seconds_behind_critical==-1 ? null : monitoring_seconds_behind_critical;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -53,20 +62,48 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         return ms;
     }
 
+    public int getMonitoringSecondsBehindLow() {
+        return monitoring_seconds_behind_low;
+    }
+
+    public int getMonitoringSecondsBehindMedium() {
+        return monitoring_seconds_behind_medium;
+    }
+
+    public int getMonitoringSecondsBehindHigh() {
+        return monitoring_seconds_behind_high;
+    }
+
+    public int getMonitoringSecondsBehindCritical() {
+        return monitoring_seconds_behind_critical;
+    }
+
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.FAILOVER_MYSQL_REPLICATIONS;
+        return SchemaTable.TableID.FAILOVER_MYSQL_REPLICATIONS;
     }
 
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         replication=result.getInt(2);
         mysql_server=result.getInt(3);
+        monitoring_seconds_behind_low = result.getInt(4);
+        if(result.wasNull()) monitoring_seconds_behind_low = -1;
+        monitoring_seconds_behind_medium = result.getInt(5);
+        if(result.wasNull()) monitoring_seconds_behind_medium = -1;
+        monitoring_seconds_behind_high = result.getInt(6);
+        if(result.wasNull()) monitoring_seconds_behind_high = -1;
+        monitoring_seconds_behind_critical = result.getInt(7);
+        if(result.wasNull()) monitoring_seconds_behind_critical = -1;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        replication=in.readCompressedInt();
-        mysql_server=in.readCompressedInt();
+        pkey = in.readCompressedInt();
+        replication = in.readCompressedInt();
+        mysql_server = in.readCompressedInt();
+        monitoring_seconds_behind_low = in.readCompressedInt();
+        monitoring_seconds_behind_medium = in.readCompressedInt();
+        monitoring_seconds_behind_high = in.readCompressedInt();
+        monitoring_seconds_behind_critical = in.readCompressedInt();
     }
 
     @Override
@@ -78,8 +115,14 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(replication);
         out.writeCompressedInt(mysql_server);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_56)>=0) {
+            out.writeCompressedInt(monitoring_seconds_behind_low);
+            out.writeCompressedInt(monitoring_seconds_behind_medium);
+            out.writeCompressedInt(monitoring_seconds_behind_high);
+            out.writeCompressedInt(monitoring_seconds_behind_critical);
+        }
     }
-    
+
     final public static class SlaveStatus {
 
         final private String slaveIOState;

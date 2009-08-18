@@ -85,6 +85,16 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
         }
     }
 
+    final public boolean hasTableListener(TableListener listener) {
+        synchronized(eventLock) {
+            if(tableListeners==null) return false;
+            for(TableListenerEntry tableListenerEntry : tableListeners) {
+                if(tableListenerEntry.listener==listener) return true;
+            }
+            return false;
+        }
+    }
+
     /**
      * Registers a <code>TableListener</code> to be notified when
      * the cached data for this table expires.  The default of

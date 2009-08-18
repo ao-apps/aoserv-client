@@ -36,8 +36,11 @@ import javax.swing.SwingUtilities;
  */
 public class TCPConnector extends AOServConnector {
 
-    private static final int MAX_IDLE_LISTEN_CACHES=15*60*1000;
-    
+    /**
+     * Close cache monitor after 90 minutes of inactivity.
+     */
+    private static final long MAX_IDLE_LISTEN_CACHES = 90L*60*1000;
+
     /** Avoid repeated copies using static final int. */
     private static final int numTables = SchemaTable.TableID.values().length;
 
@@ -57,57 +60,62 @@ public class TCPConnector extends AOServConnector {
                     try {
                         AOServConnection conn=getConnection(1);
                         try {
-                            CompressedDataOutputStream out=conn.getOutputStream();
-                            out.writeCompressedInt(AOServProtocol.CommandID.LISTEN_CACHES.ordinal());
-                            out.flush();
+                            try {
+                                CompressedDataOutputStream out = conn.getOutputStream();
+                                out.writeCompressedInt(AOServProtocol.CommandID.LISTEN_CACHES.ordinal());
+                                out.flush();
 
-                            CompressedDataInputStream in=conn.getInputStream();
-                            IntList tableList=new IntArrayList();
-                            while(true) {
-                                synchronized(cacheMonitorLock) {
-                                    long currentTime=System.currentTimeMillis();
-                                    long timeSince=currentTime-connectionLastUsed;
-                                    if(timeSince<0) connectionLastUsed=currentTime;
-                                    else if(timeSince>=MAX_IDLE_LISTEN_CACHES) {
-                                        // Must also not have any invalidate listeners
-                                        boolean foundListener=false;
-                                        if(tables!=null) {
-                                            for(int c=0;c<numTables;c++) {
-                                                AOServTable table=tables.get(c);
-                                                if(table!=null) {
-                                                    List listeners=table.tableListeners;
-                                                    if(listeners!=null && listeners.size()>0) {
-                                                        foundListener=true;
-                                                        break;
+                                CompressedDataInputStream in=conn.getInputStream();
+                                IntList tableList=new IntArrayList();
+                                while(true) {
+                                    synchronized(cacheMonitorLock) {
+                                        long currentTime=System.currentTimeMillis();
+                                        long timeSince=currentTime-connectionLastUsed;
+                                        if(timeSince<0) connectionLastUsed=currentTime;
+                                        else if(timeSince>=MAX_IDLE_LISTEN_CACHES) {
+                                            // Must also not have any invalidate listeners
+                                            boolean foundListener=false;
+                                            if(tables!=null) {
+                                                for(int c=0;c<numTables;c++) {
+                                                    AOServTable table=tables.get(c);
+                                                    if(table!=null) {
+                                                        List listeners=table.tableListeners;
+                                                        if(listeners!=null && !listeners.isEmpty()) {
+                                                            foundListener=true;
+                                                            break;
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                        if(foundListener) connectionLastUsed=currentTime;
-                                        else {
-                                            runMore=false;
-                                            break;
+                                            if(foundListener) {
+                                                // Don't check again until MAX_IDLE_LISTEN_CACHES milliseconds pass
+                                                connectionLastUsed=currentTime;
+                                            } else {
+                                                runMore=false;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                tableList.clear();
-                                boolean isSynchronous = in.readBoolean();
-                                int size=in.readCompressedInt();
-                                if(size!=-1) {
-                                    for(int c=0;c<size;c++) {
-                                        int tableID=in.readCompressedInt();
-                                        tableList.add(tableID);
+                                    tableList.clear();
+                                    boolean isSynchronous = in.readBoolean();
+                                    int size = in.readCompressedInt();
+                                    if(size!=-1) {
+                                        for(int c=0;c<size;c++) {
+                                            int tableID=in.readCompressedInt();
+                                            tableList.add(tableID);
+                                        }
+                                    }
+                                    // No tables listed for "ping"
+                                    if(!tableList.isEmpty()) tablesUpdated(tableList);
+                                    if(isSynchronous) {
+                                        out.writeBoolean(true);
+                                        out.flush();
                                     }
                                 }
-                                // No tables listed for "ping"
-                                if(!tableList.isEmpty()) tablesUpdated(tableList);
-                                if(isSynchronous) {
-                                    out.writeBoolean(true);
-                                    out.flush();
-                                }
+                            } finally {
+                                conn.close();
                             }
                         } finally {
-                            conn.close();
                             releaseConnection(conn);
                         }
                     } catch(EOFException err) {
@@ -115,7 +123,7 @@ public class TCPConnector extends AOServConnector {
                         else {
                             logger.log(Level.INFO, null, err);
                             try {
-                                sleep(60000);
+                                sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
                             } catch(InterruptedException err2) {
                                 logger.log(Level.WARNING, null, err2);
                             }
@@ -125,7 +133,7 @@ public class TCPConnector extends AOServConnector {
                         else {
                             logger.log(Level.SEVERE, null, err);
                             try {
-                                sleep(60000);
+                                sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
                             } catch(InterruptedException err2) {
                                 logger.log(Level.WARNING, null, err2);
                             }

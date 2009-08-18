@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -629,6 +630,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public List<CheckTableResult> checkTables(final Collection<String> tableNames) throws IOException, SQLException {
+        if(tableNames.isEmpty()) return Collections.emptyList();
         return table.connector.requestResult(
             true,
             new AOServConnector.ResultRequest<List<CheckTableResult>>() {

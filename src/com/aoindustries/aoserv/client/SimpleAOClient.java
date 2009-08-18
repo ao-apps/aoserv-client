@@ -1678,12 +1678,13 @@ final public class SimpleAOClient {
      * @see  #waitForMySQLDatabaseRebuild
      */
     public int addMySQLDatabase(
+        Locale userLocale,
         String name,
         String mysqlServer,
         String aoServer,
         String packageName
     ) throws IllegalArgumentException, IOException, SQLException {
-        checkMySQLDatabaseName(name);
+        checkMySQLDatabaseName(userLocale, name);
         return connector.getMysqlDatabases().addMySQLDatabase(
             name,
             getMySQLServer(aoServer, mysqlServer),
@@ -2845,9 +2846,11 @@ final public class SimpleAOClient {
      * @see  #addMySQLDatabase
      */
     public void checkMySQLDatabaseName(
+        Locale userLocale,
         String name
     ) throws IllegalArgumentException, IOException, SQLException {
-        if(!connector.getMysqlDatabases().isValidDatabaseName(name)) throw new IllegalArgumentException("Invalid MySQL database name: "+name);
+        String invalidReason = connector.getMysqlDatabases().isValidDatabaseName(userLocale, name);
+        if(invalidReason!=null) throw new IllegalArgumentException(invalidReason);
     }
 
     /**
@@ -4951,11 +4954,12 @@ final public class SimpleAOClient {
      * @see  #checkMySQLDatabaseName
      */
     public boolean isMySQLDatabaseNameAvailable(
+        Locale userLocale,
         String name,
         String mysqlServer,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
-        checkMySQLDatabaseName(name);
+        checkMySQLDatabaseName(userLocale, name);
         return getMySQLServer(aoServer, mysqlServer).isMySQLDatabaseNameAvailable(name);
     }
 

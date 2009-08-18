@@ -5,10 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>DNSZone</code> is one domain hosted in the name servers.  It can have
@@ -81,15 +88,27 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	}
     }
 
-    public static String getArpaZoneForIPAddress(String ip) throws IllegalArgumentException {
+    public static String getArpaZoneForIPAddress(String ip, String netmask) throws IllegalArgumentException {
         if(!IPAddress.isValidIPAddress(ip)) throw new IllegalArgumentException("Invalid IP address: "+ip);
-        int pos=ip.indexOf('.');
-        String oct1=ip.substring(0, pos);
-        int pos2=ip.indexOf('.', pos+1);
-        String oct2=ip.substring(pos+1, pos2);
-        pos=ip.indexOf('.', pos2+1);
-        String oct3=ip.substring(pos2+1, pos);
-        return oct3+'.'+oct2+'.'+oct1+".in-addr.arpa";
+        if(netmask.equals("255.255.255.0")) {
+            int pos = ip.indexOf('.');
+            int oct1 = Integer.parseInt(ip.substring(0, pos));
+            int pos2 = ip.indexOf('.', pos+1);
+            int oct2 = Integer.parseInt(ip.substring(pos+1, pos2));
+            pos = ip.indexOf('.', pos2+1);
+            int oct3 = Integer.parseInt(ip.substring(pos2+1, pos));
+            return oct3+"."+oct2+"."+oct1+".in-addr.arpa";
+        } else if(netmask.equals("255.255.255.128")) {
+            // Hurricane Electric compatible
+            int pos = ip.indexOf('.');
+            int oct1 = Integer.parseInt(ip.substring(0, pos));
+            int pos2 = ip.indexOf('.', pos+1);
+            int oct2 = Integer.parseInt(ip.substring(pos+1, pos2));
+            pos = ip.indexOf('.', pos2+1);
+            int oct3 = Integer.parseInt(ip.substring(pos2+1, pos));
+            int oct4 = Integer.parseInt(ip.substring(pos+1));
+            return "subnet"+(oct4&128)+"."+oct3+"."+oct2+"."+oct1+".in-addr.arpa";
+        } else throw new IllegalArgumentException("Unsupported netmask: "+netmask);
     }
 
     Object getColumnImpl(int i) {
@@ -105,17 +124,17 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public static long getCurrentSerial() {
-	Calendar cal=Calendar.getInstance();
-	return
+        Calendar cal=Calendar.getInstance();
+        return
             cal.get(Calendar.YEAR)*1000000L
             + (cal.get(Calendar.MONTH)+1)*10000
             + cal.get(Calendar.DATE)*100
             + 01
-	;
+    	;
     }
 
     public List<DNSRecord> getDNSRecords() throws IOException, SQLException {
-	return table.connector.getDnsRecords().getDNSRecords(this);
+        return table.connector.getDnsRecords().getDNSRecords(this);
     }
 
     public List<DNSRecord> getDNSRecords(String domain, DNSType type) throws IOException, SQLException {
@@ -153,24 +172,24 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public String getZoneFile() throws SQLException, IOException {
-	ByteArrayOutputStream bout=new ByteArrayOutputStream();
-	PrintWriter out=new PrintWriter(bout);
-	printZoneFile(out);
-	out.flush();
-	return new String(bout.toByteArray());
+        ByteArrayOutputStream bout=new ByteArrayOutputStream();
+        PrintWriter out=new PrintWriter(bout);
+        printZoneFile(out);
+        out.flush();
+        return new String(bout.toByteArray());
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getString(1);
-	file=result.getString(2);
-	packageName=result.getString(3);
-	hostmaster=result.getString(4);
-	serial=result.getLong(5);
+        pkey=result.getString(1);
+        file=result.getString(2);
+        packageName=result.getString(3);
+        hostmaster=result.getString(4);
+        serial=result.getLong(5);
         ttl=result.getInt(6);
     }
 
     public boolean isArpa() {
-	return pkey.length()>13 && pkey.substring(pkey.length()-13).equals(".in-addr.arpa");
+        return pkey.length()>13 && pkey.substring(pkey.length()-13).equals(".in-addr.arpa");
     }
 
     private static void printRecord(PrintWriter out, String domain, int ttl, int recordTtl, String type, int mx, String destination) {
@@ -299,11 +318,11 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(file);
-	out.writeUTF(packageName);
-	out.writeUTF(hostmaster);
-	out.writeLong(serial);
+        out.writeUTF(pkey);
+        out.writeUTF(file);
+        out.writeUTF(packageName);
+        out.writeUTF(hostmaster);
+        out.writeLong(serial);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);
     }
 }

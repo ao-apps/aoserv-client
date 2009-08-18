@@ -20,11 +20,13 @@ import java.util.*;
  */
 final public class TransactionTable extends AOServTable<Integer,Transaction> {
 
-    private Map<String,Integer> accountBalances=new HashMap<String,Integer>();
-    private Map<String,Integer> confirmedAccountBalances=new HashMap<String,Integer>();
+    private long accountBalancesClearCounter = 0;
+    final private Map<String,Integer> accountBalances=new HashMap<String,Integer>();
+    private long confirmedAccountBalancesClearCounter = 0;
+    final private Map<String,Integer> confirmedAccountBalances=new HashMap<String,Integer>();
 
     TransactionTable(AOServConnector connector) {
-	super(connector, Transaction.class);
+        super(connector, Transaction.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -92,21 +94,31 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 
     @Override
     public void clearCache() {
+        System.err.println("DEBUG: TransactionTable: clearCache() called");
         super.clearCache();
-        synchronized(this) {
+        synchronized(accountBalances) {
+            accountBalancesClearCounter++;
             accountBalances.clear();
+        }
+        synchronized(confirmedAccountBalances) {
+            confirmedAccountBalancesClearCounter++;
             confirmedAccountBalances.clear();
         }
     }
 
     int getAccountBalance(String accounting) throws IOException, SQLException {
-	synchronized(this) {
-	    Integer O=accountBalances.get(accounting);
-	    if(O!=null) return O.intValue();
-	    int balance=connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting);
-	    accountBalances.put(accounting, Integer.valueOf(balance));
-	    return balance;
-	}
+        long clearCounter;
+        synchronized(accountBalances) {
+            Integer balance=accountBalances.get(accounting);
+            if(balance!=null) return balance.intValue();
+            clearCounter = accountBalancesClearCounter;
+        }
+        int balance=connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting);
+        synchronized(accountBalances) {
+            // Only put in cache when not cleared while performing query
+            if(clearCounter==accountBalancesClearCounter) accountBalances.put(accounting, Integer.valueOf(balance));
+        }
+        return balance;
     }
 
     int getAccountBalance(String accounting, long before) throws IOException, SQLException {
@@ -114,13 +126,18 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
     }
 
     int getConfirmedAccountBalance(String accounting) throws IOException, SQLException {
-	synchronized(this) {
-	    Integer O=confirmedAccountBalances.get(accounting);
-	    if(O!=null) return O.intValue();
-	    int balance=connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting);
-	    confirmedAccountBalances.put(accounting, Integer.valueOf(balance));
-	    return balance;
-	}
+        long clearCounter;
+        synchronized(confirmedAccountBalances) {
+            Integer balance=confirmedAccountBalances.get(accounting);
+            if(balance!=null) return balance.intValue();
+            clearCounter = confirmedAccountBalancesClearCounter;
+        }
+        int balance=connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting);
+        synchronized(confirmedAccountBalances) {
+            // Only put in cache when not cleared while performing query
+            if(clearCounter==confirmedAccountBalancesClearCounter) confirmedAccountBalances.put(accounting, Integer.valueOf(balance));
+        }
+        return balance;
     }
 
     int getConfirmedAccountBalance(String accounting, long before) throws IOException, SQLException {

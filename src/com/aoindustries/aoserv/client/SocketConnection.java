@@ -48,27 +48,27 @@ final public class SocketConnection extends AOServConnection {
     private final CompressedDataInputStream in;
 
     SocketConnection(TCPConnector connector) throws IOException {
-	super(connector);
-	socket=connector.getSocket();
-	isClosed=false;
-	out=new CompressedDataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        super(connector);
+        socket=connector.getSocket();
+        isClosed=false;
+        out=new CompressedDataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
-	out.writeUTF(AOServProtocol.Version.CURRENT_VERSION.getVersion());
+        out.writeUTF(AOServProtocol.Version.CURRENT_VERSION.getVersion());
         out.writeBoolean(connector.daemonServer!=null);
         if(connector.daemonServer!=null) out.writeUTF(connector.daemonServer);
-	out.writeUTF(connector.connectAs);
-	out.writeUTF(connector.authenticateAs);
-	out.writeUTF(connector.password);
-	out.writeLong(connector.id);
-	out.flush();
+        out.writeUTF(connector.connectAs);
+        out.writeUTF(connector.authenticateAs);
+        out.writeUTF(connector.password);
+        out.writeLong(connector.id);
+        out.flush();
 
-	in=new CompressedDataInputStream(new BufferedInputStream(socket.getInputStream()));
-	if(!in.readBoolean()) {
+        in=new CompressedDataInputStream(new BufferedInputStream(socket.getInputStream()));
+        if(!in.readBoolean()) {
             String message=in.readUTF();
             close();
             throw new IOException(message);
-	}
-	if(connector.id==-1) connector.id=in.readLong();
+        }
+        if(connector.id==-1) connector.id=in.readLong();
     }
 
     void close() {

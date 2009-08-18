@@ -935,7 +935,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             PausedSyncS,
             PausedSyncT,
             VerifyS,
-            VerifyT
+            VerifyT,
+            Unconfigured
         }
 
         /**
