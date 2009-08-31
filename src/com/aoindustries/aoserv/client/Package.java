@@ -334,12 +334,12 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey = result.getInt(pos++);
-	name = result.getString(pos++);
-	accounting = result.getString(pos++);
+        name = result.getString(pos++);
+        accounting = result.getString(pos++);
         package_definition = result.getInt(pos++);
-	Timestamp temp5 = result.getTimestamp(pos++);
-	created = temp5 == null ? -1 : temp5.getTime();
-	created_by = result.getString(pos++);
+        Timestamp temp5 = result.getTimestamp(pos++);
+        created = temp5 == null ? -1 : temp5.getTime();
+        created_by = result.getString(pos++);
         disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log = -1;
         email_in_burst=result.getInt(pos++);
@@ -357,16 +357,16 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     }
 
     public static boolean isValidPackageName(String packageName) {
-	return Business.isValidAccounting(packageName);
+        return Business.isValidAccounting(packageName);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	name=in.readUTF().intern();
-	accounting=in.readUTF().intern();
+        name=in.readUTF().intern();
+        accounting=in.readUTF().intern();
         package_definition=in.readCompressedInt();
-	created=in.readLong();
-	created_by=in.readUTF().intern();
+        created=in.readLong();
+        created_by=in.readUTF().intern();
         disable_log=in.readCompressedInt();
         email_in_burst=in.readCompressedInt();
         email_in_rate=in.readFloat();
@@ -378,8 +378,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-	out.writeUTF(name);
-	out.writeUTF(accounting);
+        out.writeUTF(name);
+        out.writeUTF(accounting);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
             out.writeUTF("unknown");
             out.writeCompressedInt(0);
@@ -387,8 +387,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0) {
             out.writeCompressedInt(package_definition);
         }
-	out.writeLong(created);
-	out.writeUTF(created_by);
+        out.writeLong(created);
+        out.writeUTF(created_by);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
             out.writeCompressedInt(-1);
             out.writeCompressedInt(200);

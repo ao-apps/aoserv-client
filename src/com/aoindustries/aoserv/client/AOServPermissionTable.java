@@ -14,8 +14,6 @@ import java.sql.SQLException;
  *
  * @see AOServPermission
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class AOServPermissionTable extends GlobalTableStringKey<AOServPermission> {

@@ -5,10 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -42,29 +43,29 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     }
 
     public HttpdServer getHttpdServer() throws SQLException, IOException {
-	HttpdServer obj=table.connector.getHttpdServers().get(httpd_server);
-	if(obj==null) throw new SQLException("Unable to find HttpdServer: "+httpd_server);
-	return obj;
+        HttpdServer obj=table.connector.getHttpdServers().get(httpd_server);
+        if(obj==null) throw new SQLException("Unable to find HttpdServer: "+httpd_server);
+        return obj;
     }
 
     public NetBind getNetBind() throws SQLException, IOException {
-	NetBind obj=table.connector.getNetBinds().get(pkey);
-	if(obj==null) throw new SQLException("Unable to find NetBind: "+pkey);
-	return obj;
+        NetBind obj=table.connector.getNetBinds().get(pkey);
+        if(obj==null) throw new SQLException("Unable to find NetBind: "+pkey);
+        return obj;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_BINDS;
+        return SchemaTable.TableID.HTTPD_BINDS;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	httpd_server=result.getInt(2);
+        pkey=result.getInt(1);
+        httpd_server=result.getInt(2);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	httpd_server=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        httpd_server=in.readCompressedInt();
     }
 
     @Override
@@ -75,7 +76,7 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(httpd_server);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(httpd_server);
     }
 }
