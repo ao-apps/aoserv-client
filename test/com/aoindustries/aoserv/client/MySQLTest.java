@@ -299,7 +299,7 @@ public class MySQLTest extends TestCase {
         for(MySQLDatabase md : mysqlDatabases) {
             System.out.print('.');
             MySQLServerUser msu = getMySQLServerUser(md.getMySQLServer());
-            md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+            md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
             md.getMySQLServer().getAOServer().waitForMySQLDBUserRebuild();
         }
         System.out.println(" Done");
