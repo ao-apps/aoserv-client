@@ -78,6 +78,8 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         EMAIL_PIPES,
         EMAIL_SMTP_RELAY_TYPES,
         EMAIL_SMTP_RELAYS,
+        EMAIL_SMTP_SMART_HOST_DOMAINS,
+        EMAIL_SMTP_SMART_HOSTS,
         EMAIL_SPAMASSASSIN_INTEGRATION_MODES,
         ENCRYPTION_KEYS,
         EXPENSE_CATEGORIES,

@@ -364,13 +364,25 @@ abstract public class AOServConnector {
         return emailSmtpRelays;
     }
 
+    private final EmailSmtpSmartHostDomainTable emailSmtpSmartHostDomainTable;
+    public EmailSmtpSmartHostDomainTable getEmailSmtpSmartHostDomains() {
+        return emailSmtpSmartHostDomainTable;
+    }
+
+    private final EmailSmtpSmartHostTable emailSmtpSmartHostTable;
+    public EmailSmtpSmartHostTable getEmailSmtpSmartHosts() {
+        return emailSmtpSmartHostTable;
+    }
+
     private final EmailSpamAssassinIntegrationModeTable emailSpamAssassinIntegrationModes;
     public EmailSpamAssassinIntegrationModeTable getEmailSpamAssassinIntegrationModes() {
         return emailSpamAssassinIntegrationModes;
     }
 
     private final EncryptionKeyTable encryptionKeys;
-    public EncryptionKeyTable getEncryptionKeys() {return encryptionKeys;}
+    public EncryptionKeyTable getEncryptionKeys() {
+        return encryptionKeys;
+    }
 
     private final ExpenseCategoryTable expenseCategories;
     public ExpenseCategoryTable getExpenseCategories() {
@@ -1009,6 +1021,8 @@ abstract public class AOServConnector {
         newTables.add(emailPipes=new EmailPipeTable(this));
         newTables.add(emailSmtpRelayTypes=new EmailSmtpRelayTypeTable(this));
         newTables.add(emailSmtpRelays=new EmailSmtpRelayTable(this));
+        newTables.add(emailSmtpSmartHostDomainTable=new EmailSmtpSmartHostDomainTable(this));
+        newTables.add(emailSmtpSmartHostTable=new EmailSmtpSmartHostTable(this));
         newTables.add(emailSpamAssassinIntegrationModes=new EmailSpamAssassinIntegrationModeTable(this));
         newTables.add(encryptionKeys=new EncryptionKeyTable(this));
         newTables.add(expenseCategories=new ExpenseCategoryTable(this));
