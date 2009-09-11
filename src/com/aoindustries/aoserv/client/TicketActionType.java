@@ -75,7 +75,7 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".toString");
+        return ApplicationResources.getMessage(userLocale, "TicketActionType."+pkey+".toString");
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
@@ -88,11 +88,11 @@ final public class TicketActionType extends GlobalObjectStringKey<TicketActionTy
      */
     String generateSummary(AOServConnector connector, Locale userLocale, String oldValue, String newValue) throws IOException, SQLException {
         if(oldValue==null) {
-            if(newValue==null) return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.null.null");
-            return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.null.notNull", newValue);
+            if(newValue==null) return ApplicationResources.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.null.null");
+            return ApplicationResources.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.null.notNull", newValue);
         } else {
-            if(newValue==null) return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.notNull.null", oldValue);
-            return ApplicationResourcesAccessor.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.notNull.notNull", oldValue, newValue);
+            if(newValue==null) return ApplicationResources.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.notNull.null", oldValue);
+            return ApplicationResources.getMessage(userLocale, "TicketActionType."+pkey+".generatedSummary.notNull.notNull", oldValue, newValue);
         }
     }
 }

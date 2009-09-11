@@ -91,7 +91,7 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
 
     @Override
     String toStringImpl(Locale userLocale) throws IOException, SQLException {
-        return ApplicationResourcesAccessor.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");
+        return ApplicationResources.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

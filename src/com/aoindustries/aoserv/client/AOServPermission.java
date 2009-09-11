@@ -76,7 +76,7 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
          * Gets the permission display value in the provided locale.
          */
         public String toString(Locale userLocale) {
-            return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+name()+".toString");
+            return ApplicationResources.getMessage(userLocale, "AOServPermission."+name()+".toString");
         }
     }
 
@@ -93,14 +93,14 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+pkey+".toString");
+        return ApplicationResources.getMessage(userLocale, "AOServPermission."+pkey+".toString");
     }
 
     /**
      * Gets the locale-specific description of this permission.
      */
     public String getDescription(Locale userLocale) {
-        return ApplicationResourcesAccessor.getMessage(userLocale, "AOServPermission."+pkey+".description");
+        return ApplicationResources.getMessage(userLocale, "AOServPermission."+pkey+".description");
     }
 
     public SchemaTable.TableID getTableID() {

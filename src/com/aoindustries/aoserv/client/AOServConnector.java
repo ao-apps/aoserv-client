@@ -2205,7 +2205,7 @@ abstract public class AOServConnector {
             // Then send the events
             for(int c=0;c<size;c++) {
                 int tableID=invalidateList.getInt(c);
-                System.err.println("DEBUG: AOServConnector: tablesUpdated: "+tableID+": "+SchemaTable.TableID.values()[tableID]);
+                //System.err.println("DEBUG: AOServConnector: tablesUpdated: "+tableID+": "+SchemaTable.TableID.values()[tableID]);
                 tables.get(tableID).tableUpdated();
             }
         }

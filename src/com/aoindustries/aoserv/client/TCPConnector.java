@@ -202,7 +202,7 @@ public class TCPConnector extends AOServConnector {
 
     protected final AOServConnection getConnection(int maxConnections) throws IOException {
         if(SwingUtilities.isEventDispatchThread()) {
-            logger.log(Level.WARNING, null, new RuntimeException(ApplicationResourcesAccessor.getMessage(Locale.getDefault(), "TCPConnector.getConnection.isEventDispatchThread")));
+            logger.log(Level.WARNING, null, new RuntimeException(ApplicationResources.getMessage(Locale.getDefault(), "TCPConnector.getConnection.isEventDispatchThread")));
         }
         startCacheMonitor();
     	return pool.getConnection(maxConnections);

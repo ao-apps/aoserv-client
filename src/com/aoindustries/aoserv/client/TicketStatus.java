@@ -77,14 +77,14 @@ final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> impl
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResourcesAccessor.getMessage(userLocale, "TicketStatus."+pkey+".toString");
+        return ApplicationResources.getMessage(userLocale, "TicketStatus."+pkey+".toString");
     }
 
     /**
      * Localized description.
      */
     public String getDescription(Locale userLocale) {
-        return ApplicationResourcesAccessor.getMessage(userLocale, "TicketStatus."+pkey+".description");
+        return ApplicationResources.getMessage(userLocale, "TicketStatus."+pkey+".description");
     }
 
     public int compareTo(TicketStatus o) {

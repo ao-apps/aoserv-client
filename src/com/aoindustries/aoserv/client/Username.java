@@ -278,43 +278,43 @@ final public class Username extends CachedObjectStringKey<Username> implements P
      */
     public static String checkUsername(String username, Locale locale) {
 	int len = username.length();
-        if(len==0) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.noUsername");
-	if(len > MAX_LENGTH) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.tooLong");
+        if(len==0) return ApplicationResources.getMessage(locale, "Username.checkUsername.noUsername");
+	if(len > MAX_LENGTH) return ApplicationResources.getMessage(locale, "Username.checkUsername.tooLong");
 
         // The first character must be [a-z]
 	char ch = username.charAt(0);
-	if (ch < 'a' || ch > 'z') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.startAToZ");
+	if (ch < 'a' || ch > 'z') return ApplicationResources.getMessage(locale, "Username.checkUsername.startAToZ");
 
         // The rest may have additional characters
 	for (int c = 1; c < len; c++) {
             ch = username.charAt(c);
-            if(ch==' ') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.noSpace");
-            if(ch<=0x21 || ch>0x7f) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.specialCharacter");
-            if(ch>='A' && ch<='Z') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.noCapital");
-            if(ch==',') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.comma");
-            if(ch==':') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.colon");
-            if(ch=='(') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.leftParen");
-            if(ch==')') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.rightParen");
-            if(ch=='[') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.leftSquare");
-            if(ch==']') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.rightSquare");
-            if(ch=='\'') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.apostrophe");
-            if(ch=='"') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.quote");
-            if(ch=='|') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.verticalBar");
-            if(ch=='&') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.ampersand");
-            if(ch==';') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.semicolon");
-            if(ch=='\\') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.backslash");
-            if(ch=='/') return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.slash");
+            if(ch==' ') return ApplicationResources.getMessage(locale, "Username.checkUsername.noSpace");
+            if(ch<=0x21 || ch>0x7f) return ApplicationResources.getMessage(locale, "Username.checkUsername.specialCharacter");
+            if(ch>='A' && ch<='Z') return ApplicationResources.getMessage(locale, "Username.checkUsername.noCapital");
+            if(ch==',') return ApplicationResources.getMessage(locale, "Username.checkUsername.comma");
+            if(ch==':') return ApplicationResources.getMessage(locale, "Username.checkUsername.colon");
+            if(ch=='(') return ApplicationResources.getMessage(locale, "Username.checkUsername.leftParen");
+            if(ch==')') return ApplicationResources.getMessage(locale, "Username.checkUsername.rightParen");
+            if(ch=='[') return ApplicationResources.getMessage(locale, "Username.checkUsername.leftSquare");
+            if(ch==']') return ApplicationResources.getMessage(locale, "Username.checkUsername.rightSquare");
+            if(ch=='\'') return ApplicationResources.getMessage(locale, "Username.checkUsername.apostrophe");
+            if(ch=='"') return ApplicationResources.getMessage(locale, "Username.checkUsername.quote");
+            if(ch=='|') return ApplicationResources.getMessage(locale, "Username.checkUsername.verticalBar");
+            if(ch=='&') return ApplicationResources.getMessage(locale, "Username.checkUsername.ampersand");
+            if(ch==';') return ApplicationResources.getMessage(locale, "Username.checkUsername.semicolon");
+            if(ch=='\\') return ApplicationResources.getMessage(locale, "Username.checkUsername.backslash");
+            if(ch=='/') return ApplicationResources.getMessage(locale, "Username.checkUsername.slash");
 	}
         
         // More strict at sign control is required for user@domain structure in Cyrus virtdomains.
         int atPos = username.indexOf('@');
         if(atPos!=-1) {
-            if(atPos==0) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.startWithAt");
-            if(atPos==(len-1)) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.endWithAt");
+            if(atPos==0) return ApplicationResources.getMessage(locale, "Username.checkUsername.startWithAt");
+            if(atPos==(len-1)) return ApplicationResources.getMessage(locale, "Username.checkUsername.endWithAt");
             int atPos2 = username.indexOf('@', atPos+1);
-            if(atPos2!=-1) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.onlyOneAt");
-            if(username.startsWith("cyrus@")) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.startWithCyrusAt");
-            if(username.endsWith("@default")) return ApplicationResourcesAccessor.getMessage(locale, "Username.checkUsername.endWithAtDefault");
+            if(atPos2!=-1) return ApplicationResources.getMessage(locale, "Username.checkUsername.onlyOneAt");
+            if(username.startsWith("cyrus@")) return ApplicationResources.getMessage(locale, "Username.checkUsername.startWithCyrusAt");
+            if(username.endsWith("@default")) return ApplicationResources.getMessage(locale, "Username.checkUsername.endWithAtDefault");
         }
 
         return null;

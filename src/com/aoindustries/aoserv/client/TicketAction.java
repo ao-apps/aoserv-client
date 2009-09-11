@@ -265,8 +265,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         } else if(action_type.equals(TicketActionType.ASSIGN)) {
             BusinessAdministrator oldAssignedTo = getOldAssignedTo();
             BusinessAdministrator newAssignedTo = getNewAssignedTo();
-            oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? ApplicationResourcesAccessor.getMessage(userLocale, "TicketAction.old_assigned_to.filtered") : null;
-            newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? ApplicationResourcesAccessor.getMessage(userLocale, "TicketAction.new_assigned_to.filtered") : null;
+            oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? ApplicationResources.getMessage(userLocale, "TicketAction.old_assigned_to.filtered") : null;
+            newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? ApplicationResources.getMessage(userLocale, "TicketAction.new_assigned_to.filtered") : null;
         } else if(action_type.equals(TicketActionType.SET_CATEGORY)) {
             TicketCategory oldCategory = getOldCategory();
             TicketCategory newCategory = getNewCategory();

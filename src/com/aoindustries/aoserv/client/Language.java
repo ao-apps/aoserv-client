@@ -34,7 +34,7 @@ final public class Language extends GlobalObjectStringKey<Language> {
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResourcesAccessor.getMessage(userLocale, "Language."+pkey+".toString");
+        return ApplicationResources.getMessage(userLocale, "Language."+pkey+".toString");
     }
 
     public String getCode() {
