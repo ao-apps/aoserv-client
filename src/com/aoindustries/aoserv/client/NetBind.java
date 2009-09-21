@@ -7,12 +7,20 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * All listening network ports must be registered as a <code>NetBind</code>.  The
@@ -46,6 +54,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     String app_protocol;
     private boolean open_firewall;
     private boolean monitoring_enabled;
+    private String monitoring_parameters;
 
     public Protocol getAppProtocol() throws SQLException, IOException {
 	Protocol obj=table.connector.getProtocols().get(app_protocol);
@@ -64,6 +73,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
             case 6: return app_protocol;
             case 7: return open_firewall?Boolean.TRUE:Boolean.FALSE;
             case 8: return monitoring_enabled?Boolean.TRUE:Boolean.FALSE;
+            case 9: return monitoring_parameters;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -296,10 +306,66 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         app_protocol=result.getString(7);
         open_firewall=result.getBoolean(8);
         monitoring_enabled=result.getBoolean(9);
+        monitoring_parameters=result.getString(10);
+        getMonitoringParametersCache = null;
     }
 
     public boolean isFirewallOpen() {
         return open_firewall;
+    }
+
+    /**
+     * Encodes the parameters.  Will not return null.
+     */
+    public static String encodeParameters(Map<String,String> monitoringParameters) {
+        try {
+            StringBuilder SB = new StringBuilder();
+            for(Map.Entry<String,String> entry : monitoringParameters.entrySet()) {
+                String name = entry.getKey();
+                String value = entry.getValue();
+                if(SB.length()>0) SB.append('&');
+                SB.append(URLEncoder.encode(name, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
+            }
+            return SB.toString();
+        } catch(UnsupportedEncodingException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public static Map<String,String> decodeParameters(String monitoringParameters) {
+        if(monitoringParameters==null) return Collections.emptyMap();
+        else {
+            try {
+                String[] nameValues = StringUtility.splitString(monitoringParameters, '&');
+                Map<String,String> newMap = new HashMap<String,String>(nameValues.length*4/3+1);
+                for(String nameValue : nameValues) {
+                    String name;
+                    String value;
+                    int pos = nameValue.indexOf('=');
+                    if(pos==-1) {
+                        name = URLDecoder.decode(nameValue, "UTF-8");
+                        value = "";
+                    } else {
+                        name = URLDecoder.decode(nameValue.substring(0, pos), "UTF-8");
+                        value = URLDecoder.decode(nameValue.substring(pos+1), "UTF-8");
+                    }
+                    if(name.length()>0 || value.length()>0) newMap.put(name, value);
+                }
+                return newMap;
+            } catch(UnsupportedEncodingException err) {
+                throw new WrappedException(err);
+            }
+        }
+    }
+
+    private volatile Map<String,String> getMonitoringParametersCache;
+
+    /**
+     * Gets the unmodifiable map of parameters for this bind.
+     */
+    public Map<String,String> getMonitoringParameters() {
+        if(getMonitoringParametersCache==null) getMonitoringParametersCache=Collections.unmodifiableMap(decodeParameters(monitoring_parameters));
+        return getMonitoringParametersCache;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -312,6 +378,8 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         app_protocol=in.readUTF().intern();
         open_firewall=in.readBoolean();
         monitoring_enabled=in.readBoolean();
+        monitoring_parameters=in.readNullUTF();
+        getMonitoringParametersCache = null;
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
@@ -431,5 +499,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
             out.writeNullUTF(null);
             out.writeNullUTF(null);
         }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_58)>=0) out.writeNullUTF(monitoring_parameters);
     }
 }

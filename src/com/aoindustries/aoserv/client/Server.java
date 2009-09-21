@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,11 +17,9 @@ import java.util.Locale;
 /**
  * A <code>Server</code> stores the details about a single, physical server.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class Server extends CachedObjectIntegerKey<Server> {
+final public class Server extends CachedObjectIntegerKey<Server> implements Comparable<Server> {
 
     static final int
         COLUMN_PKEY=0,
@@ -35,9 +34,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
      */
     public static final String HIDDEN_PASSWORD="*";
 
-    String
-        farm
-    ;
+    String farm;
     private String description;
     private int operating_system_version;
     private int packageId;
@@ -99,7 +96,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     public List<Business> getBusinesses() throws IOException, SQLException {
-	return table.connector.getBusinessServers().getBusinesses(this);
+        return table.connector.getBusinessServers().getBusinesses(this);
     }
 
     Object getColumnImpl(int i) {
@@ -138,9 +135,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     public ServerFarm getServerFarm() throws SQLException, IOException {
-	ServerFarm sf=table.connector.getServerFarms().get(farm);
-	if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
-	return sf;
+        ServerFarm sf=table.connector.getServerFarms().get(farm);
+        if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
+        return sf;
     }
 
     public String getDescription() {
@@ -148,7 +145,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.SERVERS;
+        return SchemaTable.TableID.SERVERS;
     }
 
     public void init(ResultSet result) throws SQLException {
@@ -242,11 +239,11 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     public List<NetBind> getNetBinds() throws IOException, SQLException {
-	return table.connector.getNetBinds().getNetBinds(this);
+        return table.connector.getNetBinds().getNetBinds(this);
     }
 
     public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
-	return table.connector.getNetBinds().getNetBinds(this, ipAddress);
+        return table.connector.getNetBinds().getNetBinds(this, ipAddress);
     }
 
     public List<NetBind> getNetBinds(Protocol protocol) throws IOException, SQLException {
@@ -262,17 +259,31 @@ final public class Server extends CachedObjectIntegerKey<Server> {
     }
 
     public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-	return table.connector.getIpAddresses().getIPAddresses(this);
+        return table.connector.getIpAddresses().getIPAddresses(this);
     }
 
     public IPAddress getAvailableIPAddress() throws SQLException, IOException {
-	for(IPAddress ip : getIPAddresses()) {
+        for(IPAddress ip : getIPAddresses()) {
             if(
                 ip.isAvailable()
                 && ip.isAlias()
                 && !ip.getNetDevice().getNetDeviceID().isLoopback()
             ) return ip;
-	}
-	return null;
+        }
+        return null;
+    }
+
+    public int compareTo(Server o) {
+        try {
+            int diff = getPackage().compareTo(o.getPackage());
+            if(diff!=0) return diff;
+            diff = name.compareToIgnoreCase(o.name);
+            if(diff!=0) return diff;
+            return name.compareTo(o.name);
+        } catch(IOException err) {
+            throw new WrappedException(err);
+        } catch(SQLException err) {
+            throw new WrappedException(err);
+        }
     }
 }

@@ -21,7 +21,7 @@ import java.util.*;
 final public class ServerTable extends CachedTableIntegerKey<Server> {
 
     ServerTable(AOServConnector connector) {
-	super(connector, Server.class);
+        super(connector, Server.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {

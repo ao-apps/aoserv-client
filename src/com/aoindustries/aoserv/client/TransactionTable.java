@@ -94,7 +94,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 
     @Override
     public void clearCache() {
-        System.err.println("DEBUG: TransactionTable: clearCache() called");
+        // System.err.println("DEBUG: TransactionTable: clearCache() called");
         super.clearCache();
         synchronized(accountBalances) {
             accountBalancesClearCounter++;

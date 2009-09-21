@@ -24,11 +24,9 @@ import java.util.List;
  * @see  Business
  * @see  PackageDefinition
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class Package extends CachedObjectIntegerKey<Package> implements Disablable {
+final public class Package extends CachedObjectIntegerKey<Package> implements Disablable, Comparable<Package> {
 
     static final int
         COLUMN_PKEY=0,
@@ -410,5 +408,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
             out.writeCompressedInt(email_relay_burst);
             out.writeFloat(email_relay_rate);
         }        
+    }
+
+    public int compareTo(Package o) {
+        int diff = name.compareToIgnoreCase(o.name);
+        if(diff!=0) return diff;
+        return name.compareTo(o.name);
     }
 }

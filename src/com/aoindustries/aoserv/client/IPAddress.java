@@ -140,7 +140,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     }
 
     public List<NetBind> getNetBinds() throws IOException, SQLException {
-	return table.connector.getNetBinds().getNetBinds(this);
+        return table.connector.getNetBinds().getNetBinds(this);
     }
 
     public NetDevice getNetDevice() throws SQLException, IOException {

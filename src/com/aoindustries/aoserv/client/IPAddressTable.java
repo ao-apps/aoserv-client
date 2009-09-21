@@ -5,22 +5,22 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  IPAddress
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 
     IPAddressTable(AOServConnector connector) {
-	super(connector, IPAddress.class);
+        super(connector, IPAddress.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -39,18 +39,18 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
     }
 
     IPAddress getIPAddress(NetDevice device, String ipAddress) throws IOException, SQLException {
-	int pkey=device.getPkey();
+        int pkey=device.getPkey();
 
-	List<IPAddress> cached = getRows();
-	int len = cached.size();
-	for (int c = 0; c < len; c++) {
+        List<IPAddress> cached = getRows();
+        int len = cached.size();
+        for (int c = 0; c < len; c++) {
             IPAddress address=cached.get(c);
             if(
                 address.net_device==pkey
                 && address.ip_address.equals(ipAddress)
             ) return address;
-	}
-	return null;
+        }
+        return null;
     }
 
     List<IPAddress> getIPAddresses(NetDevice device) throws IOException, SQLException {
@@ -58,14 +58,14 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
     }
 
     public List<IPAddress> getIPAddresses(String ipAddress) throws IOException, SQLException {
-	List<IPAddress> cached = getRows();
-	int len = cached.size();
+        List<IPAddress> cached = getRows();
+        int len = cached.size();
         List<IPAddress> matches=new ArrayList<IPAddress>(len);
-	for (int c = 0; c < len; c++) {
+        for (int c = 0; c < len; c++) {
             IPAddress address=cached.get(c);
             if(address.ip_address.equals(ipAddress)) matches.add(address);
-	}
-	return matches;
+        }
+        return matches;
     }
 
     List<IPAddress> getIPAddresses(Package pack) throws IOException, SQLException {
@@ -75,24 +75,27 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
     List<IPAddress> getIPAddresses(Server se) throws IOException, SQLException {
         int sePKey=se.pkey;
 
-	List<IPAddress> cached = getRows();
-	int len = cached.size();
+        List<IPAddress> cached = getRows();
+        int len = cached.size();
         List<IPAddress> matches=new ArrayList<IPAddress>(len);
-	for (int c = 0; c < len; c++) {
-            IPAddress address=cached.get(c);
-            if(address.net_device==-1 || address.getNetDevice().server==sePKey) matches.add(address);
-	}
-	return matches;
+        for(IPAddress address : cached) {
+            if(address.net_device==-1 && IPAddress.WILDCARD_IP.equals(address.ip_address)) matches.add(address);
+            else {
+                NetDevice netDevice = address.getNetDevice();
+                if(netDevice!=null && netDevice.server==sePKey) matches.add(address);
+            }
+        }
+        return matches;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.IP_ADDRESSES;
+        return SchemaTable.TableID.IP_ADDRESSES;
     }
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-	String command=args[0];
-	if(command.equalsIgnoreCase(AOSHCommand.CHECK_IP_ADDRESS)) {
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.CHECK_IP_ADDRESS)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_IP_ADDRESS, args, 1, err)) {
                 try {
                     SimpleAOClient.checkIPAddress(args[1]);
@@ -104,7 +107,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.IS_IP_ADDRESS_USED)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.IS_IP_ADDRESS_USED)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_IP_ADDRESS_USED, args, 3, err)) {
                 out.println(
                     connector.getSimpleAOClient().isIPAddressUsed(
@@ -116,7 +119,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.MOVE_IP_ADDRESS)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.MOVE_IP_ADDRESS)) {
             if(AOSH.checkParamCount(AOSHCommand.MOVE_IP_ADDRESS, args, 4, err)) {
                 connector.getSimpleAOClient().moveIPAddress(
                     args[1],
@@ -126,7 +129,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_DHCP_ADDRESS)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_DHCP_ADDRESS)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_DHCP_ADDRESS, args, 2, err)) {
                 connector.getSimpleAOClient().setIPAddressDHCPAddress(
                     AOSH.parseInt(args[1], "ip_address"),
@@ -134,7 +137,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_HOSTNAME)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_HOSTNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_HOSTNAME, args, 4, err)) {
                 connector.getSimpleAOClient().setIPAddressHostname(
                     args[1],
@@ -144,7 +147,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_PACKAGE)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_PACKAGE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_PACKAGE, args, 4, err)) {
                 connector.getSimpleAOClient().setIPAddressPackage(
                     args[1],
@@ -154,7 +157,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
                 );
             }
             return true;
-	}
-	return false;
+        }
+        return false;
     }
 }

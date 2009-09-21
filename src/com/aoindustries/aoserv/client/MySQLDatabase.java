@@ -327,8 +327,9 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
         public enum Collation {
             latin1_swedish_ci,
+            utf8_bin,
             utf8_general_ci,
-            utf8_bin
+            utf8_unicode_ci
         }
 
         private final String name;

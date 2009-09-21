@@ -1996,6 +1996,22 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
     
     /**
+     * Checks a port from the daemon's point of view.  This is required for monitoring of private and loopback IPs.
+     */
+    public String checkPort(String ipAddress, int port, String netProtocol, String appProtocol, Map<String,String> monitoringParameters) throws IOException, SQLException {
+        return table.connector.requestStringQuery(
+            true,
+            AOServProtocol.CommandID.AO_SERVER_CHECK_PORT,
+            pkey,
+            ipAddress,
+            port,
+            netProtocol,
+            appProtocol,
+            NetBind.encodeParameters(monitoringParameters)
+        );
+    }
+
+    /**
      * Gets the current system time in milliseconds.
      */
     public long getSystemTimeMillis() throws IOException, SQLException {

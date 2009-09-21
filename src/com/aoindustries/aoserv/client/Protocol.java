@@ -5,9 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>Protocol</code> represents one type of application
@@ -15,8 +17,6 @@ import java.sql.*;
  * in protocol-specific ways.
  *
  * @see  NetBind
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -48,8 +48,10 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         INTERSERVER="InterServer",
         JMX="JMX",
         JNP="JNP",
+        MYSQL="MySQL",
         NTALK="ntalk",
         POP3="POP3",
+        POSTGRESQL="PostgreSQL",
         RMI="RMI",
         SIEVE="sieve",
         SIMAP="SIMAP",
