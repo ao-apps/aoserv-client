@@ -12,6 +12,7 @@ import com.aoindustries.table.TableListener;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -1551,7 +1552,7 @@ abstract public class AOServConnector {
     final <T> T requestResult(boolean allowRetry, ResultRequest<T> resultRequest) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -1581,16 +1582,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final boolean requestBooleanQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -1623,16 +1627,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final boolean requestBooleanQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 boolean result;
                 IntList invalidateList;
@@ -1673,16 +1680,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final int requestIntQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -1715,16 +1725,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final int requestIntQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 int result;
                 IntList invalidateList;
@@ -1765,16 +1778,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final long requestLongQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -1807,16 +1823,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final short requestShortQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -1849,16 +1868,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final short requestShortQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 short result;
                 IntList invalidateList;
@@ -1899,16 +1921,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final String requestStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -1941,10 +1966,13 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     /**
@@ -1953,7 +1981,7 @@ abstract public class AOServConnector {
     final String requestLongStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -1986,10 +2014,13 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     /**
@@ -1999,7 +2030,7 @@ abstract public class AOServConnector {
     final String requestNullLongStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -2032,10 +2063,13 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     /**
@@ -2065,7 +2099,7 @@ abstract public class AOServConnector {
     final void requestUpdate(boolean allowRetry, UpdateRequest updateRequest) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -2096,16 +2130,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final void requestUpdate(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 AOServConnection connection=getConnection(1);
                 try {
@@ -2137,16 +2174,19 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
 
     final void requestUpdateIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
         int attempt = 1;
         int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-        while(true) {
+        while(!Thread.interrupted()) {
             try {
                 IntList invalidateList;
                 AOServConnection connection=getConnection(1);
@@ -2184,10 +2224,13 @@ abstract public class AOServConnector {
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                InterruptedIOException ioErr = new InterruptedIOException();
+                ioErr.initCause(err);
+                throw ioErr;
             }
             attempt++;
         }
+        throw new InterruptedIOException();
     }
     
     public abstract AOServConnector switchUsers(String username) throws IOException;
