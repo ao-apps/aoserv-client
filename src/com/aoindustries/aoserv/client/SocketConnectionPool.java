@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.util.EncodingUtils;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
-final class SocketConnectionPool extends AOPool<SocketConnection,IOException> {
+final class SocketConnectionPool extends AOPool<SocketConnection,IOException,InterruptedIOException> {
 
     public static final int DELAY_TIME=3*60*1000;
     public static final int MAX_IDLE_TIME=15*60*1000;
@@ -35,7 +36,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException> {
         conn.close();
     }
 
-    protected SocketConnection getConnectionObject() throws IOException {
+    protected SocketConnection getConnectionObject() throws InterruptedIOException, IOException {
         return new SocketConnection(connector);
     }
 
@@ -126,6 +127,12 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException> {
 
     protected IOException newException(String message, Throwable cause) {
         IOException err=new IOException(message);
+        if(cause!=null) err.initCause(cause);
+        return err;
+    }
+
+    protected InterruptedIOException newInterruptedException(String message, Throwable cause) {
+        InterruptedIOException err = new InterruptedIOException(message);
         if(cause!=null) err.initCause(cause);
         return err;
     }

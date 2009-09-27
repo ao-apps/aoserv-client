@@ -13,6 +13,7 @@ import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -200,7 +201,7 @@ public class TCPConnector extends AOServConnector {
         }
     }
 
-    protected final AOServConnection getConnection(int maxConnections) throws IOException {
+    protected final AOServConnection getConnection(int maxConnections) throws InterruptedIOException, IOException {
         if(SwingUtilities.isEventDispatchThread()) {
             logger.log(Level.WARNING, null, new RuntimeException(ApplicationResources.getMessage(Locale.getDefault(), "TCPConnector.getConnection.isEventDispatchThread")));
         }
@@ -212,7 +213,8 @@ public class TCPConnector extends AOServConnector {
         return PROTOCOL;
     }
 
-    Socket getSocket() throws IOException {
+    Socket getSocket() throws InterruptedIOException, IOException {
+        if(Thread.interrupted()) throw new InterruptedIOException();
         Socket socket=new Socket();
         socket.setKeepAlive(true);
         socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);

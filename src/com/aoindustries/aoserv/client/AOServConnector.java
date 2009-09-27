@@ -1203,11 +1203,12 @@ abstract public class AOServConnector {
      *
      * @return  the connection to the server
      *
+     * @exception  InterruptedIOException  if interrupted while connecting
      * @exception  IOException  if unable to connect to the server
      *
      * @see  #releaseConnection
      */
-    protected abstract AOServConnection getConnection(int maxConnections) throws IOException;
+    protected abstract AOServConnection getConnection(int maxConnections) throws InterruptedIOException, IOException;
 
     /**
      * Gets the default <code>AOServConnector</code> as defined in the
@@ -1574,6 +1575,8 @@ abstract public class AOServConnector {
                 return resultRequest.afterRelease();
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -1619,6 +1622,8 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -1672,6 +1677,8 @@ abstract public class AOServConnector {
                 return result;
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -1717,6 +1724,8 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -1770,6 +1779,8 @@ abstract public class AOServConnector {
                 return result;
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -1815,6 +1826,8 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -1860,6 +1873,8 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -1913,6 +1928,8 @@ abstract public class AOServConnector {
                 return result;
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -1958,6 +1975,8 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -2006,6 +2025,8 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -2055,6 +2076,8 @@ abstract public class AOServConnector {
                 }
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -2122,6 +2145,8 @@ abstract public class AOServConnector {
                 return;
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -2166,6 +2191,8 @@ abstract public class AOServConnector {
                 return;
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
@@ -2216,6 +2243,8 @@ abstract public class AOServConnector {
                 return;
             } catch(RuntimeException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+            } catch(InterruptedIOException err) {
+                throw err;
             } catch(IOException err) {
                 if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
