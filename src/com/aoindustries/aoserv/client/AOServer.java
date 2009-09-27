@@ -11,6 +11,7 @@ import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -502,7 +503,9 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                         try {
                             mrtgLocks.wait(startTime + 15000 - currentTime);
                         } catch(InterruptedException err) {
-                            table.connector.logger.log(Level.WARNING, null, err);
+                            InterruptedIOException ioErr = new InterruptedIOException();
+                            ioErr.initCause(err);
+                            throw ioErr;
                         }
                     }
                 }

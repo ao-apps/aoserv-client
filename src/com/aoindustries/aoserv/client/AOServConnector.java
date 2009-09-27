@@ -1573,11 +1573,11 @@ abstract public class AOServConnector {
                 }
                 return resultRequest.afterRelease();
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -1618,11 +1618,11 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -1671,11 +1671,11 @@ abstract public class AOServConnector {
                 tablesUpdated(invalidateList);
                 return result;
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -1716,11 +1716,11 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -1769,11 +1769,11 @@ abstract public class AOServConnector {
                 tablesUpdated(invalidateList);
                 return result;
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -1814,11 +1814,11 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -1859,11 +1859,11 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -1912,11 +1912,11 @@ abstract public class AOServConnector {
                 tablesUpdated(invalidateList);
                 return result;
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -1957,11 +1957,11 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -2005,11 +2005,11 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -2054,11 +2054,11 @@ abstract public class AOServConnector {
                     releaseConnection(connection);
                 }
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -2121,11 +2121,11 @@ abstract public class AOServConnector {
                 updateRequest.afterRelease();
                 return;
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -2165,11 +2165,11 @@ abstract public class AOServConnector {
                 }
                 return;
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);
@@ -2215,11 +2215,11 @@ abstract public class AOServConnector {
                 tablesUpdated(invalidateList);
                 return;
             } catch(RuntimeException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(IOException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             } catch(SQLException err) {
-                if(attempt>=attempts || isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
             }
             try {
                 Thread.sleep(retryAttemptDelays[attempt-1]);

@@ -104,7 +104,9 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
                 int retCode = P.waitFor();
                 if(retCode!=0) throw new IOException("Non-zero exit value from gpg: "+retCode+", standard error was: "+cout.toString());
             } catch(InterruptedException err) {
-                throw new InterruptedIOException("Interrupted while waiting for gpg");
+                InterruptedIOException ioErr = new InterruptedIOException("Interrupted while waiting for gpg");
+                ioErr.initCause(err);
+                throw ioErr;
             }
         }
     }
@@ -149,7 +151,9 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
                 int retCode = P.waitFor();
                 if(retCode!=0) throw new IOException("Non-zero exit value from gpg: "+retCode);
             } catch(InterruptedException err) {
-                throw new InterruptedIOException("Interrupted while waiting for gpg");
+                InterruptedIOException ioErr = new InterruptedIOException("Interrupted while waiting for gpg");
+                ioErr.initCause(err);
+                throw ioErr;
             }
         }
     }
