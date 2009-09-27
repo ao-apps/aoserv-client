@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * All listening network ports must be registered as a <code>NetBind</code>.  The
@@ -307,7 +309,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         open_firewall=result.getBoolean(8);
         monitoring_enabled=result.getBoolean(9);
         monitoring_parameters=result.getString(10);
-        getMonitoringParametersCache = null;
     }
 
     public boolean isFirewallOpen() {
@@ -358,14 +359,21 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         }
     }
 
-    private volatile Map<String,String> getMonitoringParametersCache;
+    private static final ConcurrentMap<String,Map<String,String>> getMonitoringParametersCache = new ConcurrentHashMap<String,Map<String,String>>();
 
     /**
      * Gets the unmodifiable map of parameters for this bind.
      */
     public Map<String,String> getMonitoringParameters() {
-        if(getMonitoringParametersCache==null) getMonitoringParametersCache=Collections.unmodifiableMap(decodeParameters(monitoring_parameters));
-        return getMonitoringParametersCache;
+        String myParamString = monitoring_parameters;
+        if(myParamString==null) return Collections.emptyMap();
+        Map<String,String> params = getMonitoringParametersCache.get(myParamString);
+        if(params==null) {
+            params = Collections.unmodifiableMap(decodeParameters(myParamString));
+            Map<String,String> previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
+            if(previous!=null) params = previous;
+        }
+        return params;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -379,7 +387,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         open_firewall=in.readBoolean();
         monitoring_enabled=in.readBoolean();
         monitoring_parameters=in.readNullUTF();
-        getMonitoringParametersCache = null;
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {

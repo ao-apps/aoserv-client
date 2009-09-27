@@ -44,13 +44,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         WILDCARD_IP="0.0.0.0"
     ;
 
-    private static final String[] privateNetworks={
-        "10.",
-        "172.16.",
-        "192.168.",
-        "127."
-    };
-
     String ip_address;
     int net_device;
     boolean is_alias;
@@ -233,12 +226,12 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     }
 
     public static boolean isPrivate(String ip_address) {
-        for(int c=0;c<privateNetworks.length;c++) {
-            String pvt=privateNetworks[c];
-            int len=pvt.length();
-            if(ip_address.length()>len && ip_address.substring(0, len).equals(pvt)) return true;
-        }
-        return false;
+        return
+            ip_address.startsWith("10.")
+            || ip_address.startsWith("172.16.")
+            || ip_address.startsWith("192.168.")
+            || ip_address.startsWith("127.")
+        ;
     }
 
     public boolean isPrivate() {
