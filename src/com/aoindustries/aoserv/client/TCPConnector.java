@@ -56,19 +56,21 @@ public class TCPConnector extends AOServConnector {
         @Override
         public void run() {
             try {
+                //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Starting");
                 boolean runMore=true;
                 while(runMore) {
                     try {
                         AOServConnection conn=getConnection(1);
                         try {
                             try {
+                                //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
                                 CompressedDataOutputStream out = conn.getOutputStream();
                                 out.writeCompressedInt(AOServProtocol.CommandID.LISTEN_CACHES.ordinal());
                                 out.flush();
 
                                 CompressedDataInputStream in=conn.getInputStream();
                                 IntList tableList=new IntArrayList();
-                                while(true) {
+                                while(runMore) {
                                     synchronized(cacheMonitorLock) {
                                         long currentTime=System.currentTimeMillis();
                                         long timeSince=currentTime-connectionLastUsed;
@@ -76,16 +78,10 @@ public class TCPConnector extends AOServConnector {
                                         else if(timeSince>=MAX_IDLE_LISTEN_CACHES) {
                                             // Must also not have any invalidate listeners
                                             boolean foundListener=false;
-                                            if(tables!=null) {
-                                                for(int c=0;c<numTables;c++) {
-                                                    AOServTable table=tables.get(c);
-                                                    if(table!=null) {
-                                                        List listeners=table.tableListeners;
-                                                        if(listeners!=null && !listeners.isEmpty()) {
-                                                            foundListener=true;
-                                                            break;
-                                                        }
-                                                    }
+                                            for(int c=0;c<numTables;c++) {
+                                                if(tables.get(c).hasAnyTableListener()) {
+                                                    foundListener=true;
+                                                    break;
                                                 }
                                             }
                                             if(foundListener) {
@@ -93,24 +89,25 @@ public class TCPConnector extends AOServConnector {
                                                 connectionLastUsed=currentTime;
                                             } else {
                                                 runMore=false;
-                                                break;
                                             }
                                         }
                                     }
-                                    tableList.clear();
-                                    boolean isSynchronous = in.readBoolean();
-                                    int size = in.readCompressedInt();
-                                    if(size!=-1) {
-                                        for(int c=0;c<size;c++) {
-                                            int tableID=in.readCompressedInt();
-                                            tableList.add(tableID);
+                                    if(runMore) {
+                                        tableList.clear();
+                                        boolean isSynchronous = in.readBoolean();
+                                        int size = in.readCompressedInt();
+                                        if(size!=-1) {
+                                            for(int c=0;c<size;c++) {
+                                                int tableID=in.readCompressedInt();
+                                                tableList.add(tableID);
+                                            }
                                         }
-                                    }
-                                    // No tables listed for "ping"
-                                    if(!tableList.isEmpty()) tablesUpdated(tableList);
-                                    if(isSynchronous) {
-                                        out.writeBoolean(true);
-                                        out.flush();
+                                        // No tables listed for "ping"
+                                        if(!tableList.isEmpty()) tablesUpdated(tableList);
+                                        if(isSynchronous) {
+                                            out.writeBoolean(true);
+                                            out.flush();
+                                        }
                                     }
                                 }
                             } finally {
@@ -124,26 +121,32 @@ public class TCPConnector extends AOServConnector {
                         else {
                             logger.log(Level.INFO, null, err);
                             try {
+                                //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Sleeping after exception");
                                 sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
                             } catch(InterruptedException err2) {
                                 logger.log(Level.WARNING, null, err2);
                             }
                         }
-                    } catch(Exception err) {
-                        if(isImmediateFail(err)) runMore = false;
+                    } catch(ThreadDeath TD) {
+                        throw TD;
+                    } catch(Throwable T) {
+                        if(isImmediateFail(T)) runMore = false;
                         else {
-                            logger.log(Level.SEVERE, null, err);
+                            logger.log(Level.SEVERE, null, T);
                             try {
+                                //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Sleeping after exception");
                                 sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
                             } catch(InterruptedException err2) {
                                 logger.log(Level.WARNING, null, err2);
                             }
                         }
                     } finally {
+                        //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Clearing caches");
                         clearCaches();
                     }
                 }
             } finally {
+                //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Ending");
                 synchronized(cacheMonitorLock) {
                     if(cacheMonitor==this) cacheMonitor=null;
                 }
@@ -206,7 +209,9 @@ public class TCPConnector extends AOServConnector {
             logger.log(Level.WARNING, null, new RuntimeException(ApplicationResources.getMessage(Locale.getDefault(), "TCPConnector.getConnection.isEventDispatchThread")));
         }
         startCacheMonitor();
-    	return pool.getConnection(maxConnections);
+    	SocketConnection conn = pool.getConnection(maxConnections);
+        //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+"): getConnection("+maxConnections+"): conn.identityHashCode="+System.identityHashCode(conn));
+        return conn;
     }
 
     public String getProtocol() {
@@ -306,8 +311,9 @@ public class TCPConnector extends AOServConnector {
         pool.printConnectionStats(out);
     }
 
-    protected final void releaseConnection(AOServConnection connection) throws IOException {
-        pool.releaseConnection((SocketConnection)connection);
+    protected final void releaseConnection(AOServConnection conn) throws IOException {
+        //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+"): releaseConnection("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
+        pool.releaseConnection((SocketConnection)conn);
     }
 
     public AOServConnector switchUsers(String username) throws IOException {

@@ -85,6 +85,15 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
         }
     }
 
+    /**
+     * Checks if this table has at least one listener.
+     */
+    final public boolean hasAnyTableListener() {
+        synchronized(eventLock) {
+            return tableListeners!=null && !tableListeners.isEmpty();
+        }
+    }
+
     final public boolean hasTableListener(TableListener listener) {
         synchronized(eventLock) {
             if(tableListeners==null) return false;

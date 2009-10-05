@@ -5,17 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
  * Each <code>Thread</code> on the master reports its activities so that
  * a query on this table shows a snapshot of the currently running system.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */

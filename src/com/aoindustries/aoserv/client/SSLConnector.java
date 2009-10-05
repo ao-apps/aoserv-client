@@ -104,14 +104,14 @@ public class SSLConnector extends TCPConnector {
     }
 
     public static synchronized SSLConnector getSSLConnector(
-	String hostname,
+        String hostname,
         String local_ip,
-	int port,
-	String connectAs,
-	String authenticateAs,
-	String password,
+        int port,
+        String connectAs,
+        String authenticateAs,
+        String password,
         String daemonServer,
-	int poolSize,
+    	int poolSize,
         long maxConnectionAge,
         String trustStorePath,
         String trustStorePassword,
@@ -120,8 +120,8 @@ public class SSLConnector extends TCPConnector {
         if(connectAs==null) throw new NullPointerException("connectAs is null");
         if(authenticateAs==null) throw new NullPointerException("authenticateAs is null");
         if(password==null) throw new NullPointerException("password is null");
-	int size=connectors.size();
-	for(int c=0;c<size;c++) {
+        int size=connectors.size();
+        for(int c=0;c<size;c++) {
             SSLConnector connector=connectors.get(c);
             if(connector==null) throw new NullPointerException("connector is null");
             if(connector.connectAs==null) throw new NullPointerException("connector.connectAs is null");
@@ -140,8 +140,8 @@ public class SSLConnector extends TCPConnector {
                 && StringUtility.equals(SSLConnector.trustStorePath, trustStorePath)
                 && StringUtility.equals(SSLConnector.trustStorePassword, trustStorePassword)
             ) return connector;
-	}
-	SSLConnector newConnector=new SSLConnector(
+        }
+    	SSLConnector newConnector=new SSLConnector(
             hostname,
             local_ip,
             port,
@@ -154,9 +154,9 @@ public class SSLConnector extends TCPConnector {
             trustStorePath,
             trustStorePassword,
             logger
-	);
-	connectors.add(newConnector);
-	return newConnector;
+    	);
+    	connectors.add(newConnector);
+    	return newConnector;
     }
 
     @Override

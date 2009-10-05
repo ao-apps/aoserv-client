@@ -55,6 +55,7 @@ final public class SocketConnection extends AOServConnection {
         try {
             isClosed=false;
             out=new CompressedDataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            in=new CompressedDataInputStream(new BufferedInputStream(socket.getInputStream()));
 
             out.writeUTF(AOServProtocol.Version.CURRENT_VERSION.getVersion());
             out.writeBoolean(connector.daemonServer!=null);
@@ -62,12 +63,29 @@ final public class SocketConnection extends AOServConnection {
             out.writeUTF(connector.connectAs);
             out.writeUTF(connector.authenticateAs);
             out.writeUTF(connector.password);
-            out.writeLong(connector.id);
-            out.flush();
-            if(Thread.interrupted()) throw new InterruptedIOException();
-            in=new CompressedDataInputStream(new BufferedInputStream(socket.getInputStream()));
-            if(!in.readBoolean()) throw new IOException(in.readUTF());
-            if(connector.id==-1) connector.id=in.readLong();
+            boolean hasConnectorId;
+            long connectorId;
+            synchronized(connector.idLock) {
+                connectorId = connector.id;
+                if(connectorId==-1) {
+                    // Hold the idLock when need a connector ID
+                    out.writeLong(-1);
+                    out.flush();
+                    if(Thread.interrupted()) throw new InterruptedIOException();
+                    if(!in.readBoolean()) throw new IOException(in.readUTF());
+                    connectorId = connector.id=in.readLong();
+                    hasConnectorId = false;
+                } else {
+                    hasConnectorId = true;
+                }
+            }
+            if(hasConnectorId) {
+                // Finish connecting outside the idLock when already have a connector ID
+                out.writeLong(connectorId);
+                out.flush();
+                if(Thread.interrupted()) throw new InterruptedIOException();
+                if(!in.readBoolean()) throw new IOException(in.readUTF());
+            }
             successful = true;
         } finally {
             if(!successful) close();

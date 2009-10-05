@@ -107,7 +107,8 @@ abstract public class AOServConnector {
     /**
      * @see  #getConnectorID()
      */
-    long id=-1;
+    final Object idLock = new Object();
+    long id=-1; // Rename back to id
 
     /**
      * @see  #getHostname()
@@ -1330,7 +1331,9 @@ abstract public class AOServConnector {
      *          the identifier has not yet been assigned
      */
     final public long getConnectorID() {
-        return id;
+        synchronized(idLock) {
+            return id;
+        }
     }
 
     /**
