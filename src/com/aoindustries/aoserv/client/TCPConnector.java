@@ -148,7 +148,10 @@ public class TCPConnector extends AOServConnector {
             } finally {
                 //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Ending");
                 synchronized(cacheMonitorLock) {
-                    if(cacheMonitor==this) cacheMonitor=null;
+                    if(cacheMonitor==this) {
+                        cacheMonitor=null;
+                        clearCaches();
+                    }
                 }
             }
         }
