@@ -105,7 +105,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     public boolean getUseCompression() {
         return use_compression;
     }
-    
+
     public BackupRetention getRetention() throws SQLException, IOException {
         BackupRetention br=table.connector.getBackupRetentions().get(retention);
         if(br==null) throw new SQLException("Unable to find BackupRetention: "+retention);

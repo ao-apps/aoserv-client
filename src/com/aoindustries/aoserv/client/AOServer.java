@@ -2020,4 +2020,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public long getSystemTimeMillis() throws IOException, SQLException {
         return table.connector.requestLongQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
     }
+
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
+        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+    }
 }

@@ -5,14 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see FailoverMySQLReplication
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -23,11 +22,10 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(FailoverMySQLReplication.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(FailoverMySQLReplication.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(FailoverMySQLReplication.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
-        new OrderBy(FailoverMySQLReplication.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING),
-        new OrderBy(FailoverMySQLReplication.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING)
+        new OrderBy(FailoverMySQLReplication.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(FailoverMySQLReplication.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(FailoverMySQLReplication.COLUMN_AO_SERVER_name, ASCENDING),
+        new OrderBy(FailoverMySQLReplication.COLUMN_REPLICATION_name, ASCENDING)
     };
 
     @Override
@@ -52,11 +50,15 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
         return getIndexedRows(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, mysqlServer.pkey);
     }
 
+    List<FailoverMySQLReplication> getFailoverMySQLReplications(AOServer aoServer) throws IOException, SQLException {
+        return getIndexedRows(FailoverMySQLReplication.COLUMN_AO_SERVER, aoServer.pkey);
+    }
+
     List<FailoverMySQLReplication> getFailoverMySQLReplications(FailoverFileReplication replication) throws IOException, SQLException {
         return getIndexedRows(FailoverMySQLReplication.COLUMN_REPLICATION, replication.pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.FAILOVER_MYSQL_REPLICATIONS;
+        return SchemaTable.TableID.FAILOVER_MYSQL_REPLICATIONS;
     }
 }

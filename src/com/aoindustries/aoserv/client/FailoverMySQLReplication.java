@@ -13,9 +13,7 @@ import java.sql.SQLException;
 import java.util.Locale;
 
 /**
- * Represents MySQL replication for one A <code>FailoverFileReplication</code>.
- *
- * @version  1.0a
+ * Represents MySQL replication for one a <code>FailoverFileReplication</code> or <code>AOServer</code>.
  *
  * @author  AO Industries, Inc.
  */
@@ -23,12 +21,15 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_REPLICATION=1,
-        COLUMN_MYSQL_SERVER=2
+        COLUMN_AO_SERVER=1,
+        COLUMN_REPLICATION=2,
+        COLUMN_MYSQL_SERVER=3
     ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
     static final String COLUMN_REPLICATION_name = "replication";
     static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
 
+    int ao_server;
     int replication;
     private int mysql_server;
     private int monitoring_seconds_behind_low;
@@ -40,17 +41,26 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_REPLICATION: return Integer.valueOf(replication);
+            case COLUMN_AO_SERVER: return ao_server==-1 ? null : ao_server;
+            case COLUMN_REPLICATION: return replication==-1 ? null : replication;
             case COLUMN_MYSQL_SERVER: return mysql_server;
-            case 3: return monitoring_seconds_behind_low==-1 ? null : monitoring_seconds_behind_low;
-            case 4: return monitoring_seconds_behind_medium==-1 ? null : monitoring_seconds_behind_medium;
-            case 5: return monitoring_seconds_behind_high==-1 ? null : monitoring_seconds_behind_high;
-            case 6: return monitoring_seconds_behind_critical==-1 ? null : monitoring_seconds_behind_critical;
+            case 4: return monitoring_seconds_behind_low==-1 ? null : monitoring_seconds_behind_low;
+            case 5: return monitoring_seconds_behind_medium==-1 ? null : monitoring_seconds_behind_medium;
+            case 6: return monitoring_seconds_behind_high==-1 ? null : monitoring_seconds_behind_high;
+            case 7: return monitoring_seconds_behind_critical==-1 ? null : monitoring_seconds_behind_critical;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
+    public AOServer getAOServer() throws SQLException, IOException {
+        if(ao_server==-1) return null;
+        AOServer ao=table.connector.getAoServers().get(ao_server);
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+        return ao;
+    }
+
     public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
+        if(replication==-1) return null;
         FailoverFileReplication ffr=table.connector.getFailoverFileReplications().get(replication);
         if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
         return ffr;
@@ -83,21 +93,26 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        replication=result.getInt(2);
-        mysql_server=result.getInt(3);
-        monitoring_seconds_behind_low = result.getInt(4);
+        int pos = 1;
+        pkey=result.getInt(pos++);
+        ao_server=result.getInt(pos++);
+        if(result.wasNull()) ao_server = -1;
+        replication=result.getInt(pos++);
+        if(result.wasNull()) replication = -1;
+        mysql_server=result.getInt(pos++);
+        monitoring_seconds_behind_low = result.getInt(pos++);
         if(result.wasNull()) monitoring_seconds_behind_low = -1;
-        monitoring_seconds_behind_medium = result.getInt(5);
+        monitoring_seconds_behind_medium = result.getInt(pos++);
         if(result.wasNull()) monitoring_seconds_behind_medium = -1;
-        monitoring_seconds_behind_high = result.getInt(6);
+        monitoring_seconds_behind_high = result.getInt(pos++);
         if(result.wasNull()) monitoring_seconds_behind_high = -1;
-        monitoring_seconds_behind_critical = result.getInt(7);
+        monitoring_seconds_behind_critical = result.getInt(pos++);
         if(result.wasNull()) monitoring_seconds_behind_critical = -1;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey = in.readCompressedInt();
+        ao_server = in.readCompressedInt();
         replication = in.readCompressedInt();
         mysql_server = in.readCompressedInt();
         monitoring_seconds_behind_low = in.readCompressedInt();
@@ -108,11 +123,13 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 
     @Override
     String toStringImpl(Locale userLocale) throws IOException, SQLException {
-        return getMySQLServer().getName()+", "+getFailoverFileReplication().toString(userLocale);
+        if(ao_server!=-1) return getMySQLServer().toString(userLocale)+"->"+getAOServer().toString(userLocale);
+        else return getMySQLServer().toString(userLocale)+"->"+getFailoverFileReplication().toString(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_59)>=0) out.writeCompressedInt(ao_server);
         out.writeCompressedInt(replication);
         out.writeCompressedInt(mysql_server);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_56)>=0) {
