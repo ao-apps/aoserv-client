@@ -518,7 +518,17 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         }
     }
 
+    /**
+     * Gets the table status on the master server.
+     */
     public List<TableStatus> getTableStatus() throws IOException, SQLException {
+        return getTableStatus(null);
+    }
+
+    /**
+     * Gets the table status on the master server or provided slave server.
+     */
+    public List<TableStatus> getTableStatus(final FailoverMySQLReplication mysqlSlave) throws IOException, SQLException {
         return table.connector.requestResult(
             true,
             new AOServConnector.ResultRequest<List<TableStatus>>() {
@@ -527,6 +537,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_TABLE_STATUS.ordinal());
                     out.writeCompressedInt(pkey);
+                    out.writeCompressedInt(mysqlSlave==null ? -1 : mysqlSlave.pkey);
                 }
 
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
@@ -630,7 +641,17 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         }
     }
 
+    /**
+     * Gets the table status on the master server.
+     */
     public List<CheckTableResult> checkTables(final Collection<String> tableNames) throws IOException, SQLException {
+        return checkTables(null, tableNames);
+    }
+
+    /**
+     * Gets the table status on the master server or provided slave server.
+     */
+    public List<CheckTableResult> checkTables(final FailoverMySQLReplication mysqlSlave, final Collection<String> tableNames) throws IOException, SQLException {
         if(tableNames.isEmpty()) return Collections.emptyList();
         return table.connector.requestResult(
             true,
@@ -640,6 +661,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.CHECK_MYSQL_TABLES.ordinal());
                     out.writeCompressedInt(pkey);
+                    out.writeCompressedInt(mysqlSlave==null ? -1 : mysqlSlave.pkey);
                     int size = tableNames.size();
                     out.writeCompressedInt(size);
                     int count = 0;
