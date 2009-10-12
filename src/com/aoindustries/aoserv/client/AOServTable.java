@@ -771,7 +771,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
     void tableUpdated() {
         List<TableListenerEntry> tableListenersSnapshot;
         synchronized(tableListenersLock) {
-            tableListenersSnapshot = new ArrayList<TableListenerEntry>(this.tableListeners);
+            tableListenersSnapshot = this.tableListeners==null ? null : new ArrayList<TableListenerEntry>(this.tableListeners);
         }
         if(tableListenersSnapshot!=null) {
             // Notify all immediate listeners

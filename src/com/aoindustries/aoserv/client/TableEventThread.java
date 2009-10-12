@@ -48,36 +48,38 @@ public class TableEventThread extends Thread {
                         // Get a copy to not hold lock too long
                         List<TableListenerEntry> tableListenersSnapshot;
                         synchronized(table.tableListenersLock) {
-                            tableListenersSnapshot = new ArrayList<TableListenerEntry>(table.tableListeners);
+                            tableListenersSnapshot = table.tableListeners==null ? null : new ArrayList<TableListenerEntry>(table.tableListeners);
                         }
-                        int size = tableListenersSnapshot.size();
-                        for (int c = 0; c < size; c++) {
-                            final TableListenerEntry entry = tableListenersSnapshot.get(c);
-                            // skip immediate listeners
-                            long delay = entry.delay;
-                            if(delay>0) {
-                                long delayStart = entry.delayStart;
-                                // Is the table idle?
-                                if (delayStart != -1) {
-                                    // Has the system time been modified to an earlier time?
-                                    if (delayStart > time) delayStart = entry.delayStart = time;
-                                    long endTime = delayStart + delay;
-                                    if (time >= endTime) {
-                                        // Ready to run
-                                        entry.delayStart = -1;
-                                        // System.out.println("DEBUG: Started TableEventThread: run: "+getName()+" calling tableUpdated on "+entry.listener);
-                                        // Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
-                                        AOServConnector.executorService.submit(
-                                            new Runnable() {
-                                                public void run() {
-                                                    entry.listener.tableUpdated(table);
+                        if(tableListenersSnapshot!=null) {
+                            int size = tableListenersSnapshot.size();
+                            for (int c = 0; c < size; c++) {
+                                final TableListenerEntry entry = tableListenersSnapshot.get(c);
+                                // skip immediate listeners
+                                long delay = entry.delay;
+                                if(delay>0) {
+                                    long delayStart = entry.delayStart;
+                                    // Is the table idle?
+                                    if (delayStart != -1) {
+                                        // Has the system time been modified to an earlier time?
+                                        if (delayStart > time) delayStart = entry.delayStart = time;
+                                        long endTime = delayStart + delay;
+                                        if (time >= endTime) {
+                                            // Ready to run
+                                            entry.delayStart = -1;
+                                            // System.out.println("DEBUG: Started TableEventThread: run: "+getName()+" calling tableUpdated on "+entry.listener);
+                                            // Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
+                                            AOServConnector.executorService.submit(
+                                                new Runnable() {
+                                                    public void run() {
+                                                        entry.listener.tableUpdated(table);
+                                                    }
                                                 }
-                                            }
-                                        );
-                                    } else {
-                                        // Remaining delay
-                                        long remaining = endTime - time;
-                                        if (remaining < minTime) minTime = remaining;
+                                            );
+                                        } else {
+                                            // Remaining delay
+                                            long remaining = endTime - time;
+                                            if (remaining < minTime) minTime = remaining;
+                                        }
                                     }
                                 }
                             }
