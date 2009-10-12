@@ -43,6 +43,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
     //final SimpleAOClient client;
     final Class<V> clazz;
 
+    final Object tableListenersLock = new Object() {
+        @Override
+        public String toString() {
+            return "tableListenersLock - "+getTableID();
+        }
+    };
+
     /**
      * The list of <code>TableListener</code>s.
      */
@@ -60,6 +67,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
     /**
      * The thread that is performing the batched updates.
+     * All access should be protected by the eventLock.
      */
     TableEventThread thread;
 
@@ -89,13 +97,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
      * Checks if this table has at least one listener.
      */
     final public boolean hasAnyTableListener() {
-        synchronized(eventLock) {
+        synchronized(tableListenersLock) {
             return tableListeners!=null && !tableListeners.isEmpty();
         }
     }
 
     final public boolean hasTableListener(TableListener listener) {
-        synchronized(eventLock) {
+        synchronized(tableListenersLock) {
             if(tableListeners==null) return false;
             for(TableListenerEntry tableListenerEntry : tableListeners) {
                 if(tableListenerEntry.listener==listener) return true;
@@ -130,12 +138,12 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
     final public void addTableListener(TableListener listener, long batchTime) {
         if(batchTime<0) throw new IllegalArgumentException("batchTime<0: "+batchTime);
 
-        synchronized(eventLock) {
+        synchronized(tableListenersLock) {
             if(tableListeners==null) tableListeners=new ArrayList<TableListenerEntry>();
-            if(batchTime>0 && thread==null) thread=new TableEventThread(this);
-
             tableListeners.add(new TableListenerEntry(listener, batchTime));
-
+        }
+        synchronized(eventLock) {
+            if(batchTime>0 && thread==null) thread=new TableEventThread(this);
             // Tell the thread to recalc its stuff
             eventLock.notifyAll();
         }
@@ -702,7 +710,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
      * objects being notified when the data is updated.
      */
     final public void removeTableListener(TableListener listener) {
+        // Get thread reference and release eventLock to avoid deadlock
+        Thread myThread;
         synchronized(eventLock) {
+            myThread = thread;
+        }
+        boolean stopThread = false;
+        synchronized(tableListenersLock) {
             if(tableListeners!=null) {
                 int size=tableListeners.size();
                 for(int c=0;c<size;c++) {
@@ -710,7 +724,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
                     if(entry.listener==listener) {
                         tableListeners.remove(c);
                         size--;
-                        if(entry.delay>0 && thread!=null) {
+                        if(entry.delay>0 && myThread!=null) {
                             // If all remaining listeners are immediate (delay 0), kill the thread
                             boolean foundDelayed=false;
                             for(int d=0;d<size;d++) {
@@ -720,17 +734,20 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
                                     break;
                                 }
                             }
-                            if(!foundDelayed) {
-                                // The thread will terminate itself once the reference to it is removed
-                                thread=null;
-                            }
+                            if(!foundDelayed) stopThread = true;
                         }
                         break;
                     }
                 }
-                // Tell the thread to recalc its stuff
-                eventLock.notifyAll();
             }
+        }
+        synchronized(eventLock) {
+            if(stopThread) {
+                // The thread will terminate itself once the reference to it is removed
+                thread=null;
+            }
+            // Tell the thread to recalc its stuff
+            eventLock.notifyAll();
         }
     }
 
@@ -752,24 +769,33 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
     }
 
     void tableUpdated() {
-        synchronized(eventLock) {
+        List<TableListenerEntry> tableListenersSnapshot;
+        synchronized(tableListenersLock) {
+            tableListenersSnapshot = new ArrayList<TableListenerEntry>(this.tableListeners);
+        }
+        if(tableListenersSnapshot!=null) {
             // Notify all immediate listeners
-            if(tableListeners!=null) {
-                Iterator<TableListenerEntry> I=tableListeners.iterator();
-                while(I.hasNext()) {
-                    TableListenerEntry entry=I.next();
-                    if(entry.delay<=0) {
-                        entry.listener.tableUpdated(this);
-                    }
+            Iterator<TableListenerEntry> I=tableListenersSnapshot.iterator();
+            while(I.hasNext()) {
+                final TableListenerEntry entry=I.next();
+                if(entry.delay<=0) {
+                    // Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
+                    AOServConnector.executorService.submit(
+                        new Runnable() {
+                            public void run() {
+                                entry.listener.tableUpdated(AOServTable.this);
+                            }
+                        }
+                    );
                 }
             }
 
-            // Notify the batching thread of the update
-            if(tableListeners!=null) {
-                int size=tableListeners.size();
+            synchronized(eventLock) {
+                // Notify the batching thread of the update
+                int size=tableListenersSnapshot.size();
                 boolean modified = false;
                 for(int c=0;c<size;c++) {
-                    TableListenerEntry entry=tableListeners.get(c);
+                    TableListenerEntry entry=tableListenersSnapshot.get(c);
                     if(entry.delay>0 && entry.delayStart==-1) {
                         entry.delayStart=System.currentTimeMillis();
                         modified = true;

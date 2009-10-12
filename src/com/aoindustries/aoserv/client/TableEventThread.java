@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /*
@@ -43,9 +45,14 @@ public class TableEventThread extends Thread {
                         // Run anything that should be ran, calculating the minimum sleep time
                         // for the next wait period.
                         long minTime = Long.MAX_VALUE;
-                        int size = table.tableListeners.size();
+                        // Get a copy to not hold lock too long
+                        List<TableListenerEntry> tableListenersSnapshot;
+                        synchronized(table.tableListenersLock) {
+                            tableListenersSnapshot = new ArrayList<TableListenerEntry>(table.tableListeners);
+                        }
+                        int size = tableListenersSnapshot.size();
                         for (int c = 0; c < size; c++) {
-                            TableListenerEntry entry = (TableListenerEntry) table.tableListeners.get(c);
+                            final TableListenerEntry entry = tableListenersSnapshot.get(c);
                             // skip immediate listeners
                             long delay = entry.delay;
                             if(delay>0) {
@@ -59,7 +66,14 @@ public class TableEventThread extends Thread {
                                         // Ready to run
                                         entry.delayStart = -1;
                                         // System.out.println("DEBUG: Started TableEventThread: run: "+getName()+" calling tableUpdated on "+entry.listener);
-                                        entry.listener.tableUpdated(table);
+                                        // Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
+                                        AOServConnector.executorService.submit(
+                                            new Runnable() {
+                                                public void run() {
+                                                    entry.listener.tableUpdated(table);
+                                                }
+                                            }
+                                        );
                                     } else {
                                         // Remaining delay
                                         long remaining = endTime - time;
