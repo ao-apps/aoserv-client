@@ -27,7 +27,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     static final int COLUMN_TOMCAT_SITE=0;
     static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
-    public static final String DEFAULT_TOMCAT_VERSION_PREFIX=HttpdTomcatVersion.VERSION_4_1_PREFIX;
+    public static final String DEFAULT_TOMCAT_VERSION_PREFIX=HttpdTomcatVersion.VERSION_6_0_PREFIX;
 
     int tomcat4_shutdown_port;
     private String tomcat4_shutdown_key;
