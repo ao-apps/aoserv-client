@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Each <code>IPAddress</code> represents a unique IPv4 address.  Two of the IP
@@ -83,53 +85,63 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
      * day of the month.
      */
     public long getCreated() {
-	return created;
+        return created;
     }
 
     public String getHostname() {
-	return hostname;
+        return hostname;
     }
 
-    public static int getIntForIPAddress(String ipAddress) {
-        // There must be four octets with . between
-        String[] octets=StringUtility.splitString(ipAddress, '.');
-        if(octets.length!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+    private static final ConcurrentMap<String,Integer> intForIPAddressCache = new ConcurrentHashMap<String,Integer>();
 
-        // Each octet should be from 1 to 3 digits, all numbers
-        // and should have a value between 0 and 255 inclusive
-        for(int c=0;c<4;c++) {
-            String tet=octets[c];
-            int tetLen=tet.length();
-            if(tetLen<1 || tetLen>3) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
-            for(int d=0;d<tetLen;d++) {
-                char ch=tet.charAt(d);
-                if(ch<'0' || ch>'9') throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+    public static Integer getIntForIPAddress(String ipAddress) {
+        Integer result = intForIPAddressCache.get(ipAddress);
+        if(result==null) {
+            // There must be four octets with . between
+            String[] octets=StringUtility.splitString(ipAddress, '.');
+            if(octets.length!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+
+            // Each octet should be from 1 to 3 digits, all numbers
+            // and should have a value between 0 and 255 inclusive
+            for(int c=0;c<4;c++) {
+                String tet=octets[c];
+                int tetLen=tet.length();
+                if(tetLen<1 || tetLen>3) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+                for(int d=0;d<tetLen;d++) {
+                    char ch=tet.charAt(d);
+                    if(ch<'0' || ch>'9') throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+                }
+                int val=Integer.parseInt(tet);
+                if(val<0 || val>255) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
             }
-            int val=Integer.parseInt(tet);
-            if(val<0 || val>255) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+            result =
+                (Integer.parseInt(octets[0])<<24)
+                | (Integer.parseInt(octets[1])<<16)
+                | (Integer.parseInt(octets[2])<<8)
+                | (Integer.parseInt(octets[3])&255)
+            ;
+            Integer existing = intForIPAddressCache.putIfAbsent(ipAddress, result);
+            if(existing!=null) result = existing;
         }
-        return
-            (Integer.parseInt(octets[0])<<24)
-            | (Integer.parseInt(octets[1])<<16)
-            | (Integer.parseInt(octets[2])<<8)
-            | (Integer.parseInt(octets[3])&255)
-        ;
+        return result;
     }
 
     public static String getIPAddressForInt(int i) {
         return
-            ((i>>>24)&255)
-            +"."
-            +((i>>>16)&255)
-            +"."
-            +((i>>>8)&255)
-            +"."
-            +(i&255)
+            new StringBuilder(15)
+            .append((i>>>24)&255)
+            .append('.')
+            .append((i>>>16)&255)
+            .append('.')
+            .append((i>>>8)&255)
+            .append('.')
+            .append(i&255)
+            .toString()
         ;
     }
 
     public String getIPAddress() {
-	return ip_address;
+        return ip_address;
     }
 
     public List<NetBind> getNetBinds() throws IOException, SQLException {

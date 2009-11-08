@@ -476,7 +476,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
         GET_MYSQL_TABLE_STATUS,
         CHECK_MYSQL_TABLES,
-        AO_SERVER_CHECK_PORT
+        AO_SERVER_CHECK_PORT,
+        AO_SERVER_CHECK_SMTP_BLACKLIST
     }
 
     /**

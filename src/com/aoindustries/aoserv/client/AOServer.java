@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
@@ -2023,5 +2022,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
         return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+    }
+
+    /**
+     * Gets the status line of a SMTP server from the server from the provided source IP.
+     */
+    public String checkSmtpBlacklist(String sourceIp, String connectIp) throws IOException, SQLException {
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
     }
 }
