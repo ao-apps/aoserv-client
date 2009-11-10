@@ -27,8 +27,6 @@ import java.util.concurrent.ConcurrentMap;
  * @see  NetBind
  * @see  PrivateFTPServer
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
@@ -45,52 +43,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         LOOPBACK_IP="127.0.0.1",
         WILDCARD_IP="0.0.0.0"
     ;
-
-    String ip_address;
-    int net_device;
-    boolean is_alias;
-    private String hostname;
-    String packageName;
-    private long created;
-    private boolean available;
-    private boolean isOverflow;
-    private boolean isDHCP;
-    private boolean pingMonitorEnabled;
-    private String externalIpAddress;
-    private String netmask;
-
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return ip_address;
-            case COLUMN_NET_DEVICE: return net_device==-1?null:Integer.valueOf(net_device);
-            case 3: return is_alias?Boolean.TRUE:Boolean.FALSE;
-            case 4: return hostname;
-            case COLUMN_PACKAGE: return packageName;
-            case 6: return new java.sql.Date(created);
-            case 7: return available?Boolean.TRUE:Boolean.FALSE;
-            case 8: return isOverflow?Boolean.TRUE:Boolean.FALSE;
-            case 9: return isDHCP?Boolean.TRUE:Boolean.FALSE;
-            case 10: return pingMonitorEnabled ? Boolean.TRUE : Boolean.FALSE;
-            case 11: return externalIpAddress;
-            case 12: return netmask;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
-    /**
-     * Determines when this <code>IPAddress</code> was created.  The created time
-     * is reset when the address is allocated to a different <code>Package</code>,
-     * which allows the automated accounting to start the billing on the correct
-     * day of the month.
-     */
-    public long getCreated() {
-        return created;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
 
     private static final ConcurrentMap<String,Integer> intForIPAddressCache = new ConcurrentHashMap<String,Integer>();
 
@@ -140,6 +92,109 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         ;
     }
 
+    public static boolean isValidIPAddress(String ip) {
+        // There must be four octets with . between
+        String[] octets=StringUtility.splitString(ip, '.');
+        if(octets.length!=4) return false;
+
+        // Each octet should be from 1 to 3 digits, all numbers
+        // and should have a value between 0 and 255 inclusive
+        for(int c=0;c<4;c++) {
+            String tet=octets[c];
+            int tetLen=tet.length();
+            if(tetLen<1 || tetLen>3) return false;
+            for(int d=0;d<tetLen;d++) {
+                char ch=tet.charAt(d);
+                if(ch<'0' || ch>'9') return false;
+            }
+            int val=Integer.parseInt(tet);
+            if(val<0 || val>255) return false;
+        }
+        return true;
+    }
+
+    public static boolean isPrivate(String ip_address) {
+        return
+            ip_address.startsWith("10.")
+            || ip_address.startsWith("172.16.")
+            || ip_address.startsWith("192.168.")
+            || ip_address.startsWith("127.")
+        ;
+    }
+
+    //private static final ConcurrentMap<String,String> getReverseDnsQueryCache = new ConcurrentHashMap<String,String>();
+
+    /**
+     * Gets the arpa address to be used for reverse DNS queries.
+     */
+    /*public static String getReverseDnsQuery(String ip) {
+        String arpa = getReverseDnsQueryCache.get(ip);
+        if(arpa==null) {
+            int bits = getIntForIPAddress(ip);
+            arpa =
+                new StringBuilder(29)
+                .append(bits&255)
+                .append('.')
+                .append((bits>>>8)&255)
+                .append('.')
+                .append((bits>>>16)&255)
+                .append('.')
+                .append((bits>>>24)&255)
+                .append(".in-addr.arpa.")
+                .toString()
+            ;
+            String existingArpa = getReverseDnsQueryCache.putIfAbsent(ip, arpa);
+            if(existingArpa!=null) arpa = existingArpa;
+        }
+        return arpa;
+    }*/
+
+    String ip_address;
+    int net_device;
+    boolean is_alias;
+    private String hostname;
+    String packageName;
+    private long created;
+    private boolean available;
+    private boolean isOverflow;
+    private boolean isDHCP;
+    private boolean pingMonitorEnabled;
+    private String externalIpAddress;
+    private String netmask;
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return ip_address;
+            case COLUMN_NET_DEVICE: return net_device==-1?null:Integer.valueOf(net_device);
+            case 3: return is_alias?Boolean.TRUE:Boolean.FALSE;
+            case 4: return hostname;
+            case COLUMN_PACKAGE: return packageName;
+            case 6: return new java.sql.Date(created);
+            case 7: return available?Boolean.TRUE:Boolean.FALSE;
+            case 8: return isOverflow?Boolean.TRUE:Boolean.FALSE;
+            case 9: return isDHCP?Boolean.TRUE:Boolean.FALSE;
+            case 10: return pingMonitorEnabled ? Boolean.TRUE : Boolean.FALSE;
+            case 11: return externalIpAddress;
+            case 12: return netmask;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    /**
+     * Determines when this <code>IPAddress</code> was created.  The created time
+     * is reset when the address is allocated to a different <code>Package</code>,
+     * which allows the automated accounting to start the billing on the correct
+     * day of the month.
+     */
+    public long getCreated() {
+        return created;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
     public String getIPAddress() {
         return ip_address;
     }
@@ -180,7 +235,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     }
 
     public String getNetMask() {
-	return netmask;
+        return netmask;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -201,7 +256,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         isDHCP = result.getBoolean(10);
         pingMonitorEnabled = result.getBoolean(11);
         externalIpAddress = result.getString(12);
-	netmask = result.getString(13);
+        netmask = result.getString(13);
     }
 
     public boolean isAlias() {
@@ -214,36 +269,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 
     public boolean isUsed() throws IOException, SQLException {
         return !getNetBinds().isEmpty();
-    }
-
-    public static boolean isValidIPAddress(String ip) {
-        // There must be four octets with . between
-        String[] octets=StringUtility.splitString(ip, '.');
-        if(octets.length!=4) return false;
-
-        // Each octet should be from 1 to 3 digits, all numbers
-        // and should have a value between 0 and 255 inclusive
-        for(int c=0;c<4;c++) {
-            String tet=octets[c];
-            int tetLen=tet.length();
-            if(tetLen<1 || tetLen>3) return false;
-            for(int d=0;d<tetLen;d++) {
-                char ch=tet.charAt(d);
-                if(ch<'0' || ch>'9') return false;
-            }
-            int val=Integer.parseInt(tet);
-            if(val<0 || val>255) return false;
-        }
-        return true;
-    }
-
-    public static boolean isPrivate(String ip_address) {
-        return
-            ip_address.startsWith("10.")
-            || ip_address.startsWith("172.16.")
-            || ip_address.startsWith("192.168.")
-            || ip_address.startsWith("127.")
-        ;
     }
 
     public boolean isPrivate() {

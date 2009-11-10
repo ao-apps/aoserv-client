@@ -2028,6 +2028,6 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      * Gets the status line of a SMTP server from the server from the provided source IP.
      */
     public String checkSmtpBlacklist(String sourceIp, String connectIp) throws IOException, SQLException {
-        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
     }
 }
