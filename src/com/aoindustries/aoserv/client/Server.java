@@ -121,9 +121,20 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     
     /**
      * May be filtered.
+     *
+     * @see #getPackageId()
      */
     public Package getPackage() throws IOException, SQLException {
         return table.connector.getPackages().get(packageId);
+    }
+
+    /**
+     * Gets the package id, will not be filtered.
+     *
+     * @see #getPackage()
+     */
+    public int getPackageId() {
+        return packageId;
     }
 
     public String getName() {
@@ -275,11 +286,19 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 
     public int compareTo(Server o) {
         try {
-            int diff = getPackage().compareTo(o.getPackage());
-            if(diff!=0) return diff;
-            diff = name.compareToIgnoreCase(o.name);
-            if(diff!=0) return diff;
-            return name.compareTo(o.name);
+            Package pk1 = getPackage();
+            Package pk2 = o.getPackage();
+            if(pk1==null || pk2==null) {
+                int id1 = getPackageId();
+                int id2 = o.getPackageId();
+            	return (id1<id2 ? -1 : (id1==id2 ? 0 : 1));
+            } else {
+                int diff = pk1.compareTo(pk2);
+                if(diff!=0) return diff;
+                diff = name.compareToIgnoreCase(o.name);
+                if(diff!=0) return diff;
+                return name.compareTo(o.name);
+            }
         } catch(IOException err) {
             throw new WrappedException(err);
         } catch(SQLException err) {

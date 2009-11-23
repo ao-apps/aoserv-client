@@ -83,10 +83,11 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         return se;
     }
 
+    /**
+     * May be filtered.
+     */
     public BackupPartition getBackupPartition() throws SQLException, IOException {
-        BackupPartition bp = table.connector.getBackupPartitions().get(backup_partition);
-        if(bp==null) throw new SQLException("Unable to find BackupPartition: "+backup_partition);
-        return bp;
+        return table.connector.getBackupPartitions().get(backup_partition);
     }
 
     /**
