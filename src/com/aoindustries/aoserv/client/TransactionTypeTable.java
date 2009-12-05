@@ -5,20 +5,18 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @see  TransactionType
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 public final class TransactionTypeTable extends GlobalTableStringKey<TransactionType> {
 
     TransactionTypeTable(AOServConnector connector) {
-	super(connector, TransactionType.class);
+        super(connector, TransactionType.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -30,7 +28,7 @@ public final class TransactionTypeTable extends GlobalTableStringKey<Transaction
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TRANSACTION_TYPES;
+        return SchemaTable.TableID.TRANSACTION_TYPES;
     }
 
     public TransactionType get(String name) throws IOException, SQLException {

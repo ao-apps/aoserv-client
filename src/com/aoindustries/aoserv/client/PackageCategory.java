@@ -5,18 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
  * A <code>PackageCategory</code> represents one type of service
  *
  * @see  PackageDefinition
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -27,22 +26,21 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
 
     public static final String
         AOSERV="aoserv",
+        APPLICATION="application",
         BACKUP="backup",
         COLOCATION="colocation",
         DEDICATED="dedicated",
         MANAGED="managed",
+        RESELLER="reseller",
         SYSADMIN="sysadmin",
         VIRTUAL="virtual",
         VIRTUAL_DEDICATED="virtual_dedicated",
         VIRTUAL_MANAGED="virtual_managed"
     ;
 
-    private String display;
-
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
-            case 1: return display;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -51,30 +49,25 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
         return pkey;
     }
 
-    public String getDisplay() {
-        return display;
-    }
-
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.PACKAGE_CATEGORIES;
     }
 
     public void init(ResultSet results) throws SQLException {
-        pkey=results.getString(1);
-        display=results.getString(2);
+        pkey = results.getString(1);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        display=in.readUTF();
+        pkey = in.readUTF().intern();
     }
 
+    @Override
     String toStringImpl(Locale userLocale) {
-        return display;
+        return ApplicationResources.getMessage(userLocale, "PackageCategory."+pkey+".toString");
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
-        out.writeUTF(display);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // display
     }
 }

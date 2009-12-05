@@ -12,14 +12,12 @@ import java.sql.SQLException;
 /**
  * @see  Resource
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class ResourceTable extends GlobalTableStringKey<Resource> {
 
     ResourceTable(AOServConnector connector) {
-	super(connector, Resource.class);
+        super(connector, Resource.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -35,6 +33,6 @@ final public class ResourceTable extends GlobalTableStringKey<Resource> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.RESOURCES;
+        return SchemaTable.TableID.RESOURCES;
     }
 }

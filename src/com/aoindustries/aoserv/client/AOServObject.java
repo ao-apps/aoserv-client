@@ -151,11 +151,21 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
     public abstract void read(CompressedDataInputStream in) throws IOException;
 
+    /**
+     * Gets a string representation of this object in the default locale.
+     *
+     * @see  #toString(java.util.Locale)
+     */
     @Override
     final public String toString() {
         return toString(Locale.getDefault());
     }
 
+    /**
+     * Gets a string representation of this object in the provided locale.
+     *
+     * @see  #toString()
+     */
     final public String toString(Locale userLocale) {
         try {
             return toStringImpl(userLocale);
@@ -166,6 +176,10 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
         }
     }
 
+    /**
+     * The default string representation is that of the key value.  If there
+     * is no key value then it uses the representation of <code>Object.toString()</code>.
+     */
     String toStringImpl(Locale userLocale) throws IOException, SQLException {
         K pkey=getKey();
         if(pkey==null) return super.toString();

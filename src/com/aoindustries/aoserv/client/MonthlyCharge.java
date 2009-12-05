@@ -5,10 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.SQLUtility;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -21,8 +23,6 @@ import java.util.Locale;
  *
  * @see  Business
  * @see  Transaction
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -102,14 +102,14 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
         return bu;
     }
 
-    public String getDescription() throws SQLException, IOException {
-	return description == null ? getType().getDescription() : description;
+    public String getDescription(Locale userLocale) throws SQLException, IOException {
+        return description == null ? getType().getDescription(userLocale) : description;
     }
 
     public Package getPackage() throws SQLException, IOException {
-	Package packageObject = table.connector.getPackages().get(packageName);
-  	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
-	return packageObject;
+        Package packageObject = table.connector.getPackages().get(packageName);
+        if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
+        return packageObject;
     }
 
     public int getPennies() {
@@ -140,50 +140,50 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getInt(1);
+        pkey = result.getInt(1);
         accounting = result.getString(2);
-	packageName = result.getString(3);
-	type = result.getString(4);
-	description = result.getString(5);
-	quantity = SQLUtility.getMillis(result.getString(6));
-	rate = SQLUtility.getPennies(result.getString(7));
-	created = result.getTimestamp(8).getTime();
-	created_by = result.getString(9);
-	active = result.getBoolean(10);
+        packageName = result.getString(3);
+        type = result.getString(4);
+        description = result.getString(5);
+        quantity = SQLUtility.getMillis(result.getString(6));
+        rate = SQLUtility.getPennies(result.getString(7));
+        created = result.getTimestamp(8).getTime();
+        created_by = result.getString(9);
+        active = result.getBoolean(10);
     }
 
     public boolean isActive() {
-	return active;
+        return active;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
+        pkey=in.readCompressedInt();
         accounting=in.readUTF().intern();
-	packageName=in.readUTF().intern();
-	type=in.readUTF().intern();
-	description=in.readBoolean()?in.readUTF():null;
-	quantity=in.readCompressedInt();
-	rate=in.readCompressedInt();
-	created=in.readLong();
-	created_by=in.readUTF().intern();
-	active=in.readBoolean();
+        packageName=in.readUTF().intern();
+        type=in.readUTF().intern();
+        description=in.readBoolean()?in.readUTF():null;
+        quantity=in.readCompressedInt();
+        rate=in.readCompressedInt();
+        created=in.readLong();
+        created_by=in.readUTF().intern();
+        active=in.readBoolean();
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return packageName+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
+        return packageName+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
+        out.writeCompressedInt(pkey);
         out.writeUTF(accounting);
-	out.writeUTF(packageName);
-	out.writeUTF(type);
-	out.writeNullUTF(description);
-	out.writeCompressedInt(quantity);
-	out.writeCompressedInt(rate);
-	out.writeLong(created);
-	out.writeUTF(created_by);
-	out.writeBoolean(active);
+        out.writeUTF(packageName);
+        out.writeUTF(type);
+        out.writeNullUTF(description);
+        out.writeCompressedInt(quantity);
+        out.writeCompressedInt(rate);
+        out.writeLong(created);
+        out.writeUTF(created_by);
+        out.writeBoolean(active);
     }
 }

@@ -5,10 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -17,8 +18,6 @@ import java.util.Locale;
  * an additional amount is charged to the <code>Business</code>.
  *
  * @see  Package
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -39,6 +38,7 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
         HTTPD="httpd",
         IP="ip",
         JAVAVM="javavm",
+        JOOMLA="joomla",
         MYSQL_REPLICATION="mysql_replication",
         POP="pop",
         RACK="rack",
@@ -52,76 +52,55 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
         USER="user"
     ;
 
-    private String
-        singular_display_unit,
-        plural_display_unit,
-        per_unit,
-        description
-    ;
-
-
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
-            case 1: return singular_display_unit;
-            case 2: return plural_display_unit;
-            case 3: return per_unit;
-            case 4: return description;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
-    public String getDescription() {
-	return description;
-    }
-
+    /**
+     * Gets the unique name of this resource.
+     */
     public String getName() {
-	return pkey;
+        return pkey;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.RESOURCES;
+        return SchemaTable.TableID.RESOURCES;
     }
 
-    public String getSingularDisplayUnit() {
-	return singular_display_unit;
+    public String getDisplayUnit(Locale userLocale, int quantity) {
+        if(quantity==1) return ApplicationResources.getMessage(userLocale, "Resource."+pkey+".singularDisplayUnit", quantity);
+        else return ApplicationResources.getMessage(userLocale, "Resource."+pkey+".pluralDisplayUnit", quantity);
     }
 
-    public String getPluralDisplayUnit() {
-	return plural_display_unit;
-    }
-
-    public String getPerUnit() {
-	return per_unit;
+    public String getPerUnit(Locale userLocale, Object amount) {
+        return ApplicationResources.getMessage(userLocale, "Resource."+pkey+".perUnit", amount);
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	singular_display_unit = result.getString(2);
-	plural_display_unit = result.getString(3);
-        per_unit = result.getString(4);
-	description = result.getString(5);
+        pkey = result.getString(1);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	singular_display_unit=in.readUTF().intern();
-	plural_display_unit=in.readUTF().intern();
-        per_unit=in.readUTF().intern();
-	description=in.readUTF();
+        pkey=in.readUTF().intern();
     }
 
+    @Override
     String toStringImpl(Locale userLocale) {
-	return description;
+        return ApplicationResources.getMessage(userLocale, "Resource."+pkey+".toString");
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(singular_display_unit);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0) {
-            out.writeUTF(plural_display_unit);
-            out.writeUTF(per_unit);
+        out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+            out.writeUTF(ApplicationResources.getMessage(Locale.getDefault(), "Resource."+pkey+".singularDisplayUnit", ""));
         }
-	out.writeUTF(description);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+            out.writeUTF(ApplicationResources.getMessage(Locale.getDefault(), "Resource."+pkey+".pluralDisplayUnit", ""));
+            out.writeUTF(getPerUnit(Locale.getDefault(), ""));
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString(Locale.getDefault())); // description
     }
 }
