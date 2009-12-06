@@ -116,8 +116,8 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
         String accounting=business.pkey;
         String categoryName=category.pkey;
 
-        List<PackageDefinition> cached=getRows();
-        List<PackageDefinition> matches=new ArrayList<PackageDefinition>();
+        List<PackageDefinition> cached = getRows();
+        List<PackageDefinition> matches = new ArrayList<PackageDefinition>(cached.size());
         int size=cached.size();
         for(int c=0;c<size;c++) {
             PackageDefinition pd=cached.get(c);

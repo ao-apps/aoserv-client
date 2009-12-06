@@ -34,6 +34,7 @@ public class TableEventThread extends Thread {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void run() {
         OUTER_LOOP :
         while(true) {

@@ -18,7 +18,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A <code>Business</code> is one distinct set of packages, resources, and permissions.
@@ -603,9 +606,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * Gets an approximation of the monthly rate paid by this account.  This is not guaranteed to
      * be exactly the same as the underlying accounting database processes.
      */
-    public int getMonthlyRate() throws SQLException, IOException {
-        int total=0;
-        for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total+=mc.getPennies();
+    public BigDecimal getMonthlyRate() throws SQLException, IOException {
+        BigDecimal total = BigDecimal.valueOf(0, 2);
+        for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total = total.add(new BigDecimal(SQLUtility.getDecimal(mc.getPennies())));
         return total;
     }
 
@@ -613,7 +616,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * @see  #getMonthlyRate()
      */
     public String getMonthlyRateString() throws SQLException, IOException {
-        return "$"+SQLUtility.getDecimal(getMonthlyRate());
+        return "$"+getMonthlyRate();
     }
 
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
@@ -640,29 +643,20 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     /**
-     * Gets the total monthly rate or <code>-1</code> if unavailable.
+     * Gets the total monthly rate or <code>null</code> if unavailable.
      */
-    public int getTotalMonthlyRate() throws SQLException, IOException {
-	int sum = 0;
-	for (Package pack : getPackages()) {
-            int monthlyRate = pack.getPackageDefinition().getMonthlyRate();
-            if(monthlyRate==-1) return -1;
-            sum += monthlyRate;
+    public BigDecimal getTotalMonthlyRate() throws SQLException, IOException {
+        BigDecimal sum = BigDecimal.valueOf(0, 2);
+        for (Package pack : getPackages()) {
+            BigDecimal monthlyRate = pack.getPackageDefinition().getMonthlyRate();
+            if(monthlyRate==null) return null;
+            sum = sum.add(monthlyRate);
         }
-	return sum;
-    }
-    
-    /**
-     * Gets the total monthly rate as a <code>String</code> in US dollars of <code>null</code> if unavailable.
-     */
-    public String getTotalMonthlyRateString() throws SQLException, IOException {
-        int rate=getTotalMonthlyRate();
-        if(rate==-1) return null;
-        return SQLUtility.getDecimal(rate);
+        return sum;
     }
 
     public List<Transaction> getTransactions() throws IOException, SQLException {
-	return table.connector.getTransactions().getTransactions(pkey);
+        return table.connector.getTransactions().getTransactions(pkey);
     }
 
     public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
@@ -1106,6 +1100,24 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
         return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
+    }
+
+    /**
+     * Gets all active package definitions for this business.
+     */
+    public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
+        // Determine the active packages per category
+        List<PackageCategory> allCategories = table.connector.getPackageCategories().getRows();
+        Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<PackageCategory,List<PackageDefinition>>(allCategories.size()*4/3+1);
+        for(PackageCategory category : allCategories) {
+            List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
+            List<PackageDefinition> definitions = new ArrayList<PackageDefinition>(allDefinitions.size());
+            for(PackageDefinition definition : allDefinitions) {
+                if(definition.isActive()) definitions.add(definition);
+            }
+            if(!definitions.isEmpty()) categories.put(category, Collections.unmodifiableList(definitions));
+        }
+        return Collections.unmodifiableMap(categories);
     }
 
     public int compareTo(Business o) {

@@ -11,6 +11,7 @@ import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,8 +20,6 @@ import java.util.Locale;
 
 /**
  * A <code>PackageDefinition</code> stores one unique set of resources, limits, and prices.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -147,11 +146,15 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     public String getDescription() {
         return description;
     }
-    
-    public int getSetupFee() {
-        return setup_fee;
+
+    /**
+     * Gets the setup fee or <code>null</code> for none.
+     */
+    public BigDecimal getSetupFee() {
+        if(setup_fee==-1) return null;
+        return BigDecimal.valueOf(setup_fee, 2);
     }
-    
+
     public TransactionType getSetupFeeTransactionType() throws SQLException, IOException {
         if(setup_fee_transaction_type==null) return null;
         TransactionType tt=table.connector.getTransactionTypes().get(setup_fee_transaction_type);
@@ -159,10 +162,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return tt;
     }
     
-    public int getMonthlyRate() {
-        return monthly_rate;
+    public BigDecimal getMonthlyRate() {
+        return BigDecimal.valueOf(monthly_rate, 2);
     }
-    
+
     public TransactionType getMonthlyRateTransactionType() throws SQLException, IOException {
         if(monthly_rate_transaction_type==null) return null;
         TransactionType tt=table.connector.getTransactionTypes().get(monthly_rate_transaction_type);

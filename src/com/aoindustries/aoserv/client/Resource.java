@@ -33,6 +33,7 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
         CONSULTING="consulting",
         DISK="disk",
         DISTRIBUTION_SCAN="distribution_scan",
+        DRUPAL="drupal",
         FAILOVER="failover",
         HARDWARE_DISK_ATA_7200_120="hardware_disk_ata_7200_120",
         HTTPD="httpd",

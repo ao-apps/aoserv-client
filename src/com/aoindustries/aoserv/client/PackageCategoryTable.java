@@ -5,8 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @see  PackageCategory
@@ -16,7 +16,7 @@ import java.sql.*;
 public final class PackageCategoryTable extends GlobalTableStringKey<PackageCategory> {
 
     PackageCategoryTable(AOServConnector connector) {
-	super(connector, PackageCategory.class);
+        super(connector, PackageCategory.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {

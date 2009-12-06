@@ -5,18 +5,20 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * A <code>PackageDefinitionLimit</code> stores one limit that is part of a <code>PackageDefinition</code>.
  *
  * @see  PackageDefinition
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -93,14 +95,38 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         return soft_limit;
     }
     
+    /**
+     * Gets the soft limit and unit or <code>null</code> if there is none.
+     */
+    public String getSoftLimitDisplayUnit(Locale userLocale) throws IOException, SQLException {
+        return soft_limit==-1 ? null : getResource().getDisplayUnit(userLocale, soft_limit);
+    }
+
     public int getHardLimit() {
         return hard_limit;
     }
-    
-    public int getAdditionalRate() {
-        return additional_rate;
+
+    /**
+     * Gets the hard limit and unit or <code>null</code> if there is none.
+     */
+    public String getHardLimitDisplayUnit(Locale userLocale) throws IOException, SQLException {
+        return hard_limit==-1 ? null : getResource().getDisplayUnit(userLocale, hard_limit);
+    }
+
+    /**
+     * Gets the additional rate or <code>null</code> if there is none.
+     */
+    public BigDecimal getAdditionalRate() {
+        return additional_rate==-1 ? null : BigDecimal.valueOf(additional_rate, 2);
     }
     
+    /**
+     * Gets the additional rate per unit or <code>null</code> if there is none.
+     */
+    public String getAdditionalRatePerUnit(Locale userLocale) throws IOException, SQLException {
+        return additional_rate==-1 ? null : '$'+getResource().getPerUnit(userLocale, BigDecimal.valueOf(additional_rate, 2));
+    }
+
     public TransactionType getAdditionalTransactionType() throws SQLException, IOException {
         if(additional_transaction_type==null) return null;
         TransactionType tt=table.connector.getTransactionTypes().get(additional_transaction_type);
@@ -109,7 +135,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
     }
     
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.PACKAGE_DEFINITION_LIMITS;
+        return SchemaTable.TableID.PACKAGE_DEFINITION_LIMITS;
     }
 
     public void init(ResultSet result) throws SQLException {
