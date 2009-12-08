@@ -71,15 +71,15 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         if(ipResource==null) throw new AssertionError("ipResource is null");
         final Resource mysqlReplicationResource=connector.getResources().get(Resource.MYSQL_REPLICATION);
         if(mysqlReplicationResource==null) throw new AssertionError("mysqlReplicationResource is null");
-        final Resource popResource=connector.getResources().get(Resource.POP);
-        if(popResource==null) throw new AssertionError("popResource is null");
+        final Resource emailResource=connector.getResources().get(Resource.EMAIL);
+        if(emailResource==null) throw new AssertionError("emailResource is null");
         final Resource siteResource=connector.getResources().get(Resource.SITE);
         if(siteResource==null) throw new AssertionError("siteResource is null");
         final Resource userResource=connector.getResources().get(Resource.USER);
         if(userResource==null) throw new AssertionError("userResource is null");
 
         // Preprocess resources counts
-        Map<Package,Integer> popsPerPackage=new HashMap<Package,Integer>();
+        Map<Package,Integer> emailsPerPackage=new HashMap<Package,Integer>();
         Map<Package,Integer> usersPerPackage=new HashMap<Package,Integer>();
         {
             for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
@@ -87,7 +87,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                 if(!username.equals(LinuxAccount.MAIL)) {
                     Map<Package,Integer> map;
                     LinuxAccount la=lsa.getLinuxAccount();
-                    if(la.getType().getName().equals(LinuxAccountType.EMAIL)) map=popsPerPackage;
+                    if(la.getType().getName().equals(LinuxAccountType.EMAIL)) map=emailsPerPackage;
                     else map=usersPerPackage;
 
                     Package pack=la.getUsername().getPackage();
@@ -282,16 +282,16 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                         }
                     }
 
-                    // Add POP accounts
+                    // Add Email accounts
                     {
-                        PackageDefinitionLimit limit=packageDefinition.getLimit(popResource);
+                        PackageDefinitionLimit limit=packageDefinition.getLimit(emailResource);
                         if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                            Integer I=popsPerPackage.get(pack);
+                            Integer I=emailsPerPackage.get(pack);
                             if(I!=null) {
-                                int popCount=I.intValue();
-                                if(popCount>0) {
+                                int emailCount=I.intValue();
+                                if(emailCount>0) {
                                     if(limit==null) throw new SQLException("Email inboxes exist, but no limit defined for Package="+pack.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                    if(popCount>limit.getSoftLimit()) {
+                                    if(emailCount>limit.getSoftLimit()) {
                                         BigDecimal addRate=limit.getAdditionalRate();
                                         if(addRate==null) throw new SQLException("Additional Email inboxes exist, but no additional rate defined for Package="+pack.pkey+", PackageDefinition="+packageDefinition.pkey);
                                         TransactionType addType=limit.getAdditionalTransactionType();
@@ -302,8 +302,8 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                                                 acctBusiness,
                                                 pack,
                                                 addType,
-                                                "Additional Email Inboxes ("+limit.getSoftLimit()+" included with package, have "+popCount+")",
-                                                (popCount-limit.getSoftLimit())*1000,
+                                                "Additional Email Inboxes ("+limit.getSoftLimit()+" included with package, have "+emailCount+")",
+                                                (emailCount-limit.getSoftLimit())*1000,
                                                 addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
                                                 business_administrator
                                             )

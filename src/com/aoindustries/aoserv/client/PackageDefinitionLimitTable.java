@@ -28,7 +28,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
         new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_MONTHLY_RATE_name, ASCENDING),
         new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_NAME_name, ASCENDING),
         new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_VERSION_name, ASCENDING),
-        new OrderBy(PackageDefinitionLimit.COLUMN_PKEY_name, ASCENDING)
+        new OrderBy(PackageDefinitionLimit.COLUMN_RESOURCE_name+'.'+Resource.COLUMN_NAME_name, ASCENDING)
     };
     @Override
     OrderBy[] getDefaultOrderBy() {
