@@ -23,8 +23,6 @@ import java.util.Locale;
  * @see  HttpdSite
  * @see  HttpdSiteBind
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
@@ -32,7 +30,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     static final int
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=1,
-        COLUMN_PACKAGE=10
+        COLUMN_ACCOUNTING=10
     ;
     static final String COLUMN_AO_SERVER_name = "ao_server";
     static final String COLUMN_NUMBER_name = "number";
@@ -52,13 +50,13 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     int linux_server_group;
     private int mod_php_version;
     private boolean use_suexec;
-    private int packageNum;
+    private String accounting;
     private boolean is_shared;
     private boolean use_mod_perl;
     private int timeout;
 
     public boolean canAddSites() {
-	return can_add_sites;
+    	return can_add_sites;
     }
 
     Object getColumnImpl(int i) {
@@ -73,7 +71,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
             case 7: return Integer.valueOf(linux_server_group);
             case 8: return mod_php_version==-1?null:Integer.valueOf(mod_php_version);
             case 9: return use_suexec?Boolean.TRUE:Boolean.FALSE;
-            case COLUMN_PACKAGE: return Integer.valueOf(packageNum);
+            case COLUMN_ACCOUNTING: return accounting;
             case 11: return is_shared?Boolean.TRUE:Boolean.FALSE;
             case 12: return use_mod_perl?Boolean.TRUE:Boolean.FALSE;
             case 13: return Integer.valueOf(timeout);
@@ -126,9 +124,11 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         return use_suexec;
     }
 
-    public Package getPackage() throws IOException, SQLException {
-        // Package may be filtered
-        return table.connector.getPackages().get(packageNum);
+    /**
+     * May be filtered.
+     */
+    public Business getBusiness() throws IOException, SQLException {
+        return table.connector.getBusinesses().get(accounting);
     }
 
     public boolean isShared() {
@@ -161,10 +161,10 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	ao_server=result.getInt(2);
-	number=result.getInt(3);
-	can_add_sites=result.getBoolean(4);
+        pkey=result.getInt(1);
+        ao_server=result.getInt(2);
+        number=result.getInt(3);
+        can_add_sites=result.getBoolean(4);
         is_mod_jk=result.getBoolean(5);
         max_binds=result.getInt(6);
         linux_server_account=result.getInt(7);
@@ -172,7 +172,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         mod_php_version=result.getInt(9);
         if(result.wasNull()) mod_php_version=-1;
         use_suexec=result.getBoolean(10);
-        packageNum=result.getInt(11);
+        accounting=result.getString(11);
         is_shared=result.getBoolean(12);
         use_mod_perl=result.getBoolean(13);
         timeout=result.getInt(14);
@@ -187,17 +187,17 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	ao_server=in.readCompressedInt();
-	number=in.readCompressedInt();
-	can_add_sites=in.readBoolean();
+        pkey=in.readCompressedInt();
+        ao_server=in.readCompressedInt();
+        number=in.readCompressedInt();
+        can_add_sites=in.readBoolean();
         is_mod_jk=in.readBoolean();
         max_binds=in.readCompressedInt();
         linux_server_account=in.readCompressedInt();
         linux_server_group=in.readCompressedInt();
         mod_php_version=in.readCompressedInt();
         use_suexec=in.readBoolean();
-        packageNum=in.readCompressedInt();
+        accounting=in.readUTF().intern();
         is_shared=in.readBoolean();
         use_mod_perl=in.readBoolean();
         timeout=in.readCompressedInt();
@@ -205,14 +205,14 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return "httpd"+number;
+    	return "httpd"+number;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(ao_server);
-	out.writeCompressedInt(number);
-	out.writeBoolean(can_add_sites);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(ao_server);
+        out.writeCompressedInt(number);
+        out.writeBoolean(can_add_sites);
         out.writeBoolean(is_mod_jk);
         out.writeCompressedInt(max_binds);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) {
@@ -220,7 +220,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
             out.writeCompressedInt(linux_server_group);
             out.writeCompressedInt(mod_php_version);
             out.writeBoolean(use_suexec);
-            out.writeCompressedInt(packageNum);
+            if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeCompressedInt(-1); // packageNum
+            if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) out.writeUTF(accounting);
             if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
             out.writeBoolean(is_shared);
         }

@@ -5,9 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -19,8 +21,6 @@ import java.util.Locale;
  *
  * @see  EmailAddress
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implements Removable, Disablable {
@@ -28,18 +28,18 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     static final int
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=1,
-        COLUMN_PACKAGE=3
+        COLUMN_ACCOUNTING=3
     ;
     static final String COLUMN_AO_SERVER_name = "ao_server";
     static final String COLUMN_PATH_name = "path";
 
     int ao_server;
     private String path;
-    String packageName;
+    String accounting;
     int disable_log;
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
-	return table.connector.getEmailPipeAddresses().addEmailPipeAddress(address, this);
+        return table.connector.getEmailPipeAddresses().addEmailPipeAddress(address, this);
     }
 
     public boolean canDisable() {
@@ -49,7 +49,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
-        else return dl.canEnable() && getPackage().disable_log==-1;
+        else return dl.canEnable() && getBusiness().disable_log==-1;
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
@@ -65,7 +65,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
             case 2: return path;
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -82,14 +82,14 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
         return obj;
     }
 
-    public Package getPackage() throws IOException, SQLException {
-	Package packageObject = table.connector.getPackages().get(packageName);
-	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
-	return packageObject;
+    public Business getBusiness() throws IOException, SQLException {
+        Business bu = table.connector.getBusinesses().get(accounting);
+        if(bu == null) throw new SQLException("Unable to find Business: " + bu);
+        return bu;
     }
 
     public String getPath() {
-	return path;
+        return path;
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
@@ -99,23 +99,23 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.EMAIL_PIPES;
+        return SchemaTable.TableID.EMAIL_PIPES;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getInt(1);
-	ao_server = result.getInt(2);
-	path = result.getString(3);
-	packageName = result.getString(4);
+        pkey = result.getInt(1);
+        ao_server = result.getInt(2);
+        path = result.getString(3);
+        accounting = result.getString(4);
         disable_log=result.getInt(5);
         if(result.wasNull()) disable_log=-1;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	ao_server=in.readCompressedInt();
-	path=in.readUTF();
-	packageName=in.readUTF().intern();
+        pkey=in.readCompressedInt();
+        ao_server=in.readCompressedInt();
+        path=in.readUTF();
+        accounting=in.readUTF().intern();
         disable_log=in.readCompressedInt();
     }
 
@@ -134,14 +134,14 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return ao_server+':'+path;
+        return ao_server+':'+path;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(ao_server);
-	out.writeUTF(path);
-	out.writeUTF(packageName);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(ao_server);
+        out.writeUTF(path);
+        out.writeUTF(accounting);
         out.writeCompressedInt(disable_log);
     }
 }

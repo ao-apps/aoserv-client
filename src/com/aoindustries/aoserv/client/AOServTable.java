@@ -218,6 +218,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
         boolean getOrder() {
             return order;
         }
+
+        @Override
+        public String toString() {
+            return expression+(order==ASCENDING ? " ASC" : "DESC");
+        }
     }
 
     /**
@@ -535,7 +540,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
         int columnNameEnd=Math.min(joinPos, castPos);
         String columnName=expr.substring(0, columnNameEnd);
         SchemaColumn lastColumn=getTableSchema().getSchemaColumn(connector, columnName);
-        if(lastColumn==null) throw new IllegalArgumentException("Unable to find column: "+getTableName()+'.'+columnName);
+        if(lastColumn==null) throw new IllegalArgumentException("Unable to find column: expr="+expr+", column="+getTableName()+'.'+columnName);
 
         SQLExpression sql=new SQLColumnValue(connector, lastColumn);
         expr=expr.substring(columnNameEnd);
@@ -799,8 +804,6 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
                     if(entry.delay>0 && entry.delayStart==-1) {
                         entry.delayStart=System.currentTimeMillis();
                         modified = true;
-                    } else {
-                        // System.out.println("DEBUG: "+getTableID()+": Batched event");
                     }
                 }
                 if(modified) eventLock.notify();

@@ -20,7 +20,7 @@ import java.util.*;
 final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServerGroup> {
 
     LinuxServerGroupTable(AOServConnector connector) {
-	super(connector, LinuxServerGroup.class);
+    	super(connector, LinuxServerGroup.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -70,8 +70,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
             if (aoPKey==group.ao_server) {
                 // Must be for the correct business
                 LinuxGroup linuxGroup = group.getLinuxGroup();
-                Package pk=linuxGroup.getPackage();
-                if (pk!=null && pk.accounting.equals(accounting)) {
+                if(linuxGroup.accounting.equals(accounting)) {
                     // Must be a user group
                     if (linuxGroup.getLinuxGroupType().pkey.equals(LinuxGroupType.USER)) return group;
                 }

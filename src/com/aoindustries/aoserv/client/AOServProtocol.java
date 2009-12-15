@@ -119,9 +119,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_58("1.58"),
         VERSION_1_59("1.59"),
         VERSION_1_60("1.60"),
-        VERSION_1_61("1.61");
+        VERSION_1_61("1.61"),
+        VERSION_1_62("1.62");
 
-        public static final Version CURRENT_VERSION = VERSION_1_61;
+        public static final Version CURRENT_VERSION = VERSION_1_62;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -228,7 +229,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         @Deprecated
         UNUSED_GENERATE_INTERBASE_DB_GROUP_NAME, // No longer used
         GENERATE_MYSQL_DATABASE_NAME,
-        GENERATE_PACKAGE_NAME,
+        @Deprecated
+        UNUSED_GENERATE_PACKAGE_NAME, // No longer used
         GENERATE_POSTGRES_DATABASE_NAME,
         GENERATE_SHARED_TOMCAT_NAME,
         GENERATE_SITE_NAME,
@@ -295,7 +297,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET,
         IS_MYSQL_DATABASE_NAME_AVAILABLE,
         IS_MYSQL_SERVER_USER_PASSWORD_SET,
-        IS_PACKAGE_NAME_AVAILABLE,
+        @Deprecated
+        UNUSED_IS_PACKAGE_NAME_AVAILABLE, // No longer used
         IS_POSTGRES_DATABASE_NAME_AVAILABLE,
         IS_POSTGRES_SERVER_NAME_AVAILABLE,
         IS_POSTGRES_SERVER_USER_PASSWORD_SET,
@@ -348,7 +351,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         UNUSED_SET_INTERBASE_SERVER_USER_PASSWORD, // No longer used
         SET_IP_ADDRESS_DHCP_ADDRESS,
         SET_IP_ADDRESS_HOSTNAME,
-        SET_IP_ADDRESS_PACKAGE,
+        @Deprecated
+        UNUSED_SET_IP_ADDRESS_PACKAGE, // No longer used
         SET_LAST_BACKUP_TIME,
         SET_LAST_DISTRO_TIME,
         SET_LAST_FAILOVER_REPLICATION_TIME,
@@ -478,7 +482,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_MYSQL_TABLE_STATUS,
         CHECK_MYSQL_TABLES,
         AO_SERVER_CHECK_PORT,
-        AO_SERVER_CHECK_SMTP_BLACKLIST
+        AO_SERVER_CHECK_SMTP_BLACKLIST,
+        SET_IP_ADDRESS_BUSINESS,
     }
 
     /**

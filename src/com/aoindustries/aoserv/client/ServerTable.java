@@ -5,16 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  Server
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -25,7 +26,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(Server.COLUMN_ACCOUNTING_name, ASCENDING),
         new OrderBy(Server.COLUMN_NAME_name, ASCENDING)
     };
     @Override
@@ -36,7 +37,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
     public int addBackupServer(
         final String hostname,
         final ServerFarm farm,
-        final Package owner,
+        final Business owner,
         final String description,
         final int backup_hour,
         final OperatingSystemVersion os_version,
@@ -56,7 +57,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD_BACKUP_SERVER.ordinal());
                     out.writeUTF(hostname);
                     out.writeUTF(farm.getName());
-                    out.writeCompressedInt(owner.getPkey());
+                    out.writeUTF(owner.pkey);
                     out.writeUTF(description);
                     out.writeCompressedInt(backup_hour);
                     out.writeCompressedInt(os_version.getPkey());
@@ -96,9 +97,9 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
     }
 
     /**
-     * Gets a <code>Server</code> based on its hostname, package/name, or pkey.
+     * Gets a <code>Server</code> based on its hostname, accounting/name, or pkey.
      * This is compatible with the output of <code>Server.toString()</code>.
-     * Accepts either a hostname (for ao_servers), package/name, or pkey.
+     * Accepts either a hostname (for ao_servers), accounting/name, or pkey.
      *
      * @return  the <code>Server</code> or <code>null</code> if not found
      *
@@ -109,14 +110,14 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         AOServer aoServer = connector.getAoServers().get(server);
         if(aoServer!=null) return aoServer.getServer();
 
-        // Is if a package/name combo?
+        // Is if a accounting/name combo?
         int slashPos = server.indexOf('/');
         if(slashPos!=-1) {
-            String packageName = server.substring(0, slashPos);
+            String accounting = server.substring(0, slashPos);
             String name = server.substring(slashPos+1);
-            Package pk = connector.getPackages().get(packageName);
-            if(pk==null) return null;
-            return pk.getServer(name);
+            Business bu = connector.getBusinesses().get(accounting);
+            if(bu==null) return null;
+            return bu.getServer(name);
         }
 
         // Is it an exact server pkey
@@ -133,23 +134,23 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.SERVERS;
+        return SchemaTable.TableID.SERVERS;
     }
 
-    Server getServer(Package pk, String name) throws IOException, SQLException {
+    Server getServer(Business bu, String name) throws IOException, SQLException {
         // Use index first
-	for(Server se : getServers(pk)) if(se.getName().equals(name)) return se;
-	return null;
+        for(Server se : getServers(bu)) if(se.getName().equals(name)) return se;
+        return null;
     }
 
-    List<Server> getServers(Package pk) throws IOException, SQLException {
-        return getIndexedRows(Server.COLUMN_PACKAGE, pk.pkey);
+    List<Server> getServers(Business bu) throws IOException, SQLException {
+        return getIndexedRows(Server.COLUMN_ACCOUNTING, bu.pkey);
     }
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-	String command=args[0];
-	if(command.equalsIgnoreCase(AOSHCommand.ADD_BACKUP_SERVER)) {
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_BACKUP_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BACKUP_SERVER, args, 3, err)) {
                 out.println(
                     connector.getSimpleAOClient().addBackupServer(
@@ -170,7 +171,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
                 out.flush();
             }
             return true;
-	}
-	return false;
+        }
+        return false;
     }
 }

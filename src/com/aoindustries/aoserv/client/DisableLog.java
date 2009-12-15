@@ -38,24 +38,22 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
             .connector
             .getThisBusinessAdministrator()
             .getUsername()
-            .getPackage()
             .getBusiness()
             .isBusinessOrParentOf(
                 disabledBy
                 .getUsername()
-                .getPackage()
                 .getBusiness()
             )
         ;
     }
 
     Object getColumnImpl(int i) {
-	if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
-	if(i==1) return new java.sql.Date(time);
+        if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
+        if(i==1) return new java.sql.Date(time);
         if(i==2) return accounting;
         if(i==3) return disabled_by;
         if(i==4) return disable_reason;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
     public Business getBusiness() throws SQLException, IOException {

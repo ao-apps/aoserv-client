@@ -24,18 +24,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A <code>Business</code> is one distinct set of packages, resources, and permissions.
+ * A <code>Business</code> is one distinct set of resources and permissions.
 * Some businesses may have child businesses associated with them.  When that is the
  * case, the top level business is ultimately responsible for all actions taken and
  * resources used by itself and all child businesses.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 final public class Business extends CachedObjectStringKey<Business> implements Disablable, Comparable<Business> {
 
     static final int COLUMN_ACCOUNTING=0;
+    static final int COLUMN_PACKAGE_DEFINITION=13;
     static final String COLUMN_ACCOUNTING_name = "accounting";
 
     /**
@@ -48,23 +47,56 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      */
     public static final int MINIMUM_PAYMENT=3000;
 
+    /**
+     * The default inbound email burst before rate limiting.
+     */
+    public static final int DEFAULT_EMAIL_IN_BURST = 1000;
+
+    /**
+     * The default sustained inbound email rate in emails/second.
+     */
+    public static final float DEFAULT_EMAIL_IN_RATE = 10f;
+
+    /**
+     * The default outbound email burst before rate limiting.
+     */
+    public static final int DEFAULT_EMAIL_OUT_BURST = 200;
+
+    /**
+     * The default sustained outbound email rate in emails/second.
+     */
+    public static final float DEFAULT_EMAIL_OUT_RATE = .2f;
+
+    /**
+     * The default relay email burst before rate limiting.
+     */
+    public static final int DEFAULT_EMAIL_RELAY_BURST = 100;
+
+    /**
+     * The default sustained relay email rate in emails/second.
+     */
+    public static final float DEFAULT_EMAIL_RELAY_RATE = .1f;
+
     String contractVersion;
     private long created;
-
     private long canceled;
-
     private String cancelReason;
-
     String parent;
-
     private boolean can_add_backup_server;
     private boolean can_add_businesses;
     private boolean can_see_prices;
-
     int disable_log;
     private String do_not_disable_reason;
     private boolean auto_enable;
     private boolean bill_parent;
+    int package_definition;
+    private String created_by;
+    private int email_in_burst;
+    private float email_in_rate;
+    private int email_out_burst;
+    private float email_out_rate;
+    private int email_relay_burst;
+    private float email_relay_rate;
 
     public int addBusinessProfile(
         String name,
@@ -133,7 +165,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         byte expirationMonth,
         short expirationYear
     ) throws IOException, SQLException {
-	return table.connector.getCreditCards().addCreditCard(
+        return table.connector.getCreditCards().addCreditCard(
             processor,
             this,
             groupName,
@@ -157,7 +189,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             cardNumber,
             expirationMonth,
             expirationYear
-	);
+        );
     }
 
     /**
@@ -212,7 +244,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         long authorizationTime,
         String authorizationPrincipalName
     ) throws IOException, SQLException {
-	return table.connector.getCreditCardTransactions().addCreditCardTransaction(
+        return table.connector.getCreditCardTransactions().addCreditCardTransaction(
             processor,
             this,
             groupName,
@@ -261,7 +293,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             creditCardComments,
             authorizationTime,
             authorizationPrincipalName
-	);
+        );
     }
 
     public int addDisableLog(
@@ -287,30 +319,19 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	);
     }
 
-    public int addPackage(
-	String name,
-        PackageDefinition packageDefinition
-    ) throws IOException, SQLException {
-	return table.connector.getPackages().addPackage(
-            name,
-            this,
-            packageDefinition
-	);
-    }
-
     public int addTransaction(
         Business sourceBusiness,
-	BusinessAdministrator business_administrator,
-	TransactionType type,
-	String description,
-	int quantity,
-	int rate,
+        BusinessAdministrator business_administrator,
+        TransactionType type,
+        String description,
+        int quantity,
+        int rate,
         PaymentType paymentType,
         String paymentInfo,
         CreditCardProcessor processor,
-	byte payment_confirmed
+    	byte payment_confirmed
     ) throws IOException, SQLException {
-	return table.connector.getTransactions().addTransaction(
+    	return table.connector.getTransactions().addTransaction(
             this,
             sourceBusiness,
             business_administrator,
@@ -322,7 +343,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             paymentInfo,
             processor,
             payment_confirmed
-	);
+        );
     }
 
     public boolean canAddBackupServer() {
@@ -330,7 +351,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public boolean canAddBusinesses() {
-	return can_add_businesses;
+    	return can_add_businesses;
     }
 
     public void cancel(String cancelReason) throws IllegalArgumentException, IOException, SQLException {
@@ -383,8 +404,14 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         
         if(isRootBusiness()) return false;
 
-        // packages
-        for(Package pk : getPackages()) if(pk.disable_log==-1) return false;
+        // Can only disabled when all dependent objects are already disabled
+        for(HttpdSharedTomcat hst : getHttpdSharedTomcats()) if(hst.disable_log==-1) return false;
+        for(EmailPipe ep : getEmailPipes()) if(ep.disable_log==-1) return false;
+        for(CvsRepository cr : getCvsRepositories()) if(cr.disable_log==-1) return false;
+        for(Username un : getUsernames()) if(un.disable_log==-1) return false;
+        for(HttpdSite hs : getHttpdSites()) if(hs.disable_log==-1) return false;
+        for(EmailList el : getEmailLists()) if(el.disable_log==-1) return false;
+        for(EmailSmtpRelay ssr : getEmailSmtpRelays()) if(ssr.disable_log==-1) return false;
         
         return true;
     }
@@ -412,11 +439,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public int getAccountBalance() throws IOException, SQLException {
-	return table.connector.getTransactions().getAccountBalance(pkey);
+        return table.connector.getTransactions().getAccountBalance(pkey);
     }
 
     public int getAccountBalance(long before) throws IOException, SQLException {
-	return table.connector.getTransactions().getAccountBalance(pkey, before);
+        return table.connector.getTransactions().getAccountBalance(pkey, before);
     }
 
     /**
@@ -534,6 +561,14 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             case 10: return do_not_disable_reason;
             case 11: return auto_enable?Boolean.TRUE:Boolean.FALSE;
             case 12: return bill_parent?Boolean.TRUE:Boolean.FALSE;
+            case COLUMN_PACKAGE_DEFINITION: return Integer.valueOf(package_definition);
+            case 14: return created_by;
+            case 15: return email_in_burst==-1 ? null : Integer.valueOf(email_in_burst);
+            case 16: return Float.isNaN(email_in_rate) ? null : Float.valueOf(email_in_rate);
+            case 17: return email_out_burst==-1 ? null : Integer.valueOf(email_out_burst);
+            case 18: return Float.isNaN(email_out_rate) ? null : Float.valueOf(email_out_rate);
+            case 19: return email_relay_burst==-1 ? null : Integer.valueOf(email_relay_burst);
+            case 20: return Float.isNaN(email_relay_rate) ? null : Float.valueOf(email_relay_rate);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -583,11 +618,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-	return table.connector.getEmailLists().getEmailLists(this);
+    	return table.connector.getEmailLists().getEmailLists(this);
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-	return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
+    	return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
     }
 
     public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
@@ -623,10 +658,6 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return table.connector.getNoticeLogs().getNoticeLogs(this);
     }
 
-    public List<Package> getPackages() throws IOException, SQLException {
-	return table.connector.getPackages().getPackages(this);
-    }
-
     public Business getParentBusiness() throws IOException, SQLException {
         if(parent==null) return null;
         // The parent business might not be found, even when the value is set.  This is normal due
@@ -647,11 +678,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      */
     public BigDecimal getTotalMonthlyRate() throws SQLException, IOException {
         BigDecimal sum = BigDecimal.valueOf(0, 2);
-        for (Package pack : getPackages()) {
-            BigDecimal monthlyRate = pack.getPackageDefinition().getMonthlyRate();
-            if(monthlyRate==null) return null;
-            sum = sum.add(monthlyRate);
-        }
+        BigDecimal monthlyRate = getPackageDefinition().getMonthlyRate();
+        if(monthlyRate==null) return null;
+        sum = sum.add(monthlyRate);
         return sum;
     }
 
@@ -753,8 +782,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<LinuxServerGroup>();
         {
             for(LinuxServerGroup lsg : table.connector.getLinuxServerGroups().getRows()) {
-                Package pk=lsg.getLinuxGroup().getPackage();
-                if(pk!=null && pk.getBusiness().equals(this)) {
+                if(pkey.equals(lsg.getLinuxGroup().accounting)) {
                     AOServer ao=lsg.getAOServer();
                     if(ao.equals(from)) fromLinuxServerGroups.add(lsg);
                     else if(ao.equals(to)) toLinuxServerGroups.add(lsg);
@@ -788,8 +816,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             List<LinuxServerAccount> lsas=table.connector.getLinuxServerAccounts().getRows();
             for(int c=0;c<lsas.size();c++) {
                 LinuxServerAccount lsa=lsas.get(c);
-                Package pk=lsa.getLinuxAccount().getUsername().getPackage();
-                if(pk!=null && pk.getBusiness().equals(this)) {
+                if(pkey.equals(lsa.getLinuxAccount().getUsername().accounting)) {
                     AOServer ao=lsa.getAOServer();
                     if(ao.equals(from)) fromLinuxServerAccounts.add(lsa);
                     else if(ao.equals(to)) toLinuxServerAccounts.add(lsa);
@@ -912,7 +939,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                 ip.isAlias()
                 && !ip.isWildcard()
                 && !ip.getNetDevice().getNetDeviceID().isLoopback()
-                && ip.getPackage().accounting.equals(pkey)
+                && ip.accounting.equals(pkey)
             ) {
                 out.print("    ");
                 out.println(ip);
@@ -975,22 +1002,37 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
      public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        contractVersion = result.getString(2);
-        created = result.getTimestamp(3).getTime();
-        Timestamp T = result.getTimestamp(4);
+        int pos = 1;
+        pkey = result.getString(pos++);
+        contractVersion = result.getString(pos++);
+        created = result.getTimestamp(pos++).getTime();
+        Timestamp T = result.getTimestamp(pos++);
         if (result.wasNull()) canceled = -1;
         else canceled = T.getTime();
-        cancelReason = result.getString(5);
-        parent = result.getString(6);
-        can_add_backup_server=result.getBoolean(7);
-        can_add_businesses=result.getBoolean(8);
-        can_see_prices=result.getBoolean(9);
-        disable_log=result.getInt(10);
+        cancelReason = result.getString(pos++);
+        parent = result.getString(pos++);
+        can_add_backup_server=result.getBoolean(pos++);
+        can_add_businesses=result.getBoolean(pos++);
+        can_see_prices=result.getBoolean(pos++);
+        disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log=-1;
-        do_not_disable_reason=result.getString(11);
-        auto_enable=result.getBoolean(12);
-        bill_parent=result.getBoolean(13);
+        do_not_disable_reason=result.getString(pos++);
+        auto_enable=result.getBoolean(pos++);
+        bill_parent=result.getBoolean(pos++);
+        package_definition = result.getInt(pos++);
+        created_by = result.getString(pos++);
+        email_in_burst=result.getInt(pos++);
+        if(result.wasNull()) email_in_burst = -1;
+        email_in_rate=result.getFloat(pos++);
+        if(result.wasNull()) email_in_rate = Float.NaN;
+        email_out_burst=result.getInt(pos++);
+        if(result.wasNull()) email_out_burst = -1;
+        email_out_rate=result.getFloat(pos++);
+        if(result.wasNull()) email_out_rate = Float.NaN;
+        email_relay_burst=result.getInt(pos++);
+        if(result.wasNull()) email_relay_burst = -1;
+        email_relay_rate=result.getFloat(pos++);
+        if(result.wasNull()) email_relay_rate = Float.NaN;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -1007,6 +1049,14 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         do_not_disable_reason=in.readNullUTF();
         auto_enable=in.readBoolean();
         bill_parent=in.readBoolean();
+        package_definition=in.readCompressedInt();
+        created_by=in.readUTF().intern();
+        email_in_burst=in.readCompressedInt();
+        email_in_rate=in.readFloat();
+        email_out_burst=in.readCompressedInt();
+        email_out_rate=in.readFloat();
+        email_relay_burst=in.readCompressedInt();
+        email_relay_rate=in.readFloat();
     }
 
     public void setAccounting(String accounting) throws SQLException, IOException {
@@ -1029,10 +1079,20 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         out.writeNullUTF(do_not_disable_reason);
         out.writeBoolean(auto_enable);
         out.writeBoolean(bill_parent);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
+            out.writeCompressedInt(package_definition);
+            out.writeUTF(created_by);
+            out.writeCompressedInt(email_in_burst);
+            out.writeFloat(email_in_rate);
+            out.writeCompressedInt(email_out_burst);
+            out.writeFloat(email_out_rate);
+            out.writeCompressedInt(email_relay_burst);
+            out.writeFloat(email_relay_rate);
+        }
     }
 
     public List<Ticket> getTickets() throws SQLException, IOException {
-	return table.connector.getTickets().getTickets(this);
+        return table.connector.getTickets().getTickets(this);
     }
     
     /**
@@ -1122,5 +1182,165 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public int compareTo(Business o) {
         return pkey.compareTo(o.pkey);
+    }
+
+    public void addDNSZone(String zone, String ip, int ttl) throws IOException, SQLException {
+	    table.connector.getDnsZones().addDNSZone(this, zone, ip, ttl);
+    }
+
+    public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
+        return table.connector.getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
+    }
+
+    public void addLinuxGroup(String name, LinuxGroupType type) throws IOException, SQLException {
+    	addLinuxGroup(name, type.pkey);
+    }
+
+    public void addLinuxGroup(String name, String type) throws IOException, SQLException {
+	    table.connector.getLinuxGroups().addLinuxGroup(name, this, type);
+    }
+
+    public void addUsername(String username) throws IOException, SQLException {
+	    table.connector.getUsernames().addUsername(this, username);
+    }
+
+    public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
+        BusinessAdministrator createdByObject = table.connector.getUsernames().get(created_by).getBusinessAdministrator();
+        if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
+        return createdByObject;
+    }
+
+    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
+        return table.connector.getCvsRepositories().getCvsRepositories(this);
+    }
+
+    /**
+     * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    public int getEmailInBurst() {
+        return email_in_burst;
+    }
+
+    /**
+     * Gets the inbound sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    public float getEmailInRate() {
+        return email_in_rate;
+    }
+
+    /**
+     * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    public int getEmailOutBurst() {
+        return email_out_burst;
+    }
+
+    /**
+     * Gets the outbound sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    public float getEmailOutRate() {
+        return email_out_rate;
+    }
+
+    /**
+     * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    public int getEmailRelayBurst() {
+        return email_relay_burst;
+    }
+
+    /**
+     * Gets the relay sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    public float getEmailRelayRate() {
+        return email_relay_rate;
+    }
+
+    public List<DNSZone> getDNSZones() throws IOException, SQLException {
+        return table.connector.getDnsZones().getDNSZones(this);
+    }
+
+    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
+        return table.connector.getEmailPipes().getEmailPipes(this);
+    }
+
+    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
+        return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcats(this);
+    }
+
+    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
+        return table.connector.getHttpdServers().getHttpdServers(this);
+    }
+
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
+        return table.connector.getHttpdSites().getHttpdSites(this);
+    }
+
+    public List<IPAddress> getIPAddresses() throws IOException, SQLException {
+        return table.connector.getIpAddresses().getIPAddresses(this);
+    }
+
+    public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
+        return table.connector.getLinuxGroups().getLinuxGroups(this);
+    }
+
+    public List<MySQLDatabase> getMysqlDatabases() throws IOException, SQLException {
+        return table.connector.getMysqlDatabases().getMySQLDatabases(this);
+    }
+
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
+        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+    }
+
+    public List<MySQLServer> getMysqlServers() throws IOException, SQLException {
+        return table.connector.getMysqlServers().getMySQLServers(this);
+    }
+
+    public List<MySQLUser> getMysqlUsers() throws IOException, SQLException {
+        return table.connector.getMysqlUsers().getMySQLUsers(this);
+    }
+
+    public List<NetBind> getNetBinds() throws IOException, SQLException {
+        return table.connector.getNetBinds().getNetBinds(this);
+    }
+
+    public List<NetBind> getNetBinds(IPAddress ip) throws IOException, SQLException {
+        return table.connector.getNetBinds().getNetBinds(this, ip);
+    }
+
+    public PackageDefinition getPackageDefinition() throws SQLException, IOException {
+        PackageDefinition pd = table.connector.getPackageDefinitions().get(package_definition);
+        if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
+        return pd;
+    }
+
+    public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
+        return table.connector.getPostgresDatabases().getPostgresDatabases(this);
+    }
+
+    public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
+        return table.connector.getPostgresUsers().getPostgresUsers(this);
+    }
+
+    public Server getServer(String name) throws IOException, SQLException {
+        return table.connector.getServers().getServer(this, name);
+    }
+
+    public List<Server> getServers() throws IOException, SQLException {
+        return table.connector.getServers().getServers(this);
+    }
+
+    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
+        return table.connector.getEmailSmtpRelays().getEmailSmtpRelays(this);
+    }
+
+    public List<Username> getUsernames() throws IOException, SQLException {
+        return table.connector.getUsernames().getUsernames(this);
     }
 }

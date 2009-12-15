@@ -21,7 +21,7 @@ final public class PhysicalServerTable extends CachedTableIntegerKey<PhysicalSer
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
         new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
     };
     @Override

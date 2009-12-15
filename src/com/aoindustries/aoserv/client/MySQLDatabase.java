@@ -38,7 +38,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     static final int
         COLUMN_PKEY=0,
         COLUMN_MYSQL_SERVER=2,
-        COLUMN_PACKAGE=3
+        COLUMN_ACCOUNTING=3
     ;
     static final String COLUMN_NAME_name = "name";
     static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
@@ -79,7 +79,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
     String name;
     int mysql_server;
-    String packageName;
+    String accounting;
 
     public int addMySQLServerUser(
         MySQLServerUser msu,
@@ -183,7 +183,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return name;
             case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -240,9 +240,9 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         return name;
     }
 
-    public Package getPackage() throws SQLException, IOException {
-        Package obj=table.connector.getPackages().get(packageName);
-        if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
+    public Business getBusiness() throws SQLException, IOException {
+        Business obj=table.connector.getBusinesses().get(accounting);
+        if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
         return obj;
     }
 
@@ -260,14 +260,14 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         pkey=result.getInt(1);
         name=result.getString(2);
         mysql_server=result.getInt(3);
-        packageName=result.getString(4);
+        accounting=result.getString(4);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         name=in.readUTF();
         mysql_server=in.readCompressedInt();
-        packageName=in.readUTF().intern();
+        accounting=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
@@ -302,7 +302,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         out.writeUTF(name);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
         else out.writeCompressedInt(mysql_server);
-        out.writeUTF(packageName);
+        out.writeUTF(accounting);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);

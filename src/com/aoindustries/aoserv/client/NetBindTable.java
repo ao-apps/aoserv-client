@@ -5,16 +5,18 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  NetBind
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -25,7 +27,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
@@ -39,7 +41,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 
     int addNetBind(
         final Server se,
-        final Package pk,
+        final Business bu,
         final IPAddress ia,
         final NetPort netPort,
         final NetProtocol netProtocol,
@@ -57,7 +59,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.NET_BINDS.ordinal());
                     out.writeCompressedInt(se.pkey);
-                    out.writeUTF(pk.name);
+                    out.writeUTF(bu.pkey);
                     out.writeCompressedInt(ia.pkey);
                     out.writeCompressedInt(netPort.port);
                     out.writeUTF(netProtocol.pkey);
@@ -93,21 +95,21 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
         return getIndexedRows(NetBind.COLUMN_IP_ADDRESS, ia.pkey);
     }
 
-    List<NetBind> getNetBinds(Package pk) throws IOException, SQLException {
-        return getIndexedRows(NetBind.COLUMN_PACKAGE, pk.name);
+    List<NetBind> getNetBinds(Business bu) throws IOException, SQLException {
+        return getIndexedRows(NetBind.COLUMN_ACCOUNTING, bu.pkey);
     }
 
-    List<NetBind> getNetBinds(Package pk, IPAddress ip) throws IOException, SQLException {
-	String packageName=pk.name;
+    List<NetBind> getNetBinds(Business bu, IPAddress ip) throws IOException, SQLException {
+        String accounting=bu.pkey;
         // Use the index first
-	List<NetBind> cached=getNetBinds(ip);
-	int size=cached.size();
+        List<NetBind> cached=getNetBinds(ip);
+        int size=cached.size();
         List<NetBind> matches=new ArrayList<NetBind>(size);
-	for(int c=0;c<size;c++) {
+    	for(int c=0;c<size;c++) {
             NetBind nb=cached.get(c);
-            if(nb.packageName.equals(packageName)) matches.add(nb);
-	}
-	return matches;
+            if(nb.accounting.equals(accounting)) matches.add(nb);
+        }
+        return matches;
     }
 
     List<NetBind> getNetBinds(Server se) throws IOException, SQLException {

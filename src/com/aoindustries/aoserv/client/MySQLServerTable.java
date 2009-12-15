@@ -5,22 +5,21 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  MySQLServer
- *
- * @version  1.4
  *
  * @author  AO Industries, Inc.
  */
 final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 
     MySQLServerTable(AOServConnector connector) {
-	super(connector, MySQLServer.class);
+    	super(connector, MySQLServer.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -73,12 +72,12 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 	return null;
     }
 
-    List<MySQLServer> getMySQLServers(Package pk) throws IOException, SQLException {
-        return getIndexedRows(MySQLServer.COLUMN_PACKAGE, pk.name);
+    List<MySQLServer> getMySQLServers(Business bu) throws IOException, SQLException {
+        return getIndexedRows(MySQLServer.COLUMN_ACCOUNTING, bu.pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MYSQL_SERVERS;
+    	return SchemaTable.TableID.MYSQL_SERVERS;
     }
 
     @Override

@@ -5,22 +5,21 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  EmailDomain
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 
     EmailDomainTable(AOServConnector connector) {
-	super(connector, EmailDomain.class);
+        super(connector, EmailDomain.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -32,7 +31,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
         return defaultOrderBy;
     }
 
-    int addEmailDomain(String domain, AOServer ao, Package packageObject) throws SQLException, IOException {
+    int addEmailDomain(String domain, AOServer ao, Business business) throws SQLException, IOException {
         if (!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid domain format: " + domain);
         return connector.requestIntQueryIL(
             true,
@@ -40,7 +39,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
             SchemaTable.TableID.EMAIL_DOMAINS,
             domain,
             ao.pkey,
-            packageObject.name
+            business.pkey
     	);
     }
 
@@ -48,21 +47,8 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
     	return getUniqueRow(EmailDomain.COLUMN_PKEY, pkey);
     }
 
-    List<EmailDomain> getEmailDomains(Business owner) throws SQLException, IOException {
-        String accounting=owner.pkey;
-
-        List<EmailDomain> cached = getRows();
-	int len = cached.size();
-        List<EmailDomain> matches=new ArrayList<EmailDomain>(len);
-	for (int c = 0; c < len; c++) {
-            EmailDomain domain = cached.get(c);
-            if (domain.getPackage().accounting.equals(accounting)) matches.add(domain);
-	}
-	return matches;
-    }
-
-    List<EmailDomain> getEmailDomains(Package pack) throws IOException, SQLException {
-        return getIndexedRows(EmailDomain.COLUMN_PACKAGE, pack.name);
+    List<EmailDomain> getEmailDomains(Business owner) throws IOException, SQLException {
+        return getIndexedRows(EmailDomain.COLUMN_ACCOUNTING, owner.pkey);
     }
 
     List<EmailDomain> getEmailDomains(AOServer ao) throws IOException, SQLException {
@@ -86,8 +72,8 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-	String command=args[0];
-	if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_DOMAIN)) {
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_DOMAIN)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_DOMAIN, args, 3, err)) {
                 out.println(
                     connector.getSimpleAOClient().addEmailDomain(
@@ -99,7 +85,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_EMAIL_DOMAIN)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_EMAIL_DOMAIN)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_EMAIL_DOMAIN, args, 1, err)) {
                 try {
                     SimpleAOClient.checkEmailDomain(args[1]);
@@ -111,7 +97,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE, args, 2, err)) {
                 try {
                     out.println(connector.getSimpleAOClient().isEmailDomainAvailable(args[1], args[2]));
@@ -123,15 +109,15 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
                 }
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_EMAIL_DOMAIN)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_EMAIL_DOMAIN)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_EMAIL_DOMAIN, args, 2, err)) {
                 connector.getSimpleAOClient().removeEmailDomain(
                     args[1], args[2]
                 );
             }
             return true;
-	}
-	return false;
+        }
+        return false;
     }
 
     boolean isEmailDomainAvailable(AOServer aoServer, String domain) throws SQLException, IOException {

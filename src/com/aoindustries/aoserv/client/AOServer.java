@@ -72,31 +72,30 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	);
     }
 
-    public int addEmailDomain(String domain, Package packageObject) throws SQLException, IOException {
-	return table.connector.getEmailDomains().addEmailDomain(domain, this, packageObject);
+    public int addEmailDomain(String domain, Business business) throws SQLException, IOException {
+        return table.connector.getEmailDomains().addEmailDomain(domain, this, business);
     }
 
-    public int addEmailPipe(String path, Package packageObject) throws IOException, SQLException {
-	return table.connector.getEmailPipes().addEmailPipe(this, path, packageObject);
+    public int addEmailPipe(String path, Business bu) throws IOException, SQLException {
+        return table.connector.getEmailPipes().addEmailPipe(this, path, bu);
     }
 
     public int addHttpdJBossSite(
-	String siteName,
-	Package packageObj,
-	LinuxAccount siteUser,
-	LinuxGroup siteGroup,
-	String serverAdmin,
-	boolean useApache,
-	IPAddress ipAddress,
-	String primaryHttpHostname,
-	String[] altHttpHostnames,
-	int jBossVersion,
-	String contentSrc
+        String siteName,
+        Business business,
+        LinuxAccount siteUser,
+        LinuxGroup siteGroup,
+        String serverAdmin,
+        boolean useApache,
+        IPAddress ipAddress,
+        String primaryHttpHostname,
+        String[] altHttpHostnames,
+        int jBossVersion
     ) throws IOException, SQLException {
         return table.connector.getHttpdJBossSites().addHttpdJBossSite(
             this,
             siteName,
-            packageObj,
+            business,
             siteUser,
             siteGroup,
             serverAdmin,
@@ -104,17 +103,16 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             ipAddress,
             primaryHttpHostname,
             altHttpHostnames,
-            jBossVersion,
-            contentSrc
+            jBossVersion
         );
     }
 
     public int addHttpdSharedTomcat(
-	String name,
+    	String name,
         HttpdTomcatVersion version,
-	LinuxServerAccount lsa,
-	LinuxServerGroup lsg,
-	boolean isSecure,
+        LinuxServerAccount lsa,
+        LinuxServerGroup lsg,
+        boolean isSecure,
         boolean isOverflow
     ) throws IOException, SQLException {
         return table.connector.getHttpdSharedTomcats().addHttpdSharedTomcat(
@@ -130,7 +128,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     public int addHttpdTomcatSharedSite(
         String siteName,
-        Package packageObj,
+        Business business,
         LinuxAccount siteUser,
         LinuxGroup siteGroup,
         String serverAdmin,
@@ -139,13 +137,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         String primaryHttpHostname,
         String[] altHttpHostnames,
         String sharedTomcatName,
-        HttpdTomcatVersion version,
-        String contentSrc
+        HttpdTomcatVersion version
     ) throws IOException, SQLException {
         return table.connector.getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
             this,
             siteName,
-            packageObj,
+            business,
             siteUser,
             siteGroup,
             serverAdmin,
@@ -154,28 +151,26 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             primaryHttpHostname,
             altHttpHostnames,
             sharedTomcatName,
-            version,
-            contentSrc
+            version
         );
     }
 
     public int addHttpdTomcatStdSite(
-	String siteName,
-	Package packageObj,
-	LinuxAccount jvmUser,
-	LinuxGroup jvmGroup,
-	String serverAdmin,
-	boolean useApache,
-	IPAddress ipAddress,
-	String primaryHttpHostname,
-	String[] altHttpHostnames,
-	HttpdTomcatVersion tomcatVersion,
-	String contentSrc
+        String siteName,
+        Business business,
+        LinuxAccount jvmUser,
+        LinuxGroup jvmGroup,
+        String serverAdmin,
+        boolean useApache,
+        IPAddress ipAddress,
+        String primaryHttpHostname,
+        String[] altHttpHostnames,
+        HttpdTomcatVersion tomcatVersion
     ) throws IOException, SQLException {
         return table.connector.getHttpdTomcatStdSites().addHttpdTomcatStdSite(
             this,
             siteName,
-            packageObj,
+            business,
             jvmUser,
             jvmGroup,
             serverAdmin,
@@ -183,8 +178,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             ipAddress,
             primaryHttpHostname,
             altHttpHostnames,
-            tomcatVersion,
-            contentSrc
+            tomcatVersion
         );
     }
 
@@ -382,19 +376,19 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
-	return table.connector.getEmailListAddresses().getEmailListAddresses(this);
+        return table.connector.getEmailListAddresses().getEmailListAddresses(this);
     }
 
     public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
-	return table.connector.getEmailPipeAddresses().getEmailPipeAddresses(this);
+        return table.connector.getEmailPipeAddresses().getEmailPipeAddresses(this);
     }
 
     public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-	return table.connector.getEmailPipes().getEmailPipes(this);
+        return table.connector.getEmailPipes().getEmailPipes(this);
     }
 
-    public EmailSmtpRelay getEmailSmtpRelay(Package pk, String host) throws IOException, SQLException {
-	return table.connector.getEmailSmtpRelays().getEmailSmtpRelay(pk, this, host);
+    public EmailSmtpRelay getEmailSmtpRelay(Business bu, String host) throws IOException, SQLException {
+    	return table.connector.getEmailSmtpRelays().getEmailSmtpRelay(bu, this, host);
     }
 
     /**

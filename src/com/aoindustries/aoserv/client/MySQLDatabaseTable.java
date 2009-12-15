@@ -15,14 +15,12 @@ import java.util.Locale;
 /**
  * @see  MySQLDatabase
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabase> {
 
     MySQLDatabaseTable(AOServConnector connector) {
-	super(connector, MySQLDatabase.class);
+    	super(connector, MySQLDatabase.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -38,7 +36,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
     int addMySQLDatabase(
         String name,
         MySQLServer mysqlServer,
-        Package packageObj
+        Business bu
     ) throws IOException, SQLException {
     	int pkey=connector.requestIntQueryIL(
             true,
@@ -46,7 +44,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
             SchemaTable.TableID.MYSQL_DATABASES,
             name,
             mysqlServer.pkey,
-            packageObj.name
+            bu.pkey
         );
         return pkey;
     }
@@ -65,8 +63,8 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
         return null;
     }
 
-    List<MySQLDatabase> getMySQLDatabases(Package pack) throws IOException, SQLException {
-        return getIndexedRows(MySQLDatabase.COLUMN_PACKAGE, pack.name);
+    List<MySQLDatabase> getMySQLDatabases(Business bu) throws IOException, SQLException {
+        return getIndexedRows(MySQLDatabase.COLUMN_ACCOUNTING, bu.pkey);
     }
 
     List<MySQLDatabase> getMySQLDatabases(MySQLServer ms) throws IOException, SQLException {

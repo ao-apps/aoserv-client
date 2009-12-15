@@ -5,10 +5,13 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.BufferManager;
-import java.io.*;
-import java.sql.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -31,8 +34,6 @@ import java.util.Locale;
  * @see  HttpdStaticSite
  * @see  HttpdTomcatSite
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implements Disablable, Removable {
@@ -40,7 +41,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     static final int
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=1,
-        COLUMN_PACKAGE=4
+        COLUMN_ACCOUNTING=4
     ;
     static final String COLUMN_SITE_NAME_name = "site_name";
     static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -64,13 +65,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     int ao_server;
     String site_name;
     private boolean list_first;
-    String packageName;
+    String accounting;
     String linuxAccount;
     String linuxGroup;
-    private String
-        serverAdmin,
-        contentSrc
-    ;
+    private String serverAdmin;
     int disable_log;
     private boolean isManual;
     private String awstatsSkipFiles;
@@ -105,7 +103,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         if(dl==null) return false;
         else return
             dl.canEnable()
-            && getPackage().disable_log==-1
+            && getBusiness().disable_log==-1
             && getLinuxServerAccount().disable_log==-1
         ;
     }
@@ -135,20 +133,15 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
             case 2: return site_name;
             case 3: return list_first?Boolean.TRUE:Boolean.FALSE;
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             case 5: return linuxAccount;
             case 6: return linuxGroup;
             case 7: return serverAdmin;
-            case 8: return contentSrc;
-            case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
-            case 10: return isManual?Boolean.TRUE:Boolean.FALSE;
-            case 11: return awstatsSkipFiles;
+            case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 9: return isManual?Boolean.TRUE:Boolean.FALSE;
+            case 10: return awstatsSkipFiles;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
-    }
-
-    public String getContentSrc() {
-        return contentSrc;
     }
 
     public boolean isDisabled() {
@@ -200,9 +193,9 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         return lsg;
     }
 
-    public Package getPackage() throws SQLException, IOException {
-        Package obj=table.connector.getPackages().get(packageName);
-        if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
+    public Business getBusiness() throws SQLException, IOException {
+        Business obj=table.connector.getBusinesses().get(accounting);
+        if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
         return obj;
     }
 
@@ -244,21 +237,16 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         return SchemaTable.TableID.HTTPD_SITES;
     }
 
-    //public void initializePasswdFile(String username, String password) {
-    //    table.connector.requestUpdate(AOServProtocol.INITIALIZE_HTTPD_SITE_PASSWD_FILE, pkey, username, UnixCrypt.crypt(username, password));
-    //}
-
     public void init(ResultSet result) throws SQLException {
         int pos = 1;
         pkey=result.getInt(pos++);
         ao_server=result.getInt(pos++);
         site_name=result.getString(pos++);
         list_first=result.getBoolean(pos++);
-        packageName=result.getString(pos++);
+        accounting=result.getString(pos++);
         linuxAccount=result.getString(pos++);
         linuxGroup=result.getString(pos++);
         serverAdmin=result.getString(pos++);
-        contentSrc=result.getString(pos++);
         disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log=-1;
         isManual=result.getBoolean(pos++);
@@ -319,11 +307,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         ao_server=in.readCompressedInt();
         site_name=in.readUTF();
         list_first=in.readBoolean();
-        packageName=in.readUTF().intern();
+        accounting=in.readUTF().intern();
         linuxAccount=in.readUTF().intern();
         linuxGroup=in.readUTF().intern();
         serverAdmin=in.readUTF();
-        contentSrc=in.readNullUTF();
         disable_log=in.readCompressedInt();
         isManual=in.readBoolean();
         awstatsSkipFiles=in.readNullUTF();
@@ -351,11 +338,11 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         out.writeCompressedInt(ao_server);
         out.writeUTF(site_name);
         out.writeBoolean(list_first);
-        out.writeUTF(packageName);
+        out.writeUTF(accounting);
         out.writeUTF(linuxAccount);
         out.writeUTF(linuxGroup);
         out.writeUTF(serverAdmin);
-        out.writeNullUTF(contentSrc);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeNullUTF(null); // contentSrc
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);

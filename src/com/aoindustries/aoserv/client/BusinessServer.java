@@ -161,98 +161,94 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
             if(bu.isBusinessOrParentOf(bus.get(c))) {
                 Business bu2=bus.get(c);
                 if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<Business>("Child business "+bu2.getAccounting()+" still has access to "+se, bu2));
-                List<Package> pks=bu2.getPackages();
-                for(int d=0;d<pks.size();d++) {
-                    Package pk=pks.get(d);
 
-                    // net_binds
-                    for(NetBind nb : pk.getNetBinds()) {
-                        if(nb.getServer().equals(se)) {
-                            String details=nb.getDetails();
-                            if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(userLocale), nb));
-                            else {
-                                IPAddress ia=nb.getIPAddress();
-                                NetDevice nd=ia.getNetDevice();
-                                if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), nb));
-                                else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(userLocale), nb));
+                // net_binds
+                for(NetBind nb : bu2.getNetBinds()) {
+                    if(nb.getServer().equals(se)) {
+                        String details=nb.getDetails();
+                        if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(userLocale), nb));
+                        else {
+                            IPAddress ia=nb.getIPAddress();
+                            NetDevice nd=ia.getNetDevice();
+                            if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), nb));
+                            else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(userLocale), nb));
+                        }
+                    }
+                }
+
+                // ip_addresses
+                for(IPAddress ia : bu2.getIPAddresses()) {
+                    NetDevice nd=ia.getNetDevice();
+                    if(
+                        nd!=null
+                        && se.equals(nd.getServer())
+                    ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), ia));
+                }
+
+                if(ao!=null) {
+                    // email_pipes
+                    for(EmailPipe ep : bu2.getEmailPipes()) {
+                        if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailPipe>("Used by email pipe '"+ep.getPath()+"' on "+ao.getHostname(), ep));
+                    }
+
+                    // httpd_sites
+                    for(HttpdSite hs : bu2.getHttpdSites()) {
+                        if(hs.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
+                    }
+
+                    for(Username un : bu2.getUsernames()) {
+                        // linux_server_accounts
+                        LinuxAccount la=un.getLinuxAccount();
+                        if(la!=null) {
+                            LinuxServerAccount lsa=la.getLinuxServerAccount(ao);
+                            if(lsa!=null) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Used by Linux account "+un.getUsername()+" on "+ao.getHostname(), lsa));
+                        }
+
+                        // mysql_server_users
+                        MySQLUser mu=un.getMySQLUser();
+                        if(mu!=null) {
+                            for(MySQLServer ms : ao.getMySQLServers()) {
+                                MySQLServerUser msu=mu.getMySQLServerUser(ms);
+                                if(msu!=null) reasons.add(new CannotRemoveReason<MySQLServerUser>("Used by MySQL user "+un.getUsername()+" on "+ms.getName()+" on "+ao.getHostname(), msu));
+                            }
+                        }
+
+                        // postgres_server_users
+                        PostgresUser pu=un.getPostgresUser();
+                        if(pu!=null) {
+                            for(PostgresServer ps : ao.getPostgresServers()) {
+                                PostgresServerUser psu=pu.getPostgresServerUser(ps);
+                                if(psu!=null) reasons.add(new CannotRemoveReason<PostgresServerUser>("Used by PostgreSQL user "+un.getUsername()+" on "+ps.getName()+" on "+ao.getHostname(), psu));
                             }
                         }
                     }
 
-                    // ip_addresses
-                    for(IPAddress ia : pk.getIPAddresses()) {
-                        NetDevice nd=ia.getNetDevice();
-                        if(
-                            nd!=null
-                            && se.equals(nd.getServer())
-                        ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), ia));
+                    for(LinuxGroup lg : bu2.getLinuxGroups()) {
+                        // linux_server_groups
+                        LinuxServerGroup lsg=lg.getLinuxServerGroup(ao);
+                        if(lsg!=null) reasons.add(new CannotRemoveReason<LinuxServerGroup>("Used by Linux group "+lg.getName()+" on "+ao.getHostname(), lsg));
                     }
 
-                    if(ao!=null) {
-                        // email_pipes
-                        for(EmailPipe ep : pk.getEmailPipes()) {
-                            if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailPipe>("Used by email pipe '"+ep.getPath()+"' on "+ao.getHostname(), ep));
-                        }
+                    // mysql_databases
+                    for(MySQLDatabase md : bu2.getMysqlDatabases()) {
+                        MySQLServer ms=md.getMySQLServer();
+                        if(ms.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
+                    }
 
-                        // httpd_sites
-                        for(HttpdSite hs : pk.getHttpdSites()) {
-                            if(hs.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
-                        }
+                    // postgres_databases
+                    for(PostgresDatabase pd : bu2.getPostgresDatabases()) {
+                        PostgresServer ps=pd.getPostgresServer();
+                        if(ps.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
+                    }
 
-                        for(Username un : pk.getUsernames()) {
-                            // linux_server_accounts
-                            LinuxAccount la=un.getLinuxAccount();
-                            if(la!=null) {
-                                LinuxServerAccount lsa=la.getLinuxServerAccount(ao);
-                                if(lsa!=null) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Used by Linux account "+un.getUsername()+" on "+ao.getHostname(), lsa));
-                            }
+                    // email_domains
+                    for(EmailDomain ed : bu2.getEmailDomains()) {
+                        if(ed.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailDomain>("Used by email domain "+ed.getDomain()+" on "+ao.getHostname(), ed));
+                    }
 
-                            // mysql_server_users
-                            MySQLUser mu=un.getMySQLUser();
-                            if(mu!=null) {
-                                for(MySQLServer ms : ao.getMySQLServers()) {
-                                    MySQLServerUser msu=mu.getMySQLServerUser(ms);
-                                    if(msu!=null) reasons.add(new CannotRemoveReason<MySQLServerUser>("Used by MySQL user "+un.getUsername()+" on "+ms.getName()+" on "+ao.getHostname(), msu));
-                                }
-                            }
-
-                            // postgres_server_users
-                            PostgresUser pu=un.getPostgresUser();
-                            if(pu!=null) {
-                                for(PostgresServer ps : ao.getPostgresServers()) {
-                                    PostgresServerUser psu=pu.getPostgresServerUser(ps);
-                                    if(psu!=null) reasons.add(new CannotRemoveReason<PostgresServerUser>("Used by PostgreSQL user "+un.getUsername()+" on "+ps.getName()+" on "+ao.getHostname(), psu));
-                                }
-                            }
-                        }
-
-                        for(LinuxGroup lg : pk.getLinuxGroups()) {
-                            // linux_server_groups
-                            LinuxServerGroup lsg=lg.getLinuxServerGroup(ao);
-                            if(lsg!=null) reasons.add(new CannotRemoveReason<LinuxServerGroup>("Used by Linux group "+lg.getName()+" on "+ao.getHostname(), lsg));
-                        }
-
-                        // mysql_databases
-                        for(MySQLDatabase md : pk.getMySQLDatabases()) {
-                            MySQLServer ms=md.getMySQLServer();
-                            if(ms.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
-                        }
-
-                        // postgres_databases
-                        for(PostgresDatabase pd : pk.getPostgresDatabases()) {
-                            PostgresServer ps=pd.getPostgresServer();
-                            if(ps.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
-                        }
-
-                        // email_domains
-                        for(EmailDomain ed : pk.getEmailDomains()) {
-                            if(ed.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailDomain>("Used by email domain "+ed.getDomain()+" on "+ao.getHostname(), ed));
-                        }
-
-                        // email_smtp_relays
-                        for(EmailSmtpRelay esr : pk.getEmailSmtpRelays()) {
-                            if(esr.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailSmtpRelay>("Used by email SMTP rule "+esr, esr));
-                        }
+                    // email_smtp_relays
+                    for(EmailSmtpRelay esr : bu2.getEmailSmtpRelays()) {
+                        if(esr.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailSmtpRelay>("Used by email SMTP rule "+esr, esr));
                     }
                 }
             }

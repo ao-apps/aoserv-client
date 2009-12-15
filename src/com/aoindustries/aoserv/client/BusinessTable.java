@@ -22,8 +22,6 @@ import java.util.List;
 /**
  * @see  Business
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class BusinessTable extends CachedTableStringKey<Business> {
@@ -31,7 +29,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     private String rootAccounting;
 
     BusinessTable(AOServConnector connector) {
-	super(connector, Business.class);
+        super(connector, Business.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -50,7 +48,8 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
         final boolean canAddBackupServers,
     	final boolean canAddBusinesses,
         final boolean canSeePrices,
-        final boolean billParent
+        final boolean billParent,
+        final PackageDefinition packageDefinition
     ) throws IOException, SQLException {
         connector.requestUpdate(
             true,
@@ -69,6 +68,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
                     out.writeBoolean(canAddBusinesses);
                     out.writeBoolean(canSeePrices);
                     out.writeBoolean(billParent);
+                    out.writeCompressedInt(packageDefinition.pkey);
                 }
 
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
@@ -154,7 +154,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS)) {
-            if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS, args, 8, err)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS, args, 9, err)) {
                 try {
                     connector.getSimpleAOClient().addBusiness(
                         args[1],
@@ -164,7 +164,8 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
                         AOSH.parseBoolean(args[5], "can_add_backup_servers"),
                         AOSH.parseBoolean(args[6], "can_add_businesses"),
                         AOSH.parseBoolean(args[7], "can_see_prices"),
-                        AOSH.parseBoolean(args[8], "bill_parent")
+                        AOSH.parseBoolean(args[8], "bill_parent"),
+                        AOSH.parseInt(args[9], "package_definition")
                     );
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.ADD_BUSINESS+": ");
@@ -252,6 +253,10 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     public boolean isAccountingAvailable(String accounting) throws SQLException, IOException {
         if(!Business.isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
         return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_ACCOUNTING_AVAILABLE, accounting);
+    }
+
+    List<Business> getBusinesses(PackageDefinition pd) throws IOException, SQLException {
+        return getIndexedRows(Business.COLUMN_PACKAGE_DEFINITION, pd.pkey);
     }
 
     // <editor-fold defaultstate="collapsed" desc="Tree compatibility">

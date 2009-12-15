@@ -186,11 +186,6 @@ abstract public class AOServConnector {
         return backupPartitions;
     }
 
-    private final BackupReportTable backupReports;
-    public BackupReportTable getBackupReports() {
-        return backupReports;
-    }
-
     private final BackupRetentionTable backupRetentions;
     public BackupRetentionTable getBackupRetentions() {
         return backupRetentions;
@@ -727,9 +722,6 @@ abstract public class AOServConnector {
         return packageDefinitions;
     }
 
-    private final PackageTable packages;
-    public PackageTable getPackages() {return packages;}
-    
     private final PaymentTypeTable paymentTypes;
     public PaymentTypeTable getPaymentTypes() {
         return paymentTypes;
@@ -991,7 +983,6 @@ abstract public class AOServConnector {
         newTables.add(aoshCommands=new AOSHCommandTable(this));
         newTables.add(architectures=new ArchitectureTable(this));
         newTables.add(backupPartitions=new BackupPartitionTable(this));
-        newTables.add(backupReports=new BackupReportTable(this));
         newTables.add(backupRetentions=new BackupRetentionTable(this));
         newTables.add(bankAccounts=new BankAccountTable(this));
         newTables.add(bankTransactionTypes=new BankTransactionTypeTable(this));
@@ -1102,7 +1093,6 @@ abstract public class AOServConnector {
         newTables.add(packageCategories=new PackageCategoryTable(this));
         newTables.add(packageDefinitionLimits=new PackageDefinitionLimitTable(this));
         newTables.add(packageDefinitions=new PackageDefinitionTable(this));
-        newTables.add(packages=new PackageTable(this));
         newTables.add(paymentTypes=new PaymentTypeTable(this));
         newTables.add(physicalServers=new PhysicalServerTable(this));
         newTables.add(postgresDatabases=new PostgresDatabaseTable(this));
@@ -2287,7 +2277,6 @@ abstract public class AOServConnector {
             // Then send the events
             for(int c=0;c<size;c++) {
                 int tableID=invalidateList.getInt(c);
-                //System.err.println("DEBUG: AOServConnector: tablesUpdated: "+tableID+": "+SchemaTable.TableID.values()[tableID]);
                 tables.get(tableID).tableUpdated();
             }
         }

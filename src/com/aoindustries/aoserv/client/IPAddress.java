@@ -19,11 +19,11 @@ import java.util.concurrent.ConcurrentMap;
  * Each <code>IPAddress</code> represents a unique IPv4 address.  Two of the IP
  * addresses exist on every server, <code>WILDCARD_IP</code> and <code>LOOPBACK_IP</code>.
  * Every other IP address is assigned to a specific <code>Server</code>.  IP
- * addresses may be assigned to a specific <code>Package</code> and may have
+ * addresses may be assigned to a specific <code>Business</code> and may have
  * a monthly rate associated with them.
  *
  * @see  Server
- * @see  Package
+ * @see  Business
  * @see  NetBind
  * @see  PrivateFTPServer
  *
@@ -34,7 +34,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     static final int
         COLUMN_PKEY=0,
         COLUMN_NET_DEVICE=2,
-        COLUMN_PACKAGE=5
+        COLUMN_ACCOUNTING=5
     ;
     static final String COLUMN_IP_ADDRESS_name = "ip_address";
     static final String COLUMN_NET_DEVICE_name = "net_device";
@@ -153,7 +153,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     int net_device;
     boolean is_alias;
     private String hostname;
-    String packageName;
+    String accounting;
     private long created;
     private boolean available;
     private boolean isOverflow;
@@ -169,7 +169,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             case COLUMN_NET_DEVICE: return net_device==-1?null:Integer.valueOf(net_device);
             case 3: return is_alias?Boolean.TRUE:Boolean.FALSE;
             case 4: return hostname;
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             case 6: return new java.sql.Date(created);
             case 7: return available?Boolean.TRUE:Boolean.FALSE;
             case 8: return isOverflow?Boolean.TRUE:Boolean.FALSE;
@@ -183,7 +183,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 
     /**
      * Determines when this <code>IPAddress</code> was created.  The created time
-     * is reset when the address is allocated to a different <code>Package</code>,
+     * is reset when the address is allocated to a different <code>Business</code>,
      * which allows the automated accounting to start the billing on the correct
      * day of the month.
      */
@@ -210,9 +210,12 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	return nd;
     }
 
-    public Package getPackage() throws IOException, SQLException {
+    /**
+     * May be filtered.
+     */
+    public Business getBusiness() throws IOException, SQLException {
         // May be null when filtered
-        return table.connector.getPackages().get(packageName);
+        return table.connector.getBusinesses().get(accounting);
     }
 
     public boolean isOverflow() {
@@ -249,7 +252,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         if(result.wasNull()) net_device=-1;
         is_alias = result.getBoolean(4);
         hostname = result.getString(5);
-        packageName = result.getString(6);
+        accounting = result.getString(6);
         created = result.getTimestamp(7).getTime();
         available = result.getBoolean(8);
         isOverflow = result.getBoolean(9);
@@ -289,14 +292,14 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         net_device=in.readCompressedInt();
         is_alias=in.readBoolean();
         hostname=in.readUTF();
-        packageName=in.readUTF().intern();
+        accounting=in.readUTF().intern();
         created=in.readLong();
         available=in.readBoolean();
         isOverflow=in.readBoolean();
         isDHCP=in.readBoolean();
         pingMonitorEnabled = in.readBoolean();
         externalIpAddress = in.readNullUTF();
-	netmask = in.readUTF().intern();
+    	netmask = in.readUTF().intern();
     }
 
     /**
@@ -307,13 +310,12 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     }
 
     /**
-     * Sets the <code>Package</code>.  The package may only be set if the IP Address is not used
+     * Sets the <code>Business</code>.  The business may only be set if the IP Address is not used
      * by other resources.
      */
-    public void setPackage(Package pk) throws IOException, SQLException {
-        if(isUsed()) throw new SQLException("Unable to set Package, IPAddress in use: #"+pkey);
-
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_PACKAGE, pkey, pk.name);
+    public void setBusiness(Business bu) throws IOException, SQLException {
+        if(isUsed()) throw new SQLException("Unable to set Business, IPAddress in use: #"+pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_BUSINESS, pkey, bu.pkey);
     }
 
     public void setDHCPAddress(String ipAddress) throws IOException, SQLException {
@@ -326,7 +328,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         out.writeCompressedInt(net_device);
         out.writeBoolean(is_alias);
         out.writeUTF(hostname);
-        out.writeUTF(packageName);
+        out.writeUTF(accounting);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(0);
         out.writeLong(created);
         out.writeBoolean(available);

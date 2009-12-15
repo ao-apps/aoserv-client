@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,9 +22,9 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_PACKAGE=4
+        COLUMN_ACCOUNTING=4
     ;
-    static final String COLUMN_PACKAGE_name = "package";
+    static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_NAME_name = "name";
 
     /**
@@ -37,7 +36,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     String farm;
     private String description;
     private int operating_system_version;
-    private int packageId;
+    private String accounting;
     private String name;
     private boolean monitoring_enabled;
 
@@ -48,7 +47,8 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         boolean can_add_backup_servers,
         boolean can_add_businesses,
         boolean can_see_prices,
-        boolean billParent
+        boolean billParent,
+        PackageDefinition packageDefinition
     ) throws IOException, SQLException {
 	    table.connector.getBusinesses().addBusiness(
             accounting,
@@ -58,12 +58,13 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
             can_add_backup_servers,
             can_add_businesses,
             can_see_prices,
-            billParent
+            billParent,
+            packageDefinition
         );
     }
 
     public int addNetBind(
-        Package pk,
+        Business bu,
         IPAddress ia,
         NetPort netPort,
         NetProtocol netProtocol,
@@ -73,7 +74,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     ) throws IOException, SQLException {
         return table.connector.getNetBinds().addNetBind(
             this,
-            pk,
+            bu,
             ia,
             netPort,
             netProtocol,
@@ -105,7 +106,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
             case 1: return farm;
             case 2: return description;
             case 3: return operating_system_version==-1 ? null : Integer.valueOf(operating_system_version);
-            case COLUMN_PACKAGE: return packageId;
+            case COLUMN_ACCOUNTING: return accounting;
             case 5: return name;
             case 6: return monitoring_enabled;
             default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -122,19 +123,19 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     /**
      * May be filtered.
      *
-     * @see #getPackageId()
+     * @see #getAccounting()
      */
-    public Package getPackage() throws IOException, SQLException {
-        return table.connector.getPackages().get(packageId);
+    public Business getBusiness() throws IOException, SQLException {
+        return table.connector.getBusinesses().get(accounting);
     }
 
     /**
-     * Gets the package id, will not be filtered.
+     * Gets the accounting code, will not be filtered.
      *
-     * @see #getPackage()
+     * @see #getBusiness()
      */
-    public int getPackageId() {
-        return packageId;
+    public String getAccounting() {
+        return accounting;
     }
 
     public String getName() {
@@ -161,11 +162,11 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 
     public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
-	farm = result.getString(2);
+        farm = result.getString(2);
         description = result.getString(3);
         operating_system_version=result.getInt(4);
         if(result.wasNull()) operating_system_version = -1;
-        packageId = result.getInt(5);
+        accounting = result.getString(5);
         name = result.getString(6);
         monitoring_enabled = result.getBoolean(7);
     }
@@ -173,10 +174,10 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     @Override
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	farm=in.readUTF().intern();
+        farm=in.readUTF().intern();
         description = in.readUTF();
         operating_system_version=in.readCompressedInt();
-        packageId = in.readCompressedInt();
+        accounting = in.readUTF().intern();
         name = in.readUTF();
         monitoring_enabled = in.readBoolean();
     }
@@ -185,9 +186,8 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     protected String toStringImpl(Locale userLocale) throws IOException, SQLException {
         AOServer aoServer = getAOServer();
         if(aoServer!=null) return aoServer.toStringImpl(userLocale);
-        Package pk = getPackage();
-        if(pk!=null) return pk.getName()+'/'+name;
-        return Integer.toString(pkey);
+        return accounting+'/'+name;
+        // return Integer.toString(pkey);
     }
 
     @Override
@@ -196,7 +196,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeUTF(name); // hostname
         }
-	out.writeUTF(farm);
+    	out.writeUTF(farm);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeUTF("AOINDUSTRIES"); // owner
             out.writeUTF("orion"); // administrator
@@ -225,10 +225,9 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
             out.writeFloat(Float.NaN); // minimum_power
             out.writeFloat(Float.NaN); // maximum_power
         }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
-            out.writeCompressedInt(packageId);
-            out.writeUTF(name);
-        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeCompressedInt(308); // packageId
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) out.writeUTF(accounting);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeUTF(name);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_32)>=0) {
             out.writeBoolean(monitoring_enabled);
         }
@@ -285,24 +284,14 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     }
 
     public int compareTo(Server o) {
-        try {
-            Package pk1 = getPackage();
-            Package pk2 = o.getPackage();
-            if(pk1==null || pk2==null) {
-                int id1 = getPackageId();
-                int id2 = o.getPackageId();
-            	return (id1<id2 ? -1 : (id1==id2 ? 0 : 1));
-            } else {
-                int diff = pk1.compareTo(pk2);
-                if(diff!=0) return diff;
-                diff = name.compareToIgnoreCase(o.name);
-                if(diff!=0) return diff;
-                return name.compareTo(o.name);
-            }
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
-            throw new WrappedException(err);
-        }
+        String accounting1 = accounting;
+        String accounting2 = o.accounting;
+        int diff = accounting1.compareToIgnoreCase(accounting2);
+        if(diff!=0) return diff;
+        diff = accounting1.compareTo(accounting2);
+        if(diff!=0) return diff;
+        diff = name.compareToIgnoreCase(o.name);
+        if(diff!=0) return diff;
+        return name.compareTo(o.name);
     }
 }

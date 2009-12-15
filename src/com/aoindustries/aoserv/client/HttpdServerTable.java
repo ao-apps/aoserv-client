@@ -5,21 +5,19 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  HttpdServer
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 
     HttpdServerTable(AOServConnector connector) {
-	super(connector, HttpdServer.class);
+    	super(connector, HttpdServer.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -39,11 +37,11 @@ final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
         return getIndexedRows(HttpdServer.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    List<HttpdServer> getHttpdServers(Package pk) throws IOException, SQLException {
-        return getIndexedRows(HttpdServer.COLUMN_PACKAGE, pk.pkey);
+    List<HttpdServer> getHttpdServers(Business bu) throws IOException, SQLException {
+        return getIndexedRows(HttpdServer.COLUMN_ACCOUNTING, bu.pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_SERVERS;
+    	return SchemaTable.TableID.HTTPD_SERVERS;
     }
 }

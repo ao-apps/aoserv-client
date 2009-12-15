@@ -9,7 +9,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
 import com.aoindustries.table.Row;
-import com.aoindustries.util.LocalizedToString;
+import com.aoindustries.util.i18n.LocalizedToString;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.net.UnknownHostException;

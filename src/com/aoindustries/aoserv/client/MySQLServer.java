@@ -23,8 +23,6 @@ import java.util.Locale;
  * @see  MySQLDatabase
  * @see  MySQLServerUser
  *
- * @version  1.4
- *
  * @author  AO Industries, Inc.
  */
 final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
@@ -33,7 +31,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=2,
         COLUMN_NET_BIND=5,
-        COLUMN_PACKAGE=6
+        COLUMN_ACCOUNTING=6
     ;
     static final String COLUMN_AO_SERVER_name = "ao_server";
     static final String COLUMN_NAME_name = "name";
@@ -77,17 +75,17 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     private int version;
     private int max_connections;
     int net_bind;
-    String packageName;
+    String accounting;
 
     public int addMySQLDatabase(
         String name,
-        Package pack
+        Business bu
     ) throws IOException, SQLException {
-	return table.connector.getMysqlDatabases().addMySQLDatabase(
+    	return table.connector.getMysqlDatabases().addMySQLDatabase(
             name,
             this,
-            pack
-	);
+            bu
+    	);
     }
 
     public static void checkServerName(String name) throws IllegalArgumentException {
@@ -118,7 +116,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
             case 3: return Integer.valueOf(version);
             case 4: return Integer.valueOf(max_connections);
             case COLUMN_NET_BIND: return Integer.valueOf(net_bind);
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -174,14 +172,14 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return nb;
     }
 
-    public Package getPackage() throws SQLException, IOException {
-        Package pk=table.connector.getPackages().get(packageName);
-        if(pk==null) throw new SQLException("Unable to find Package: "+packageName);
-        return pk;
+    public Business getBusiness() throws SQLException, IOException {
+        Business bu=table.connector.getBusinesses().get(accounting);
+        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
+        return bu;
     }
 
     public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
-	return table.connector.getMysqlDatabases().getMySQLDatabase(name, this);
+    	return table.connector.getMysqlDatabases().getMySQLDatabase(name, this);
     }
 
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
@@ -213,31 +211,31 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MYSQL_SERVERS;
+    	return SchemaTable.TableID.MYSQL_SERVERS;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	name=result.getString(2);
-	ao_server=result.getInt(3);
-	version=result.getInt(4);
+        pkey=result.getInt(1);
+        name=result.getString(2);
+        ao_server=result.getInt(3);
+        version=result.getInt(4);
         max_connections=result.getInt(5);
         net_bind=result.getInt(6);
-        packageName=result.getString(7);
+        accounting=result.getString(7);
     }
 
     public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
-	return table.connector.getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
+    	return table.connector.getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	name=in.readUTF().intern();
-	ao_server=in.readCompressedInt();
-	version=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        name=in.readUTF().intern();
+        ao_server=in.readCompressedInt();
+        version=in.readCompressedInt();
         max_connections=in.readCompressedInt();
         net_bind=in.readCompressedInt();
-        packageName=in.readUTF().intern();
+        accounting=in.readUTF().intern();
     }
 
     public void restartMySQL() throws IOException, SQLException {
@@ -258,13 +256,13 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(name);
-	out.writeCompressedInt(ao_server);
-	out.writeCompressedInt(version);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(name);
+        out.writeCompressedInt(ao_server);
+        out.writeCompressedInt(version);
         out.writeCompressedInt(max_connections);
         out.writeCompressedInt(net_bind);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0) out.writeUTF(packageName);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0) out.writeUTF(accounting);
     }
 
     final public static class MasterStatus {

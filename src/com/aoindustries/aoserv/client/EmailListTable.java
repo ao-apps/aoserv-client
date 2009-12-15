@@ -64,23 +64,9 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
                 list
                 .getLinuxServerGroup()
                 .getLinuxGroup()
-                .getPackage()
                 .accounting
                 .equals(accounting)
             ) matches.add(list);
-        }
-        return matches;
-    }
-
-    List<EmailList> getEmailLists(Package pack) throws IOException, SQLException {
-        String packName=pack.name;
-
-        List<EmailList> cached=getRows();
-        int size=cached.size();
-        List<EmailList> matches=new ArrayList<EmailList>(size);
-        for(int c=0;c<size;c++) {
-            EmailList list=cached.get(c);
-            if(list.getLinuxServerGroup().getLinuxGroup().packageName.equals(packName)) matches.add(list);
         }
         return matches;
     }

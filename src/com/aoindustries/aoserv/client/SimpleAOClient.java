@@ -200,12 +200,6 @@ final public class SimpleAOClient {
         return pd;
     }
 
-    private Package getPackage(String name) throws IllegalArgumentException, IOException, SQLException {
-        Package pk=connector.getPackages().get(name);
-        if(pk==null) throw new IllegalArgumentException("Unable to find Package: "+name);
-        return pk;
-    }
-
     private PostgresDatabase getPostgresDatabase(String aoServer, String postgres_server, String name) throws IllegalArgumentException, IOException, SQLException {
         PostgresServer ps=getPostgresServer(aoServer, postgres_server);
         PostgresDatabase pd=ps.getPostgresDatabase(name);
@@ -283,7 +277,7 @@ final public class SimpleAOClient {
      *
      * @param  hostname  the desired hostname for the server
      * @param  farm  the farm the server is part of
-     * @param  owner  the package the server belongs to
+     * @param  owner  the business the server belongs to
      * @param  description  a description of the server
      * @param  backup_hour  the hour the backup will be run if used in daemon mode,
      *                      expressed in server-local time
@@ -321,7 +315,7 @@ final public class SimpleAOClient {
         return connector.getServers().addBackupServer(
             hostname,
             getServerFarm(farm),
-            getPackage(owner),
+            getBusiness(owner),
             description,
             backup_hour,
             getOperatingSystemVersion(os_type, os_version, getArchitecture(architecture)),
@@ -362,10 +356,12 @@ final public class SimpleAOClient {
         boolean can_add_backup_servers,
         boolean can_add_businesses,
         boolean can_see_prices,
-        boolean billParent
+        boolean billParent,
+        int packageDefinition
     ) throws IllegalArgumentException, SQLException, IOException {
         checkAccounting(accounting);
         if(contractVersion!=null && contractVersion.length()==0) contractVersion=null;
+        PackageDefinition pd=getPackageDefinition(packageDefinition);
         getServer(defaultServer).addBusiness(
             accounting,
             contractVersion,
@@ -373,7 +369,8 @@ final public class SimpleAOClient {
             can_add_backup_servers,
             can_add_businesses,
             can_see_prices,
-            billParent
+            billParent,
+            pd
         );
     }
 
@@ -615,21 +612,21 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if unable to find the <code>Package</code> or either parameter is not in
      *                                  the proper format.
      *
-     * @see  Package#addDNSZone
+     * @see  Business#addDNSZone
      * @see  DNSZone
      * @see  #addDNSRecord
      * @see  IPAddress
      * @see  DNSTLD
      */
     public void addDNSZone(
-        String packageName,
+        String accounting,
         String zone,
         String ip,
         int ttl
     ) throws IllegalArgumentException, IOException, SQLException {
         if(!connector.getDnsZones().checkDNSZone(zone)) throw new IllegalArgumentException("Invalid zone: "+zone);
         checkIPAddress(ip);
-        getPackage(packageName).addDNSZone(zone, ip, ttl);
+        getBusiness(accounting).addDNSZone(zone, ip, ttl);
     }
 
     /**
@@ -786,12 +783,12 @@ final public class SimpleAOClient {
     public int addEmailPipe(
         String aoServer,
         String path,
-        String packageName
+        String accounting
     ) throws IllegalArgumentException, IOException, SQLException {
         return connector.getEmailPipes().addEmailPipe(
             getAOServer(aoServer),
             path,
-            getPackage(packageName)
+            getBusiness(accounting)
         );
     }
 
@@ -895,7 +892,7 @@ final public class SimpleAOClient {
      *
      * @param  aoServer  the hostname of the <code>AOServer</code>
      * @param  siteName  the name of the <code>HttpdTomcatStdSite</code>
-     * @param  packageName  the name of the <code>Package</code>
+     * @param  accounting  the name of the <code>Business</code>
      * @param  jvmUsername  the username of the <code>LinuxAccount</code> that the Java VM
      *					will run as
      * @param  groupName  the name of the <code>LinuxGroup</code> that the web site will
@@ -915,8 +912,6 @@ final public class SimpleAOClient {
      *					<code>null</code> for none
      * @param  jBossVersion  the version number of <code>JBoss</code> to install in the site
      *
-     * @param  contentSrc  initial content installed to the site directory upon creation
-     *
      * @return  the <code>pkey</code> of the new <code>HttpdTomcatStdSite</code>
      *
      * @exception  IOException  if unable to contact the server
@@ -930,7 +925,7 @@ final public class SimpleAOClient {
     public int addHttpdJBossSite(
         String aoServer,
         String siteName,
-        String packageName,
+        String accounting,
         String jvmUsername,
         String groupName,
         String serverAdmin,
@@ -939,8 +934,7 @@ final public class SimpleAOClient {
         String netDevice,
         String primaryHttpHostname,
         String[] altHttpHostnames,
-        String jBossVersion,
-        String contentSrc
+        String jBossVersion
     ) throws IllegalArgumentException, SQLException, IOException {
         AOServer ao=getAOServer(aoServer);
         checkSiteName(siteName);
@@ -966,7 +960,7 @@ final public class SimpleAOClient {
         if(hjv==null) throw new IllegalArgumentException("Unable to find HttpdJBossVersion: "+jBossVersion);
         return ao.addHttpdJBossSite(
             siteName,
-            getPackage(packageName),
+            getBusiness(accounting),
             getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
             getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
             serverAdmin,
@@ -974,8 +968,7 @@ final public class SimpleAOClient {
             ip,
             primaryHttpHostname,
             altHttpHostnames,
-            hjv.getTechnologyVersion(connector).getPkey(),
-            (contentSrc==null || contentSrc.length()==0)?null:contentSrc
+            hjv.getTechnologyVersion(connector).getPkey()
         );
     }
 
@@ -1151,7 +1144,7 @@ final public class SimpleAOClient {
      *
      * @param  aoServer  the hostname of the <code>AOServer</code>
      * @param  siteName  the name of the <code>HttpdTomcatSharedSite</code>
-     * @param  packageName  the name of the <code>Package</code>
+     * @param  accounting  the name of the <code>Package</code>
      * @param  jvmUsername  the username of the <code>LinuxAccount</code> that the Java VM
      *					will run as
      * @param  groupName  the name of the <code>LinuxGroup</code> that the web site will
@@ -1173,8 +1166,6 @@ final public class SimpleAOClient {
      *					to use an overflow JVM
      * @param  version                  the version of Tomcat to support
      *
-     * @param  contentSrc  initial content installed to the site directories upon creation
-     *
      * @return  the <code>pkey</code> of the new <code>HttpdTomcatSharedSite</code>
      *
      * @exception  IOException  if unable to contact the server
@@ -1191,7 +1182,7 @@ final public class SimpleAOClient {
     public int addHttpdTomcatSharedSite(
         String aoServer,
         String siteName,
-        String packageName,
+        String accounting,
         String jvmUsername,
         String groupName,
         String serverAdmin,
@@ -1201,8 +1192,7 @@ final public class SimpleAOClient {
         String primaryHttpHostname,
         String[] altHttpHostnames,
         String sharedTomcatName,
-        String version,
-        String contentSrc
+        String version
     ) throws IllegalArgumentException, SQLException, IOException {
         AOServer ao=getAOServer(aoServer);
         checkSiteName(siteName);
@@ -1244,7 +1234,7 @@ final public class SimpleAOClient {
 
         return ao.addHttpdTomcatSharedSite(
             siteName,
-            getPackage(packageName),
+            getBusiness(accounting),
             getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
             getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
             serverAdmin,
@@ -1253,8 +1243,7 @@ final public class SimpleAOClient {
             primaryHttpHostname,
             altHttpHostnames,
             sharedTomcatName,
-            htv,
-            (contentSrc==null || contentSrc.length()==0)?null:contentSrc
+            htv
         );
     }
 
@@ -1266,7 +1255,7 @@ final public class SimpleAOClient {
      *
      * @param  aoServer  the hostname of the <code>AOServer</code>
      * @param  siteName  the name of the <code>HttpdTomcatStdSite</code>
-     * @param  packageName  the name of the <code>Package</code>
+     * @param  accounting  the name of the <code>Package</code>
      * @param  jvmUsername  the username of the <code>LinuxAccount</code> that the Java VM
      *					will run as
      * @param  groupName  the name of the <code>LinuxGroup</code> that the web site will
@@ -1286,8 +1275,6 @@ final public class SimpleAOClient {
      *					<code>null</code> for none
      * @param  tomcatVersion  the version number of <code>Tomcat</code> to install in the site
      *
-     * @param  contentSrc  initial content installed to the site directory upon creation
-     *
      * @return  the <code>pkey</code> of the new <code>HttpdTomcatStdSite</code>
      *
      * @exception  IOException  if unable to contact the server
@@ -1304,7 +1291,7 @@ final public class SimpleAOClient {
     public int addHttpdTomcatStdSite(
         String aoServer,
         String siteName,
-        String packageName,
+        String accounting,
         String jvmUsername,
         String groupName,
         String serverAdmin,
@@ -1313,8 +1300,7 @@ final public class SimpleAOClient {
         String netDevice,
         String primaryHttpHostname,
         String[] altHttpHostnames,
-        String tomcatVersion,
-        String contentSrc
+        String tomcatVersion
     ) throws IllegalArgumentException, SQLException, IOException {
         AOServer ao=getAOServer(aoServer);
         checkSiteName(siteName);
@@ -1340,7 +1326,7 @@ final public class SimpleAOClient {
         if(htv==null) throw new IllegalArgumentException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
         return ao.addHttpdTomcatStdSite(
             siteName,
-            getPackage(packageName),
+            getBusiness(accounting),
             getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
             getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
             serverAdmin,
@@ -1348,8 +1334,7 @@ final public class SimpleAOClient {
             ip,
             primaryHttpHostname,
             altHttpHostnames,
-            htv,
-            (contentSrc==null || contentSrc.length()==0)?null:contentSrc
+            htv
         );
     }
 
@@ -1465,7 +1450,7 @@ final public class SimpleAOClient {
      * may be granted access to the group using <code>LinuxGroupAccount</code>.
      *
      * @param  name  the name of the new <code>LinuxGroup</code>
-     * @param  packageName  the name of the <code>Package</code> that the group belongs to
+     * @param  accounting  the name of the <code>Business</code> that the group belongs to
      * @param  type  the <code>LinuxGroupType</code>
      *
      * @exception  IOException  if unable to contact the server
@@ -1483,16 +1468,12 @@ final public class SimpleAOClient {
      */
     public void addLinuxGroup(
         String name,
-        String packageName,
+        String accounting,
         String type
     ) throws IllegalArgumentException, IOException, SQLException {
         LinuxGroupType lgt=connector.getLinuxGroupTypes().get(type);
         if(lgt==null) throw new IllegalArgumentException("Unable to find LinuxGroupType: "+type);
-        connector.getLinuxGroups().addLinuxGroup(
-            name,
-            getPackage(packageName),
-            type
-        );
+        getBusiness(accounting).addLinuxGroup(name, type);
     }
 
     /**
@@ -1661,7 +1642,7 @@ final public class SimpleAOClient {
      *
      * @param  name  the name of the new database
      * @param  aoServer  the hostname of the <code>AOServer</code>
-     * @param  packageName  the name of the <code>Package</code> that owns the database
+     * @param  accounting  the name of the <code>Business</code> that owns the database
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data
@@ -1682,13 +1663,13 @@ final public class SimpleAOClient {
         String name,
         String mysqlServer,
         String aoServer,
-        String packageName
+        String accounting
     ) throws IllegalArgumentException, IOException, SQLException {
         checkMySQLDatabaseName(userLocale, name);
         return connector.getMysqlDatabases().addMySQLDatabase(
             name,
             getMySQLServer(aoServer, mysqlServer),
-            getPackage(packageName)
+            getBusiness(accounting)
         );
     }
 
@@ -1838,7 +1819,7 @@ final public class SimpleAOClient {
      */
     public int addNetBind(
         String server,
-        String packageName,
+        String accounting,
         String ipAddress,
         String net_device,
         int netPort,
@@ -1855,7 +1836,7 @@ final public class SimpleAOClient {
         Protocol appProt=connector.getProtocols().get(appProtocol);
         if(appProt==null) throw new IllegalArgumentException("Unable to find Protocol: "+appProtocol);
         return getServer(server).addNetBind(
-            getPackage(packageName),
+            getBusiness(accounting),
             ia,
             netPortObj,
             netProt,
@@ -1910,50 +1891,6 @@ final public class SimpleAOClient {
             balance,
             type,
             transid
-        );
-    }
-
-    /**
-     * Each <code>Business</code> can have multiple <code>Package</code>s associated with it.
-     * Each <code>Package</code> is an allotment of resources with a monthly charge.
-     * <p>
-     * To determine if this connection can set prices:
-     * <pre>
-     * SimpleAOClient client=new SimpleAOClient();
-     *
-     * boolean canSetPrices=client
-     *     .getConnector()
-     *     .getThisBusinessAdministrator()
-     *     .getUsername()
-     *     .getPackage()
-     *     .getBusiness()
-     *     .canSetPrices();
-     * </pre>
-     *
-     * @param  packageName  the name for the new package
-     * @param  accounting  the accounting code of the <code>Business</code>
-     * @param  packageDefinition  the unique identifier of the <code>PackageDefinition</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find 
-     *
-     * @see  #checkPackageName
-     * @see  #addBusiness
-     * @see  PackageDefinition
-     */
-    public int addPackage(
-        String packageName,
-        String accounting,
-        int packageDefinition
-    ) throws IllegalArgumentException, IOException, SQLException {
-        checkPackageName(packageName);
-        Business business=getBusiness(accounting);
-        PackageDefinition pd=getPackageDefinition(packageDefinition);
-
-        return business.addPackage(
-            packageName,
-            pd
         );
     }
 
@@ -2090,10 +2027,10 @@ final public class SimpleAOClient {
     public int addEmailDomain(
         String domain,
         String aoServer,
-        String packageName
+        String accounting
     ) throws IllegalArgumentException, IOException, SQLException {
         if(!EmailDomain.isValidFormat(domain)) throw new IllegalArgumentException("Invalid domain name: "+domain);
-        return getAOServer(aoServer).addEmailDomain(domain, getPackage(packageName));
+        return getAOServer(aoServer).addEmailDomain(domain, getBusiness(accounting));
     }
 
     /**
@@ -2102,7 +2039,7 @@ final public class SimpleAOClient {
      * access to the SMTP server may also be granted from the API.  In either case,
      * the SMTP access will be revoked after 24 hours unless refresh.
      *
-     * @param  packageName  the name of the <code>Package</code> that is granted access
+     * @param  accounting  the name of the <code>Business</code> that is granted access
      * @param  aoServer  the hostname of the <code>AOServer</code>
      * @param  host  the hostname or IP address that is being configured
      *
@@ -2112,10 +2049,10 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if the IP address is for valid or unable to
      *					find the <code>Package</code> or <code>Server</code>
      *
-     * @see  Package#addEmailSmtpRelay
+     * @see  Business#addEmailSmtpRelay
      */
     public int addEmailSmtpRelay(
-        String packageName,
+        String accounting,
         String aoServer,
         String host,
         String type,
@@ -2128,7 +2065,7 @@ final public class SimpleAOClient {
         EmailSmtpRelayType esrt=connector.getEmailSmtpRelayTypes().get(type);
         if(esrt==null) throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
 
-        return getPackage(packageName).addEmailSmtpRelay(ao, host, esrt, duration);
+        return getBusiness(accounting).addEmailSmtpRelay(ao, host, esrt, duration);
     }
 
     /**
@@ -2321,12 +2258,12 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Adds a new <code>Username</code> to a <code>Package</code>.  A username is unique to the
+     * Adds a new <code>Username</code> to a <code>Business</code>.  A username is unique to the
      * system, regardless of which service(s) it is used for.  For example, if a username is
      * allocated for use as a MySQL user for business A, business B may not use the username as
      * a PostgreSQL user.
      *
-     * @param  packageName  the name of the <code>Package</code> that owns the <code>Username</code>
+     * @param  accounting  the name of the <code>Business</code> that owns the <code>Username</code>
      * @param  username  the username to add
      *
      * @exception  IOException  if unable to contact the server
@@ -2335,17 +2272,17 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if the username is not a valid username or
      *					unable to find the <code>Package</code>
      *
-     * @see  Package#addUsername
+     * @see  Business#addUsername
      * @see  Username
      * @see  #addPackage
      * @see  Package
      */
     public void addUsername(
-        String packageName,
+        String accounting,
         String username
     ) throws IllegalArgumentException, IOException, SQLException {
         checkUsername(username);
-        getPackage(packageName).addUsername(username);
+        getBusiness(accounting).addUsername(username);
     }
 
     /**
@@ -2912,22 +2849,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Checks the format of a <code>Package</code> name.
-     *
-     * @param  packageName  the name that will be used for a <code>Package</code>
-     *
-     * @exception  IllegalArgumentException  if the name is not valid
-     *
-     * @see  Package#isValidPackageName
-     * @see  #addPackage
-     */
-    public static void checkPackageName(
-        String packageName
-    ) throws IllegalArgumentException {
-        if(!Package.isValidPackageName(packageName)) throw new IllegalArgumentException("Invalid package name: "+packageName);
-    }
-
-    /**
      * Checks the format of a PostgreSQL database name.
      *
      * @param  name  the name that will be used to create a new database
@@ -3282,50 +3203,26 @@ final public class SimpleAOClient {
     public int disableBusiness(String accounting, String disableReason) throws IllegalArgumentException, IOException, SQLException {
         Business bu=getBusiness(accounting);
         DisableLog dl=connector.getDisableLogs().get(bu.addDisableLog(disableReason));
-        for(Package pk : bu.getPackages()) if(pk.disable_log==-1) disablePackage(dl, pk);
-        bu.disable(dl);
-        return dl.getPkey();
-    }
 
-    /**
-     * Disables a package, recursively disabling all of its enabled child components.
-     *
-     * @param  name  the name of the package
-     * @param  disableReason  the reason the account is being disabled
-     *
-     * @return  the pkey of the new <code>DisableLog</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the necessary <code>AOServObject</code>s
-     */
-    public int disablePackage(String name, String disableReason) throws IllegalArgumentException, SQLException, IOException {
-        Package pk=getPackage(name);
-        DisableLog dl=connector.getDisableLogs().get(pk.getBusiness().addDisableLog(disableReason));
-        disablePackage(dl, pk);
-        return dl.getPkey();
-    }
-    private void disablePackage(DisableLog dl, Package pk) throws IOException, SQLException {
         /*
          * Email stuff
          */
-        for(EmailList el : pk.getEmailLists()) if(el.disable_log==-1) el.disable(dl);
-        for(EmailPipe ep : pk.getEmailPipes()) if(ep.disable_log==-1) ep.disable(dl);
-        for(EmailSmtpRelay ssr : pk.getEmailSmtpRelays()) if(ssr.disable_log==-1) ssr.disable(dl);
+        for(EmailList el : bu.getEmailLists()) if(el.disable_log==-1) el.disable(dl);
+        for(EmailPipe ep : bu.getEmailPipes()) if(ep.disable_log==-1) ep.disable(dl);
+        for(EmailSmtpRelay ssr : bu.getEmailSmtpRelays()) if(ssr.disable_log==-1) ssr.disable(dl);
 
         /*
          * HTTP stuff
          */
         List<AOServer> httpdServers=new SortedArrayList<AOServer>();
-        for(HttpdSharedTomcat hst : pk.getHttpdSharedTomcats()) {
+        for(HttpdSharedTomcat hst : bu.getHttpdSharedTomcats()) {
             if(hst.disable_log==-1) {
                 hst.disable(dl);
                 AOServer ao=hst.getAOServer();
                 if(!httpdServers.contains(ao)) httpdServers.add(ao);
             }
         }
-        for(HttpdSite hs : pk.getHttpdSites()) {
+        for(HttpdSite hs : bu.getHttpdSites()) {
             if(hs.disable_log==-1) {
                 disableHttpdSite(dl, hs);
                 AOServer ao=hs.getAOServer();
@@ -3337,9 +3234,10 @@ final public class SimpleAOClient {
         for(AOServer httpdServer : httpdServers) httpdServer.waitForHttpdSiteRebuild();
 
         // Disable the user accounts once the JVMs have been shut down
-        for(Username un : pk.getUsernames()) if(un.disable_log==-1) disableUsername(dl, un);
+        for(Username un : bu.getUsernames()) if(un.disable_log==-1) disableUsername(dl, un);
 
-        pk.disable(dl);
+        bu.disable(dl);
+        return dl.getPkey();
     }
 
     /**
@@ -3362,7 +3260,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, IOException, SQLException {
         HttpdSharedTomcat hst=getHttpdSharedTomcat(aoServer, name);
-        DisableLog dl=connector.getDisableLogs().get(hst.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(hst.getLinuxServerGroup().getLinuxGroup().getBusiness().addDisableLog(disableReason));
         hst.disable(dl);
         return dl.getPkey();
     }
@@ -3386,7 +3284,7 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException, SQLException, IOException {
         EmailPipe ep=connector.getEmailPipes().get(pkey);
         if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
-        DisableLog dl=connector.getDisableLogs().get(ep.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(ep.getBusiness().addDisableLog(disableReason));
         ep.disable(dl);
         return dl.getPkey();
     }
@@ -3411,7 +3309,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         HttpdSite hs=getHttpdSite(aoServer, name);
-        DisableLog dl=connector.getDisableLogs().get(hs.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(hs.getBusiness().addDisableLog(disableReason));
         disableHttpdSite(dl, hs);
         return dl.getPkey();
     }
@@ -3439,7 +3337,7 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException, SQLException, IOException {
         HttpdSiteBind hsb=connector.getHttpdSiteBinds().get(pkey);
         if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
-        DisableLog dl=connector.getDisableLogs().get(hsb.getHttpdSite().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(hsb.getHttpdSite().getBusiness().addDisableLog(disableReason));
         hsb.disable(dl);
         return dl.getPkey();
     }
@@ -3464,7 +3362,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         EmailList el=getEmailList(aoServer, path);
-        DisableLog dl=connector.getDisableLogs().get(el.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(el.getLinuxServerGroup().getLinuxGroup().getBusiness().addDisableLog(disableReason));
         el.disable(dl);
         return dl.getPkey();
     }
@@ -3488,7 +3386,7 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException, SQLException, IOException {
         EmailSmtpRelay ssr=connector.getEmailSmtpRelays().get(pkey);
         if(ssr==null) throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
-        DisableLog dl=connector.getDisableLogs().get(ssr.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(ssr.getBusiness().addDisableLog(disableReason));
         ssr.disable(dl);
         return dl.getPkey();
     }
@@ -3511,7 +3409,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         Username un=getUsername(username);
-        DisableLog dl=connector.getDisableLogs().get(un.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(un.getBusiness().addDisableLog(disableReason));
         disableUsername(dl, un);
         return dl.getPkey();
     }
@@ -3546,7 +3444,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         LinuxAccount la=getLinuxAccount(username);
-        DisableLog dl=connector.getDisableLogs().get(la.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(la.getUsername().getBusiness().addDisableLog(disableReason));
         disableLinuxAccount(dl, la);
         return dl.getPkey();
     }
@@ -3579,7 +3477,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         LinuxServerAccount lsa=getLinuxServerAccount(aoServer, username);
-        DisableLog dl=connector.getDisableLogs().get(lsa.getLinuxAccount().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(lsa.getLinuxAccount().getUsername().getBusiness().addDisableLog(disableReason));
         disableLinuxServerAccount(dl, lsa);
         return dl.getPkey();
     }
@@ -3613,7 +3511,6 @@ final public class SimpleAOClient {
                 .getLinuxServerAccount()
                 .getLinuxAccount()
                 .getUsername()
-                .getPackage()
                 .getBusiness()
                 .addDisableLog(disableReason)
             )
@@ -3640,7 +3537,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         MySQLUser mu=getMySQLUser(username);
-        DisableLog dl=connector.getDisableLogs().get(mu.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(mu.getUsername().getBusiness().addDisableLog(disableReason));
         disableMySQLUser(dl, mu);
         return dl.getPkey();
     }
@@ -3670,7 +3567,7 @@ final public class SimpleAOClient {
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
         MySQLServerUser msu=getMySQLServerUser(aoServer, mysqlServer, username);
-        DisableLog dl=connector.getDisableLogs().get(msu.getMySQLUser().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(msu.getMySQLUser().getUsername().getBusiness().addDisableLog(disableReason));
         msu.disable(dl);
         return dl.getPkey();
     }
@@ -3695,7 +3592,7 @@ final public class SimpleAOClient {
         Username un=getUsername(username);
         PostgresUser pu=un.getPostgresUser();
         if(pu==null) throw new IllegalArgumentException("Unable to find PostgresUser: "+username);
-        DisableLog dl=connector.getDisableLogs().get(un.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(un.getBusiness().addDisableLog(disableReason));
         disablePostgresUser(dl, pu);
         return dl.getPkey();
     }
@@ -3731,7 +3628,6 @@ final public class SimpleAOClient {
                 psu
                 .getPostgresUser()
                 .getUsername()
-                .getPackage()
                 .getBusiness()
                 .addDisableLog(disableReason)
             )
@@ -3760,7 +3656,7 @@ final public class SimpleAOClient {
         Username un=getUsername(username);
         BusinessAdministrator ba=un.getBusinessAdministrator();
         if(ba==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
-        DisableLog dl=connector.getDisableLogs().get(un.getPackage().getBusiness().addDisableLog(disableReason));
+        DisableLog dl=connector.getDisableLogs().get(un.getBusiness().addDisableLog(disableReason));
         ba.disable(dl);
         return dl.getPkey();
     }
@@ -3780,40 +3676,18 @@ final public class SimpleAOClient {
         DisableLog dl=bu.getDisableLog();
         if(dl==null) throw new IllegalArgumentException("Business not disabled: "+accounting);
         bu.enable();
-        for(Package pk : bu.getPackages()) if(pk.disable_log==dl.pkey) enablePackage(dl, pk);
-    }
-
-    /**
-     * Enables a package, recursively enabling all of its disabled child components.
-     *
-     * @param  name  the name of the package
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the necessary <code>AOServObject</code>s
-     */
-    public void enablePackage(String name) throws IllegalArgumentException, SQLException, IOException {
-        Package pk=getPackage(name);
-        DisableLog dl=pk.getDisableLog();
-        if(dl==null) throw new IllegalArgumentException("Package not disabled: "+name);
-        enablePackage(dl, pk);
-    }
-    private void enablePackage(DisableLog dl, Package pk) throws IOException, SQLException {
-        pk.enable();
-
         /*
          * Email stuff
          */
-        for(EmailList el : pk.getEmailLists()) if(el.disable_log==dl.pkey) el.enable();
-        for(EmailPipe ep : pk.getEmailPipes()) if(ep.disable_log==dl.pkey) ep.enable();
-        for(EmailSmtpRelay ssr : pk.getEmailSmtpRelays()) if(ssr.disable_log==dl.pkey) ssr.enable();
+        for(EmailList el : bu.getEmailLists()) if(el.disable_log==dl.pkey) el.enable();
+        for(EmailPipe ep : bu.getEmailPipes()) if(ep.disable_log==dl.pkey) ep.enable();
+        for(EmailSmtpRelay ssr : bu.getEmailSmtpRelays()) if(ssr.disable_log==dl.pkey) ssr.enable();
 
         // Various accounts
         List<AOServer> linuxAccountServers=new SortedArrayList<AOServer>();
         List<AOServer> mysqlServers=new SortedArrayList<AOServer>();
         List<AOServer> postgresServers=new SortedArrayList<AOServer>();
-        for(Username un : pk.getUsernames()) {
+        for(Username un : bu.getUsernames()) {
             if(un.disable_log==dl.pkey) enableUsername(
                 dl,
                 un,
@@ -3835,9 +3709,9 @@ final public class SimpleAOClient {
         }
 
         // Start up the web sites
-        for(HttpdSharedTomcat hst : pk.getHttpdSharedTomcats()) if(hst.disable_log==dl.pkey) hst.enable();
+        for(HttpdSharedTomcat hst : bu.getHttpdSharedTomcats()) if(hst.disable_log==dl.pkey) hst.enable();
 
-        for(HttpdSite hs : pk.getHttpdSites()) if(hs.disable_log==dl.pkey) enableHttpdSite(dl, hs);
+        for(HttpdSite hs : bu.getHttpdSites()) if(hs.disable_log==dl.pkey) enableHttpdSite(dl, hs);
     }
 
     /**
@@ -4308,26 +4182,6 @@ final public class SimpleAOClient {
         String template_added
     ) throws IOException, SQLException {
         return connector.getMysqlDatabases().generateMySQLDatabaseName(template_base, template_added);
-    }
-
-    /**
-     * Generates a unique <code>Package</code> name.
-     *
-     * @param  template  the beginning part of the template, such as <code>"AO_"</code>
-     *
-     * @return  the available <code>Package</code> name
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     *
-     * @see  PackageTable#generatePackageName
-     * @see  #addPackage
-     * @see  Package
-     */
-    public String generatePackageName(
-        String template
-    ) throws IOException, SQLException {
-        return connector.getPackages().generatePackageName(template);
     }
 
     /**
@@ -4858,7 +4712,7 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if unable to find the <code>IPAddress</code>
      *
      * @see  IPAddress#isUsed
-     * @see  #setIPAddressPackage
+     * @see  #setIPAddressBusiness
      */
     public boolean isIPAddressUsed(
         String ipAddress,
@@ -5010,29 +4864,6 @@ final public class SimpleAOClient {
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
         return getMySQLServerUser(aoServer, mysqlServer, username).arePasswordsSet()==PasswordProtected.ALL;
-    }
-
-    /**
-     * Determines if a <code>Package</code> name is available.
-     *
-     * @param  packageName  the name of the <code>Package</code>
-     *
-     * @return  <code>true</code> if the <code>Package</code> name is available
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if the <code>Package</code> name is invalid
-     *
-     * @see  PackageTable#isPackageNameAvailable
-     * @see  #generatePackageName
-     * @see  #addPackage
-     * @see  Package
-     */
-    public boolean isPackageNameAvailable(
-        String packageName
-    ) throws IllegalArgumentException, IOException, SQLException {
-        checkPackageName(packageName);
-        return connector.getPackages().isPackageNameAvailable(packageName);
     }
 
     /**
@@ -6887,7 +6718,7 @@ final public class SimpleAOClient {
      * if the <code>IPAddress</code> is not being used by any resources.
      *
      * @param  ipAddress  the <code>IPAddress</code> being modified
-     * @param  newPackage  the name of the <code>Package</code>
+     * @param  accounting  the accounting code of the <code>Business</code>
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data integrity
@@ -6898,13 +6729,13 @@ final public class SimpleAOClient {
      * @see  IPAddress#setPackage
      * @see  #addPackage
      */
-    public void setIPAddressPackage(
+    public void setIPAddressBusiness(
         String ipAddress,
         String server,
         String net_device,
-        String newPackage
+        String accounting
     ) throws IllegalArgumentException, IOException, SQLException {
-        getIPAddress(server, net_device, ipAddress).setPackage(getPackage(newPackage));
+        getIPAddress(server, net_device, ipAddress).setBusiness(getBusiness(accounting));
     }
 
     /**

@@ -12,14 +12,12 @@ import java.sql.SQLException;
 /**
  * For AO Industries use only.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
 
     ServerFarmTable(AOServConnector connector) {
-	super(connector, ServerFarm.class);
+    	super(connector, ServerFarm.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -35,6 +33,6 @@ final public class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.SERVER_FARMS;
+    	return SchemaTable.TableID.SERVER_FARMS;
     }
 }

@@ -21,7 +21,7 @@ final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
         new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
     };
     @Override

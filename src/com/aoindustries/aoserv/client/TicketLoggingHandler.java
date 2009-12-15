@@ -72,7 +72,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
         this.connector = connector;
         this.category = category;
         // Look-up things in advance to reduce possible round-trips during logging
-        business = connector.getThisBusinessAdministrator().getUsername().getPackage().getBusiness();
+        business = connector.getThisBusinessAdministrator().getUsername().getBusiness();
         brand = business.getBrand();
         if(brand==null) throw new SQLException("Unable to find Brand for connector: "+connector);
         language = connector.getLanguages().get(Language.EN);

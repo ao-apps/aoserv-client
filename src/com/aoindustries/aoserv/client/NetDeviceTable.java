@@ -23,7 +23,7 @@ final public class NetDeviceTable extends CachedTableIntegerKey<NetDevice> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
         new OrderBy(NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
     };

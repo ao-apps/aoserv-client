@@ -22,7 +22,7 @@ final public class EmailSmtpSmartHostDomain extends CachedObjectIntegerKey<Email
         COLUMN_PKEY = 0,
         COLUMN_SMART_HOST = 1
     ;
-    static final String COLUMN_SMART_HOST_name = "replication";
+    static final String COLUMN_SMART_HOST_name = "smart_host";
     static final String COLUMN_DOMAIN_name = "domain";
 
     private int smart_host;

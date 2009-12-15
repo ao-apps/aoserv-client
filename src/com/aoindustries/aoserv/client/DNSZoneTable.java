@@ -5,22 +5,22 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  DNSZone
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 
     DNSZoneTable(AOServConnector connector) {
-	super(connector, DNSZone.class);
+    	super(connector, DNSZone.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -42,8 +42,8 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
         return strings;
     }
 
-    void addDNSZone(Package packageObj, String zone, String ip, int ttl) throws IOException, SQLException {
-    	connector.requestUpdateIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.DNS_ZONES, packageObj.name, zone, ip, ttl);
+    void addDNSZone(Business business, String zone, String ip, int ttl) throws IOException, SQLException {
+    	connector.requestUpdateIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.DNS_ZONES, business.pkey, zone, ip, ttl);
     }
 
     /**
@@ -112,8 +112,8 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	return zone+longestTld+".";
     }
 
-    List<DNSZone> getDNSZones(Package packageObj) throws IOException, SQLException {
-        return getIndexedRows(DNSZone.COLUMN_PACKAGE, packageObj.name);
+    List<DNSZone> getDNSZones(Business business) throws IOException, SQLException {
+        return getIndexedRows(DNSZone.COLUMN_ACCOUNTING, business.pkey);
     }
 
     /**
@@ -131,7 +131,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	int len=tlds.size();
 	for(int c=0;c<len;c++) {
             String o = tlds.get(c);
-            String tld='.'+(String)o+'.';
+            String tld='.'+o+'.';
 
             int tldLen=tld.length();
             if(tldLen<hostnameLen) {
@@ -152,7 +152,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.DNS_ZONES;
+        return SchemaTable.TableID.DNS_ZONES;
     }
 
     @Override

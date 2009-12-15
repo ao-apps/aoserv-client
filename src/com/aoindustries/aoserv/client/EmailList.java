@@ -60,7 +60,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         if(dl==null) return false;
         else return
             dl.canEnable()
-            && getLinuxServerGroup().getLinuxGroup().getPackage().disable_log==-1
+            && getLinuxServerGroup().getLinuxGroup().getBusiness().disable_log==-1
             && getLinuxServerAccount().disable_log==-1
         ;
     }

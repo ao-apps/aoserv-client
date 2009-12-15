@@ -5,10 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>LinuxGroup</code> may exist on multiple <code>Server</code>s.
@@ -16,15 +20,13 @@ import java.util.*;
  *
  * @see  LinuxServerGroup
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implements Removable {
 
     static final int
         COLUMN_NAME=0,
-        COLUMN_PACKAGE=1
+        COLUMN_ACCOUNTING=1
     ;
     static final String COLUMN_NAME_name = "name";
 
@@ -55,7 +57,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
     @Deprecated
     public static final String HTTPD="httpd";
 
-    String packageName;
+    String accounting;
     private String type;
     public static final int MAX_LENGTH=255;
 
@@ -70,7 +72,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_NAME: return pkey;
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             case 2: return type;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -94,9 +96,12 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         return pkey;
     }
 
-    public Package getPackage() throws IOException, SQLException {
+    /**
+     * May be filtered.
+     */
+    public Business getBusiness() throws IOException, SQLException {
         // null OK because data may be filtered at this point, like the linux group 'mail'
-        return table.connector.getPackages().get(packageName);
+        return table.connector.getBusinesses().get(accounting);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -105,7 +110,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
     public void init(ResultSet result) throws SQLException {
         pkey = result.getString(1);
-        packageName = result.getString(2);
+        accounting = result.getString(2);
         type = result.getString(3);
     }
 
@@ -148,7 +153,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readUTF().intern();
-        packageName=in.readUTF().intern();
+        accounting=in.readUTF().intern();
         type=in.readUTF().intern();
     }
 
@@ -179,7 +184,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
-        out.writeUTF(packageName);
+        out.writeUTF(accounting);
         out.writeUTF(type);
     }
 }

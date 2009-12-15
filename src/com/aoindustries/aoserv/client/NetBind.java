@@ -31,15 +31,13 @@ import java.util.concurrent.ConcurrentMap;
  * or a network port is listening that should not, monitoring personnel are notified
  * to remove the discrepancy.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Removable {
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_PACKAGE=1,
+        COLUMN_ACCOUNTING=1,
         COLUMN_SERVER=2,
         COLUMN_IP_ADDRESS=3
     ;
@@ -48,7 +46,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     static final String COLUMN_PORT_name = "port";
     static final String COLUMN_NET_PROTOCOL_name = "net_protocol";
 
-    String packageName;
+    String accounting;
     int server;
     int ip_address;
     int port;
@@ -67,7 +65,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             case COLUMN_SERVER: return Integer.valueOf(server);
             case COLUMN_IP_ADDRESS: return Integer.valueOf(ip_address);
             case 4: return Integer.valueOf(port);
@@ -269,9 +267,12 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return table.connector.getNetTcpRedirects().get(pkey);
     }
 
-    public Package getPackage() throws IOException, SQLException {
+    /**
+     * May be filtered.
+     */
+    public Business getBusiness() throws IOException, SQLException {
         // May be filtered
-        return table.connector.getPackages().get(packageName);
+        return table.connector.getBusinesses().get(accounting);
     }
     
     public PostgresServer getPostgresServer() throws IOException, SQLException {
@@ -300,7 +301,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
-        packageName=result.getString(2);
+        accounting=result.getString(2);
         server=result.getInt(3);
         ip_address=result.getInt(4);
         port=result.getInt(5);
@@ -378,7 +379,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-        packageName=in.readUTF().intern();
+        accounting=in.readUTF().intern();
         server=in.readCompressedInt();
         ip_address=in.readCompressedInt();
         port=in.readCompressedInt();
@@ -394,8 +395,8 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
         AOServConnector conn=table.connector;
 
-        // Must be able to access package
-        if(getPackage()==null) reasons.add(new CannotRemoveReason<Package>("Unable to access package: "+packageName));
+        // Must be able to access business
+        if(getBusiness()==null) reasons.add(new CannotRemoveReason<Business>("Unable to access business: "+accounting));
 
         // ao_servers
         for(AOServer ao : conn.getAoServers().getRows()) {
@@ -491,7 +492,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeUTF(packageName);
+        out.writeUTF(accounting);
         out.writeCompressedInt(server);
         out.writeCompressedInt(ip_address);
         out.writeCompressedInt(port);

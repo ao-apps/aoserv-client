@@ -19,8 +19,6 @@ import java.util.Locale;
 /**
  * A <code>Resource</code> wraps all the data for an entry in the resource table.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
@@ -39,7 +37,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         AOSH_COMMANDS,
         ARCHITECTURES,
         BACKUP_PARTITIONS,
-        BACKUP_REPORTS,
         BACKUP_RETENTIONS,
         BANK_ACCOUNTS,
         BANK_TRANSACTION_TYPES,
@@ -150,7 +147,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         PACKAGE_CATEGORIES,
         PACKAGE_DEFINITION_LIMITS,
         PACKAGE_DEFINITIONS,
-        PACKAGES,
         PAYMENT_TYPES,
         PHYSICAL_SERVERS,
         POSTGRES_DATABASES,

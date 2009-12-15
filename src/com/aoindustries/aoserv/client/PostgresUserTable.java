@@ -44,15 +44,15 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
         return getUniqueRow(PostgresUser.COLUMN_USERNAME, username);
     }
 
-    List<PostgresUser> getPostgresUsers(Package pack) throws SQLException, IOException {
-        String name=pack.name;
+    List<PostgresUser> getPostgresUsers(Business business) throws SQLException, IOException {
+        String accounting = business.pkey;
 
         List<PostgresUser> cached=getRows();
         int size=cached.size();
         List<PostgresUser> matches=new ArrayList<PostgresUser>(size);
         for(int c=0;c<size;c++) {
             PostgresUser psu=cached.get(c);
-            if(psu.getUsername().packageName.equals(name)) matches.add(psu);
+            if(psu.getUsername().accounting.equals(accounting)) matches.add(psu);
         }
         return matches;
     }

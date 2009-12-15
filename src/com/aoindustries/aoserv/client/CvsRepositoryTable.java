@@ -86,17 +86,17 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	return matches;
     }
 
-    List<CvsRepository> getCvsRepositories(Package pk) throws IOException, SQLException {
-        String pkname=pk.name;
+    List<CvsRepository> getCvsRepositories(Business bu) throws IOException, SQLException {
+        String accounting=bu.pkey;
 
         List<CvsRepository> cached=getRows();
-	int size=cached.size();
+    	int size=cached.size();
         List<CvsRepository> matches=new ArrayList<CvsRepository>(size);
         for(int c=0;c<size;c++) {
             CvsRepository cr=cached.get(c);
-            if(cr.getLinuxServerAccount().getLinuxAccount().getUsername().packageName.equals(pkname)) matches.add(cr);
+            if(cr.getLinuxServerAccount().getLinuxAccount().getUsername().accounting.equals(accounting)) matches.add(cr);
         }
-	return matches;
+    	return matches;
     }
 
     List<CvsRepository> getCvsRepositories(LinuxServerAccount lsa) throws IOException, SQLException {

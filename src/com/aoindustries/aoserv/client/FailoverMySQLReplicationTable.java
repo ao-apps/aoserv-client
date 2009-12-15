@@ -37,9 +37,9 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
     	return getUniqueRow(FailoverMySQLReplication.COLUMN_PKEY, pkey);
     }
 
-    List<FailoverMySQLReplication> getFailoverMySQLReplications(Package pk) throws IOException, SQLException {
+    List<FailoverMySQLReplication> getFailoverMySQLReplications(Business bu) throws IOException, SQLException {
         List<FailoverMySQLReplication> matches = new ArrayList<FailoverMySQLReplication>();
-        List<MySQLServer> mss = pk.getMySQLServers();
+        List<MySQLServer> mss = bu.getMysqlServers();
         for(MySQLServer ms : mss) {
             matches.addAll(ms.getFailoverMySQLReplications());
         }

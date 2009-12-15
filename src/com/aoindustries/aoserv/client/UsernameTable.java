@@ -5,15 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @see  Username
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -31,12 +31,12 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
         return defaultOrderBy;
     }
 
-    void addUsername(Package packageObject, String username) throws IOException, SQLException {
+    void addUsername(Business business, String username) throws IOException, SQLException {
     	connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.USERNAMES,
-            packageObject.name,
+            business.pkey,
             username
     	);
     }
@@ -49,8 +49,8 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
         return SchemaTable.TableID.USERNAMES;
     }
 
-    List<Username> getUsernames(Package pack) throws IOException, SQLException {
-        return getIndexedRows(Username.COLUMN_PACKAGE, pack.name);
+    List<Username> getUsernames(Business business) throws IOException, SQLException {
+        return getIndexedRows(Username.COLUMN_ACCOUNTING, business.pkey);
     }
 
     @Override
@@ -60,7 +60,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
             if(AOSH.checkParamCount(AOSHCommand.ADD_USERNAME, args, 2, err)) {
                 connector.getSimpleAOClient().addUsername(
                     args[1],
-                        args[2]
+                    args[2]
                 );
             }
             return true;

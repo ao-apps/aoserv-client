@@ -30,12 +30,12 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
     static final int COLUMN_PKEY=0;
     static final String COLUMN_ACCOUNTING_name = "accounting";
-    static final String COLUMN_PACKAGE_name = "package";
+    static final String COLUMN_SOURCE_ACCOUNTING_name = "source_accounting";
     static final String COLUMN_TYPE_name = "type";
     static final String COLUMN_CREATED_name = "created";
 
     String accounting;
-    String packageName;
+    String sourceAccounting;
     private String type;
     private String description;
     private int quantity;
@@ -48,33 +48,33 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     }
 
     MonthlyCharge(
-	MonthlyChargeTable table,
+    	MonthlyChargeTable table,
         Business business,
-	Package packageObject,
-	TransactionType typeObject,
+    	Business sourceBusiness,
+    	TransactionType typeObject,
         String description,
-	int quantity,
-	int rate,
-	BusinessAdministrator createdByObject
+    	int quantity,
+    	int rate,
+    	BusinessAdministrator createdByObject
     ) {
-	setTable(table);
-	this.pkey=-1;
-        this.accounting = business.getAccounting();
-	this.packageName = packageObject.getName();
-	this.type = typeObject.getName();
-	this.description=description;
-	this.quantity = quantity;
-	this.rate = rate;
-	this.created = System.currentTimeMillis();
-	this.created_by = createdByObject.pkey;
-	this.active=true;
+        setTable(table);
+        this.pkey=-1;
+        this.accounting = business.pkey;
+        this.sourceAccounting = sourceBusiness.pkey;
+        this.type = typeObject.getName();
+        this.description=description;
+        this.quantity = quantity;
+        this.rate = rate;
+        this.created = System.currentTimeMillis();
+        this.created_by = createdByObject.pkey;
+        this.active=true;
     }
 
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return pkey==-1?null:Integer.valueOf(pkey);
             case 1: return accounting;
-            case 2: return packageName;
+            case 2: return sourceAccounting;
             case 3: return type;
             case 4: return description;
             case 5: return Integer.valueOf(quantity);
@@ -106,10 +106,10 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
         return description == null ? getType().getDescription(userLocale) : description;
     }
 
-    public Package getPackage() throws SQLException, IOException {
-        Package packageObject = table.connector.getPackages().get(packageName);
-        if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
-        return packageObject;
+    public Business getSourceBusiness() throws SQLException, IOException {
+        Business bu = table.connector.getBusinesses().get(sourceAccounting);
+        if(bu == null) throw new SQLException("Unable to find Business: " + sourceAccounting);
+        return bu;
     }
 
     public int getPennies() {
@@ -142,7 +142,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
         accounting = result.getString(2);
-        packageName = result.getString(3);
+        sourceAccounting = result.getString(3);
         type = result.getString(4);
         description = result.getString(5);
         quantity = SQLUtility.getMillis(result.getString(6));
@@ -159,7 +159,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         accounting=in.readUTF().intern();
-        packageName=in.readUTF().intern();
+        sourceAccounting=in.readUTF().intern();
         type=in.readUTF().intern();
         description=in.readBoolean()?in.readUTF():null;
         quantity=in.readCompressedInt();
@@ -171,13 +171,13 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return packageName+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
+        return sourceAccounting+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(accounting);
-        out.writeUTF(packageName);
+        out.writeUTF(sourceAccounting);
         out.writeUTF(type);
         out.writeNullUTF(description);
         out.writeCompressedInt(quantity);

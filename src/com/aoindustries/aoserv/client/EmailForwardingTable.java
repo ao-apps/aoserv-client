@@ -54,20 +54,19 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
     }
 
     List<EmailForwarding> getEmailForwarding(Business business) throws SQLException, IOException {
-	List<EmailForwarding> cached = getRows();
-	int len = cached.size();
+        List<EmailForwarding> cached = getRows();
+        int len = cached.size();
         List<EmailForwarding> matches=new ArrayList<EmailForwarding>(len);
-	for (int c = 0; c < len; c++) {
+        for (int c = 0; c < len; c++) {
             EmailForwarding forward = cached.get(c);
             if (forward
                 .getEmailAddress()
                 .getDomain()
-                .getPackage()
                 .getBusiness()
                 .equals(business)
             ) matches.add(forward);
-	}
-	return matches;
+    	}
+    	return matches;
     }
 
     List<EmailForwarding> getEmailForwardings(EmailAddress ea) throws IOException, SQLException {
@@ -75,7 +74,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
     }
 
     List<EmailForwarding> getEnabledEmailForwardings(EmailAddress ea) throws SQLException, IOException {
-        if(ea.getDomain().getPackage().disable_log==-1) return getEmailForwardings(ea);
+        if(ea.getDomain().getBusiness().disable_log==-1) return getEmailForwardings(ea);
         else return Collections.emptyList();
     }
 

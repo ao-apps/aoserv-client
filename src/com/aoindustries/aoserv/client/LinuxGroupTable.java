@@ -5,22 +5,21 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  LinuxGroup
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 
     LinuxGroupTable(AOServConnector connector) {
-	super(connector, LinuxGroup.class);
+    	super(connector, LinuxGroup.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -31,13 +30,13 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         return defaultOrderBy;
     }
 
-    void addLinuxGroup(String name, Package packageObject, String type) throws IOException, SQLException {
+    void addLinuxGroup(String name, Business business, String type) throws IOException, SQLException {
         connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.LINUX_GROUPS,
             name,
-            packageObject.name,
+            business.pkey,
             type
         );
     }
@@ -46,8 +45,8 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
         return getUniqueRow(LinuxGroup.COLUMN_NAME, name);
     }
 
-    List<LinuxGroup> getLinuxGroups(Package pack) throws IOException, SQLException {
-        return getIndexedRows(LinuxGroup.COLUMN_PACKAGE, pack.name);
+    List<LinuxGroup> getLinuxGroups(Business business) throws IOException, SQLException {
+        return getIndexedRows(LinuxGroup.COLUMN_ACCOUNTING, business.pkey);
     }
 
     public SchemaTable.TableID getTableID() {

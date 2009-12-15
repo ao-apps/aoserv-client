@@ -86,8 +86,8 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
     public boolean canSwitchUser(BusinessAdministrator other) throws SQLException, IOException {
         if(isDisabled() || other.isDisabled()) return false;
-        Business business=getUsername().getPackage().getBusiness();
-        Business otherBusiness=other.getUsername().getPackage().getBusiness();
+        Business business=getUsername().getBusiness();
+        Business otherBusiness=other.getUsername().getBusiness();
         return !business.equals(otherBusiness) && business.isBusinessOrParentOf(otherBusiness);
     }
 

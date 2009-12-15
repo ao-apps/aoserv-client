@@ -30,7 +30,6 @@ public class TableEventThread extends Thread {
         this.table=table;
         setDaemon(true);
         start();
-        // System.out.println("DEBUG: Started TableEventThread: "+getName());
     }
 
     @Override
@@ -67,7 +66,6 @@ public class TableEventThread extends Thread {
                                         if (time >= endTime) {
                                             // Ready to run
                                             entry.delayStart = -1;
-                                            // System.out.println("DEBUG: Started TableEventThread: run: "+getName()+" calling tableUpdated on "+entry.listener);
                                             // Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
                                             AOServConnector.executorService.submit(
                                                 new Runnable() {
@@ -86,10 +84,8 @@ public class TableEventThread extends Thread {
                             }
                         }
                         if(minTime==Long.MAX_VALUE) {
-                            // System.out.println("DEBUG: TableEventThread: run: "+getName()+" size="+size+", waiting indefinitely");
                             table.eventLock.wait();
                         } else {
-                            // System.out.println("DEBUG: TableEventThread: run: "+getName()+" size="+size+", waiting for "+minTime+" ms");
                             table.eventLock.wait(minTime);
                         }
                     }

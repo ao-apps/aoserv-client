@@ -44,14 +44,14 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         return getUniqueRow(MySQLUser.COLUMN_USERNAME, username);
     }
 
-    List<MySQLUser> getMySQLUsers(Package pack) throws IOException, SQLException {
-        String name=pack.name;
+    List<MySQLUser> getMySQLUsers(Business business) throws IOException, SQLException {
+        String accounting = business.pkey;
         List<MySQLUser> cached=getRows();
         int size=cached.size();
         List<MySQLUser> matches=new ArrayList<MySQLUser>(size);
         for(int c=0;c<size;c++) {
             MySQLUser msu=cached.get(c);
-            if(msu.getUsername().packageName.equals(name)) matches.add(msu);
+            if(msu.getUsername().accounting.equals(accounting)) matches.add(msu);
         }
         return matches;
     }

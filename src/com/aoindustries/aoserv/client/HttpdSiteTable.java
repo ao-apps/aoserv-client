@@ -5,22 +5,23 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.io.WriterOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  HttpdSite
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 
     HttpdSiteTable(AOServConnector connector) {
-	super(connector, HttpdSite.class);
+    	super(connector, HttpdSite.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -77,35 +78,35 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
         return getIndexedRows(HttpdSite.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    List<HttpdSite> getHttpdSites(Package pk) throws IOException, SQLException {
-        return getIndexedRows(HttpdSite.COLUMN_PACKAGE, pk.name);
+    List<HttpdSite> getHttpdSites(Business bu) throws IOException, SQLException {
+        return getIndexedRows(HttpdSite.COLUMN_ACCOUNTING, bu.pkey);
     }
 
     List<HttpdSite> getHttpdSites(LinuxServerAccount lsa) throws IOException, SQLException {
         String lsaUsername=lsa.username;
         int aoServer=lsa.ao_server;
 
-	List<HttpdSite> cached=getRows();
-	int size=cached.size();
+        List<HttpdSite> cached=getRows();
+        int size=cached.size();
         List<HttpdSite> matches=new ArrayList<HttpdSite>(size);
-	for(int c=0;c<size;c++) {
+    	for(int c=0;c<size;c++) {
             HttpdSite site=cached.get(c);
             if(
                 site.ao_server==aoServer
                 && site.linuxAccount.equals(lsaUsername)
             ) matches.add(site);
-	}
-	return matches;
+        }
+        return matches;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_SITES;
+    	return SchemaTable.TableID.HTTPD_SITES;
     }
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-	String command=args[0];
-	if(command.equalsIgnoreCase(AOSHCommand.CHECK_SITE_NAME)) {
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.CHECK_SITE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_SITE_NAME, args, 1, err)) {
                 try {
                     SimpleAOClient.checkSiteName(args[1]);
@@ -117,7 +118,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_HTTPD_SITE)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_HTTPD_SITE)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_HTTPD_SITE, args, 3, err)) {
                 out.println(
                     connector.getSimpleAOClient().disableHttpdSite(
@@ -129,12 +130,12 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_HTTPD_SITE)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_HTTPD_SITE)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_HTTPD_SITE, args, 2, err)) {
                 connector.getSimpleAOClient().enableHttpdSite(args[1], args[2]);
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_SITE_NAME)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_SITE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_SITE_NAME, args, 1, err)) {
                 out.println(connector.getSimpleAOClient().generateSiteName(args[1]));
                 out.flush();
@@ -163,23 +164,23 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
             }
             return true;
          */
-	} else if(command.equalsIgnoreCase(AOSHCommand.IS_SITE_NAME_AVAILABLE)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.IS_SITE_NAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_SITE_NAME_AVAILABLE, args, 1, err)) {
                 out.println(connector.getSimpleAOClient().isSiteNameAvailable(args[1]));
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_HTTPD_SITE)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_HTTPD_SITE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_HTTPD_SITE, args, 2, err)) {
                 connector.getSimpleAOClient().removeHttpdSite(args[1], args[2]);
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_SERVER_ADMIN)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_SERVER_ADMIN)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_SERVER_ADMIN, args, 3, err)) {
                 connector.getSimpleAOClient().setHttpdSiteServerAdmin(args[1], args[2], args[3]);
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_IS_MANUAL)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_IS_MANUAL)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_IS_MANUAL, args, 3, err)) {
                 connector.getSimpleAOClient().setHttpdSiteIsManual(
                     args[1],
@@ -188,12 +189,12 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
                 );
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_HTTPD_SITE_REBUILD)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_HTTPD_SITE_REBUILD)) {
             if(AOSH.checkParamCount(AOSHCommand.WAIT_FOR_HTTPD_SITE_REBUILD, args, 1, err)) {
                 connector.getSimpleAOClient().waitForHttpdSiteRebuild(args[1]);
             }
             return true;
-	} else return false;
+        } else return false;
     }
 
     public boolean isSiteNameAvailable(String sitename) throws IOException, SQLException {

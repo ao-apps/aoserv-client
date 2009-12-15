@@ -18,12 +18,12 @@ import java.util.*;
 final public class BusinessServerTable extends CachedTableIntegerKey<BusinessServer> {
 
     BusinessServerTable(AOServConnector connector) {
-	super(connector, BusinessServer.class);
+    	super(connector, BusinessServer.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
         new OrderBy(BusinessServer.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
         new OrderBy(BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
     };
     @Override

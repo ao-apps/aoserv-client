@@ -78,10 +78,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     }
 
     /**
-     * Gets the list of packages using this definition.
+     * Gets the list of businesses using this definition.
      */
-    public List<Package> getPackages() throws IOException, SQLException {
-        return table.connector.getPackages().getPackages(this);
+    public List<Business> getBusinesses() throws IOException, SQLException {
+        return table.connector.getBusinesses().getBusinesses(this);
     }
 
     public PackageDefinitionLimit getLimit(Resource resource) throws IOException, SQLException {
@@ -249,11 +249,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>(1);
-        List<Package> packs=getPackages();
-        if(!packs.isEmpty()) reasons.add(new CannotRemoveReason<Package>("Used by "+packs.size()+" "+(packs.size()==1?"package":"packages"), packs));
+        List<Business> bus=getBusinesses();
+        if(!bus.isEmpty()) reasons.add(new CannotRemoveReason<Business>("Used by "+bus.size()+" "+(bus.size()==1?"business":"businesses"), bus));
         return reasons;
     }
-    
+
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(
             true,

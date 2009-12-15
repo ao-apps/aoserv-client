@@ -16,7 +16,7 @@ import java.util.Locale;
 
 /**
  * Each <code>Username</code> is unique across all systems and must
- * be allocated to a <code>Package</code> before use in any of the
+ * be allocated to a <code>Business</code> before use in any of the
  * account types.
  *
  * @see  BusinessAdministrator
@@ -24,21 +24,19 @@ import java.util.Locale;
  * @see  MySQLUser
  * @see  PostgresUser
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class Username extends CachedObjectStringKey<Username> implements PasswordProtected, Removable, Disablable {
 	
     static final int
         COLUMN_USERNAME=0,
-        COLUMN_PACKAGE=1
+        COLUMN_ACCOUNTING=1
     ;
     static final String COLUMN_USERNAME_name = "username";
 
     public static final int MAX_LENGTH=255;
 
-    String packageName;
+    String accounting;
     int disable_log;
 
     public void addBusinessAdministrator(
@@ -149,7 +147,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
-        else return dl.canEnable() && getPackage().disable_log==-1;
+        else return dl.canEnable() && getBusiness().disable_log==-1;
     }
 
     /**
@@ -198,7 +196,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_USERNAME: return pkey;
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             case 2: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -223,19 +221,18 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	return table.connector.getMysqlUsers().get(pkey);
     }
 
-    public Package getPackage() throws SQLException, IOException {
-	Package packageObject=table.connector.getPackages().get(packageName);
-	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
-	return packageObject;
+    public Business getBusiness() throws SQLException, IOException {
+    	Business bu=table.connector.getBusinesses().get(accounting);
+        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
+    	return bu;
     }
 
     public PostgresUser getPostgresUser() throws IOException, SQLException {
-	return table.connector.getPostgresUsers().get(pkey);
-
+        return table.connector.getPostgresUsers().get(pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.USERNAMES;
+        return SchemaTable.TableID.USERNAMES;
     }
 
     public String getUsername() {
@@ -253,8 +250,8 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	packageName = result.getString(2);
+        pkey = result.getString(1);
+        accounting = result.getString(2);
         disable_log=result.getInt(3);
         if(result.wasNull()) disable_log=-1;
     }
@@ -333,8 +330,8 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	packageName=in.readUTF().intern();
+        pkey=in.readUTF().intern();
+        accounting=in.readUTF().intern();
         disable_log=in.readCompressedInt();
     }
 
@@ -395,8 +392,8 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(packageName);
+        out.writeUTF(pkey);
+        out.writeUTF(accounting);
         out.writeCompressedInt(disable_log);
     }
 }

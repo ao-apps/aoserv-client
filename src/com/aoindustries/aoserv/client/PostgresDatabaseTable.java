@@ -67,17 +67,17 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	return null;
     }
 
-    List<PostgresDatabase> getPostgresDatabases(Package pack) throws IOException, SQLException {
-        String name=pack.name;
+    List<PostgresDatabase> getPostgresDatabases(Business business) throws IOException, SQLException {
+        String accounting=business.pkey;
 
         List<PostgresDatabase> cached=getRows();
-	int size=cached.size();
+    	int size=cached.size();
         List<PostgresDatabase> matches=new ArrayList<PostgresDatabase>(size);
-	for(int c=0;c<size;c++) {
+    	for(int c=0;c<size;c++) {
             PostgresDatabase pd=cached.get(c);
-            if(pd.getDatDBA().getPostgresUser().getUsername().packageName.equals(name)) matches.add(pd);
-	}
-	return matches;
+            if(pd.getDatDBA().getPostgresUser().getUsername().accounting.equals(accounting)) matches.add(pd);
+        }
+        return matches;
     }
 
     List<PostgresDatabase> getPostgresDatabases(PostgresServerUser psu) throws IOException, SQLException {

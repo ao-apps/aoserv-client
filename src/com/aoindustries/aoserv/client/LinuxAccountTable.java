@@ -316,7 +316,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             LinuxAccount linuxAccount = cached.get(c);
             if (
                 linuxAccount.getType().isEmail()
-                && linuxAccount.getUsername().getPackage().accounting.equals(accounting)
+                && linuxAccount.getUsername().accounting.equals(accounting)
             ) matches.add(linuxAccount);
         }
         return matches;

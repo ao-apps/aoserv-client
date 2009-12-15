@@ -19,8 +19,6 @@ import java.sql.SQLException;
  *
  * @see AOSH
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
@@ -75,7 +73,6 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         ADD_MYSQL_USER="add_mysql_user",
         ADD_NET_BIND="add_net_bind",
         ADD_NOTICE_LOG="add_notice_log",
-        ADD_PACKAGE="add_package",
         ADD_POSTGRES_DATABASE="add_postgres_database",
         ADD_POSTGRES_SERVER_USER="add_postgres_server_user",
         ADD_POSTGRES_USER="add_postgres_user",
@@ -113,7 +110,6 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         CHECK_MYSQL_PASSWORD="check_mysql_user_password",
         CHECK_MYSQL_SERVER_NAME="check_mysql_server_name",
         CHECK_MYSQL_USERNAME="check_mysql_username",
-        CHECK_PACKAGE_NAME="check_package_name",
         CHECK_POSTGRES_DATABASE_NAME="check_postgres_database_name",
         CHECK_POSTGRES_PASSWORD="check_postgres_password",
         CHECK_POSTGRES_SERVER_NAME="check_postgres_server_name",
@@ -144,7 +140,6 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         DISABLE_LINUX_SERVER_ACCOUNT="disable_linux_server_account",
         DISABLE_MYSQL_SERVER_USER="disable_mysql_server_user",
         DISABLE_MYSQL_USER="disable_mysql_user",
-        DISABLE_PACKAGE="disable_package",
         DISABLE_POSTGRES_SERVER_USER="disable_postgres_server_user",
         DISABLE_POSTGRES_USER="disable_postgres_user",
         DISABLE_USERNAME="disable_username",
@@ -164,14 +159,12 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         ENABLE_LINUX_SERVER_ACCOUNT="enable_linux_server_account",
         ENABLE_MYSQL_SERVER_USER="enable_mysql_server_user",
         ENABLE_MYSQL_USER="enable_mysql_user",
-        ENABLE_PACKAGE="enable_package",
         ENABLE_POSTGRES_SERVER_USER="enable_postgres_server_user",
         ENABLE_POSTGRES_USER="enable_postgres_user",
         ENABLE_USERNAME="enable_username",
         EXIT="exit",
         GENERATE_ACCOUNTING="generate_accounting",
         GENERATE_MYSQL_DATABASE_NAME="generate_mysql_database_name",
-        GENERATE_PACKAGE_NAME="generate_package_name",
         GENERATE_PASSWORD="generate_password",
         GENERATE_POSTGRES_DATABASE_NAME="generate_postgres_database_name",
         GENERATE_SHARED_TOMCAT_NAME="generate_shared_tomcat_name",
@@ -203,7 +196,6 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         IS_MYSQL_DATABASE_NAME_AVAILABLE="is_mysql_database_name_available",
         IS_MYSQL_SERVER_NAME_AVAILABLE="is_mysql_server_name_available",
         IS_MYSQL_SERVER_USER_PASSWORD_SET="is_mysql_server_user_password_set",
-        IS_PACKAGE_NAME_AVAILABLE="is_package_name_available",
         IS_POSTGRES_DATABASE_NAME_AVAILABLE="is_postgres_database_name_available",
         IS_POSTGRES_SERVER_NAME_AVAILABLE="is_postgres_server_name_available",
         IS_POSTGRES_SERVER_USER_PASSWORD_SET="is_postgres_server_user_password_set",
@@ -282,9 +274,9 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         SET_HTTPD_SITE_IS_MANUAL="set_httpd_site_is_manual",
         SET_HTTPD_SITE_SERVER_ADMIN="set_httpd_site_server_admin",
         SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES="set_httpd_tomcat_context_attributes",
+        SET_IP_ADDRESS_BUSINESS="set_ip_address_business",
         SET_IP_ADDRESS_DHCP_ADDRESS="set_ip_address_dhcp_address",
         SET_IP_ADDRESS_HOSTNAME="set_ip_address_hostname",
-        SET_IP_ADDRESS_PACKAGE="set_ip_address_package",
         SET_LINUX_ACCOUNT_HOME_PHONE="set_linux_account_home_phone",
         SET_LINUX_ACCOUNT_NAME="set_linux_account_name",
         SET_LINUX_ACCOUNT_OFFICE_LOCATION="set_linux_account_office_location",

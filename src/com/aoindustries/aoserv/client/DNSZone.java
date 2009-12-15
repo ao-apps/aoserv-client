@@ -25,15 +25,13 @@ import java.util.Locale;
  * @see  DNSTLD
  * @see  DNSRecord
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Removable, Dumpable {
 
     static final int
         COLUMN_ZONE=0,
-        COLUMN_PACKAGE=2
+        COLUMN_ACCOUNTING=2
     ;
     static final String COLUMN_ZONE_name= "zone";
     
@@ -50,19 +48,19 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     public static final String DEFAULT_HOSTMASTER="hostmaster."+API_ZONE;
 
     private String file;
-    String packageName;
+    String accounting;
     private String hostmaster;
     private long serial;
     private int ttl;
 
     public int addDNSRecord(
-	String domain,
-	DNSType type,
-	int mx_priority,
-	String destination,
+        String domain,
+        DNSType type,
+        int mx_priority,
+        String destination,
         int ttl
     ) throws IOException, SQLException {
-	return table.connector.getDnsRecords().addDNSRecord(this, domain, type, mx_priority, destination, ttl);
+    	return table.connector.getDnsRecords().addDNSRecord(this, domain, type, mx_priority, destination, ttl);
     }
 
     public void dump(PrintWriter out) throws SQLException, IOException {
@@ -115,7 +113,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         switch(i) {
             case COLUMN_ZONE: return pkey;
             case 1: return file;
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             case 3: return hostmaster;
             case 4: return Long.valueOf(serial);
             case 5: return Integer.valueOf(ttl);
@@ -149,14 +147,14 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	return hostmaster;
     }
 
-    public Package getPackage() throws SQLException, IOException {
-	Package obj=table.connector.getPackages().get(packageName);
-	if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
-	return obj;
+    public Business getBusiness() throws SQLException, IOException {
+        Business obj=table.connector.getBusinesses().get(accounting);
+        if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
+        return obj;
     }
 
     public long getSerial() {
-	return serial;
+        return serial;
     }
     
     public int getTTL() {
@@ -182,7 +180,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     public void init(ResultSet result) throws SQLException {
         pkey=result.getString(1);
         file=result.getString(2);
-        packageName=result.getString(3);
+        accounting=result.getString(3);
         hostmaster=result.getString(4);
         serial=result.getLong(5);
         ttl=result.getInt(6);
@@ -294,11 +292,11 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	file=in.readUTF();
-	packageName=in.readUTF().intern();
-	hostmaster=in.readUTF().intern();
-	serial=in.readLong();
+        pkey=in.readUTF().intern();
+        file=in.readUTF();
+        accounting=in.readUTF().intern();
+        hostmaster=in.readUTF().intern();
+        serial=in.readLong();
         ttl=in.readCompressedInt();
     }
 
@@ -320,7 +318,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
         out.writeUTF(file);
-        out.writeUTF(packageName);
+        out.writeUTF(accounting);
         out.writeUTF(hostmaster);
         out.writeLong(serial);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);

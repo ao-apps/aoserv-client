@@ -5,16 +5,21 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @see  Transaction
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -94,7 +99,6 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 
     @Override
     public void clearCache() {
-        // System.err.println("DEBUG: TransactionTable: clearCache() called");
         super.clearCache();
         synchronized(accountBalances) {
             accountBalancesClearCounter++;

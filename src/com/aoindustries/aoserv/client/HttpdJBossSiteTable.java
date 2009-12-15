@@ -5,23 +5,24 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  HttpdJBossSite
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossSite> {
 
     protected HttpdJBossSiteTable(AOServConnector connector) {
-	super(connector, HttpdJBossSite.class);
+    	super(connector, HttpdJBossSite.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -36,7 +37,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
     int addHttpdJBossSite(
         final AOServer aoServer,
         final String siteName,
-        final Package packageObj,
+        final Business business,
         final LinuxAccount siteUser,
         final LinuxGroup siteGroup,
         final String serverAdmin,
@@ -44,8 +45,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
         final IPAddress ipAddress,
         final String primaryHttpHostname,
         final String[] altHttpHostnames,
-        final int jBossVersion,
-        final String contentSrc
+        final int jBossVersion
     ) throws IOException, SQLException {
         return connector.requestResult(
             true,
@@ -58,7 +58,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
                     out.writeCompressedInt(SchemaTable.TableID.HTTPD_JBOSS_SITES.ordinal());
                     out.writeCompressedInt(aoServer.pkey);
                     out.writeUTF(siteName);
-                    out.writeUTF(packageObj.name);
+                    out.writeUTF(business.pkey);
                     out.writeUTF(siteUser.pkey);
                     out.writeUTF(siteGroup.pkey);
                     out.writeUTF(serverAdmin);
@@ -68,8 +68,6 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
                     out.writeCompressedInt(altHttpHostnames.length);
                     for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
                     out.writeCompressedInt(jBossVersion);
-                    out.writeBoolean(contentSrc!=null);
-                    if (contentSrc!=null) out.writeUTF(contentSrc);
                 }
 
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
@@ -99,12 +97,12 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
         int pkey=nb.pkey;
         
         List<HttpdJBossSite> cached=getRows();
-	int size=cached.size();
-	for(int c=0;c<size;c++) {
+        int size=cached.size();
+        for(int c=0;c<size;c++) {
             HttpdJBossSite jboss=cached.get(c);
             if(jboss.rmiBind==pkey) return jboss;
-	}
-	return null;
+        }
+        return null;
     }
 
     HttpdJBossSite getHttpdJBossSiteByJNPPort(NetBind nb) throws IOException, SQLException {
@@ -156,17 +154,17 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_JBOSS_SITES;
+    	return SchemaTable.TableID.HTTPD_JBOSS_SITES;
     }
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-	String command=args[0];
-	if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_JBOSS_SITE)) {
-            if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_JBOSS_SITE, args, 12, err)) {
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_JBOSS_SITE)) {
+            if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_JBOSS_SITE, args, 11, err)) {
                 // Create an array of all the alternate hostnames
-                String[] altHostnames=new String[args.length-13];
-                System.arraycopy(args, 13, altHostnames, 0, args.length-13);
+                String[] altHostnames=new String[args.length-12];
+                System.arraycopy(args, 12, altHostnames, 0, args.length-12);
                 out.println(
                     connector.getSimpleAOClient().addHttpdJBossSite(
                         args[1],
@@ -180,14 +178,13 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
                         args[9],
                         args[11],
                         altHostnames,
-                        args[10],
-                        args[12]
+                        args[10]
                     )
                 );
                 out.flush();
             }
             return true;
-	}
-	return false;
+        }
+        return false;
     }
 }

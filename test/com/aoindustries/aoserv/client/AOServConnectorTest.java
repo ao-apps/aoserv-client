@@ -29,13 +29,13 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Gets the list of connectors to be used during testing.  This represents the three different
      * filter modes.  Regular user (testuser), unrestritected master (aoweb_app), and a single server
-     * (mandriva20060_svr).
+     * (test_svr).
      */
     static List<AOServConnector> getTestConnectors() throws IOException {
         List<AOServConnector> conns = new ArrayList<AOServConnector>();
         conns.add(AOServConnector.getConnector("aoweb_app", "changeme", logger));
         conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD, logger));
-        conns.add(AOServConnector.getConnector("mandriva20060_svr", "Ogrol3Veve5", logger));
+        conns.add(AOServConnector.getConnector("test_svr", "Ogrol3Veve5", logger));
         return conns;
     }
 

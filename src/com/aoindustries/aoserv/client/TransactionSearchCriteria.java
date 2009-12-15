@@ -106,43 +106,43 @@ final public class TransactionSearchCriteria implements Streamable {
     }
 
     public TransactionSearchCriteria(BusinessAdministrator business_administrator) throws IOException, SQLException {
-	// The current time
-	Calendar cal = Calendar.getInstance();
-	cal.setTime(new java.util.Date());
+        // The current time
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new java.util.Date());
 
-	// The current year
-	int year = cal.get(Calendar.YEAR);
+        // The current year
+        int year = cal.get(Calendar.YEAR);
 
-	before = ANY;
+    	before = ANY;
 
-	// The beginning of last month starts the default search
-	int month = cal.get(Calendar.MONTH);
-	if (month == Calendar.JANUARY) {
+        // The beginning of last month starts the default search
+        int month = cal.get(Calendar.MONTH);
+        if (month == Calendar.JANUARY) {
             year--;
             month = Calendar.DECEMBER;
-	} else month--;
-	cal.set(Calendar.YEAR, year);
-	cal.set(Calendar.MONTH, month);
-	cal.set(Calendar.DAY_OF_MONTH, 1);
-	cal.set(Calendar.HOUR_OF_DAY, 0);
-	cal.set(Calendar.MINUTE, 0);
-	cal.set(Calendar.SECOND, 0);
-	cal.set(Calendar.MILLISECOND, 0);
-	after = cal.getTime().getTime();
+        } else month--;
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        after = cal.getTime().getTime();
 
-	transid = ANY;
-	business = business_administrator == null ? null : business_administrator.getUsername().getPackage().getBusiness().pkey;
+        transid = ANY;
+        business = business_administrator == null ? null : business_administrator.getUsername().accounting;
         sourceBusiness = null;
-	business_administrator = null;
-	type = null;
-	description = null;
-	paymentType = null;
-	paymentInfo = null;
-	payment_confirmed = ANY;
+        business_administrator = null;
+        type = null;
+        description = null;
+        paymentType = null;
+        paymentInfo = null;
+        payment_confirmed = ANY;
     }
 
     public long getAfter() {
-	return after;
+        return after;
     }
 
     public long getBefore() {

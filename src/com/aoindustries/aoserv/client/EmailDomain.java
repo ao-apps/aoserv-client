@@ -5,10 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>EmailDomain</code> is one hostname/domain of email
@@ -23,8 +27,6 @@ import java.util.*;
  * @see  DNSType#MX
  * @see  AOServer
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> implements Removable {
@@ -32,17 +34,17 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     static final int
         COLUMN_PKEY=0,
         COLUMN_AO_SERVER=2,
-        COLUMN_PACKAGE=3
+        COLUMN_ACCOUNTING=3
     ;
     static final String COLUMN_AO_SERVER_name = "ao_server";
     static final String COLUMN_DOMAIN_name = "domain";
 
     String domain;
     int ao_server;
-    String packageName;
+    String accounting;
 
     public int addEmailAddress(String address) throws SQLException, IOException {
-	return table.connector.getEmailAddresses().addEmailAddress(address, this);
+        return table.connector.getEmailAddresses().addEmailAddress(address, this);
     }
 
     public void addMajordomoServer(
@@ -63,7 +65,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return domain;
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
-            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_ACCOUNTING: return accounting;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -84,27 +86,27 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	return table.connector.getMajordomoServers().get(pkey);
     }
 
-    public Package getPackage() throws SQLException, IOException {
-	Package packageObject = table.connector.getPackages().get(packageName);
-	if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
-	return packageObject;
+    public Business getBusiness() throws SQLException, IOException {
+        Business bu = table.connector.getBusinesses().get(accounting);
+        if(bu == null) throw new SQLException("Unable to find Business: " + accounting);
+        return bu;
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-	AOServer ao=table.connector.getAoServers().get(ao_server);
-	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-	return ao;
+        AOServer ao=table.connector.getAoServers().get(ao_server);
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+        return ao;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.EMAIL_DOMAINS;
+        return SchemaTable.TableID.EMAIL_DOMAINS;
     }
 
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
-	domain=result.getString(2);
-	ao_server=result.getInt(3);
-	packageName=result.getString(4);
+        domain=result.getString(2);
+        ao_server=result.getInt(3);
+        accounting=result.getString(4);
     }
 
     public static boolean isValidFormat(String name) {
@@ -138,9 +140,9 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	domain=in.readUTF();
-	ao_server=in.readCompressedInt();
-	packageName=in.readUTF().intern();
+        domain=in.readUTF();
+        ao_server=in.readCompressedInt();
+        accounting=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
@@ -170,6 +172,6 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         out.writeCompressedInt(pkey);
         out.writeUTF(domain);
         out.writeCompressedInt(ao_server);
-        out.writeUTF(packageName);
+        out.writeUTF(accounting);
     }
 }

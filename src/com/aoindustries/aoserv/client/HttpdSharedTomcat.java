@@ -5,11 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * An <code>HttpdSharedTomcat</code> stores configuration information
@@ -18,8 +21,6 @@ import java.util.*;
  *
  * @see  HttpdTomcatSharedSite
  * @see  HttpdTomcatSite
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -79,7 +80,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         if(dl==null) return false;
         else return
             dl.canEnable()
-            && getLinuxServerGroup().getLinuxGroup().getPackage().disable_log==-1
+            && getLinuxServerGroup().getLinuxGroup().getBusiness().disable_log==-1
             && getLinuxServerAccount().disable_log==-1
         ;
     }
