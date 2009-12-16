@@ -167,22 +167,22 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
     public static String isValidDatabaseName(Locale userLocale, String name, List<?> reservedWords) {
         // Must be a-z first, then a-z or 0-9 or _
         int len = name.length();
-        if(len==0) return ApplicationResources.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.empty");
-        if(len>MySQLDatabase.MAX_DATABASE_NAME_LENGTH) return ApplicationResources.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.tooLong", len, MySQLDatabase.MAX_DATABASE_NAME_LENGTH);
+        if(len==0) return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.empty");
+        if(len>MySQLDatabase.MAX_DATABASE_NAME_LENGTH) return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.tooLong", len, MySQLDatabase.MAX_DATABASE_NAME_LENGTH);
         // The first character must be [a-z]
         char ch = name.charAt(0);
-        if (ch < 'a' || ch > 'z') return ApplicationResources.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.firstChar");
+        if (ch < 'a' || ch > 'z') return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.firstChar");
         // The rest may have additional characters
         for (int c = 1; c < len; c++) {
             ch = name.charAt(c);
-            if ((ch < 'a' || ch > 'z') && (ch < '0' || ch > '9') && ch != '_') return ApplicationResources.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.invalidChar", ch);
+            if ((ch < 'a' || ch > 'z') && (ch < '0' || ch > '9') && ch != '_') return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.invalidChar", ch);
         }
 
         // Also must not be a reserved word
         int size=reservedWords.size();
         for(int c=0;c<size;c++) {
             String reservedWord = reservedWords.get(c).toString();
-            if(name.equalsIgnoreCase(reservedWord)) return ApplicationResources.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.reservedWord", reservedWord);
+            if(name.equalsIgnoreCase(reservedWord)) return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseTable.isValidDatabaseName.reservedWord", reservedWord);
         }
     	return null;
     }

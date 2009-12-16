@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -81,6 +82,19 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
         ticket = in.readCompressedInt();
         reseller = in.readUTF().intern();
         administrator = in.readUTF().intern();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getTicket(),
+            getReseller(),
+            getBusinessAdministrator()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

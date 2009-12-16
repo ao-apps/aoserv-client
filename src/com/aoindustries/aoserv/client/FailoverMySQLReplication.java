@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -119,6 +120,19 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         monitoring_seconds_behind_medium = in.readCompressedInt();
         monitoring_seconds_behind_high = in.readCompressedInt();
         monitoring_seconds_behind_critical = in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getAOServer(),
+            getFailoverFileReplication(),
+            getMySQLServer()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

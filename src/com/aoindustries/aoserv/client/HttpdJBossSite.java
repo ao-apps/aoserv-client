@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -104,13 +105,29 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	version=in.readCompressedInt();
-	jnpBind=in.readCompressedInt();
-	webserverBind=in.readCompressedInt();
-	rmiBind=in.readCompressedInt();
-	hypersonicBind=in.readCompressedInt();
-	jmxBind=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        version=in.readCompressedInt();
+        jnpBind=in.readCompressedInt();
+        webserverBind=in.readCompressedInt();
+        rmiBind=in.readCompressedInt();
+        hypersonicBind=in.readCompressedInt();
+        jmxBind=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getHttpdTomcatSite(),
+            getJnpBind(),
+            getWebserverBind(),
+            getRmiBind(),
+            getHypersonicBind(),
+            getJmxBind()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

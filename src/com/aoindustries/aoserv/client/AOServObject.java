@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,8 +25,6 @@ import java.util.Locale;
  * for all data in the system.  Each <code>AOServObject</code>
  * belongs to a <code>AOServTable</code>, and each table
  * contains <code>AOServObject</code>s.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  *
@@ -197,4 +196,71 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
     }
 
     public abstract void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
+
+    /**
+     * Returns an unmodifiable list of the provided objects, not including any null values.
+     */
+    static List<AOServObject> createDependencyList() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns an unmodifiable list of the provided objects, not including any null values.
+     */
+    static List<AOServObject> createDependencyList(AOServObject obj) {
+        if(obj==null) return Collections.emptyList();
+        assert !(obj instanceof GlobalObject);
+        return Collections.singletonList(obj);
+    }
+
+    /**
+     * Checks if all elements of a list are unique based on hashCode and equals.
+     */
+    /*private static boolean isListUnique(List<AOServObject> list) {
+        if(list.size()>1) {
+            Set<AOServObject> set = new HashSet<AOServObject>(list.size()*4/3+1);
+            for(AOServObject obj : list) {
+                if(!set.add(obj)) {
+                    System.err.println("Not unique: "+obj);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }*/
+
+    /**
+     * Returns an unmodifiable list of the provided objects, not including any null values.
+     */
+    static List<AOServObject> createDependencyList(AOServObject... objs) {
+        List<AOServObject> list = new ArrayList<AOServObject>(objs.length);
+        for(AOServObject obj : objs) {
+            if(obj!=null) {
+                assert !(obj instanceof GlobalObject);
+                list.add(obj);
+            }
+        }
+        //assert isListUnique(list);
+        return Collections.unmodifiableList(list);
+    }
+
+    /**
+     * Gets an unmodifiable list of objects this object directly depends on.
+     * An object may be returned in the list more than one time.
+     * This should result in a directed acyclic graph - there should never be any loops in the graph.
+     * This acyclic graph, however, should be an exact mirror of the acyclic graph obtained from <code>getDependentObjects</code>.
+     *
+     * @see #getDependentObjects() for the opposite direction
+     */
+    public abstract List<AOServObject> getDependencies() throws IOException, SQLException;
+
+    /**
+     * Gets the set of objects directly dependent upon this object.
+     * An object may be returned in the list more than one time.
+     * This should result in a directed acyclic graph - there should never be any loops in the graph.
+     * This acyclic graph, however, should be an exact mirror of the acyclic graph obtained from <code>getDependencies</code>.
+     *
+     * @see #getDependencies() for the opposite direction
+     */
+    public abstract List<AOServObject> getDependentObjects() throws IOException, SQLException;
 }

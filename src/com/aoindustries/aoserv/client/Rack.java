@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -84,10 +85,21 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
     @Override
     public void read(CompressedDataInputStream in) throws IOException {
         pkey = in.readCompressedInt();
-	farm = in.readUTF().intern();
+    	farm = in.readUTF().intern();
         name = in.readUTF();
         maxPower = in.readFloat();
         totalRackUnits = in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getServerFarm()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

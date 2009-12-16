@@ -10,6 +10,8 @@ import java.sql.SQLException;
 
 /**
  * Classes that are <code>Disablable</code> can be disable and reenabled.
+ * 
+ * TODO: Remove this interface once everything switched to resources.
  *
  * @version  1.0a
  *

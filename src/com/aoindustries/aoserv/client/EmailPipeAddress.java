@@ -49,25 +49,37 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
     }
 
     public EmailPipe getEmailPipe() throws SQLException, IOException {
-	EmailPipe emailPipeObject = table.connector.getEmailPipes().get(email_pipe);
-	if (emailPipeObject == null) throw new SQLException("Unable to find EmailPipe: " + email_pipe);
-	return emailPipeObject;
+        EmailPipe emailPipeObject = table.connector.getEmailPipes().get(email_pipe);
+        if (emailPipeObject == null) throw new SQLException("Unable to find EmailPipe: " + email_pipe);
+        return emailPipeObject;
     }
-    
+
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.EMAIL_PIPE_ADDRESSES;
+    	return SchemaTable.TableID.EMAIL_PIPE_ADDRESSES;
     }
 
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
-	email_address=result.getInt(2);
-	email_pipe=result.getInt(3);
+        email_address=result.getInt(2);
+        email_pipe=result.getInt(3);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	email_address=in.readCompressedInt();
-	email_pipe=in.readCompressedInt();
+        email_address=in.readCompressedInt();
+        email_pipe=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getEmailAddress(),
+            getEmailPipe()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {

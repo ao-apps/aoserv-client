@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * A <code>PackageDefinition</code> stores one unique set of resources, limits, and prices.
+ * A <code>PackageDefinition</code> stores one unique set of resource types, limits, and prices.
  *
  * @author  AO Industries, Inc.
  */
@@ -84,9 +84,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         return table.connector.getBusinesses().getBusinesses(this);
     }
 
-    public PackageDefinitionLimit getLimit(Resource resource) throws IOException, SQLException {
-        if(resource==null) throw new AssertionError("resource is null");
-        return table.connector.getPackageDefinitionLimits().getPackageDefinitionLimit(this, resource);
+    public PackageDefinitionLimit getLimit(ResourceType resourceType) throws IOException, SQLException {
+        if(resourceType==null) throw new AssertionError("resourceType is null");
+        return table.connector.getPackageDefinitionLimits().getPackageDefinitionLimit(this, resourceType);
     }
 
     public List<PackageDefinitionLimit> getLimits() throws IOException, SQLException {
@@ -105,7 +105,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
                     out.writeCompressedInt(limits.length);
                     for(int c=0;c<limits.length;c++) {
                         PackageDefinitionLimit limit=limits[c];
-                        out.writeUTF(limit.resource);
+                        out.writeUTF(limit.resourceType);
                         out.writeCompressedInt(limit.soft_limit);
                         out.writeCompressedInt(limit.hard_limit);
                         out.writeCompressedInt(limit.additional_rate);
@@ -224,6 +224,17 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         monthly_rate_transaction_type=StringUtility.intern(in.readNullUTF());
         active=in.readBoolean();
         approved=in.readBoolean();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

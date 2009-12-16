@@ -41,7 +41,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     private int quota_gid;
 
     public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws IOException, SQLException {
-	return table.connector.getFailoverFileLogs().addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
+    	return table.connector.getFailoverFileLogs().addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
     }
 
     public int getBitRate() {
@@ -185,6 +185,18 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         connect_from=StringUtility.intern(in.readNullUTF());
         enabled=in.readBoolean();
         quota_gid=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getServer(),
+            getBackupPartition()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

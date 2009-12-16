@@ -302,6 +302,18 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     	netmask = in.readUTF().intern();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getNetDevice(),
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     /**
      * Sets the hostname for this <code>IPAddress</code>.
      */

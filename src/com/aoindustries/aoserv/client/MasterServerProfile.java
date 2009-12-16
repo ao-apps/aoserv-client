@@ -10,6 +10,7 @@ import com.aoindustries.profiler.MethodProfile;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * For debugging and optimization, code profiling may be enabled
@@ -133,37 +134,47 @@ final public class MasterServerProfile extends AOServObject<String,MasterServerP
     }
 
     public long getUseCount() {
-	return use_count;
+    	return use_count;
     }
 
     public void init(ResultSet result) throws SQLException {
-	throw new SQLException("Should not be read from the database, should be generated.");
+    	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         level=in.readCompressedInt();
         classname=in.readUTF();
-	method_name=in.readUTF();
-	parameter=in.readNullUTF();
-	use_count=in.readLong();
-	total_time=in.readLong();
-	min_time=in.readLong();
-	max_time=in.readLong();
+        method_name=in.readUTF();
+        parameter=in.readNullUTF();
+        use_count=in.readLong();
+        total_time=in.readLong();
+        min_time=in.readLong();
+        max_time=in.readLong();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void setTable(AOServTable<String,MasterServerProfile> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(level);
         out.writeUTF(classname);
-	out.writeUTF(method_name);
+    	out.writeUTF(method_name);
         out.writeNullUTF(parameter);
-	out.writeLong(use_count);
-	out.writeLong(total_time);
-	out.writeLong(min_time);
-	out.writeLong(max_time);
+    	out.writeLong(use_count);
+    	out.writeLong(total_time);
+        out.writeLong(min_time);
+        out.writeLong(max_time);
     }
 }

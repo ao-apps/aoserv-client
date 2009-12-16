@@ -152,14 +152,26 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	zone=in.readUTF().intern();
-	domain=in.readUTF().intern();
-	type=in.readUTF().intern();
-	mx_priority=in.readCompressedInt();
-	destination=in.readUTF().intern();
+        pkey=in.readCompressedInt();
+        zone=in.readUTF().intern();
+        domain=in.readUTF().intern();
+        type=in.readUTF().intern();
+        mx_priority=in.readCompressedInt();
+        destination=in.readUTF().intern();
         dhcpAddress=in.readCompressedInt();
         ttl=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getZone(),
+            getDHCPAddress()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {

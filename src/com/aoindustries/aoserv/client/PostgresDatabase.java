@@ -204,18 +204,30 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     }
 
     public boolean isTemplate() {
-	return is_template;
+    	return is_template;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	name=in.readUTF();
-	postgres_server=in.readCompressedInt();
-	datdba=in.readCompressedInt();
-	encoding=in.readCompressedInt();
-	is_template=in.readBoolean();
-	allow_conn=in.readBoolean();
+        pkey=in.readCompressedInt();
+        name=in.readUTF();
+        postgres_server=in.readCompressedInt();
+        datdba=in.readCompressedInt();
+        encoding=in.readCompressedInt();
+        is_template=in.readBoolean();
+        allow_conn=in.readBoolean();
         enable_postgis=in.readBoolean();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getPostgresServer(),
+            getDatDBA()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {

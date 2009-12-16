@@ -16,8 +16,6 @@ import java.util.List;
 /**
  * @see  PackageDefinition
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageDefinition> {

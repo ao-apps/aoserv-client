@@ -300,6 +300,17 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
         ttl=in.readCompressedInt();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(pkey.equals(API_ZONE)) reasons.add(new CannotRemoveReason<DNSZone>("Not allowed to remove the API Zone: "+API_ZONE));

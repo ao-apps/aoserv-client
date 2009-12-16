@@ -142,14 +142,25 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	httpd_site=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        httpd_site=in.readCompressedInt();
         path=in.readCompressedUTF();
         is_regular_expression=in.readBoolean();
         auth_name=in.readCompressedUTF();
         auth_group_file=in.readCompressedUTF();
         auth_user_file=in.readCompressedUTF();
         require=in.readCompressedUTF().intern();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getHttpdSite()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void remove() throws IOException, SQLException {

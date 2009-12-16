@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Every <code>SpamEmailMessage</code> that causes an IP address
@@ -99,7 +100,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         email_relay=result.getInt(2);
-	time=result.getTimestamp(3).getTime();
+    	time=result.getTimestamp(3).getTime();
         message=result.getString(4);
     }
 
@@ -107,14 +108,25 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         email_relay=in.readCompressedInt();
-	time=in.readLong();
+    	time=in.readLong();
         message=in.readUTF();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getEmailSmtpRelay()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override
     public void setTable(AOServTable<Integer,SpamEmailMessage> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
     @Override

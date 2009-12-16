@@ -95,6 +95,18 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         created=in.readLong();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getLinuxGroup(),
+            getAOServer()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 

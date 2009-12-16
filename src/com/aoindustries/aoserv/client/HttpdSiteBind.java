@@ -158,17 +158,30 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	httpd_site=in.readCompressedInt();
-	httpd_bind=in.readCompressedInt();
-	access_log=in.readUTF();
-	error_log=in.readUTF();
-	sslCertFile=in.readNullUTF();
-	sslCertKeyFile=in.readNullUTF();
+        pkey=in.readCompressedInt();
+        httpd_site=in.readCompressedInt();
+        httpd_bind=in.readCompressedInt();
+        access_log=in.readUTF();
+        error_log=in.readUTF();
+        sslCertFile=in.readNullUTF();
+        sslCertKeyFile=in.readNullUTF();
         disable_log=in.readCompressedInt();
         predisable_config=in.readNullUTF();
         isManual=in.readBoolean();
         redirect_to_primary_hostname=in.readBoolean();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getHttpdSite(),
+            getHttpdBind(),
+            getDisableLog()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void setIsManual(boolean isManual) throws IOException, SQLException {

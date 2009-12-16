@@ -23,8 +23,6 @@ import java.util.Locale;
  * @see  LinuxAccount
  * @see  AOServer
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServerAccount> implements Removable, PasswordProtected, Disablable {
@@ -452,6 +450,20 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         sa_integration_mode=in.readUTF().intern();
         sa_required_score=in.readFloat();
         sa_discard_score = in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getLinuxAccount(),
+            getAOServer(),
+            // Caused cycle: getAutoresponderFrom(),
+            getDisableLog()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {

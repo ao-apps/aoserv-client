@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -73,17 +74,29 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES;
+    	return SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	httpd_shared_tomcat=result.getInt(2);
+        pkey=result.getInt(1);
+        httpd_shared_tomcat=result.getInt(2);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	httpd_shared_tomcat=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        httpd_shared_tomcat=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getHttpdTomcatSite(),
+            getHttpdSharedTomcat()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override
@@ -92,7 +105,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(httpd_shared_tomcat);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(httpd_shared_tomcat);
     }
 }

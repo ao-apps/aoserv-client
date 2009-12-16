@@ -236,6 +236,17 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         work_dir=in.readNullUTF();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getHttpdTomcatSite()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void setAttributes(
         final String className,
         final boolean cookies,

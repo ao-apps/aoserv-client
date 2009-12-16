@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -66,6 +67,18 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         httpd_server=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getNetBind(),
+            getHttpdServer()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

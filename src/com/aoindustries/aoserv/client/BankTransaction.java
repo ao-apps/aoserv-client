@@ -10,6 +10,7 @@ import com.aoindustries.sql.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -181,20 +182,33 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeLong(time);
-	out.writeCompressedInt(transID);
-	out.writeUTF(bankAccount);
+        out.writeLong(time);
+        out.writeCompressedInt(transID);
+        out.writeUTF(bankAccount);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
             out.writeNullUTF(null);
         } else {
             out.writeNullUTF(processor);
         }
-	out.writeUTF(administrator);
-	out.writeUTF(type);
-	out.writeNullUTF(expenseCode);
-	out.writeUTF(description);
-	out.writeNullUTF(checkNo);
-	out.writeCompressedInt(amount);
-	out.writeBoolean(confirmed);
+        out.writeUTF(administrator);
+        out.writeUTF(type);
+        out.writeNullUTF(expenseCode);
+        out.writeUTF(description);
+        out.writeNullUTF(checkNo);
+        out.writeCompressedInt(amount);
+        out.writeBoolean(confirmed);
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBankAccount(),
+            getCreditCardProcessor(),
+            getAdministrator()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 }

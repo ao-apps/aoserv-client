@@ -35,7 +35,7 @@ public class MySQLTest extends TestCase {
     private static final Logger logger = Logger.getLogger(MySQLTest.class.getName());
 
     private AOServConnector conn;
-    private Package pack;
+    private Business bu;
     private Username username;
     private MySQLUser mysqlUser;
     private List<MySQLServerUser> mysqlServerUsers=new ArrayList<MySQLServerUser>();
@@ -89,9 +89,9 @@ public class MySQLTest extends TestCase {
      */
     private void addMySQLServerUsers() throws Exception {
         System.out.println("Testing adding MySQLUser to each MySQLServer");
-        System.out.print("    Resolving TEST Package: ");
-        pack=conn.getPackages().get("TEST");
-        assertNotNull("Unable to find Package: TEST", pack);
+        System.out.print("    Resolving TEST Business: ");
+        bu=conn.getBusinesses().get("TEST");
+        assertNotNull("Unable to find Business: TEST", bu);
         System.out.println("Done");
 
         System.out.print("    Generating random username: ");
@@ -114,7 +114,7 @@ public class MySQLTest extends TestCase {
         System.out.println(randomUsername);
         
         System.out.print("    Adding Username: ");
-        pack.addUsername(randomUsername);
+        bu.addUsername(randomUsername);
         username=conn.getUsernames().get(randomUsername);
         assertNotNull("Username", username);
         System.out.println("Done");
@@ -200,7 +200,7 @@ public class MySQLTest extends TestCase {
             System.out.println(randomName);
 
             System.out.print("    Adding MySQLDatabase to "+mysqlServer+": ");
-            int pkey=mysqlServer.addMySQLDatabase(randomName, pack);
+            int pkey=mysqlServer.addMySQLDatabase(randomName, bu);
             MySQLDatabase mysqlDatabase=conn.getMysqlDatabases().get(pkey);
             assertNotNull("MySQLDatabase", mysqlDatabase);
             mysqlServer.getAOServer().waitForMySQLDatabaseRebuild();
@@ -353,7 +353,7 @@ public class MySQLTest extends TestCase {
      */
     private void disableMySQLServerUsers() throws Exception {
         System.out.print("Disabling MySQLServerUsers: ");
-        DisableLog dl=conn.getDisableLogs().get(pack.getBusiness().addDisableLog("Test disabling"));
+        DisableLog dl=conn.getDisableLogs().get(bu.addDisableLog("Test disabling"));
         for(MySQLServerUser msu : mysqlServerUsers) {
             System.out.print('.');
             msu.disable(dl);

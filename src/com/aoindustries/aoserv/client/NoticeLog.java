@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -97,31 +98,43 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	create_time=result.getTimestamp(2).getTime();
-	accounting=result.getString(3);
-	billing_contact=result.getString(4);
-	billing_email=result.getString(5);
-	balance=SQLUtility.getPennies(result.getString(6));
-	notice_type=result.getString(7);
-	transid=result.getInt(8);
-	if(result.wasNull()) transid=-1;
+        pkey=result.getInt(1);
+        create_time=result.getTimestamp(2).getTime();
+        accounting=result.getString(3);
+        billing_contact=result.getString(4);
+        billing_email=result.getString(5);
+        balance=SQLUtility.getPennies(result.getString(6));
+        notice_type=result.getString(7);
+        transid=result.getInt(8);
+        if(result.wasNull()) transid=-1;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	create_time=in.readLong();
-	accounting=in.readUTF().intern();
-	billing_contact=in.readUTF();
-	billing_email=in.readUTF();
-	balance=in.readCompressedInt();
-	notice_type=in.readUTF().intern();
-	transid=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        create_time=in.readLong();
+        accounting=in.readUTF().intern();
+        billing_contact=in.readUTF();
+        billing_email=in.readUTF();
+        balance=in.readCompressedInt();
+        notice_type=in.readUTF().intern();
+        transid=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness(),
+            getTransaction()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return pkey+"|"+accounting+'|'+SQLUtility.getDecimal(balance)+'|'+notice_type;
+    	return pkey+"|"+accounting+'|'+SQLUtility.getDecimal(balance)+'|'+notice_type;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

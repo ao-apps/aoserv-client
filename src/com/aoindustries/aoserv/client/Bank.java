@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -29,40 +30,50 @@ final public class Bank extends CachedObjectStringKey<Bank> {
     ;
 
     Object getColumnImpl(int i) {
-	if(i==COLUMN_NAME) return pkey;
-	if(i==1) return display;
-	throw new IllegalArgumentException("Invalid index: "+i);
+        if(i==COLUMN_NAME) return pkey;
+        if(i==1) return display;
+        throw new IllegalArgumentException("Invalid index: "+i);
     }
 
     public String getDisplay() {
-	return display;
+    	return display;
     }
 
     public String getName() {
-	return pkey;
+    	return pkey;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BANKS;
+    	return SchemaTable.TableID.BANKS;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	display = result.getString(2);
+        pkey = result.getString(1);
+        display = result.getString(2);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	display=in.readUTF();
+        pkey=in.readUTF().intern();
+        display=in.readUTF();
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return display;
+    	return display;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(display);
+        out.writeUTF(pkey);
+        out.writeUTF(display);
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 }

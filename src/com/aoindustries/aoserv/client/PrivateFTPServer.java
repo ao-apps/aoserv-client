@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -116,6 +117,18 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
         created=in.readLong();
         pub_linux_server_account=in.readCompressedInt();
         allow_anonymous=in.readBoolean();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getNetBind(),
+            getLinuxServerAccount()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

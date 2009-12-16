@@ -11,6 +11,8 @@ import java.util.List;
 /**
  * Encapsulates a reason and optional dependent object.
  *
+ * TODO: Remove this interface once everything switched to resources.
+ *
  * @see Removable
  *
  * @version  1.0a

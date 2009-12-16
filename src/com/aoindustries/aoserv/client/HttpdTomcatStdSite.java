@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -70,9 +71,21 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
+    	pkey=in.readCompressedInt();
         tomcat4_shutdown_port=in.readCompressedInt();
         tomcat4_shutdown_key=in.readNullUTF();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getHttpdTomcatSite(),
+            getTomcat4ShutdownPort()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

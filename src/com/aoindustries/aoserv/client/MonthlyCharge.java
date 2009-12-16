@@ -11,6 +11,7 @@ import com.aoindustries.sql.SQLUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -167,6 +168,19 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
         created=in.readLong();
         created_by=in.readUTF().intern();
         active=in.readBoolean();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness(),
+            getSourceBusiness(),
+            getCreatedBy()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Provides SMTP relay services for one or more non-managed servers.
@@ -98,6 +99,17 @@ public final class EmailSmtpSmartHost extends CachedObjectIntegerKey<EmailSmtpSm
         total_out_rate=in.readFloat();
         default_domain_out_burst=in.readCompressedInt();
         default_domain_out_rate=in.readFloat();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getNetBind()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

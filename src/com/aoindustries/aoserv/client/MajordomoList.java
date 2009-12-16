@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -221,6 +222,24 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         listname_owner_add=in.readCompressedInt();
         listname_approval_add=in.readCompressedInt();
         listname_request_pipe_add=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getEmailList(),
+            getMajordomoServer(),
+            getListPipeAddress(),
+            getListListAddress(),
+            getOwnerListAddress(),
+            getListOwnerAddress(),
+            getListApprovalAddress(),
+            getListRequestPipeAddress()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void setInfoFile(String file) throws IOException, SQLException {

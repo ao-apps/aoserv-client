@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * <code>MasterUser</code>s are restricted to data based on a list
@@ -69,14 +70,26 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	username=in.readUTF().intern();
-	server=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        username=in.readUTF().intern();
+        server=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getMasterUser(),
+            getServer()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(username);
-	out.writeCompressedInt(server);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(username);
+        out.writeCompressedInt(server);
     }
 }

@@ -67,8 +67,19 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	linux_server_account=in.readCompressedInt();
-	extension=in.readUTF().intern();
+        linux_server_account=in.readCompressedInt();
+        extension=in.readUTF().intern();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getLinuxServerAccount()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {

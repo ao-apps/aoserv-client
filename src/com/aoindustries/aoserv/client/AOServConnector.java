@@ -784,6 +784,11 @@ abstract public class AOServConnector {
         return resellers;
     }
 
+    private final ResourceTypeTable resourceTypes;
+    public ResourceTypeTable getResourceTypes() {
+        return resourceTypes;
+    }
+
     private final ResourceTable resources;
     public ResourceTable getResources() {
         return resources;
@@ -1107,6 +1112,7 @@ abstract public class AOServConnector {
         newTables.add(protocols=new ProtocolTable(this));
         newTables.add(racks=new RackTable(this));
         newTables.add(resellers=new ResellerTable(this));
+        newTables.add(resourceTypes=new ResourceTypeTable(this));
         newTables.add(resources=new ResourceTable(this));
         newTables.add(schemaColumns=new SchemaColumnTable(this));
         newTables.add(schemaForeignKeys=new SchemaForeignKeyTable(this));

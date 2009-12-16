@@ -27,14 +27,14 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
 
     private int depositDelay, withdrawalDelay;
 
-    public Bank getBank(long maximumCacheAge) throws SQLException, IOException {
+    public Bank getBank() throws SQLException, IOException {
         Bank bankObject = table.connector.getBanks().get(bank);
         if (bankObject == null) throw new SQLException("Bank not found: " + bank);
         return bankObject;
     }
 
     public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
-	return table.connector.getBankTransactions().getBankTransactions(this);
+    	return table.connector.getBankTransactions().getBankTransactions(this);
     }
 
     Object getColumnImpl(int i) {
@@ -88,10 +88,21 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(display);
-	out.writeUTF(bank);
-	out.writeCompressedInt(depositDelay);
-	out.writeCompressedInt(withdrawalDelay);
+        out.writeUTF(pkey);
+        out.writeUTF(display);
+        out.writeUTF(bank);
+        out.writeCompressedInt(depositDelay);
+        out.writeCompressedInt(withdrawalDelay);
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBank()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 }

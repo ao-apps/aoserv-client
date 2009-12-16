@@ -174,6 +174,18 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         disable_log=in.readCompressedInt();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getUsername(),
+            getDisableLog()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         for(PostgresServerUser psu : getPostgresServerUsers()) reasons.addAll(psu.getCannotRemoveReasons(userLocale));

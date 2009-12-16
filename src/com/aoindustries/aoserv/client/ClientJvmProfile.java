@@ -7,9 +7,9 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.profiler.MethodProfile;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * For debugging and optimization, code profiling may be enabled
@@ -57,21 +57,21 @@ final public class ClientJvmProfile extends AOServObject<String,ClientJvmProfile
     public ClientJvmProfile(
         int level,
         String classname,
-	String method_name,
-	String parameter,
-	long use_count,
-	long total_time,
-	long min_time,
-	long max_time
+        String method_name,
+        String parameter,
+        long use_count,
+        long total_time,
+        long min_time,
+        long max_time
     ) {
         this.level=level;
         this.classname=classname;
-	this.method_name=method_name;
-	this.parameter=parameter;
-	this.use_count=use_count;
-	this.total_time=total_time;
-	this.min_time=min_time;
-	this.max_time=max_time;
+        this.method_name=method_name;
+        this.parameter=parameter;
+        this.use_count=use_count;
+        this.total_time=total_time;
+        this.min_time=min_time;
+        this.max_time=max_time;
     }
 
     public int getLevel() {
@@ -97,52 +97,62 @@ final public class ClientJvmProfile extends AOServObject<String,ClientJvmProfile
     }
 
     public long getMaxTime() {
-	return max_time;
+        return max_time;
     }
 
     public String getMethodName() {
-	return method_name;
+        return method_name;
     }
 
     public long getMinTime() {
-	return min_time;
+        return min_time;
     }
 
     public String getParameter() {
-	return parameter;
+        return parameter;
     }
 
     public String getKey() {
-	return parameter==null?method_name:(method_name+':'+parameter);
+        return parameter==null?method_name:(method_name+':'+parameter);
     }
 
     final public AOServTable<String,ClientJvmProfile> getTable() {
-	return table;
+        return table;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.CLIENT_JVM_PROFILE;
+        return SchemaTable.TableID.CLIENT_JVM_PROFILE;
     }
 
     public long getTotalTime() {
-	return total_time;
+        return total_time;
     }
 
     public long getUseCount() {
-	return use_count;
+        return use_count;
     }
 
     public void init(ResultSet result) throws SQLException {
-	throw new SQLException("Should not be read from the database, should be generated.");
+    	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	throw new IOException("Should not be read from stream, should be generated.");
+    	throw new IOException("Should not be read from stream, should be generated.");
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void setTable(AOServTable<String,ClientJvmProfile> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

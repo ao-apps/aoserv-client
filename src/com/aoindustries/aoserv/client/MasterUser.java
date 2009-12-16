@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * A <code>MasterUser</code> is a <code>BusinessAdministrator</code> who
@@ -104,6 +105,17 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
         can_invalidate_tables=in.readBoolean();
         can_access_admin_web=in.readBoolean();
         is_dns_admin=in.readBoolean();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusinessAdministrator()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

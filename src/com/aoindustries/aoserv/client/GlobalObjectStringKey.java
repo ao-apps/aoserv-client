@@ -19,24 +19,24 @@ public abstract class GlobalObjectStringKey<T extends GlobalObjectStringKey<T>> 
 
     @Override
     boolean equalsImpl(Object O) {
-	return
+    	return
             O!=null
             && O.getClass()==getClass()
             && ((GlobalObjectStringKey)O).pkey.equals(pkey)
-	;
+    	;
     }
 
     public String getKey() {
-	return pkey;
+    	return pkey;
     }
 
     @Override
     int hashCodeImpl() {
-	return pkey.hashCode();
+    	return pkey.hashCode();
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return pkey;
+    	return pkey;
     }
 }

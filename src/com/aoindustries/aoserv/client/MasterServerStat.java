@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * To aid in system reliability, scalability, and debugging, many server
@@ -120,14 +121,24 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	name=in.readUTF().intern();
-	value=in.readBoolean()?in.readUTF():null;
-	description=in.readUTF();
+        name=in.readUTF().intern();
+        value=in.readBoolean()?in.readUTF():null;
+        description=in.readUTF();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void setTable(AOServTable<String,MasterServerStat> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

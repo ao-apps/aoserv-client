@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Stores the list of encryption keys for a business.  The keys themselves are GPG keys
@@ -197,6 +198,17 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         pkey=in.readCompressedInt();
     	accounting=in.readUTF().intern();
         id = in.readUTF();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

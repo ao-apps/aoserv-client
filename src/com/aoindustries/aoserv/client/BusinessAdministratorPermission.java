@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Associates a permission with a business administrator.
@@ -62,13 +63,25 @@ final public class BusinessAdministratorPermission extends CachedObjectIntegerKe
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
+    	pkey=in.readCompressedInt();
         username=in.readUTF().intern();
         permission=in.readUTF().intern();
     }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusinessAdministrator()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(username);
-	out.writeUTF(permission);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(username);
+        out.writeUTF(permission);
     }
 }

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -28,7 +29,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         COLUMN_PKEY=0,
         COLUMN_PACKAGE_DEFINITION=1
     ;
-    static final String COLUMN_RESOURCE_name = "resource";
+    static final String COLUMN_RESOURCE_TYPE_name = "resource_type";
     static final String COLUMN_PACKAGE_DEFINITION_name = "package_definition";
 
     /**
@@ -37,7 +38,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
     public static final int UNLIMITED=-1;
 
     int package_definition;
-    String resource;
+    String resourceType;
     int soft_limit;
     int hard_limit;
     int additional_rate;
@@ -48,7 +49,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 
     public PackageDefinitionLimit(
         PackageDefinition package_definition,
-        Resource resource,
+        ResourceType resourceType,
         int soft_limit,
         int hard_limit,
         int additional_rate,
@@ -56,7 +57,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
     ) {
         this.pkey=-1;
         this.package_definition=package_definition.pkey;
-        this.resource=resource.pkey;
+        this.resourceType=resourceType.pkey;
         this.soft_limit=soft_limit;
         this.hard_limit=hard_limit;
         this.additional_rate=additional_rate;
@@ -70,7 +71,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_PACKAGE_DEFINITION: return Integer.valueOf(package_definition);
-            case 2: return resource;
+            case 2: return resourceType;
             case 3: return soft_limit==UNLIMITED ? null : Integer.valueOf(soft_limit);
             case 4: return hard_limit==UNLIMITED ? null : Integer.valueOf(hard_limit);
             case 5: return additional_rate==-1 ? null : Integer.valueOf(additional_rate);
@@ -85,9 +86,9 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         return pd;
     }
     
-    public Resource getResource() throws SQLException, IOException {
-        Resource r=table.connector.getResources().get(resource);
-        if(r==null) throw new SQLException("Unable to find Resource: "+resource);
+    public ResourceType getResourceType() throws SQLException, IOException {
+        ResourceType r=table.connector.getResourceTypes().get(resourceType);
+        if(r==null) throw new SQLException("Unable to find ResourceType: "+resourceType);
         return r;
     }
 
@@ -99,7 +100,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
      * Gets the soft limit and unit or <code>null</code> if there is none.
      */
     public String getSoftLimitDisplayUnit(Locale userLocale) throws IOException, SQLException {
-        return soft_limit==-1 ? null : getResource().getDisplayUnit(userLocale, soft_limit);
+        return soft_limit==-1 ? null : getResourceType().getDisplayUnit(userLocale, soft_limit);
     }
 
     public int getHardLimit() {
@@ -110,7 +111,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
      * Gets the hard limit and unit or <code>null</code> if there is none.
      */
     public String getHardLimitDisplayUnit(Locale userLocale) throws IOException, SQLException {
-        return hard_limit==-1 ? null : getResource().getDisplayUnit(userLocale, hard_limit);
+        return hard_limit==-1 ? null : getResourceType().getDisplayUnit(userLocale, hard_limit);
     }
 
     /**
@@ -124,7 +125,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
      * Gets the additional rate per unit or <code>null</code> if there is none.
      */
     public String getAdditionalRatePerUnit(Locale userLocale) throws IOException, SQLException {
-        return additional_rate==-1 ? null : '$'+getResource().getPerUnit(userLocale, BigDecimal.valueOf(additional_rate, 2));
+        return additional_rate==-1 ? null : '$'+getResourceType().getPerUnit(userLocale, BigDecimal.valueOf(additional_rate, 2));
     }
 
     public TransactionType getAdditionalTransactionType() throws SQLException, IOException {
@@ -141,7 +142,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         package_definition=result.getInt(2);
-        resource=result.getString(3);
+        resourceType=result.getString(3);
         soft_limit=result.getInt(4);
         if(result.wasNull()) soft_limit=UNLIMITED;
         hard_limit=result.getInt(5);
@@ -154,17 +155,28 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         package_definition=in.readCompressedInt();
-        resource=in.readUTF().intern();
+        resourceType=in.readUTF().intern();
         soft_limit=in.readCompressedInt();
         hard_limit=in.readCompressedInt();
         additional_rate=in.readCompressedInt();
         additional_transaction_type=StringUtility.intern(in.readNullUTF());
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getPackageDefinition()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(package_definition);
-        out.writeUTF(resource);
+        out.writeUTF(resourceType);
         out.writeCompressedInt(soft_limit);
         out.writeCompressedInt(hard_limit);
         out.writeCompressedInt(additional_rate);

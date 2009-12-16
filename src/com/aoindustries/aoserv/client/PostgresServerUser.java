@@ -113,20 +113,33 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	username=result.getString(2);
-	postgres_server=result.getInt(3);
+        pkey=result.getInt(1);
+        username=result.getString(2);
+        postgres_server=result.getInt(3);
         disable_log=result.getInt(4);
         if(result.wasNull()) disable_log=-1;
         predisable_password=result.getString(5);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	username=in.readUTF().intern();
-	postgres_server=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        username=in.readUTF().intern();
+        postgres_server=in.readCompressedInt();
         disable_log=in.readCompressedInt();
         predisable_password=in.readNullUTF();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getPostgresUser(),
+            getPostgresServer(),
+            getDisableLog()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {

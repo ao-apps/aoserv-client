@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.profiler.MethodProfile;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * For debugging and optimization, code profiling may be enabled
@@ -59,22 +60,22 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
         String ao_server,
         int level,
         String classname,
-	String method_name,
-	String parameter,
-	long use_count,
-	long total_time,
-	long min_time,
-	long max_time
+        String method_name,
+        String parameter,
+        long use_count,
+        long total_time,
+        long min_time,
+        long max_time
     ) {
         this.ao_server=ao_server;
         this.level=level;
         this.classname=classname;
-	this.method_name=method_name;
-	this.parameter=parameter;
-	this.use_count=use_count;
-	this.total_time=total_time;
-	this.min_time=min_time;
-	this.max_time=max_time;
+        this.method_name=method_name;
+        this.parameter=parameter;
+        this.use_count=use_count;
+        this.total_time=total_time;
+        this.min_time=min_time;
+        this.max_time=max_time;
     }
 
     public int getLevel() {
@@ -101,23 +102,23 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
     }
 
     public long getMaxTime() {
-	return max_time;
+        return max_time;
     }
 
     public String getMethodName() {
-	return method_name;
+        return method_name;
     }
 
     public long getMinTime() {
-	return min_time;
+        return min_time;
     }
 
     public String getParameter() {
-	return parameter;
+        return parameter;
     }
 
     public Object getKey() {
-	return parameter==null?method_name:(method_name+':'+parameter);
+        return parameter==null?method_name:(method_name+':'+parameter);
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
@@ -127,51 +128,61 @@ final public class DaemonProfile extends AOServObject<Object,DaemonProfile> impl
     }
 
     final public AOServTable<Object,DaemonProfile> getTable() {
-	return table;
+        return table;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.DAEMON_PROFILE;
+        return SchemaTable.TableID.DAEMON_PROFILE;
     }
 
     public long getTotalTime() {
-	return total_time;
+        return total_time;
     }
 
     public long getUseCount() {
-	return use_count;
+        return use_count;
     }
 
     public void init(ResultSet result) throws SQLException {
-	throw new SQLException("Should not be read from the database, should be generated.");
+        throw new SQLException("Should not be read from the database, should be generated.");
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         ao_server=in.readUTF().intern();
         level=in.readCompressedInt();
         classname=in.readUTF();
-	method_name=in.readUTF();
-	parameter=in.readBoolean()?in.readUTF():null;
-	use_count=in.readLong();
-	total_time=in.readLong();
-	min_time=in.readLong();
-	max_time=in.readLong();
+        method_name=in.readUTF();
+        parameter=in.readBoolean()?in.readUTF():null;
+        use_count=in.readLong();
+        total_time=in.readLong();
+        min_time=in.readLong();
+        max_time=in.readLong();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void setTable(AOServTable<Object,DaemonProfile> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(ao_server);
         out.writeCompressedInt(level);
         out.writeUTF(classname);
-	out.writeUTF(method_name);
-	out.writeBoolean(parameter!=null); if(parameter!=null) out.writeUTF(parameter);
-	out.writeLong(use_count);
-	out.writeLong(total_time);
-	out.writeLong(min_time);
-	out.writeLong(max_time);
+        out.writeUTF(method_name);
+        out.writeBoolean(parameter!=null); if(parameter!=null) out.writeUTF(parameter);
+        out.writeLong(use_count);
+        out.writeLong(total_time);
+        out.writeLong(min_time);
+        out.writeLong(max_time);
     }
 }

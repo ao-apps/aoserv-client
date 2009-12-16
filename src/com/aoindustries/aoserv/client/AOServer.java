@@ -28,8 +28,6 @@ import java.util.Map;
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class AOServer extends CachedObjectIntegerKey<AOServer> {
@@ -63,13 +61,13 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         LinuxServerGroup lsg,
         long mode
     ) throws IOException, SQLException {
-	return table.connector.getCvsRepositories().addCvsRepository(
+    	return table.connector.getCvsRepositories().addCvsRepository(
             this,
             path,
             lsa,
             lsg,
             mode
-	);
+    	);
     }
 
     public int addEmailDomain(String domain, Business business) throws SQLException, IOException {
@@ -242,7 +240,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      * Gets the port information to bind to.
      */
     public NetBind getDaemonBind() throws IOException, SQLException {
-	if(daemon_bind==-1) return null;
+    	if(daemon_bind==-1) return null;
         // May be filtered
         return table.connector.getNetBinds().get(daemon_bind);
     }
@@ -1040,7 +1038,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             String[] values = StringUtility.splitString(line, '\t');
             if(values.length!=5) {
                 throw new ParseException(
-                    ApplicationResources.getMessage(
+                    ApplicationResources.accessor.getMessage(
                         locale,
                         "AOServer.DrbdReport.ParseException.badColumnCount",
                         line
@@ -1053,7 +1051,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             String device = values[0];
             if(!device.startsWith("/dev/drbd")) {
                 throw new ParseException(
-                    ApplicationResources.getMessage(
+                    ApplicationResources.accessor.getMessage(
                         locale,
                         "AOServer.DrbdReport.ParseException.badDeviceStart",
                         device
@@ -1066,7 +1064,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             String resource = values[1];
             int dashPos = resource.lastIndexOf('-');
             if(dashPos==-1) throw new ParseException(
-                ApplicationResources.getMessage(
+                ApplicationResources.accessor.getMessage(
                     locale,
                     "AOServer.DrbdReport.ParseException.noDash",
                     resource
@@ -1083,7 +1081,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                 || domUDevice.charAt(3)<'a'
                 || domUDevice.charAt(3)>'z'
             ) throw new ParseException(
-                ApplicationResources.getMessage(
+                ApplicationResources.accessor.getMessage(
                     locale,
                     "AOServer.DrbdReport.ParseException.unexpectedResourceEnding",
                     domUDevice
@@ -1098,7 +1096,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             String ds = values[3];
             int dsSlashPos = ds.indexOf('/');
             if(dsSlashPos==-1) throw new ParseException(
-                ApplicationResources.getMessage(
+                ApplicationResources.accessor.getMessage(
                     locale,
                     "AOServer.DrbdReport.ParseException.noSlashInDiskStates",
                     ds
@@ -1112,7 +1110,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             String state = values[4];
             int slashPos = state.indexOf('/');
             if(slashPos==-1) throw new ParseException(
-                ApplicationResources.getMessage(
+                ApplicationResources.accessor.getMessage(
                     locale,
                     "AOServer.DrbdReport.ParseException.noSlashInState",
                     state
@@ -1150,7 +1148,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     String line = lines.get(c);
                     String[] fields = StringUtility.splitString(line, '\t');
                     if(fields.length!=6) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.VolumeGroup.parseVgsReport.badColumnCount",
                             6,
@@ -1161,7 +1159,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     String vgExtentSize = fields[1].trim();
                     if(!vgExtentSize.endsWith("B")) {
                         throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.VolumeGroup.parseVgsReport.invalidateVgExtentSize",
                                 vgExtentSize
@@ -1184,7 +1182,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                             )
                         )!=null
                     ) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.VolumeGroup.parseVgsReport.vgNameFoundTwice",
                             vgName
@@ -1278,7 +1276,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     String line = lines.get(c);
                     String[] fields = StringUtility.splitString(line, '\t');
                     if(fields.length!=5) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
                             5,
@@ -1296,7 +1294,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     VolumeGroup volumeGroup;
                     if(vgName.length()==0) {
                         if(pvPeCount!=0 || pvPeAllocCount!=0) throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
                                 pvPeCount,
@@ -1308,7 +1306,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                         volumeGroup = null;
                     } else {
                         if(pvPeCount<1 && pvPeAllocCount<0 && pvPeAllocCount>pvPeCount) throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
                                 pvPeCount,
@@ -1319,7 +1317,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                         );
                         volumeGroup = volumeGroups.get(vgName);
                         if(volumeGroup==null) throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.PhysicalVolume.parsePvsReport.volumeGroupNotFound",
                                 vgName
@@ -1355,7 +1353,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                             )
                         )!=null
                     ) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.pvNameFoundTwice",
                             pvName
@@ -1372,7 +1370,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     Integer actualPvCountI = vgPhysicalVolumeCounts.get(vgName);
                     int actualPvCount = actualPvCountI==null ? 0 : actualPvCountI.intValue();
                     if(expectedPvCount!=actualPvCount) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.mismatchPvCount",
                             vgName
@@ -1384,7 +1382,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     Long actualVgExtentCountL = vgExtentCountTotals.get(vgName);
                     long actualVgExtentCount = actualVgExtentCountL==null ? 0 : actualVgExtentCountL.longValue();
                     if(expectedVgExtentCount!=actualVgExtentCount) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badVgExtentCount",
                             vgName
@@ -1396,7 +1394,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     Long vgAllocCountTotalL = vgAllocCountTotals.get(vgName);
                     long actualVgFreeCount = vgAllocCountTotalL==null ? expectedVgExtentCount : (expectedVgExtentCount-vgAllocCountTotalL);
                     if(expectedVgFreeCount!=actualVgFreeCount) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badVgFreeCount",
                             vgName
@@ -1480,7 +1478,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     final String line = lines.get(c);
                     final String[] fields = StringUtility.splitString(line, '\t');
                     if(fields.length!=7) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.badColumnCount",
                             7,
@@ -1499,7 +1497,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     // Find the volume group
                     VolumeGroup volumeGroup = volumeGroups.get(vgName);
                     if(volumeGroup==null) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.volumeGroupNotFound",
                             vgName
@@ -1509,7 +1507,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
                     // Find or add the logical volume
                     if(segCount<1) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.badSegCount",
                             segCount
@@ -1522,7 +1520,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                         volumeGroup.logicalVolumes.put(lvName, logicalVolume);
                     } else {
                         if(segCount!=logicalVolume.segCount) throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.segCountChanged",
                                 logicalVolume.segCount,
@@ -1534,7 +1532,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
                     // Add the segment
                     if(stripeCount<1) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.badStripeCount",
                             stripeCount
@@ -1542,7 +1540,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                         lineNum
                     );
                     if(segPeRanges.length!=stripeCount) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchStripeCount"
                         ),
@@ -1552,7 +1550,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     // Check no overlap in segments
                     for(Segment existingSegment : logicalVolume.segments) {
                         if(newSegment.overlaps(existingSegment)) throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.segmentOverlap",
                                 existingSegment,
@@ -1567,7 +1565,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     for(String segPeRange : segPeRanges) {
                         int colonPos = segPeRange.indexOf(':');
                         if(colonPos==-1) throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoColon",
                                 segPeRange
@@ -1576,7 +1574,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                         );
                         int dashPos = segPeRange.indexOf('-', colonPos+1);
                         if(dashPos==-1) throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoDash",
                                 segPeRange
@@ -1586,7 +1584,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                         String stripeDevice = segPeRange.substring(0, colonPos).trim();
                         PhysicalVolume stripePv = physicalVolumes.get(stripeDevice);
                         if(stripePv==null) throw new ParseException(
-                            ApplicationResources.getMessage(
+                            ApplicationResources.accessor.getMessage(
                                 locale,
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.physicalVolumeNotFound",
                                 stripeDevice
@@ -1604,7 +1602,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                                 for(Segment existingSegment : existingLV.segments) {
                                     for(Stripe existingStripe : existingSegment.stripes) {
                                         if(newStripe.overlaps(existingStripe)) throw new ParseException(
-                                            ApplicationResources.getMessage(
+                                            ApplicationResources.accessor.getMessage(
                                                 locale,
                                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.stripeOverlap",
                                                 existingStripe,
@@ -1627,7 +1625,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     int expectedLvCount = volumeGroup.getLvCount();
                     int actualLvCount = volumeGroup.logicalVolumes.size();
                     if(expectedLvCount!=actualLvCount) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchLvCount",
                             volumeGroup
@@ -1647,7 +1645,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
                     long expectedFreeCount = volumeGroup.vgFreeCount;
                     long actualFreeCount = volumeGroup.vgExtentCount - totalLvExtents;
                     if(expectedFreeCount!=actualFreeCount) throw new ParseException(
-                        ApplicationResources.getMessage(
+                        ApplicationResources.accessor.getMessage(
                             locale,
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchFreeCount",
                             volumeGroup
@@ -1949,7 +1947,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             lineNum++;
             int colonPos = line.indexOf(':');
             if(colonPos==-1) throw new ParseException(
-                ApplicationResources.getMessage(
+                ApplicationResources.accessor.getMessage(
                     locale,
                     "AOServer.getHddModelReport.ParseException.noColon",
                     line
@@ -1959,7 +1957,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             String device = line.substring(0, colonPos).trim();
             String model = line.substring(colonPos+1).trim();
             if(results.put(device, model)!=null) throw new ParseException(
-                ApplicationResources.getMessage(
+                ApplicationResources.accessor.getMessage(
                     locale,
                     "AOServer.getHddModelReport.ParseException.duplicateDevice",
                     device
@@ -2023,5 +2021,20 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      */
     public String checkSmtpBlacklist(String sourceIp, String connectIp) throws IOException, SQLException {
         return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getServer(),
+            getDaemonBind(),
+            getFailoverServer(),
+            getDaemonConnectBind(),
+            getJilterBind()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 }

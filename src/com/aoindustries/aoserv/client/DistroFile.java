@@ -13,6 +13,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * For AO Industries use only.
@@ -189,6 +190,16 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         file_md5_hi=has_file_md5?in.readLong():-1;
         file_md5_lo=has_file_md5?in.readLong():-1;
         symlink_target=in.readBoolean()?in.readCompressedUTF():null;
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void readRecord(DataInputStream in) throws IOException {

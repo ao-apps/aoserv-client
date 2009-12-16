@@ -434,6 +434,17 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         support_code = in.readNullUTF();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getUsername()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
@@ -637,5 +648,9 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      */
     public int compareTo(BusinessAdministrator o) {
         return pkey.compareToIgnoreCase(o.pkey);
+    }
+
+    public List<Resource> getResources() throws IOException, SQLException {
+        return table.connector.getResources().getResources(this);
     }
 }

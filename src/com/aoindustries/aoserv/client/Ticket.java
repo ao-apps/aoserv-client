@@ -141,6 +141,21 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         contact_phone_numbers = in.readUTF();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBrand(),
+            getReseller(),
+            getBusiness(),
+            getCreatedBy(),
+            getCategory()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand);

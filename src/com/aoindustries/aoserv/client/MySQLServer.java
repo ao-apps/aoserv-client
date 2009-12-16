@@ -172,10 +172,11 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return nb;
     }
 
+    /**
+     * May be filtered.
+     */
     public Business getBusiness() throws SQLException, IOException {
-        Business bu=table.connector.getBusinesses().get(accounting);
-        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
-        return bu;
+        return table.connector.getBusinesses().get(accounting);
     }
 
     public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
@@ -236,6 +237,19 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         max_connections=in.readCompressedInt();
         net_bind=in.readCompressedInt();
         accounting=in.readUTF().intern();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getAOServer(),
+            getNetBind(),
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void restartMySQL() throws IOException, SQLException {

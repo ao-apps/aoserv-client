@@ -178,29 +178,40 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
     }*/
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	accounting=in.readUTF().intern();
-	priority=in.readCompressedInt();
-	name=in.readUTF();
-	isPrivate=in.readBoolean();
-	phone=in.readUTF();
-	fax=in.readNullUTF();
-	address1=in.readUTF();
-	address2=in.readNullUTF();
-	city=in.readUTF();
-	state=StringUtility.intern(in.readNullUTF());
-	country=in.readUTF().intern();
-	zip=in.readNullUTF();
-	sendInvoice=in.readBoolean();
-	created=in.readLong();
-	billingContact=in.readUTF();
-	billingEmail=in.readUTF();
-	technicalContact=in.readUTF();
-	technicalEmail=in.readUTF();
+        pkey=in.readCompressedInt();
+        accounting=in.readUTF().intern();
+        priority=in.readCompressedInt();
+        name=in.readUTF();
+        isPrivate=in.readBoolean();
+        phone=in.readUTF();
+        fax=in.readNullUTF();
+        address1=in.readUTF();
+        address2=in.readNullUTF();
+        city=in.readUTF();
+        state=StringUtility.intern(in.readNullUTF());
+        country=in.readUTF().intern();
+        zip=in.readNullUTF();
+        sendInvoice=in.readBoolean();
+        created=in.readLong();
+        billingContact=in.readUTF();
+        billingEmail=in.readUTF();
+        technicalContact=in.readUTF();
+        technicalEmail=in.readUTF();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public boolean sendInvoice() {
-	return sendInvoice;
+    	return sendInvoice;
     }
 
     @Override

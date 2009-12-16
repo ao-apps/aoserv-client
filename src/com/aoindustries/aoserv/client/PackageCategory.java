@@ -63,7 +63,7 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.getMessage(userLocale, "PackageCategory."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "PackageCategory."+pkey+".toString");
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -5,10 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Several resources on a <code>Server</code> require a server-wide
@@ -31,37 +33,39 @@ final public class LinuxID extends AOServObject<Integer,LinuxID> {
         this.id=id;
     }
 
+    @Override
     boolean equalsImpl(Object O) {
-	return
+    	return
             O instanceof LinuxID
             && ((LinuxID)O).id==id
-	;
+    	;
     }
 
     Object getColumnImpl(int i) {
-	if(i==0) return Integer.valueOf(id);
-	if(i==1) return isSystem()?Boolean.TRUE:Boolean.FALSE;
-	throw new IllegalArgumentException("Invalid index: "+i);
+        if(i==0) return Integer.valueOf(id);
+        if(i==1) return isSystem()?Boolean.TRUE:Boolean.FALSE;
+        throw new IllegalArgumentException("Invalid index: "+i);
     }
 
     public int getID() {
-	return id;
+    	return id;
     }
 
     public Integer getKey() {
-	return id;
+    	return id;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.LINUX_IDS;
+    	return SchemaTable.TableID.LINUX_IDS;
     }
 
+    @Override
     int hashCodeImpl() {
-	return id;
+    	return id;
     }
 
     public void init(ResultSet result) throws SQLException {
-	throw new SQLException("Should not be read from the database, should be generated.");
+    	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
     public boolean isSystem() {
@@ -69,10 +73,20 @@ final public class LinuxID extends AOServObject<Integer,LinuxID> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	throw new IOException("Should not be read from a stream, should be generated.");
+        throw new IOException("Should not be read from a stream, should be generated.");
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	throw new IOException("Should not be written to a stream, should be generated.");
+        throw new IOException("Should not be written to a stream, should be generated.");
     }
 }

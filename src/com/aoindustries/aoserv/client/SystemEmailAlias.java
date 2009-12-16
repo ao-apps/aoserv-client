@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * Each <code>AOServer</code> has several entries in <code>/etc/aliases</code>
@@ -61,23 +62,34 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getInt(1);
-	ao_server = result.getInt(2);
-	address = result.getString(3);
-	destination = result.getString(4);
+        pkey = result.getInt(1);
+        ao_server = result.getInt(2);
+        address = result.getString(3);
+        destination = result.getString(4);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	ao_server=in.readCompressedInt();
-	address=in.readUTF().intern();
-	destination=in.readUTF().intern();
+        pkey=in.readCompressedInt();
+        ao_server=in.readCompressedInt();
+        address=in.readUTF().intern();
+        destination=in.readUTF().intern();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getAOServer()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(ao_server);
-	out.writeUTF(address);
-	out.writeUTF(destination);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(ao_server);
+        out.writeUTF(address);
+        out.writeUTF(destination);
     }
 }

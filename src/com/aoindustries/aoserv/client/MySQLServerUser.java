@@ -174,14 +174,14 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MYSQL_SERVER_USERS;
+        return SchemaTable.TableID.MYSQL_SERVER_USERS;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	username=result.getString(2);
-	mysql_server=result.getInt(3);
-	host=result.getString(4);
+        pkey=result.getInt(1);
+        username=result.getString(2);
+        mysql_server=result.getInt(3);
+        host=result.getString(4);
         disable_log=result.getInt(5);
         if(result.wasNull()) disable_log=-1;
         predisable_password=result.getString(6);
@@ -202,6 +202,19 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         max_updates=in.readCompressedInt();
         max_connections=in.readCompressedInt();
         max_user_connections=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getMySQLUser(),
+            getMySQLServer(),
+            getDisableLog()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {

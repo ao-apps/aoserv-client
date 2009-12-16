@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -81,6 +82,17 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
         cps_overload_sleep_time=in.readCompressedInt();
         destination_host=in.readUTF().intern();
         destination_port=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getNetBind()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

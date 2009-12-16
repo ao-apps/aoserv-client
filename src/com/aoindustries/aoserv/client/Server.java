@@ -182,6 +182,18 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         monitoring_enabled = in.readBoolean();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getServerFarm(),
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     @Override
     protected String toStringImpl(Locale userLocale) throws IOException, SQLException {
         AOServer aoServer = getAOServer();

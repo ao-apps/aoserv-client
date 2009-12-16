@@ -586,7 +586,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public long getCreated() {
-	return created;
+    	return created;
     }
 
     public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
@@ -614,7 +614,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
-	return table.connector.getEmailForwardings().getEmailForwarding(this);
+    	return table.connector.getEmailForwardings().getEmailForwarding(this);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
@@ -1050,13 +1050,25 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         auto_enable=in.readBoolean();
         bill_parent=in.readBoolean();
         package_definition=in.readCompressedInt();
-        created_by=in.readUTF().intern();
+        created_by=StringUtility.intern(in.readNullUTF());
         email_in_burst=in.readCompressedInt();
         email_in_rate=in.readFloat();
         email_out_burst=in.readCompressedInt();
         email_out_rate=in.readFloat();
         email_relay_burst=in.readCompressedInt();
         email_relay_rate=in.readFloat();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getParentBusiness(),
+            getCreatedBy()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void setAccounting(String accounting) throws SQLException, IOException {
@@ -1081,7 +1093,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         out.writeBoolean(bill_parent);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
             out.writeCompressedInt(package_definition);
-            out.writeUTF(created_by);
+            out.writeNullUTF(created_by);
             out.writeCompressedInt(email_in_burst);
             out.writeFloat(email_in_rate);
             out.writeCompressedInt(email_out_burst);
@@ -1204,10 +1216,12 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	    table.connector.getUsernames().addUsername(this, username);
     }
 
+    /**
+     * May be filter.  May also be null for the root business only.
+     */
     public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
-        BusinessAdministrator createdByObject = table.connector.getUsernames().get(created_by).getBusinessAdministrator();
-        if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
-        return createdByObject;
+        if(created_by==null) return null;
+        return table.connector.getBusinessAdministrators().get(created_by);
     }
 
     public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
@@ -1342,5 +1356,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public List<Username> getUsernames() throws IOException, SQLException {
         return table.connector.getUsernames().getUsernames(this);
+    }
+
+    public List<Resource> getResources() throws IOException, SQLException {
+        return table.connector.getResources().getResources(this);
     }
 }

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * A <code>CreditCardTransaction</code> stores the complete history of credit card transactions.
@@ -734,10 +735,10 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey = in.readCompressedInt();
+    	pkey = in.readCompressedInt();
         processorId = in.readUTF().intern();
         accounting = in.readUTF().intern();
-	groupName = in.readNullUTF();
+    	groupName = in.readNullUTF();
         testMode = in.readBoolean();
         duplicateWindow = in.readCompressedInt();
         orderNumber = in.readNullUTF();
@@ -822,11 +823,28 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         status = in.readUTF().intern();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getCreditCardProcessor(),
+            getBusiness(),
+            getCreditCardCreatedBy(),
+            getCreditCardBusiness(),
+            getAuthorizationAdministrator(),
+            getCaptureAdministrator(),
+            getVoidAdministrator()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
+    	out.writeCompressedInt(pkey);
         out.writeUTF(processorId);
         out.writeUTF(accounting);
-	out.writeNullUTF(groupName);
+    	out.writeNullUTF(groupName);
         out.writeBoolean(testMode);
         out.writeCompressedInt(duplicateWindow);
         out.writeNullUTF(orderNumber);

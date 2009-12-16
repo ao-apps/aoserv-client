@@ -11,6 +11,7 @@ import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -244,6 +245,16 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
             command=null;
         }
         state_start_time=in.readLong();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     synchronized public void setCommand(Object ... command) {

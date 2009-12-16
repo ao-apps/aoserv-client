@@ -61,19 +61,30 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.EMAIL_FORWARDING;
+    	return SchemaTable.TableID.EMAIL_FORWARDING;
     }
 
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
-	email_address=result.getInt(2);
-	destination=result.getString(3);
+        email_address=result.getInt(2);
+        destination=result.getString(3);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-	email_address=in.readCompressedInt();
-	destination=in.readUTF();
+        email_address=in.readCompressedInt();
+        destination=in.readUTF();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getEmailAddress()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {

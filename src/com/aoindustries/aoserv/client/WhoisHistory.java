@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -88,11 +89,11 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.WHOIS_HISTORY;
+    	return SchemaTable.TableID.WHOIS_HISTORY;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getInt(1);
+    	pkey = result.getInt(1);
         time = result.getTimestamp(2).getTime();
         accounting = result.getString(3);
         zone = result.getString(4);
@@ -100,20 +101,31 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey = in.readCompressedInt();
+    	pkey = in.readCompressedInt();
         time = in.readLong();
         accounting = in.readUTF().intern();
         zone = in.readUTF().intern();
         // Note: this is loaded in a separate call to the master as needed to conserve heap space: whois_output = in.readUTF();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     @Override
     String toStringImpl(Locale userLocale) {
-	return pkey+"|"+accounting+'|'+zone+'|'+new java.sql.Date(time);
+        return pkey+"|"+accounting+'|'+zone+'|'+new java.sql.Date(time);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
+    	out.writeCompressedInt(pkey);
         out.writeLong(time);
         out.writeUTF(accounting);
         out.writeUTF(zone);

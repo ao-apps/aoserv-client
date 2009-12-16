@@ -225,6 +225,18 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         trigger_priv=in.readBoolean();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getMySQLDatabase(),
+            getMySQLServerUser()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         reasons.addAll(getMySQLServerUser().getCannotRemoveReasons(userLocale));

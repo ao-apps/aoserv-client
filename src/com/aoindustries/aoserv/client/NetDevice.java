@@ -195,12 +195,12 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
     @Override
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	server=in.readCompressedInt();
-	device_id=in.readUTF().intern();
-	description=in.readUTF();
-	delete_route=StringUtility.intern(in.readNullUTF());
-	gateway=StringUtility.intern(in.readNullUTF());
+        pkey=in.readCompressedInt();
+        server=in.readCompressedInt();
+        device_id=in.readUTF().intern();
+        description=in.readUTF();
+        delete_route=StringUtility.intern(in.readNullUTF());
+        gateway=StringUtility.intern(in.readNullUTF());
         network=StringUtility.intern(in.readNullUTF());
         broadcast=StringUtility.intern(in.readNullUTF());
         mac_address=in.readNullUTF();
@@ -209,6 +209,17 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
         monitoring_bit_rate_medium = in.readLong();
         monitoring_bit_rate_high = in.readLong();
         monitoring_bit_rate_critical = in.readLong();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getServer()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

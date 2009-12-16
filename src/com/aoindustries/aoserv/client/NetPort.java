@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * Several network resources on a <code>Server</code> require a unique
@@ -27,6 +28,7 @@ final public class NetPort extends AOServObject<Integer,NetPort> {
         this.port=port;
     }
 
+    @Override
     boolean equalsImpl(Object O) {
 	return
             O instanceof NetPort
@@ -52,6 +54,7 @@ final public class NetPort extends AOServObject<Integer,NetPort> {
 	return SchemaTable.TableID.NET_PORTS;
     }
 
+    @Override
     int hashCodeImpl() {
 	return port;
     }
@@ -66,6 +69,16 @@ final public class NetPort extends AOServObject<Integer,NetPort> {
 
     public void read(CompressedDataInputStream in) throws IOException {
 	throw new IOException("Should not be read from a stream, should be generated.");
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -80,9 +81,19 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(display);
-	out.writeUTF(description);
-	out.writeBoolean(isNegative);
+        out.writeUTF(pkey);
+        out.writeUTF(display);
+        out.writeUTF(description);
+        out.writeBoolean(isNegative);
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 }

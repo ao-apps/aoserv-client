@@ -259,9 +259,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         return true;
     }
 
-    /**
-     * readImpl method comment.
-     */
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         name=in.readUTF();
@@ -276,6 +273,22 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         tomcat4_shutdown_port=in.readCompressedInt();
         tomcat4_shutdown_key=in.readNullUTF();
         isManual=in.readBoolean();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getAOServer(),
+            getLinuxServerAccount(),
+            getLinuxServerGroup(),
+            getDisableLog(),
+            getTomcat4Worker(),
+            getTomcat4ShutdownPort()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void remove() throws IOException, SQLException {

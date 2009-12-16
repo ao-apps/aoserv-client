@@ -61,6 +61,17 @@ final public class Reseller extends CachedObjectStringKey<Reseller> {
         ticket_auto_escalate = in.readBoolean();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBrand()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
         out.writeBoolean(ticket_auto_escalate);

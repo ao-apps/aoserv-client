@@ -11,6 +11,7 @@ import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -336,25 +337,40 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	time=in.readLong();
-	transid=in.readCompressedInt();
-	accounting=in.readCompressedUTF().intern();
+        time=in.readLong();
+        transid=in.readCompressedInt();
+    	accounting=in.readCompressedUTF().intern();
         source_accounting=in.readCompressedUTF().intern();
-	username=in.readCompressedUTF().intern();
-	type=in.readCompressedUTF().intern();
-	description=in.readCompressedUTF();
-	quantity=in.readCompressedInt();
-	rate=in.readCompressedInt();
-	payment_type=StringUtility.intern(in.readNullUTF());
-	payment_info=in.readNullUTF();
-	processor = StringUtility.intern(in.readNullUTF());
+        username=in.readCompressedUTF().intern();
+        type=in.readCompressedUTF().intern();
+        description=in.readCompressedUTF();
+        quantity=in.readCompressedInt();
+        rate=in.readCompressedInt();
+        payment_type=StringUtility.intern(in.readNullUTF());
+        payment_info=in.readNullUTF();
+        processor = StringUtility.intern(in.readNullUTF());
         creditCardTransaction = in.readCompressedInt();
-	payment_confirmed=in.readByte();
+    	payment_confirmed=in.readByte();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness(),
+            getSourceBusiness(),
+            getBusinessAdministrator(),
+            getCreditCardProcessor(),
+            getCreditCardTransaction()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void setTable(AOServTable<Integer,Transaction> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
     @Override

@@ -14,6 +14,8 @@ import java.util.Locale;
  * Flags an <code>AOServObject</code>s as being able to be removed
  * with a call to the <code>remove()</code> method.
  *
+ * TODO: Remove this interface once everything switched to resources.
+ *
  * @see  AOServObject
  *
  * @version  1.0a

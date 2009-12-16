@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * A <code>MasterHost</code> controls which hosts a <code>MasterUser</code>
@@ -57,14 +58,25 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	username=in.readUTF().intern();
-	host=in.readUTF().intern();
+        pkey=in.readCompressedInt();
+        username=in.readUTF().intern();
+        host=in.readUTF().intern();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getMasterUser()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(username);
-	out.writeUTF(host);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(username);
+        out.writeUTF(host);
     }
 }

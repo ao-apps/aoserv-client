@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * For debugging, the last commands executed by the master are accessible as a table.
@@ -153,15 +154,15 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
     }
 
     final public AOServTable<Long,MasterHistory> getTable() {
-	return table;
+    	return table;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MASTER_HISTORY;
+    	return SchemaTable.TableID.MASTER_HISTORY;
     }
 
     public void init(ResultSet result) throws SQLException {
-	throw new SQLException("Should not be read from the database, should be generated.");
+    	throw new SQLException("Should not be read from the database, should be generated.");
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -178,9 +179,19 @@ final public class MasterHistory extends AOServObject<Long,MasterHistory> implem
         command=in.readNullUTF();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void setTable(AOServTable<Long,MasterHistory> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

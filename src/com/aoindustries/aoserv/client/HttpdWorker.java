@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -82,27 +83,39 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_WORKERS;
+    	return SchemaTable.TableID.HTTPD_WORKERS;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	code=result.getString(2);
-	net_bind=result.getInt(3);
-	tomcat_site=result.getInt(4);
+        pkey=result.getInt(1);
+        code=result.getString(2);
+        net_bind=result.getInt(3);
+        tomcat_site=result.getInt(4);
         if(result.wasNull()) tomcat_site=-1;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	code=in.readUTF();
-	net_bind=in.readCompressedInt();
-	tomcat_site=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        code=in.readUTF();
+        net_bind=in.readCompressedInt();
+        tomcat_site=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getNetBind(),
+            getHttpdTomcatSite()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return pkey+"|"+code;
+    	return pkey+"|"+code;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

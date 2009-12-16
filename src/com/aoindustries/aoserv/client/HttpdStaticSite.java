@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -38,15 +39,26 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_STATIC_SITES;
+        return SchemaTable.TableID.HTTPD_STATIC_SITES;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
+        pkey=result.getInt(1);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
+    	pkey=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getHttpdSite()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

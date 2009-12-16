@@ -168,6 +168,17 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         use_apache=in.readBoolean();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getHttpdSite()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public String startJVM() throws IOException, SQLException {
         return table.connector.requestResult(
             false,

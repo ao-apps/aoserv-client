@@ -214,17 +214,18 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public LinuxAccount getLinuxAccount() throws IOException, SQLException {
-	return table.connector.getLinuxAccounts().get(pkey);
+        return table.connector.getLinuxAccounts().get(pkey);
     }
 
     public MySQLUser getMySQLUser() throws IOException, SQLException {
-	return table.connector.getMysqlUsers().get(pkey);
+        return table.connector.getMysqlUsers().get(pkey);
     }
 
+    /**
+     * May be filtered.
+     */
     public Business getBusiness() throws SQLException, IOException {
-    	Business bu=table.connector.getBusinesses().get(accounting);
-        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
-    	return bu;
+    	return table.connector.getBusinesses().get(accounting);
     }
 
     public PostgresUser getPostgresUser() throws IOException, SQLException {
@@ -275,43 +276,43 @@ final public class Username extends CachedObjectStringKey<Username> implements P
      */
     public static String checkUsername(String username, Locale locale) {
 	int len = username.length();
-        if(len==0) return ApplicationResources.getMessage(locale, "Username.checkUsername.noUsername");
-	if(len > MAX_LENGTH) return ApplicationResources.getMessage(locale, "Username.checkUsername.tooLong");
+        if(len==0) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.noUsername");
+	if(len > MAX_LENGTH) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.tooLong");
 
         // The first character must be [a-z]
 	char ch = username.charAt(0);
-	if (ch < 'a' || ch > 'z') return ApplicationResources.getMessage(locale, "Username.checkUsername.startAToZ");
+	if (ch < 'a' || ch > 'z') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.startAToZ");
 
         // The rest may have additional characters
 	for (int c = 1; c < len; c++) {
             ch = username.charAt(c);
-            if(ch==' ') return ApplicationResources.getMessage(locale, "Username.checkUsername.noSpace");
-            if(ch<=0x21 || ch>0x7f) return ApplicationResources.getMessage(locale, "Username.checkUsername.specialCharacter");
-            if(ch>='A' && ch<='Z') return ApplicationResources.getMessage(locale, "Username.checkUsername.noCapital");
-            if(ch==',') return ApplicationResources.getMessage(locale, "Username.checkUsername.comma");
-            if(ch==':') return ApplicationResources.getMessage(locale, "Username.checkUsername.colon");
-            if(ch=='(') return ApplicationResources.getMessage(locale, "Username.checkUsername.leftParen");
-            if(ch==')') return ApplicationResources.getMessage(locale, "Username.checkUsername.rightParen");
-            if(ch=='[') return ApplicationResources.getMessage(locale, "Username.checkUsername.leftSquare");
-            if(ch==']') return ApplicationResources.getMessage(locale, "Username.checkUsername.rightSquare");
-            if(ch=='\'') return ApplicationResources.getMessage(locale, "Username.checkUsername.apostrophe");
-            if(ch=='"') return ApplicationResources.getMessage(locale, "Username.checkUsername.quote");
-            if(ch=='|') return ApplicationResources.getMessage(locale, "Username.checkUsername.verticalBar");
-            if(ch=='&') return ApplicationResources.getMessage(locale, "Username.checkUsername.ampersand");
-            if(ch==';') return ApplicationResources.getMessage(locale, "Username.checkUsername.semicolon");
-            if(ch=='\\') return ApplicationResources.getMessage(locale, "Username.checkUsername.backslash");
-            if(ch=='/') return ApplicationResources.getMessage(locale, "Username.checkUsername.slash");
+            if(ch==' ') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.noSpace");
+            if(ch<=0x21 || ch>0x7f) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.specialCharacter");
+            if(ch>='A' && ch<='Z') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.noCapital");
+            if(ch==',') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.comma");
+            if(ch==':') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.colon");
+            if(ch=='(') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.leftParen");
+            if(ch==')') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.rightParen");
+            if(ch=='[') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.leftSquare");
+            if(ch==']') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.rightSquare");
+            if(ch=='\'') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.apostrophe");
+            if(ch=='"') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.quote");
+            if(ch=='|') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.verticalBar");
+            if(ch=='&') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.ampersand");
+            if(ch==';') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.semicolon");
+            if(ch=='\\') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.backslash");
+            if(ch=='/') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.slash");
 	}
         
         // More strict at sign control is required for user@domain structure in Cyrus virtdomains.
         int atPos = username.indexOf('@');
         if(atPos!=-1) {
-            if(atPos==0) return ApplicationResources.getMessage(locale, "Username.checkUsername.startWithAt");
-            if(atPos==(len-1)) return ApplicationResources.getMessage(locale, "Username.checkUsername.endWithAt");
+            if(atPos==0) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.startWithAt");
+            if(atPos==(len-1)) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.endWithAt");
             int atPos2 = username.indexOf('@', atPos+1);
-            if(atPos2!=-1) return ApplicationResources.getMessage(locale, "Username.checkUsername.onlyOneAt");
-            if(username.startsWith("cyrus@")) return ApplicationResources.getMessage(locale, "Username.checkUsername.startWithCyrusAt");
-            if(username.endsWith("@default")) return ApplicationResources.getMessage(locale, "Username.checkUsername.endWithAtDefault");
+            if(atPos2!=-1) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.onlyOneAt");
+            if(username.startsWith("cyrus@")) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.startWithCyrusAt");
+            if(username.endsWith("@default")) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.endWithAtDefault");
         }
 
         return null;
@@ -333,6 +334,18 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         pkey=in.readUTF().intern();
         accounting=in.readUTF().intern();
         disable_log=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness(),
+            getDisableLog()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {

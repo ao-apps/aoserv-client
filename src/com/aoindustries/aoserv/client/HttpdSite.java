@@ -316,6 +316,21 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         awstatsSkipFiles=in.readNullUTF();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getAOServer(),
+            getBusiness(),
+            getLinuxServerAccount(),
+            getLinuxServerGroup(),
+            getDisableLog()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void remove() throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }

@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Stores an option for a sign-up request, each option has a unique name per sign-up request.
@@ -42,7 +43,7 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.SIGNUP_REQUEST_OPTIONS;
+    	return SchemaTable.TableID.SIGNUP_REQUEST_OPTIONS;
     }
 
     public void init(ResultSet result) throws SQLException {
@@ -60,6 +61,17 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
         value = in.readNullUTF();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getSignupRequest()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(request);
@@ -68,9 +80,9 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
     }
 
     public SignupRequest getSignupRequest() throws SQLException, IOException {
-	SignupRequest sr = table.connector.getSignupRequests().get(request);
-	if (sr == null) throw new SQLException("Unable to find SignupRequest: " + request);
-	return sr;
+        SignupRequest sr = table.connector.getSignupRequests().get(request);
+        if (sr == null) throw new SQLException("Unable to find SignupRequest: " + request);
+        return sr;
     }
 
     public String getName() {

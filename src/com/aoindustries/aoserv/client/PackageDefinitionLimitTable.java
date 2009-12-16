@@ -5,9 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  PackageDefinitionLimit
@@ -19,7 +19,7 @@ import java.util.*;
 public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<PackageDefinitionLimit> {
 
     PackageDefinitionLimitTable(AOServConnector connector) {
-	super(connector, PackageDefinitionLimit.class);
+        super(connector, PackageDefinitionLimit.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -28,7 +28,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
         new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_MONTHLY_RATE_name, ASCENDING),
         new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_NAME_name, ASCENDING),
         new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_VERSION_name, ASCENDING),
-        new OrderBy(PackageDefinitionLimit.COLUMN_RESOURCE_name+'.'+Resource.COLUMN_NAME_name, ASCENDING)
+        new OrderBy(PackageDefinitionLimit.COLUMN_RESOURCE_TYPE_name+'.'+ResourceType.COLUMN_NAME_name, ASCENDING)
     };
     @Override
     OrderBy[] getDefaultOrderBy() {
@@ -43,16 +43,16 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
     	return getUniqueRow(PackageDefinitionLimit.COLUMN_PKEY, pkey);
     }
 
-    PackageDefinitionLimit getPackageDefinitionLimit(PackageDefinition packageDefinition, Resource resource) throws IOException, SQLException {
+    PackageDefinitionLimit getPackageDefinitionLimit(PackageDefinition packageDefinition, ResourceType resourceType) throws IOException, SQLException {
         if(packageDefinition==null) throw new AssertionError("packageDefinition is null");
-        if(resource==null) throw new AssertionError("resource is null");
-        String resourceName=resource.pkey;
+        if(resourceType==null) throw new AssertionError("resourceType is null");
+        String resourceTypeName=resourceType.pkey;
         // Use the index first
-        for(PackageDefinitionLimit limit : getPackageDefinitionLimits(packageDefinition)) if(limit.resource.equals(resourceName)) return limit;
+        for(PackageDefinitionLimit limit : getPackageDefinitionLimits(packageDefinition)) if(limit.resourceType.equals(resourceTypeName)) return limit;
         return null;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.PACKAGE_DEFINITION_LIMITS;
+        return SchemaTable.TableID.PACKAGE_DEFINITION_LIMITS;
     }
 }

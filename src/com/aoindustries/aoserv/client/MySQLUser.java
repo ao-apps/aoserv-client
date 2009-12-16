@@ -5,10 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A <code>MySQLUser</code> stores the details of a MySQL account
@@ -16,8 +20,6 @@ import java.util.*;
  *
  * @see  MySQLServerUser
  * @see  MySQLDBUser
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -78,7 +80,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     int disable_log;
 
     public int addMySQLServerUser(MySQLServer mysqlServer, String host) throws IOException, SQLException {
-	return table.connector.getMysqlServerUsers().addMySQLServerUser(pkey, mysqlServer, host);
+    	return table.connector.getMysqlServerUsers().addMySQLServerUser(pkey, mysqlServer, host);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
@@ -363,6 +365,18 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         event_priv=in.readBoolean();
         trigger_priv=in.readBoolean();
         disable_log=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getUsername(),
+            getDisableLog()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {

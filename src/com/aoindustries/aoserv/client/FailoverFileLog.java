@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * The entire contents of servers are periodically replicated to another server.  In the
@@ -125,19 +126,29 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	replication=in.readCompressedInt();
+    	pkey=in.readCompressedInt();
+    	replication=in.readCompressedInt();
         startTime=in.readLong();
-	endTime=in.readLong();
-	scanned=in.readCompressedInt();
-	updated=in.readCompressedInt();
-	bytes=in.readLong();
+        endTime=in.readLong();
+        scanned=in.readCompressedInt();
+        updated=in.readCompressedInt();
+        bytes=in.readLong();
         is_successful=in.readBoolean();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void setTable(AOServTable<Integer,FailoverFileLog> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
+        if(this.table!=null) throw new IllegalStateException("table already set");
+        this.table=table;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

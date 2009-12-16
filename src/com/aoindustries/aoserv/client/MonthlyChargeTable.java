@@ -63,19 +63,19 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         }
 
         // Resource constants used later
-        final Resource httpdResource=connector.getResources().get(Resource.HTTPD);
+        final ResourceType httpdResource=connector.getResourceTypes().get(ResourceType.HTTPD);
         if(httpdResource==null) throw new AssertionError("httpdResource is null");
-        final Resource javavmResource=connector.getResources().get(Resource.JAVAVM);
+        final ResourceType javavmResource=connector.getResourceTypes().get(ResourceType.JAVAVM);
         if(javavmResource==null) throw new AssertionError("javavmResource is null");
-        final Resource ipResource=connector.getResources().get(Resource.IP);
+        final ResourceType ipResource=connector.getResourceTypes().get(ResourceType.IP);
         if(ipResource==null) throw new AssertionError("ipResource is null");
-        final Resource mysqlReplicationResource=connector.getResources().get(Resource.MYSQL_REPLICATION);
+        final ResourceType mysqlReplicationResource=connector.getResourceTypes().get(ResourceType.MYSQL_REPLICATION);
         if(mysqlReplicationResource==null) throw new AssertionError("mysqlReplicationResource is null");
-        final Resource emailResource=connector.getResources().get(Resource.EMAIL);
+        final ResourceType emailResource=connector.getResourceTypes().get(ResourceType.EMAIL);
         if(emailResource==null) throw new AssertionError("emailResource is null");
-        final Resource siteResource=connector.getResources().get(Resource.SITE);
+        final ResourceType siteResource=connector.getResourceTypes().get(ResourceType.SITE);
         if(siteResource==null) throw new AssertionError("siteResource is null");
-        final Resource userResource=connector.getResources().get(Resource.USER);
+        final ResourceType userResource=connector.getResourceTypes().get(ResourceType.USER);
         if(userResource==null) throw new AssertionError("userResource is null");
 
         // Preprocess resources counts

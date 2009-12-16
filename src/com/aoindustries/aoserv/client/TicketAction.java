@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -265,8 +266,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         } else if(action_type.equals(TicketActionType.ASSIGN)) {
             BusinessAdministrator oldAssignedTo = getOldAssignedTo();
             BusinessAdministrator newAssignedTo = getNewAssignedTo();
-            oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? ApplicationResources.getMessage(userLocale, "TicketAction.old_assigned_to.filtered") : null;
-            newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? ApplicationResources.getMessage(userLocale, "TicketAction.new_assigned_to.filtered") : null;
+            oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? ApplicationResources.accessor.getMessage(userLocale, "TicketAction.old_assigned_to.filtered") : null;
+            newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? ApplicationResources.accessor.getMessage(userLocale, "TicketAction.new_assigned_to.filtered") : null;
         } else if(action_type.equals(TicketActionType.SET_CATEGORY)) {
             TicketCategory oldCategory = getOldCategory();
             TicketCategory newCategory = getNewCategory();
@@ -372,6 +373,24 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         summary = in.readNullUTF();
         // Loaded only when needed: details
         // Loaded only when needed: raw_email
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getTicket(),
+            getAdministrator(),
+            getOldBusiness(),
+            getNewBusiness(),
+            getOldAssignedTo(),
+            getNewAssignedTo(),
+            getOldCategory(),
+            getNewCategory()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

@@ -195,19 +195,31 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     public boolean isPostgresDatabaseNameAvailable(String name) throws IOException, SQLException {
-	return table.connector.getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
+    	return table.connector.getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	name=in.readUTF().intern();
-	ao_server=in.readCompressedInt();
-	version=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        name=in.readUTF().intern();
+        ao_server=in.readCompressedInt();
+        version=in.readCompressedInt();
         max_connections=in.readCompressedInt();
         net_bind=in.readCompressedInt();
         sort_mem=in.readCompressedInt();
         shared_buffers=in.readCompressedInt();
         fsync=in.readBoolean();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getAOServer(),
+            getNetBind()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void restartPostgreSQL() throws IOException, SQLException {

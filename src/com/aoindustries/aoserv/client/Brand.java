@@ -192,28 +192,32 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         return signup_email_display;
     }
 
+    /**
+     * May be filtered.
+     */
     public EncryptionKey getTicketEncryptionFrom() throws IOException, SQLException {
-        EncryptionKey ek = table.connector.getEncryptionKeys().get(ticket_encryption_from);
-        if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+ticket_encryption_from);
-        return ek;
+        return table.connector.getEncryptionKeys().get(ticket_encryption_from);
     }
 
+    /**
+     * May be filtered.
+     */
     public EncryptionKey getTicketEncryptionRecipient() throws IOException, SQLException {
-        EncryptionKey ek = table.connector.getEncryptionKeys().get(ticket_encryption_recipient);
-        if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+ticket_encryption_recipient);
-        return ek;
+        return table.connector.getEncryptionKeys().get(ticket_encryption_recipient);
     }
 
+    /**
+     * May be filtered.
+     */
     public EncryptionKey getSignupEncryptionFrom() throws IOException, SQLException {
-        EncryptionKey ek = table.connector.getEncryptionKeys().get(signup_encryption_from);
-        if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+signup_encryption_from);
-        return ek;
+        return table.connector.getEncryptionKeys().get(signup_encryption_from);
     }
 
+    /**
+     * May be filtered.
+     */
     public EncryptionKey getSignupEncryptionRecipient() throws IOException, SQLException {
-        EncryptionKey ek = table.connector.getEncryptionKeys().get(signup_encryption_recipient);
-        if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+signup_encryption_recipient);
-        return ek;
+        return table.connector.getEncryptionKeys().get(signup_encryption_recipient);
     }
 
     public String getSupportTollFree() {
@@ -437,6 +441,26 @@ final public class Brand extends CachedObjectStringKey<Brand> {
             out.writeUTF(aoweb_struts_keystore_type);
             out.writeUTF(aoweb_struts_keystore_password);
         }
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness(),
+            getSmtpLinuxServerAccount(),
+            getImapLinuxServerAccount(),
+            getSupportEmailAddress(),
+            getSignupEmailAddress(),
+            getTicketEncryptionFrom(),
+            getTicketEncryptionRecipient(),
+            getSignupEncryptionFrom(),
+            getSignupEncryptionRecipient(),
+            getAowebStrutsVncBind()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     /**

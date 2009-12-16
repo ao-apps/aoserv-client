@@ -209,6 +209,21 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
         completed_time=in.readLong();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBrand(),
+            getPackageDefinition(),
+            getEncryptionFrom(),
+            getEncryptionRecipient(),
+            getCompletedBy()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(brand);

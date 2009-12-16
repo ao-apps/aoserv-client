@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * A <code>Resource</code> wraps all the data for an entry in the resource table.
- *
  * @author  AO Industries, Inc.
  */
 final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
@@ -161,6 +159,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         PROTOCOLS,
         RACKS,
         RESELLERS,
+        RESOURCE_TYPES,
         RESOURCES,
         SCHEMA_COLUMNS,
         SCHEMA_FOREIGN_KEYS,

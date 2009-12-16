@@ -77,6 +77,17 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
         name = in.readUTF().intern();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getParent()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     private String slashPath = null;
     synchronized public String getSlashPath() throws IOException, SQLException {
         if(slashPath==null) slashPath = parent==-1 ? name : (getParent().getSlashPath()+'/'+name);
@@ -91,7 +102,7 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
 
     @Override
     String toStringImpl(Locale userLocale) throws IOException, SQLException {
-        return ApplicationResources.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

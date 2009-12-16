@@ -393,9 +393,9 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
+    	pkey=in.readCompressedInt();
         processorId=in.readUTF().intern();
-	accounting=in.readUTF().intern();
+    	accounting=in.readUTF().intern();
         groupName=in.readNullUTF();
         cardInfo=in.readUTF();
         providerUniqueId=in.readUTF();
@@ -412,20 +412,33 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         state=StringUtility.intern(in.readNullUTF());
         postalCode=in.readNullUTF();
         countryCode=in.readUTF().intern();
-	created=in.readLong();
-	createdBy=in.readUTF().intern();
+        created=in.readLong();
+        createdBy=in.readUTF().intern();
         principalName=in.readNullUTF();
-	useMonthly=in.readBoolean();
-	isActive=in.readBoolean();
-	deactivatedOn=in.readLong();
-	deactivateReason=in.readNullUTF();
-	description=in.readNullUTF();
+        useMonthly=in.readBoolean();
+        isActive=in.readBoolean();
+        deactivatedOn=in.readLong();
+        deactivateReason=in.readNullUTF();
+        description=in.readNullUTF();
         encrypted_card_number=in.readNullUTF();
         encryption_card_number_from=in.readCompressedInt();
         encryption_card_number_recipient=in.readCompressedInt();
         encrypted_expiration=in.readNullUTF();
         encryption_expiration_from=in.readCompressedInt();
         encryption_expiration_recipient=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getCreditCardProcessor(),
+            getBusiness(),
+            getCreatedBy()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void remove() throws IOException, SQLException {

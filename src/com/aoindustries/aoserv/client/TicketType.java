@@ -42,7 +42,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.getMessage(userLocale, "TicketType."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "TicketType."+pkey+".toString");
     }
 
     public SchemaTable.TableID getTableID() {

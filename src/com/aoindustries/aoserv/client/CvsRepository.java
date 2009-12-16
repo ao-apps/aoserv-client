@@ -170,6 +170,18 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         disable_log=in.readCompressedInt();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getLinuxServerAccount(),
+            getLinuxServerGroup()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         return Collections.emptyList();
     }

@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -56,25 +57,36 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	aoServer=result.getInt(2);
-	host=result.getString(3);
+        pkey=result.getInt(1);
+        aoServer=result.getInt(2);
+        host=result.getString(3);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	aoServer=in.readCompressedInt();
-	host=in.readUTF().intern();
+        pkey=in.readCompressedInt();
+        aoServer=in.readCompressedInt();
+        host=in.readUTF().intern();
     }
 
     @Override
-    String toStringImpl(Locale userLocale) {
-	return aoServer+'|'+host;
+    String toStringImpl(Locale userLocale) throws IOException, SQLException {
+    	return host+"->"+getAOServer().toStringImpl(userLocale);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(aoServer);
-	out.writeUTF(host);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(aoServer);
+        out.writeUTF(host);
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getAOServer()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 }

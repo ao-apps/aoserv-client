@@ -5,18 +5,34 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A <code>GlobalObject</code> is stored in
  * a <code>GlobalTable</code> and shared by all users
  * for greater performance.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 abstract public class GlobalObject<K,T extends GlobalObject<K,T>> extends AOServObject<K,T> {
 
     protected GlobalObject() {
+    }
+
+    /**
+     * Global objects are shared between all connections and therefore have no dependencies.
+     */
+    final public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList();
+    }
+
+    /**
+     * Global objects are shared between all connections and therefore have no dependent objects.
+     */
+    final public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList();
     }
 }

@@ -11,6 +11,7 @@ import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -155,6 +156,18 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         processorCores = in.readCompressedInt();
         maxPower = in.readFloat();
         supports_hvm = in.readBoolean() ? in.readBoolean() : null;
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getServer(),
+            getRack()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

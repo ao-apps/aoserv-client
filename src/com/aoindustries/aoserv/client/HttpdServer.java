@@ -95,16 +95,18 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         return max_binds;
     }
 
+    /**
+     * May be filtered.
+     */
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        LinuxServerAccount lsa=table.connector.getLinuxServerAccounts().get(linux_server_account);
-        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
-        return lsa;
+        return table.connector.getLinuxServerAccounts().get(linux_server_account);
     }
 
+    /**
+     * May be filtered.
+     */
     public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        LinuxServerGroup lsg=table.connector.getLinuxServerGroups().get(linux_server_group);
-        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
-        return lsg;
+        return table.connector.getLinuxServerGroups().get(linux_server_group);
     }
 
     public TechnologyVersion getModPhpVersion() throws SQLException, IOException {
@@ -201,6 +203,20 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         is_shared=in.readBoolean();
         use_mod_perl=in.readBoolean();
         timeout=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getAOServer(),
+            getLinuxServerAccount(),
+            getLinuxServerGroup(),
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     @Override

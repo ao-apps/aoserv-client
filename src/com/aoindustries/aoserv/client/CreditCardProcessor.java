@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * A <code>CreditCardProcessor</code> represents on Merchant account used for credit card processing.
@@ -142,8 +143,8 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	accounting=in.readUTF().intern();
+        pkey=in.readUTF().intern();
+        accounting=in.readUTF().intern();
         className = in.readUTF();
         param1 = in.readNullUTF();
         param2 = in.readNullUTF();
@@ -151,14 +152,25 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
         param4 = in.readNullUTF();
         enabled = in.readBoolean();
         weight = in.readCompressedInt();
-	description = in.readNullUTF();
+    	description = in.readNullUTF();
         encryption_from = in.readCompressedInt();
         encryption_recipient = in.readCompressedInt();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(accounting);
+        out.writeUTF(pkey);
+        out.writeUTF(accounting);
         out.writeUTF(className);
         out.writeNullUTF(param1);
         out.writeNullUTF(param2);

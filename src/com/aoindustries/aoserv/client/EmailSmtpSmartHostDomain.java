@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Provides non-default per-domain smart host limits.
@@ -88,6 +89,17 @@ final public class EmailSmtpSmartHostDomain extends CachedObjectIntegerKey<Email
         domain = in.readUTF();
         domain_out_burst=in.readCompressedInt();
         domain_out_rate=in.readFloat();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getEmailSmtpSmartHost()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

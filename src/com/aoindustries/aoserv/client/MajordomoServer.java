@@ -133,23 +133,39 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	linux_server_account=result.getInt(2);
-	linux_server_group=result.getInt(3);
-	version=result.getString(4);
-	majordomo_pipe_address=result.getInt(5);
-	owner_majordomo_add=result.getInt(6);
-	majordomo_owner_add=result.getInt(7);
+        pkey=result.getInt(1);
+        linux_server_account=result.getInt(2);
+        linux_server_group=result.getInt(3);
+        version=result.getString(4);
+        majordomo_pipe_address=result.getInt(5);
+        owner_majordomo_add=result.getInt(6);
+        majordomo_owner_add=result.getInt(7);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	linux_server_account=in.readCompressedInt();
-	linux_server_group=in.readCompressedInt();
-	version=in.readUTF().intern();
-	majordomo_pipe_address=in.readCompressedInt();
-	owner_majordomo_add=in.readCompressedInt();
-	majordomo_owner_add=in.readCompressedInt();
+        pkey=in.readCompressedInt();
+        linux_server_account=in.readCompressedInt();
+        linux_server_group=in.readCompressedInt();
+        version=in.readUTF().intern();
+        majordomo_pipe_address=in.readCompressedInt();
+        owner_majordomo_add=in.readCompressedInt();
+        majordomo_owner_add=in.readCompressedInt();
+    }
+
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getDomain(),
+            getLinuxServerAccount(),
+            getLinuxServerGroup(),
+            getMajordomoPipeAddress(),
+            getOwnerMajordomoAddress(),
+            getMajordomoOwnerAddress()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
     }
 
     public void remove() throws IOException, SQLException {
@@ -162,13 +178,13 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(linux_server_account);
-	out.writeCompressedInt(linux_server_group);
-	out.writeUTF(version);
-	out.writeCompressedInt(majordomo_pipe_address);
-	out.writeCompressedInt(owner_majordomo_add);
-	out.writeCompressedInt(majordomo_owner_add);
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(linux_server_account);
+        out.writeCompressedInt(linux_server_group);
+        out.writeUTF(version);
+        out.writeCompressedInt(majordomo_pipe_address);
+        out.writeCompressedInt(owner_majordomo_add);
+        out.writeCompressedInt(majordomo_owner_add);
         if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);

@@ -50,7 +50,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
     }
 
     public String getDescription(Locale userLocale) {
-        return ApplicationResources.getMessage(userLocale, "TransactionType."+pkey+".description");
+        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+pkey+".description");
     }
 
     /**
@@ -65,7 +65,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
     }
 
     public String getUnit(Locale userLocale) {
-        return ApplicationResources.getMessage(userLocale, "TransactionType."+pkey+".unit");
+        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+pkey+".unit");
     }
 
     public void init(ResultSet result) throws SQLException {
@@ -84,7 +84,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.getMessage(userLocale, "TransactionType."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+pkey+".toString");
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -5,14 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * When a resource or resources are disabled, the reason and time is logged.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -80,7 +81,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.DISABLE_LOG;
+        return SchemaTable.TableID.DISABLE_LOG;
     }
 
     public void init(ResultSet result) throws SQLException {
@@ -99,11 +100,27 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         disable_reason=in.readNullUTF();
     }
 
+    public List<AOServObject> getDependencies() throws IOException, SQLException {
+        return createDependencyList(
+            getBusiness(),
+            getDisabledBy()
+        );
+    }
+
+    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+        return createDependencyList(
+        );
+    }
+
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeLong(time);
         out.writeUTF(accounting);
         out.writeUTF(disabled_by);
         out.writeNullUTF(disable_reason);
+    }
+
+    public List<Resource> getResources() throws IOException, SQLException {
+        return table.connector.getResources().getResources(this);
     }
 }
