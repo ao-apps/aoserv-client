@@ -258,7 +258,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
         return paymentType;
     }
 
-    public long getPennies() {
+    private long getPennies() {
         long pennies=(long)quantity*(long)rate/(long)100;
         int fraction=(int)(pennies%10);
         pennies/=10;
@@ -280,7 +280,9 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
      * to two digits, rounding half_up.
      */
     public BigDecimal getAmount() {
-        return getQuantity().multiply(getRate()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal amount = getQuantity().multiply(getRate()).setScale(2, RoundingMode.HALF_UP);
+        if(!amount.equals(BigDecimal.valueOf(getPennies(), 2))) throw new AssertionError("amount!=pennies");
+        return amount;
     }
 
     public SchemaTable.TableID getTableID() {
