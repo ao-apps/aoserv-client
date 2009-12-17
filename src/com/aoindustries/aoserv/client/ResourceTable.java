@@ -42,10 +42,6 @@ final public class ResourceTable extends CachedTableIntegerKey<Resource> {
         return getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, resourceType.pkey);
     }
 
-    List<Resource> getResources(BusinessAdministrator createdBy) throws IOException, SQLException {
-        return getIndexedRows(Resource.COLUMN_CREATED_BY, createdBy.pkey);
-    }
-
     List<Resource> getResources(DisableLog dl) throws IOException, SQLException {
         return getIndexedRows(Resource.COLUMN_DISABLE_LOG, dl.pkey);
     }

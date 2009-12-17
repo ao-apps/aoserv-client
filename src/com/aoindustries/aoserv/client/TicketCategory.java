@@ -83,8 +83,14 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getTickets(),
+            getChildrenCategories(),
+            getTicketActionsByOldCategory(),
+            getTicketActionsByNewCategory(),
+            getTicketBrandCategorys()
         );
     }
 
@@ -117,5 +123,17 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
 
     public List<TicketCategory> getChildrenCategories() throws IOException, SQLException {
         return table.connector.getTicketCategories().getChildrenCategories(this);
+    }
+
+    public List<Ticket> getTickets() throws IOException, SQLException {
+        return table.connector.getTickets().getIndexedRows(Ticket.COLUMN_CATEGORY, pkey);
+    }
+
+    public List<TicketAction> getTicketActionsByOldCategory() throws IOException, SQLException {
+        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_CATEGORY, pkey);
+    }
+
+    public List<TicketAction> getTicketActionsByNewCategory() throws IOException, SQLException {
+        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_CATEGORY, pkey);
     }
 }

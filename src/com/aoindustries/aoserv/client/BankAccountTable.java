@@ -7,11 +7,10 @@ package com.aoindustries.aoserv.client;
  */
 import java.io.*;
 import java.sql.*;
+import java.util.List;
 
 /**
  * For AO Industries use only.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -35,5 +34,9 @@ final public class BankAccountTable extends CachedTableStringKey<BankAccount> {
 
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.BANK_ACCOUNTS;
+    }
+
+    List<BankAccount> getBankAccounts(Bank bank) throws IOException, SQLException {
+        return getIndexedRows(BankAccount.COLUMN_BANK, bank.pkey);
     }
 }

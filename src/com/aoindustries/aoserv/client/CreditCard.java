@@ -29,7 +29,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     static final int
         COLUMN_PKEY=0,
         COLUMN_PROCESSOR_ID=1,
-        COLUMN_ACCOUNTING=2
+        COLUMN_ACCOUNTING=2,
+        COLUMN_CREATED_BY=20
     ;
     static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_CREATED_name = "created";
@@ -210,7 +211,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             case 17: return postalCode;
             case 18: return countryCode;
             case 19: return new java.sql.Date(created);
-            case 20: return createdBy;
+            case COLUMN_CREATED_BY: return createdBy;
             case 21: return principalName;
             case 22: return useMonthly?Boolean.TRUE:Boolean.FALSE;
             case 23: return isActive?Boolean.TRUE:Boolean.FALSE;

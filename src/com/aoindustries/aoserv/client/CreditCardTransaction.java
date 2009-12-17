@@ -25,7 +25,13 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 
     static final int
         COLUMN_PKEY = 0,
-        COLUMN_PROCESSOR_ID = 1
+        COLUMN_PROCESSOR_ID = 1,
+        COLUMN_ACCOUNTING = 2,
+        COLUMN_CREDIT_CARD_CREATED_BY = 27,
+        COLUMN_CREDIT_CARD_ACCOUNTING = 29,
+        COLUMN_AUTHORIZATION_USERNAME = 48,
+        COLUMN_CAPTURE_USERNAME = 67,
+        COLUMN_VOID_USERNAME = 75
     ;
     static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_AUTHORIZATION_TIME_name = "authorization_time";
@@ -555,7 +561,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_PROCESSOR_ID: return processorId;
-            case 2: return accounting;
+            case COLUMN_ACCOUNTING: return accounting;
             case 3: return groupName;
             case 4: return Boolean.valueOf(testMode);
             case 5: return Integer.valueOf(duplicateWindow);
@@ -580,9 +586,9 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
             case 24: return invoiceNumber;
             case 25: return purchaseOrderNumber;
             case 26: return description;
-            case 27: return creditCardCreatedBy;
+            case COLUMN_CREDIT_CARD_CREATED_BY: return creditCardCreatedBy;
             case 28: return creditCardPrincipalName;
-            case 29: return creditCardAccounting;
+            case COLUMN_CREDIT_CARD_ACCOUNTING: return creditCardAccounting;
             case 30: return creditCardGroupName;
             case 31: return creditCardProviderUniqueId;
             case 32: return creditCardMaskedCardNumber;
@@ -601,7 +607,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
             case 45: return creditCardCountryCode;
             case 46: return creditCardComments;
             case 47: return authorizationTime==-1 ? null : new java.sql.Date(authorizationTime);
-            case 48: return authorizationUsername;
+            case COLUMN_AUTHORIZATION_USERNAME: return authorizationUsername;
             case 49: return authorizationPrincipalName;
             case 50: return authorizationCommunicationResult;
             case 51: return authorizationProviderErrorCode;
@@ -620,7 +626,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
             case 64: return authorizationAvsResult;
             case 65: return authorizationApprovalCode;
             case 66: return captureTime==-1 ? null : new java.sql.Date(captureTime);
-            case 67: return captureUsername;
+            case COLUMN_CAPTURE_USERNAME: return captureUsername;
             case 68: return capturePrincipalName;
             case 69: return captureCommunicationResult;
             case 70: return captureProviderErrorCode;
@@ -628,7 +634,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
             case 72: return captureProviderErrorMessage;
             case 73: return captureProviderUniqueId;
             case 74: return voidTime==-1 ? null : new java.sql.Date(voidTime);
-            case 75: return voidUsername;
+            case COLUMN_VOID_USERNAME: return voidUsername;
             case 76: return voidPrincipalName;
             case 77: return voidCommunicationResult;
             case 78: return voidProviderErrorCode;
@@ -837,6 +843,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getTransaction()
         );
     }
 
@@ -1074,5 +1081,9 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
                 }
             }
         );
+    }
+
+    public Transaction getTransaction() throws IOException, SQLException {
+        return table.connector.getTransactions().getUniqueRow(Transaction.COLUMN_CREDIT_CARD_TRANSACTION, false);
     }
 }

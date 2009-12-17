@@ -137,16 +137,6 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         return SchemaTable.TableID.SERVERS;
     }
 
-    Server getServer(Business bu, String name) throws IOException, SQLException {
-        // Use index first
-        for(Server se : getServers(bu)) if(se.getName().equals(name)) return se;
-        return null;
-    }
-
-    List<Server> getServers(Business bu) throws IOException, SQLException {
-        return getIndexedRows(Server.COLUMN_ACCOUNTING, bu.pkey);
-    }
-
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];

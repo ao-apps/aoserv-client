@@ -20,13 +20,14 @@ import java.util.Locale;
  *
  * @see  NetBind
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPServer> {
 
-    static final int COLUMN_NET_BIND=0;
+    static final int
+        COLUMN_NET_BIND = 0,
+        COLUMN_PUB_LINUX_SERVER_ACCOUNT = 5
+    ;
     static final String COLUMN_NET_BIND_name = "net_bind";
 
     private String logfile;
@@ -43,7 +44,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
             case 2: return hostname;
             case 3: return email;
             case 4: return new java.sql.Date(created);
-            case 5: return Integer.valueOf(pub_linux_server_account);
+            case COLUMN_PUB_LINUX_SERVER_ACCOUNT: return Integer.valueOf(pub_linux_server_account);
             case 6: return allow_anonymous?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }

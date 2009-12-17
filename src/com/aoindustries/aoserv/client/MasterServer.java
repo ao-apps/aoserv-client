@@ -21,13 +21,15 @@ import java.util.List;
  * @see  MasterUser
  * @see  Server
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 
-    static final int COLUMN_PKEY=0;
+    static final int
+        COLUMN_PKEY = 0,
+        COLUMN_USERNAME = 1,
+        COLUMN_SERVER = 2
+    ;
     static final String COLUMN_USERNAME_name = "username";
     static final String COLUMN_SERVER_name = "server";
 
@@ -37,8 +39,8 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return username;
-            case 2: return Integer.valueOf(server);
+            case COLUMN_USERNAME: return username;
+            case COLUMN_SERVER: return Integer.valueOf(server);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }

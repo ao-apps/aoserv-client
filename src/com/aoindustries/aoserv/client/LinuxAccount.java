@@ -328,8 +328,14 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getFTPGuestUser()
+            ),
+            getLinuxServerAccounts(),
+            getLinuxGroupAccounts()
         );
     }
 
@@ -422,5 +428,9 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         LinuxGroupAccount lga=table.connector.getLinuxGroupAccounts().getLinuxGroupAccount(group.getName(), pkey);
         if(lga==null) throw new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName());
         lga.setAsPrimary();
+    }
+
+    public List<LinuxGroupAccount> getLinuxGroupAccounts() throws IOException, SQLException {
+        return table.connector.getLinuxGroupAccounts().getIndexedRows(LinuxGroupAccount.COLUMN_USERNAME, pkey);
     }
 }

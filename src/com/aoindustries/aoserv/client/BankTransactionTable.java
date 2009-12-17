@@ -5,21 +5,18 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * For AO Industries use only.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class BankTransactionTable extends AOServTable<Integer,BankTransaction> {
+final public class BankTransactionTable extends CachedTableIntegerKey<BankTransaction> {
 
     BankTransactionTable(AOServConnector connector) {
-	super(connector, BankTransaction.class);
+        super(connector, BankTransaction.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -31,30 +28,11 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
         return defaultOrderBy;
     }
 
-    public BankTransaction get(Object transid) throws IOException, SQLException {
-        return get(((Integer)transid).intValue());
-    }
-
     public BankTransaction get(int transid) throws IOException, SQLException {
-        return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BANK_TRANSACTIONS, transid);
-    }
-
-    List<BankTransaction> getBankTransactions(BankAccount account) throws IOException, SQLException {
-    	return getObjects(true, AOServProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
-    }
-
-    public List<BankTransaction> getRows() throws IOException, SQLException {
-        List<BankTransaction> list=new ArrayList<BankTransaction>();
-        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BANK_TRANSACTIONS);
-        return list;
+        return getUniqueRow(BankTransaction.COLUMN_TRANSID, transid);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BANK_TRANSACTIONS;
-    }
-
-    protected BankTransaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-        if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
-        return get(value);
+    	return SchemaTable.TableID.BANK_TRANSACTIONS;
     }
 }

@@ -64,6 +64,16 @@ public class DependencyTest extends TestCase {
     private void doTestGetDependenciesDfsVisit(Map<AOServObject,Color> colors, Map<AOServObject,AOServObject> predecessors, Sequence time, ChildGetter childGetter, ChildGetter backGetter, AOServObject v) throws IOException, SQLException {
         colors.put(v, Color.GRAY);
         for(AOServObject u : childGetter.getChildren(v)) {
+            // The directed edges should match
+            if(!backGetter.getChildren(u).contains(v)) {
+                fail(
+                    "child doesn't point back to parent:\n"
+                    + "    parent="+v.getClass().getName()+"(\""+v.toString()+"\")\n"
+                    + "    child="+u.getClass().getName()+"(\""+u.toString()+"\")"
+                );
+                throw new AssertionError("Should have already failed");
+            }
+            // Check for cycle
             Color uMark = colors.get(u);
             if(Color.GRAY==uMark /*&& child.equals(predecessors.get(obj))*/) {
                 StringBuilder SB = new StringBuilder();

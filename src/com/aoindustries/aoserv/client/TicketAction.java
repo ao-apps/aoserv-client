@@ -27,10 +27,16 @@ import java.util.Locale;
 final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_TICKET=1,
-        COLUMN_ADMINISTRATOR=2,
-        COLUMN_TIME=3
+        COLUMN_PKEY = 0,
+        COLUMN_TICKET = 1,
+        COLUMN_ADMINISTRATOR = 2,
+        COLUMN_TIME = 3,
+        COLUMN_OLD_ACCOUNTING = 5,
+        COLUMN_NEW_ACCOUNTING = 6,
+        COLUMN_OLD_ASSIGNED_TO = 13,
+        COLUMN_NEW_ASSIGNED_TO = 14,
+        COLUMN_OLD_CATEGORY = 15,
+        COLUMN_NEW_CATEGORY = 16
     ;
     static final String COLUMN_TICKET_name = "ticket";
     static final String COLUMN_TIME_name = "time";
@@ -70,18 +76,18 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
             case COLUMN_ADMINISTRATOR: return administrator;
             case COLUMN_TIME: return new java.sql.Date(time);
             case 4: return action_type;
-            case 5: return old_accounting;
-            case 6: return new_accounting;
+            case COLUMN_OLD_ACCOUNTING: return old_accounting;
+            case COLUMN_NEW_ACCOUNTING: return new_accounting;
             case 7: return old_priority;
             case 8: return new_priority;
             case 9: return old_type;
             case 10: return new_type;
             case 11: return old_status;
             case 12: return new_status;
-            case 13: return old_assigned_to;
-            case 14: return new_assigned_to;
-            case 15: return old_category==-1 ? null : Integer.valueOf(old_category);
-            case 16: return new_category==-1 ? null : Integer.valueOf(new_category);
+            case COLUMN_OLD_ASSIGNED_TO: return old_assigned_to;
+            case COLUMN_NEW_ASSIGNED_TO: return new_assigned_to;
+            case COLUMN_OLD_CATEGORY: return old_category==-1 ? null : Integer.valueOf(old_category);
+            case COLUMN_NEW_CATEGORY: return new_category==-1 ? null : Integer.valueOf(new_category);
             case 17: return getOldValue();
             case 18: return getNewValue();
             case 19: return from_address;

@@ -26,9 +26,10 @@ import java.util.Locale;
 final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implements Removable, Disablable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=1,
-        COLUMN_ACCOUNTING=3
+        COLUMN_PKEY = 0,
+        COLUMN_AO_SERVER = 1,
+        COLUMN_ACCOUNTING = 3,
+        COLUMN_DISABLE_LOG = 4
     ;
     static final String COLUMN_AO_SERVER_name = "ao_server";
     static final String COLUMN_PATH_name = "path";
@@ -66,7 +67,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
             case 2: return path;
             case COLUMN_ACCOUNTING: return accounting;
-            case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -129,6 +130,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getEmailPipeAddresses()
         );
     }
 
@@ -156,5 +158,9 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
         out.writeUTF(path);
         out.writeUTF(accounting);
         out.writeCompressedInt(disable_log);
+    }
+
+    public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
+        return table.connector.getEmailPipeAddresses().getIndexedRows(EmailPipeAddress.COLUMN_EMAIL_PIPE, pkey);
     }
 }

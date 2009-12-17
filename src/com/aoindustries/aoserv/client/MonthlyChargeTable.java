@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,21 +47,9 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
      *
      * @return  the <code>MonthlyCharge</code> objects.
      */
-    List<MonthlyCharge> getMonthlyCharges(BusinessAdministrator business_administrator, Business bu) throws IOException, SQLException {
+    List<MonthlyCharge> getMonthlyCharges(BusinessAdministrator business_administrator) throws IOException, SQLException {
         // Add the entries in the monthly_charges table that apply to this business
-        List<MonthlyCharge> charges;
-        {
-            List<MonthlyCharge> cached=super.getRows();
-            int len=cached.size();
-            charges=new ArrayList<MonthlyCharge>(len);
-            for(int c=0;c<len;c++) {
-                MonthlyCharge mc=cached.get(c);
-                if(
-                    bu==null
-                    || bu.equals(mc.getBusiness())
-                ) charges.add(mc);
-            }
-        }
+        List<MonthlyCharge> charges = new ArrayList<MonthlyCharge>(super.getRows());
 
         // Resource constants used later
         final ResourceType httpdResource=connector.getResourceTypes().get(ResourceType.HTTPD);
@@ -132,56 +121,112 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
             // Only bill when active
             if(business.getCanceled()==-1) {
                 Business acctBusiness=business.getAccountingBusiness();
-                if(
-                    bu==null
-                    || bu.equals(acctBusiness)
-                ) {
-                    // Add the package billing to the top level business account
-                    PackageDefinition packageDefinition=business.getPackageDefinition();
-                    BigDecimal rate = packageDefinition.getMonthlyRate();
-                    if(rate.compareTo(BigDecimal.ZERO)!=0) {
-                        charges.add(
-                            new MonthlyCharge(
-                                this,
-                                acctBusiness,
-                                business,
-                                packageDefinition.getMonthlyRateTransactionType(),
-                                null,
-                                1000,
-                                rate.multiply(BigDecimal.valueOf(100)).intValueExact(),
-                                business_administrator
-                            )
-                        );
+                // Add the package billing to the top level business account
+                PackageDefinition packageDefinition=business.getPackageDefinition();
+                BigDecimal rate = packageDefinition.getMonthlyRate();
+                if(rate.compareTo(BigDecimal.ZERO)!=0) {
+                    charges.add(
+                        new MonthlyCharge(
+                            this,
+                            acctBusiness,
+                            business,
+                            packageDefinition.getMonthlyRateTransactionType(),
+                            null,
+                            1000,
+                            rate.multiply(BigDecimal.valueOf(100)).intValueExact(),
+                            business_administrator
+                        )
+                    );
+                }
+
+                // TODO: Add aoserv_daemon
+                // TODO: Add aoserv_master
+                // TODO: Add bandwidth
+                // TODO: Add consulting
+                // TODO: Add disk
+                // TODO: Add failover
+                // TODO: Add hardware_*
+
+                // Add the httpd_servers
+                {
+                    PackageDefinitionLimit limit=packageDefinition.getLimit(httpdResource);
+                    if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
+                        List<HttpdServer> hss=business.getHttpdServers();
+                        if(!hss.isEmpty()) {
+                            if(limit==null) throw new SQLException("HttpdServers exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                            if(hss.size()>limit.getSoftLimit()) {
+                                BigDecimal addRate=limit.getAdditionalRate();
+                                if(addRate==null) throw new SQLException("Additional HttpdServers exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                TransactionType addType=limit.getAdditionalTransactionType();
+                                if(addType==null) throw new SQLException("Additional HttpdServers exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                charges.add(
+                                    new MonthlyCharge(
+                                        this,
+                                        acctBusiness,
+                                        business,
+                                        addType,
+                                        "Additional HTTP Servers ("+limit.getSoftLimit()+" included with package, have "+hss.size()+")",
+                                        (hss.size()-limit.getSoftLimit())*1000,
+                                        addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
+                                        business_administrator
+                                    )
+                                );
+                            }
+                        }
                     }
+                }
 
-                    // TODO: Add aoserv_daemon
-                    // TODO: Add aoserv_master
-                    // TODO: Add bandwidth
-                    // TODO: Add consulting
-                    // TODO: Add disk
-                    // TODO: Add failover
-                    // TODO: Add hardware_*
+                // Add the ip addresses
+                {
+                    PackageDefinitionLimit limit=packageDefinition.getLimit(ipResource);
+                    if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
+                        List<IPAddress> ips=business.getIPAddresses();
+                        if(!ips.isEmpty()) {
+                            if(limit==null) throw new SQLException("IPAddresses exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                            if(ips.size()>limit.getSoftLimit()) {
+                                BigDecimal addRate=limit.getAdditionalRate();
+                                if(addRate==null) throw new SQLException("Additional IPAddresses exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                TransactionType addType=limit.getAdditionalTransactionType();
+                                if(addType==null) throw new SQLException("Additional IPAddresses exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                charges.add(
+                                    new MonthlyCharge(
+                                        this,
+                                        acctBusiness,
+                                        business,
+                                        addType,
+                                        "Additional IP Addresses ("+limit.getSoftLimit()+" included with package, have "+ips.size()+")",
+                                        (ips.size()-limit.getSoftLimit())*1000,
+                                        addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
+                                        business_administrator
+                                    )
+                                );
+                            }
+                        }
+                    }
+                }
 
-                    // Add the httpd_servers
-                    {
-                        PackageDefinitionLimit limit=packageDefinition.getLimit(httpdResource);
-                        if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                            List<HttpdServer> hss=business.getHttpdServers();
-                            if(!hss.isEmpty()) {
-                                if(limit==null) throw new SQLException("HttpdServers exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                if(hss.size()>limit.getSoftLimit()) {
+                // Add javavm
+                {
+                    PackageDefinitionLimit limit=packageDefinition.getLimit(javavmResource);
+                    if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
+                        Integer I=javavmsPerBusiness.get(business);
+                        if(I!=null) {
+                            int javavmCount=I.intValue();
+                            if(javavmCount>0) {
+                                if(limit==null) throw new SQLException("Java virtual machines exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                if(javavmCount>limit.getSoftLimit()) {
                                     BigDecimal addRate=limit.getAdditionalRate();
-                                    if(addRate==null) throw new SQLException("Additional HttpdServers exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                    if(addRate==null) throw new SQLException("Additional Java virtual machines exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
                                     TransactionType addType=limit.getAdditionalTransactionType();
-                                    if(addType==null) throw new SQLException("Additional HttpdServers exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                    if(addType==null) throw new SQLException("Additional Java virtual machines exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
                                     charges.add(
                                         new MonthlyCharge(
                                             this,
                                             acctBusiness,
                                             business,
                                             addType,
-                                            "Additional HTTP Servers ("+limit.getSoftLimit()+" included with package, have "+hss.size()+")",
-                                            (hss.size()-limit.getSoftLimit())*1000,
+                                            "Additional Java Virtual Machines ("+limit.getSoftLimit()+" included with package, have "+javavmCount+")",
+                                            (javavmCount-limit.getSoftLimit())*1000,
                                             addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
                                             business_administrator
                                         )
@@ -190,27 +235,59 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                             }
                         }
                     }
+                }
 
-                    // Add the ip addresses
-                    {
-                        PackageDefinitionLimit limit=packageDefinition.getLimit(ipResource);
-                        if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                            List<IPAddress> ips=business.getIPAddresses();
-                            if(!ips.isEmpty()) {
-                                if(limit==null) throw new SQLException("IPAddresses exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                if(ips.size()>limit.getSoftLimit()) {
+                // Add the mysql_replications
+                {
+                    PackageDefinitionLimit limit=packageDefinition.getLimit(mysqlReplicationResource);
+                    if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
+                        List<FailoverMySQLReplication> fmrs = business.getFailoverMySQLReplications();
+                        if(!fmrs.isEmpty()) {
+                            if(limit==null) throw new SQLException("FailoverMySQLReplications exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                            if(fmrs.size()>limit.getSoftLimit()) {
+                                BigDecimal addRate=limit.getAdditionalRate();
+                                if(addRate==null) throw new SQLException("Additional FailoverMySQLReplications exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                TransactionType addType=limit.getAdditionalTransactionType();
+                                if(addType==null) throw new SQLException("Additional FailoverMySQLReplications exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                charges.add(
+                                    new MonthlyCharge(
+                                        this,
+                                        acctBusiness,
+                                        business,
+                                        addType,
+                                        "Additional MySQL Replications ("+limit.getSoftLimit()+" included with package, have "+fmrs.size()+")",
+                                        (fmrs.size()-limit.getSoftLimit())*1000,
+                                        addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
+                                        business_administrator
+                                    )
+                                );
+                            }
+                        }
+                    }
+                }
+
+                // Add Email accounts
+                {
+                    PackageDefinitionLimit limit=packageDefinition.getLimit(emailResource);
+                    if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
+                        Integer I=emailsPerBusiness.get(business);
+                        if(I!=null) {
+                            int emailCount=I.intValue();
+                            if(emailCount>0) {
+                                if(limit==null) throw new SQLException("Email inboxes exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                if(emailCount>limit.getSoftLimit()) {
                                     BigDecimal addRate=limit.getAdditionalRate();
-                                    if(addRate==null) throw new SQLException("Additional IPAddresses exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                    if(addRate==null) throw new SQLException("Additional Email inboxes exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
                                     TransactionType addType=limit.getAdditionalTransactionType();
-                                    if(addType==null) throw new SQLException("Additional IPAddresses exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                    if(addType==null) throw new SQLException("Additional Email inboxes exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
                                     charges.add(
                                         new MonthlyCharge(
                                             this,
                                             acctBusiness,
                                             business,
                                             addType,
-                                            "Additional IP Addresses ("+limit.getSoftLimit()+" included with package, have "+ips.size()+")",
-                                            (ips.size()-limit.getSoftLimit())*1000,
+                                            "Additional Email Inboxes ("+limit.getSoftLimit()+" included with package, have "+emailCount+")",
+                                            (emailCount-limit.getSoftLimit())*1000,
                                             addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
                                             business_administrator
                                         )
@@ -219,160 +296,67 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                             }
                         }
                     }
+                }
 
-                    // Add javavm
-                    {
-                        PackageDefinitionLimit limit=packageDefinition.getLimit(javavmResource);
-                        if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                            Integer I=javavmsPerBusiness.get(business);
-                            if(I!=null) {
-                                int javavmCount=I.intValue();
-                                if(javavmCount>0) {
-                                    if(limit==null) throw new SQLException("Java virtual machines exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                    if(javavmCount>limit.getSoftLimit()) {
-                                        BigDecimal addRate=limit.getAdditionalRate();
-                                        if(addRate==null) throw new SQLException("Additional Java virtual machines exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                        TransactionType addType=limit.getAdditionalTransactionType();
-                                        if(addType==null) throw new SQLException("Additional Java virtual machines exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                        charges.add(
-                                            new MonthlyCharge(
-                                                this,
-                                                acctBusiness,
-                                                business,
-                                                addType,
-                                                "Additional Java Virtual Machines ("+limit.getSoftLimit()+" included with package, have "+javavmCount+")",
-                                                (javavmCount-limit.getSoftLimit())*1000,
-                                                addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
-                                                business_administrator
-                                            )
-                                        );
-                                    }
-                                }
+                // TODO: Add rack
+
+                // Add sites
+                {
+                    PackageDefinitionLimit limit=packageDefinition.getLimit(siteResource);
+                    if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
+                        List<HttpdSite> hss=business.getHttpdSites();
+                        if(!hss.isEmpty()) {
+                            if(limit==null) throw new SQLException("HttpdSites exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                            if(hss.size()>limit.getSoftLimit()) {
+                                BigDecimal addRate=limit.getAdditionalRate();
+                                if(addRate==null) throw new SQLException("Additional HttpdSites exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                TransactionType addType=limit.getAdditionalTransactionType();
+                                if(addType==null) throw new SQLException("Additional HttpdSites exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                charges.add(
+                                    new MonthlyCharge(
+                                        this,
+                                        acctBusiness,
+                                        business,
+                                        addType,
+                                        "Additional Web Sites ("+limit.getSoftLimit()+" included with package, have "+hss.size()+")",
+                                        (hss.size()-limit.getSoftLimit())*1000,
+                                        addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
+                                        business_administrator
+                                    )
+                                );
                             }
                         }
                     }
-                    
-                    // Add the mysql_replications
-                    {
-                        PackageDefinitionLimit limit=packageDefinition.getLimit(mysqlReplicationResource);
-                        if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                            List<FailoverMySQLReplication> fmrs = business.getFailoverMySQLReplications();
-                            if(!fmrs.isEmpty()) {
-                                if(limit==null) throw new SQLException("FailoverMySQLReplications exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                if(fmrs.size()>limit.getSoftLimit()) {
+                }
+
+                // TODO: Add sysadmin
+
+                // Add user accounts
+                {
+                    PackageDefinitionLimit limit=packageDefinition.getLimit(userResource);
+                    if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
+                        Integer I=usersPerBusiness.get(business);
+                        if(I!=null) {
+                            int userCount=I.intValue();
+                            if(userCount>0) {
+                                if(limit==null) throw new SQLException("Shell accounts exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                if(userCount>limit.getSoftLimit()) {
                                     BigDecimal addRate=limit.getAdditionalRate();
-                                    if(addRate==null) throw new SQLException("Additional FailoverMySQLReplications exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                    if(addRate==null) throw new SQLException("Additional Shell accounts exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
                                     TransactionType addType=limit.getAdditionalTransactionType();
-                                    if(addType==null) throw new SQLException("Additional FailoverMySQLReplications exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
+                                    if(addType==null) throw new SQLException("Additional Shell accounts exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
                                     charges.add(
                                         new MonthlyCharge(
                                             this,
                                             acctBusiness,
                                             business,
                                             addType,
-                                            "Additional MySQL Replications ("+limit.getSoftLimit()+" included with package, have "+fmrs.size()+")",
-                                            (fmrs.size()-limit.getSoftLimit())*1000,
+                                            "Additional Shell Accounts ("+limit.getSoftLimit()+" included with package, have "+userCount+")",
+                                            (userCount-limit.getSoftLimit())*1000,
                                             addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
                                             business_administrator
                                         )
                                     );
-                                }
-                            }
-                        }
-                    }
-
-                    // Add Email accounts
-                    {
-                        PackageDefinitionLimit limit=packageDefinition.getLimit(emailResource);
-                        if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                            Integer I=emailsPerBusiness.get(business);
-                            if(I!=null) {
-                                int emailCount=I.intValue();
-                                if(emailCount>0) {
-                                    if(limit==null) throw new SQLException("Email inboxes exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                    if(emailCount>limit.getSoftLimit()) {
-                                        BigDecimal addRate=limit.getAdditionalRate();
-                                        if(addRate==null) throw new SQLException("Additional Email inboxes exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                        TransactionType addType=limit.getAdditionalTransactionType();
-                                        if(addType==null) throw new SQLException("Additional Email inboxes exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                        charges.add(
-                                            new MonthlyCharge(
-                                                this,
-                                                acctBusiness,
-                                                business,
-                                                addType,
-                                                "Additional Email Inboxes ("+limit.getSoftLimit()+" included with package, have "+emailCount+")",
-                                                (emailCount-limit.getSoftLimit())*1000,
-                                                addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
-                                                business_administrator
-                                            )
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // TODO: Add rack
-                    
-                    // Add sites
-                    {
-                        PackageDefinitionLimit limit=packageDefinition.getLimit(siteResource);
-                        if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                            List<HttpdSite> hss=business.getHttpdSites();
-                            if(!hss.isEmpty()) {
-                                if(limit==null) throw new SQLException("HttpdSites exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                if(hss.size()>limit.getSoftLimit()) {
-                                    BigDecimal addRate=limit.getAdditionalRate();
-                                    if(addRate==null) throw new SQLException("Additional HttpdSites exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                    TransactionType addType=limit.getAdditionalTransactionType();
-                                    if(addType==null) throw new SQLException("Additional HttpdSites exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                    charges.add(
-                                        new MonthlyCharge(
-                                            this,
-                                            acctBusiness,
-                                            business,
-                                            addType,
-                                            "Additional Web Sites ("+limit.getSoftLimit()+" included with package, have "+hss.size()+")",
-                                            (hss.size()-limit.getSoftLimit())*1000,
-                                            addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
-                                            business_administrator
-                                        )
-                                    );
-                                }
-                            }
-                        }
-                    }
-
-                    // TODO: Add sysadmin
-
-                    // Add user accounts
-                    {
-                        PackageDefinitionLimit limit=packageDefinition.getLimit(userResource);
-                        if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                            Integer I=usersPerBusiness.get(business);
-                            if(I!=null) {
-                                int userCount=I.intValue();
-                                if(userCount>0) {
-                                    if(limit==null) throw new SQLException("Shell accounts exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                    if(userCount>limit.getSoftLimit()) {
-                                        BigDecimal addRate=limit.getAdditionalRate();
-                                        if(addRate==null) throw new SQLException("Additional Shell accounts exist, but no additional rate defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                        TransactionType addType=limit.getAdditionalTransactionType();
-                                        if(addType==null) throw new SQLException("Additional Shell accounts exist, but no additional TransactionType defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
-                                        charges.add(
-                                            new MonthlyCharge(
-                                                this,
-                                                acctBusiness,
-                                                business,
-                                                addType,
-                                                "Additional Shell Accounts ("+limit.getSoftLimit()+" included with package, have "+userCount+")",
-                                                (userCount-limit.getSoftLimit())*1000,
-                                                addRate.multiply(BigDecimal.valueOf(100)).intValueExact(),
-                                                business_administrator
-                                            )
-                                        );
-                                    }
                                 }
                             }
                         }
@@ -382,20 +366,46 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         }
 
         // Convert and return
-	return charges;
+    	return charges;
     }
 
     List<MonthlyCharge> getMonthlyCharges(Business bu) throws SQLException, IOException {
-        return getMonthlyCharges(connector.getThisBusinessAdministrator(), bu);
+        String accounting = bu.pkey;
+        List<MonthlyCharge> allCharges = getMonthlyCharges(connector.getThisBusinessAdministrator());
+        List<MonthlyCharge> buCharges = new ArrayList<MonthlyCharge>(allCharges.size());
+        for(MonthlyCharge charge : allCharges) {
+            if(charge.accounting.equals(accounting)) buCharges.add(charge);
+        }
+        return Collections.unmodifiableList(buCharges);
+    }
+
+    List<MonthlyCharge> getMonthlyChargesBySourceBusiness(Business bu) throws SQLException, IOException {
+        String accounting = bu.pkey;
+        List<MonthlyCharge> allCharges = getMonthlyCharges(connector.getThisBusinessAdministrator());
+        List<MonthlyCharge> buCharges = new ArrayList<MonthlyCharge>(allCharges.size());
+        for(MonthlyCharge charge : allCharges) {
+            if(charge.sourceAccounting.equals(accounting)) buCharges.add(charge);
+        }
+        return Collections.unmodifiableList(buCharges);
+    }
+
+    List<MonthlyCharge> getMonthlyChargesByCreatedBy(BusinessAdministrator ba) throws SQLException, IOException {
+        String username = ba.pkey;
+        List<MonthlyCharge> allCharges = getMonthlyCharges(connector.getThisBusinessAdministrator());
+        List<MonthlyCharge> baCharges = new ArrayList<MonthlyCharge>(allCharges.size());
+        for(MonthlyCharge charge : allCharges) {
+            if(charge.created_by.equals(username)) baCharges.add(charge);
+        }
+        return Collections.unmodifiableList(baCharges);
     }
 
     @Override
     public List<MonthlyCharge> getRows() throws SQLException, IOException {
-        return getMonthlyCharges(connector.getThisBusinessAdministrator(), null);
+        return Collections.unmodifiableList(getMonthlyCharges(connector.getThisBusinessAdministrator()));
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MONTHLY_CHARGES;
+    	return SchemaTable.TableID.MONTHLY_CHARGES;
     }
 
     @Override

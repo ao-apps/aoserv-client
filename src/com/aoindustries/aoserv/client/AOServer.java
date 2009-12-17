@@ -2025,18 +2025,34 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
-            getServer(),
-            getDaemonBind(),
-            getFailoverServer(),
-            getDaemonConnectBind(),
-            getJilterBind()
+            //createDependencyList(
+                getServer(),
+                getDaemonBind(),
+                getFailoverServer(),
+                getDaemonConnectBind(),
+                getJilterBind()
+            //)
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
             getNestedAOServers(),
-            getAOServerDaemonHosts()
+            getAOServerDaemonHosts(),
+            getBackupPartitions(),
+            getLinuxServerAccounts(),
+            getEmailDomains(),
+            getLinuxServerGroups(),
+            getEmailPipes(),
+            getSystemEmailAliases(),
+            getEmailSmtpRelays(),
+            getHttpdServers(),
+            getHttpdSites(),
+            getFailoverMySQLReplications(),
+            getHttpdSharedTomcats(),
+            getMySQLServers(),
+            getPostgresServers()
         );
     }
 }

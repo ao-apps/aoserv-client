@@ -20,15 +20,14 @@ import java.util.Locale;
  *
  * @see  DNSZone
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implements Removable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_ZONE=1
+        COLUMN_PKEY = 0,
+        COLUMN_ZONE = 1,
+        COLUMN_DHCP_ADDRESS = 6
     ;
     static final String COLUMN_ZONE_name = "zone";
     static final String COLUMN_DOMAIN_name = "domain";
@@ -57,7 +56,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
             case 3: return type;
             case 4: return mx_priority==NO_MX_PRIORITY?null:Integer.valueOf(mx_priority);
             case 5: return destination;
-            case 6: return dhcpAddress==-1?null:Integer.valueOf(dhcpAddress);
+            case COLUMN_DHCP_ADDRESS: return dhcpAddress==-1?null:Integer.valueOf(dhcpAddress);
             case 7: return ttl==NO_TTL?null:Integer.valueOf(ttl);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }

@@ -71,15 +71,15 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
         if(tomcat_site==-1) return null;
-	HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(tomcat_site);
-	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+tomcat_site);
-	return obj;
+        HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(tomcat_site);
+        if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+tomcat_site);
+        return obj;
     }
 
     public NetBind getNetBind() throws IOException, SQLException {
-	NetBind obj=table.connector.getNetBinds().get(net_bind);
-	if(obj==null) throw new SQLException("Unable to find NetBind: "+net_bind);
-	return obj;
+        NetBind obj=table.connector.getNetBinds().get(net_bind);
+        if(obj==null) throw new SQLException("Unable to find NetBind: "+net_bind);
+        return obj;
     }
 
     public SchemaTable.TableID getTableID() {
@@ -110,6 +110,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getHttpdSharedTomcat()
         );
     }
 

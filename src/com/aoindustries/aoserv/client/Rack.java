@@ -45,9 +45,9 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
     }
 
     public ServerFarm getServerFarm() throws SQLException, IOException {
-	ServerFarm sf=table.connector.getServerFarms().get(farm);
-	if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
-	return sf;
+        ServerFarm sf=table.connector.getServerFarms().get(farm);
+        if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
+        return sf;
     }
     
     public String getName() {
@@ -99,6 +99,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getPhysicalServers()
         );
     }
 
@@ -114,5 +115,9 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
         out.writeUTF(name);
         out.writeFloat(maxPower);
         out.writeCompressedInt(totalRackUnits);
+    }
+
+    public List<PhysicalServer> getPhysicalServers() throws IOException, SQLException {
+        return table.connector.getPhysicalServers().getIndexedRows(PhysicalServer.COLUMN_RACK, pkey);
     }
 }

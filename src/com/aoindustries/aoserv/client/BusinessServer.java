@@ -21,8 +21,6 @@ import java.util.Locale;
  * @see  Business
  * @see  Server
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer> implements Removable {

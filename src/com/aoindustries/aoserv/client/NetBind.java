@@ -406,7 +406,22 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return createDependencyList(
             getAOServerByDaemonNetBind(),
             getAOServerByDaemonConnectNetBind(),
-            getAOServerByJilterNetBind()
+            getAOServerByJilterNetBind(),
+            getBrandByAowebStrutsVncBind(),
+            getNetTcpRedirect(),
+            getEmailSmartHost(),
+            getHttpdBind(),
+            getHttpdJBossSiteByJNPPort(),
+            getHttpdJBossSiteByWebserverPort(),
+            getHttpdJBossSiteByRMIPort(),
+            getHttpdJBossSiteByHypersonicPort(),
+            getHttpdJBossSiteByJMXPort(),
+            getHttpdSharedTomcatByShutdownPort(),
+            getHttpdWorker(),
+            getHttpdTomcatStdSiteByShutdownPort(),
+            getMySQLServer(),
+            getPrivateFTPServer(),
+            getPostgresServer()
         );
     }
 
@@ -528,5 +543,17 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
             out.writeNullUTF(null);
         }
         if(version.compareTo(AOServProtocol.Version.VERSION_1_58)>=0) out.writeNullUTF(monitoring_parameters);
+    }
+
+    public Brand getBrandByAowebStrutsVncBind() throws IOException, SQLException {
+        return table.connector.getBrands().getUniqueRow(Brand.COLUMN_AOWEB_STRUTS_VNC_BIND, pkey);
+    }
+
+    public EmailSmtpSmartHost getEmailSmartHost() throws IOException, SQLException {
+        return table.connector.getEmailSmtpSmartHosts().getUniqueRow(EmailSmtpSmartHost.COLUMN_NET_BIND, pkey);
+    }
+
+    public MySQLServer getMySQLServer() throws IOException, SQLException {
+        return table.connector.getMysqlServers().getUniqueRow(MySQLServer.COLUMN_NET_BIND, pkey);
     }
 }

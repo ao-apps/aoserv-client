@@ -98,10 +98,6 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
         return getIndexedRows(Ticket.COLUMN_ACCOUNTING, business.pkey);
     }
 
-    List<Ticket> getCreatedTickets(BusinessAdministrator ba) throws IOException, SQLException {
-        return getIndexedRows(Ticket.COLUMN_CREATED_BY, ba.pkey);
-    }
-
     /*
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {

@@ -30,9 +30,10 @@ import java.util.*;
 final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUser> implements Removable, PasswordProtected, Disablable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_USERNAME=1,
-        COLUMN_MYSQL_SERVER=2
+        COLUMN_PKEY = 0,
+        COLUMN_USERNAME = 1,
+        COLUMN_MYSQL_SERVER = 2,
+        COLUMN_DISABLE_LOG = 4
     ;
     static final String COLUMN_USERNAME_name = "username";
     static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
@@ -113,7 +114,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
             case COLUMN_USERNAME: return username;
             case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
             case 3: return host;
-            case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 5: return predisable_password;
             case 6: return max_questions;
             case 7: return max_updates;
@@ -214,6 +215,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getMySQLDBUsers()
         );
     }
 

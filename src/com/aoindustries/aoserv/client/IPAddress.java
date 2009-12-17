@@ -309,8 +309,11 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getDhcpDNSRecords(),
+            getNetBinds()
         );
     }
 
@@ -349,5 +352,9 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(externalIpAddress);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_38)>=0) out.writeUTF(netmask);
+    }
+
+    public List<DNSRecord> getDhcpDNSRecords() throws IOException, SQLException {
+        return table.connector.getDnsRecords().getIndexedRows(DNSRecord.COLUMN_DHCP_ADDRESS, pkey);
     }
 }

@@ -22,7 +22,10 @@ import java.util.*;
  */
 final public class PostgresUser extends CachedObjectStringKey<PostgresUser> implements Removable, PasswordProtected, Disablable {
 
-    static final int COLUMN_USERNAME=0;
+    static final int
+        COLUMN_USERNAME = 0,
+        COLUMN_DISABLE_LOG = 5
+    ;
     static final String COLUMN_USERNAME_name = "username";
 
     /**
@@ -113,13 +116,15 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
     }
 
     Object getColumnImpl(int i) {
-        if(i==COLUMN_USERNAME) return pkey;
-        if(i==1) return createdb?Boolean.TRUE:Boolean.FALSE;
-        if(i==2) return trace?Boolean.TRUE:Boolean.FALSE;
-        if(i==3) return superPriv?Boolean.TRUE:Boolean.FALSE;
-        if(i==4) return catupd?Boolean.TRUE:Boolean.FALSE;
-        if(i==5) return disable_log==-1?null:Integer.valueOf(disable_log);
-        throw new IllegalArgumentException("Invalid index: "+i);
+        switch(i) {
+            case COLUMN_USERNAME: return pkey;
+            case 1: return createdb?Boolean.TRUE:Boolean.FALSE;
+            case 2: return trace?Boolean.TRUE:Boolean.FALSE;
+            case 3: return superPriv?Boolean.TRUE:Boolean.FALSE;
+            case 4: return catupd?Boolean.TRUE:Boolean.FALSE;
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
     public boolean isDisabled() {
@@ -183,6 +188,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getPostgresServerUsers()
         );
     }
 

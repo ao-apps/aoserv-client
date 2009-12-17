@@ -127,9 +127,9 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-	AOServer ao=table.connector.getAoServers().get(ao_server);
-	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-	return ao;
+        AOServer ao=table.connector.getAoServers().get(ao_server);
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+        return ao;
     }
 
     public int getMaxConnections() {
@@ -143,11 +143,11 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     }
     
     public PostgresDatabase getPostgresDatabase(String name) throws IOException, SQLException {
-	return table.connector.getPostgresDatabases().getPostgresDatabase(name, this);
+    	return table.connector.getPostgresDatabases().getPostgresDatabase(name, this);
     }
 
     public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
-	return table.connector.getPostgresDatabases().getPostgresDatabases(this);
+    	return table.connector.getPostgresDatabases().getPostgresDatabases(this);
     }
 
     public PostgresServerUser getPostgresServerUser(String username) throws IOException, SQLException {
@@ -217,8 +217,11 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getPostgresDatabases(),
+            getPostgresServerUsers()
         );
     }
 

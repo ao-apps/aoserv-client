@@ -152,8 +152,13 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getMajordomoServer()
+            ),
+            getEmailAddresses()
         );
     }
 

@@ -67,8 +67,11 @@ final public class Reseller extends CachedObjectStringKey<Reseller> {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getTickets(),
+            getTicketAssignments()
         );
     }
 
@@ -108,5 +111,9 @@ final public class Reseller extends CachedObjectStringKey<Reseller> {
             if(!reseller.equals(this) && this.equals(reseller.getParentReseller())) children.add(reseller);
         }
         return children;
+    }
+
+    public List<Ticket> getTickets() throws IOException, SQLException {
+        return table.connector.getTickets().getIndexedRows(Ticket.COLUMN_RESELLER, pkey);
     }
 }

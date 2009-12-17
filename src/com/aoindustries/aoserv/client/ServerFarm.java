@@ -21,7 +21,10 @@ import java.util.Locale;
  */
 final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 
-    static final int COLUMN_NAME=0;
+    static final int
+        COLUMN_NAME = 0,
+        COLUMN_OWNER = 2
+    ;
     static final String COLUMN_NAME_name = "name";
 
     private String description;
@@ -33,7 +36,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
         switch(i) {
             case COLUMN_NAME: return pkey;
             case 1: return description;
-            case 2: return owner;
+            case COLUMN_OWNER: return owner;
             case 3: return use_restricted_smtp_port;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -85,8 +88,11 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getServers(),
+            getRacks()
         );
     }
 
@@ -107,5 +113,13 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeCompressedInt(308); // owner (package)
         if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) out.writeUTF(owner);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
+    }
+
+    public List<Server> getServers() throws IOException, SQLException {
+        return table.connector.getServers().getIndexedRows(Server.COLUMN_FARM, pkey);
+    }
+
+    public List<Rack> getRacks() throws IOException, SQLException {
+        return table.connector.getRacks().getIndexedRows(Rack.COLUMN_FARM, pkey);
     }
 }

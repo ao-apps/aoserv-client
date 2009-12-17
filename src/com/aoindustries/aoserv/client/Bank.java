@@ -72,8 +72,13 @@ final public class Bank extends CachedObjectStringKey<Bank> {
         );
     }
 
+    public List<BankAccount> getBankAccounts() throws IOException, SQLException {
+        return table.connector.getBankAccounts().getBankAccounts(this);
+    }
+
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getBankAccounts()
         );
     }
 }

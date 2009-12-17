@@ -27,11 +27,13 @@ import java.util.Locale;
 final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedTomcat> implements Disablable, Removable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=2,
-        COLUMN_LINUX_SERVER_ACCOUNT=4,
-        COLUMN_TOMCAT4_WORKER=9,
-        COLUMN_TOMCAT4_SHUTDOWN_PORT=10
+        COLUMN_PKEY = 0,
+        COLUMN_AO_SERVER = 2,
+        COLUMN_LINUX_SERVER_ACCOUNT = 4,
+        COLUMN_LINUX_SERVER_GROUP = 5,
+        COLUMN_DISABLE_LOG = 8,
+        COLUMN_TOMCAT4_WORKER = 9,
+        COLUMN_TOMCAT4_SHUTDOWN_PORT = 10
     ;
     static final String COLUMN_NAME_name = "name";
     static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -115,10 +117,10 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
             case 3: return Integer.valueOf(version);
             case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
-            case 5: return Integer.valueOf(linux_server_group);
+            case COLUMN_LINUX_SERVER_GROUP: return Integer.valueOf(linux_server_group);
             case 6: return isSecure?Boolean.TRUE:Boolean.FALSE;
             case 7: return isOverflow?Boolean.TRUE:Boolean.FALSE;
-            case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             case COLUMN_TOMCAT4_WORKER: return tomcat4_worker==-1?null:Integer.valueOf(tomcat4_worker);
             case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:Integer.valueOf(tomcat4_shutdown_port);
             case 11: return tomcat4_shutdown_key;
@@ -288,6 +290,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getHttpdTomcatSharedSites()
         );
     }
 

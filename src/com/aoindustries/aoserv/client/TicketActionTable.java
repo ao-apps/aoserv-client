@@ -39,10 +39,6 @@ final public class TicketActionTable extends CachedTableIntegerKey<TicketAction>
         return getIndexedRows(TicketAction.COLUMN_TICKET, ticket.pkey);
     }
 
-    List<TicketAction> getActions(BusinessAdministrator ba) throws IOException, SQLException {
-        return getIndexedRows(TicketAction.COLUMN_ADMINISTRATOR, ba.pkey);
-    }
-
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.TICKET_ACTIONS;
     }

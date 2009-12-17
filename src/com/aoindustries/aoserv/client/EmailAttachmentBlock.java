@@ -18,8 +18,6 @@ import java.util.Locale;
  * @see  EmailAttachmentType
  * @see  LinuxServerAccount
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAttachmentBlock> implements Removable {
@@ -44,15 +42,15 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-	LinuxServerAccount lsa=table.connector.getLinuxServerAccounts().get(linux_server_account);
-	if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
-	return lsa;
+        LinuxServerAccount lsa=table.connector.getLinuxServerAccounts().get(linux_server_account);
+        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
+        return lsa;
     }
 
     public EmailAttachmentType getEmailAttachmentType() throws SQLException, IOException {
         EmailAttachmentType eat=table.connector.getEmailAttachmentTypes().get(extension);
         if(eat==null) throw new SQLException("Unable to find EmailAttachmentType: " + extension);
-	return eat;
+    	return eat;
     }
 
     public SchemaTable.TableID getTableID() {

@@ -14,6 +14,7 @@ import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -33,8 +34,11 @@ import java.util.Map;
  */
 final public class Business extends CachedObjectStringKey<Business> implements Disablable, Comparable<Business> {
 
-    static final int COLUMN_ACCOUNTING=0;
-    static final int COLUMN_PACKAGE_DEFINITION=13;
+    static final int
+        COLUMN_ACCOUNTING = 0,
+        COLUMN_PACKAGE_DEFINITION = 13,
+        COLUMN_CREATED_BY = 14
+    ;
     static final String COLUMN_ACCOUNTING_name = "accounting";
 
     /**
@@ -45,7 +49,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * The minimum payment for auto-enabling accounts, in pennies.
      */
-    public static final int MINIMUM_PAYMENT=3000;
+    public static final BigDecimal MINIMUM_PAYMENT = BigDecimal.valueOf(3000, 2);
 
     /**
      * The default inbound email burst before rate limiting.
@@ -303,11 +307,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public void addNoticeLog(
-	String billingContact,
-	String emailAddress,
-	int balance,
-	String type,
-	int transid
+        String billingContact,
+        String emailAddress,
+        int balance,
+        String type,
+        int transid
     ) throws IOException, SQLException {
 	    table.connector.getNoticeLogs().addNoticeLog(
             pkey,
@@ -438,11 +442,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
     }
 
-    public int getAccountBalance() throws IOException, SQLException {
+    public BigDecimal getAccountBalance() throws IOException, SQLException {
         return table.connector.getTransactions().getAccountBalance(pkey);
     }
 
-    public int getAccountBalance(long before) throws IOException, SQLException {
+    public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
         return table.connector.getTransactions().getAccountBalance(pkey, before);
     }
 
@@ -450,18 +454,18 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * @see  #getAccountBalance()
      */
     public String getAccountBalanceString() throws IOException, SQLException {
-        return "$"+SQLUtility.getDecimal(getAccountBalance());
+        return "$"+getAccountBalance().toPlainString();
     }
 
     /**
      * @see  #getAccountBalance(long)
      */
     public String getAccountBalanceString(long before) throws IOException, SQLException {
-        return "$"+SQLUtility.getDecimal(getAccountBalance(before));
+        return "$"+getAccountBalance(before).toPlainString();
     }
 
     public String getAccounting() {
-	return pkey;
+        return pkey;
     }
 
     public boolean getAutoEnable() {
@@ -472,12 +476,12 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return bill_parent;
     }
     
-    public int getAutoEnableMinimumPayment() throws IOException, SQLException {
-        int balance=getAccountBalance();
-        if(balance<0) return 0;
-        int minimum=balance/2;
-        if(minimum<MINIMUM_PAYMENT) minimum=MINIMUM_PAYMENT;
-        if(minimum>balance) minimum=balance;
+    public BigDecimal getAutoEnableMinimumPayment() throws IOException, SQLException {
+        BigDecimal balance = getAccountBalance();
+        if(balance.compareTo(BigDecimal.ZERO)<=0) return BigDecimal.valueOf(0, 2);
+        BigDecimal minimum = balance.divide(BigDecimal.valueOf(2), RoundingMode.CEILING);
+        if(minimum.compareTo(MINIMUM_PAYMENT)<0) minimum=MINIMUM_PAYMENT;
+        if(minimum.compareTo(balance)>0) minimum=balance;
         return minimum;
     }
 
@@ -562,7 +566,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             case 11: return auto_enable?Boolean.TRUE:Boolean.FALSE;
             case 12: return bill_parent?Boolean.TRUE:Boolean.FALSE;
             case COLUMN_PACKAGE_DEFINITION: return Integer.valueOf(package_definition);
-            case 14: return created_by;
+            case COLUMN_CREATED_BY: return created_by;
             case 15: return email_in_burst==-1 ? null : Integer.valueOf(email_in_burst);
             case 16: return Float.isNaN(email_in_rate) ? null : Float.valueOf(email_in_rate);
             case 17: return email_out_burst==-1 ? null : Integer.valueOf(email_out_burst);
@@ -573,16 +577,16 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         }
     }
 
-    public int getConfirmedAccountBalance() throws IOException, SQLException {
-	return table.connector.getTransactions().getConfirmedAccountBalance(pkey);
+    public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
+    	return table.connector.getTransactions().getConfirmedAccountBalance(pkey);
     }
 
-    public int getConfirmedAccountBalance(long before) throws IOException, SQLException {
-	return table.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
+    public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
+    	return table.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
     }
 
     public String getContractVersion() {
-	return contractVersion;
+    	return contractVersion;
     }
 
     public long getCreated() {
@@ -590,11 +594,19 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
-	return table.connector.getCreditCardProcessors().getCreditCardProcessors(this);
+    	return table.connector.getCreditCardProcessors().getIndexedRows(CreditCardProcessor.COLUMN_ACCOUNTING, pkey);
+    }
+
+    public List<CreditCardTransaction> getCreditCardTransactions() throws IOException, SQLException {
+    	return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_ACCOUNTING, pkey);
+    }
+
+    public List<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws IOException, SQLException {
+    	return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, pkey);
     }
 
     public List<CreditCard> getCreditCards() throws IOException, SQLException {
-	return table.connector.getCreditCards().getCreditCards(this);
+    	return table.connector.getCreditCards().getCreditCards(this);
     }
 
     public Server getDefaultServer() throws IOException, SQLException {
@@ -630,11 +642,15 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public CreditCard getMonthlyCreditCard() throws IOException, SQLException {
-	return table.connector.getCreditCards().getMonthlyCreditCard(this);
+        return table.connector.getCreditCards().getMonthlyCreditCard(this);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
         return table.connector.getMonthlyCharges().getMonthlyCharges(this);
+    }
+
+    public List<MonthlyCharge> getMonthlyChargesBySourceBusiness() throws SQLException, IOException {
+        return table.connector.getMonthlyCharges().getMonthlyChargesBySourceBusiness(this);
     }
 
     /**
@@ -1066,8 +1082,45 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getBrand()
+            ),
+            getChildBusinesses(),
+            getBusinessProfiles(),
+            getBusinessServers(),
+            getCreditCards(),
+            getServers(),
+            getServerFarms(),
+            getCreditCardProcessors(),
+            getCreditCardTransactions(),
+            getCreditCardTransactionsByCreditCardAccounting(),
+            getDisableLogs(),
+            getDNSZones(),
+            getNetBinds(),
+            getIPAddresses(),
+            getUsernames(),
+            getEmailDomains(),
+            getLinuxGroups(),
+            getEncryptionKeys(),
+            getEmailPipes(),
+            getEmailSmtpRelays(),
+            getHttpdServers(),
+            getHttpdSites(),
+            getMonthlyCharges(),
+            getMonthlyChargesBySourceBusiness(),
+            getMysqlDatabases(),
+            getMysqlServers(),
+            getNoticeLogs(),
+            getPackageDefinitions(),
+            getResources(),
+            getTickets(),
+            getTicketActionsByOldBusiness(),
+            getTicketActionsByNewBusiness(),
+            getTransactions(),
+            getTransactionsBySourceAccounting()
         );
     }
 
@@ -1138,7 +1191,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * Gets the Brand for this business or <code>null</code> if not a brand.
      */
     public Brand getBrand() throws IOException, SQLException {
-        return table.connector.getBrands().getBrand(this);
+        return table.connector.getBrands().get(pkey);
     }
 
     public int addPackageDefinition(
@@ -1343,11 +1396,17 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public Server getServer(String name) throws IOException, SQLException {
-        return table.connector.getServers().getServer(this, name);
+        // Use index first
+        for(Server se : getServers()) if(se.getName().equals(name)) return se;
+        return null;
     }
 
     public List<Server> getServers() throws IOException, SQLException {
-        return table.connector.getServers().getServers(this);
+        return table.connector.getServers().getIndexedRows(Server.COLUMN_ACCOUNTING, pkey);
+    }
+
+    public List<ServerFarm> getServerFarms() throws IOException, SQLException {
+        return table.connector.getServerFarms().getIndexedRows(ServerFarm.COLUMN_OWNER, pkey);
     }
 
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
@@ -1360,5 +1419,25 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public List<Resource> getResources() throws IOException, SQLException {
         return table.connector.getResources().getResources(this);
+    }
+
+    public List<DisableLog> getDisableLogs() throws IOException, SQLException {
+        return table.connector.getDisableLogs().getIndexedRows(DisableLog.COLUMN_ACCOUNTING, pkey);
+    }
+
+    public List<PackageDefinition> getPackageDefinitions() throws IOException, SQLException {
+        return table.connector.getPackageDefinitions().getIndexedRows(PackageDefinition.COLUMN_ACCOUNTING, pkey);
+    }
+
+    public List<TicketAction> getTicketActionsByOldBusiness() throws IOException, SQLException {
+        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_ACCOUNTING, pkey);
+    }
+
+    public List<TicketAction> getTicketActionsByNewBusiness() throws IOException, SQLException {
+        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_ACCOUNTING, pkey);
+    }
+
+    public List<Transaction> getTransactionsBySourceAccounting() throws IOException, SQLException {
+        return table.connector.getTransactions().getIndexedRows(Transaction.COLUMN_SOURCE_ACCOUNTING, pkey);
     }
 }

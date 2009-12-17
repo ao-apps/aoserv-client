@@ -19,8 +19,10 @@ import java.util.*;
 final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> implements Disablable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_HTTPD_SITE=1
+        COLUMN_PKEY = 0,
+        COLUMN_HTTPD_SITE = 1,
+        COLUMN_HTTPD_BIND = 2,
+        COLUMN_DISABLE_LOG = 7
     ;
     static final String COLUMN_HTTPD_SITE_name = "httpd_site";
     static final String COLUMN_HTTPD_BIND_name = "httpd_bind";
@@ -70,12 +72,12 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_HTTPD_SITE: return Integer.valueOf(httpd_site);
-            case 2: return Integer.valueOf(httpd_bind);
+            case COLUMN_HTTPD_BIND: return Integer.valueOf(httpd_bind);
             case 3: return access_log;
             case 4: return error_log;
             case 5: return sslCertFile;
             case 6: return sslCertKeyFile;
-            case 7: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 8: return predisable_config;
             case 9: return isManual?Boolean.TRUE:Boolean.FALSE;
             case 10: return redirect_to_primary_hostname?Boolean.TRUE:Boolean.FALSE;
@@ -99,9 +101,9 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public HttpdBind getHttpdBind() throws SQLException, IOException {
-	HttpdBind obj=table.connector.getHttpdBinds().get(httpd_bind);
-	if(obj==null) throw new SQLException("Unable to find HttpdBind: "+httpd_bind+" for HttpdSite="+httpd_site);
-	return obj;
+        HttpdBind obj=table.connector.getHttpdBinds().get(httpd_bind);
+        if(obj==null) throw new SQLException("Unable to find HttpdBind: "+httpd_bind+" for HttpdSite="+httpd_site);
+        return obj;
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
@@ -181,6 +183,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getHttpdSiteURLs()
         );
     }
 

@@ -102,8 +102,15 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getCvsRepositories(),
+            getEmailLists(),
+            getHttpdServers(),
+            getHttpdSites(),
+            getHttpdSharedTomcats(),
+            getMajordomoServers()
         );
     }
 
@@ -167,5 +174,29 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         out.writeCompressedInt(ao_server);
         out.writeCompressedInt(gid);
         out.writeLong(created);
+    }
+    
+    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
+        return table.connector.getCvsRepositories().getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<EmailList> getEmailLists() throws IOException, SQLException {
+        return table.connector.getEmailLists().getIndexedRows(EmailList.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
+        return table.connector.getHttpdServers().getIndexedRows(HttpdServer.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
+        return table.connector.getHttpdSites().getHttpdSites(this);
+    }
+
+    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
+        return table.connector.getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
+        return table.connector.getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
 }

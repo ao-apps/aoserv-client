@@ -19,15 +19,14 @@ import java.util.*;
  * @see  EmailPipe
  * @see  EmailAddress
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddress> implements Removable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_EMAIL_ADDRESS=1
+        COLUMN_PKEY = 0,
+        COLUMN_EMAIL_ADDRESS = 1,
+        COLUMN_EMAIL_PIPE = 2
     ;
     static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
     static final String COLUMN_EMAIL_PIPE_name = "email_pipe";
@@ -37,9 +36,9 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 
     Object getColumnImpl(int i) {
         if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
-	if(i==COLUMN_EMAIL_ADDRESS) return Integer.valueOf(email_address);
-	if(i==2) return Integer.valueOf(email_pipe);
-	throw new IllegalArgumentException("Invalid index: "+i);
+    	if(i==COLUMN_EMAIL_ADDRESS) return Integer.valueOf(email_address);
+    	if(i==COLUMN_EMAIL_PIPE) return Integer.valueOf(email_pipe);
+    	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
     public EmailAddress getEmailAddress() throws SQLException, IOException {
@@ -77,8 +76,12 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getMajordomoListsByListPipeAddress(),
+            getMajordomoListsByListRequestPipeAddress(),
+            getMajordomoServers()
         );
     }
 
@@ -123,7 +126,19 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-	out.writeCompressedInt(email_address);
-	out.writeCompressedInt(email_pipe);
+        out.writeCompressedInt(email_address);
+        out.writeCompressedInt(email_pipe);
+    }
+
+    public List<MajordomoList> getMajordomoListsByListPipeAddress() throws IOException, SQLException {
+        return table.connector.getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_PIPE_ADD, pkey);
+    }
+
+    public List<MajordomoList> getMajordomoListsByListRequestPipeAddress() throws IOException, SQLException {
+        return table.connector.getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_REQUEST_PIPE_ADD, pkey);
+    }
+
+    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
+        return table.connector.getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_MAJORDOMO_PIPE_ADDRESS, pkey);
     }
 }

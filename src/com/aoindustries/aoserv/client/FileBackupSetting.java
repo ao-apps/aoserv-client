@@ -13,8 +13,6 @@ import java.util.*;
 /**
  * A <code>FileBackupSetting</code> overrides the default backup behavior.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSetting> implements Removable {

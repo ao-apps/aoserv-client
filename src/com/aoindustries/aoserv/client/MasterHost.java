@@ -17,13 +17,14 @@ import java.util.List;
  *
  * @see  MasterUser
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 
-    static final int COLUMN_PKEY=0;
+    static final int
+        COLUMN_PKEY = 0,
+        COLUMN_USERNAME = 1
+    ;
     static final String COLUMN_USERNAME_name = "username";
     static final String COLUMN_HOST_name = "host";
 
@@ -31,10 +32,10 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
     private String host;
 
     Object getColumnImpl(int i) {
-	if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
-	if(i==1) return username;
-	if(i==2) return host;
-	throw new IllegalArgumentException("Invalid index: "+i);
+        if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
+        if(i==COLUMN_USERNAME) return username;
+        if(i==2) return host;
+        throw new IllegalArgumentException("Invalid index: "+i);
     }
 
     public String getHost() {

@@ -174,8 +174,16 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getHttpdJBossSite(),
+                getHttpdTomcatStdSite(),
+                getHttpdTomcatSharedSite()
+            ),
+            getHttpdWorkers(),
+            getHttpdTomcatContexts()
         );
     }
 

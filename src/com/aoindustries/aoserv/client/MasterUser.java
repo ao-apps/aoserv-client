@@ -22,8 +22,6 @@ import java.util.List;
  * @see  MasterHost
  * @see  MasterServer
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class MasterUser extends CachedObjectStringKey<MasterUser> {
@@ -41,21 +39,21 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
     ;
 
     public boolean canAccessAccounting() {
-	return can_access_accounting;
+        return can_access_accounting;
     }
 
     public boolean canAccessBankAccount() {
-	return can_access_bank_account;
+        return can_access_bank_account;
     }
 
     public boolean canInvalidateTables() {
-	return can_invalidate_tables;
+        return can_invalidate_tables;
     }
 
     public BusinessAdministrator getBusinessAdministrator() throws SQLException, IOException {
-	BusinessAdministrator obj=table.connector.getBusinessAdministrators().get(pkey);
-	if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+pkey);
-	return obj;
+        BusinessAdministrator obj=table.connector.getBusinessAdministrators().get(pkey);
+        if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+pkey);
+        return obj;
     }
 
     Object getColumnImpl(int i) {
@@ -113,8 +111,12 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getBankTransactions(),
+            getMasterHosts(),
+            getMasterServers()
         );
     }
 
@@ -128,5 +130,17 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // is_ticket_admin
         out.writeBoolean(is_dns_admin);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)<0) out.writeBoolean(false);
+    }
+
+    public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
+        return table.connector.getBankTransactions().getIndexedRows(BankTransaction.COLUMN_ADMINISTRATOR, pkey);
+    }
+
+    public List<MasterHost> getMasterHosts() throws IOException, SQLException {
+        return table.connector.getMasterHosts().getIndexedRows(MasterHost.COLUMN_USERNAME, pkey);
+    }
+
+    public List<MasterServer> getMasterServers() throws IOException, SQLException {
+        return table.connector.getMasterServers().getIndexedRows(MasterServer.COLUMN_USERNAME, pkey);
     }
 }

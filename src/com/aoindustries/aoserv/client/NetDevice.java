@@ -219,6 +219,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getIPAddresses()
         );
     }
 

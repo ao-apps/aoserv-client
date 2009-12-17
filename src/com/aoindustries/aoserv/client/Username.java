@@ -29,8 +29,9 @@ import java.util.Locale;
 final public class Username extends CachedObjectStringKey<Username> implements PasswordProtected, Removable, Disablable {
 	
     static final int
-        COLUMN_USERNAME=0,
-        COLUMN_ACCOUNTING=1
+        COLUMN_USERNAME = 0,
+        COLUMN_ACCOUNTING = 1,
+        COLUMN_DISABLE_LOG = 2
     ;
     static final String COLUMN_USERNAME_name = "username";
 
@@ -197,7 +198,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         switch(i) {
             case COLUMN_USERNAME: return pkey;
             case COLUMN_ACCOUNTING: return accounting;
-            case 2: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -345,6 +346,10 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getBusinessAdministrator(),
+            getLinuxAccount(),
+            getMySQLUser(),
+            getPostgresUser()
         );
     }
 

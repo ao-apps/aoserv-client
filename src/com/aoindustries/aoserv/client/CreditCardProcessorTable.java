@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @see  CreditCardProcessor
@@ -17,7 +16,7 @@ import java.util.List;
 final public class CreditCardProcessorTable extends CachedTableStringKey<CreditCardProcessor> {
 
     CreditCardProcessorTable(AOServConnector connector) {
-	super(connector, CreditCardProcessor.class);
+        super(connector, CreditCardProcessor.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -31,10 +30,6 @@ final public class CreditCardProcessorTable extends CachedTableStringKey<CreditC
 
     public CreditCardProcessor get(String providerId) throws IOException, SQLException {
         return getUniqueRow(CreditCardProcessor.COLUMN_PROVIDER_ID, providerId);
-    }
-
-    List<CreditCardProcessor> getCreditCardProcessors(Business business) throws IOException, SQLException {
-        return getIndexedRows(CreditCardProcessor.COLUMN_ACCOUNTING, business.pkey);
     }
 
     public SchemaTable.TableID getTableID() {

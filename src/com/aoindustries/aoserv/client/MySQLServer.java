@@ -157,9 +157,9 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-	AOServer ao=table.connector.getAoServers().get(ao_server);
-	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-	return ao;
+        AOServer ao=table.connector.getAoServers().get(ao_server);
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+        return ao;
     }
 
     public int getMaxConnections() {
@@ -247,8 +247,12 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getFailoverMySQLReplications(),
+            getMySQLDatabases(),
+            getMySQLServerUsers()
         );
     }
 

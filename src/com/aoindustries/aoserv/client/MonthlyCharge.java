@@ -29,7 +29,10 @@ import java.util.Locale;
  */
 final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
-    static final int COLUMN_PKEY=0;
+    static final int
+        COLUMN_PKEY = 0,
+        COLUMN_CREATED_BY = 8
+    ;
     static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_SOURCE_ACCOUNTING_name = "source_accounting";
     static final String COLUMN_TYPE_name = "type";
@@ -42,7 +45,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     private int quantity;
     private int rate;
     private long created;
-    private String created_by;
+    String created_by;
     private boolean active;
 
     public MonthlyCharge() {
@@ -81,14 +84,14 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
             case 5: return Integer.valueOf(quantity);
             case 6: return Integer.valueOf(rate);
             case 7: return new java.sql.Date(created);
-            case 8: return created_by;
+            case COLUMN_CREATED_BY: return created_by;
             case 9: return active?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
     public long getCreated() {
-	return created;
+        return created;
     }
 
     public BusinessAdministrator getCreatedBy() throws SQLException, IOException {

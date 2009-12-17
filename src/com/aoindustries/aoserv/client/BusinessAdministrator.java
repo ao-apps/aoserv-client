@@ -163,7 +163,15 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public List<TicketAction> getTicketActions() throws IOException, SQLException {
-        return table.connector.getTicketActions().getActions(this);
+        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_ADMINISTRATOR, pkey);
+    }
+
+    public List<TicketAction> getTicketActionsByOldAssignedTo() throws IOException, SQLException {
+        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_ASSIGNED_TO, pkey);
+    }
+
+    public List<TicketAction> getTicketActionsByNewAssignedTo() throws IOException, SQLException {
+        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_ASSIGNED_TO, pkey);
     }
 
     public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
@@ -230,7 +238,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public List<Ticket> getCreatedTickets() throws IOException, SQLException {
-        return table.connector.getTickets().getCreatedTickets(this);
+        return table.connector.getTickets().getIndexedRows(Ticket.COLUMN_CREATED_BY, pkey);
     }
 
     public boolean isDisabled() {
@@ -257,15 +265,15 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public MasterUser getMasterUser() throws IOException, SQLException {
-	return table.connector.getMasterUsers().get(pkey);
+    	return table.connector.getMasterUsers().get(pkey);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
-	return table.connector.getMonthlyCharges().getMonthlyCharges(this, null);
+    	return table.connector.getMonthlyCharges().getMonthlyCharges(this);
     }
 
     public String getName() {
-	return name;
+    	return name;
     }
 
     /**
@@ -440,8 +448,29 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getMasterUser()
+            ),
+            getBusinessesByCreatedBy(),
+            getPermissions(),
+            getCreditCardsByCreatedBy(),
+            getCreditCardTransactionsByAuthorizationUsername(),
+            getCreditCardTransactionsByCaptureUsername(),
+            getCreditCardTransactionsByVoidUsername(),
+            getDisableLogsByDisabledBy(),
+            getMonthlyCharges(),
+            getMonthlyChargesByCreatedBy(),
+            getResources(),
+            getCreatedTickets(),
+            getCompletedSignupRequests(),
+            getTicketActions(),
+            getTicketActionsByOldAssignedTo(),
+            getTicketActionsByNewAssignedTo(),
+            getTicketAssignments(),
+            getTransactions()
         );
     }
 
@@ -651,6 +680,42 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     }
 
     public List<Resource> getResources() throws IOException, SQLException {
-        return table.connector.getResources().getResources(this);
+        return table.connector.getResources().getIndexedRows(Resource.COLUMN_CREATED_BY, pkey);
+    }
+
+    public List<Business> getBusinessesByCreatedBy() throws IOException, SQLException {
+        return table.connector.getBusinesses().getIndexedRows(Business.COLUMN_CREATED_BY, pkey);
+    }
+
+    public List<CreditCard> getCreditCardsByCreatedBy() throws IOException, SQLException {
+        return table.connector.getCreditCards().getIndexedRows(CreditCard.COLUMN_CREATED_BY, pkey);
+    }
+
+    public List<CreditCardTransaction> getCreditCardTransactionsByCreditCardCreatedBy() throws IOException, SQLException {
+        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_CREATED_BY, pkey);
+    }
+
+    public List<CreditCardTransaction> getCreditCardTransactionsByAuthorizationUsername() throws IOException, SQLException {
+        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_AUTHORIZATION_USERNAME, pkey);
+    }
+
+    public List<CreditCardTransaction> getCreditCardTransactionsByCaptureUsername() throws IOException, SQLException {
+        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CAPTURE_USERNAME, pkey);
+    }
+
+    public List<CreditCardTransaction> getCreditCardTransactionsByVoidUsername() throws IOException, SQLException {
+        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_VOID_USERNAME, pkey);
+    }
+
+    public List<DisableLog> getDisableLogsByDisabledBy() throws IOException, SQLException {
+        return table.connector.getDisableLogs().getIndexedRows(DisableLog.COLUMN_DISABLED_BY, pkey);
+    }
+
+    public List<MonthlyCharge> getMonthlyChargesByCreatedBy() throws IOException, SQLException {
+        return table.connector.getMonthlyCharges().getMonthlyChargesByCreatedBy(this);
+    }
+
+    public List<SignupRequest> getCompletedSignupRequests() throws IOException, SQLException {
+        return table.connector.getSignupRequests().getIndexedRows(SignupRequest.COLUMN_COMPLETED_BY, pkey);
     }
 }

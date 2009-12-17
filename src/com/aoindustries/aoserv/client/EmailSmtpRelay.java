@@ -25,8 +25,9 @@ import java.util.Locale;
 public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay> implements Removable, Disablable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=1
+        COLUMN_PKEY = 0,
+        COLUMN_ACCOUNTING = 1,
+        COLUMN_DISABLE_LOG = 9
     ;
     static final String COLUMN_AO_SERVER_name = "ao_server";
     static final String COLUMN_HOST_name = "host";
@@ -82,7 +83,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
             case 6: return new java.sql.Date(last_refreshed);
             case 7: return Integer.valueOf(refresh_count);
             case 8: return expiration==NO_EXPIRATION?null:new java.sql.Date(expiration);
-            case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -193,6 +194,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getSpamEmailMessages()
         );
     }
 

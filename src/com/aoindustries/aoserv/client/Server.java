@@ -21,8 +21,9 @@ import java.util.Locale;
 final public class Server extends CachedObjectIntegerKey<Server> implements Comparable<Server> {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=4
+        COLUMN_PKEY = 0,
+        COLUMN_FARM = 1,
+        COLUMN_ACCOUNTING = 4
     ;
     static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_NAME_name = "name";
@@ -103,7 +104,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return farm;
+            case COLUMN_FARM: return farm;
             case 2: return description;
             case 3: return operating_system_version==-1 ? null : Integer.valueOf(operating_system_version);
             case COLUMN_ACCOUNTING: return accounting;
@@ -189,9 +190,19 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
-            getAOServer()
+            createDependencyList(
+                getAOServer(),
+                getPhysicalServer(),
+                getVirtualServer()
+            ),
+            getBusinessServers(),
+            getNetBinds(),
+            getNetDevices(),
+            getFailoverFileReplications(),
+            getMasterServers()
         );
     }
 
@@ -306,5 +317,13 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         diff = name.compareToIgnoreCase(o.name);
         if(diff!=0) return diff;
         return name.compareTo(o.name);
+    }
+
+    public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
+        return table.connector.getBusinessServers().getIndexedRows(BusinessServer.COLUMN_SERVER, pkey);
+    }
+
+    public List<MasterServer> getMasterServers() throws IOException, SQLException {
+        return table.connector.getMasterServers().getIndexedRows(MasterServer.COLUMN_SERVER, pkey);
     }
 }

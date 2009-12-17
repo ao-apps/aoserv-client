@@ -237,6 +237,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getVirtualDisks()
         );
     }
 

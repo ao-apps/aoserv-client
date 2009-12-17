@@ -19,14 +19,15 @@ import java.util.Locale;
 /**
  * Causes a server to replicate itself to another machine on a regular basis.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class FailoverFileReplication extends CachedObjectIntegerKey<FailoverFileReplication> implements BitRateProvider {
 
-    static final int COLUMN_PKEY=0;
-    static final int COLUMN_SERVER=1;
+    static final int
+        COLUMN_PKEY = 0,
+        COLUMN_SERVER = 1,
+        COLUMN_BACKUP_PARTITION = 2
+    ;
     static final String COLUMN_SERVER_name = "server";
     static final String COLUMN_BACKUP_PARTITION_name = "backup_partition";
 
@@ -61,7 +62,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_SERVER: return server;
-            case 2: return backup_partition;
+            case COLUMN_BACKUP_PARTITION: return backup_partition;
             case 3: return max_bit_rate==-1?null:Integer.valueOf(max_bit_rate);
             case 4: return use_compression;
             case 5: return retention;
@@ -194,8 +195,12 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getFailoverFileSchedules(),
+            getFailoverMySQLReplications(),
+            getFileBackupSettings()
         );
     }
 

@@ -15,8 +15,6 @@ import java.util.List;
 /**
  * Stores an option for a sign-up request, each option has a unique name per sign-up request.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequestOption> {

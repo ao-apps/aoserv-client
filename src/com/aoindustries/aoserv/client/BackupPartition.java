@@ -133,6 +133,11 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getFailoverFileReplications()
         );
+    }
+
+    public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
+        return table.connector.getFailoverFileReplications().getIndexedRows(FailoverFileReplication.COLUMN_BACKUP_PARTITION, pkey);
     }
 }

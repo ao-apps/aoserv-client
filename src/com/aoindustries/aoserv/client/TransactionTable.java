@@ -9,26 +9,22 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
 /**
  * @see  Transaction
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionTable extends AOServTable<Integer,Transaction> {
-
-    private long accountBalancesClearCounter = 0;
-    final private Map<String,Integer> accountBalances=new HashMap<String,Integer>();
-    private long confirmedAccountBalancesClearCounter = 0;
-    final private Map<String,Integer> confirmedAccountBalances=new HashMap<String,Integer>();
+final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
     TransactionTable(AOServConnector connector) {
         super(connector, Transaction.class);
@@ -97,111 +93,122 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         );
     }
 
-    @Override
-    public void clearCache() {
-        super.clearCache();
-        synchronized(accountBalances) {
-            accountBalancesClearCounter++;
-            accountBalances.clear();
+    BigDecimal getAccountBalance(String accounting) throws IOException, SQLException {
+        BigDecimal total = BigDecimal.valueOf(0, 2);
+        for(Transaction tr : getTransactions(accounting)) {
+            if(tr.getPaymentConfirmation()!=Transaction.NOT_CONFIRMED) total = total.add(tr.getAmount());
         }
-        synchronized(confirmedAccountBalances) {
-            confirmedAccountBalancesClearCounter++;
-            confirmedAccountBalances.clear();
-        }
+        return total;
     }
 
-    int getAccountBalance(String accounting) throws IOException, SQLException {
-        long clearCounter;
-        synchronized(accountBalances) {
-            Integer balance=accountBalances.get(accounting);
-            if(balance!=null) return balance.intValue();
-            clearCounter = accountBalancesClearCounter;
+    BigDecimal getAccountBalance(String accounting, long before) throws IOException, SQLException {
+        BigDecimal total = BigDecimal.valueOf(0, 2);
+        for(Transaction tr : getTransactions(accounting)) {
+            if(tr.getPaymentConfirmation()!=Transaction.NOT_CONFIRMED && tr.getTime()<before) total = total.add(tr.getAmount());
         }
-        int balance=connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting);
-        synchronized(accountBalances) {
-            // Only put in cache when not cleared while performing query
-            if(clearCounter==accountBalancesClearCounter) accountBalances.put(accounting, Integer.valueOf(balance));
-        }
-        return balance;
+        return total;
     }
 
-    int getAccountBalance(String accounting, long before) throws IOException, SQLException {
-        return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting, before);
+    BigDecimal getConfirmedAccountBalance(String accounting) throws IOException, SQLException {
+        BigDecimal total = BigDecimal.valueOf(0, 2);
+        for(Transaction tr : getTransactions(accounting)) {
+            if(tr.getPaymentConfirmation()==Transaction.CONFIRMED) total = total.add(tr.getAmount());
+        }
+        return total;
     }
 
-    int getConfirmedAccountBalance(String accounting) throws IOException, SQLException {
-        long clearCounter;
-        synchronized(confirmedAccountBalances) {
-            Integer balance=confirmedAccountBalances.get(accounting);
-            if(balance!=null) return balance.intValue();
-            clearCounter = confirmedAccountBalancesClearCounter;
+    BigDecimal getConfirmedAccountBalance(String accounting, long before) throws IOException, SQLException {
+        BigDecimal total = BigDecimal.valueOf(0, 2);
+        for(Transaction tr : getTransactions(accounting)) {
+            if(tr.getPaymentConfirmation()==Transaction.CONFIRMED && tr.getTime()<before) total = total.add(tr.getAmount());
         }
-        int balance=connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting);
-        synchronized(confirmedAccountBalances) {
-            // Only put in cache when not cleared while performing query
-            if(clearCounter==confirmedAccountBalancesClearCounter) confirmedAccountBalances.put(accounting, Integer.valueOf(balance));
-        }
-        return balance;
-    }
-
-    int getConfirmedAccountBalance(String accounting, long before) throws IOException, SQLException {
-        return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting, before);
+        return total;
     }
 
     public List<Transaction> getPendingPayments() throws IOException, SQLException {
-        return getObjects(true, AOServProtocol.CommandID.GET_PENDING_PAYMENTS);
-    }
-
-    public List<Transaction> getRows() throws IOException, SQLException {
-        List<Transaction> list=new ArrayList<Transaction>();
-        getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TRANSACTIONS);
-        return list;
+        List<Transaction> payments = getIndexedRows(Transaction.COLUMN_TYPE, TransactionType.PAYMENT);
+        List<Transaction> pending = new ArrayList<Transaction>(payments.size());
+        for(Transaction payment : payments) if(payment.getPaymentConfirmation()==Transaction.WAITING_CONFIRMATION) pending.add(payment);
+        return Collections.unmodifiableList(pending);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TRANSACTIONS;
-    }
-
-    public Transaction get(Object transid) throws IOException, SQLException {
-        return get(((Integer)transid).intValue());
+    	return SchemaTable.TableID.TRANSACTIONS;
     }
 
     public Transaction get(int transid) throws IOException, SQLException {
-        return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TRANSACTIONS, transid);
+        return getUniqueRow(Transaction.COLUMN_TRANSID, transid);
     }
 
-    List<Transaction> getTransactions(TransactionSearchCriteria search) throws IOException, SQLException {
-        return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
+    List<Transaction> getTransactions(TransactionSearchCriteria criteria) throws IOException, SQLException {
+        List<Transaction> matches = new ArrayList<Transaction>();
+        // Uses the indexes when possible
+        List<Transaction> trs =
+            criteria.getBusiness()!=null ? getIndexedRows(Transaction.COLUMN_ACCOUNTING, criteria.getBusiness())
+            : criteria.getSourceBusiness()!=null ? getIndexedRows(Transaction.COLUMN_SOURCE_ACCOUNTING, criteria.getSourceBusiness())
+            : criteria.getType()!=null ? getIndexedRows(Transaction.COLUMN_TYPE, criteria.getType())
+            : criteria.getBusinessAdministrator()!=null ? getIndexedRows(Transaction.COLUMN_USERNAME, criteria.getBusinessAdministrator())
+            : criteria.getPaymentType()!=null ? getIndexedRows(Transaction.COLUMN_PAYMENT_TYPE, criteria.getPaymentType())
+            : getRows()
+        ;
+        for(Transaction tr : trs) {
+            if(
+                (criteria.getAfter()==TransactionSearchCriteria.ANY || tr.getTime()>=criteria.getAfter())
+                && (criteria.getBefore()==TransactionSearchCriteria.ANY || tr.getTime()<criteria.getBefore())
+                && (criteria.getTransID()==TransactionSearchCriteria.ANY || tr.pkey==criteria.getTransID())
+                && (criteria.getBusiness()==null || tr.accounting.equals(criteria.getBusiness()))
+                && (criteria.getSourceBusiness()==null || tr.source_accounting.equals(criteria.getSourceBusiness()))
+                && (criteria.getType()==null || tr.type.equals(criteria.getType()))
+                && (criteria.getBusinessAdministrator()==null || tr.username.equals(criteria.getBusinessAdministrator()))
+                && (criteria.getPaymentType()==null || tr.payment_type.equals(criteria.getPaymentType()))
+                && (criteria.getPaymentConfirmed()==TransactionSearchCriteria.ANY || tr.payment_confirmed==criteria.getPaymentConfirmed())
+            ) {
+                boolean wordsMatch = true;
+
+                // payment_info words
+                if(criteria.getPaymentInfo()!=null && criteria.getPaymentInfo().length()>0) {
+                    String paymentInfo = tr.getPaymentInfo();
+                    if(paymentInfo==null) wordsMatch = false;
+                    else {
+                        String lowerPaymentInfo = paymentInfo.toLowerCase(Locale.ENGLISH);
+                        for(String word : StringUtility.splitString(criteria.getPaymentInfo())) {
+                            if(!lowerPaymentInfo.contains(word.toLowerCase(Locale.ENGLISH))) {
+                                wordsMatch = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if(wordsMatch) {
+                    // description words
+                    if(criteria.getDescription()!=null && criteria.getDescription().length()>0) {
+                        String lowerDescription = tr.getDescription().toLowerCase(Locale.ENGLISH);
+                        for(String word : StringUtility.splitString(criteria.getDescription())) {
+                            if(!lowerDescription.contains(word.toLowerCase(Locale.ENGLISH))) {
+                                wordsMatch = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(wordsMatch) matches.add(tr);
+                }
+            }
+        }
+        return Collections.unmodifiableList(matches);
     }
 
     List<Transaction> getTransactions(String accounting) throws IOException, SQLException {
-        return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting);
+        return getIndexedRows(Transaction.COLUMN_ACCOUNTING, accounting);
     }
 
     List<Transaction> getTransactions(BusinessAdministrator ba) throws IOException, SQLException {
-        return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.pkey);
-    }
-
-    @Override
-    final public List<Transaction> getIndexedRows(int col, Object value) throws IOException, SQLException {
-        if(col==Transaction.COLUMN_TRANSID) {
-            Transaction tr=get(value);
-            if(tr==null) return Collections.emptyList();
-            else return Collections.singletonList(tr);
-        }
-        if(col==Transaction.COLUMN_ACCOUNTING) return getTransactions((String)value);
-        throw new UnsupportedOperationException("Not an indexed column: "+col);
-    }
-
-    protected Transaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-        if(col!=Transaction.COLUMN_TRANSID) throw new IllegalArgumentException("Not a unique column: "+col);
-        return get(value);
+        return getIndexedRows(Transaction.COLUMN_USERNAME, ba.pkey);
     }
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-	String command=args[0];
-	if(command.equalsIgnoreCase(AOSHCommand.ADD_TRANSACTION)) {
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_TRANSACTION)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_TRANSACTION, args, 11, err)) {
                 byte pc;
                 if(args[11].equals("Y")) pc=Transaction.CONFIRMED;
@@ -225,7 +232,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
                 out.flush();
             }
             return true;
-	}
-	return false;
+        }
+        return false;
     }
 }

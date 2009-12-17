@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
@@ -18,8 +17,6 @@ import java.util.Locale;
  * of one Tomcat instance per Java virtual machine.
  *
  * @see  HttpdTomcatSite
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -43,9 +40,9 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-	HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(pkey);
-	if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
-	return obj;
+        HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(pkey);
+        if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
+        return obj;
     }
 
     public String getTomcat4ShutdownKey() {

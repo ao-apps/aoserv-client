@@ -18,15 +18,17 @@ import java.util.List;
 /**
  * Stores a single sign-up request.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_BRAND=1
+        COLUMN_PKEY = 0,
+        COLUMN_BRAND = 1,
+        COLUMN_PACKAGE_DEFINITION = 4,
+        COLUMN_ENCRYPTION_FROM = 33,
+        COLUMN_ENCRYPTION_RECIPIENT = 34,
+        COLUMN_COMPLETED_BY = 35
     ;
     static final String COLUMN_BRAND_name = "brand";
     static final String COLUMN_TIME_name = "time";
@@ -86,7 +88,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
             case COLUMN_BRAND: return brand;
             case 2: return new Date(time);
             case 3: return ip_address;
-            case 4: return package_definition;
+            case COLUMN_PACKAGE_DEFINITION: return package_definition;
             case 5: return business_name;
             case 6: return business_phone;
             case 7: return business_fax;
@@ -115,9 +117,9 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
             case 30: return billing_use_monthly;
             case 31: return billing_pay_one_year;
             case 32: return encrypted_data;
-            case 33: return encryption_from;
-            case 34: return encryption_recipient;
-            case 35: return completed_by;
+            case COLUMN_ENCRYPTION_FROM: return encryption_from;
+            case COLUMN_ENCRYPTION_RECIPIENT: return encryption_recipient;
+            case COLUMN_COMPLETED_BY: return completed_by;
             case 36: return new Date(completed_time);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -221,6 +223,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getSignupRequestOptions()
         );
     }
 
@@ -497,5 +500,9 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
             }
             decryptPassphrase=passphrase;
         }
+    }
+
+    public List<SignupRequestOption> getSignupRequestOptions() throws IOException, SQLException {
+        return table.connector.getSignupRequestOptions().getIndexedRows(SignupRequestOption.COLUMN_REQUEST, pkey);
     }
 }

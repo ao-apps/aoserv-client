@@ -18,8 +18,6 @@ import java.util.Locale;
  *
  * @see  HttpdSite
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSite> {
@@ -28,14 +26,14 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
     static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
     Object getColumnImpl(int i) {
-	if(i==COLUMN_HTTPD_SITE) return Integer.valueOf(pkey);
-	throw new IllegalArgumentException("Invalid index: "+i);
+        if(i==COLUMN_HTTPD_SITE) return Integer.valueOf(pkey);
+        throw new IllegalArgumentException("Invalid index: "+i);
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
-	HttpdSite obj=table.connector.getHttpdSites().get(pkey);
-	if(obj==null) throw new SQLException("Unable to find HttpdSite: "+pkey);
-	return obj;
+        HttpdSite obj=table.connector.getHttpdSites().get(pkey);
+        if(obj==null) throw new SQLException("Unable to find HttpdSite: "+pkey);
+        return obj;
     }
 
     public SchemaTable.TableID getTableID() {

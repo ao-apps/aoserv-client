@@ -20,8 +20,6 @@ import java.util.Locale;
  *
  * @see  HttpdSite
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
 import java.io.*;
 import java.sql.*;
 import java.util.List;
@@ -14,8 +13,6 @@ import java.util.Locale;
 
 /**
  * For AO Industries use only.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */

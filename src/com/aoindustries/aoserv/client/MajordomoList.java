@@ -17,15 +17,19 @@ import java.util.Locale;
  *
  * @see  MajordomoServer
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 
     static final int
-        COLUMN_EMAIL_LIST=0,
-        COLUMN_MAJORDOMO_SERVER=1
+        COLUMN_EMAIL_LIST = 0,
+        COLUMN_MAJORDOMO_SERVER = 1,
+        COLUMN_LISTNAME_PIPE_ADD = 3,
+        COLUMN_LISTNAME_LIST_ADD = 4,
+        COLUMN_OWNER_LISTNAME_ADD = 5,
+        COLUMN_LISTNAME_OWNER_ADD = 6,
+        COLUMN_LISTNAME_APPROVAL_ADD = 7,
+        COLUMN_LISTNAME_REQUEST_PIPE_ADD = 8
     ;
     static final String COLUMN_NAME_name = "name";
     static final String COLUMN_MAJORDOMO_SERVER_name = "majordomo_server";
@@ -49,12 +53,12 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
             case COLUMN_EMAIL_LIST: return Integer.valueOf(pkey);
             case COLUMN_MAJORDOMO_SERVER: return Integer.valueOf(majordomo_server);
             case 2: return name;
-            case 3: return Integer.valueOf(listname_pipe_add);
-            case 4: return Integer.valueOf(listname_list_add);
-            case 5: return Integer.valueOf(owner_listname_add);
-            case 6: return Integer.valueOf(listname_owner_add);
-            case 7: return Integer.valueOf(listname_approval_add);
-            case 8: return Integer.valueOf(listname_request_pipe_add);
+            case COLUMN_LISTNAME_PIPE_ADD: return Integer.valueOf(listname_pipe_add);
+            case COLUMN_LISTNAME_LIST_ADD: return Integer.valueOf(listname_list_add);
+            case COLUMN_OWNER_LISTNAME_ADD: return Integer.valueOf(owner_listname_add);
+            case COLUMN_LISTNAME_OWNER_ADD: return Integer.valueOf(listname_owner_add);
+            case COLUMN_LISTNAME_APPROVAL_ADD: return Integer.valueOf(listname_approval_add);
+            case COLUMN_LISTNAME_REQUEST_PIPE_ADD: return Integer.valueOf(listname_request_pipe_add);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }

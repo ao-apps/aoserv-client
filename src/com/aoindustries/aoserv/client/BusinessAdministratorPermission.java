@@ -15,8 +15,6 @@ import java.util.List;
 /**
  * Associates a permission with a business administrator.
  *
- * @version  1.0
- *
  * @author  AO Industries, Inc.
  */
 final public class BusinessAdministratorPermission extends CachedObjectIntegerKey<BusinessAdministratorPermission> {

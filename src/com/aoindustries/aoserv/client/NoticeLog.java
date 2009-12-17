@@ -19,15 +19,14 @@ import java.util.Locale;
  *
  * @see  NoticeType
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=2
+        COLUMN_PKEY = 0,
+        COLUMN_ACCOUNTING = 2,
+        COLUMN_TRANSID = 7
     ;
     static final String COLUMN_PKEY_name = "pkey";
     static final String COLUMN_CREATE_TIME_name = "create_time";
@@ -71,7 +70,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
             case 4: return billing_email;
             case 5: return Integer.valueOf(balance);
             case 6: return notice_type;
-            case 7: return transid==NO_TRANSACTION?null:Integer.valueOf(transid);
+            case COLUMN_TRANSID: return transid==NO_TRANSACTION?null:Integer.valueOf(transid);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }

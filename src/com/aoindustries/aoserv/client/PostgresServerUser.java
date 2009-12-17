@@ -25,9 +25,10 @@ import java.util.*;
 final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresServerUser> implements Removable, PasswordProtected, Disablable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_USERNAME=1,
-        COLUMN_POSTGRES_SERVER=2
+        COLUMN_PKEY = 0,
+        COLUMN_USERNAME = 1,
+        COLUMN_POSTGRES_SERVER = 2,
+        COLUMN_DISABLE_LOG = 3
     ;
     static final String COLUMN_USERNAME_name = "username";
     static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
@@ -72,7 +73,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case COLUMN_USERNAME: return username;
             case COLUMN_POSTGRES_SERVER: return Integer.valueOf(postgres_server);
-            case 3: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 4: return predisable_password;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -90,13 +91,13 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
     }
 
     public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
-        return table.connector.getPostgresDatabases().getPostgresDatabases(this);
+        return table.connector.getPostgresDatabases().getIndexedRows(PostgresDatabase.COLUMN_DATDBA, pkey);
     }
 
     public PostgresUser getPostgresUser() throws SQLException, IOException {
-	PostgresUser obj=table.connector.getPostgresUsers().get(username);
-	if(obj==null) throw new SQLException("Unable to find PostgresUser: "+username);
-	return obj;
+        PostgresUser obj=table.connector.getPostgresUsers().get(username);
+        if(obj==null) throw new SQLException("Unable to find PostgresUser: "+username);
+        return obj;
     }
 
     public String getPredisablePassword() {
@@ -139,6 +140,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getPostgresDatabases()
         );
     }
 

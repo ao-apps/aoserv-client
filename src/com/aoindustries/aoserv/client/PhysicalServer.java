@@ -24,7 +24,10 @@ import java.util.Locale;
  */
 final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer> {
 
-    static final int COLUMN_SERVER = 0;
+    static final int
+        COLUMN_SERVER = 0,
+        COLUMN_RACK = 1
+    ;
     
     static final String COLUMN_SERVER_name = "server";
 
@@ -40,7 +43,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_SERVER: return Integer.valueOf(pkey);
-            case 1: return rack==-1 ? null : Integer.valueOf(rack);
+            case COLUMN_RACK: return rack==-1 ? null : Integer.valueOf(rack);
             case 2: return rackUnits==-1 ? null : Short.valueOf(rackUnits);
             case 3: return ram==-1 ? null : Integer.valueOf(ram);
             case 4: return processorType;

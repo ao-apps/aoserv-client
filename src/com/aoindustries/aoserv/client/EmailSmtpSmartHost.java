@@ -109,6 +109,7 @@ public final class EmailSmtpSmartHost extends CachedObjectIntegerKey<EmailSmtpSm
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getEmailSmtpSmartHostDomains()
         );
     }
 
@@ -118,5 +119,9 @@ public final class EmailSmtpSmartHost extends CachedObjectIntegerKey<EmailSmtpSm
         out.writeFloat(total_out_rate);
         out.writeCompressedInt(default_domain_out_burst);
         out.writeFloat(default_domain_out_rate);
+    }
+
+    public List<EmailSmtpSmartHostDomain> getEmailSmtpSmartHostDomains() throws IOException, SQLException {
+        return table.connector.getEmailSmtpSmartHostDomains().getIndexedRows(EmailSmtpSmartHostDomain.COLUMN_SMART_HOST, pkey);
     }
 }

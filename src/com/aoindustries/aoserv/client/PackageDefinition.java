@@ -25,7 +25,10 @@ import java.util.Locale;
  */
 public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefinition> implements Removable {
 
-    static final int COLUMN_PKEY=0;
+    static final int
+        COLUMN_PKEY = 0,
+        COLUMN_ACCOUNTING = 1
+    ;
     static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_CATEGORY_name = "category";
     static final String COLUMN_MONTHLY_RATE_name = "monthly_rate";
@@ -48,7 +51,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return accounting;
+            case COLUMN_ACCOUNTING: return accounting;
             case 2: return category;
             case 3: return name;
             case 4: return version;
@@ -232,8 +235,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getLimits(),
+            getSignupRequests()
         );
     }
 
@@ -322,5 +328,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
                 }
             }
         );
+    }
+
+    public List<SignupRequest> getSignupRequests() throws IOException, SQLException {
+        return table.connector.getSignupRequests().getIndexedRows(SignupRequest.COLUMN_PACKAGE_DEFINITION, pkey);
     }
 }

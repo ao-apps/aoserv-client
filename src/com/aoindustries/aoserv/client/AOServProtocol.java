@@ -247,7 +247,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         UNUSED_GET_BACKUP_DATAS_PKEYS, // No longer used
         GET_BACKUP_PARTITION_DISK_TOTAL_SIZE,
         GET_BACKUP_PARTITION_DISK_USED_SIZE,
-        GET_BANK_TRANSACTIONS_ACCOUNT,
+        @Deprecated
+        UNUSED_GET_BANK_TRANSACTIONS_ACCOUNT, // No longer used
         GET_CACHED_ROW_COUNT,
         GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE,
         GET_CONFIRMED_ACCOUNT_BALANCE,
@@ -278,7 +279,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         @Deprecated
         UNUSED_GET_TICKETS_BUSINESS, // No longer used
         GET_TRANSACTIONS_BUSINESS,
-        GET_TRANSACTIONS_SEARCH,
+        @Deprecated
+        UNUSED_GET_TRANSACTIONS_SEARCH, // No longer used
         @Deprecated
         UNUSED_HOLD_TICKET, // No longer used
         @Deprecated
@@ -484,6 +486,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         AO_SERVER_CHECK_PORT,
         AO_SERVER_CHECK_SMTP_BLACKLIST,
         SET_IP_ADDRESS_BUSINESS,
+        GET_TRANSACTION_DESCRIPTION
     }
 
     /**

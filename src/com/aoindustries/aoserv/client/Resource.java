@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * A <code>Resource</code> represents one accountable item.  For the purposes
@@ -46,10 +45,9 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
 
     /**
      * Gets the owner of the business that is responsible for any charges caused by this resource.
-     * All resources will have an owner except the root Business, which will return null.
+     * All resources will have an owner.
      */
     public Business getOwner() throws IOException, SQLException {
-        if(owner==null) return null;
         Business obj=table.connector.getBusinesses().get(owner);
         if(obj==null) throw new SQLException("Unable to find Business: "+owner);
         return obj;
@@ -124,7 +122,7 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey = in.readCompressedInt();
-        owner = StringUtility.intern(in.readNullUTF());
+        owner = in.readUTF().intern();
         resource_type = in.readUTF().intern();
         created = in.readLong();
         created_by = in.readUTF().intern();
@@ -135,7 +133,7 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) throw new IOException("Due to table rename, ResourceType object should be used instead for protocol<=1.61");
         out.writeCompressedInt(pkey);
-        out.writeNullUTF(owner);
+        out.writeUTF(owner);
         out.writeUTF(resource_type);
         out.writeLong(created);
         out.writeUTF(created_by);

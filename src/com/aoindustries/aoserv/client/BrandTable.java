@@ -39,13 +39,6 @@ final public class BrandTable extends CachedTableStringKey<Brand> {
         return getUniqueRow(Brand.COLUMN_ACCOUNTING, accounting);
     }
 
-    /**
-     * Gets a <code>Brand</code> given its business.
-     */
-    Brand getBrand(Business business) throws IOException, SQLException {
-        return getUniqueRow(Brand.COLUMN_ACCOUNTING, business.pkey);
-    }
-
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.BRANDS;
     }

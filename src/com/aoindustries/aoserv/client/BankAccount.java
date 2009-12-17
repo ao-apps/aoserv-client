@@ -21,6 +21,7 @@ import java.util.Locale;
 final public class BankAccount extends CachedObjectStringKey<BankAccount> {
 
     static final int COLUMN_NAME=0;
+    static final int COLUMN_BANK=2;
     static final String COLUMN_NAME_name = "name";
 
     private String display, bank;
@@ -34,20 +35,20 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
     }
 
     public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
-    	return table.connector.getBankTransactions().getBankTransactions(this);
+    	return table.connector.getBankTransactions().getIndexedRows(BankTransaction.COLUMN_BANK_ACCOUNT, pkey);
     }
 
     Object getColumnImpl(int i) {
-	if(i==COLUMN_NAME) return pkey;
-	if(i==1) return display;
-	if(i==2) return bank;
-	if(i==3) return Integer.valueOf(depositDelay);
-	if(i==4) return Integer.valueOf(withdrawalDelay);
-	throw new IllegalArgumentException("Invalid index: "+i);
+        if(i==COLUMN_NAME) return pkey;
+        if(i==1) return display;
+        if(i==COLUMN_BANK) return bank;
+        if(i==3) return Integer.valueOf(depositDelay);
+        if(i==4) return Integer.valueOf(withdrawalDelay);
+        throw new IllegalArgumentException("Invalid index: "+i);
     }
 
     public int getDepositDelay() {
-	return depositDelay;
+    	return depositDelay;
     }
 
     public String getDisplay() {
@@ -103,6 +104,7 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getBankTransactions()
         );
     }
 }

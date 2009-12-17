@@ -163,8 +163,11 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getLinuxServerGroups(),
+            getLinuxGroupAccounts()
         );
     }
 
@@ -197,5 +200,9 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
         out.writeUTF(pkey);
         out.writeUTF(accounting);
         out.writeUTF(type);
+    }
+
+    public List<LinuxGroupAccount> getLinuxGroupAccounts() throws IOException, SQLException {
+        return table.connector.getLinuxGroupAccounts().getIndexedRows(LinuxGroupAccount.COLUMN_GROUP_NAME, pkey);
     }
 }

@@ -18,8 +18,6 @@ import java.util.List;
 /**
  * For AO Industries use only.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile> {

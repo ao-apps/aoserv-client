@@ -135,9 +135,9 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     }
 
     public PostgresServerUser getDatDBA() throws SQLException, IOException {
-	PostgresServerUser obj=table.connector.getPostgresServerUsers().get(datdba);
-	if(obj==null) throw new SQLException("Unable to find PostgresServerUser: "+datdba);
-	return obj;
+        PostgresServerUser obj=table.connector.getPostgresServerUsers().get(datdba);
+        if(obj==null) throw new SQLException("Unable to find PostgresServerUser: "+datdba);
+        return obj;
     }
 
     public String getJdbcDriver() {
@@ -183,9 +183,9 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     }
 
     public PostgresServer getPostgresServer() throws SQLException, IOException {
-	PostgresServer obj=table.connector.getPostgresServers().get(postgres_server);
-	if(obj==null) throw new SQLException("Unable to find PostgresServer: "+postgres_server);
-	return obj;
+        PostgresServer obj=table.connector.getPostgresServers().get(postgres_server);
+        if(obj==null) throw new SQLException("Unable to find PostgresServer: "+postgres_server);
+        return obj;
     }
 
     public SchemaTable.TableID getTableID() {

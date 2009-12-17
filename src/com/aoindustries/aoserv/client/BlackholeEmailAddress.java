@@ -19,8 +19,6 @@ import java.util.Locale;
  *
  * @see  EmailAddress#getBlackholeEmailAddress
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class BlackholeEmailAddress extends CachedObjectIntegerKey<BlackholeEmailAddress> implements Removable {

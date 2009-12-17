@@ -61,22 +61,27 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
     // </editor-fold>
 
     // <editor-fold desc="AOServObject implementation">
-    static final int COLUMN_PKEY = 0;
-    static final int COLUMN_ACCOUNTING = 3;
-    static final int COLUMN_CREATED_BY = 5;
-    static final int COLUMN_OPEN_DATE = 12;
+    static final int
+        COLUMN_PKEY = 0,
+        COLUMN_BRAND = 1,
+        COLUMN_RESELLER = 2,
+        COLUMN_ACCOUNTING = 3,
+        COLUMN_CREATED_BY = 5,
+        COLUMN_CATEGORY = 6,
+        COLUMN_OPEN_DATE = 12
+    ;
     static final String COLUMN_PKEY_name = "pkey";
     static final String COLUMN_OPEN_DATE_name = "open_date";
 
     Object getColumnImpl(int i) throws IOException, SQLException {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return brand;
-            case 2: return reseller;
+            case COLUMN_BRAND: return brand;
+            case COLUMN_RESELLER: return reseller;
             case COLUMN_ACCOUNTING: return accounting;
             case 4: return language;
             case COLUMN_CREATED_BY: return created_by;
-            case 6: return category==-1 ? null : category;
+            case COLUMN_CATEGORY: return category==-1 ? null : category;
             case 7: return ticket_type;
             case 8: return from_address;
             case 9: return summary;
@@ -151,8 +156,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getTicketActions(),
+            getTicketAssignments()
         );
     }
 

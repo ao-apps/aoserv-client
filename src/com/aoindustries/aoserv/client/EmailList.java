@@ -19,15 +19,15 @@ import java.util.Locale;
  *
  * @see  EmailAddress
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class EmailList extends CachedObjectIntegerKey<EmailList> implements Removable, Disablable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_LINUX_SERVER_ACCOUNT=2
+        COLUMN_PKEY = 0,
+        COLUMN_LINUX_SERVER_ACCOUNT = 2,
+        COLUMN_LINUX_SERVER_GROUP = 3,
+        COLUMN_DISABLE_LOG = 4
     ;
     static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
     static final String COLUMN_PATH_name = "path";
@@ -100,8 +100,8 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return path;
             case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
-            case 3: return Integer.valueOf(linux_server_group);
-            case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_LINUX_SERVER_GROUP: return Integer.valueOf(linux_server_group);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -213,8 +213,13 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getMajordomoList()
+            ),
+            getEmailListAddresses()
         );
     }
 

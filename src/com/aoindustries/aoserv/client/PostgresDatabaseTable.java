@@ -80,16 +80,12 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
         return matches;
     }
 
-    List<PostgresDatabase> getPostgresDatabases(PostgresServerUser psu) throws IOException, SQLException {
-        return getIndexedRows(PostgresDatabase.COLUMN_DATDBA, psu.pkey);
-    }
-
     List<PostgresDatabase> getPostgresDatabases(PostgresServer postgresServer) throws IOException, SQLException {
         return getIndexedRows(PostgresDatabase.COLUMN_POSTGRES_SERVER, postgresServer.pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.POSTGRES_DATABASES;
+    	return SchemaTable.TableID.POSTGRES_DATABASES;
     }
 
     @Override

@@ -22,8 +22,9 @@ import java.util.Locale;
 final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> implements Removable, Disablable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_LINUX_SERVER_ACCOUNT=2
+        COLUMN_PKEY = 0,
+        COLUMN_LINUX_SERVER_ACCOUNT = 2,
+        COLUMN_LINUX_SERVER_GROUP = 3
     ;
     static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
     static final String COLUMN_PATH_name = "path";
@@ -102,7 +103,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return path;
             case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
-            case 3: return Integer.valueOf(linux_server_group);
+            case COLUMN_LINUX_SERVER_GROUP: return Integer.valueOf(linux_server_group);
             case 4: return Long.valueOf(mode);
             case 5: return new java.sql.Date(created);
             case 6: return disable_log==-1?null:Integer.valueOf(disable_log);

@@ -279,6 +279,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getMySQLDBUsers()
         );
     }
 

@@ -25,7 +25,10 @@ import java.util.Locale;
  */
 final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements PasswordProtected, Removable, Disablable {
 
-    static final int COLUMN_USERNAME=0;
+    static final int
+        COLUMN_USERNAME = 0,
+        COLUMN_DISABLE_LOG = 29
+    ;
     static final String COLUMN_USERNAME_name = "username";
 
     /**
@@ -266,7 +269,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
             case 26: return create_user_priv;
             case 27: return event_priv;
             case 28: return trigger_priv;
-            case 29: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -376,6 +379,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getMySQLServerUsers()
         );
     }
 

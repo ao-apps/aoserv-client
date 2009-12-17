@@ -97,9 +97,9 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
-	HttpdSite obj=table.connector.getHttpdSites().get(httpd_site);
-	if(obj==null) throw new SQLException("Unable to find HttpdSite: "+httpd_site);
-	return obj;
+        HttpdSite obj=table.connector.getHttpdSites().get(httpd_site);
+        if(obj==null) throw new SQLException("Unable to find HttpdSite: "+httpd_site);
+        return obj;
     }
 
     public String getPath() {

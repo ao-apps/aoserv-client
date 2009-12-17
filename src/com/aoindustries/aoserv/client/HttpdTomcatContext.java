@@ -242,8 +242,11 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getHttpdTomcatDataSources(),
+            getHttpdTomcatParameters()
         );
     }
 

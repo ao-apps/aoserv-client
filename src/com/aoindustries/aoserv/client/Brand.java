@@ -21,13 +21,22 @@ import java.util.List;
  * @see  Business
  * @see  Reseller
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class Brand extends CachedObjectStringKey<Brand> {
 
-    static final int COLUMN_ACCOUNTING = 0;
+    static final int
+        COLUMN_ACCOUNTING = 0,
+        COLUMN_SMTP_LINUX_SERVER_ACCOUNT = 5,
+        COLUMN_IMAP_LINUX_SERVER_ACCOUNT = 8,
+        COLUMN_SUPPORT_EMAIL_ADDRESS = 11,
+        COLUMN_SIGNUP_EMAIL_ADDRESS = 13,
+        COLUMN_TICKET_ENCRYPTION_FROM = 15,
+        COLUMN_TICKET_ENCRYPTION_RECIPIENT = 16,
+        COLUMN_SIGNUP_ENCRYPTION_FROM = 17,
+        COLUMN_SIGNUP_ENCRYPTION_RECIPIENT = 18,
+        COLUMN_AOWEB_STRUTS_VNC_BIND = 36
+    ;
     static final String COLUMN_ACCOUNTING_name = "accounting";
 
     private String nameserver1;
@@ -76,20 +85,20 @@ final public class Brand extends CachedObjectStringKey<Brand> {
             case 2: return nameserver2;
             case 3: return nameserver3;
             case 4: return nameserver4;
-            case 5: return smtp_linux_server_account;
+            case COLUMN_SMTP_LINUX_SERVER_ACCOUNT: return smtp_linux_server_account;
             case 6: return smtp_host;
             case 7: return smtp_password;
-            case 8: return imap_linux_server_account;
+            case COLUMN_IMAP_LINUX_SERVER_ACCOUNT: return imap_linux_server_account;
             case 9: return imap_host;
             case 10: return imap_password;
-            case 11: return support_email_address;
+            case COLUMN_SUPPORT_EMAIL_ADDRESS: return support_email_address;
             case 12: return support_email_display;
-            case 13: return signup_email_address;
+            case COLUMN_SIGNUP_EMAIL_ADDRESS: return signup_email_address;
             case 14: return signup_email_display;
-            case 15: return ticket_encryption_from;
-            case 16: return ticket_encryption_recipient;
-            case 17: return signup_encryption_from;
-            case 18: return signup_encryption_recipient;
+            case COLUMN_TICKET_ENCRYPTION_FROM: return ticket_encryption_from;
+            case COLUMN_TICKET_ENCRYPTION_RECIPIENT: return ticket_encryption_recipient;
+            case COLUMN_SIGNUP_ENCRYPTION_FROM: return signup_encryption_from;
+            case COLUMN_SIGNUP_ENCRYPTION_RECIPIENT: return signup_encryption_recipient;
             case 19: return support_toll_free;
             case 20: return support_day_phone;
             case 21: return support_emergency_phone1;
@@ -107,7 +116,7 @@ final public class Brand extends CachedObjectStringKey<Brand> {
             case 33: return aoweb_struts_noindex;
             case 34: return aoweb_struts_google_analytics_new_tracking_code;
             case 35: return aoweb_struts_signup_admin_address;
-            case 36: return aoweb_struts_vnc_bind;
+            case COLUMN_AOWEB_STRUTS_VNC_BIND: return aoweb_struts_vnc_bind;
             case 37: return aoweb_struts_keystore_type;
             case 38: return aoweb_struts_keystore_password;
             default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -458,8 +467,15 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getReseller()
+            ),
+            getTickets(),
+            getSignupRequests(),
+            getTicketBrandCategories()
         );
     }
 
@@ -498,5 +514,13 @@ final public class Brand extends CachedObjectStringKey<Brand> {
             if(!brand.equals(this) && this.equals(brand.getParentBrand())) children.add(brand);
         }
         return children;
+    }
+
+    public List<Ticket> getTickets() throws IOException, SQLException {
+        return table.connector.getTickets().getIndexedRows(Ticket.COLUMN_BRAND, pkey);
+    }
+
+    public List<SignupRequest> getSignupRequests() throws IOException, SQLException {
+        return table.connector.getSignupRequests().getIndexedRows(SignupRequest.COLUMN_BRAND, pkey);
     }
 }

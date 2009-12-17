@@ -39,9 +39,10 @@ import java.util.Locale;
 final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implements Disablable, Removable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=1,
-        COLUMN_ACCOUNTING=4
+        COLUMN_PKEY = 0,
+        COLUMN_AO_SERVER = 1,
+        COLUMN_ACCOUNTING = 4,
+        COLUMN_DISABLE_LOG = 8
     ;
     static final String COLUMN_SITE_NAME_name = "site_name";
     static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -137,7 +138,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
             case 5: return linuxAccount;
             case 6: return linuxGroup;
             case 7: return serverAdmin;
-            case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 9: return isManual?Boolean.TRUE:Boolean.FALSE;
             case 10: return awstatsSkipFiles;
             default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -326,8 +327,15 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getHttpdStaticSite(),
+                getHttpdTomcatSite()
+            ),
+            getHttpdSiteAuthenticatedLocations(),
+            getHttpdSiteBinds()
         );
     }
 

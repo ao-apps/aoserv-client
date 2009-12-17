@@ -126,8 +126,8 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
 
     public void init(ResultSet result) throws SQLException {
         int pos = 1;
-	pkey = result.getString(pos++);
-	accounting = result.getString(pos++);
+        pkey = result.getString(pos++);
+    	accounting = result.getString(pos++);
         className = result.getString(pos++);
         param1 = result.getString(pos++);
         param2 = result.getString(pos++);
@@ -135,7 +135,7 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
         param4 = result.getString(pos++);
         enabled = result.getBoolean(pos++);
         weight = result.getInt(pos++);
-	description = result.getString(pos++);
+    	description = result.getString(pos++);
         encryption_from = result.getInt(pos++);
         if(result.wasNull()) encryption_from = -1;
         encryption_recipient = result.getInt(pos++);
@@ -163,8 +163,13 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getBankTransactions(),
+            getCreditCards(),
+            getCreditCardTransactions(),
+            getTransactions()
         );
     }
 
@@ -183,5 +188,21 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
             out.writeCompressedInt(encryption_from);
             out.writeCompressedInt(encryption_recipient);
         }
+    }
+
+    public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
+        return table.connector.getBankTransactions().getIndexedRows(BankTransaction.COLUMN_PROCESSOR, pkey);
+    }
+
+    public List<CreditCard> getCreditCards() throws IOException, SQLException {
+        return table.connector.getCreditCards().getIndexedRows(CreditCard.COLUMN_PROCESSOR_ID, pkey);
+    }
+
+    public List<CreditCardTransaction> getCreditCardTransactions() throws IOException, SQLException {
+        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_PROCESSOR_ID, pkey);
+    }
+
+    public List<Transaction> getTransactions() throws IOException, SQLException {
+        return table.connector.getTransactions().getIndexedRows(Transaction.COLUMN_PROCESSOR, pkey);
     }
 }

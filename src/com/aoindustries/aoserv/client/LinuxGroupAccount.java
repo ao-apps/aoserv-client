@@ -27,7 +27,11 @@ import java.util.*;
  */
 final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAccount> implements Removable {
 
-    static final int COLUMN_PKEY=0;
+    static final int
+        COLUMN_PKEY = 0,
+        COLUMN_GROUP_NAME = 1,
+        COLUMN_USERNAME = 2
+    ;
     static final String COLUMN_GROUP_NAME_name = "group_name";
     static final String COLUMN_USERNAME_name = "username";
 
@@ -43,8 +47,8 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return group_name;
-            case 2: return username;
+            case COLUMN_GROUP_NAME: return group_name;
+            case COLUMN_USERNAME: return username;
             case 3: return is_primary?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }

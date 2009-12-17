@@ -28,9 +28,11 @@ import java.util.Locale;
 final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=1,
-        COLUMN_ACCOUNTING=10
+        COLUMN_PKEY = 0,
+        COLUMN_AO_SERVER = 1,
+        COLUMN_LINUX_SERVER_ACCOUNT = 6,
+        COLUMN_LINUX_SERVER_GROUP = 7,
+        COLUMN_ACCOUNTING = 10
     ;
     static final String COLUMN_AO_SERVER_name = "ao_server";
     static final String COLUMN_NUMBER_name = "number";
@@ -67,8 +69,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
             case 3: return can_add_sites?Boolean.TRUE:Boolean.FALSE;
             case 4: return is_mod_jk?Boolean.TRUE:Boolean.FALSE;
             case 5: return Integer.valueOf(max_binds);
-            case 6: return Integer.valueOf(linux_server_account);
-            case 7: return Integer.valueOf(linux_server_group);
+            case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
+            case COLUMN_LINUX_SERVER_GROUP: return Integer.valueOf(linux_server_group);
             case 8: return mod_php_version==-1?null:Integer.valueOf(mod_php_version);
             case 9: return use_suexec?Boolean.TRUE:Boolean.FALSE;
             case COLUMN_ACCOUNTING: return accounting;
@@ -216,6 +218,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getHttpdBinds()
         );
     }
 

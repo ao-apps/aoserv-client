@@ -185,8 +185,23 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getBlackholeEmailAddress(),
+                getBrandBySupportEmailAddress(),
+                getBrandBySignupEmailAddress()
+            ),
+            getEmailForwardings(),
+            getEmailListAddresses(),
+            getEmailPipeAddresses(),
+            getLinuxAccAddresses(),
+            getMajordomoListsByOwnerListAddress(),
+            getMajordomoListsByListOwnerAddress(),
+            getMajordomoListsByListApprovalAddress(),
+            getMajordomoServersByOwnerMajordomoAddress(),
+            getMajordomoServersByMajordomoOwnerAddress()
         );
     }
 
@@ -252,8 +267,36 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(address);
-	out.writeCompressedInt(domain);
+        out.writeCompressedInt(pkey);
+        out.writeUTF(address);
+        out.writeCompressedInt(domain);
+    }
+
+    public Brand getBrandBySupportEmailAddress() throws IOException, SQLException {
+        return table.connector.getBrands().getUniqueRow(Brand.COLUMN_SUPPORT_EMAIL_ADDRESS, pkey);
+    }
+
+    public Brand getBrandBySignupEmailAddress() throws IOException, SQLException {
+        return table.connector.getBrands().getUniqueRow(Brand.COLUMN_SIGNUP_EMAIL_ADDRESS, pkey);
+    }
+
+    public List<MajordomoList> getMajordomoListsByOwnerListAddress() throws IOException, SQLException {
+        return table.connector.getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_OWNER_LISTNAME_ADD, pkey);
+    }
+
+    public List<MajordomoList> getMajordomoListsByListOwnerAddress() throws IOException, SQLException {
+        return table.connector.getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_OWNER_ADD, pkey);
+    }
+
+    public List<MajordomoList> getMajordomoListsByListApprovalAddress() throws IOException, SQLException {
+        return table.connector.getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_APPROVAL_ADD, pkey);
+    }
+
+    public List<MajordomoServer> getMajordomoServersByOwnerMajordomoAddress() throws IOException, SQLException {
+        return table.connector.getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_OWNER_MAJORDOMO_ADD, pkey);
+    }
+
+    public List<MajordomoServer> getMajordomoServersByMajordomoOwnerAddress() throws IOException, SQLException {
+        return table.connector.getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_MAJORDOMO_OWNER_ADD, pkey);
     }
 }

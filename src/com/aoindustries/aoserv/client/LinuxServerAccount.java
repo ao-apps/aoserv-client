@@ -28,9 +28,10 @@ import java.util.Locale;
 final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServerAccount> implements Removable, PasswordProtected, Disablable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_USERNAME=1,
-        COLUMN_AO_SERVER=2
+        COLUMN_PKEY = 0,
+        COLUMN_USERNAME = 1,
+        COLUMN_AO_SERVER = 2,
+        COLUMN_DISABLE_LOG = 9
     ;
     static final String COLUMN_USERNAME_name = "username";
     static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -159,7 +160,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
             case 6: return autoresponder_subject;
             case 7: return autoresponder_path;
             case 8: return is_autoresponder_enabled?Boolean.TRUE:Boolean.FALSE;
-            case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 10: return predisable_password;
             case 11: return new java.sql.Date(created);
             case 12: return use_inbox?Boolean.TRUE:Boolean.FALSE;
@@ -461,8 +462,22 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            createDependencyList(
+                getBrandFromSmtpLinuxServerAccount(),
+                getBrandFromImapLinuxServerAccount()
+            ),
+            getCvsRepositories(),
+            getEmailAttachmentBlocks(),
+            getEmailLists(),
+            getHttpdServers(),
+            getHttpdSites(),
+            getLinuxAccAddresses(),
+            getHttpdSharedTomcats(),
+            getPrivateFTPServers(),
+            getMajordomoServers()
         );
     }
 
@@ -684,5 +699,25 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
         return table.connector.getLinuxAccAddresses().addLinuxAccAddress(address, this);
+    }
+
+    public Brand getBrandFromSmtpLinuxServerAccount() throws IOException, SQLException {
+        return table.connector.getBrands().getUniqueRow(Brand.COLUMN_SMTP_LINUX_SERVER_ACCOUNT, pkey);
+    }
+
+    public Brand getBrandFromImapLinuxServerAccount() throws IOException, SQLException {
+        return table.connector.getBrands().getUniqueRow(Brand.COLUMN_IMAP_LINUX_SERVER_ACCOUNT, pkey);
+    }
+
+    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
+        return table.connector.getHttpdServers().getIndexedRows(HttpdServer.COLUMN_LINUX_SERVER_ACCOUNT, pkey);
+    }
+
+    public List<PrivateFTPServer> getPrivateFTPServers() throws IOException, SQLException {
+        return table.connector.getPrivateFTPServers().getIndexedRows(PrivateFTPServer.COLUMN_PUB_LINUX_SERVER_ACCOUNT, pkey);
+    }
+
+    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
+        return table.connector.getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_LINUX_SERVER_ACCOUNT, pkey);
     }
 }

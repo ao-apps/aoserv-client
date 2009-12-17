@@ -81,6 +81,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getMajordomoListsByListListAddress()
         );
     }
 
@@ -114,7 +115,11 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-	out.writeCompressedInt(email_address);
-	out.writeCompressedInt(email_list);
+    	out.writeCompressedInt(email_address);
+    	out.writeCompressedInt(email_list);
+    }
+
+    public List<MajordomoList> getMajordomoListsByListListAddress() throws IOException, SQLException {
+        return table.connector.getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_LIST_ADD, pkey);
     }
 }

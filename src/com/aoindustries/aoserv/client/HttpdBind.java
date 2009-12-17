@@ -78,6 +78,7 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getHttpdSiteBinds()
         );
     }
 
@@ -91,5 +92,9 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(httpd_server);
+    }
+
+    public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
+        return table.connector.getHttpdSiteBinds().getIndexedRows(HttpdSiteBind.COLUMN_HTTPD_BIND, pkey);
     }
 }

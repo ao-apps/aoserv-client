@@ -35,17 +35,17 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
     }
 
     public LinuxAccount getLinuxAccount() throws SQLException, IOException {
-	LinuxAccount obj = table.connector.getLinuxAccounts().get(pkey);
-	if (obj == null) throw new SQLException("Unable to find LinuxAccount: " + pkey);
-	return obj;
+        LinuxAccount obj = table.connector.getLinuxAccounts().get(pkey);
+        if (obj == null) throw new SQLException("Unable to find LinuxAccount: " + pkey);
+        return obj;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.FTP_GUEST_USERS;
+    	return SchemaTable.TableID.FTP_GUEST_USERS;
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
+    	pkey = result.getString(1);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {

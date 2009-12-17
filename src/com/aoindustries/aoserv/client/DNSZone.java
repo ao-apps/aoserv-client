@@ -308,6 +308,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getDNSRecords()
         );
     }
 

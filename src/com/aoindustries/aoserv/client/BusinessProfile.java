@@ -14,8 +14,6 @@ import java.util.*;
 /**
  * Contact information associated with a <code>Business</code>.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfile> {
