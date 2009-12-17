@@ -95,13 +95,13 @@ final public class BankAccount extends CachedObjectStringKey<BankAccount> {
         out.writeCompressedInt(withdrawalDelay);
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getBank()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

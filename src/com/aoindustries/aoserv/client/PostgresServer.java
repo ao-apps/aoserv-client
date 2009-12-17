@@ -210,14 +210,14 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
         fsync=in.readBoolean();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getAOServer(),
             getNetBind()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

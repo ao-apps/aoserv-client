@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,14 +24,14 @@ abstract public class GlobalObject<K,T extends GlobalObject<K,T>> extends AOServ
     /**
      * Global objects are shared between all connections and therefore have no dependencies.
      */
-    final public List<AOServObject> getDependencies() throws IOException, SQLException {
+    final public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList();
     }
 
     /**
      * Global objects are shared between all connections and therefore have no dependent objects.
      */
-    final public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    final public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList();
     }
 }

@@ -76,13 +76,13 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
         backup_enabled = in.readBoolean();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getReplication()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

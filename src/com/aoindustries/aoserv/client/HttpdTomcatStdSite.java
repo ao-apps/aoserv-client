@@ -76,14 +76,14 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
         tomcat4_shutdown_key=in.readNullUTF();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getHttpdTomcatSite(),
             getTomcat4ShutdownPort()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

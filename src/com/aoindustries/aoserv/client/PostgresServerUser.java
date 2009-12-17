@@ -129,7 +129,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         predisable_password=in.readNullUTF();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getPostgresUser(),
             getPostgresServer(),
@@ -137,7 +137,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

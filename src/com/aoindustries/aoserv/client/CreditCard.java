@@ -428,7 +428,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         encryption_expiration_recipient=in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getCreditCardProcessor(),
             getBusiness(),
@@ -436,7 +436,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

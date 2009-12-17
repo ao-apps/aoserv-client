@@ -353,7 +353,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
     	payment_confirmed=in.readByte();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getBusiness(),
             getSourceBusiness(),
@@ -363,7 +363,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

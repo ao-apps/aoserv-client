@@ -316,7 +316,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         awstatsSkipFiles=in.readNullUTF();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getAOServer(),
             getBusiness(),
@@ -326,7 +326,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

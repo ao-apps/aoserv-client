@@ -573,15 +573,15 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public int getPoolSize() {
-	return pool_size;
+        return pool_size;
     }
 
     public PostgresServer getPostgresServer(String name) throws IOException, SQLException {
-	return table.connector.getPostgresServers().getPostgresServer(name, this);
+        return table.connector.getPostgresServers().getPostgresServer(name, this);
     }
 
     public List<PostgresServer> getPostgresServers() throws IOException, SQLException {
-	return table.connector.getPostgresServers().getPostgresServers(this);
+        return table.connector.getPostgresServers().getPostgresServers(this);
     }
 
     public PostgresServer getPreferredPostgresServer() throws SQLException, IOException {
@@ -612,7 +612,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     /*
     public PrivateFTPServer getPrivateFTPServer(String path) {
-	return table.connector.privateFTPServers.getPrivateFTPServer(this, path);
+    	return table.connector.privateFTPServers.getPrivateFTPServer(this, path);
     }*/
 
     public List<PrivateFTPServer> getPrivateFTPServers() throws IOException, SQLException {
@@ -2023,7 +2023,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getServer(),
             getDaemonBind(),
@@ -2033,8 +2033,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getNestedAOServers(),
+            getAOServerDaemonHosts()
         );
     }
 }

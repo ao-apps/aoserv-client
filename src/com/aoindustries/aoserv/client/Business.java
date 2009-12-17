@@ -1059,14 +1059,14 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         email_relay_rate=in.readFloat();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getParentBusiness(),
             getCreatedBy()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }
@@ -1217,7 +1217,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     /**
-     * May be filter.  May also be null for the root business only.
+     * May be filtered.  May also be null for the root business only.
      */
     public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
         if(created_by==null) return null;

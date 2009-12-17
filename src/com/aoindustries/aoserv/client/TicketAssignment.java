@@ -84,7 +84,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
         administrator = in.readUTF().intern();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getTicket(),
             getReseller(),
@@ -92,7 +92,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

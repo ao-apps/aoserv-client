@@ -5,9 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,8 +18,6 @@ import java.util.Locale;
  * each is configured as an <code>AOServerDaemonHost</code>.
  *
  * @see  Server
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -47,13 +47,13 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-	AOServer ao=table.connector.getAoServers().get(aoServer);
-	if(ao==null) throw new SQLException("Unable to find AOServer: "+aoServer);
-	return ao;
+        AOServer ao=table.connector.getAoServers().get(aoServer);
+        if(ao==null) throw new SQLException("Unable to find AOServer: "+aoServer);
+        return ao;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.AO_SERVER_DAEMON_HOSTS;
+    	return SchemaTable.TableID.AO_SERVER_DAEMON_HOSTS;
     }
 
     public void init(ResultSet result) throws SQLException {
@@ -79,13 +79,13 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
         out.writeUTF(host);
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getAOServer()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

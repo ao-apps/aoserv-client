@@ -119,14 +119,14 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
         allow_anonymous=in.readBoolean();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getNetBind(),
             getLinuxServerAccount()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

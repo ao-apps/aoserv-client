@@ -207,6 +207,10 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return table.connector.getAoServers().getAOServerByDaemonNetBind(this);
     }
 
+    public AOServer getAOServerByDaemonConnectNetBind() throws IOException, SQLException {
+        return table.connector.getAoServers().getAOServerByDaemonConnectNetBind(this);
+    }
+
     public AOServer getAOServerByJilterNetBind() throws IOException, SQLException {
         return table.connector.getAoServers().getAOServerByJilterNetBind(this);
     }
@@ -390,7 +394,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         monitoring_parameters=in.readNullUTF();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getBusiness(),
             getServer(),
@@ -398,8 +402,11 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getAOServerByDaemonNetBind(),
+            getAOServerByDaemonConnectNetBind(),
+            getAOServerByJilterNetBind()
         );
     }
 

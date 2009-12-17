@@ -823,7 +823,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         status = in.readUTF().intern();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getCreditCardProcessor(),
             getBusiness(),
@@ -835,7 +835,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

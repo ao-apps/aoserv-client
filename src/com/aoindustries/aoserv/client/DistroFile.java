@@ -192,12 +192,12 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
         symlink_target=in.readBoolean()?in.readCompressedUTF():null;
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

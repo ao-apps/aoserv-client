@@ -174,14 +174,14 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
         disable_log=in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getUsername(),
             getDisableLog()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

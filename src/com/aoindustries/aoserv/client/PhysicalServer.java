@@ -158,14 +158,14 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         supports_hvm = in.readBoolean() ? in.readBoolean() : null;
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getServer(),
             getRack()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

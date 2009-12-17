@@ -84,14 +84,14 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
         is_primary=in.readBoolean();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getLinuxGroup(),
             getLinuxAccount()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

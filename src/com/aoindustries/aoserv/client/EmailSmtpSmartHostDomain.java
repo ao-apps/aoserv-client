@@ -91,13 +91,13 @@ final public class EmailSmtpSmartHostDomain extends CachedObjectIntegerKey<Email
         domain_out_rate=in.readFloat();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getEmailSmtpSmartHost()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

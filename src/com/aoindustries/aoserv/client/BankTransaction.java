@@ -199,7 +199,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
         out.writeBoolean(confirmed);
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getBankAccount(),
             getCreditCardProcessor(),
@@ -207,7 +207,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

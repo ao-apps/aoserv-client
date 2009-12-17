@@ -270,14 +270,14 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         accounting=in.readUTF().intern();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getMySQLServer(),
             getBusiness()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

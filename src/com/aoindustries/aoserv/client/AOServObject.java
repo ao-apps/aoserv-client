@@ -200,39 +200,69 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
     /**
      * Returns an unmodifiable list of the provided objects, not including any null values.
      */
-    static List<AOServObject> createDependencyList() {
+    static List<? extends AOServObject> createDependencyList() {
         return Collections.emptyList();
     }
 
     /**
      * Returns an unmodifiable list of the provided objects, not including any null values.
      */
-    static List<AOServObject> createDependencyList(AOServObject obj) {
+    static List<? extends AOServObject> createDependencyList(AOServObject obj) {
         if(obj==null) return Collections.emptyList();
         assert !(obj instanceof GlobalObject);
         return Collections.singletonList(obj);
     }
 
     /**
-     * Checks if all elements of a list are unique based on hashCode and equals.
+     * Returns an unmodifiable list of the provided objects, not including any null values.
+     * It is assumed that the list passed-in is unmodifiable and it will be returned directly if
+     * it contains no null values.
      */
-    /*private static boolean isListUnique(List<AOServObject> list) {
-        if(list.size()>1) {
-            Set<AOServObject> set = new HashSet<AOServObject>(list.size()*4/3+1);
-            for(AOServObject obj : list) {
-                if(!set.add(obj)) {
-                    System.err.println("Not unique: "+obj);
-                    return false;
+    static List<? extends AOServObject> createDependencyList(List<? extends AOServObject> objs) {
+        boolean hasNull = false;
+        for(AOServObject obj : objs) {
+            if(obj==null) {
+                hasNull = true;
+                break;
+            } else {
+                assert !(obj instanceof GlobalObject);
+            }
+        }
+        if(!hasNull) return objs;
+        List<AOServObject> list = new ArrayList<AOServObject>(objs.size());
+        for(AOServObject obj : objs) {
+            if(obj!=null) {
+                assert !(obj instanceof GlobalObject);
+                list.add(obj);
+            }
+        }
+        return Collections.unmodifiableList(list);
+    }
+
+    /**
+     * Returns an unmodifiable list of the provided objects, not including any null values.
+     * It is assumed that the list passed-in is unmodifiable and it will be returned directly if
+     * it contains no null values.
+     */
+    static List<? extends AOServObject> createDependencyList(List<? extends AOServObject>... objss) {
+        int totalSize = 0;
+        for(List<? extends AOServObject> objs : objss) totalSize+=objs.size();
+        List<AOServObject> list = new ArrayList<AOServObject>(totalSize);
+        for(List<? extends AOServObject> objs : objss) {
+            for(AOServObject obj : objs) {
+                if(obj!=null) {
+                    assert !(obj instanceof GlobalObject);
+                    list.add(obj);
                 }
             }
         }
-        return true;
-    }*/
+        return Collections.unmodifiableList(list);
+    }
 
     /**
      * Returns an unmodifiable list of the provided objects, not including any null values.
      */
-    static List<AOServObject> createDependencyList(AOServObject... objs) {
+    static List<? extends AOServObject> createDependencyList(AOServObject... objs) {
         List<AOServObject> list = new ArrayList<AOServObject>(objs.length);
         for(AOServObject obj : objs) {
             if(obj!=null) {
@@ -240,7 +270,6 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
                 list.add(obj);
             }
         }
-        //assert isListUnique(list);
         return Collections.unmodifiableList(list);
     }
 
@@ -252,7 +281,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
      *
      * @see #getDependentObjects() for the opposite direction
      */
-    public abstract List<AOServObject> getDependencies() throws IOException, SQLException;
+    public abstract List<? extends AOServObject> getDependencies() throws IOException, SQLException;
 
     /**
      * Gets the set of objects directly dependent upon this object.
@@ -262,5 +291,5 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
      *
      * @see #getDependencies() for the opposite direction
      */
-    public abstract List<AOServObject> getDependentObjects() throws IOException, SQLException;
+    public abstract List<? extends AOServObject> getDependentObjects() throws IOException, SQLException;
 }

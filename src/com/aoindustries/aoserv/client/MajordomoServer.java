@@ -152,7 +152,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
         majordomo_owner_add=in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getDomain(),
             getLinuxServerAccount(),
@@ -163,7 +163,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

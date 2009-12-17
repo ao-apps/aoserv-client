@@ -443,7 +443,7 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         }
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getBusiness(),
             getSmtpLinuxServerAccount(),
@@ -458,7 +458,7 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

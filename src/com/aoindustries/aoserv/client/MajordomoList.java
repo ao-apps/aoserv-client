@@ -224,7 +224,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         listname_request_pipe_add=in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getEmailList(),
             getMajordomoServer(),
@@ -237,7 +237,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

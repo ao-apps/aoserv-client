@@ -162,13 +162,13 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         additional_transaction_type=StringUtility.intern(in.readNullUTF());
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getPackageDefinition()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

@@ -452,7 +452,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         sa_discard_score = in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getLinuxAccount(),
             getAOServer(),
@@ -461,7 +461,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

@@ -60,6 +60,17 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
         return null;
     }
 
+    AOServer getAOServerByDaemonConnectNetBind(NetBind nb) throws IOException, SQLException {
+        int pkey=nb.pkey;
+        List<AOServer> servers=getRows();
+        int size=servers.size();
+        for(int c=0;c<size;c++) {
+            AOServer se=servers.get(c);
+            if(se.daemon_connect_bind==pkey) return se;
+        }
+        return null;
+    }
+
     AOServer getAOServerByJilterNetBind(NetBind nb) throws IOException, SQLException {
         int pkey=nb.pkey;
         List<AOServer> servers=getRows();

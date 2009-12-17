@@ -44,17 +44,17 @@ public class DependencyTest extends TestCase {
     }
 
     abstract class ChildGetter {
-        abstract List<AOServObject> getChildren(AOServObject obj) throws IOException, SQLException;
+        abstract List<? extends AOServObject> getChildren(AOServObject obj) throws IOException, SQLException;
     }
 
     class DependenciesGetter extends ChildGetter {
-        List<AOServObject> getChildren(AOServObject obj) throws IOException, SQLException {
+        List<? extends AOServObject> getChildren(AOServObject obj) throws IOException, SQLException {
             return obj.getDependencies();
         }
     }
 
     class DependentObjectsGetter extends ChildGetter {
-        List<AOServObject> getChildren(AOServObject obj) throws IOException, SQLException {
+        List<? extends AOServObject> getChildren(AOServObject obj) throws IOException, SQLException {
             return obj.getDependentObjects();
         }
     }
@@ -82,6 +82,7 @@ public class DependencyTest extends TestCase {
                 doTestGetDependenciesDfsVisit(colors, predecessors, time, childGetter, backGetter, u);
             }
         }
+        predecessors.remove(v);
         colors.put(v, Color.BLACK);
     }
 

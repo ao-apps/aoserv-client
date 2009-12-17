@@ -140,12 +140,12 @@ final public class ClientJvmProfile extends AOServObject<String,ClientJvmProfile
     	throw new IOException("Should not be read from stream, should be generated.");
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

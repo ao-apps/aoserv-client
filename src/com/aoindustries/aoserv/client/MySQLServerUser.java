@@ -204,7 +204,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         max_user_connections=in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getMySQLUser(),
             getMySQLServer(),
@@ -212,7 +212,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

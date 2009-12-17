@@ -375,7 +375,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         // Loaded only when needed: raw_email
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getTicket(),
             getAdministrator(),
@@ -388,7 +388,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

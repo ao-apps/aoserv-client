@@ -122,7 +122,7 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         monitoring_seconds_behind_critical = in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getAOServer(),
             getFailoverFileReplication(),
@@ -130,7 +130,7 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

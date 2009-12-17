@@ -87,14 +87,14 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
         httpd_shared_tomcat=in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getHttpdTomcatSite(),
             getHttpdSharedTomcat()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

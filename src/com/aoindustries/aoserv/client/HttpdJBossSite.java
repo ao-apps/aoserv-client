@@ -114,7 +114,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
         jmxBind=in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getHttpdTomcatSite(),
             getJnpBind(),
@@ -125,7 +125,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }

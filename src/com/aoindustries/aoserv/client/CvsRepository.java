@@ -170,14 +170,14 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         disable_log=in.readCompressedInt();
     }
 
-    public List<AOServObject> getDependencies() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getLinuxServerAccount(),
             getLinuxServerGroup()
         );
     }
 
-    public List<AOServObject> getDependentObjects() throws IOException, SQLException {
+    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
         );
     }
