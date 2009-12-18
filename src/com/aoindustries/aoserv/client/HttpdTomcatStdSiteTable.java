@@ -38,8 +38,8 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
         final AOServer aoServer,
         final String siteName,
         final Business business,
-        final LinuxAccount jvmUser,
-        final LinuxGroup jvmGroup,
+        final LinuxServerAccount jvmUser,
+        final LinuxServerGroup jvmGroup,
         final String serverAdmin,
         final boolean useApache,
         final IPAddress ipAddress,
@@ -59,8 +59,8 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
                     out.writeCompressedInt(aoServer.pkey);
                     out.writeUTF(siteName);
                     out.writeUTF(business.pkey);
-                    out.writeUTF(jvmUser.pkey);
-                    out.writeUTF(jvmGroup.pkey);
+                    out.writeCompressedInt(jvmUser.pkey);
+                    out.writeCompressedInt(jvmGroup.pkey);
                     out.writeUTF(serverAdmin);
                     out.writeBoolean(useApache);
                     out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);

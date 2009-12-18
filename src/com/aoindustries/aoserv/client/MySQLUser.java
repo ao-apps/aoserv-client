@@ -7,6 +7,8 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,18 +20,50 @@ import java.util.Locale;
  * A <code>MySQLUser</code> stores the details of a MySQL account
  * that are common to all servers.
  *
- * @see  MySQLServerUser
  * @see  MySQLDBUser
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements PasswordProtected, Removable, Disablable {
+final public class MySQLUser extends CachedObjectIntegerKey<MySQLUser> implements PasswordProtected, Removable, Disablable {
 
     static final int
-        COLUMN_USERNAME = 0,
-        COLUMN_DISABLE_LOG = 29
+        COLUMN_PKEY = 0,
+        COLUMN_USERNAME = 1,
+        COLUMN_MYSQL_SERVER = 2,
+        COLUMN_DISABLE_LOG = 32
     ;
     static final String COLUMN_USERNAME_name = "username";
+    static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
+
+    public static final int
+        UNLIMITED_QUESTIONS=0,
+        DEFAULT_MAX_QUESTIONS=UNLIMITED_QUESTIONS
+    ;
+
+    public static final int
+        UNLIMITED_UPDATES=0,
+        DEFAULT_MAX_UPDATES=UNLIMITED_UPDATES
+    ;
+
+    public static final int
+        UNLIMITED_CONNECTIONS=0,
+        DEFAULT_MAX_CONNECTIONS=UNLIMITED_CONNECTIONS
+    ;
+
+    public static final int
+        UNLIMITED_USER_CONNECTIONS=0,
+        DEFAULT_MAX_USER_CONNECTIONS=UNLIMITED_USER_CONNECTIONS
+    ;
+
+    public static final int MAX_HOST_LENGTH=60;
+
+    /**
+     * Convenience constants for the most commonly used host values.
+     */
+    public static final String
+        ANY_HOST="%",
+        ANY_LOCAL_HOST=null
+    ;
 
     /**
      * The maximum length of a MySQL username.
@@ -49,6 +83,9 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
     public static final String NO_PASSWORD_DB_VALUE="*";
 
+    String username;
+    int mysql_server;
+    String host;
     private boolean
         select_priv,
         insert_priv,
@@ -81,14 +118,11 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     ;
 
     int disable_log;
-
-    public int addMySQLServerUser(MySQLServer mysqlServer, String host) throws IOException, SQLException {
-    	return table.connector.getMysqlServerUsers().addMySQLServerUser(pkey, mysqlServer, host);
-    }
-
-    public int arePasswordsSet() throws IOException, SQLException {
-        return Username.groupPasswordsSet(getMySQLServerUsers());
-    }
+    private String predisable_password;
+    int max_questions;
+    int max_updates;
+    int max_connections;
+    int max_user_connections;
 
     public boolean canAlter() {
         return alter_priv;
@@ -160,10 +194,9 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
     public boolean canDisable() throws IOException, SQLException {
         if(disable_log!=-1) return false;
-        for(MySQLServerUser msu : getMySQLServerUsers()) if(msu.disable_log==-1) return false;
         return true;
     }
-    
+
     public boolean canDrop() {
         return drop_priv;
     }
@@ -215,7 +248,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     }
 
     public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
-        return checkPassword(userLocale, pkey, password);
+        return checkPassword(userLocale, username, password);
     }
 
     public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
@@ -240,36 +273,44 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
     Object getColumnImpl(int i) {
         switch(i) {
-            case COLUMN_USERNAME: return pkey;
-            case 1: return select_priv;
-            case 2: return insert_priv;
-            case 3: return update_priv;
-            case 4: return delete_priv;
-            case 5: return create_priv;
-            case 6: return drop_priv;
-            case 7: return reload_priv;
-            case 8: return shutdown_priv;
-            case 9: return process_priv;
-            case 10: return file_priv;
-            case 11: return grant_priv;
-            case 12: return references_priv;
-            case 13: return index_priv;
-            case 14: return alter_priv;
-            case 15: return show_db_priv;
-            case 16: return super_priv;
-            case 17: return create_tmp_table_priv;
-            case 18: return lock_tables_priv;
-            case 19: return execute_priv;
-            case 20: return repl_slave_priv;
-            case 21: return repl_client_priv;
-            case 22: return create_view_priv;
-            case 23: return show_view_priv;
-            case 24: return create_routine_priv;
-            case 25: return alter_routine_priv;
-            case 26: return create_user_priv;
-            case 27: return event_priv;
-            case 28: return trigger_priv;
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_USERNAME: return username;
+            case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
+            case 3: return host;
+            case 4: return select_priv;
+            case 5: return insert_priv;
+            case 6: return update_priv;
+            case 7: return delete_priv;
+            case 8: return create_priv;
+            case 9: return drop_priv;
+            case 10: return reload_priv;
+            case 11: return shutdown_priv;
+            case 12: return process_priv;
+            case 13: return file_priv;
+            case 14: return grant_priv;
+            case 15: return references_priv;
+            case 16: return index_priv;
+            case 17: return alter_priv;
+            case 18: return show_db_priv;
+            case 19: return super_priv;
+            case 20: return create_tmp_table_priv;
+            case 21: return lock_tables_priv;
+            case 22: return execute_priv;
+            case 23: return repl_slave_priv;
+            case 24: return repl_client_priv;
+            case 25: return create_view_priv;
+            case 26: return show_view_priv;
+            case 27: return create_routine_priv;
+            case 28: return alter_routine_priv;
+            case 29: return create_user_priv;
+            case 30: return event_priv;
+            case 31: return trigger_priv;
             case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 33: return predisable_password;
+            case 34: return max_questions;
+            case 35: return max_updates;
+            case 36: return max_connections;
+            case 37: return max_user_connections;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -285,60 +326,64 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         return obj;
     }
 
-    public MySQLServerUser getMySQLServerUser(MySQLServer mysqlServer) throws IOException, SQLException {
-        return table.connector.getMysqlServerUsers().getMySQLServerUser(pkey, mysqlServer);
-    }
-
-    public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
-        return table.connector.getMysqlServerUsers().getMySQLServerUsers(this);
-    }
-
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.MYSQL_USERS;
     }
 
     public Username getUsername() throws SQLException, IOException {
-        Username obj=table.connector.getUsernames().get(pkey);
-        if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
+        Username obj=table.connector.getUsernames().get(username);
+        if(obj==null) throw new SQLException("Unable to find Username: "+username);
         return obj;
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey=result.getString(1);
-        select_priv=result.getBoolean(2);
-        insert_priv=result.getBoolean(3);
-        update_priv=result.getBoolean(4);
-        delete_priv=result.getBoolean(5);
-        create_priv=result.getBoolean(6);
-        drop_priv=result.getBoolean(7);
-        reload_priv=result.getBoolean(8);
-        shutdown_priv=result.getBoolean(9);
-        process_priv=result.getBoolean(10);
-        file_priv=result.getBoolean(11);
-        grant_priv=result.getBoolean(12);
-        references_priv=result.getBoolean(13);
-        index_priv=result.getBoolean(14);
-        alter_priv=result.getBoolean(15);
-        show_db_priv=result.getBoolean(16);
-        super_priv=result.getBoolean(17);
-        create_tmp_table_priv=result.getBoolean(18);
-        lock_tables_priv=result.getBoolean(19);
-        execute_priv=result.getBoolean(20);
-        repl_slave_priv=result.getBoolean(21);
-        repl_client_priv=result.getBoolean(22);
-        create_view_priv=result.getBoolean(23);
-        show_view_priv=result.getBoolean(24);
-        create_routine_priv=result.getBoolean(25);
-        alter_routine_priv=result.getBoolean(26);
-        create_user_priv=result.getBoolean(27);
-        event_priv=result.getBoolean(28);
-        trigger_priv=result.getBoolean(29);
-        disable_log=result.getInt(30);
+        int pos = 1;
+        pkey=result.getInt(pos++);
+        username=result.getString(pos++);
+        mysql_server=result.getInt(pos++);
+        host=result.getString(pos++);
+        select_priv=result.getBoolean(pos++);
+        insert_priv=result.getBoolean(pos++);
+        update_priv=result.getBoolean(pos++);
+        delete_priv=result.getBoolean(pos++);
+        create_priv=result.getBoolean(pos++);
+        drop_priv=result.getBoolean(pos++);
+        reload_priv=result.getBoolean(pos++);
+        shutdown_priv=result.getBoolean(pos++);
+        process_priv=result.getBoolean(pos++);
+        file_priv=result.getBoolean(pos++);
+        grant_priv=result.getBoolean(pos++);
+        references_priv=result.getBoolean(pos++);
+        index_priv=result.getBoolean(pos++);
+        alter_priv=result.getBoolean(pos++);
+        show_db_priv=result.getBoolean(pos++);
+        super_priv=result.getBoolean(pos++);
+        create_tmp_table_priv=result.getBoolean(pos++);
+        lock_tables_priv=result.getBoolean(pos++);
+        execute_priv=result.getBoolean(pos++);
+        repl_slave_priv=result.getBoolean(pos++);
+        repl_client_priv=result.getBoolean(pos++);
+        create_view_priv=result.getBoolean(pos++);
+        show_view_priv=result.getBoolean(pos++);
+        create_routine_priv=result.getBoolean(pos++);
+        alter_routine_priv=result.getBoolean(pos++);
+        create_user_priv=result.getBoolean(pos++);
+        event_priv=result.getBoolean(pos++);
+        trigger_priv=result.getBoolean(pos++);
+        disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log=-1;
+        predisable_password=result.getString(pos++);
+        max_questions=result.getInt(pos++);
+        max_updates=result.getInt(pos++);
+        max_connections=result.getInt(pos++);
+        max_user_connections=result.getInt(pos++);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
+        pkey=in.readCompressedInt();
+        username=in.readUTF().intern();
+        mysql_server=in.readCompressedInt();
+        host=StringUtility.intern(in.readNullUTF());
         select_priv=in.readBoolean();
         insert_priv=in.readBoolean();
         update_priv=in.readBoolean();
@@ -368,24 +413,30 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         event_priv=in.readBoolean();
         trigger_priv=in.readBoolean();
         disable_log=in.readCompressedInt();
+        predisable_password=in.readNullUTF();
+        max_questions=in.readCompressedInt();
+        max_updates=in.readCompressedInt();
+        max_connections=in.readCompressedInt();
+        max_user_connections=in.readCompressedInt();
     }
 
     public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getUsername(),
+            getMySQLServer(),
             getDisableLog()
         );
     }
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
-            getMySQLServerUsers()
+            getMySQLDBUsers()
         );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        if(pkey.equals(ROOT)) reasons.add(new CannotRemoveReason<MySQLUser>("Not allowed to remove the "+ROOT+" MySQL user", this));
+        if(username.equals(ROOT)) reasons.add(new CannotRemoveReason<MySQLUser>("Not allowed to remove the "+ROOT+" MySQL user", this));
         return reasons;
     }
 
@@ -398,12 +449,68 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
         );
     }
 
-    public void setPassword(String password) throws IOException, SQLException {
-        for(MySQLServerUser user : getMySQLServerUsers()) user.setPassword(password);
+    public void setPassword(final String password) throws IOException, SQLException {
+        AOServConnector connector=table.connector;
+        if(!connector.isSecure()) throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+
+        connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_USER_PASSWORD.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeNullUTF(password);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code!=AOServProtocol.DONE) {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                }
+            }
+        );
+    }
+
+    public void setPredisablePassword(final String password) throws IOException, SQLException {
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
+
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_USER_PREDISABLE_PASSWORD.ordinal());
+                    out.writeCompressedInt(pkey);
+                    out.writeNullUTF(password);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
+            }
+        );
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) out.writeCompressedInt(pkey);
+        out.writeUTF(username);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
+            out.writeCompressedInt(mysql_server);
+            out.writeNullUTF(host);
+        }
         out.writeBoolean(select_priv);
         out.writeBoolean(insert_priv);
         out.writeBoolean(update_priv);
@@ -439,6 +546,13 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
             out.writeBoolean(trigger_priv);
         }
         out.writeCompressedInt(disable_log);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
+            out.writeNullUTF(predisable_password);
+            out.writeCompressedInt(max_questions);
+            out.writeCompressedInt(max_updates);
+            out.writeCompressedInt(max_connections);
+            out.writeCompressedInt(max_user_connections);
+        }
     }
 
     /**
@@ -464,6 +578,48 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
     }
     
     public boolean canSetPassword() {
-        return disable_log==-1 && !pkey.equals(ROOT);
+        return disable_log==-1 && !username.equals(ROOT);
+    }
+
+    public int arePasswordsSet() throws IOException, SQLException {
+        return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_MYSQL_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+    }
+
+    public String getHost() {
+    	return host;
+    }
+
+    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
+        return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
+    }
+
+    public String getPredisablePassword() {
+        return predisable_password;
+    }
+
+    public int getMaxQuestions() {
+        return max_questions;
+    }
+
+    public int getMaxUpdates() {
+        return max_updates;
+    }
+
+    public int getMaxConnections() {
+        return max_connections;
+    }
+
+    public int getMaxUserConnections() {
+        return max_user_connections;
+    }
+
+    public MySQLServer getMySQLServer() throws IOException, SQLException{
+        // May be filtered
+    	return table.connector.getMysqlServers().get(mysql_server);
+    }
+
+    @Override
+    String toStringImpl(Locale userLocale) throws IOException, SQLException {
+        return username+" on "+getMySQLServer().toStringImpl(userLocale);
     }
 }

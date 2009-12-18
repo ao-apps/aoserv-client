@@ -5,43 +5,86 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.util.IntList;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @see  MySQLUser
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
+final public class MySQLUserTable extends CachedTableIntegerKey<MySQLUser> {
 
     MySQLUserTable(AOServConnector connector) {
         super(connector, MySQLUser.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(MySQLUser.COLUMN_USERNAME_name, ASCENDING)
+        new OrderBy(MySQLUser.COLUMN_USERNAME_name, ASCENDING),
+        new OrderBy(MySQLUser.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MySQLUser.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING)
     };
     @Override
     OrderBy[] getDefaultOrderBy() {
         return defaultOrderBy;
     }
 
-    void addMySQLUser(String username) throws IOException, SQLException {
-        connector.requestUpdateIL(
+    int addMySQLUser(final String username, final MySQLServer mysqlServer, final String host) throws IOException, SQLException {
+        return connector.requestResult(
             true,
-            AOServProtocol.CommandID.ADD,
-            SchemaTable.TableID.MYSQL_USERS,
-            username
+            new AOServConnector.ResultRequest<Integer>() {
+                int pkey;
+                IntList invalidateList;
+
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
+                    out.writeCompressedInt(SchemaTable.TableID.MYSQL_USERS.ordinal());
+                    out.writeUTF(username);
+                    out.writeCompressedInt(mysqlServer.pkey);
+                    out.writeBoolean(host!=null); if(host!=null) out.writeUTF(host);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) {
+                        pkey=in.readCompressedInt();
+                        invalidateList=AOServConnector.readInvalidateList(in);
+                    } else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public Integer afterRelease() {
+                    connector.tablesUpdated(invalidateList);
+                    return pkey;
+                }
+            }
         );
     }
 
-    public MySQLUser get(String username) throws IOException, SQLException {
-        return getUniqueRow(MySQLUser.COLUMN_USERNAME, username);
+    public MySQLUser get(int pkey) throws IOException, SQLException {
+        return getUniqueRow(MySQLUser.COLUMN_PKEY, pkey);
+    }
+
+    MySQLUser getMySQLUser(String username, MySQLServer ms) throws IOException, SQLException {
+        int msPKey=ms.pkey;
+        // Use index first
+        List<MySQLUser> table=getIndexedRows(MySQLUser.COLUMN_USERNAME, username);
+        int size=table.size();
+    	for(int c=0;c<size;c++) {
+            MySQLUser mu=table.get(c);
+            if(mu.mysql_server==msPKey) return mu;
+    	}
+    	return null;
     }
 
     List<MySQLUser> getMySQLUsers(Business business) throws IOException, SQLException {
@@ -50,10 +93,14 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
         int size=cached.size();
         List<MySQLUser> matches=new ArrayList<MySQLUser>(size);
         for(int c=0;c<size;c++) {
-            MySQLUser msu=cached.get(c);
-            if(msu.getUsername().accounting.equals(accounting)) matches.add(msu);
+            MySQLUser mu=cached.get(c);
+            if(mu.getUsername().accounting.equals(accounting)) matches.add(mu);
         }
         return matches;
+    }
+
+    List<MySQLUser> getMySQLUsers(MySQLServer ms) throws IOException, SQLException {
+        return getIndexedRows(MySQLUser.COLUMN_MYSQL_SERVER, ms.pkey);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -63,20 +110,15 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
-        if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_USER)) {
-            if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_USER, args, 1, err)) {
-                connector.getSimpleAOClient().addMySQLUser(
-                    args[1]
+    	if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_USER)) {
+            if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_USER, args, 4, err)) {
+                int pkey=connector.getSimpleAOClient().addMySQLUser(
+                    args[1],
+                    args[2],
+                    args[3],
+                    args[4]
                 );
-            }
-            return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.ARE_MYSQL_USER_PASSWORDS_SET)) {
-            if(AOSH.checkParamCount(AOSHCommand.ARE_MYSQL_USER_PASSWORDS_SET, args, 1, err)) {
-                int result=connector.getSimpleAOClient().areMySQLUserPasswordsSet(args[1]);
-                if(result==PasswordProtected.NONE) out.println("none");
-                else if(result==PasswordProtected.SOME) out.println("some");
-                else if(result==PasswordProtected.ALL) out.println("all");
-                else throw new RuntimeException("Unexpected value for result: "+result);
+                out.println(pkey);
                 out.flush();
             }
             return true;
@@ -94,34 +136,56 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
                 SimpleAOClient.checkMySQLUsername(args[1]);
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_MYSQL_USER)) {
-            if(AOSH.checkParamCount(AOSHCommand.DISABLE_MYSQL_USER, args, 2, err)) {
+        } else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_MYSQL_USER)) {
+            if(AOSH.checkParamCount(AOSHCommand.DISABLE_MYSQL_USER, args, 4, err)) {
                 out.println(
                     connector.getSimpleAOClient().disableMySQLUser(
                         args[1],
-                        args[2]
+                        args[2],
+                        args[3],
+                        args[4]
                     )
                 );
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_MYSQL_USER)) {
-            if(AOSH.checkParamCount(AOSHCommand.ENABLE_MYSQL_USER, args, 1, err)) {
-                connector.getSimpleAOClient().enableMySQLUser(args[1]);
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_USER)) {
-            if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_USER, args, 1, err)) {
-                connector.getSimpleAOClient().removeMySQLUser(
-                    args[1]
+    	} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_MYSQL_USER)) {
+            if(AOSH.checkParamCount(AOSHCommand.ENABLE_MYSQL_USER, args, 3, err)) {
+                connector.getSimpleAOClient().enableMySQLUser(
+                    args[1],
+                    args[2],
+                    args[3]
                 );
             }
             return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.SET_MYSQL_USER_PASSWORD)) {
-            if(AOSH.checkParamCount(AOSHCommand.SET_MYSQL_USER_PASSWORD, args, 2, err)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_USER)) {
+            if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_USER, args, 3, err)) {
+                connector.getSimpleAOClient().removeMySQLUser(
+                    args[1],
+                    args[2],
+                    args[3]
+                );
+            }
+            return true;
+        } else if(command.equalsIgnoreCase(AOSHCommand.IS_MYSQL_USER_PASSWORD_SET)) {
+                if(AOSH.checkParamCount(AOSHCommand.IS_MYSQL_USER_PASSWORD_SET, args, 3, err)) {
+                    out.println(
+                        connector.getSimpleAOClient().isMySQLUserPasswordSet(
+                            args[1],
+                            args[2],
+                            args[3]
+                        )
+                    );
+                    out.flush();
+                }
+                return true;
+    	} else if(command.equalsIgnoreCase(AOSHCommand.SET_MYSQL_USER_PASSWORD)) {
+            if(AOSH.checkParamCount(AOSHCommand.SET_MYSQL_USER_PASSWORD, args, 4, err)) {
                 connector.getSimpleAOClient().setMySQLUserPassword(
                     args[1],
-                    args[2]
+                    args[2],
+                    args[3],
+                    args[4]
                 );
             }
             return true;

@@ -81,8 +81,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public int addHttpdJBossSite(
         String siteName,
         Business business,
-        LinuxAccount siteUser,
-        LinuxGroup siteGroup,
+        LinuxServerAccount siteUser,
+        LinuxServerGroup siteGroup,
         String serverAdmin,
         boolean useApache,
         IPAddress ipAddress,
@@ -127,15 +127,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public int addHttpdTomcatSharedSite(
         String siteName,
         Business business,
-        LinuxAccount siteUser,
-        LinuxGroup siteGroup,
+        LinuxServerAccount siteUser,
+        LinuxServerGroup siteGroup,
         String serverAdmin,
         boolean useApache,
         IPAddress ipAddress,
         String primaryHttpHostname,
         String[] altHttpHostnames,
-        String sharedTomcatName,
-        HttpdTomcatVersion version
+        String sharedTomcatName
     ) throws IOException, SQLException {
         return table.connector.getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
             this,
@@ -148,16 +147,15 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             ipAddress,
             primaryHttpHostname,
             altHttpHostnames,
-            sharedTomcatName,
-            version
+            sharedTomcatName
         );
     }
 
     public int addHttpdTomcatStdSite(
         String siteName,
         Business business,
-        LinuxAccount jvmUser,
-        LinuxGroup jvmGroup,
+        LinuxServerAccount jvmUser,
+        LinuxServerGroup jvmGroup,
         String serverAdmin,
         boolean useApache,
         IPAddress ipAddress,

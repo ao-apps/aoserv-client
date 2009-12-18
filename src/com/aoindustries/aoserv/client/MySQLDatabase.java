@@ -81,8 +81,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     int mysql_server;
     String accounting;
 
-    public int addMySQLServerUser(
-        MySQLServerUser msu,
+    public int addMySQLDBUser(
+        MySQLUser mu,
         boolean canSelect,
         boolean canInsert,
         boolean canUpdate,
@@ -103,7 +103,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     ) throws IOException, SQLException {
         return table.connector.getMysqlDBUsers().addMySQLDBUser(
             this,
-            msu,
+            mu,
             canSelect,
             canInsert,
             canUpdate,
@@ -224,16 +224,16 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         }
     }
 
-    public MySQLDBUser getMySQLDBUser(MySQLServerUser msu) throws IOException, SQLException {
-	return table.connector.getMysqlDBUsers().getMySQLDBUser(this, msu);
+    public MySQLDBUser getMySQLDBUser(MySQLUser mu) throws IOException, SQLException {
+    	return table.connector.getMysqlDBUsers().getMySQLDBUser(this, mu);
     }
 
     public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
         return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
     }
 
-    public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
-        return table.connector.getMysqlDBUsers().getMySQLServerUsers(this);
+    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
+        return table.connector.getMysqlDBUsers().getMySQLUsers(this);
     }
 
     public String getName() {

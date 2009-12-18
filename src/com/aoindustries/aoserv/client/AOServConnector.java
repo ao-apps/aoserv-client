@@ -644,11 +644,6 @@ abstract public class AOServConnector {
         return mysqlReservedWords;
     }
 
-    private final MySQLServerUserTable mysqlServerUsers;
-    public MySQLServerUserTable getMysqlServerUsers() {
-        return mysqlServerUsers;
-    }
-
     private final MySQLServerTable mysqlServers;
     public MySQLServerTable getMysqlServers() {return mysqlServers;}
 
@@ -1082,7 +1077,6 @@ abstract public class AOServConnector {
         newTables.add(mysqlDatabases=new MySQLDatabaseTable(this));
         newTables.add(mysqlDBUsers=new MySQLDBUserTable(this));
         newTables.add(mysqlReservedWords=new MySQLReservedWordTable(this));
-        newTables.add(mysqlServerUsers=new MySQLServerUserTable(this));
         newTables.add(mysqlServers=new MySQLServerTable(this));
         newTables.add(mysqlUsers=new MySQLUserTable(this));
         newTables.add(netBinds=new NetBindTable(this));

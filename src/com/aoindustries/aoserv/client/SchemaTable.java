@@ -129,7 +129,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         MYSQL_DATABASES,
         MYSQL_DB_USERS,
         MYSQL_RESERVED_WORDS,
-        MYSQL_SERVER_USERS,
         MYSQL_SERVERS,
         MYSQL_USERS,
         NET_BINDS,

@@ -10,18 +10,17 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 /**
  * A <code>MySQLServer</code> corresponds to a unique MySQL install
  * space on one server.  The server name must be unique per server.
- * <code>MySQLDatabase</code>s and <code>MySQLServerUser</code>s are
+ * <code>MySQLDatabase</code>s and <code>MySQLUser</code>s are
  * unique per <code>MySQLServer</code>.
  *
  * @see  MySQLDatabase
- * @see  MySQLServerUser
+ * @see  MySQLUser
  *
  * @author  AO Industries, Inc.
  */
@@ -195,20 +194,12 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
     }
 
-    public MySQLServerUser getMySQLServerUser(String username) throws IOException, SQLException {
-	return table.connector.getMysqlServerUsers().getMySQLServerUser(username, this);
-    }
-
-    public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
-	return table.connector.getMysqlServerUsers().getMySQLServerUsers(this);
+    public MySQLUser getMySQLUser(String username) throws IOException, SQLException {
+    	return table.connector.getMysqlUsers().getMySQLUser(username, this);
     }
 
     public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-	List<MySQLServerUser> psu=getMySQLServerUsers();
-	int len=psu.size();
-	List<MySQLUser> pu=new ArrayList<MySQLUser>(len);
-	for(int c=0;c<len;c++) pu.add(psu.get(c).getMySQLUser());
-	return pu;
+    	return table.connector.getMysqlUsers().getMySQLUsers(this);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -252,7 +243,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return createDependencyList(
             getFailoverMySQLReplications(),
             getMySQLDatabases(),
-            getMySQLServerUsers()
+            getMySQLUsers()
         );
     }
 

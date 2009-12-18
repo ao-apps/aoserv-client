@@ -112,8 +112,8 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     	);
     }
 
-    public void addMySQLUser() throws IOException, SQLException {
-        table.connector.getMysqlUsers().addMySQLUser(pkey);
+    public int addMySQLUser(MySQLServer mysqlServer, String host) throws IOException, SQLException {
+    	return table.connector.getMysqlUsers().addMySQLUser(pkey, mysqlServer, host);
     }
 
     public void addPostgresUser() throws IOException, SQLException {
@@ -123,14 +123,13 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     public int arePasswordsSet() throws IOException, SQLException {
         // Build the array of objects
         List<PasswordProtected> pps=new ArrayList<PasswordProtected>();
-	BusinessAdministrator ba=getBusinessAdministrator();
-	if(ba!=null) pps.add(ba);
+        BusinessAdministrator ba=getBusinessAdministrator();
+        if(ba!=null) pps.add(ba);
         LinuxAccount la=getLinuxAccount();
-	if(la!=null) pps.add(la);
-	MySQLUser mu=getMySQLUser();
-	if(mu!=null) pps.add(mu);
-	PostgresUser pu=getPostgresUser();
-	if(pu!=null) pps.add(pu);
+        if(la!=null) pps.add(la);
+        pps.addAll(getMySQLUsers());
+        PostgresUser pu=getPostgresUser();
+        if(pu!=null) pps.add(pu);
         return Username.groupPasswordsSet(pps);
     }
 
@@ -138,8 +137,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         if(disable_log!=-1) return false;
         LinuxAccount la=getLinuxAccount();
         if(la!=null && la.disable_log==-1) return false;
-        MySQLUser mu=getMySQLUser();
-        if(mu!=null && mu.disable_log==-1) return false;
+        for(MySQLUser mu : getMySQLUsers()) if(mu.disable_log==-1) return false;
         PostgresUser pu=getPostgresUser();
         if(pu!=null && pu.disable_log==-1) return false;
         return true;
@@ -155,29 +153,28 @@ final public class Username extends CachedObjectStringKey<Username> implements P
      * Checks the strength of a password as used by this <code>Username</code>.
      */
     public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException, SQLException {
-	BusinessAdministrator ba=getBusinessAdministrator();
-	if(ba!=null) {
+        BusinessAdministrator ba=getBusinessAdministrator();
+        if(ba!=null) {
             PasswordChecker.Result[] results=ba.checkPassword(userLocale, password);
             if(PasswordChecker.hasResults(userLocale, results)) return results;
-	}
+    	}
 
         LinuxAccount la=getLinuxAccount();
-	if(la!=null) {
+    	if(la!=null) {
             PasswordChecker.Result[] results=la.checkPassword(userLocale, password);
             if(PasswordChecker.hasResults(userLocale, results)) return results;
-	}
+    	}
 
-	MySQLUser mu=getMySQLUser();
-	if(mu!=null) {
+        for(MySQLUser mu : getMySQLUsers()) {
             PasswordChecker.Result[] results=mu.checkPassword(userLocale, password);
             if(PasswordChecker.hasResults(userLocale, results)) return results;
-	}
+    	}
 
-	PostgresUser pu=getPostgresUser();
-	if(pu!=null) {
+        PostgresUser pu=getPostgresUser();
+        if(pu!=null) {
             PasswordChecker.Result[] results=pu.checkPassword(userLocale, password);
             if(PasswordChecker.hasResults(userLocale, results)) return results;
-	}
+    	}
 
         return PasswordChecker.getAllGoodResults(userLocale);
     }
@@ -218,8 +215,8 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         return table.connector.getLinuxAccounts().get(pkey);
     }
 
-    public MySQLUser getMySQLUser() throws IOException, SQLException {
-        return table.connector.getMysqlUsers().get(pkey);
+    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
+        return table.connector.getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_USERNAME, pkey);
     }
 
     /**
@@ -259,12 +256,12 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public boolean isUsed() throws IOException, SQLException {
-	return
+    	return
             getLinuxAccount()!=null
             || getBusinessAdministrator()!=null
-            || getMySQLUser()!=null
+            || !getMySQLUsers().isEmpty()
             || getPostgresUser()!=null
-	;
+    	;
     }
 
     /**
@@ -344,12 +341,15 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
-            getBusinessAdministrator(),
-            getLinuxAccount(),
-            getMySQLUser(),
-            getPostgresUser()
+            createDependencyList(
+                getBusinessAdministrator(),
+                getLinuxAccount(),
+                getPostgresUser()
+            ),
+            getMySQLUsers()
         );
     }
 
@@ -360,8 +360,8 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         if(la!=null) reasons.add(new CannotRemoveReason<LinuxAccount>("Used by Linux account: "+la.getUsername().getUsername(), la));
         BusinessAdministrator ba=getBusinessAdministrator();
         if(ba!=null) reasons.add(new CannotRemoveReason<BusinessAdministrator>("Used by Business Administrator: "+ba.getUsername().getUsername(), ba));
-        MySQLUser mu=getMySQLUser();
-        if(mu!=null) reasons.add(new CannotRemoveReason<MySQLUser>("Used by MySQL user: "+mu.getUsername().getUsername(), mu));
+        List<MySQLUser> mus=getMySQLUsers();
+        if(!mus.isEmpty()) reasons.add(new CannotRemoveReason<MySQLUser>("Used by MySQL users: "+pkey, mus));
         PostgresUser pu=getPostgresUser();
         if(pu!=null) reasons.add(new CannotRemoveReason<PostgresUser>("Used by PostgreSQL user: "+pu.getUsername().getUsername(), pu));
 
@@ -378,35 +378,34 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     }
 
     public void setPassword(String password) throws SQLException, IOException {
-	BusinessAdministrator ba=getBusinessAdministrator();
-	if(ba!=null) ba.setPassword(password);
+        BusinessAdministrator ba=getBusinessAdministrator();
+        if(ba!=null) ba.setPassword(password);
 
         LinuxAccount la=getLinuxAccount();
-	if(la!=null) la.setPassword(password);
+    	if(la!=null) la.setPassword(password);
 
-	MySQLUser mu=getMySQLUser();
-	if(mu!=null) mu.setPassword(password);
+        for(MySQLUser mu : getMySQLUsers()) mu.setPassword(password);
 
-	PostgresUser pu=getPostgresUser();
-	if(pu!=null) pu.setPassword(password);
+        PostgresUser pu=getPostgresUser();
+        if(pu!=null) pu.setPassword(password);
     }
 
     public boolean canSetPassword() throws IOException, SQLException {
         if(disable_log!=-1) return false;
 
         BusinessAdministrator ba=getBusinessAdministrator();
-	if(ba!=null && !ba.canSetPassword()) return false;
+    	if(ba!=null && !ba.canSetPassword()) return false;
 
         LinuxAccount la=getLinuxAccount();
-	if(la!=null && !la.canSetPassword()) return false;
+    	if(la!=null && !la.canSetPassword()) return false;
 
-	MySQLUser mu=getMySQLUser();
-	if(mu!=null && !mu.canSetPassword()) return false;
+        List<MySQLUser> mus = getMySQLUsers();
+    	for(MySQLUser mu : mus) if(!mu.canSetPassword()) return false;
 
-	PostgresUser pu=getPostgresUser();
-	if(pu!=null && !pu.canSetPassword()) return false;
+        PostgresUser pu=getPostgresUser();
+        if(pu!=null && !pu.canSetPassword()) return false;
         
-        return ba!=null || la!=null || mu!=null || pu!=null;
+        return ba!=null || la!=null || !mus.isEmpty() || pu!=null;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

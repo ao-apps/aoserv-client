@@ -214,12 +214,11 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                             if(lsa!=null) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Used by Linux account "+un.getUsername()+" on "+ao.getHostname(), lsa));
                         }
 
-                        // mysql_server_users
-                        MySQLUser mu=un.getMySQLUser();
-                        if(mu!=null) {
-                            for(MySQLServer ms : ao.getMySQLServers()) {
-                                MySQLServerUser msu=mu.getMySQLServerUser(ms);
-                                if(msu!=null) reasons.add(new CannotRemoveReason<MySQLServerUser>("Used by MySQL user "+un.getUsername()+" on "+ms.getName()+" on "+ao.getHostname(), msu));
+                        // mysql_users
+                        for(MySQLUser mu : un.getMySQLUsers()) {
+                            MySQLServer ms = mu.getMySQLServer();
+                            if(ms.getAOServer().equals(ao)) {
+                                reasons.add(new CannotRemoveReason<MySQLUser>("Used by MySQL user "+mu.username+" on "+ms.getName()+" on "+ao.getHostname(), mu));
                             }
                         }
 

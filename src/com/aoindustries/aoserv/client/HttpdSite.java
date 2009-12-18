@@ -42,6 +42,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         COLUMN_PKEY = 0,
         COLUMN_AO_SERVER = 1,
         COLUMN_ACCOUNTING = 4,
+        COLUMN_LINUX_SERVER_ACCOUNT = 5,
+        COLUMN_LINUX_SERVER_GROUP = 6,
         COLUMN_DISABLE_LOG = 8
     ;
     static final String COLUMN_SITE_NAME_name = "site_name";
@@ -67,8 +69,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
     String site_name;
     private boolean list_first;
     String accounting;
-    String linuxAccount;
-    String linuxGroup;
+    int linux_server_account;
+    int linux_server_group;
     private String serverAdmin;
     int disable_log;
     private boolean isManual;
@@ -135,8 +137,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
             case 2: return site_name;
             case 3: return list_first?Boolean.TRUE:Boolean.FALSE;
             case COLUMN_ACCOUNTING: return accounting;
-            case 5: return linuxAccount;
-            case 6: return linuxGroup;
+            case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
+            case COLUMN_LINUX_SERVER_GROUP: return linux_server_group;
             case 7: return serverAdmin;
             case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 9: return isManual?Boolean.TRUE:Boolean.FALSE;
@@ -176,22 +178,18 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         return table.connector.getHttpdTomcatSites().get(pkey);
     }
 
+    /**
+     * May be filtered.
+     */
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        // May be filtered
-        LinuxAccount obj=table.connector.getLinuxAccounts().get(linuxAccount);
-        if(obj==null) return null;
-
-        LinuxServerAccount lsa = obj.getLinuxServerAccount(getAOServer());
-        if (lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linuxAccount+" on "+ao_server);
-        return lsa;
+        return table.connector.getLinuxServerAccounts().get(linux_server_account);
     }
 
+    /**
+     * May be filtered.
+     */
     public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        LinuxGroup obj=table.connector.getLinuxGroups().get(linuxGroup);
-        if(obj==null) throw new SQLException("Unable to find LinuxGroup: "+linuxGroup);
-        LinuxServerGroup lsg = obj.getLinuxServerGroup(getAOServer());
-        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup+" on "+ao_server);
-        return lsg;
+        return table.connector.getLinuxServerGroups().get(linux_server_group);
     }
 
     public Business getBusiness() throws SQLException, IOException {
@@ -245,8 +243,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         site_name=result.getString(pos++);
         list_first=result.getBoolean(pos++);
         accounting=result.getString(pos++);
-        linuxAccount=result.getString(pos++);
-        linuxGroup=result.getString(pos++);
+        linux_server_account=result.getInt(pos++);
+        linux_server_group=result.getInt(pos++);
         serverAdmin=result.getString(pos++);
         disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log=-1;
@@ -309,8 +307,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         site_name=in.readUTF();
         list_first=in.readBoolean();
         accounting=in.readUTF().intern();
-        linuxAccount=in.readUTF().intern();
-        linuxGroup=in.readUTF().intern();
+        linux_server_account=in.readCompressedInt();
+        linux_server_group=in.readCompressedInt();
         serverAdmin=in.readUTF();
         disable_log=in.readCompressedInt();
         isManual=in.readBoolean();
@@ -362,8 +360,13 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
         out.writeUTF(site_name);
         out.writeBoolean(list_first);
         out.writeUTF(accounting);
-        out.writeUTF(linuxAccount);
-        out.writeUTF(linuxGroup);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) {
+            out.writeUTF("apache"); // linuxAccount
+            out.writeUTF("apache"); // linuxGroup
+        } else {
+            out.writeCompressedInt(linux_server_account);
+            out.writeCompressedInt(linux_server_group);
+        }
         out.writeUTF(serverAdmin);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeNullUTF(null); // contentSrc
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {

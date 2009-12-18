@@ -38,8 +38,8 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
         final AOServer aoServer,
         final String siteName,
         final Business business,
-        final LinuxAccount siteUser,
-        final LinuxGroup siteGroup,
+        final LinuxServerAccount siteUser,
+        final LinuxServerGroup siteGroup,
         final String serverAdmin,
         final boolean useApache,
         final IPAddress ipAddress,
@@ -59,8 +59,8 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
                     out.writeCompressedInt(aoServer.pkey);
                     out.writeUTF(siteName);
                     out.writeUTF(business.pkey);
-                    out.writeUTF(siteUser.pkey);
-                    out.writeUTF(siteGroup.pkey);
+                    out.writeCompressedInt(siteUser.pkey);
+                    out.writeCompressedInt(siteGroup.pkey);
                     out.writeUTF(serverAdmin);
                     out.writeBoolean(useApache);
                     out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);

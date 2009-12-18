@@ -238,7 +238,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return table.connector.getHttpdSites().getHttpdSites(this);
+        return table.connector.getHttpdSites().getIndexedRows(HttpdSite.COLUMN_LINUX_SERVER_ACCOUNT, pkey);
     }
 
     public InboxAttributes getInboxAttributes() throws IOException, SQLException {
@@ -530,7 +530,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
         // No httpd_sites
         for(HttpdSite site : ao.getHttpdSites()) {
-            if(site.linuxAccount.equals(username)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
+            if(site.linux_server_account==pkey) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
         }
 
         return reasons;

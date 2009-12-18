@@ -38,17 +38,15 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
         final AOServer aoServer,
         final String siteName,
         final Business business,
-        final LinuxAccount siteUser,
-        final LinuxGroup siteGroup,
+        final LinuxServerAccount siteUser,
+        final LinuxServerGroup siteGroup,
         final String serverAdmin,
         final boolean useApache,
         final IPAddress ipAddress,
         final String primaryHttpHostname,
         final String[] altHttpHostnames,
-        final String sharedTomcatName,
-        HttpdTomcatVersion version
+        final String sharedTomcatName
     ) throws IOException, SQLException {
-        final int tv = version==null?-1:version.getTechnologyVersion(connector).getPkey();
         return connector.requestResult(
             true,
             new AOServConnector.ResultRequest<Integer>() {
@@ -61,17 +59,15 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
                     out.writeCompressedInt(aoServer.pkey);
                     out.writeUTF(siteName);
                     out.writeUTF(business.pkey);
-                    out.writeUTF(siteUser.pkey);
-                    out.writeUTF(siteGroup.pkey);
+                    out.writeCompressedInt(siteUser.pkey);
+                    out.writeCompressedInt(siteGroup.pkey);
                     out.writeUTF(serverAdmin);
                     out.writeBoolean(useApache);
                     out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);
                     out.writeUTF(primaryHttpHostname);
                     out.writeCompressedInt(altHttpHostnames.length);
                     for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
-                    out.writeBoolean(sharedTomcatName!=null);
-                    if(sharedTomcatName!=null) out.writeUTF(sharedTomcatName);
-                    out.writeCompressedInt(tv);
+                    out.writeUTF(sharedTomcatName);
                 }
 
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
@@ -115,10 +111,10 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
     ) throws IllegalArgumentException, SQLException, IOException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE)) {
-            if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE, args, 12, err)) {
+            if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE, args, 11, err)) {
                 // Create an array of all the alternate hostnames
-                String[] altHostnames=new String[args.length-13];
-                System.arraycopy(args, 13, altHostnames, 0, args.length-13);
+                String[] altHostnames=new String[args.length-12];
+                System.arraycopy(args, 12, altHostnames, 0, args.length-12);
                 out.println(
                     connector.getSimpleAOClient().addHttpdTomcatSharedSite(
                         args[1],
@@ -130,10 +126,9 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
                         AOSH.parseBoolean(args[7], "use_apache"),
                         args[8],
                         args[9],
-                        args[12],
+                        args[11],
                         altHostnames,
-                        args[10],
-                        args[11]
+                        args[10]
                     )
                 );
                 out.flush();

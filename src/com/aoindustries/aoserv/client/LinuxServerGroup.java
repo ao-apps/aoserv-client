@@ -137,7 +137,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 
         // httpd_sites
         for(HttpdSite site : ao.getHttpdSites()) {
-            if(site.linuxGroup.equals(name)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
+            if(site.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
         }
 
         for(MajordomoServer ms : ao.getMajordomoServers()) {
@@ -189,7 +189,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return table.connector.getHttpdSites().getHttpdSites(this);
+        return table.connector.getHttpdSites().getIndexedRows(HttpdSite.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {

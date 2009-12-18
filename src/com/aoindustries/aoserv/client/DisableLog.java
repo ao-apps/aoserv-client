@@ -121,7 +121,6 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
             getEmailSmtpRelays(),
             getHttpdSites(),
             getHttpdSharedTomcats(),
-            getMySQLServerUsers(),
             getMySQLUsers(),
             getHttpdSiteBinds(),
             getPostgresServerUsers(),
@@ -171,10 +170,6 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
         return table.connector.getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_DISABLE_LOG, pkey);
-    }
-
-    public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
-        return table.connector.getMysqlServerUsers().getIndexedRows(MySQLServerUser.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {

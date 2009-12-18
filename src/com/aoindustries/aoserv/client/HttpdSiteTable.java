@@ -82,40 +82,6 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
         return getIndexedRows(HttpdSite.COLUMN_ACCOUNTING, bu.pkey);
     }
 
-    List<HttpdSite> getHttpdSites(LinuxServerAccount lsa) throws IOException, SQLException {
-        String lsaUsername=lsa.username;
-        int aoServer=lsa.ao_server;
-
-        List<HttpdSite> cached=getRows();
-        int size=cached.size();
-        List<HttpdSite> matches=new ArrayList<HttpdSite>(size);
-    	for(int c=0;c<size;c++) {
-            HttpdSite site=cached.get(c);
-            if(
-                site.ao_server==aoServer
-                && site.linuxAccount.equals(lsaUsername)
-            ) matches.add(site);
-        }
-        return matches;
-    }
-
-    List<HttpdSite> getHttpdSites(LinuxServerGroup lsg) throws IOException, SQLException {
-        String lsgName=lsg.name;
-        int aoServer=lsg.ao_server;
-
-        List<HttpdSite> cached=getRows();
-        int size=cached.size();
-        List<HttpdSite> matches=new ArrayList<HttpdSite>(size);
-    	for(int c=0;c<size;c++) {
-            HttpdSite site=cached.get(c);
-            if(
-                site.ao_server==aoServer
-                && site.linuxGroup.equals(lsgName)
-            ) matches.add(site);
-        }
-        return matches;
-    }
-
     public SchemaTable.TableID getTableID() {
     	return SchemaTable.TableID.HTTPD_SITES;
     }

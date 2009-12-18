@@ -5,30 +5,32 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  MySQLDBUser
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
 final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 
     MySQLDBUserTable(AOServConnector connector) {
-	super(connector, MySQLDBUser.class);
+    	super(connector, MySQLDBUser.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
         new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_NAME_name, ASCENDING),
         new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
         new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(MySQLDBUser.COLUMN_MYSQL_SERVER_USER_name+'.'+MySQLServerUser.COLUMN_USERNAME_name, ASCENDING)
+        new OrderBy(MySQLDBUser.COLUMN_MYSQL_USER_name+'.'+MySQLUser.COLUMN_USERNAME_name, ASCENDING)
     };
     @Override
     OrderBy[] getDefaultOrderBy() {
@@ -37,7 +39,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 
     int addMySQLDBUser(
         final MySQLDatabase md,
-        final MySQLServerUser msu,
+        final MySQLUser mu,
         final boolean canSelect,
         final boolean canInsert,
         final boolean canUpdate,
@@ -66,7 +68,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.MYSQL_DB_USERS.ordinal());
                     out.writeCompressedInt(md.pkey);
-                    out.writeCompressedInt(msu.pkey);
+                    out.writeCompressedInt(mu.pkey);
                     out.writeBoolean(canSelect);
                     out.writeBoolean(canInsert);
                     out.writeBoolean(canUpdate);
@@ -109,59 +111,59 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
     	return getUniqueRow(MySQLDBUser.COLUMN_PKEY, pkey);
     }
 
-    MySQLDBUser getMySQLDBUser(MySQLDatabase db, MySQLServerUser msu) throws IOException, SQLException {
-	int msuPKey=msu.pkey;
+    MySQLDBUser getMySQLDBUser(MySQLDatabase db, MySQLUser mu) throws IOException, SQLException {
+    	int muPKey=mu.pkey;
 
         // Use index first on database
-	List<MySQLDBUser> cached=getMySQLDBUsers(db);
-	int size=cached.size();
-	for(int c=0;c<size;c++) {
+        List<MySQLDBUser> cached=getMySQLDBUsers(db);
+        int size=cached.size();
+        for(int c=0;c<size;c++) {
             MySQLDBUser mdu=cached.get(c);
-            if(mdu.mysql_server_user==msuPKey) return mdu;
-	}
-	return null;
+            if(mdu.mysql_user==muPKey) return mdu;
+        }
+        return null;
     }
 
     List<MySQLDBUser> getMySQLDBUsers(MySQLServer ms) throws IOException, SQLException {
         int msPKey=ms.pkey;
 
-	List<MySQLDBUser> cached=getRows();
-	int size=cached.size();
+        List<MySQLDBUser> cached=getRows();
+        int size=cached.size();
         List<MySQLDBUser> matches=new ArrayList<MySQLDBUser>(size);
-	for(int c=0;c<size;c++) {
+    	for(int c=0;c<size;c++) {
             MySQLDBUser mdu=cached.get(c);
             MySQLDatabase md=mdu.getMySQLDatabase();
             // The database might be null if filtered or recently removed
             if(md!=null && md.mysql_server==msPKey) matches.add(mdu);
-	}
-	return matches;
+        }
+        return matches;
     }
 
-    List<MySQLDBUser> getMySQLDBUsers(MySQLServerUser msu) throws IOException, SQLException {
-        return getIndexedRows(MySQLDBUser.COLUMN_MYSQL_SERVER_USER, msu.pkey);
+    List<MySQLDBUser> getMySQLDBUsers(MySQLUser mu) throws IOException, SQLException {
+        return getIndexedRows(MySQLDBUser.COLUMN_MYSQL_USER, mu.pkey);
     }
 
     List<MySQLDBUser> getMySQLDBUsers(MySQLDatabase md) throws IOException, SQLException {
         return getIndexedRows(MySQLDBUser.COLUMN_MYSQL_DATABASE, md.pkey);
     }
 
-    List<MySQLServerUser> getMySQLServerUsers(MySQLDatabase md) throws IOException, SQLException {
+    List<MySQLUser> getMySQLUsers(MySQLDatabase md) throws IOException, SQLException {
         // Use index first
-	List<MySQLDBUser> cached=getMySQLDBUsers(md);
+    	List<MySQLDBUser> cached=getMySQLDBUsers(md);
         int len=cached.size();
-	List<MySQLServerUser> array=new ArrayList<MySQLServerUser>(len);
-        for(int c=0;c<len;c++) array.add(cached.get(c).getMySQLServerUser());
-	return array;
+    	List<MySQLUser> array=new ArrayList<MySQLUser>(len);
+        for(int c=0;c<len;c++) array.add(cached.get(c).getMySQLUser());
+    	return array;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MYSQL_DB_USERS;
+    	return SchemaTable.TableID.MYSQL_DB_USERS;
     }
 
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-	String command=args[0];
-	if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DB_USER)) {
+        String command=args[0];
+        if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DB_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DB_USER, args, 21, err)) {
                 int pkey=connector.getSimpleAOClient().addMySQLDBUser(
                     args[1],
@@ -190,7 +192,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
                 out.flush();
             }
             return true;
-	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_DB_USER)) {
+    	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_DB_USER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_DB_USER, args, 4, err)) {
                 connector.getSimpleAOClient().removeMySQLDBUser(
                     args[1],
@@ -205,8 +207,8 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
                 connector.getSimpleAOClient().waitForMySQLDBUserRebuild(args[1]);
             }
             return true;
-	}
-	return false;
+        }
+        return false;
     }
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {

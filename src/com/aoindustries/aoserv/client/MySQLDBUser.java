@@ -5,20 +5,22 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * A <code>MySQLDBUser</code> grants a <code>MySQLServerUser</code>
+ * A <code>MySQLDBUser</code> grants a <code>MySQLUser</code>
  * access to a <code>MySQLDatabase</code>.  The database and
  * user must be on the same server.
  *
  * @see  MySQLDatabase
- * @see  MySQLServerUser
- *
- * @version  1.0a
+ * @see  MySQLUser
  *
  * @author  AO Industries, Inc.
  */
@@ -27,13 +29,13 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     static final int
         COLUMN_PKEY=0,
         COLUMN_MYSQL_DATABASE=1,
-        COLUMN_MYSQL_SERVER_USER=2
+        COLUMN_MYSQL_USER=2
     ;
     static final String COLUMN_MYSQL_DATABASE_name = "mysql_database";
-    static final String COLUMN_MYSQL_SERVER_USER_name = "mysql_server_user";
+    static final String COLUMN_MYSQL_USER_name = "mysql_user";
 
     int mysql_database;
-    int mysql_server_user;
+    int mysql_user;
 
     private boolean
         select_priv,
@@ -137,7 +139,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         switch(i) {
             case COLUMN_PKEY: return pkey;
             case COLUMN_MYSQL_DATABASE: return mysql_database;
-            case COLUMN_MYSQL_SERVER_USER: return mysql_server_user;
+            case COLUMN_MYSQL_USER: return mysql_user;
             case 3: return select_priv;
             case 4: return insert_priv;
             case 5: return update_priv;
@@ -161,14 +163,16 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
         }
     }
 
+    /**
+     * May be filtered.
+     */
     public MySQLDatabase getMySQLDatabase() throws IOException, SQLException {
-        // May be null due to filtering or a recently removed table
-	return table.connector.getMysqlDatabases().get(mysql_database);
+    	return table.connector.getMysqlDatabases().get(mysql_database);
     }
 
-    public MySQLServerUser getMySQLServerUser() throws IOException, SQLException {
+    public MySQLUser getMySQLUser() throws IOException, SQLException {
         // May be null due to filtering or a recently removed table
-	return table.connector.getMysqlServerUsers().get(mysql_server_user);
+    	return table.connector.getMysqlUsers().get(mysql_user);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -178,7 +182,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         mysql_database=result.getInt(2);
-        mysql_server_user=result.getInt(3);
+        mysql_user=result.getInt(3);
         select_priv=result.getBoolean(4);
         insert_priv=result.getBoolean(5);
         update_priv=result.getBoolean(6);
@@ -203,7 +207,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         mysql_database=in.readCompressedInt();
-        mysql_server_user=in.readCompressedInt();
+        mysql_user=in.readCompressedInt();
         select_priv=in.readBoolean();
         insert_priv=in.readBoolean();
         update_priv=in.readBoolean();
@@ -228,7 +232,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getMySQLDatabase(),
-            getMySQLServerUser()
+            getMySQLUser()
         );
     }
 
@@ -239,7 +243,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        reasons.addAll(getMySQLServerUser().getCannotRemoveReasons(userLocale));
+        reasons.addAll(getMySQLUser().getCannotRemoveReasons(userLocale));
         reasons.addAll(getMySQLDatabase().getCannotRemoveReasons(userLocale));
         return reasons;
     }
@@ -256,7 +260,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(mysql_database);
-        out.writeCompressedInt(mysql_server_user);
+        out.writeCompressedInt(mysql_user);
         out.writeBoolean(select_priv);
         out.writeBoolean(insert_priv);
         out.writeBoolean(update_priv);

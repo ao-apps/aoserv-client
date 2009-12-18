@@ -31,9 +31,9 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         COLUMN_AO_SERVER = 2,
         COLUMN_LINUX_SERVER_ACCOUNT = 4,
         COLUMN_LINUX_SERVER_GROUP = 5,
-        COLUMN_DISABLE_LOG = 8,
-        COLUMN_TOMCAT4_WORKER = 9,
-        COLUMN_TOMCAT4_SHUTDOWN_PORT = 10
+        COLUMN_DISABLE_LOG = 6,
+        COLUMN_TOMCAT4_WORKER = 7,
+        COLUMN_TOMCAT4_SHUTDOWN_PORT = 8
     ;
     static final String COLUMN_NAME_name = "name";
     static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -56,8 +56,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
     public static final int MAX_NAME_LENGTH=32;
 
-    public static final String OVERFLOW_TEMPLATE="tomcat";
-
     public static final String DEFAULT_TOMCAT_VERSION_PREFIX=HttpdTomcatVersion.VERSION_6_0_PREFIX;
 
     private String name;
@@ -65,8 +63,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     private int version;
     int linux_server_account;
     int linux_server_group;
-    private boolean isSecure;
-    private boolean isOverflow;
     int disable_log;
     int tomcat4_worker;
     int tomcat4_shutdown_port;
@@ -118,13 +114,11 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
             case 3: return Integer.valueOf(version);
             case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
             case COLUMN_LINUX_SERVER_GROUP: return Integer.valueOf(linux_server_group);
-            case 6: return isSecure?Boolean.TRUE:Boolean.FALSE;
-            case 7: return isOverflow?Boolean.TRUE:Boolean.FALSE;
             case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
             case COLUMN_TOMCAT4_WORKER: return tomcat4_worker==-1?null:Integer.valueOf(tomcat4_worker);
             case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:Integer.valueOf(tomcat4_shutdown_port);
-            case 11: return tomcat4_shutdown_key;
-            case 12: return isManual?Boolean.TRUE:Boolean.FALSE;
+            case 9: return tomcat4_shutdown_key;
+            case 10: return isManual?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -208,8 +202,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         version=result.getInt(pos++);
         linux_server_account=result.getInt(pos++);
         linux_server_group=result.getInt(pos++);
-        isSecure = result.getBoolean(pos++);
-        isOverflow = result.getBoolean(pos++);
         disable_log=result.getInt(pos++);
         if(result.wasNull()) disable_log=-1;
         tomcat4_worker=result.getInt(pos++);
@@ -222,20 +214,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
     public boolean isManual() {
         return isManual;
-    }
-
-    public boolean isOverflow() {
-        return isOverflow;
-    }
-
-    /**
-     * TODO: Remove this field.
-     *
-     * @deprecated  All shared Tomcats are now not secured internally.
-     */
-    @Deprecated
-    public boolean isSecure() {
-        return isSecure;
     }
 
     /**
@@ -268,8 +246,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         version=in.readCompressedInt();
         linux_server_account=in.readCompressedInt();
         linux_server_group=in.readCompressedInt();
-        isSecure = in.readBoolean();
-        isOverflow = in.readBoolean();
         disable_log=in.readCompressedInt();
         tomcat4_worker=in.readCompressedInt();
         tomcat4_shutdown_port=in.readCompressedInt();
@@ -314,8 +290,10 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         out.writeCompressedInt(version);
         out.writeCompressedInt(linux_server_account);
         out.writeCompressedInt(linux_server_group);
-        out.writeBoolean(isSecure);
-        out.writeBoolean(isOverflow);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) {
+            out.writeBoolean(false); // isSecure
+            out.writeBoolean(false); // isOverflow
+        }
         if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
             out.writeShort(0);
             out.writeShort(7);

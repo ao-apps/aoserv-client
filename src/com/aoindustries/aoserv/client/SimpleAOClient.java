@@ -158,15 +158,9 @@ final public class SimpleAOClient {
         return md;
     }
 
-    private MySQLServerUser getMySQLServerUser(String aoServer, String mysqlServer, String username) throws IllegalArgumentException, IOException, SQLException {
-        MySQLServerUser msu=getMySQLServer(aoServer, mysqlServer).getMySQLServerUser(username);
-        if(msu==null) throw new IllegalArgumentException("Unable to find MySQLServerUser: "+username+" on "+aoServer);
-        return msu;
-    }
-
-    private MySQLUser getMySQLUser(String username) throws IllegalArgumentException, IOException, SQLException {
-        MySQLUser mu=getUsername(username).getMySQLUser();
-        if(mu==null) throw new IllegalArgumentException("Unable to find MySQLUser: "+username);
+    private MySQLUser getMySQLUser(String aoServer, String mysqlServer, String username) throws IllegalArgumentException, IOException, SQLException {
+        MySQLUser mu=getMySQLServer(aoServer, mysqlServer).getMySQLUser(username);
+        if(mu==null) throw new IllegalArgumentException("Unable to find MySQLUser: "+username+" on "+aoServer);
         return mu;
     }
 
@@ -961,8 +955,8 @@ final public class SimpleAOClient {
         return ao.addHttpdJBossSite(
             siteName,
             getBusiness(accounting),
-            getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
-            getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
+            getLinuxServerAccount(aoServer, jvmUsername),
+            getLinuxServerGroup(aoServer, groupName),
             serverAdmin,
             useApache,
             ip,
@@ -1162,9 +1156,7 @@ final public class SimpleAOClient {
      *					HTTP protocol
      * @param  altHttpHostnames  any number of alternate hostnames for the HTTP protocol or
      *					<code>null</code> for none
-     * @param  sharedTomcatName   the shared Tomcat JVM under which this site runs or <code>null</code>
-     *					to use an overflow JVM
-     * @param  version                  the version of Tomcat to support
+     * @param  sharedTomcatName   the shared Tomcat JVM under which this site runs
      *
      * @return  the <code>pkey</code> of the new <code>HttpdTomcatSharedSite</code>
      *
@@ -1191,8 +1183,7 @@ final public class SimpleAOClient {
         String netDevice,
         String primaryHttpHostname,
         String[] altHttpHostnames,
-        String sharedTomcatName,
-        String version
+        String sharedTomcatName
     ) throws IllegalArgumentException, SQLException, IOException {
         AOServer ao=getAOServer(aoServer);
         checkSiteName(siteName);
@@ -1214,36 +1205,20 @@ final public class SimpleAOClient {
             String hostname=altHttpHostnames[c];
             if(!EmailDomain.isValidFormat(hostname)) throw new IllegalArgumentException("Invalid hostname: "+hostname);
         }
-        HttpdSharedTomcat sht;
-        if(sharedTomcatName==null || sharedTomcatName.length()==0) {
-            sht=null;
-            sharedTomcatName=null;
-        } else {
-            sht = ao.getHttpdSharedTomcat(sharedTomcatName);
-            if (sht==null) throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: "+sharedTomcatName+" on "+aoServer);
-        }
-        HttpdTomcatVersion htv;
-        if(version!=null && version.length()>0) {
-            TechnologyName tn=connector.getTechnologyNames().get(HttpdTomcatVersion.TECHNOLOGY_NAME);
-            if(tn==null) throw new SQLException("Unable to find TechnologyName: "+HttpdTomcatVersion.TECHNOLOGY_NAME);
-            TechnologyVersion tv=tn.getTechnologyVersion(connector, version, ao.getServer().getOperatingSystemVersion());
-            if(tv==null) throw new IllegalArgumentException("Unable to find TechnologyVersion: "+HttpdTomcatVersion.TECHNOLOGY_NAME+" version "+version);
-            htv=tv.getHttpdTomcatVersion(connector);
-            if(htv==null) throw new IllegalArgumentException("Unable to find HttpdTomcatVersion: "+HttpdTomcatVersion.TECHNOLOGY_NAME+" version "+version);
-        } else htv=null;
+        HttpdSharedTomcat sht = ao.getHttpdSharedTomcat(sharedTomcatName);
+        if (sht==null) throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: "+sharedTomcatName+" on "+aoServer);
 
         return ao.addHttpdTomcatSharedSite(
             siteName,
             getBusiness(accounting),
-            getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
-            getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
+            getLinuxServerAccount(aoServer, jvmUsername),
+            getLinuxServerGroup(aoServer, groupName),
             serverAdmin,
             useApache,
             ip,
             primaryHttpHostname,
             altHttpHostnames,
-            sharedTomcatName,
-            htv
+            sharedTomcatName
         );
     }
 
@@ -1327,8 +1302,8 @@ final public class SimpleAOClient {
         return ao.addHttpdTomcatStdSite(
             siteName,
             getBusiness(accounting),
-            getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
-            getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
+            getLinuxServerAccount(aoServer, jvmUsername),
+            getLinuxServerGroup(aoServer, groupName),
             serverAdmin,
             useApache,
             ip,
@@ -1653,7 +1628,6 @@ final public class SimpleAOClient {
      * @see  MySQLServer#addMySQLDatabase
      * @see  #checkMySQLDatabaseName
      * @see  #addMySQLUser
-     * @see  #addMySQLServerUser
      * @see  #addMySQLDBUser
      * @see  #removeMySQLDatabase
      * @see  #waitForMySQLDatabaseRebuild
@@ -1674,7 +1648,7 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Grants a <code>MySQLServerUser</code> permission to access a <code>MySQLDatabase</code>.
+     * Grants a <code>MySQLUser</code> permission to access a <code>MySQLDatabase</code>.
      *
      * @param  name  the name of the <code>MySQLDatabase</code>
      * @param  aoServer  the hostname of the <code>AOServer</code>
@@ -1694,11 +1668,10 @@ final public class SimpleAOClient {
      * @exception  SQLException  if unable to access the database or a data
      *					integrity violation occurs
      * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
-     *					<code>MySQLDatabase</code>, or <code>MySQLServerUser</code>
+     *					<code>MySQLDatabase</code>, or <code>MySQLUser</code>
      *
-     * @see  MySQLDatabase#addMySQLServerUser
+     * @see  MySQLDatabase#addMySQLDBUser
      * @see  #addMySQLUser
-     * @see  #addMySQLServerUser
      * @see  #addMySQLDatabase
      */
     public int addMySQLDBUser(
@@ -1725,8 +1698,8 @@ final public class SimpleAOClient {
         boolean canTrigger
     ) throws IllegalArgumentException, IOException, SQLException {
         MySQLDatabase md=getMySQLDatabase(aoServer, mysqlServer, name);
-        return md.addMySQLServerUser(
-            getMySQLServerUser(aoServer, mysqlServer, username),
+        return md.addMySQLDBUser(
+            getMySQLUser(aoServer, mysqlServer, username),
             canSelect,
             canInsert,
             canUpdate,
@@ -1749,7 +1722,7 @@ final public class SimpleAOClient {
 
     /**
      * Grants a <code>MySQLUser</code> access to a <code>Server</code> by adding a
-     * <code>MySQLServerUser</code>.
+     * <code>MySQLUser</code>.
      *
      * @param  username  the username of the <code>MySQLUser</code>
      * @param  aoServer  the hostname of the <code>AOServer</code>
@@ -1763,49 +1736,19 @@ final public class SimpleAOClient {
      * @exception  IllegalArgumentException  if unable to find the <code>MySQLUser</code> or
      *					<code>Server</code>
      *
-     * @see  MySQLUser#addMySQLServerUser
-     * @see  MySQLServerUser#ANY_LOCAL_HOST
-     * @see  #addMySQLUser
+     * @see  MySQLUser#addMySQLUser
+     * @see  MySQLUser#ANY_LOCAL_HOST
      * @see  #addMySQLDBUser
      */
-    public int addMySQLServerUser(
+    public int addMySQLUser(
         String username,
         String mysqlServer,
         String aoServer,
         String host
     ) throws IllegalArgumentException, IOException, SQLException {
-        return getMySQLUser(username).addMySQLServerUser(getMySQLServer(aoServer, mysqlServer), host==null || host.length()==0?null:host);
-    }
-
-    /**
-     * Adds a <code>MySQLUser</code> to the system.  A <code>MySQLUser</code> does not
-     * exist on any <code>Server</code>, it merely indicates that a <code>Username</code>
-     * will be used for accessing a <code>MySQLDatabase</code>.  In order to grant
-     * the new <code>MySQLUser</code> access to a <code>MySQLDatabase</code>, first
-     * add a <code>MySQLServerUser</code> on the same <code>Server</code> as the
-     * <code>MySQLDatabase</code>, then add a <code>MySQLDBUser</code> granting
-     * permission to the <code>MySQLDatabase</code>.
-     *
-     * @param  username  the <code>Username</code> that will be used for accessing MySQL
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data
-     *					integrity violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
-     *
-     * @see  Username#addMySQLUser
-     * @see  #addUsername
-     * @see  #addMySQLServerUser
-     * @see  #addMySQLDatabase
-     * @see  #addMySQLDBUser
-     * @see  MySQLUser
-     */
-    public void addMySQLUser(
-        String username
-    ) throws IllegalArgumentException, IOException, SQLException {
-        Username un=getUsername(username);
+        Username un = getUsername(username);
         checkMySQLUsername(username);
-        un.addMySQLUser();
+        return un.addMySQLUser(getMySQLServer(aoServer, mysqlServer), host==null || host.length()==0?null:host);
     }
 
     /**
@@ -2309,29 +2252,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Determines if a <code>MySQLUser</code> currently has passwords set.
-     *
-     * @param  username  the username of the user
-     *
-     * @return  an <code>int</code> containing <code>PasswordProtected.NONE</code>,
-     *          <code>PasswordProtected.SOME</code>, or <code>PasswordProtected.ALL</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if the <code>MySQLUser</code> is not found
-     *
-     * @see  MySQLUser#arePasswordsSet
-     * @see  #setMySQLUserPassword
-     * @see  MySQLUser
-     * @see  PasswordProtected
-     */
-    public int areMySQLUserPasswordsSet(
-        String username
-    ) throws IllegalArgumentException, IOException, SQLException {
-        return getMySQLUser(username).arePasswordsSet();
-    }
-
-    /**
      * Determines if a <code>PostgresUser</code> currently has passwords set.
      *
      * @param  username  the username of the user
@@ -2792,9 +2712,9 @@ final public class SimpleAOClient {
 
     /**
      * Checks the strength of a password that will be used for
-     * a <code>MySQLServerUser</code>.
+     * a <code>MySQLUser</code>.
      *
-     * @param  username  the username of the <code>MySQLServerUser</code> whos
+     * @param  username  the username of the <code>MySQLUser</code> whos
      *					password will be set
      * @param  password  the new password
      *
@@ -2804,7 +2724,6 @@ final public class SimpleAOClient {
      * @exception  IOException  if unable to load the dictionary resource
      *
      * @see  #setMySQLUserPassword
-     * @see  #setMySQLServerUserPassword
      * @see  MySQLUser#checkPassword
      */
     public static PasswordChecker.Result[] checkMySQLPassword(
@@ -3417,8 +3336,7 @@ final public class SimpleAOClient {
         LinuxAccount la=un.getLinuxAccount();
         if(la!=null && la.disable_log==-1) disableLinuxAccount(dl, la);
 
-        MySQLUser mu=un.getMySQLUser();
-        if(mu!=null && mu.disable_log==-1) disableMySQLUser(dl, mu);
+        for(MySQLUser mu : un.getMySQLUsers()) if(mu.disable_log==-1) mu.disable(dl);
 
         PostgresUser pu=un.getPostgresUser();
         if(pu!=null && pu.disable_log==-1) disablePostgresUser(dl, pu);
@@ -3523,33 +3441,6 @@ final public class SimpleAOClient {
      * Disables a <code>MySQLUser</code>.
      *
      * @param  username  the username to disable
-     * @param  disableReason  the reason the account is being disabled
-     *
-     * @return  the pkey of the new <code>DisableLog</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or <code>MySQLUser</code>
-     */
-    public int disableMySQLUser(
-        String username,
-        String disableReason
-    ) throws IllegalArgumentException, SQLException, IOException {
-        MySQLUser mu=getMySQLUser(username);
-        DisableLog dl=connector.getDisableLogs().get(mu.getUsername().getBusiness().addDisableLog(disableReason));
-        disableMySQLUser(dl, mu);
-        return dl.getPkey();
-    }
-    private void disableMySQLUser(DisableLog dl, MySQLUser mu) throws IOException, SQLException {
-        for(MySQLServerUser msu : mu.getMySQLServerUsers()) if(msu.disable_log==-1) msu.disable(dl);
-        mu.disable(dl);
-    }
-
-    /**
-     * Disables a <code>MySQLServerUser</code>.
-     *
-     * @param  username  the username to disable
      * @param  aoServer  the server the account is on
      * @param  disableReason  the reason the account is being disabled
      *
@@ -3560,15 +3451,15 @@ final public class SimpleAOClient {
      *					violation occurs
      * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>MySQLUser</code>
      */
-    public int disableMySQLServerUser(
+    public int disableMySQLUser(
         String username,
         String mysqlServer,
         String aoServer,
         String disableReason
     ) throws IllegalArgumentException, SQLException, IOException {
-        MySQLServerUser msu=getMySQLServerUser(aoServer, mysqlServer, username);
-        DisableLog dl=connector.getDisableLogs().get(msu.getMySQLUser().getUsername().getBusiness().addDisableLog(disableReason));
-        msu.disable(dl);
+        MySQLUser mu=getMySQLUser(aoServer, mysqlServer, username);
+        DisableLog dl=connector.getDisableLogs().get(mu.getUsername().getBusiness().addDisableLog(disableReason));
+        mu.disable(dl);
         return dl.getPkey();
     }
 
@@ -3874,8 +3765,15 @@ final public class SimpleAOClient {
         LinuxAccount la=un.getLinuxAccount();
         if(la!=null && la.disable_log==dl.pkey) enableLinuxAccount(dl, la, linuxAccountServers);
 
-        MySQLUser mu=un.getMySQLUser();
-        if(mu!=null && mu.disable_log==dl.pkey) enableMySQLUser(dl, mu, mysqlServers);
+        for(MySQLUser mu : un.getMySQLUsers()) {
+            if(mu.disable_log==dl.pkey) {
+                mu.enable();
+                if(mysqlServers!=null) {
+                    AOServer ao=mu.getMySQLServer().getAOServer();
+                    if(!mysqlServers.contains(ao)) mysqlServers.add(ao);
+                }
+            }
+        }
 
         PostgresUser pu=un.getPostgresUser();
         if(pu!=null && pu.disable_log==dl.pkey) enablePostgresUser(dl, pu, postgresServers);
@@ -3963,37 +3861,6 @@ final public class SimpleAOClient {
      * Enables a <code>MySQLUser</code>.
      *
      * @param  username  the username to enable
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or <code>MySQLUser</code>
-     */
-    public void enableMySQLUser(
-        String username
-    ) throws IllegalArgumentException, SQLException, IOException {
-        MySQLUser mu=getMySQLUser(username);
-        DisableLog dl=mu.getDisableLog();
-        if(dl==null) throw new IllegalArgumentException("MySQLUser not disabled: "+username);
-        enableMySQLUser(dl, mu, null);
-    }
-    private void enableMySQLUser(DisableLog dl, MySQLUser mu, List<AOServer> mysqlServers) throws IOException, SQLException {
-        mu.enable();
-        for(MySQLServerUser msu : mu.getMySQLServerUsers()) {
-            if(msu.disable_log==dl.pkey) {
-                msu.enable();
-                if(mysqlServers!=null) {
-                    AOServer ao=msu.getMySQLServer().getAOServer();
-                    if(!mysqlServers.contains(ao)) mysqlServers.add(ao);
-                }
-            }
-        }
-    }
-
-    /**
-     * Enables a <code>MySQLServerUser</code>.
-     *
-     * @param  username  the username to enable
      * @param  aoServer  the server the account is on
      *
      * @exception  IOException  if unable to contact the server
@@ -4001,15 +3868,15 @@ final public class SimpleAOClient {
      *					violation occurs
      * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>MySQLUser</code>
      */
-    public void enableMySQLServerUser(
+    public void enableMySQLUser(
         String username,
         String mysqlServer,
         String aoServer
     ) throws IllegalArgumentException, SQLException, IOException {
-        MySQLServerUser msu=getMySQLServerUser(aoServer, mysqlServer, username);
-        DisableLog dl=msu.getDisableLog();
-        if(dl==null) throw new IllegalArgumentException("MySQLServerUser not disabled: "+username+" on "+mysqlServer+" on "+aoServer);
-        msu.enable();
+        MySQLUser mu=getMySQLUser(aoServer, mysqlServer, username);
+        DisableLog dl=mu.getDisableLog();
+        if(dl==null) throw new IllegalArgumentException("MySQLUser not disabled: "+username+" on "+mysqlServer+" on "+aoServer);
+        mu.enable();
     }
 
     /**
@@ -4843,27 +4710,27 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Determines if a <code>MySQLServerUser</code> currently has a password set.
+     * Determines if a <code>MySQLUser</code> currently has a password set.
      *
      * @param  username  the username of the account
      * @param  aoServer  the server the account is hosted on
      *
-     * @return  if the <code>MySQLServerUser</code> has a password set
+     * @return  if the <code>MySQLUser</code> has a password set
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if the <code>MySQLServerUser</code> is not found
+     * @exception  IllegalArgumentException  if the <code>MySQLUser</code> is not found
      *
-     * @see  MySQLServerUser#arePasswordsSet
-     * @see  #setMySQLServerUserPassword
-     * @see  MySQLServerUser
+     * @see  MySQLUser#arePasswordsSet
+     * @see  #setMySQLUserPassword
+     * @see  MySQLUser
      */
-    public boolean isMySQLServerUserPasswordSet(
+    public boolean isMySQLUserPasswordSet(
         String username,
         String mysqlServer,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
-        return getMySQLServerUser(aoServer, mysqlServer, username).arePasswordsSet()==PasswordProtected.ALL;
+        return getMySQLUser(aoServer, mysqlServer, username).arePasswordsSet()==PasswordProtected.ALL;
     }
 
     /**
@@ -5873,7 +5740,7 @@ final public class SimpleAOClient {
      * @exception  SQLException  if unable to access the database or a data integrity
      *					violation occurs
      * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
-     *					<code>MySQLDatabase</code>, <code>MySQLServerUser</code>, or
+     *					<code>MySQLDatabase</code>, <code>MySQLUser</code>, or
      *					<code>MySQLDBUser</code>
      *
      * @see  MySQLDBUser#remove
@@ -5886,55 +5753,33 @@ final public class SimpleAOClient {
         String username
     ) throws IllegalArgumentException, IOException, SQLException {
         MySQLDatabase md=getMySQLDatabase(aoServer, mysqlServer, name);
-        MySQLServerUser msu=getMySQLServerUser(aoServer, mysqlServer, username);
-        MySQLDBUser mdu=md.getMySQLDBUser(msu);
-        if(mdu==null) throw new IllegalArgumentException("Unable to find MySQLDBUser on MySQLServer "+mysqlServer+" on AOServer "+aoServer+" for MySQLDatabase named "+name+" and MySQLServerUser named "+username);
+        MySQLUser mu=getMySQLUser(aoServer, mysqlServer, username);
+        MySQLDBUser mdu=md.getMySQLDBUser(mu);
+        if(mdu==null) throw new IllegalArgumentException("Unable to find MySQLDBUser on MySQLServer "+mysqlServer+" on AOServer "+aoServer+" for MySQLDatabase named "+name+" and MySQLUser named "+username);
         mdu.remove();
     }
 
     /**
-     * Removes a <code>MySQLServerUser</code> from a the system..  The <code>MySQLUser</code> is
-     * no longer allowed to access the <code>Server</code>.
+     * Removes a <code>MySQLUser</code> from a the system.
      *
-     * @param  username  the username of the <code>MySQLServerUser</code>
+     * @param  username  the username of the <code>MySQLUser</code>
      * @param  aoServer  the hostname of the <code>Server</code>
      *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data integrity
      *					violation occurs
      * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
-     *					<code>MySQLServerUser</code>
+     *					<code>MySQLUser</code>
      *
-     * @see  MySQLServerUser#remove
-     * @see  #addMySQLServerUser
+     * @see  MySQLUser#remove
+     * @see  #addMySQLUser
      */
-    public void removeMySQLServerUser(
+    public void removeMySQLUser(
         String username,
         String mysqlServer,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
-        getMySQLServerUser(aoServer, mysqlServer, username).remove();
-    }
-
-    /**
-     * Removes a <code>MySQLUser</code> from a the system.  All of the associated
-     * <code>MySQLServerUser</code>s and <code>MySQLDBUser</code>s are also removed.
-     *
-     * @param  username  the username of the <code>MySQLUser</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>MySQLUser</code>
-     *
-     * @see  MySQLUser#remove
-     * @see  #addMySQLUser
-     * @see  #removeMySQLServerUser
-     */
-    public void removeMySQLUser(
-        String username
-    ) throws IllegalArgumentException, IOException, SQLException {
-        getMySQLUser(username).remove();
+        getMySQLUser(aoServer, mysqlServer, username).remove();
     }
 
     /**
@@ -7076,9 +6921,9 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Sets the password for a <code>MySQLServerUser</code>.
+     * Sets the password for a <code>MySQLUser</code>.
      *
-     * @param  username  the username of the <code>MySQLServerUser</code>
+     * @param  username  the username of the <code>MySQLUser</code>
      * @param  aoServer  the hostname of the <code>AOServer</code>
      * @param  password  the new password
      *
@@ -7086,38 +6931,17 @@ final public class SimpleAOClient {
      * @exception  SQLException  if unable to access the database or a data integrity
      *					violation occurs
      * @exception  IllegalArgumentException  if unable to find the <code>MySQLUser</code>,
-     *					<code>Server</code>, or <code>MySQLServerUser</code>
-     *
-     * @see  MySQLServerUser#setPassword
-     */
-    public void setMySQLServerUserPassword(
-        String username,
-        String mysqlServer,
-        String aoServer,
-        String password
-    ) throws IllegalArgumentException, IOException, SQLException {
-        getMySQLServerUser(aoServer, mysqlServer, username).setPassword(password==null || password.length()==0?null:password);
-    }
-
-    /**
-     * Sets the password for a <code>MySQLUser</code> by settings the password for
-     * all of its <code>MySQLServerUser</code>s.
-     *
-     * @param  username  the username of the <code>MySQLUser</code>
-     * @param  password  the new password
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>MySQLUser</code>
+     *					<code>Server</code>, or <code>MySQLUser</code>
      *
      * @see  MySQLUser#setPassword
      */
     public void setMySQLUserPassword(
         String username,
+        String mysqlServer,
+        String aoServer,
         String password
     ) throws IllegalArgumentException, IOException, SQLException {
-        getMySQLUser(username).setPassword(password==null || password.length()==0?null:password);
+        getMySQLUser(aoServer, mysqlServer, username).setPassword(password==null || password.length()==0?null:password);
     }
 
     /**

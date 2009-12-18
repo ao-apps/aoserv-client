@@ -37,9 +37,8 @@ public class MySQLTest extends TestCase {
     private AOServConnector conn;
     private Business bu;
     private Username username;
-    private MySQLUser mysqlUser;
-    private List<MySQLServerUser> mysqlServerUsers=new ArrayList<MySQLServerUser>();
-    private Map<MySQLServerUser,String> mysqlServerUserPasswords=new HashMap<MySQLServerUser,String>();
+    private List<MySQLUser> mysqlUsers=new ArrayList<MySQLUser>();
+    private Map<MySQLUser,String> mysqlUserPasswords=new HashMap<MySQLUser,String>();
     private List<MySQLDatabase> mysqlDatabases=new ArrayList<MySQLDatabase>();
     private Map<MySQLDatabase,Integer> dumpSizes=new HashMap<MySQLDatabase,Integer>();
 
@@ -55,8 +54,7 @@ public class MySQLTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         for(MySQLDatabase md : mysqlDatabases) md.remove();
-        for(MySQLServerUser msu : mysqlServerUsers) msu.remove();
-        if(mysqlUser!=null) mysqlUser.remove();
+        for(MySQLUser mu : mysqlUsers) mu.remove();
         if(username!=null) username.remove();
         conn=null;
     }
@@ -70,16 +68,16 @@ public class MySQLTest extends TestCase {
      * Runs the full MySQL test.
      */
     public void testMySQL() throws Exception {
-        addMySQLServerUsers();
-        setMySQLServerUserPasswords();
+        addMySQLUsers();
+        setMySQLUserPasswords();
         addMySQLDatabases();
         doCantConnectTest();
         addMySQLDBUser();
         createTestTable();
         selectCount();
-        disableMySQLServerUsers();
+        disableMySQLUsers();
         doCantConnectTest();
-        enableMySQLServerUsers();
+        enableMySQLUsers();
         selectCount();
         dumpMySQLDatabases();
     }
@@ -87,7 +85,7 @@ public class MySQLTest extends TestCase {
     /**
      * Test adding a new mysql user to each of the mysql servers.
      */
-    private void addMySQLServerUsers() throws Exception {
+    private void addMySQLUsers() throws Exception {
         System.out.println("Testing adding MySQLUser to each MySQLServer");
         System.out.print("    Resolving TEST Business: ");
         bu=conn.getBusinesses().get("TEST");
@@ -119,19 +117,13 @@ public class MySQLTest extends TestCase {
         assertNotNull("Username", username);
         System.out.println("Done");
         
-        System.out.print("    Adding MySQLUser: ");
-        username.addMySQLUser();
-        mysqlUser=username.getMySQLUser();
-        assertNotNull("MySQLUser", mysqlUser);
-        System.out.println("Done");
-        
-        System.out.println("    Adding MySQLServerUsers:");
+        System.out.println("    Adding MySQLUsers:");
         for(MySQLServer mysqlServer : conn.getMysqlServers()) {
             System.out.print("        "+mysqlServer+": ");
-            int pkey=mysqlUser.addMySQLServerUser(mysqlServer, MySQLServerUser.ANY_HOST);
-            MySQLServerUser msu=conn.getMysqlServerUsers().get(pkey);
-            assertNotNull("MySQLServerUser", msu);
-            mysqlServerUsers.add(msu);
+            int pkey=username.addMySQLUser(mysqlServer, MySQLUser.ANY_HOST);
+            MySQLUser mu=conn.getMysqlUsers().get(pkey);
+            assertNotNull("MySQLUser", mu);
+            mysqlUsers.add(mu);
             mysqlServer.getAOServer().waitForMySQLUserRebuild();
             System.out.println("Done");
         }
@@ -140,36 +132,22 @@ public class MySQLTest extends TestCase {
     /**
      * Tests the password setting and related functions
      */
-    private void setMySQLServerUserPasswords() throws Exception {
-        System.out.print("Testing MySQLUser.arePasswordsSet for NONE: ");
-        assertEquals(mysqlUser.arePasswordsSet(), PasswordProtected.NONE);
-        System.out.println("Done");
-
-        for(int c=0;c<mysqlServerUsers.size();c++) {
-            MySQLServerUser msu = mysqlServerUsers.get(c);
-            System.out.print("Testing MySQLServerUser.arePasswordsSet for NONE: ");
-            assertEquals(msu.arePasswordsSet(), PasswordProtected.NONE);
+    private void setMySQLUserPasswords() throws Exception {
+        for(MySQLUser mu : mysqlUsers) {
+            System.out.print("Testing MySQLUser.arePasswordsSet for NONE: ");
+            assertEquals(mu.arePasswordsSet(), PasswordProtected.NONE);
             System.out.println("Done");
 
-            System.out.print("Testing MySQLServerUser.setPassword for "+msu+": ");
+            System.out.print("Testing MySQLUser.setPassword for "+mu+": ");
             String password=LinuxAccountTable.generatePassword();
-            msu.setPassword(password);
+            mu.setPassword(password);
             System.out.println("Done");
-            mysqlServerUserPasswords.put(msu, password);
+            mysqlUserPasswords.put(mu, password);
 
-            System.out.print("Testing MySQLServerUser.arePasswordsSet for ALL: ");
-            assertEquals(msu.arePasswordsSet(), PasswordProtected.ALL);
+            System.out.print("Testing MySQLUser.arePasswordsSet for ALL: ");
+            assertEquals(mu.arePasswordsSet(), PasswordProtected.ALL);
             System.out.println(" Done");
-
-            if(c==0 && mysqlServerUsers.size()>1) {
-                System.out.print("Testing MySQLUser.arePasswordsSet for SOME: ");
-                assertEquals(mysqlUser.arePasswordsSet(), PasswordProtected.SOME);
-                System.out.println("Done");
-            }
         }
-        System.out.print("Testing MySQLUser.arePasswordsSet for ALL: ");
-        assertEquals(mysqlUser.arePasswordsSet(), PasswordProtected.ALL);
-        System.out.println("Done");
     }
 
     /**
@@ -194,7 +172,6 @@ public class MySQLTest extends TestCase {
                     +(char)('0'+random.nextInt(10))
                     +(char)('0'+random.nextInt(10))
                 ;
-                boolean found=false;
                 if(mysqlServer.isMySQLDatabaseNameAvailable(temp)) randomName=temp;
             }
             System.out.println(randomName);
@@ -210,28 +187,28 @@ public class MySQLTest extends TestCase {
     }
 
     /**
-     * Gets the test MySQLServerUser for the provided MySQLServer.
+     * Gets the test MySQLUser for the provided MySQLServer.
      */
-    private MySQLServerUser getMySQLServerUser(MySQLServer ms) throws Exception {
-        MySQLServerUser foundMSU=null;
-        for(MySQLServerUser msu : mysqlServerUsers) {
-            if(msu.getMySQLServer().equals(ms)) {
-                foundMSU=msu;
+    private MySQLUser getMySQLUser(MySQLServer ms) throws Exception {
+        MySQLUser foundMU=null;
+        for(MySQLUser mu : mysqlUsers) {
+            if(mu.getMySQLServer().equals(ms)) {
+                foundMU=mu;
                 break;
             }
         }
-        assertNotNull(foundMSU);
-        return foundMSU;
+        assertNotNull(foundMU);
+        return foundMU;
     }
 
     /**
      * Gets a new connection to the provided MySQLDatabase.
      */
-    private Connection getConnection(MySQLDatabase md, MySQLServerUser msu) throws Exception {
+    private Connection getConnection(MySQLDatabase md, MySQLUser mu) throws Exception {
         try {
-            assertEquals(md.getMySQLServer(), msu.getMySQLServer());
+            assertEquals(md.getMySQLServer(), mu.getMySQLServer());
             Class.forName(md.getJdbcDriver()).newInstance();
-            return DriverManager.getConnection(md.getJdbcUrl(true), msu.getMySQLUser().getUsername().getUsername(), mysqlServerUserPasswords.get(msu));
+            return DriverManager.getConnection(md.getJdbcUrl(true), mu.getUsername().getUsername(), mysqlUserPasswords.get(mu));
         } catch(ClassNotFoundException err) {
             fail(err.toString());
             return null;
@@ -248,7 +225,7 @@ public class MySQLTest extends TestCase {
      * Gets a new connection to the provided MySQLDatabase.
      */
     private Connection getConnection(MySQLDatabase md) throws Exception {
-        return getConnection(md, getMySQLServerUser(md.getMySQLServer()));
+        return getConnection(md, getMySQLUser(md.getMySQLServer()));
     }
 
     /**
@@ -298,8 +275,8 @@ public class MySQLTest extends TestCase {
         System.out.print("Testing addMySQLDBUser: ");
         for(MySQLDatabase md : mysqlDatabases) {
             System.out.print('.');
-            MySQLServerUser msu = getMySQLServerUser(md.getMySQLServer());
-            md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+            MySQLUser mu = getMySQLUser(md.getMySQLServer());
+            md.addMySQLDBUser(mu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
             md.getMySQLServer().getAOServer().waitForMySQLDBUserRebuild();
         }
         System.out.println(" Done");
@@ -351,13 +328,13 @@ public class MySQLTest extends TestCase {
     /**
      * Test disable users.
      */
-    private void disableMySQLServerUsers() throws Exception {
-        System.out.print("Disabling MySQLServerUsers: ");
+    private void disableMySQLUsers() throws Exception {
+        System.out.print("Disabling MySQLUsers: ");
         DisableLog dl=conn.getDisableLogs().get(bu.addDisableLog("Test disabling"));
-        for(MySQLServerUser msu : mysqlServerUsers) {
+        for(MySQLUser mu : mysqlUsers) {
             System.out.print('.');
-            msu.disable(dl);
-            msu.getMySQLServer().getAOServer().waitForMySQLUserRebuild();
+            mu.disable(dl);
+            mu.getMySQLServer().getAOServer().waitForMySQLUserRebuild();
         }
         System.out.println(" Done");
     }
@@ -365,12 +342,12 @@ public class MySQLTest extends TestCase {
     /**
      * Test enable users.
      */
-    private void enableMySQLServerUsers() throws Exception {
-        System.out.print("Enabling MySQLServerUsers: ");
-        for(MySQLServerUser msu : mysqlServerUsers) {
+    private void enableMySQLUsers() throws Exception {
+        System.out.print("Enabling MySQLUsers: ");
+        for(MySQLUser mu : mysqlUsers) {
             System.out.print('.');
-            msu.enable();
-            msu.getMySQLServer().getAOServer().waitForMySQLUserRebuild();
+            mu.enable();
+            mu.getMySQLServer().getAOServer().waitForMySQLUserRebuild();
         }
         System.out.println(" Done");
     }
