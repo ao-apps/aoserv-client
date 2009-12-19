@@ -283,17 +283,21 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         }
         return Collections.unmodifiableList(nbs);
     }
-    /*
+
     public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
-        return table.connector.getNetBinds().getNetBinds(this, ipAddress);
+        // Use the index first
+        List<NetBind> cached = table.connector.getNetBinds().getIndexedRows(NetBind.COLUMN_IP_ADDRESS, ipAddress.pkey);
+        int size=cached.size();
+        List<NetBind> matches=new ArrayList<NetBind>(size);
+        for(NetBind nb : cached) {
+            if(nb.getBusinessServer().server==pkey) matches.add(nb);
+        }
+        return Collections.unmodifiableList(matches);
     }
-     */
 
     public List<NetBind> getNetBinds(Protocol protocol) throws IOException, SQLException {
         // Use the index first
         List<NetBind> cached = table.connector.getNetBinds().getIndexedRows(NetBind.COLUMN_APP_PROTOCOL, protocol.pkey);
-
-        // Use the index first
         int size=cached.size();
         List<NetBind> matches=new ArrayList<NetBind>(size);
         for(NetBind nb : cached) {

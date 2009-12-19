@@ -112,19 +112,6 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
         return matches;
     }
 
-    List<NetBind> getNetBinds(Server se, IPAddress ip) throws IOException, SQLException {
-    	int ipAddress=ip.pkey;
-
-        // Use the index first
-        List<NetBind> cached=getNetBinds(se);
-        int size=cached.size();
-        List<NetBind> matches=new ArrayList<NetBind>(size);
-        for(NetBind nb : cached) {
-            if(nb.ip_address==ipAddress) matches.add(nb);
-        }
-        return matches;
-    }
-
     NetBind getNetBind(
         Server se,
         IPAddress ip,
