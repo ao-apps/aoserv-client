@@ -39,10 +39,6 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
         return getUniqueRow(BusinessServer.COLUMN_PKEY, pkey);
     }
 
-    List<BusinessServer> getBusinessServers(Business bu) throws IOException, SQLException {
-        return getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, bu.pkey);
-    }
-
     List<BusinessServer> getBusinessServers(Server server) throws IOException, SQLException {
         return getIndexedRows(BusinessServer.COLUMN_SERVER, server.pkey);
     }
@@ -56,32 +52,30 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 	return businesses;
     }
 
-    BusinessServer getBusinessServer(Business bu, Server se) throws IOException, SQLException {
-        int pkey=se.pkey;
-        
+    BusinessServer getBusinessServer(String accounting, int server) throws IOException, SQLException {
         // Use the index first
-	List<BusinessServer> cached=getBusinessServers(bu);
-	int size=cached.size();
-	for(int c=0;c<size;c++) {
+        List<BusinessServer> cached=getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, accounting);
+        int size=cached.size();
+        for(int c=0;c<size;c++) {
             BusinessServer bs=cached.get(c);
-            if(bs.server==pkey) return bs;
-	}
-	return null;
+            if(bs.server==server) return bs;
+        }
+        return null;
     }
 
     Server getDefaultServer(Business business) throws IOException, SQLException {
         // Use index first
-	List<BusinessServer> cached=getBusinessServers(business);
-	int size=cached.size();
-	for(int c=0;c<size;c++) {
+        List<BusinessServer> cached=getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, business.pkey);
+        int size=cached.size();
+        for(int c=0;c<size;c++) {
             BusinessServer bs=cached.get(c);
             if(bs.is_default) return bs.getServer();
-	}
-	return null;
+        }
+        return null;
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BUSINESS_SERVERS;
+    	return SchemaTable.TableID.BUSINESS_SERVERS;
     }
 
     @Override

@@ -160,6 +160,9 @@ abstract public class AOServConnector {
     private final AOServerDaemonHostTable aoServerDaemonHosts;
     public AOServerDaemonHostTable getAoServerDaemonHosts() {return aoServerDaemonHosts;}
 
+    private final AOServerResourceTable aoServerResources;
+    public AOServerResourceTable getAoServerResources() {return aoServerResources;}
+
     private final AOServerTable aoServers;
     public AOServerTable getAoServers() {return aoServers;}
 
@@ -977,6 +980,7 @@ abstract public class AOServConnector {
         // These must match the table IDs in SchemaTable
         ArrayList<AOServTable> newTables = new ArrayList<AOServTable>();
         newTables.add(aoServerDaemonHosts=new AOServerDaemonHostTable(this));
+        newTables.add(aoServerResources=new AOServerResourceTable(this));
         newTables.add(aoServers=new AOServerTable(this));
         newTables.add(aoservPermissions=new AOServPermissionTable(this));
         newTables.add(aoservProtocols=new AOServProtocolTable(this));

@@ -241,7 +241,12 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                 {
                     PackageDefinitionLimit limit=packageDefinition.getLimit(mysqlReplicationResource);
                     if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-                        List<FailoverMySQLReplication> fmrs = business.getFailoverMySQLReplications();
+
+                        //List<FailoverMySQLReplication> fmrs = business.getFailoverMySQLReplications();
+                        List<FailoverMySQLReplication> fmrs = new ArrayList<FailoverMySQLReplication>();
+                        for(FailoverMySQLReplication fmr : connector.getFailoverMySQLReplications().getRows()) {
+                            if(fmr.getMySQLServer().getAoServerResource().getResource().getBusiness().equals(business)) fmrs.add(fmr);
+                        }
                         if(!fmrs.isEmpty()) {
                             if(limit==null) throw new SQLException("FailoverMySQLReplications exist, but no limit defined for Business="+business.pkey+", PackageDefinition="+packageDefinition.pkey);
                             if(fmrs.size()>limit.getSoftLimit()) {

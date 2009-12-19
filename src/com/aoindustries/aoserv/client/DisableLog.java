@@ -137,7 +137,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
     }
 
     public List<Resource> getResources() throws IOException, SQLException {
-        return table.connector.getResources().getResources(this);
+        return table.connector.getResources().getIndexedRows(Resource.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {

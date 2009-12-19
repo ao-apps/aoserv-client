@@ -146,9 +146,12 @@ final public class SimpleAOClient {
     }
 
     private MySQLServer getMySQLServer(String aoServer, String name) throws IllegalArgumentException, IOException, SQLException {
-        MySQLServer ms=getAOServer(aoServer).getMySQLServer(name);
-        if(ms==null) throw new IllegalArgumentException("Unable to find MySQLServer: "+name+" on "+aoServer);
-        return ms;
+        AOServer ao = getAOServer(aoServer);
+        // Use index first
+        for(MySQLServer ms : connector.getMysqlServers().getIndexedRows(MySQLServer.COLUMN_NAME, name)) {
+            if(ms.getAoServerResource().ao_server==ao.pkey) return ms;
+        }
+        throw new IllegalArgumentException("Unable to find MySQLServer: "+name+" on "+aoServer);
     }
 
     private MySQLDatabase getMySQLDatabase(String aoServer, String mysqlServer, String name) throws IllegalArgumentException, IOException, SQLException {
@@ -3769,7 +3772,7 @@ final public class SimpleAOClient {
             if(mu.disable_log==dl.pkey) {
                 mu.enable();
                 if(mysqlServers!=null) {
-                    AOServer ao=mu.getMySQLServer().getAOServer();
+                    AOServer ao=mu.getMySQLServer().getAoServerResource().getAoServer();
                     if(!mysqlServers.contains(ao)) mysqlServers.add(ao);
                 }
             }

@@ -36,18 +36,19 @@ import java.util.concurrent.ConcurrentMap;
 final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Removable {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=1,
-        COLUMN_SERVER=2,
-        COLUMN_IP_ADDRESS=3
+        COLUMN_PKEY = 0,
+        COLUMN_BUSINESS_SERVER = 1,
+        COLUMN_IP_ADDRESS = 2,
+        COLUMN_APP_PROTOCOL = 5
     ;
-    static final String COLUMN_SERVER_name = "server";
-    static final String COLUMN_IP_ADDRESS_name = "ip_address";
-    static final String COLUMN_PORT_name = "port";
-    static final String COLUMN_NET_PROTOCOL_name = "net_protocol";
+    static final String
+        COLUMN_BUSINESS_SERVER_name = "business_server",
+        COLUMN_IP_ADDRESS_name = "ip_address",
+        COLUMN_PORT_name = "port",
+        COLUMN_NET_PROTOCOL_name = "net_protocol"
+    ;
 
-    String accounting;
-    int server;
+    int business_server;
     int ip_address;
     int port;
     String net_protocol;
@@ -57,23 +58,22 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     private String monitoring_parameters;
 
     public Protocol getAppProtocol() throws SQLException, IOException {
-	Protocol obj=table.connector.getProtocols().get(app_protocol);
-	if(obj==null) throw new SQLException("Unable to find Protocol: "+app_protocol);
-	return obj;
+        Protocol obj=table.connector.getProtocols().get(app_protocol);
+        if(obj==null) throw new SQLException("Unable to find Protocol: "+app_protocol);
+        return obj;
     }
 
     Object getColumnImpl(int i) {
         switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_ACCOUNTING: return accounting;
-            case COLUMN_SERVER: return Integer.valueOf(server);
+            case COLUMN_PKEY: return pkey;
+            case COLUMN_BUSINESS_SERVER: return business_server;
             case COLUMN_IP_ADDRESS: return Integer.valueOf(ip_address);
-            case 4: return Integer.valueOf(port);
-            case 5: return net_protocol;
-            case 6: return app_protocol;
-            case 7: return open_firewall?Boolean.TRUE:Boolean.FALSE;
-            case 8: return monitoring_enabled?Boolean.TRUE:Boolean.FALSE;
-            case 9: return monitoring_parameters;
+            case 3: return port;
+            case 4: return net_protocol;
+            case COLUMN_APP_PROTOCOL: return app_protocol;
+            case 6: return open_firewall?Boolean.TRUE:Boolean.FALSE;
+            case 7: return monitoring_enabled?Boolean.TRUE:Boolean.FALSE;
+            case 8: return monitoring_parameters;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -274,11 +274,10 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
     /**
      * May be filtered.
      */
-    public Business getBusiness() throws IOException, SQLException {
-        // May be filtered
-        return table.connector.getBusinesses().get(accounting);
+    public BusinessServer getBusinessServer() throws IOException, SQLException {
+        return table.connector.getBusinessServers().get(business_server);
     }
-    
+
     public PostgresServer getPostgresServer() throws IOException, SQLException {
         return table.connector.getPostgresServers().getPostgresServer(this);
     }
@@ -293,27 +292,21 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         return obj;
     }
 
-    public Server getServer() throws SQLException, IOException {
-        Server obj=table.connector.getServers().get(server);
-        if(obj==null) throw new SQLException("Unable to find Server: "+server);
-        return obj;
-    }
-
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.NET_BINDS;
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        accounting=result.getString(2);
-        server=result.getInt(3);
-        ip_address=result.getInt(4);
-        port=result.getInt(5);
-        net_protocol=result.getString(6);
-        app_protocol=result.getString(7);
-        open_firewall=result.getBoolean(8);
-        monitoring_enabled=result.getBoolean(9);
-        monitoring_parameters=result.getString(10);
+        int pos = 1;
+        pkey=result.getInt(pos++);
+        business_server=result.getInt(pos++);
+        ip_address=result.getInt(pos++);
+        port=result.getInt(pos++);
+        net_protocol=result.getString(pos++);
+        app_protocol=result.getString(pos++);
+        open_firewall=result.getBoolean(pos++);
+        monitoring_enabled=result.getBoolean(pos++);
+        monitoring_parameters=result.getString(pos++);
     }
 
     public boolean isFirewallOpen() {
@@ -383,8 +376,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
-        accounting=in.readUTF().intern();
-        server=in.readCompressedInt();
+        business_server=in.readCompressedInt();
         ip_address=in.readCompressedInt();
         port=in.readCompressedInt();
         net_protocol=in.readUTF().intern();
@@ -396,8 +388,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
-            getBusiness(),
-            getServer(),
+            getBusinessServer(),
             getIPAddress()
         );
     }
@@ -431,7 +422,9 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         AOServConnector conn=table.connector;
 
         // Must be able to access business
-        if(getBusiness()==null) reasons.add(new CannotRemoveReason<Business>("Unable to access business: "+accounting));
+        BusinessServer bs = getBusinessServer();
+        if(bs==null) reasons.add(new CannotRemoveReason<Business>("Unable to access business_server: "+business_server));
+        else if(bs.getBusiness()==null) reasons.add(new CannotRemoveReason<Business>("Unable to access business: "+bs.accounting));
 
         // ao_servers
         for(AOServer ao : conn.getAoServers().getRows()) {
@@ -487,7 +480,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
         
         // mysql_servers
         for(MySQLServer ms : conn.getMysqlServers().getRows()) {
-            if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<MySQLServer>("Used for MySQL server "+ms.getName()+" on "+ms.getAOServer().getHostname(), ms));
+            if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<MySQLServer>("Used for MySQL server "+ms.getName()+" on "+ms.getAoServerResource().getAoServer().getHostname(), ms));
         }
 
         // postgres_servers
@@ -527,8 +520,12 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeUTF(accounting);
-        out.writeCompressedInt(server);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) {
+            out.writeUTF("AOINDUSTRIES"); // accounting
+            out.writeCompressedInt(2); // server test.aoindustries.com
+        } else {
+            out.writeCompressedInt(business_server);
+        }
         out.writeCompressedInt(ip_address);
         out.writeCompressedInt(port);
         out.writeUTF(net_protocol);

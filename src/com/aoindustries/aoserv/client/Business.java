@@ -528,22 +528,20 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return table.connector.getBusinessProfiles().getBusinessProfiles(this);
     }
 
-    public BusinessServer getBusinessServer(
-        Server server
-    ) throws IOException, SQLException {
-        return table.connector.getBusinessServers().getBusinessServer(this, server);
+    public BusinessServer getBusinessServer(Server server) throws IOException, SQLException {
+        return table.connector.getBusinessServers().getBusinessServer(pkey, server.pkey);
     }
-    
+
     public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
-        return table.connector.getBusinessServers().getBusinessServers(this);
+        return table.connector.getBusinessServers().getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, pkey);
     }
 
     public long getCanceled() {
-	return canceled;
+    	return canceled;
     }
 
     public String getCancelReason() {
-	return cancelReason;
+        return cancelReason;
     }
 
     public List<Business> getChildBusinesses() throws IOException, SQLException {
@@ -1099,7 +1097,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             getCreditCardTransactionsByCreditCardAccounting(),
             getDisableLogs(),
             getDNSZones(),
-            getNetBinds(),
+            //getNetBinds(),
             getIPAddresses(),
             getUsernames(),
             getEmailDomains(),
@@ -1112,7 +1110,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             getMonthlyCharges(),
             getMonthlyChargesBySourceBusiness(),
             getMysqlDatabases(),
-            getMysqlServers(),
+            //getMysqlServers(),
             getNoticeLogs(),
             getPackageDefinitions(),
             getResources(),
@@ -1361,6 +1359,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return table.connector.getMysqlDatabases().getMySQLDatabases(this);
     }
 
+    /*
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
         return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
     }
@@ -1368,11 +1367,13 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public List<MySQLServer> getMysqlServers() throws IOException, SQLException {
         return table.connector.getMysqlServers().getMySQLServers(this);
     }
+     */
 
     public List<MySQLUser> getMysqlUsers() throws IOException, SQLException {
         return table.connector.getMysqlUsers().getMySQLUsers(this);
     }
 
+    /*
     public List<NetBind> getNetBinds() throws IOException, SQLException {
         return table.connector.getNetBinds().getNetBinds(this);
     }
@@ -1380,6 +1381,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public List<NetBind> getNetBinds(IPAddress ip) throws IOException, SQLException {
         return table.connector.getNetBinds().getNetBinds(this, ip);
     }
+     */
 
     public PackageDefinition getPackageDefinition() throws SQLException, IOException {
         PackageDefinition pd = table.connector.getPackageDefinitions().get(package_definition);
@@ -1418,7 +1420,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public List<Resource> getResources() throws IOException, SQLException {
-        return table.connector.getResources().getResources(this);
+        return table.connector.getResources().getIndexedRows(Resource.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<DisableLog> getDisableLogs() throws IOException, SQLException {

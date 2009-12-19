@@ -43,6 +43,7 @@ final public class ResourceType extends GlobalObjectStringKey<ResourceType> {
         JAVAVM="javavm",
         JOOMLA="joomla",
         MYSQL_REPLICATION="mysql_replication",
+        MYSQL_SERVER = "mysql_server",
         RACK="rack",
         SERVER_DATABASE="server_database",
         SERVER_ENTERPRISE="server_enterprise",
@@ -107,6 +108,6 @@ final public class ResourceType extends GlobalObjectStringKey<ResourceType> {
     }
 
     public List<Resource> getResources(AOServConnector connector) throws IOException, SQLException {
-        return connector.getResources().getResources(this);
+        return connector.getResources().getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, pkey);
     }
 }

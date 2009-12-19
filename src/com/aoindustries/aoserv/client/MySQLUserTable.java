@@ -29,7 +29,7 @@ final public class MySQLUserTable extends CachedTableIntegerKey<MySQLUser> {
 
     private static final OrderBy[] defaultOrderBy = {
         new OrderBy(MySQLUser.COLUMN_USERNAME_name, ASCENDING),
-        new OrderBy(MySQLUser.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MySQLUser.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_RESOURCE_name+'.'+AOServerResource.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
         new OrderBy(MySQLUser.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING)
     };
     @Override

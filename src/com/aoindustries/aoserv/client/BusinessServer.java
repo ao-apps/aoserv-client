@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,6 +21,7 @@ import java.util.Locale;
  *
  * @see  Business
  * @see  Server
+ * @see  ServerResource
  *
  * @author  AO Industries, Inc.
  */
@@ -146,8 +148,11 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         );
     }
 
+    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getAOServerResources(),
+            getNetBinds()
         );
     }
 
@@ -173,16 +178,14 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                 if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<Business>("Child business "+bu2.getAccounting()+" still has access to "+se, bu2));
 
                 // net_binds
-                for(NetBind nb : bu2.getNetBinds()) {
-                    if(nb.getServer().equals(se)) {
-                        String details=nb.getDetails();
-                        if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(userLocale), nb));
-                        else {
-                            IPAddress ia=nb.getIPAddress();
-                            NetDevice nd=ia.getNetDevice();
-                            if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), nb));
-                            else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(userLocale), nb));
-                        }
+                for(NetBind nb : getNetBinds()) {
+                    String details=nb.getDetails();
+                    if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(userLocale), nb));
+                    else {
+                        IPAddress ia=nb.getIPAddress();
+                        NetDevice nd=ia.getNetDevice();
+                        if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), nb));
+                        else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(userLocale), nb));
                     }
                 }
 
@@ -217,7 +220,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                         // mysql_users
                         for(MySQLUser mu : un.getMySQLUsers()) {
                             MySQLServer ms = mu.getMySQLServer();
-                            if(ms.getAOServer().equals(ao)) {
+                            if(ms.getAoServerResource().getAoServer().equals(ao)) {
                                 reasons.add(new CannotRemoveReason<MySQLUser>("Used by MySQL user "+mu.username+" on "+ms.getName()+" on "+ao.getHostname(), mu));
                             }
                         }
@@ -241,7 +244,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                     // mysql_databases
                     for(MySQLDatabase md : bu2.getMysqlDatabases()) {
                         MySQLServer ms=md.getMySQLServer();
-                        if(ms.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
+                        if(ms.getAoServerResource().getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
                     }
 
                     // postgres_databases
@@ -287,5 +290,21 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         out.writeBoolean(can_control_xfs);
         out.writeBoolean(can_control_xvfb);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeBoolean(can_vnc_console);
+    }
+
+    public List<AOServerResource> getAOServerResources() throws IOException, SQLException {
+        // Use index first
+        List<Resource> resources = table.connector.getResources().getIndexedRows(Resource.COLUMN_ACCOUNTING, accounting);
+        // Filter by server
+        List<AOServerResource> aoResources = new ArrayList<AOServerResource>(resources.size());
+        for(Resource resource : resources) {
+            AOServerResource aoResource = resource.getAoServerResource();
+            if(aoResource!=null && aoResource.ao_server==server) aoResources.add(aoResource);
+        }
+        return Collections.unmodifiableList(aoResources);
+    }
+
+    public List<NetBind> getNetBinds() throws IOException, SQLException {
+        return table.connector.getNetBinds().getIndexedRows(NetBind.COLUMN_BUSINESS_SERVER, pkey);
     }
 }

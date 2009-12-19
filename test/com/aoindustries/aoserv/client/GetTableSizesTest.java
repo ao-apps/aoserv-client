@@ -63,6 +63,7 @@ public class GetTableSizesTest extends TestCase {
                     AOServTable table=conn.getTable(c);
                     String tableName=table.getTableName();
                     int size=table.size();
+                    //if(c==SchemaTable.TableID.AO_SERVER_RESOURCES.ordinal()) System.out.println("\nao_server_resources.size="+size);
                     if(size<0) fail("Table size < 0 for table "+tableName+": "+size);
                     counts[d][c]=size;
                 }

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +21,7 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(FailoverMySQLReplication.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(FailoverMySQLReplication.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_RESOURCE_name+'.'+AOServerResource.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
         new OrderBy(FailoverMySQLReplication.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING),
         new OrderBy(FailoverMySQLReplication.COLUMN_AO_SERVER_name, ASCENDING),
         new OrderBy(FailoverMySQLReplication.COLUMN_REPLICATION_name, ASCENDING)
@@ -37,6 +36,7 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
     	return getUniqueRow(FailoverMySQLReplication.COLUMN_PKEY, pkey);
     }
 
+    /*
     List<FailoverMySQLReplication> getFailoverMySQLReplications(Business bu) throws IOException, SQLException {
         List<FailoverMySQLReplication> matches = new ArrayList<FailoverMySQLReplication>();
         List<MySQLServer> mss = bu.getMysqlServers();
@@ -44,7 +44,7 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
             matches.addAll(ms.getFailoverMySQLReplications());
         }
         return matches;
-    }
+    }*/
 
     List<FailoverMySQLReplication> getFailoverMySQLReplications(MySQLServer mysqlServer) throws IOException, SQLException {
         return getIndexedRows(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, mysqlServer.pkey);

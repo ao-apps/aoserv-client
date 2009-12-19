@@ -48,12 +48,14 @@ public class DependencyTest extends TestCase {
     }
 
     class DependenciesGetter extends ChildGetter {
+        @SuppressWarnings("unchecked")
         List<? extends AOServObject> getChildren(AOServObject obj) throws IOException, SQLException {
             return obj.getDependencies();
         }
     }
 
     class DependentObjectsGetter extends ChildGetter {
+        @SuppressWarnings("unchecked")
         List<? extends AOServObject> getChildren(AOServObject obj) throws IOException, SQLException {
             return obj.getDependentObjects();
         }

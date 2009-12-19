@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @see  Resource
@@ -21,7 +20,7 @@ final public class ResourceTable extends CachedTableIntegerKey<Resource> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(Resource.COLUMN_OWNER_name, ASCENDING),
+        new OrderBy(Resource.COLUMN_ACCOUNTING_name, ASCENDING),
         new OrderBy(Resource.COLUMN_RESOURCE_TYPE_name, ASCENDING),
         new OrderBy(Resource.COLUMN_PKEY_name, ASCENDING)
     };
@@ -32,18 +31,6 @@ final public class ResourceTable extends CachedTableIntegerKey<Resource> {
 
     public Resource get(int pkey) throws IOException, SQLException {
         return getUniqueRow(Resource.COLUMN_PKEY, pkey);
-    }
-
-    List<Resource> getResources(Business owner) throws IOException, SQLException {
-        return getIndexedRows(Resource.COLUMN_OWNER, owner.pkey);
-    }
-
-    List<Resource> getResources(ResourceType resourceType) throws IOException, SQLException {
-        return getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, resourceType.pkey);
-    }
-
-    List<Resource> getResources(DisableLog dl) throws IOException, SQLException {
-        return getIndexedRows(Resource.COLUMN_DISABLE_LOG, dl.pkey);
     }
 
     public SchemaTable.TableID getTableID() {

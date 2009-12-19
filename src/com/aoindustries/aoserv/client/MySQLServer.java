@@ -27,12 +27,11 @@ import java.util.Locale;
 final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
     static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=2,
-        COLUMN_NET_BIND=5,
-        COLUMN_ACCOUNTING=6
+        COLUMN_AO_SERVER_RESOURCE = 0,
+        COLUMN_NAME = 1,
+        COLUMN_NET_BIND = 4
     ;
-    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_AO_SERVER_RESOURCE_name = "ao_server_resource";
     static final String COLUMN_NAME_name = "name";
 
     /**
@@ -70,11 +69,9 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     public static final int MAX_SERVER_NAME_LENGTH=31;
 
     String name;
-    int ao_server;
     private int version;
     private int max_connections;
     int net_bind;
-    String accounting;
 
     public int addMySQLDatabase(
         String name,
@@ -88,15 +85,15 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public static void checkServerName(String name) throws IllegalArgumentException {
-	// Must be a-z or 0-9 first, then a-z or 0-9 or . or _
-	int len = name.length();
-	if (len == 0 || len > MAX_SERVER_NAME_LENGTH) throw new IllegalArgumentException("MySQL server name should not exceed "+MAX_SERVER_NAME_LENGTH+" characters.");
+        // Must be a-z or 0-9 first, then a-z or 0-9 or . or _
+        int len = name.length();
+        if (len == 0 || len > MAX_SERVER_NAME_LENGTH) throw new IllegalArgumentException("MySQL server name should not exceed "+MAX_SERVER_NAME_LENGTH+" characters.");
 
         // The first character must be [a-z] or [0-9]
-	char ch = name.charAt(0);
-	if ((ch < 'a' || ch > 'z') && (ch<'0' || ch>'9')) throw new IllegalArgumentException("MySQL server names must start with [a-z] or [0-9]");
+        char ch = name.charAt(0);
+        if ((ch < 'a' || ch > 'z') && (ch<'0' || ch>'9')) throw new IllegalArgumentException("MySQL server names must start with [a-z] or [0-9]");
         // The rest may have additional characters
-	for (int c = 1; c < len; c++) {
+        for (int c = 1; c < len; c++) {
             ch = name.charAt(c);
             if (
                 (ch<'a' || ch>'z')
@@ -104,18 +101,16 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
                 && ch!='.'
                 && ch!='_'
             ) throw new IllegalArgumentException("MySQL server names may only contain [a-z], [0-9], period (.), and underscore (_)");
-	}
+    	}
     }
 
     Object getColumnImpl(int i) {
         switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return name;
-            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
-            case 3: return Integer.valueOf(version);
-            case 4: return Integer.valueOf(max_connections);
+            case COLUMN_AO_SERVER_RESOURCE: return pkey;
+            case COLUMN_NAME: return name;
+            case 2: return Integer.valueOf(version);
+            case 3: return Integer.valueOf(max_connections);
             case COLUMN_NET_BIND: return Integer.valueOf(net_bind);
-            case COLUMN_ACCOUNTING: return accounting;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -125,7 +120,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public String getName() {
-	return name;
+    	return name;
     }
 
     /**
@@ -144,21 +139,21 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public TechnologyVersion getVersion() throws SQLException, IOException {
-	TechnologyVersion obj=table.connector.getTechnologyVersions().get(version);
-	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+version);
+        TechnologyVersion obj=table.connector.getTechnologyVersions().get(version);
+        if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+version);
         if(
             obj.getOperatingSystemVersion(table.connector).getPkey()
-            != getAOServer().getServer().getOperatingSystemVersion().getPkey()
+            != getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
             throw new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey);
         }
-	return obj;
+    	return obj;
     }
 
-    public AOServer getAOServer() throws SQLException, IOException {
-        AOServer ao=table.connector.getAoServers().get(ao_server);
-        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-        return ao;
+    public AOServerResource getAoServerResource() throws SQLException, IOException {
+        AOServerResource re=table.connector.getAoServerResources().get(pkey);
+        if(re==null) throw new SQLException("Unable to find AOServerResource: "+pkey);
+        return re;
     }
 
     public int getMaxConnections() {
@@ -171,13 +166,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return nb;
     }
 
-    /**
-     * May be filtered.
-     */
-    public Business getBusiness() throws SQLException, IOException {
-        return table.connector.getBusinesses().get(accounting);
-    }
-
     public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
     	return table.connector.getMysqlDatabases().getMySQLDatabase(name, this);
     }
@@ -187,11 +175,11 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     }
 
     public List<MySQLDatabase> getMySQLDatabases() throws IOException, SQLException {
-	return table.connector.getMysqlDatabases().getMySQLDatabases(this);
+        return table.connector.getMysqlDatabases().getMySQLDatabases(this);
     }
 
     public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
-	return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
+        return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
     }
 
     public MySQLUser getMySQLUser(String username) throws IOException, SQLException {
@@ -209,11 +197,9 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     public void init(ResultSet result) throws SQLException {
         pkey=result.getInt(1);
         name=result.getString(2);
-        ao_server=result.getInt(3);
-        version=result.getInt(4);
-        max_connections=result.getInt(5);
-        net_bind=result.getInt(6);
-        accounting=result.getString(7);
+        version=result.getInt(3);
+        max_connections=result.getInt(4);
+        net_bind=result.getInt(5);
     }
 
     public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
@@ -223,18 +209,15 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readCompressedInt();
         name=in.readUTF().intern();
-        ao_server=in.readCompressedInt();
         version=in.readCompressedInt();
         max_connections=in.readCompressedInt();
         net_bind=in.readCompressedInt();
-        accounting=in.readUTF().intern();
     }
 
     public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
-            getAOServer(),
-            getNetBind(),
-            getBusiness()
+            getAoServerResource(),
+            getNetBind()
         );
     }
 
@@ -261,17 +244,17 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
     @Override
     String toStringImpl(Locale userLocale) throws SQLException, IOException {
-        return name+" on "+getAOServer().getHostname();
+        return name+" on "+getAoServerResource().getAoServer().getHostname();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(name);
-        out.writeCompressedInt(ao_server);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeCompressedInt(-1);
         out.writeCompressedInt(version);
         out.writeCompressedInt(max_connections);
         out.writeCompressedInt(net_bind);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0) out.writeUTF(accounting);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeUTF("AOINDUSTRIES"); // accounting
     }
 
     final public static class MasterStatus {

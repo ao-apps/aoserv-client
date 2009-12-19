@@ -189,7 +189,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public String getJdbcDriver() throws SQLException, IOException {
-        int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
+        int osv=getMySQLServer().getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DRIVER;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
@@ -200,12 +200,12 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
     public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
         MySQLServer ms=getMySQLServer();
-	AOServer ao=ms.getAOServer();
+    	AOServer ao=ms.getAoServerResource().getAoServer();
         return
             "jdbc:mysql://"
             + (ipOnly
                ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
-	       :ao.getHostname()
+    	       :ao.getHostname()
             )
             + ":"
             + ms.getNetBind().getPort().getPort()
@@ -215,7 +215,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public String getJdbcDocumentationUrl() throws SQLException, IOException {
-        int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
+        int osv=getMySQLServer().getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DOCUMENTATION_URL;
@@ -232,9 +232,9 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
     }
 
-    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-        return table.connector.getMysqlDBUsers().getMySQLUsers(this);
-    }
+    //public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
+    //    return table.connector.getMysqlDBUsers().getMySQLUsers(this);
+    //}
 
     public String getName() {
         return name;

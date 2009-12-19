@@ -22,8 +22,8 @@ public final class NetTcpRedirectTable extends CachedTableIntegerKey<NetTcpRedir
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(NetTcpRedirect.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(NetTcpRedirect.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(NetTcpRedirect.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(NetTcpRedirect.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(NetTcpRedirect.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
         new OrderBy(NetTcpRedirect.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
         new OrderBy(NetTcpRedirect.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING),

@@ -24,8 +24,8 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
         new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
         new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING),
@@ -43,14 +43,14 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
     List<PrivateFTPServer> getPrivateFTPServers(AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 
-	List<PrivateFTPServer> cached=getRows();
-	int size=cached.size();
+        List<PrivateFTPServer> cached=getRows();
+        int size=cached.size();
         List<PrivateFTPServer> matches=new ArrayList<PrivateFTPServer>(size);
-	for(int c=0;c<size;c++) {
+    	for(int c=0;c<size;c++) {
             PrivateFTPServer obj=cached.get(c);
-            if(obj.getNetBind().server==aoPKey) matches.add(obj);
-	}
-	return matches;
+            if(obj.getNetBind().getBusinessServer().server==aoPKey) matches.add(obj);
+    	}
+        return matches;
     }
 
     /*

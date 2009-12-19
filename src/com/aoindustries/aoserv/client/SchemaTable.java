@@ -29,6 +29,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
      */
     public enum TableID {
         AO_SERVER_DAEMON_HOSTS,
+        AO_SERVER_RESOURCES,
         AO_SERVERS,
         AOSERV_PERMISSIONS,
         AOSERV_PROTOCOLS,

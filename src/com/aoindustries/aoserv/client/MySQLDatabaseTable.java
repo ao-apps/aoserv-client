@@ -25,7 +25,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 
     private static final OrderBy[] defaultOrderBy = {
         new OrderBy(MySQLDatabase.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_RESOURCE_name+'.'+AOServerResource.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
         new OrderBy(MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING)
     };
     @Override

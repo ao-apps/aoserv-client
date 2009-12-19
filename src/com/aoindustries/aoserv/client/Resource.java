@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,36 +26,34 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
 
     static final int
         COLUMN_PKEY=0,
-        COLUMN_OWNER=1,
-        COLUMN_RESOURCE_TYPE=2,
+        COLUMN_RESOURCE_TYPE=1,
+        COLUMN_ACCOUNTING=2,
         COLUMN_CREATED_BY=4,
         COLUMN_DISABLE_LOG=5
     ;
     static final String COLUMN_PKEY_name = "pkey";
-    static final String COLUMN_OWNER_name = "owner";
     static final String COLUMN_RESOURCE_TYPE_name = "resource_type";
+    static final String COLUMN_ACCOUNTING_name = "accounting";
 
-    private String owner;
-    private String resource_type;
+    String resource_type;
+    String accounting;
     private long created;
     private String created_by;
     private int disable_log;
     private long last_enabled;
 
-    /**
-     * Gets the owner of the business that is responsible for any charges caused by this resource.
-     * All resources will have an owner.
-     */
-    public Business getOwner() throws IOException, SQLException {
-        Business obj=table.connector.getBusinesses().get(owner);
-        if(obj==null) throw new SQLException("Unable to find Business: "+owner);
-        return obj;
-    }
-
     public ResourceType getResourceType() throws SQLException, IOException {
         ResourceType r=table.connector.getResourceTypes().get(resource_type);
         if(r==null) throw new SQLException("Unable to find ResourceType: "+resource_type);
         return r;
+    }
+
+    /**
+     * Gets the business that is responsible for any charges caused by this resource.
+     * This may be filtered.
+     */
+    public Business getBusiness() throws IOException, SQLException {
+        return table.connector.getBusinesses().get(accounting);
     }
 
     /**
@@ -94,8 +91,8 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
 
     Object getColumnImpl(int i) {
         switch(i) {
+            case COLUMN_ACCOUNTING: return accounting;
             case COLUMN_PKEY: return pkey;
-            case COLUMN_OWNER: return owner;
             case COLUMN_RESOURCE_TYPE: return resource_type;
             case 3: return new java.sql.Date(created);
             case COLUMN_CREATED_BY: return created_by;
@@ -111,8 +108,8 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
 
     public void init(ResultSet result) throws SQLException {
         pkey = result.getInt(1);
-        owner = result.getString(2);
-        resource_type = result.getString(3);
+        resource_type = result.getString(2);
+        accounting = result.getString(3);
         created = result.getTimestamp(4).getTime();
         created_by = result.getString(5);
         disable_log=result.getInt(6);
@@ -122,8 +119,8 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
 
     public void read(CompressedDataInputStream in) throws IOException {
         pkey = in.readCompressedInt();
-        owner = in.readUTF().intern();
         resource_type = in.readUTF().intern();
+        accounting = in.readUTF().intern();
         created = in.readLong();
         created_by = in.readUTF().intern();
         disable_log = in.readCompressedInt();
@@ -133,8 +130,8 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) throw new IOException("Due to table rename, ResourceType object should be used instead for protocol<=1.61");
         out.writeCompressedInt(pkey);
-        out.writeUTF(owner);
         out.writeUTF(resource_type);
+        out.writeUTF(accounting);
         out.writeLong(created);
         out.writeUTF(created_by);
         out.writeCompressedInt(disable_log);
@@ -276,7 +273,7 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
     }
 
     public int compareTo(Resource o) {
-        int diff = owner.compareTo(o.owner);
+        int diff = accounting.compareTo(o.accounting);
         if(diff!=0) return diff;
         diff = resource_type.compareTo(o.resource_type);
         if(diff!=0) return diff;
@@ -287,13 +284,27 @@ final public class Resource extends CachedObjectIntegerKey<Resource> implements 
 
     public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
-            getOwner(),
+            getBusiness(),
             getCreatedBy()
         );
     }
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getDependentObjectByResourceType(),
+            getAoServerResource()
         );
+    }
+
+    public AOServerResource getAoServerResource() throws IOException, SQLException {
+        return table.connector.getAoServerResources().get(pkey);
+    }
+
+    private AOServObject getDependentObjectByResourceType() throws IOException, SQLException {
+        AOServObject obj;
+        if(resource_type.equals(ResourceType.MYSQL_SERVER)) return null;
+        else throw new AssertionError("Unexpected resource type: "+resource_type);
+        // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
+        // TODO: return obj;
     }
 }

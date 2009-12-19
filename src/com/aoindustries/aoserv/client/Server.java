@@ -10,6 +10,8 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -199,7 +201,6 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
                 getVirtualServer()
             ),
             getBusinessServers(),
-            getNetBinds(),
             getNetDevices(),
             getFailoverFileReplications(),
             getMasterServers()
@@ -264,6 +265,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         return table.connector.getFailoverFileReplications().getFailoverFileReplications(this);
     }
 
+    /*
     public NetBind getNetBind(
         IPAddress ipAddress,
         NetPort port,
@@ -271,25 +273,41 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     ) throws IOException, SQLException {
         return table.connector.getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
     }
+    */
 
     public List<NetBind> getNetBinds() throws IOException, SQLException {
-        return table.connector.getNetBinds().getNetBinds(this);
+        List<NetBind> nbs = table.connector.getNetBinds().getRows();
+        List<NetBind> matches = new ArrayList<NetBind>(nbs.size());
+        for(NetBind nb : nbs) {
+            if(nb.getBusinessServer().server==pkey) matches.add(nb);
+        }
+        return Collections.unmodifiableList(nbs);
     }
-
+    /*
     public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
         return table.connector.getNetBinds().getNetBinds(this, ipAddress);
     }
+     */
 
     public List<NetBind> getNetBinds(Protocol protocol) throws IOException, SQLException {
-	return table.connector.getNetBinds().getNetBinds(this, protocol);
+        // Use the index first
+        List<NetBind> cached = table.connector.getNetBinds().getIndexedRows(NetBind.COLUMN_APP_PROTOCOL, protocol.pkey);
+
+        // Use the index first
+        int size=cached.size();
+        List<NetBind> matches=new ArrayList<NetBind>(size);
+        for(NetBind nb : cached) {
+            if(nb.getBusinessServer().server==pkey) matches.add(nb);
+        }
+        return Collections.unmodifiableList(matches);
     }
 
     public NetDevice getNetDevice(String deviceID) throws IOException, SQLException {
-	return table.connector.getNetDevices().getNetDevice(this, deviceID);
+    	return table.connector.getNetDevices().getNetDevice(this, deviceID);
     }
 
     public List<NetDevice> getNetDevices() throws IOException, SQLException {
-	return table.connector.getNetDevices().getNetDevices(this);
+    	return table.connector.getNetDevices().getNetDevices(this);
     }
 
     public List<IPAddress> getIPAddresses() throws IOException, SQLException {

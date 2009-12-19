@@ -28,7 +28,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 
     private static final OrderBy[] defaultOrderBy = {
         new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+        new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_AO_SERVER_RESOURCE_name+'.'+AOServerResource.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
         new OrderBy(MySQLDBUser.COLUMN_MYSQL_DATABASE_name+'.'+MySQLDatabase.COLUMN_MYSQL_SERVER_name+'.'+MySQLServer.COLUMN_NAME_name, ASCENDING),
         new OrderBy(MySQLDBUser.COLUMN_MYSQL_USER_name+'.'+MySQLUser.COLUMN_USERNAME_name, ASCENDING)
     };
@@ -147,14 +147,14 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
         return getIndexedRows(MySQLDBUser.COLUMN_MYSQL_DATABASE, md.pkey);
     }
 
-    List<MySQLUser> getMySQLUsers(MySQLDatabase md) throws IOException, SQLException {
+    //List<MySQLUser> getMySQLUsers(MySQLDatabase md) throws IOException, SQLException {
         // Use index first
-    	List<MySQLDBUser> cached=getMySQLDBUsers(md);
-        int len=cached.size();
-    	List<MySQLUser> array=new ArrayList<MySQLUser>(len);
-        for(int c=0;c<len;c++) array.add(cached.get(c).getMySQLUser());
-    	return array;
-    }
+    	//List<MySQLDBUser> cached=getMySQLDBUsers(md);
+        //int len=cached.size();
+    	//List<MySQLUser> array=new ArrayList<MySQLUser>(len);
+        //for(int c=0;c<len;c++) array.add(cached.get(c).getMySQLUser());
+    	//return array;
+    //}
 
     public SchemaTable.TableID getTableID() {
     	return SchemaTable.TableID.MYSQL_DB_USERS;

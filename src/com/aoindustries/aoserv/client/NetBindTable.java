@@ -12,7 +12,6 @@ import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,8 +26,8 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
         new OrderBy(NetBind.COLUMN_PORT_name, ASCENDING),
@@ -95,6 +94,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
         return getIndexedRows(NetBind.COLUMN_IP_ADDRESS, ia.pkey);
     }
 
+    /*
     List<NetBind> getNetBinds(Business bu) throws IOException, SQLException {
         return getIndexedRows(NetBind.COLUMN_ACCOUNTING, bu.pkey);
     }
@@ -110,10 +110,6 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
             if(nb.accounting.equals(accounting)) matches.add(nb);
         }
         return matches;
-    }
-
-    List<NetBind> getNetBinds(Server se) throws IOException, SQLException {
-        return getIndexedRows(NetBind.COLUMN_SERVER, se.pkey);
     }
 
     List<NetBind> getNetBinds(Server se, IPAddress ip) throws IOException, SQLException {
@@ -140,35 +136,22 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
         String netProt=netProtocol.getProtocol();
 
         // Use the index first
-	List<NetBind> cached=getNetBinds(ip);
-	int size=cached.size();
-	for(int c=0;c<size;c++) {
+        List<NetBind> cached=getNetBinds(ip);
+        int size=cached.size();
+        for(int c=0;c<size;c++) {
             NetBind nb=cached.get(c);
             if(
                 nb.server==sePKey
                 && nb.port==port
                 && nb.net_protocol.equals(netProt)
             ) return nb;
-	}
-	return null;
+        }
+        return null;
     }
-
-    List<NetBind> getNetBinds(Server se, Protocol protocol) throws IOException, SQLException {
-	String prot=protocol.pkey;
-
-        // Use the index first
-	List<NetBind> cached=getNetBinds(se);
-	int size=cached.size();
-        List<NetBind> matches=new ArrayList<NetBind>(size);
-	for(int c=0;c<size;c++) {
-            NetBind nb=cached.get(c);
-            if(nb.app_protocol.equals(prot)) matches.add(nb);
-	}
-	return matches;
-    }
+     */
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.NET_BINDS;
+    	return SchemaTable.TableID.NET_BINDS;
     }
 
     @Override

@@ -541,13 +541,23 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public MySQLServer getMySQLServer(String name) throws IOException, SQLException {
-	return table.connector.getMysqlServers().getMySQLServer(name, this);
+        // Use the index first
+        for(MySQLServer ms : table.connector.getMysqlServers().getIndexedRows(MySQLServer.COLUMN_NAME, name)) {
+            if(ms.getAoServerResource().ao_server==pkey) return ms;
+        }
+        return null;
     }
 
     public List<MySQLServer> getMySQLServers() throws IOException, SQLException {
-	return table.connector.getMysqlServers().getMySQLServers(this);
+        List<Resource> resources = table.connector.getResources().getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, ResourceType.MYSQL_SERVER);
+        List<MySQLServer> matches = new ArrayList<MySQLServer>(resources.size());
+        for(Resource resource : resources) {
+            matches.add(resource.getAoServerResource().getMySQLServer());
+        }
+        return Collections.unmodifiableList(matches);
     }
 
+    /*
     public MySQLServer getPreferredMySQLServer() throws IOException, SQLException {
         // Look for the most-preferred version that has an instance on the server
         List<MySQLServer> pss=getMySQLServers();
@@ -564,7 +574,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
         // Default to first available server if no preferred ones round
         return pss.isEmpty()?null:pss.get(0);
-    }
+    }*/
 
     public List<AOServer> getNestedAOServers() throws IOException, SQLException {
         return table.connector.getAoServers().getNestedAOServers(this);
@@ -640,7 +650,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public boolean isMySQLServerNameAvailable(String name) throws IOException, SQLException {
-	return table.connector.getMysqlServers().isMySQLServerNameAvailable(name, this);
+        return table.connector.getMysqlServers().isMySQLServerNameAvailable(name, this);
     }
 
     public boolean isPostgresServerNameAvailable(String name) throws IOException, SQLException {
@@ -2023,13 +2033,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
-            //createDependencyList(
-                getServer(),
-                getDaemonBind(),
-                getFailoverServer(),
-                getDaemonConnectBind(),
-                getJilterBind()
-            //)
+            getServer(),
+            getDaemonBind(),
+            getFailoverServer(),
+            getDaemonConnectBind(),
+            getJilterBind()
         );
     }
 
@@ -2049,8 +2057,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             getHttpdSites(),
             getFailoverMySQLReplications(),
             getHttpdSharedTomcats(),
-            getMySQLServers(),
-            getPostgresServers()
+            getPostgresServers(),
+            getAoServerResources()
         );
+    }
+
+    public List<AOServerResource> getAoServerResources() throws IOException, SQLException {
+        return table.connector.getAoServerResources().getIndexedRows(AOServerResource.COLUMN_AO_SERVER, pkey);
     }
 }

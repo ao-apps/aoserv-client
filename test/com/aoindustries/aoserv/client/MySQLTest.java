@@ -124,7 +124,7 @@ public class MySQLTest extends TestCase {
             MySQLUser mu=conn.getMysqlUsers().get(pkey);
             assertNotNull("MySQLUser", mu);
             mysqlUsers.add(mu);
-            mysqlServer.getAOServer().waitForMySQLUserRebuild();
+            mysqlServer.getAoServerResource().getAoServer().waitForMySQLUserRebuild();
             System.out.println("Done");
         }
     }
@@ -180,7 +180,7 @@ public class MySQLTest extends TestCase {
             int pkey=mysqlServer.addMySQLDatabase(randomName, bu);
             MySQLDatabase mysqlDatabase=conn.getMysqlDatabases().get(pkey);
             assertNotNull("MySQLDatabase", mysqlDatabase);
-            mysqlServer.getAOServer().waitForMySQLDatabaseRebuild();
+            mysqlServer.getAoServerResource().getAoServer().waitForMySQLDatabaseRebuild();
             System.out.println("Done");
             mysqlDatabases.add(mysqlDatabase);
         }
@@ -277,7 +277,7 @@ public class MySQLTest extends TestCase {
             System.out.print('.');
             MySQLUser mu = getMySQLUser(md.getMySQLServer());
             md.addMySQLDBUser(mu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
-            md.getMySQLServer().getAOServer().waitForMySQLDBUserRebuild();
+            md.getMySQLServer().getAoServerResource().getAoServer().waitForMySQLDBUserRebuild();
         }
         System.out.println(" Done");
     }
@@ -334,7 +334,7 @@ public class MySQLTest extends TestCase {
         for(MySQLUser mu : mysqlUsers) {
             System.out.print('.');
             mu.disable(dl);
-            mu.getMySQLServer().getAOServer().waitForMySQLUserRebuild();
+            mu.getMySQLServer().getAoServerResource().getAoServer().waitForMySQLUserRebuild();
         }
         System.out.println(" Done");
     }
@@ -347,7 +347,7 @@ public class MySQLTest extends TestCase {
         for(MySQLUser mu : mysqlUsers) {
             System.out.print('.');
             mu.enable();
-            mu.getMySQLServer().getAOServer().waitForMySQLUserRebuild();
+            mu.getMySQLServer().getAoServerResource().getAoServer().waitForMySQLUserRebuild();
         }
         System.out.println(" Done");
     }

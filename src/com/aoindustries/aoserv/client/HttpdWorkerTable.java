@@ -5,15 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
  * @see  HttpdWorker
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -24,8 +23,8 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
     }
 
     private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(HttpdWorker.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(HttpdWorker.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+        new OrderBy(HttpdWorker.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
+        new OrderBy(HttpdWorker.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
         new OrderBy(HttpdWorker.COLUMN_CODE_name, ASCENDING)
     };
     @Override
@@ -39,11 +38,11 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 
     List<HttpdWorker> getHttpdWorkers(HttpdServer server) throws IOException, SQLException {
         int serverPKey=server.pkey;
-	List<HttpdWorker> cached=getRows();
-	int size=cached.size();
+        List<HttpdWorker> cached=getRows();
+        int size=cached.size();
         List<HttpdWorker> matches=new ArrayList<HttpdWorker>(size);
     Loop:
-	for(int c=0;c<size;c++) {
+    	for(int c=0;c<size;c++) {
             HttpdWorker worker=cached.get(c);
             HttpdTomcatSite hts=worker.getHttpdTomcatSite();
             if(hts!=null) {
@@ -72,8 +71,8 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
                     connector.logger.log(Level.WARNING, "pkey="+worker.pkey, new SQLException("HttpdWorker doesn't have either HttpdTomcatSite or HttpdSharedTomcat"));
                 }
             }
-	}
-	return matches;
+        }
+        return matches;
     }
 
     List<HttpdWorker> getHttpdWorkers(HttpdTomcatSite tomcatSite) throws IOException, SQLException {
@@ -81,10 +80,10 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
     }
 
     HttpdWorker getHttpdWorker(NetBind nb) throws IOException, SQLException {
-	return getUniqueRow(HttpdWorker.COLUMN_NET_BIND, nb.pkey);
+        return getUniqueRow(HttpdWorker.COLUMN_NET_BIND, nb.pkey);
     }
 
     public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_WORKERS;
+        return SchemaTable.TableID.HTTPD_WORKERS;
     }
 }
