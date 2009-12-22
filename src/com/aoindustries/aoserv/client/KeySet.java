@@ -7,19 +7,18 @@ package com.aoindustries.aoserv.client;
  */
 import java.util.AbstractSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
- * An entry set that may be used by any of the various tables.
+ * An entry set that may be used by any of the various services.
  *
  * @author  AO Industries, Inc.
  */
-final class KeySet<K,V extends AOServObject<K,V>> extends AbstractSet<K> {
+final class KeySet<K extends Comparable<K>,V extends AOServObject<K,V>> extends AbstractSet<K> {
 
-    private List<V> objs;
+    private Set<V> objs;
 
-    KeySet(List<V> objs) {
+    KeySet(Set<V> objs) {
         this.objs=objs;
     }
 
@@ -30,27 +29,18 @@ final class KeySet<K,V extends AOServObject<K,V>> extends AbstractSet<K> {
     public Iterator<K> iterator() {
         return new Iterator<K>() {
 
-            private int cursor=0;
-
-            private int lastRet=-1;
+            private final Iterator<V> iter = objs.iterator();
 
             public void remove() {
                 throw new UnsupportedOperationException();
             }
 
             public boolean hasNext() {
-                return cursor < objs.size();
+                return iter.hasNext();
             }
 
             public K next() {
-                try {
-                    V value=objs.get(cursor);
-                    K next=value.getKey();
-                    lastRet = cursor++;
-                    return next;
-                } catch(IndexOutOfBoundsException e) {
-                    throw new NoSuchElementException();
-                }
+                return iter.next().getKey();
             }
         };
     }

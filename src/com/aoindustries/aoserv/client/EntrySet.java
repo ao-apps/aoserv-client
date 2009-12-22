@@ -29,7 +29,7 @@ final class EntrySet<K extends Comparable<K>,V extends AOServObject<K,V>> extend
 
     public Iterator<Map.Entry<K,V>> iterator() {
         return new Iterator<Map.Entry<K,V>>() {
-            final Iterator<V> iter = objs.iterator();
+            private final Iterator<V> iter = objs.iterator();
 
             public void remove() {
                 throw new UnsupportedOperationException();
