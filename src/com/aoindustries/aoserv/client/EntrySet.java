@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * An entry set that may be used by any of the various tables.
+ * An entry set that may be used by any of the various services.
  *
  * @author  AO Industries, Inc.
  */
-final class EntrySet<K,V extends AOServObject<K,V>> extends AbstractSet<Map.Entry<K,V>> {
+final class EntrySet<K extends Comparable<K>,V extends AOServObject<K,V>> extends AbstractSet<Map.Entry<K,V>> {
 
     private List<V> objs;
 
