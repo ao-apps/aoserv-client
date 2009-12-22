@@ -28,7 +28,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  *
- * @see  AOServService
+ * @see  AOServTable
  */
 abstract public class AOServObject<K extends Comparable<K>,T extends AOServObject<K,T>> implements Row, Serializable, LocalizedToString, Comparable<T>, Cloneable {
 
@@ -45,10 +45,10 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         return i1<i2 ? -1 : i1==i2 ? 0 : 1;
     }
 
-    private volatile transient AOServService<?,?,K,T> service;
+    private volatile transient AOServService<?,?,K,T> table;
 
-    protected AOServObject(AOServService<?,?,K,T> service) {
-        this.service = service;
+    protected AOServObject(AOServService<?,?,K,T> table) {
+        this.table = table;
     }
 
     /**
@@ -65,41 +65,39 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     }
 
     /**
-     * Gets the service that this object belongs to.
+     * Gets the table that this object belongs to.
      */
-    final public AOServService<?,?,K,T> getService() {
-        return service;
+    final public AOServService<?,?,K,T> getTable() {
+        return table;
     }
 
     /**
-     * Returns a (possibly new) instance of this object set to a different service.
+     * Returns a (possibly new) instance of this object set to a different table.
      * <p>
-     * The <code>service</code> field is marked <code>transient</code>, and thus
-     * deserialized objects will initially have a <code>null</code> service
+     * The <code>table</code> field is marked <code>transient</code>, and thus
+     * deserialized objects will initially have a <code>null</code> table
      * reference.  The code that deserializes the objects should call this
-     * setService method on all objects received.
+     * setTable method on all objects received.
      * </p>
      * <p>
-     * Also, caching layers should call setService on all objects in order to make
+     * Also, caching layers should call setTable on all objects in order to make
      * subsequent method invocations use the caches.  This will cause additional
      * copying within the cache layers, but the reduction of round-trips to the
      * server should payoff.
      * </p>
      *
-     * @return  if the service field is currently <code>null</code>, sets the field and
-     *          returns this object.  Next, if the service is equal to the provided service
-     *          returns this object.  Otherwise, returns a clone with the service field updated.
+     * @return  if the table field is currently <code>null</code>, sets the field and returns this object.  Next, if the table is equal to the provided table returns this object.  Otherwise, returns a clone with the table field updated.
      */
     @SuppressWarnings("unchecked")
-    final public T setService(AOServService<?,?,K,T> service) {
-        if(this.service==null) {
-            this.service = service;
+    final public T setService(AOServService<?,?,K,T> table) {
+        if(this.table==null) {
+            this.table = table;
             return (T)this;
-        } else if(this.service==service) {
+        } else if(this.table==table) {
             return (T)this;
         } else {
             T newObj = clone();
-            newObj.service = service;
+            newObj.table = table;
             return newObj;
         }
     }
@@ -153,7 +151,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     @Override
     final public String toString() {
         try {
-            return toString(service.getConnector().getLocale());
+            return toString(table.getConnector().getLocale());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
