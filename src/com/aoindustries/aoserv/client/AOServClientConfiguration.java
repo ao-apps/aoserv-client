@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.cache.CachedConnectorFactory;
 import com.aoindustries.aoserv.client.rmi.RmiConnectorFactory;
 import com.aoindustries.security.LoginException;
 import java.io.BufferedInputStream;
@@ -76,7 +77,7 @@ final public class AOServClientConfiguration {
     }
 
     /**
-     * Gets the useSsl flag.
+     * Gets the useSsl flag.  Defaults to true.
      */
     static boolean getUseSsl() throws IOException {
         return !"false".equals(getProperty("aoserv.client.useSsl"));
@@ -94,6 +95,13 @@ final public class AOServClientConfiguration {
      */
     static String getTrustStorePassword() throws IOException {
         return getProperty("aoserv.client.truststore.password");
+    }
+
+    /**
+     * Gets the use cache flag.  Defaults to true.
+     */
+    static boolean getUseCache() throws IOException {
+        return "!false".equals(getProperty("aoserv.client.useCache"));
     }
 
     /**
@@ -131,14 +139,15 @@ final public class AOServClientConfiguration {
                 if(trustStorePath!=null && trustStorePath.length()>0) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
                 String trustStorePassword = getTrustStorePassword();
                 if(trustStorePassword!=null && trustStorePassword.length()>0) System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
-                factory = new RmiConnectorFactory(
+                AOServConnectorFactory<?,?> newFactory = new RmiConnectorFactory(
                     getHostname(),
                     getPort(),
                     getLocalIp(),
                     getUseSsl()
                 );
+                if(getUseCache()) newFactory = new CachedConnectorFactory(newFactory);
+                factory = newFactory;
             }
-            // TODO: Add caching option, defaulting to true
             return factory;
         }
     }
