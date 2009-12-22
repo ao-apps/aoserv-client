@@ -5,13 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.AOPool;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.aoserv.client.rmi.RmiConnectorFactory;
+import com.aoindustries.security.LoginException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.rmi.RemoteException;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * The default client configuration is stored in a properties resource named
@@ -19,11 +21,12 @@ import java.util.Properties;
  *
  * @see  AOServConnector#getConnector()
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class AOServClientConfiguration {
+
+    private AOServClientConfiguration() {
+    }
 
     private static final Object propsLock = new Object();
     private static Properties props;
@@ -47,24 +50,17 @@ final public class AOServClientConfiguration {
     }
 
     /**
-     * Gets the list of protocols in preferred order.
+     * Gets the server hostname.
      */
-    static List<String> getProtocols() throws IOException {
-        return StringUtility.splitStringCommaSpace(getProperty("aoserv.client.protocols"));
+    static String getHostname() throws IOException {
+        return getProperty("aoserv.client.hostname");
     }
-    
+
     /**
-     * Gets the non-SSL hostname.
+     * Gets the local IP to connect from or <code>null</code> if not configured.
      */
-    static String getTcpHostname() throws IOException {
-        return getProperty("aoserv.client.tcp.hostname");
-    }
-    
-    /**
-     * Gets the non-SSL local IP to connect from or <code>null</code> if not configured.
-     */
-    static String getTcpLocalIp() throws IOException {
-        String S = getProperty("aoserv.client.tcp.local_ip");
+    static String getLocalIp() throws IOException {
+        String S = getProperty("aoserv.client.local_ip");
         if(
             S==null
             || (S=S.trim()).length()==0
@@ -73,97 +69,44 @@ final public class AOServClientConfiguration {
     }
     
     /**
-     * Gets the non-SSL port.
+     * Gets the server port.
      */
-    static int getTcpPort() throws IOException {
-        return Integer.parseInt(getProperty("aoserv.client.tcp.port"));
+    static int getPort() throws IOException {
+        return Integer.parseInt(getProperty("aoserv.client.port"));
     }
 
     /**
-     * Gets the non-SSL pool size.
+     * Gets the useSsl flag.
      */
-    static int getTcpConnectionPoolSize() throws IOException {
-        return Integer.parseInt(getProperty("aoserv.client.tcp.connection.pool.size"));
-    }
-    
-    /**
-     * Gets the non-SSL connection max age in milliseconds.
-     */
-    static long getTcpConnectionMaxAge() throws IOException {
-        String S = getProperty("aoserv.client.tcp.connection.max_age");
-        return S==null || S.length()==0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(S);
-    }
-
-    /**
-     * Gets the SSL hostname to connect to.
-     */
-    static String getSslHostname() throws IOException {
-        return getProperty("aoserv.client.ssl.hostname");
-    }
-    
-    /**
-     * Gets the SSL local IP to connect from or <code>null</code> if not configured.
-     */
-    static String getSslLocalIp() throws IOException {
-        String S = getProperty("aoserv.client.ssl.local_ip");
-        if(
-            S==null
-            || (S=S.trim()).length()==0
-        ) return null;
-        return S;
-    }
-    
-    /**
-     * Gets the SSL port to connect to.
-     */
-    static int getSslPort() throws IOException {
-        return Integer.parseInt(getProperty("aoserv.client.ssl.port"));
-    }
-    
-    /**
-     * Gets the SSL connection pool size.
-     */
-    static int getSslConnectionPoolSize() throws IOException {
-        return Integer.parseInt(getProperty("aoserv.client.ssl.connection.pool.size"));
-    }
-    
-    /**
-     * Gets the SSL connection max age in milliseconds.
-     */
-    static long getSslConnectionMaxAge() throws IOException {
-        String S = getProperty("aoserv.client.ssl.connection.max_age");
-        return S==null || S.length()==0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(S);
+    static boolean getUseSsl() throws IOException {
+        return !"false".equals(getProperty("aoserv.client.useSsl"));
     }
     
     /**
      * Gets the optional SSL truststore path.
-     *
-     * For use by aoserv-daemon and aoserv-backup only.
      */
-    public static String getSslTruststorePath() throws IOException {
-        return getProperty("aoserv.client.ssl.truststore.path");
+    static String getTrustStorePath() throws IOException {
+        return getProperty("aoserv.client.truststore.path");
     }
     
     /**
      * Gets the optional SSL truststore password.
-     *
-     * For use by aoserv-daemon and aoserv-backup only.
      */
-    public static String getSslTruststorePassword() throws IOException {
-        return getProperty("aoserv.client.ssl.truststore.password");
+    static String getTrustStorePassword() throws IOException {
+        return getProperty("aoserv.client.truststore.password");
     }
-    
+
     /**
      * Gets the optional default username.
      */
-    public static String getUsername() throws IOException {
+    static String getUsername() throws IOException {
         return getProperty("aoserv.client.username");
     }
     
     /**
      * Gets the optional default password.
      */
-    public static String getPassword() throws IOException {
+    static String getPassword() throws IOException {
         return getProperty("aoserv.client.password");
     }
 
@@ -173,5 +116,73 @@ final public class AOServClientConfiguration {
      */
     static String getDaemonServer() throws IOException {
         return getProperty("aoserv.client.daemon.server");
+    }
+
+    private static final Object factoryLock = new Object();
+    private static AOServConnectorFactory<?,?> factory;
+
+    /**
+     * Gets the AOServConnector that is configured in the aoserv-client.properties file.
+     */
+    public static AOServConnectorFactory<?,?> getAOServConnectorFactory() throws IOException {
+        synchronized(factoryLock) {
+            if(factory==null) {
+                String trustStorePath = getTrustStorePath();
+                if(trustStorePath!=null && trustStorePath.length()>0) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+                String trustStorePassword = getTrustStorePassword();
+                if(trustStorePassword!=null && trustStorePassword.length()>0) System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
+                factory = new RmiConnectorFactory(
+                    getHostname(),
+                    getPort(),
+                    getLocalIp(),
+                    getUseSsl()
+                );
+            }
+            // TODO: Add caching option, defaulting to true
+            return factory;
+        }
+    }
+
+    /**
+     * Gets the default <code>AOServConnector</code> as defined in the
+     * <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
+     * resource, in the system default locale.
+     */
+    public static AOServConnector<?,?> getConnector() throws IOException, RemoteException, LoginException {
+        String username = getUsername();
+        String daemonServer = getDaemonServer();
+        if(daemonServer==null || daemonServer.length()==0) daemonServer=null;
+        return getAOServConnectorFactory().getConnector(
+            UUID.randomUUID(),
+            Locale.getDefault(),
+            username,
+            username,
+            getPassword(),
+            daemonServer
+        );
+    }
+
+    /**
+     * Gets the <code>AOServConnector</code> with the provided authentication
+     * information.  The <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
+     * resource determines the connection parameters.  Uses the default locale.
+     *
+     * @param  username  the username to connect as
+     * @param  password  the password to connect with
+     *
+     * @return  the first <code>AOServConnector</code> to successfully connect
+     *          to the server
+     *
+     * @exception  IOException  if no connection can be established
+     */
+    public static AOServConnector<?,?> getConnector(String username, String password) throws IOException, RemoteException, LoginException {
+        return getAOServConnectorFactory().getConnector(
+            UUID.randomUUID(),
+            Locale.getDefault(),
+            username,
+            username,
+            password,
+            null
+        );
     }
 }

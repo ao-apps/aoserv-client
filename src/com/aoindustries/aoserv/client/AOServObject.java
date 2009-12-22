@@ -5,159 +5,158 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.Streamable;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.i18n.LocalizedToString;
 import com.aoindustries.util.WrappedException;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.beans.IntrospectionException;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.text.Collator;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * An <code>AOServObject</code> is the lowest level object
  * for all data in the system.  Each <code>AOServObject</code>
- * belongs to a <code>AOServTable</code>, and each table
- * contains <code>AOServObject</code>s.
+ * belongs to an <code>AOServService</code>, each service
+ * belongs to an <code>AOServConnector</code>, and each
+ * connector belongs to an <code>AOServConnectorFactory</code>.
  *
  * @author  AO Industries, Inc.
  *
- * @see  AOServTable
+ * @see  AOServService
  */
-abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row, Streamable, LocalizedToString {
+abstract public class AOServObject<K extends Comparable<K>,T extends AOServObject<K,T>> implements Row, Serializable, LocalizedToString, Comparable<T>, Cloneable {
 
-    protected AOServObject() {
+    private static final long serialVersionUID = 1L;
+
+    private static final Collator collator = Collator.getInstance(Locale.ENGLISH);
+    static int compareIgnoreCaseConsistentWithEquals(String S1, String S2) {
+        int diff = collator.compare(S1, S2);
+        if(diff!=0) return diff;
+        return S1.compareTo(S2);
     }
 
-    final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-        int len=sortExpressions.length;
-        for(int c=0;c<len;c++) {
-            SQLExpression expr=sortExpressions[c];
-            SchemaType type=expr.getType();
-            int diff=type.compareTo(
-                expr.getValue(conn, this),
-                expr.getValue(conn, other)
-            );
-            if(diff!=0) return sortOrders[c]?diff:-diff;
-        }
-        return 0;
+    static int compare(int i1, int i2) {
+        return i1<i2 ? -1 : i1==i2 ? 0 : 1;
     }
 
-    final public int compareTo(AOServConnector conn, Comparable value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-        int len=sortExpressions.length;
-        for(int c=0;c<len;c++) {
-            SQLExpression expr=sortExpressions[c];
-            SchemaType type=expr.getType();
-            int diff=type.compareTo(
-                expr.getValue(conn, this),
-                value
-            );
-            if(diff!=0) return sortOrders[c]?diff:-diff;
-        }
-        return 0;
+    private volatile transient AOServService<?,?,K,T> service;
+
+    protected AOServObject(AOServService<?,?,K,T> service) {
+        this.service = service;
     }
 
-    final public int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-        int len=sortExpressions.length;
-        if(len!=OA.length) throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length="+len+", OA.length="+OA.length);
-
-        for(int c=0;c<len;c++) {
-            SQLExpression expr=sortExpressions[c];
-            SchemaType type=expr.getType();
-            int diff=type.compareTo(
-                expr.getValue(conn, this),
-                OA[c]
-            );
-            if(diff!=0) return sortOrders[c]?diff:-diff;
-        }
-        return 0;
-    }
-
+    /**
+     * All AOServObjects are cloneable.
+     */
     @Override
-    final public boolean equals(Object O) {
-        return O==null?false:equalsImpl(O);
-    }
-
-    boolean equalsImpl(Object O) {
-        Class class1=getClass();
-        Class class2=O.getClass();
-        if(class1==class2) {
-            K pkey1=getKey();
-            Object pkey2=((AOServObject)O).getKey();
-            if(pkey1==null || pkey2==null) throw new NullPointerException("No primary key available.");
-            return pkey1.equals(pkey2);
-        }
-        return false;
-    }
-
-    final public Object getColumn(int i) {
+    @SuppressWarnings("unchecked")
+    final public T clone() {
         try {
-            return getColumnImpl(i);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
+            return (T)super.clone();
+        } catch(CloneNotSupportedException err) {
             throw new WrappedException(err);
         }
     }
 
-    abstract Object getColumnImpl(int i) throws IOException, SQLException;
-
-    final public List<Object> getColumns(AOServConnector connector) throws IOException, SQLException {
-        int len=getTableSchema(connector).getSchemaColumns(connector).size();
-        List<Object> buff=new ArrayList<Object>(len);
-        for(int c=0;c<len;c++) buff.add(getColumn(c));
-        return buff;
+    /**
+     * Gets the service that this object belongs to.
+     */
+    final public AOServService<?,?,K,T> getService() {
+        return service;
     }
 
-    final public int getColumns(AOServConnector connector, List<Object> buff) throws IOException, SQLException {
-        int len=getTableSchema(connector).getSchemaColumns(connector).size();
-        for(int c=0;c<len;c++) buff.add(getColumn(c));
-        return len;
+    /**
+     * Returns a (possibly new) instance of this object set to a different service.
+     * <p>
+     * The <code>service</code> field is marked <code>transient</code>, and thus
+     * deserialized objects will initially have a <code>null</code> service
+     * reference.  The code that deserializes the objects should call this
+     * setService method on all objects received.
+     * </p>
+     * <p>
+     * Also, caching layers should call setService on all objects in order to make
+     * subsequent method invocations use the caches.  This will cause additional
+     * copying within the cache layers, but the reduction of round-trips to the
+     * server should payoff.
+     * </p>
+     *
+     * @return  if the service field is currently <code>null</code>, sets the field and
+     *          returns this object.  Next, if the service is equal to the provided service
+     *          returns this object.  Otherwise, returns a clone with the service field updated.
+     */
+    @SuppressWarnings("unchecked")
+    final public T setService(AOServService<?,?,K,T> service) {
+        if(this.service==null) {
+            this.service = service;
+            return (T)this;
+        } else if(this.service==service) {
+            return (T)this;
+        } else {
+            T newObj = clone();
+            newObj.service = service;
+            return newObj;
+        }
     }
 
+    /**
+     * Every object's equality is based on being of the same class and having the same key value.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o==null || getClass()!=o.getClass()) return false;
+        return getKey().equals(((T)o).getKey());
+    }
+
+    /**
+     * Gets the key value for this object.
+     */
     public abstract K getKey();
 
-    public abstract SchemaTable.TableID getTableID();
-
-    final public SchemaTable getTableSchema(AOServConnector connector) throws IOException, SQLException {
-        return connector.getSchemaTables().get(getTableID());
-    }
-
-    @Override
-    final public int hashCode() {
-        return hashCodeImpl();
-    }
-
-    int hashCodeImpl() {
-        K pkey=getKey();
-        if(pkey==null) throw new NullPointerException("No primary key available.");
-        return pkey.hashCode();
+    final public int compareTo(T other) {
+        try {
+            return compareToImpl(other);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
 
     /**
-     * Initializes this object from the raw database contents.
+     * By default sortes by key value, if the key is <code>Comparable</code>,
+     * otherwise throws exception.
      *
-     * @param  results  the <code>ResultSet</code> containing the row
-     *                  to copy into this object
+     * @throws  ClassCastException if either key is not comparable.
      */
-    public abstract void init(ResultSet results) throws SQLException;
-
-    public abstract void read(CompressedDataInputStream in) throws IOException;
+    protected int compareToImpl(T other) throws RemoteException {
+        return getKey().compareTo(other.getKey());
+    }
 
     /**
-     * Gets a string representation of this object in the default locale.
+     * The default hashcode value is the hash code of the key value.
+     */
+    @Override
+    public int hashCode() {
+        return getKey().hashCode();
+    }
+
+    /**
+     * Gets a string representation of this object in the connector's current locale.
      *
      * @see  #toString(java.util.Locale)
      */
     @Override
     final public String toString() {
-        return toString(Locale.getDefault());
+        try {
+            return toString(service.getConnector().getLocale());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
 
     /**
@@ -168,128 +167,127 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
     final public String toString(Locale userLocale) {
         try {
             return toStringImpl(userLocale);
-        } catch(IOException err) {
-            throw new WrappedException(err);
-        } catch(SQLException err) {
+        } catch(RemoteException err) {
             throw new WrappedException(err);
         }
     }
 
     /**
-     * The default string representation is that of the key value.  If there
-     * is no key value then it uses the representation of <code>Object.toString()</code>.
+     * The default string representation is that of the key value.
      */
-    String toStringImpl(Locale userLocale) throws IOException, SQLException {
-        K pkey=getKey();
-        if(pkey==null) return super.toString();
-        if(pkey instanceof LocalizedToString) return ((LocalizedToString)pkey).toString(userLocale);
-        return pkey.toString();
+    String toStringImpl(Locale userLocale) throws RemoteException {
+        K key=getKey();
+        if(key instanceof LocalizedToString) return ((LocalizedToString)key).toString(userLocale);
+        return key.toString();
     }
 
     /**
-     * @deprecated  This is maintained only for compatibility with the <code>Streamable</code> interface.
-     * 
-     * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
+     * Returns an unmodifiable set of the provided objects, not including any null values.
      */
-    final public void write(CompressedDataOutputStream out, String version) throws IOException {
-        write(out, AOServProtocol.Version.getVersion(version));
-    }
-
-    public abstract void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
-
-    /**
-     * Returns an unmodifiable list of the provided objects, not including any null values.
-     */
-    static List<? extends AOServObject> createDependencyList() {
-        return Collections.emptyList();
+    static Set<? extends AOServObject> createDependencySet() {
+        return Collections.emptySet();
     }
 
     /**
-     * Returns an unmodifiable list of the provided objects, not including any null values.
+     * Returns an unmodifiable set of the provided objects, not including any null values.
      */
-    static List<? extends AOServObject> createDependencyList(AOServObject obj) {
-        if(obj==null) return Collections.emptyList();
-        assert !(obj instanceof GlobalObject);
-        return Collections.singletonList(obj);
+    static Set<? extends AOServObject> createDependencySet(AOServObject obj) {
+        if(obj==null) return Collections.emptySet();
+        return Collections.singleton(obj);
     }
 
     /**
-     * Returns an unmodifiable list of the provided objects, not including any null values.
-     * It is assumed that the list passed-in is unmodifiable and it will be returned directly if
+     * Returns an unmodifiable set of the provided objects, not including any null values.
+     * It is assumed that the set passed-in is unmodifiable and it will be returned directly if
      * it contains no null values.
      */
-    static List<? extends AOServObject> createDependencyList(List<? extends AOServObject> objs) {
+    static Set<? extends AOServObject> createDependencySet(Set<? extends AOServObject> objs) {
         boolean hasNull = false;
         for(AOServObject obj : objs) {
             if(obj==null) {
                 hasNull = true;
                 break;
-            } else {
-                assert !(obj instanceof GlobalObject);
             }
         }
         if(!hasNull) return objs;
-        List<AOServObject> list = new ArrayList<AOServObject>(objs.size());
+        Set<AOServObject> set = new HashSet<AOServObject>(objs.size()*4/3+1);
         for(AOServObject obj : objs) {
-            if(obj!=null) {
-                assert !(obj instanceof GlobalObject);
-                list.add(obj);
-            }
+            if(obj!=null) set.add(obj);
         }
-        return Collections.unmodifiableList(list);
+        if(set.size()==0) return Collections.emptySet();
+        return Collections.unmodifiableSet(set);
     }
 
     /**
-     * Returns an unmodifiable list of the provided objects, not including any null values.
-     * It is assumed that the list passed-in is unmodifiable and it will be returned directly if
-     * it contains no null values.
+     * Returns an unmodifiable set of the provided objects, not including any null values.
      */
-    static List<? extends AOServObject> createDependencyList(List<? extends AOServObject>... objss) {
+    static Set<? extends AOServObject> createDependencySet(Set<? extends AOServObject>... objss) {
         int totalSize = 0;
-        for(List<? extends AOServObject> objs : objss) totalSize+=objs.size();
-        List<AOServObject> list = new ArrayList<AOServObject>(totalSize);
-        for(List<? extends AOServObject> objs : objss) {
+        for(Set<? extends AOServObject> objs : objss) totalSize+=objs.size();
+        Set<AOServObject> set = new HashSet<AOServObject>(totalSize*4/3+1);
+        for(Set<? extends AOServObject> objs : objss) {
             for(AOServObject obj : objs) {
-                if(obj!=null) {
-                    assert !(obj instanceof GlobalObject);
-                    list.add(obj);
-                }
+                if(obj!=null) set.add(obj);
             }
         }
-        return Collections.unmodifiableList(list);
+        if(set.size()==0) return Collections.emptySet();
+        return Collections.unmodifiableSet(set);
     }
 
     /**
-     * Returns an unmodifiable list of the provided objects, not including any null values.
+     * Returns an unmodifiable set of the provided objects, not including any null values.
      */
-    static List<? extends AOServObject> createDependencyList(AOServObject... objs) {
-        List<AOServObject> list = new ArrayList<AOServObject>(objs.length);
+    static Set<? extends AOServObject> createDependencySet(AOServObject... objs) {
+        Set<AOServObject> set = new HashSet<AOServObject>(objs.length*4/3+1);
         for(AOServObject obj : objs) {
-            if(obj!=null) {
-                assert !(obj instanceof GlobalObject);
-                list.add(obj);
-            }
+            if(obj!=null) set.add(obj);
         }
-        return Collections.unmodifiableList(list);
+        if(set.size()==0) return Collections.emptySet();
+        return Collections.unmodifiableSet(set);
     }
 
     /**
-     * Gets an unmodifiable list of objects this object directly depends on.
-     * An object may be returned in the list more than one time.
+     * Gets an unmodifiable set of objects this object directly depends on.
      * This should result in a directed acyclic graph - there should never be any loops in the graph.
      * This acyclic graph, however, should be an exact mirror of the acyclic graph obtained from <code>getDependentObjects</code>.
+     * By default, there are no dependencies.
      *
      * @see #getDependentObjects() for the opposite direction
      */
-    public abstract List<? extends AOServObject> getDependencies() throws IOException, SQLException;
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+        );
+    }
 
     /**
      * Gets the set of objects directly dependent upon this object.
-     * An object may be returned in the list more than one time.
      * This should result in a directed acyclic graph - there should never be any loops in the graph.
      * This acyclic graph, however, should be an exact mirror of the acyclic graph obtained from <code>getDependencies</code>.
+     * By default, there are no dependent objects.
      *
      * @see #getDependencies() for the opposite direction
      */
-    public abstract List<? extends AOServObject> getDependentObjects() throws IOException, SQLException;
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+        );
+    }
+
+    /**
+     * Gets value of the column with the provided name, by using the ColumnName annotation.
+     */
+    final public Object getColumn(String name) {
+        try {
+            for(Method method : getClass().getMethods()) {
+                SchemaColumn columnName = method.getAnnotation(SchemaColumn.class);
+                if(columnName.name().equals(name)) return method.invoke(this);
+            }
+            throw new IntrospectionException("Unable to find column named "+name);
+        } catch(IllegalAccessException err) {
+            throw new WrappedException(err);
+        } catch(InvocationTargetException err) {
+            throw new WrappedException(err);
+        } catch(IntrospectionException err) {
+            throw new WrappedException(err);
+        }
+    }
 }
