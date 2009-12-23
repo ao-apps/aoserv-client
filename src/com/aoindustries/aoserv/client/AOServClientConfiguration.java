@@ -101,7 +101,7 @@ final public class AOServClientConfiguration {
      * Gets the use cache flag.  Defaults to true.
      */
     static boolean getUseCache() throws IOException {
-        return "!false".equals(getProperty("aoserv.client.useCache"));
+        return !"false".equals(getProperty("aoserv.client.useCache"));
     }
 
     /**

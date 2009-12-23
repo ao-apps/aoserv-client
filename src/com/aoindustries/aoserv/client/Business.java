@@ -5,24 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.IntList;
-import com.aoindustries.util.SortedArrayList;
-import com.aoindustries.util.StringUtility;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A <code>Business</code> is one distinct set of resources and permissions.
@@ -32,14 +17,10 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class Business extends CachedObjectStringKey<Business> implements Disablable, Comparable<Business> {
+final public class Business extends AOServObjectStringKey<Business> /* TODO: implements Disablable*/ {
 
-    static final int
-        COLUMN_ACCOUNTING = 0,
-        COLUMN_PACKAGE_DEFINITION = 13,
-        COLUMN_CREATED_BY = 14
-    ;
-    static final String COLUMN_ACCOUNTING_name = "accounting";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The maximum depth of the business tree.
@@ -49,7 +30,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     /**
      * The minimum payment for auto-enabling accounts, in pennies.
      */
-    public static final BigDecimal MINIMUM_PAYMENT = BigDecimal.valueOf(3000, 2);
+    // TODO: Currencies: public static final BigDecimal MINIMUM_PAYMENT = BigDecimal.valueOf(3000, 2);
 
     /**
      * The default inbound email burst before rate limiting.
@@ -80,28 +61,230 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * The default sustained relay email rate in emails/second.
      */
     public static final float DEFAULT_EMAIL_RELAY_RATE = .1f;
+    // </editor-fold>
 
-    String contractVersion;
-    private long created;
-    private long canceled;
-    private String cancelReason;
-    String parent;
-    private boolean can_add_backup_server;
-    private boolean can_add_businesses;
-    private boolean can_see_prices;
-    int disable_log;
-    private String do_not_disable_reason;
-    private boolean auto_enable;
-    private boolean bill_parent;
-    int package_definition;
-    private String created_by;
-    private int email_in_burst;
-    private float email_in_rate;
-    private int email_out_burst;
-    private float email_out_rate;
-    private int email_relay_burst;
-    private float email_relay_rate;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String contractVersion;
+    final private Timestamp created;
+    final private Timestamp canceled;
+    final private String cancelReason;
+    final private String parent;
+    final private boolean can_add_backup_server;
+    final private boolean can_add_businesses;
+    final private boolean can_see_prices;
+    final private int disable_log;
+    final private String do_not_disable_reason;
+    final private boolean auto_enable;
+    final private boolean bill_parent;
+    final private int package_definition;
+    final private String created_by;
+    final private int email_in_burst;
+    final private float email_in_rate;
+    final private int email_out_burst;
+    final private float email_out_rate;
+    final private int email_relay_burst;
+    final private float email_relay_rate;
 
+    public Business(
+        BusinessService<?,?> service,
+        String accounting,
+        String contractVersion,
+        Timestamp created,
+        Timestamp canceled,
+        String cancelReason,
+        String parent,
+        boolean can_add_backup_server,
+        boolean can_add_businesses,
+        boolean can_see_prices,
+        int disable_log,
+        String do_not_disable_reason,
+        boolean auto_enable,
+        boolean bill_parent,
+        int package_definition,
+        String created_by,
+        int email_in_burst,
+        float email_in_rate,
+        int email_out_burst,
+        float email_out_rate,
+        int email_relay_burst,
+        float email_relay_rate
+    ) {
+        super(service, accounting);
+        this.contractVersion = contractVersion;
+        this.created = created;
+        this.canceled = canceled;
+        this.cancelReason = cancelReason;
+        this.parent = parent;
+        this.can_add_backup_server = can_add_backup_server;
+        this.can_add_businesses = can_add_businesses;
+        this.can_see_prices = can_see_prices;
+        this.disable_log = disable_log;
+        this.do_not_disable_reason = do_not_disable_reason;
+        this.auto_enable = auto_enable;
+        this.bill_parent = bill_parent;
+        this.package_definition = package_definition;
+        this.created_by = created_by;
+        this.email_in_burst = email_in_burst;
+        this.email_in_rate = email_in_rate;
+        this.email_out_burst = email_out_burst;
+        this.email_out_rate = email_out_rate;
+        this.email_relay_burst = email_relay_burst;
+        this.email_relay_rate = email_relay_rate;
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(name="accounting", unique=true, description="the unique identifier for this business.")
+    public String getAccounting() {
+        return key;
+    }
+
+    @SchemaColumn(name="contract_version", description="the version number of the contract")
+    public String getContractVersion() {
+    	return contractVersion;
+    }
+
+    @SchemaColumn(name="created", description="the time the account was created")
+    public Timestamp getCreated() {
+    	return created;
+    }
+
+    @SchemaColumn(name="canceled", description="the time the account was deactivated")
+    public Timestamp getCanceled() {
+    	return canceled;
+    }
+
+    @SchemaColumn(name="cancel_reason", description="the reason the account was canceled")
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    @SchemaColumn(name="parent", description="the parent business to this one")
+    public Business getParentBusiness() throws IOException, SQLException {
+        if(parent==null) return null;
+        // The parent business might not be found, even when the value is set.  This is normal due
+        // to filtering.
+        return getService().get(parent);
+    }
+
+    @SchemaColumn(name="can_add_backup_server", description="the business may add servers to the backup system")
+    public boolean canAddBackupServer() {
+        return can_add_backup_server;
+    }
+
+    @SchemaColumn(name="can_add_businesses", description="if <code>true</code> this business can create and be the parent of other businesses")
+    public boolean canAddBusinesses() {
+    	return can_add_businesses;
+    }
+
+    @SchemaColumn(name="can_see_prices", description="control whether prices will be visible or filtered")
+    public boolean canSeePrices() {
+        return can_see_prices;
+    }
+
+    @SchemaColumn(name="disable_log", description="indicates the business is disabled")
+    public DisableLog getDisableLog() throws SQLException, IOException {
+        if(disable_log==-1) return null;
+        DisableLog obj=getService().getConnector().getDisableLogs().get(disable_log);
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+        return obj;
+    }
+
+    @SchemaColumn(name="do_not_disable_reason", description="a reason why we should not disable the account")
+    public String getDoNotDisableReason() {
+        return do_not_disable_reason;
+    }
+
+    @SchemaColumn(name="auto_enable", description="allows the account to be automatically reenabled on payment")
+    public boolean getAutoEnable() {
+        return auto_enable;
+    }
+
+    @SchemaColumn(name="bill_parent", description="if <code>true</code>, the parent business will be charged for all resources used by this account")
+    public boolean billParent() {
+        return bill_parent;
+    }
+
+    /** TODO
+    @SchemaColumn(name="package_definition", description="the definition of the package")
+    public PackageDefinition getPackageDefinition() throws SQLException, IOException {
+        PackageDefinition pd = service.connector.getPackageDefinitions().get(package_definition);
+        if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
+        return pd;
+    }*/
+
+    /**
+     * May be filtered.  May also be null for the root business only.
+     */
+    @SchemaColumn(name="created_by", description="the user who added this business")
+    public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
+        if(created_by==null) return null;
+        return getService().getConnector().getBusinessAdministrators().get(created_by);
+    }
+
+    /**
+     * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    @SchemaColumn(name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
+    public int getEmailInBurst() {
+        return email_in_burst;
+    }
+
+    /**
+     * Gets the inbound sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    @SchemaColumn(name="email_in_rate", description="the number of sustained inbound emails per second")
+    public float getEmailInRate() {
+        return email_in_rate;
+    }
+
+    /**
+     * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    @SchemaColumn(name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
+    public int getEmailOutBurst() {
+        return email_out_burst;
+    }
+
+    /**
+     * Gets the outbound sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    @SchemaColumn(name="email_out_rate", description="the number of sustained outbound emails per second")
+    public float getEmailOutRate() {
+        return email_out_rate;
+    }
+
+    /**
+     * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
+     * A value of <code>-1</code> indicates unlimited.
+     */
+    @SchemaColumn(name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
+    public int getEmailRelayBurst() {
+        return email_relay_burst;
+    }
+
+    /**
+     * Gets the relay sustained email rate in emails/second.
+     * A value of <code>Float.NaN</code> indicates unlimited.
+     */
+    @SchemaColumn(name="email_relay_rate", description="the number of sustained relay emails per second")
+    public float getEmailRelayRate() {
+        return email_relay_rate;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public int addBusinessProfile(
         String name,
         boolean isPrivate,
@@ -119,7 +302,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         String technicalContact,
         String technicalEmail
     ) throws IOException, SQLException {
-        return table.connector.getBusinessProfiles().addBusinessProfile(
+        return service.connector.getBusinessProfiles().addBusinessProfile(
             this,
             name,
             isPrivate,
@@ -142,7 +325,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public int addBusinessServer(
         Server server
     ) throws IOException, SQLException {
-        return table.connector.getBusinessServers().addBusinessServer(this, server);
+        return service.connector.getBusinessServers().addBusinessServer(this, server);
     }
 
     public int addCreditCard(
@@ -169,7 +352,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         byte expirationMonth,
         short expirationYear
     ) throws IOException, SQLException {
-        return table.connector.getCreditCards().addCreditCard(
+        return service.connector.getCreditCards().addCreditCard(
             processor,
             this,
             groupName,
@@ -195,10 +378,12 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             expirationYear
         );
     }
+    */
 
     /**
      * Adds a transaction in the pending state.
      */
+    /* TODO
     public int addCreditCardTransaction(
         CreditCardProcessor processor,
         String groupName,
@@ -248,7 +433,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         long authorizationTime,
         String authorizationPrincipalName
     ) throws IOException, SQLException {
-        return table.connector.getCreditCardTransactions().addCreditCardTransaction(
+        return service.connector.getCreditCardTransactions().addCreditCardTransaction(
             processor,
             this,
             groupName,
@@ -298,14 +483,16 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             authorizationTime,
             authorizationPrincipalName
         );
-    }
+    }*/
 
+    /* TODO
     public int addDisableLog(
         String disableReason
     ) throws IOException, SQLException {
-        return table.connector.getDisableLogs().addDisableLog(this, disableReason);
-    }
+        return service.connector.getDisableLogs().addDisableLog(this, disableReason);
+    }*/
 
+    /* TODO
     public void addNoticeLog(
         String billingContact,
         String emailAddress,
@@ -313,7 +500,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         String type,
         int transid
     ) throws IOException, SQLException {
-	    table.connector.getNoticeLogs().addNoticeLog(
+	    service.connector.getNoticeLogs().addNoticeLog(
             pkey,
             billingContact,
             emailAddress,
@@ -335,7 +522,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         CreditCardProcessor processor,
     	byte payment_confirmed
     ) throws IOException, SQLException {
-    	return table.connector.getTransactions().addTransaction(
+    	return service.connector.getTransactions().addTransaction(
             this,
             sourceBusiness,
             business_administrator,
@@ -349,25 +536,19 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             payment_confirmed
         );
     }
+    */
 
-    public boolean canAddBackupServer() {
-        return can_add_backup_server;
-    }
-
-    public boolean canAddBusinesses() {
-    	return can_add_businesses;
-    }
-
+    /* TODO
     public void cancel(String cancelReason) throws IllegalArgumentException, IOException, SQLException {
         // Automatically disable if not already disabled
         if(disable_log==-1) {
-            new SimpleAOClient(table.connector).disableBusiness(pkey, "Account canceled");
+            new SimpleAOClient(service.connector).disableBusiness(pkey, "Account canceled");
         }
 
         // Now cancel the account
         if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
         final String finalCancelReason = cancelReason;
-        table.connector.requestUpdate(
+        service.connector.requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -388,24 +569,25 @@ final public class Business extends CachedObjectStringKey<Business> implements D
                 }
 
                 public void afterRelease() {
-                    table.connector.tablesUpdated(invalidateList);
+                    service.connector.tablesUpdated(invalidateList);
                 }
             }
         );
     }
-
+    */
+    /* TODO
     public boolean canCancel() throws IOException, SQLException {
         return canceled==-1 && !isRootBusiness();
     }
-    
+
     public boolean isRootBusiness() throws IOException, SQLException {
-        return pkey.equals(table.connector.getBusinesses().getRootAccounting());
+        return pkey.equals(service.connector.getBusinesses().getRootAccounting());
     }
 
     public boolean canDisable() throws IOException, SQLException {
         // already disabled
         if(disable_log!=-1) return false;
-        
+
         if(isRootBusiness()) return false;
 
         // Can only disabled when all dependent objects are already disabled
@@ -416,7 +598,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         for(HttpdSite hs : getHttpdSites()) if(hs.disable_log==-1) return false;
         for(EmailList el : getEmailLists()) if(el.disable_log==-1) return false;
         for(EmailSmtpRelay ssr : getEmailSmtpRelays()) if(ssr.disable_log==-1) return false;
-        
+
         return true;
     }
 
@@ -430,52 +612,38 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         else return dl.canEnable();
     }
 
-    public boolean canSeePrices() {
-        return can_see_prices;
+    public void disable(DisableLog dl) throws IOException, SQLException {
+        service.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
     }
 
-    public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
-    }
-    
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
+        service.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
     }
 
     public BigDecimal getAccountBalance() throws IOException, SQLException {
-        return table.connector.getTransactions().getAccountBalance(pkey);
+        return service.connector.getTransactions().getAccountBalance(pkey);
     }
 
     public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
-        return table.connector.getTransactions().getAccountBalance(pkey, before);
-    }
+        return service.connector.getTransactions().getAccountBalance(pkey, before);
+    }*/
 
     /**
      * @see  #getAccountBalance()
      */
+    /*
     public String getAccountBalanceString() throws IOException, SQLException {
         return "$"+getAccountBalance().toPlainString();
-    }
+    }*/
 
     /**
      * @see  #getAccountBalance(long)
      */
+    /*
     public String getAccountBalanceString(long before) throws IOException, SQLException {
         return "$"+getAccountBalance(before).toPlainString();
     }
 
-    public String getAccounting() {
-        return pkey;
-    }
-
-    public boolean getAutoEnable() {
-        return auto_enable;
-    }
-    
-    public boolean billParent() {
-        return bill_parent;
-    }
-    
     public BigDecimal getAutoEnableMinimumPayment() throws IOException, SQLException {
         BigDecimal balance = getAccountBalance();
         if(balance.compareTo(BigDecimal.ZERO)<=0) return BigDecimal.valueOf(0, 2);
@@ -483,27 +651,25 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         if(minimum.compareTo(MINIMUM_PAYMENT)<0) minimum=MINIMUM_PAYMENT;
         if(minimum.compareTo(balance)>0) minimum=balance;
         return minimum;
-    }
+    }*/
 
-    public String getDoNotDisableReason() {
-        return do_not_disable_reason;
-    }
-    
     /**
      * Gets the <code>Business</code> in the business tree that is one level down
      * from the top level business.
      */
+    /* TODO
     public Business getTopLevelBusiness() throws IOException, SQLException {
-        String rootAccounting=table.connector.getBusinesses().getRootAccounting();
+        String rootAccounting=service.connector.getBusinesses().getRootAccounting();
         Business bu=this;
         Business tempParent;
         while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
         return bu;
-    }
+    }*/
 
     /**
      * Gets the <code>Business</code> the is responsible for paying the bills created by this business.
      */
+    /* TODO
     public Business getAccountingBusiness() throws SQLException, IOException {
         Business bu=this;
         while(bu.bill_parent) {
@@ -511,41 +677,35 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             if(bu==null) throw new SQLException("Unable to find the accounting business for '"+pkey+'\'');
         }
         return bu;
-    }
+    }*/
 
     /**
      * Gets the <code>BusinessProfile</code> with the highest priority.
      */
+    /* TODO
     public BusinessProfile getBusinessProfile() throws IOException, SQLException {
-        return table.connector.getBusinessProfiles().getBusinessProfile(this);
-    }
+        return service.connector.getBusinessProfiles().getBusinessProfile(this);
+    }*/
 
     /**
      * Gets a list of all <code>BusinessProfiles</code> for this <code>Business</code>
      * sorted with the highest priority profile at the zero index.
      */
+    /* TODO
     public List<BusinessProfile> getBusinessProfiles() throws IOException, SQLException {
-        return table.connector.getBusinessProfiles().getBusinessProfiles(this);
+        return service.connector.getBusinessProfiles().getBusinessProfiles(this);
     }
 
     public BusinessServer getBusinessServer(Server server) throws IOException, SQLException {
-        return table.connector.getBusinessServers().getBusinessServer(pkey, server.pkey);
+        return service.connector.getBusinessServers().getBusinessServer(pkey, server.pkey);
     }
 
     public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
-        return table.connector.getBusinessServers().getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, pkey);
-    }
-
-    public long getCanceled() {
-    	return canceled;
-    }
-
-    public String getCancelReason() {
-        return cancelReason;
+        return service.connector.getBusinessServers().getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<Business> getChildBusinesses() throws IOException, SQLException {
-        return table.connector.getBusinesses().getChildBusinesses(this);
+        return service.connector.getBusinesses().getChildBusinesses(this);
     }
 
     Object getColumnImpl(int i) {
@@ -580,19 +740,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
-    	return table.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
-    }
-
-    public String getContractVersion() {
-    	return contractVersion;
-    }
-
-    public long getCreated() {
-    	return created;
+    	return service.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
     }
 
     public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
-    	return table.connector.getCreditCardProcessors().getIndexedRows(CreditCardProcessor.COLUMN_ACCOUNTING, pkey);
+    	return service.connector.getCreditCardProcessors().getIndexedRows(CreditCardProcessor.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<CreditCardTransaction> getCreditCardTransactions() throws IOException, SQLException {
@@ -614,13 +766,6 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public boolean isDisabled() {
         return disable_log!=-1;
-    }
-
-    public DisableLog getDisableLog() throws SQLException, IOException {
-        if(disable_log==-1) return null;
-        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
-        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
-        return obj;
     }
 
     public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
@@ -649,34 +794,29 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public List<MonthlyCharge> getMonthlyChargesBySourceBusiness() throws SQLException, IOException {
         return table.connector.getMonthlyCharges().getMonthlyChargesBySourceBusiness(this);
-    }
+    }*/
 
     /**
      * Gets an approximation of the monthly rate paid by this account.  This is not guaranteed to
      * be exactly the same as the underlying accounting database processes.
      */
+    /* TODO
     public BigDecimal getMonthlyRate() throws SQLException, IOException {
         BigDecimal total = BigDecimal.valueOf(0, 2);
         for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total = total.add(new BigDecimal(SQLUtility.getDecimal(mc.getPennies())));
         return total;
-    }
+    }*/
 
     /**
      * @see  #getMonthlyRate()
      */
+    /* TODO
     public String getMonthlyRateString() throws SQLException, IOException {
         return "$"+getMonthlyRate();
     }
 
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
         return table.connector.getNoticeLogs().getNoticeLogs(this);
-    }
-
-    public Business getParentBusiness() throws IOException, SQLException {
-        if(parent==null) return null;
-        // The parent business might not be found, even when the value is set.  This is normal due
-        // to filtering.
-        return table.connector.getBusinesses().get(parent);
     }
 
     public List<EmailDomain> getEmailDomains() throws SQLException, IOException {
@@ -686,10 +826,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.BUSINESSES;
     }
-
+    */
     /**
      * Gets the total monthly rate or <code>null</code> if unavailable.
      */
+    /* TODO
     public BigDecimal getTotalMonthlyRate() throws SQLException, IOException {
         BigDecimal sum = BigDecimal.valueOf(0, 2);
         BigDecimal monthlyRate = getPackageDefinition().getMonthlyRate();
@@ -705,19 +846,22 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
         return table.connector.getWhoisHistory().getWhoisHistory(this);
     }
-
+    */
     /**
      * @deprecated  Please use <code>isBusinessOrParentOf</code> instead.
      */
+    /* TODO
     public boolean isBusinessOrParent(Business other) throws IOException, SQLException {
         return isBusinessOrParentOf(other);
     }
+     */
 
     /**
      * Determines if this <code>Business</code> is the other business
      * or a parent of it.  This is often used for access control between
      * accounts.
      */
+    /* TODO
     public boolean isBusinessOrParentOf(Business other) throws IOException, SQLException {
         while(other!=null) {
             if(equals(other)) return true;
@@ -725,11 +869,13 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         }
         return false;
     }
+     */
 
     /**
      * Determines if this <code>Business</code> is a parent of the other business.
      * This is often used for access control between accounts.
      */
+    /* TODO
     public boolean isParentOf(Business other) throws IOException, SQLException {
         if(other!=null) {
             other=other.getParentBusiness();
@@ -1015,40 +1161,6 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         fromBusinessServer.remove();
     }
 
-     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey = result.getString(pos++);
-        contractVersion = result.getString(pos++);
-        created = result.getTimestamp(pos++).getTime();
-        Timestamp T = result.getTimestamp(pos++);
-        if (result.wasNull()) canceled = -1;
-        else canceled = T.getTime();
-        cancelReason = result.getString(pos++);
-        parent = result.getString(pos++);
-        can_add_backup_server=result.getBoolean(pos++);
-        can_add_businesses=result.getBoolean(pos++);
-        can_see_prices=result.getBoolean(pos++);
-        disable_log=result.getInt(pos++);
-        if(result.wasNull()) disable_log=-1;
-        do_not_disable_reason=result.getString(pos++);
-        auto_enable=result.getBoolean(pos++);
-        bill_parent=result.getBoolean(pos++);
-        package_definition = result.getInt(pos++);
-        created_by = result.getString(pos++);
-        email_in_burst=result.getInt(pos++);
-        if(result.wasNull()) email_in_burst = -1;
-        email_in_rate=result.getFloat(pos++);
-        if(result.wasNull()) email_in_rate = Float.NaN;
-        email_out_burst=result.getInt(pos++);
-        if(result.wasNull()) email_out_burst = -1;
-        email_out_rate=result.getFloat(pos++);
-        if(result.wasNull()) email_out_rate = Float.NaN;
-        email_relay_burst=result.getInt(pos++);
-        if(result.wasNull()) email_relay_burst = -1;
-        email_relay_rate=result.getFloat(pos++);
-        if(result.wasNull()) email_relay_rate = Float.NaN;
-    }
-
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readUTF().intern();
         contractVersion=StringUtility.intern(in.readNullUTF());
@@ -1080,7 +1192,6 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         );
     }
 
-    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
             createDependencyList(
@@ -1157,18 +1268,20 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public List<Ticket> getTickets() throws SQLException, IOException {
         return table.connector.getTickets().getTickets(this);
     }
-    
+    */
     /**
      * Gets all of the encryption keys for this business.
      */
+    /* TODO
     public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
         return table.connector.getEncryptionKeys().getEncryptionKeys(this);
-    }
-    
+    }*/
+
     /**
      * Sets the credit card that will be used monthly.  Any other selected card will
      * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
      */
+    /*
     public void setUseMonthlyCreditCard(CreditCard creditCard) throws IOException, SQLException {
         table.connector.requestUpdateIL(
             true,
@@ -1176,22 +1289,25 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             pkey,
             creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPkey())
         );
-    }
-    
+    }*/
+
     /**
      * Gets the most recent credit card transaction.
      */
+    /*
     public CreditCardTransaction getLastCreditCardTransaction() throws IOException, SQLException {
         return table.connector.getCreditCardTransactions().getLastCreditCardTransaction(this);
-    }
+    }*/
 
     /**
      * Gets the Brand for this business or <code>null</code> if not a brand.
      */
+    /*
     public Brand getBrand() throws IOException, SQLException {
         return table.connector.getBrands().get(pkey);
-    }
+    }*/
 
+    /*
     public int addPackageDefinition(
         PackageCategory category,
         String name,
@@ -1223,11 +1339,12 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
         return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
-    }
+    }*/
 
     /**
      * Gets all active package definitions for this business.
      */
+    /*
     public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
         // Determine the active packages per category
         List<PackageCategory> allCategories = table.connector.getPackageCategories().getRows();
@@ -1241,12 +1358,9 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             if(!definitions.isEmpty()) categories.put(category, Collections.unmodifiableList(definitions));
         }
         return Collections.unmodifiableMap(categories);
-    }
+    }*/
 
-    public int compareTo(Business o) {
-        return pkey.compareTo(o.pkey);
-    }
-
+    /*
     public void addDNSZone(String zone, String ip, int ttl) throws IOException, SQLException {
 	    table.connector.getDnsZones().addDNSZone(this, zone, ip, ttl);
     }
@@ -1267,64 +1381,8 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	    table.connector.getUsernames().addUsername(this, username);
     }
 
-    /**
-     * May be filtered.  May also be null for the root business only.
-     */
-    public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
-        if(created_by==null) return null;
-        return table.connector.getBusinessAdministrators().get(created_by);
-    }
-
     public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
         return table.connector.getCvsRepositories().getCvsRepositories(this);
-    }
-
-    /**
-     * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>-1</code> indicates unlimited.
-     */
-    public int getEmailInBurst() {
-        return email_in_burst;
-    }
-
-    /**
-     * Gets the inbound sustained email rate in emails/second.
-     * A value of <code>Float.NaN</code> indicates unlimited.
-     */
-    public float getEmailInRate() {
-        return email_in_rate;
-    }
-
-    /**
-     * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>-1</code> indicates unlimited.
-     */
-    public int getEmailOutBurst() {
-        return email_out_burst;
-    }
-
-    /**
-     * Gets the outbound sustained email rate in emails/second.
-     * A value of <code>Float.NaN</code> indicates unlimited.
-     */
-    public float getEmailOutRate() {
-        return email_out_rate;
-    }
-
-    /**
-     * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>-1</code> indicates unlimited.
-     */
-    public int getEmailRelayBurst() {
-        return email_relay_burst;
-    }
-
-    /**
-     * Gets the relay sustained email rate in emails/second.
-     * A value of <code>Float.NaN</code> indicates unlimited.
-     */
-    public float getEmailRelayRate() {
-        return email_relay_rate;
     }
 
     public List<DNSZone> getDNSZones() throws IOException, SQLException {
@@ -1358,6 +1416,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public List<MySQLDatabase> getMysqlDatabases() throws IOException, SQLException {
         return table.connector.getMysqlDatabases().getMySQLDatabases(this);
     }
+    */
 
     /*
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
@@ -1369,9 +1428,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
      */
 
+    /*
     public List<MySQLUser> getMysqlUsers() throws IOException, SQLException {
         return table.connector.getMysqlUsers().getMySQLUsers(this);
-    }
+    }*/
 
     /*
     public List<NetBind> getNetBinds() throws IOException, SQLException {
@@ -1383,12 +1443,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
      */
 
-    public PackageDefinition getPackageDefinition() throws SQLException, IOException {
-        PackageDefinition pd = table.connector.getPackageDefinitions().get(package_definition);
-        if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
-        return pd;
-    }
-
+    /*
     public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
         return table.connector.getPostgresDatabases().getPostgresDatabases(this);
     }
@@ -1442,4 +1497,6 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     public List<Transaction> getTransactionsBySourceAccounting() throws IOException, SQLException {
         return table.connector.getTransactions().getIndexedRows(Transaction.COLUMN_SOURCE_ACCOUNTING, pkey);
     }
+     */
+    // </editor-fold>
 }

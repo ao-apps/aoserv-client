@@ -5,12 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -18,14 +12,14 @@ import java.util.Locale;
  * comes with a set of resources, and when those <code>PackageDefinitionLimit</code>s are exceeded,
  * an additional amount is charged to the <code>Business</code>.
  *
- * @see  Package
+ * @see  PackageDefinition
  *
  * @author  AO Industries, Inc.
  */
-final public class ResourceType extends GlobalObjectStringKey<ResourceType> {
+final public class ResourceType extends AOServObjectStringKey<ResourceType> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         AOSERV_DAEMON="aoserv_daemon",
@@ -54,60 +48,45 @@ final public class ResourceType extends GlobalObjectStringKey<ResourceType> {
         SYSADMIN="sysadmin",
         USER="user"
     ;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public ResourceType(ResourceTypeService<?,?> table, String name) {
+        super(table, name);
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Columns">
     /**
      * Gets the unique name of this resource type.
      */
+    @SchemaColumn(name="name", unique=true, description="the name of the resource type")
     public String getName() {
-        return pkey;
+        return key;
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.RESOURCE_TYPES;
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDisplayUnit(Locale userLocale, int quantity) {
-        if(quantity==1) return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+pkey+".singularDisplayUnit", quantity);
-        else return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+pkey+".pluralDisplayUnit", quantity);
+        if(quantity==1) return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+key+".singularDisplayUnit", quantity);
+        else return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+key+".pluralDisplayUnit", quantity);
     }
 
     public String getPerUnit(Locale userLocale, Object amount) {
-        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+pkey+".perUnit", amount);
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
+        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+key+".perUnit", amount);
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+key+".toString");
     }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
-            out.writeUTF(ApplicationResources.accessor.getMessage(Locale.getDefault(), "ResourceType."+pkey+".singularDisplayUnit", ""));
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
-            out.writeUTF(ApplicationResources.accessor.getMessage(Locale.getDefault(), "ResourceType."+pkey+".pluralDisplayUnit", ""));
-            out.writeUTF(getPerUnit(Locale.getDefault(), ""));
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString(Locale.getDefault())); // description
-    }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public List<Resource> getResources(AOServConnector connector) throws IOException, SQLException {
         return connector.getResources().getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, pkey);
     }
+     */
+    // </editor-fold>
 }

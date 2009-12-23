@@ -34,10 +34,10 @@ abstract public class AOServObjectIntegerKey<T extends AOServObjectIntegerKey<T>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     final public boolean equals(Object o) {
-        if(o==null || getClass()!=o.getClass()) return false;
-        return key==((T)o).key;
+        if(o==null) return false;
+        Class<? extends AOServObjectIntegerKey> clazz = getClass();
+        return clazz==o.getClass() && key==clazz.cast(o).key;
     }
 
     /**

@@ -5,11 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -19,10 +14,10 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-public final class PackageCategory extends GlobalObjectStringKey<PackageCategory> {
+final public class PackageCategory extends AOServObjectStringKey<PackageCategory> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         AOSERV="aoserv",
@@ -37,37 +32,28 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
         VIRTUAL_DEDICATED="virtual_dedicated",
         VIRTUAL_MANAGED="virtual_managed"
     ;
-
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public PackageCategory(PackageCategoryService<?,?> table, String name) {
+        super(table, name);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    /**
+     * Gets the unique name of this resource type.
+     */
+    @SchemaColumn(name="name", unique=true, description="the category name")
     public String getName() {
-        return pkey;
+        return key;
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.PACKAGE_CATEGORIES;
-    }
-
-    public void init(ResultSet results) throws SQLException {
-        pkey = results.getString(1);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readUTF().intern();
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "PackageCategory."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "PackageCategory."+key+".toString");
     }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // display
-    }
+    // </editor-fold>
 }

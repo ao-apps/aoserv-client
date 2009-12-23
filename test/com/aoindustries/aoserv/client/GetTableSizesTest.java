@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  */
 public class GetTableSizesTest extends TestCase {
     
-    private List<AOServConnector> conns;
+    private List<AOServConnector<?,?>> conns;
 
     public GetTableSizesTest(String testName) {
         super(testName);
@@ -34,9 +34,7 @@ public class GetTableSizesTest extends TestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(GetTableSizesTest.class);
-        
-        return suite;
+        return new TestSuite(GetTableSizesTest.class);
     }
 
     /**
@@ -45,26 +43,24 @@ public class GetTableSizesTest extends TestCase {
     public void testTableSizes() throws Exception {
         final int PASSES=10;
         System.out.println("Testing getTable(tableID).size()");
-        for(AOServConnector conn : conns) {
-            String username = conn.getThisBusinessAdministrator().pkey;
-            System.out.println("    "+username);
-            int numTables = SchemaTable.TableID.values().length;
+        for(AOServConnector<?,?> conn : conns) {
+            System.out.println("    "+conn.getThisBusinessAdministrator());
+            int numTables = ServiceName.values.size();
             int[][] counts=new int[PASSES][numTables];
             for(int d=0;d<PASSES;d++) {
-                // Excluded for testing speed
-                if(
-                    d==SchemaTable.TableID.DISTRO_FILES.ordinal()
-                    || d==SchemaTable.TableID.TRANSACTIONS.ordinal()
-                    || d==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
-                ) continue;
                 System.out.print("        Pass"+(d<9?"  ":" ")+(d+1)+" of "+PASSES+": ");
                 for(int c=0;c<numTables;c++) {
+                    AOServService<?,?,?,?> table = conn.getServices().get(ServiceName.values.get(c));
+                    // Excluded for testing speed
+                    /* TODOif(
+                        (table instanceof DistroFileTable...c==SchemaTable.TableID.DISTRO_FILES.ordinal()
+                        || c==SchemaTable.TableID.TRANSACTIONS.ordinal()
+                        || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+                    ) continue;*/
                     System.out.print('.');
-                    AOServTable table=conn.getTable(c);
-                    String tableName=table.getTableName();
                     int size=table.size();
                     //if(c==SchemaTable.TableID.AO_SERVER_RESOURCES.ordinal()) System.out.println("\nao_server_resources.size="+size);
-                    if(size<0) fail("Table size < 0 for table "+tableName+": "+size);
+                    if(size<0) fail("Table size < 0 for table "+table.getTable().getTableName()+": "+size);
                     counts[d][c]=size;
                 }
                 System.out.println(" Done");
@@ -73,7 +69,7 @@ public class GetTableSizesTest extends TestCase {
             for(int c=1;c<PASSES;c++) {
                 for(int d=0;d<numTables;d++) {
                     // Excluded for testing speed
-                    if(
+                    /* TODO: if(
                         d==SchemaTable.TableID.DISTRO_FILES.ordinal()
                         || d==SchemaTable.TableID.TRANSACTIONS.ordinal()
                         || d==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
@@ -83,11 +79,16 @@ public class GetTableSizesTest extends TestCase {
                         d!=SchemaTable.TableID.MASTER_HISTORY.ordinal()
                         && d!=SchemaTable.TableID.MASTER_SERVER_PROFILE.ordinal()
                         && d!=SchemaTable.TableID.MASTER_PROCESSES.ordinal()
-                    ) {
-                        AOServTable table=conn.getTable(d);
-                        String tableName=table.getTableName();
+                    ) {*/
+                        AOServService<?,?,?,?> table=conn.getServices().get(ServiceName.values.get(d));
+                        /*if(c==1) {
+                            for(AOServObject<?,?> row : table.getSortedSet()) {
+                                System.err.println(row);
+                            }
+                        }*/
+                        String tableName=table.getTable().getTableName();
                         assertEquals("Mismatched counts from different passes on table "+tableName+": ", counts[0][d], counts[c][d]);
-                    }
+                    // TODO: }
                 }
             }
         }

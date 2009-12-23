@@ -5,11 +5,12 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 
+import com.aoindustries.security.LoginException;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
+import java.util.UUID;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -21,8 +22,6 @@ import junit.framework.TestSuite;
  */
 public class AOServConnectorTest extends TestCase {
 
-    private static final Logger logger = Logger.getLogger(AOServConnectorTest.class.getName());
-
     static final String REGULAR_USER_USERNAME="testuser";
     static final String REGULAR_USER_PASSWORD="T3st1234";
 
@@ -31,15 +30,15 @@ public class AOServConnectorTest extends TestCase {
      * filter modes.  Regular user (testuser), unrestritected master (aoweb_app), and a single server
      * (test_svr).
      */
-    static List<AOServConnector> getTestConnectors() throws IOException {
-        List<AOServConnector> conns = new ArrayList<AOServConnector>();
-        conns.add(AOServConnector.getConnector("aoweb_app", "changeme", logger));
-        conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD, logger));
-        conns.add(AOServConnector.getConnector("test_svr", "Ogrol3Veve5", logger));
+    static List<AOServConnector<?,?>> getTestConnectors() throws IOException, RemoteException, LoginException {
+        List<AOServConnector<?,?>> conns = new ArrayList<AOServConnector<?,?>>();
+        conns.add(AOServClientConfiguration.getConnector("aoweb_app", "changeme"));
+        conns.add(AOServClientConfiguration.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD));
+        conns.add(AOServClientConfiguration.getConnector("test_svr", "Ogrol3Veve5"));
         return conns;
     }
 
-    private List<AOServConnector> conns;
+    private List<AOServConnector<?,?>> conns;
 
     public AOServConnectorTest(String testName) {
         super(testName);
@@ -64,6 +63,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of clearCaches method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testClearCaches() throws Exception {
         System.out.println("Testing clearCaches");
         for(AOServConnector conn : conns) {
@@ -71,11 +71,12 @@ public class AOServConnectorTest extends TestCase {
             System.out.println("    "+username);
             for(int c=0;c<1000;c++) conn.clearCaches();
         }
-    }
+    }*/
 
     /**
      * Test of executeCommand method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testExecuteCommand() throws Exception {
         System.out.println("Testing executeCommand");
         for(AOServConnector conn : conns) {
@@ -83,7 +84,7 @@ public class AOServConnectorTest extends TestCase {
             System.out.println("    "+username);
             assertEquals(username+"\n", conn.executeCommand(new String[] {"whoami"}));
         }
-    }
+    }*/
 
     /**
      * Test of getConnectorID method, of class com.aoindustries.aoserv.client.AOServConnector.
@@ -91,17 +92,16 @@ public class AOServConnectorTest extends TestCase {
     public void testGetConnectorID() throws Exception {
         System.out.println("Testing getConnectorID");
         for(AOServConnector conn : conns) {
-            String username = conn.getThisBusinessAdministrator().pkey;
-            System.out.println("    "+username);
-            long connectorID=conn.getConnectorID();
+            System.out.println("    "+conn.getThisBusinessAdministrator());
+            UUID connectorID=conn.getConnectorId();
             for(AOServConnector conn2 : conns) {
-                long connectorID2 = conn2.getConnectorID();
+                UUID connectorID2 = conn2.getConnectorId();
                 if(conn==conn2) {
                     // Must have same connector ID
                     assertEquals(connectorID, connectorID2);
                 } else {
                     // Must have different connector ID
-                    assertTrue(connectorID!=connectorID2);
+                    assertTrue(!connectorID.equals(connectorID2));
                 }
             }
         }
@@ -110,6 +110,7 @@ public class AOServConnectorTest extends TestCase {
     /**
      * Test of getHostname method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testGetHostname() throws Exception {
         System.out.println("Testing getHostname");
         for(AOServConnector conn : conns) {
@@ -117,11 +118,12 @@ public class AOServConnectorTest extends TestCase {
             System.out.println("    "+username);
             assertEquals("192.168.1.129", conn.getHostname());
         }
-    }
+    }*/
 
     /**
      * Test of getPort method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testGetPort() throws Exception {
         System.out.println("Testing getPort");
         for(AOServConnector conn : conns) {
@@ -129,11 +131,12 @@ public class AOServConnectorTest extends TestCase {
             System.out.println("    "+username);
             assertEquals(4582, conn.getPort());
         }
-    }
+    }*/
 
     /**
      * Test of getProtocol method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testGetProtocol() throws Exception {
         System.out.println("Testing getProtocol");
         for(AOServConnector conn : conns) {
@@ -141,11 +144,12 @@ public class AOServConnectorTest extends TestCase {
             System.out.println("    "+username);
             assertEquals(NetProtocol.TCP, conn.getProtocol());
         }
-    }
+    }*/
 
     /**
      * Test of getRandom method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testGetRandom() throws Exception {
         System.out.println("Testing getRandom");
         Random random=AOServConnector.getRandom();
@@ -174,11 +178,12 @@ public class AOServConnectorTest extends TestCase {
             }
             System.out.println("        OK");
         }
-    }
+    }*/
 
     /**
      * Test of isSecure method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testIsSecure() throws Exception {
         System.out.println("Testing isSecure");
         for(AOServConnector conn : conns) {
@@ -186,11 +191,12 @@ public class AOServConnectorTest extends TestCase {
             System.out.println("    "+username);
             assertTrue(conn.isSecure());
         }
-    }
+    }*/
 
     /**
      * Test of ping method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testPing() throws Exception {
         System.out.print("Testing ping: ");
         for(AOServConnector conn : conns) {
@@ -205,11 +211,12 @@ public class AOServConnectorTest extends TestCase {
             }
             System.out.println("        Average: "+(totalTime/50)+"ms");
         }
-    }
+    }*/
 
     /**
      * Test of getConnection method, of class com.aoindustries.aoserv.client.AOServConnector.
      */
+    /* TODO
     public void testGetConnection() throws Exception {
         System.out.println("Testing getConnection and releaseConnection");
         for(AOServConnector conn : conns) {
@@ -220,41 +227,23 @@ public class AOServConnectorTest extends TestCase {
                 conn.releaseConnection(connection);
             }
         }
-    }
+    }*/
 
     /**
-     * Test the ability to get each table from the connector by table ID.  Also makes sure each table is a unique instance.
+     * Test the ability to get the set of tables from the connector.  Also makes sure each table is a unique instance.
      */
-    public void testGetTable() throws Exception {
-        System.out.println("Testing getTable and getTables");
-        for(AOServConnector conn : conns) {
-            String username = conn.getThisBusinessAdministrator().pkey;
-            System.out.println("    "+username);
-            int numTables = SchemaTable.TableID.values().length;
-            AOServTable[] tables=new AOServTable[numTables];
+    public void testGetTables() throws Exception {
+        System.out.println("Testing getTables");
+        for(AOServConnector<?,?> conn : conns) {
+            System.out.println("    "+conn.getThisBusinessAdministrator());
+            int numTables = ServiceName.values.size();
             for(int c=0;c<numTables;c++) {
-                AOServTable table=tables[c]=conn.getTable(c);
-                // Make sure index matches table ID
-                // AOServClient version 1.30 had a bug where two tables were swapped
-                if(
-                    AOServProtocol.Version.CURRENT_VERSION==AOServProtocol.Version.VERSION_1_30
-                    && (
-                        c==SchemaTable.TableID.AOSERV_PERMISSIONS.ordinal()
-                        || c==SchemaTable.TableID.AOSERV_PROTOCOLS.ordinal()
-                    )
-                ) {
-                    System.out.println("        Skipping version 1.30 bug where aoserv_protocols and aoserv_permissions were swapped in AOServConnector table array");
-                } else {
-                    assertEquals("AOServConnector.tables["+c+"] and AOServTable("+table.getClass().getName()+").getTableID()="+table.getTableID(), table.getTableID().ordinal(), c);
-                }
+                AOServService table=conn.getServices().get(ServiceName.values.get(c));
                 if(c>0) {
                     // Make sure not a duplicate
-                    for(int d=0;d<c;d++) assertNotSame(table, tables[d]);
+                    for(int d=0;d<c;d++) assertNotSame(table, conn.getServices().get(ServiceName.values.get(d)));
                 }
             }
-            List<AOServTable> allTables=conn.getTables();
-            assertEquals(tables.length, allTables.size());
-            for(int c=0;c<numTables;c++) assertSame(tables[c], allTables.get(c));
         }
     }
 }

@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.security.LoginException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -30,7 +29,7 @@ abstract public class AbstractConnector<C extends AbstractConnector<C,F>, F exte
     protected final String password;
     protected final String daemonServer;
 
-    protected AbstractConnector(F factory, UUID connectorId, Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, NotBoundException, LoginException {
+    protected AbstractConnector(F factory, UUID connectorId, Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, LoginException {
         this.factory = factory;
         this.connectorId = connectorId;
         this.locale = locale;
@@ -52,7 +51,7 @@ abstract public class AbstractConnector<C extends AbstractConnector<C,F>, F exte
         return locale;
     }
 
-    final public void setLocale(Locale locale) {
+    public void setLocale(Locale locale) throws RemoteException {
         this.locale = locale;
     }
 

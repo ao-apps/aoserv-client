@@ -5,38 +5,103 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * When a resource or resources are disabled, the reason and time is logged.
  *
  * @author  AO Industries, Inc.
  */
-final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
+final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
 
-    static final int
-        COLUMN_PKEY = 0,
-        COLUMN_ACCOUNTING = 2,
-        COLUMN_DISABLED_BY = 3
-    ;
-    static final String COLUMN_TIME_name = "time";
-    static final String COLUMN_ACCOUNTING_name = "accounting";
-    static final String COLUMN_PKEY_name = "pkey";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    private long time;
-    private String accounting;
-    private String disabled_by;
-    private String disable_reason;
-    
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private Timestamp time;
+    final private String accounting;
+    final private String disabled_by;
+    final private String disable_reason;
+
+    public DisableLog(
+        DisableLogService<?,?> service,
+        int pkey,
+        Timestamp time,
+        String accounting,
+        String disabled_by,
+        String disable_reason
+    ) {
+        super(service, pkey);
+        this.time = time;
+        this.accounting = accounting;
+        this.disabled_by = disabled_by;
+        this.disable_reason = disable_reason;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(DisableLog other) {
+        int diff = time.compareTo(other.time);
+        if(diff!=0) return diff;
+        diff = compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
+        if(diff!=0) return diff;
+        return compare(key, other.key);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(name="pkey", unique=true, description="a generated primary key")
+    public int getPkey() {
+        return key;
+    }
+
+    @SchemaColumn(name="time", description="the time the stuff was disabled")
+    public Timestamp getTime() {
+        return time;
+    }
+
+    @SchemaColumn(name="accounting", description="the business whos resources are being disabled")
+    public Business getBusiness() throws SQLException, IOException {
+        Business bu=getService().getConnector().getBusinesses().get(accounting);
+        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
+        return bu;
+    }
+
+    /**
+     * May be filtered.
+     */
+    @SchemaColumn(name="disabled_by", description="the person who disabled the accounts")
+    public BusinessAdministrator getDisabledBy() throws IOException, SQLException {
+        return getService().getConnector().getBusinessAdministrators().get(disabled_by);
+    }
+
+    @SchemaColumn(name="disable_reason", description="the optional reason the accounts were disabled")
+    public String getDisableReason() {
+        return disable_reason;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
+    public String getDisabledByUsername() {
+        return disabled_by;
+    }*/
+
     /**
      * Determines if the current <code>AOServConnector</code> can enable
      * things disabled by this <code>DisableLog</code>.
      */
+    /* TODO
     public boolean canEnable() throws SQLException, IOException {
         BusinessAdministrator disabledBy=getDisabledBy();
         return disabledBy!=null && table
@@ -52,58 +117,6 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         ;
     }
 
-    Object getColumnImpl(int i) {
-        if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
-        if(i==1) return new java.sql.Date(time);
-        if(i==COLUMN_ACCOUNTING) return accounting;
-        if(i==COLUMN_DISABLED_BY) return disabled_by;
-        if(i==4) return disable_reason;
-    	throw new IllegalArgumentException("Invalid index: "+i);
-    }
-
-    public Business getBusiness() throws SQLException, IOException {
-        Business bu=table.connector.getBusinesses().get(accounting);
-        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
-        return bu;
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public String getDisabledByUsername() {
-        return disabled_by;
-    }
-
-    public BusinessAdministrator getDisabledBy() throws IOException, SQLException {
-        // May be filtered
-        return table.connector.getBusinessAdministrators().get(disabled_by);
-    }
-
-    public String getDisableReason() {
-        return disable_reason;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.DISABLE_LOG;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        time=result.getTimestamp(2).getTime();
-        accounting=result.getString(3);
-        disabled_by=result.getString(4);
-        disable_reason=result.getString(5);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        time=in.readLong();
-        accounting=in.readUTF().intern();
-        disabled_by=in.readUTF().intern();
-        disable_reason=in.readNullUTF();
-    }
-
     public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
         return createDependencyList(
             getBusiness(),
@@ -111,7 +124,6 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
         );
     }
 
-    @SuppressWarnings("unchecked")
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
             getLinuxServerAccounts(),
@@ -126,14 +138,6 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
             getPostgresServerUsers(),
             getPostgresUsers()
         );
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeLong(time);
-        out.writeUTF(accounting);
-        out.writeUTF(disabled_by);
-        out.writeNullUTF(disable_reason);
     }
 
     public List<Resource> getResources() throws IOException, SQLException {
@@ -183,4 +187,6 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
     public List<PostgresUser> getPostgresUsers() throws IOException, SQLException {
         return table.connector.getPostgresUsers().getIndexedRows(PostgresUser.COLUMN_DISABLE_LOG, pkey);
     }
+     */
+    // </editor-fold>
 }
