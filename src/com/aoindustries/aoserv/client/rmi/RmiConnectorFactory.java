@@ -5,12 +5,15 @@ package com.aoindustries.aoserv.client.rmi;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.rmi.RMIClientSocketFactorySSL;
 import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
 import com.aoindustries.security.LoginException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.RMIClientSocketFactory;
 import java.util.Locale;
 
@@ -20,7 +23,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class RmiConnectorFactory implements AOServConnectorFactory<RmiConnector,RmiConnectorFactory> {
+final public class RmiConnectorFactory implements AOServConnectorFactory {
 
     final String serverAddress;
     final int serverPort;
@@ -58,43 +61,14 @@ final public class RmiConnectorFactory implements AOServConnectorFactory<RmiConn
         }
     }
 
-    static interface RetryCallable<T> {
-        T call() throws LoginException, RemoteException;
-    }
-
-    static <T> T retry(RetryCallable<T> callable) throws LoginException, RemoteException {
-        int attempt = 1;
-        while(!Thread.interrupted()) {
-            try {
-                return callable.call();
-            } catch(RuntimeException err) {
-                if(Thread.interrupted() || attempt>=RmiUtils.RETRY_ATTEMPTS || RmiUtils.isImmediateFail(err)) throw err;
-            } catch(LoginException err) {
-                if(Thread.interrupted() || attempt>=RmiUtils.RETRY_ATTEMPTS || RmiUtils.isImmediateFail(err)) throw err;
-            } catch(RemoteException err) {
-                if(Thread.interrupted() || attempt>=RmiUtils.RETRY_ATTEMPTS || RmiUtils.isImmediateFail(err)) throw err;
-            }
-            try {
-                Thread.sleep(RmiUtils.retryAttemptDelays[attempt-1]);
-            } catch(InterruptedException err) {
-                throw new RemoteException(err.getMessage(), err);
-            }
-            attempt++;
+    public AOServConnector<?,?> getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+        try {
+            // Connect to the remote registry and get each of the stubs
+            Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
+            AOServConnectorFactory<?,?> serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
+            return serverFactory.getConnector(locale, connectAs, authenticateAs, password, daemonServer);
+        } catch(NotBoundException err) {
+            throw new RemoteException(err.getMessage(), err);
         }
-        throw new RemoteException("interrupted", new InterruptedException("interrupted"));
-    }
-
-    public RmiConnector getConnector(final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
-        return retry(
-            new RetryCallable<RmiConnector>() {
-                public RmiConnector call() throws LoginException, RemoteException {
-                    try {
-                        return new RmiConnector(RmiConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
-                    } catch(NotBoundException err) {
-                        throw new RemoteException(err.getMessage(), err);
-                    }
-                }
-            }
-        );
     }
 }

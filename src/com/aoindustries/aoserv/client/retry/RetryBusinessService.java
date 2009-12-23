@@ -1,4 +1,4 @@
-package com.aoindustries.aoserv.client.rmi;
+package com.aoindustries.aoserv.client.retry;
 
 /*
  * Copyright 2009 by AO Industries, Inc.,
@@ -11,9 +11,9 @@ import com.aoindustries.aoserv.client.BusinessService;
 /**
  * @author  AO Industries, Inc.
  */
-final class RmiBusinessService extends RmiServiceStringKey<Business> implements BusinessService<RmiConnector,RmiConnectorFactory> {
+final class RetryBusinessService extends RetryServiceStringKey<Business> implements BusinessService<RetryConnector,RetryConnectorFactory> {
 
-    RmiBusinessService(RmiConnector connector) {
+    RetryBusinessService(RetryConnector connector) {
         super(connector, Business.class);
     }
 }

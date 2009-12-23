@@ -1,4 +1,4 @@
-package com.aoindustries.aoserv.client.rmi;
+package com.aoindustries.aoserv.client.retry;
 
 /*
  * Copyright 2009 by AO Industries, Inc.,
@@ -11,9 +11,9 @@ import com.aoindustries.aoserv.client.ResourceTypeService;
 /**
  * @author  AO Industries, Inc.
  */
-final class RmiResourceTypeService extends RmiServiceStringKey<ResourceType> implements ResourceTypeService<RmiConnector,RmiConnectorFactory> {
+final class RetryResourceTypeService extends RetryServiceStringKey<ResourceType> implements ResourceTypeService<RetryConnector,RetryConnectorFactory> {
 
-    RmiResourceTypeService(RmiConnector connector) {
+    RetryResourceTypeService(RetryConnector connector) {
         super(connector, ResourceType.class);
     }
 }

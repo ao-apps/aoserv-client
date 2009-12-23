@@ -1,4 +1,4 @@
-package com.aoindustries.aoserv.client.rmi;
+package com.aoindustries.aoserv.client.retry;
 
 /*
  * Copyright 2009 by AO Industries, Inc.,
@@ -11,9 +11,9 @@ import java.io.IOException;
 /**
  * @author  AO Industries, Inc.
  */
-final class RmiUtils {
+final class RetryUtils {
 
-    private RmiUtils() {
+    private RetryUtils() {
     }
 
     /**

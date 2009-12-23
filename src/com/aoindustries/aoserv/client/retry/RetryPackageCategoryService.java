@@ -1,4 +1,4 @@
-package com.aoindustries.aoserv.client.rmi;
+package com.aoindustries.aoserv.client.retry;
 
 /*
  * Copyright 2009 by AO Industries, Inc.,
@@ -11,9 +11,9 @@ import com.aoindustries.aoserv.client.PackageCategoryService;
 /**
  * @author  AO Industries, Inc.
  */
-final class RmiPackageCategoryService extends RmiServiceStringKey<PackageCategory> implements PackageCategoryService<RmiConnector,RmiConnectorFactory> {
+final class RetryPackageCategoryService extends RetryServiceStringKey<PackageCategory> implements PackageCategoryService<RetryConnector,RetryConnectorFactory> {
 
-    RmiPackageCategoryService(RmiConnector connector) {
+    RetryPackageCategoryService(RetryConnector connector) {
         super(connector, PackageCategory.class);
     }
 }

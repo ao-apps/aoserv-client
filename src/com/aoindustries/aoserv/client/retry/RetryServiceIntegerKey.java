@@ -1,4 +1,4 @@
-package com.aoindustries.aoserv.client.rmi;
+package com.aoindustries.aoserv.client.retry;
 
 /*
  * Copyright 2009 by AO Industries, Inc.,
@@ -11,9 +11,9 @@ import com.aoindustries.aoserv.client.AOServServiceIntegerKey;
 /**
  * @author  AO Industries, Inc.
  */
-abstract class RmiServiceIntegerKey<V extends AOServObjectIntegerKey<V>> extends RmiService<Integer,V> implements AOServServiceIntegerKey<RmiConnector,RmiConnectorFactory,V> {
+abstract class RetryServiceIntegerKey<V extends AOServObjectIntegerKey<V>> extends RetryService<Integer,V> implements AOServServiceIntegerKey<RetryConnector,RetryConnectorFactory,V> {
 
-    RmiServiceIntegerKey(RmiConnector connector, Class<V> clazz) {
+    RetryServiceIntegerKey(RetryConnector connector, Class<V> clazz) {
         super(connector, Integer.class, clazz);
     }
 }

@@ -1,4 +1,4 @@
-package com.aoindustries.aoserv.client.rmi;
+package com.aoindustries.aoserv.client.retry;
 
 /*
  * Copyright 2009 by AO Industries, Inc.,
@@ -18,15 +18,15 @@ import java.util.SortedSet;
 /**
  * @author  AO Industries, Inc.
  */
-abstract class RmiService<K extends Comparable<K>,V extends AOServObject<K,V>> implements AOServService<RmiConnector,RmiConnectorFactory,K,V> {
+abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>> implements AOServService<RetryConnector,RetryConnectorFactory,K,V> {
 
-    final RmiConnector connector;
+    final RetryConnector connector;
     final ServiceName serviceName;
     final Table<V> table;
     final Map<K,V> map;
     AOServService<?,?,K,V> wrapped;
 
-    RmiService(RmiConnector connector, Class<K> keyClass, Class<V> valueClass) {
+    RetryService(RetryConnector connector, Class<K> keyClass, Class<V> valueClass) {
         this.connector = connector;
         serviceName = AOServServiceUtils.findServiceNameByAnnotation(getClass());
         table = new AOServServiceUtils.AnnotationTable<K,V>(this, valueClass);
@@ -62,13 +62,13 @@ abstract class RmiService<K extends Comparable<K>,V extends AOServObject<K,V>> i
                 return callable.call();
             } catch(RuntimeException err) {
                 connector.disconnectIfNeeded(err);
-                if(Thread.interrupted() || attempt>=RmiUtils.RETRY_ATTEMPTS || RmiUtils.isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
             } catch(RemoteException err) {
                 connector.disconnectIfNeeded(err);
-                if(Thread.interrupted() || attempt>=RmiUtils.RETRY_ATTEMPTS || RmiUtils.isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
             }
             try {
-                Thread.sleep(RmiUtils.retryAttemptDelays[attempt-1]);
+                Thread.sleep(RetryUtils.retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
                 throw new RemoteException(err.getMessage(), err);
             }
@@ -77,7 +77,7 @@ abstract class RmiService<K extends Comparable<K>,V extends AOServObject<K,V>> i
         throw new RemoteException("interrupted", new InterruptedException("interrupted"));
     }
 
-    final public RmiConnector getConnector() {
+    final public RetryConnector getConnector() {
         return connector;
     }
 
@@ -85,7 +85,7 @@ abstract class RmiService<K extends Comparable<K>,V extends AOServObject<K,V>> i
         return retry(
             new RetryCallable<Set<V>>() {
                 public Set<V> call() throws RemoteException {
-                    return AOServServiceUtils.setServices(getWrapped().getSet(), RmiService.this);
+                    return AOServServiceUtils.setServices(getWrapped().getSet(), RetryService.this);
                 }
             }
         );
@@ -95,7 +95,7 @@ abstract class RmiService<K extends Comparable<K>,V extends AOServObject<K,V>> i
         return retry(
             new RetryCallable<SortedSet<V>>() {
                 public SortedSet<V> call() throws RemoteException {
-                    return AOServServiceUtils.setServices(getWrapped().getSortedSet(), RmiService.this);
+                    return AOServServiceUtils.setServices(getWrapped().getSortedSet(), RetryService.this);
                 }
             }
         );
@@ -117,7 +117,7 @@ abstract class RmiService<K extends Comparable<K>,V extends AOServObject<K,V>> i
         return retry(
             new RetryCallable<V>() {
                 public V call() throws RemoteException {
-                    return AOServServiceUtils.setService(getWrapped().get(key), RmiService.this);
+                    return AOServServiceUtils.setService(getWrapped().get(key), RetryService.this);
                 }
             }
         );

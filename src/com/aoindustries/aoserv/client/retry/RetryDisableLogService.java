@@ -1,4 +1,4 @@
-package com.aoindustries.aoserv.client.rmi;
+package com.aoindustries.aoserv.client.retry;
 
 /*
  * Copyright 2009 by AO Industries, Inc.,
@@ -11,9 +11,9 @@ import com.aoindustries.aoserv.client.DisableLogService;
 /**
  * @author  AO Industries, Inc.
  */
-final class RmiDisableLogService extends RmiServiceIntegerKey<DisableLog> implements DisableLogService<RmiConnector,RmiConnectorFactory> {
+final class RetryDisableLogService extends RetryServiceIntegerKey<DisableLog> implements DisableLogService<RetryConnector,RetryConnectorFactory> {
 
-    RmiDisableLogService(RmiConnector connector) {
+    RetryDisableLogService(RetryConnector connector) {
         super(connector, DisableLog.class);
     }
 }

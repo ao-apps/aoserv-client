@@ -7,7 +7,9 @@ package com.aoindustries.aoserv.client.cache;
  */
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServService;
-import com.aoindustries.aoserv.client.AbstractService;
+import com.aoindustries.aoserv.client.AOServServiceUtils;
+import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.table.Table;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,8 +28,12 @@ import java.util.TreeSet;
  *
  * @author  AO Industries, Inc.
  */
-abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>> extends AbstractService<CachedConnector,CachedConnectorFactory,K,V> {
+abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>> implements AOServService<CachedConnector,CachedConnectorFactory,K,V> {
 
+    final CachedConnector connector;
+    final ServiceName serviceName;
+    final Table<V> table;
+    final Map<K,V> map;
     final AOServService<?,?,K,V> wrapped;
 
     /**
@@ -51,27 +57,52 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
     private boolean cachedHashValid = false;
 
     CachedService(CachedConnector connector, Class<K> keyClass, Class<V> valueClass, AOServService<?,?,K,V> wrapped) {
-        super(connector, keyClass, valueClass);
+        this.connector = connector;
         this.wrapped = wrapped;
+        serviceName = AOServServiceUtils.findServiceNameByAnnotation(getClass());
+        table = new AOServServiceUtils.AnnotationTable<K,V>(this, valueClass);
+        map = new AOServServiceUtils.ServiceMap<K,V>(this, keyClass, valueClass);
+    }
+
+    @Override
+    final public String toString() {
+        return getServiceName().getDisplay();
+    }
+
+    final public CachedConnector getConnector() {
+        return connector;
     }
 
     final public Set<V> getSet() throws RemoteException {
         synchronized(cachedSetLock) {
-            if(cachedSet==null) cachedSet = setServices(wrapped.getSet());
+            if(cachedSet==null) cachedSet = AOServServiceUtils.setServices(wrapped.getSet(), this);
             return cachedSet;
         }
     }
 
-    @Override
-    public SortedSet<V> getSortedSet() throws RemoteException {
+    /**
+     * Sorting is performed locally using <code>TreeSet</code>.
+     */
+    final public SortedSet<V> getSortedSet() throws RemoteException {
         synchronized(cachedSortedSetLock) {
             if(cachedSortedSet==null) cachedSortedSet = Collections.unmodifiableSortedSet(new TreeSet<V>(getSet()));
             return cachedSortedSet;
         }
     }
 
-    @Override
-    final public V get(final K key) throws RemoteException {
+    final public ServiceName getServiceName() {
+        return serviceName;
+    }
+
+    final public Table<V> getTable() {
+        return table;
+    }
+
+    final public Map<K,V> getMap() {
+        return map;
+    }
+
+    final public V get(K key) throws RemoteException {
         synchronized(cachedHash) {
             if(!cachedHashValid) {
                 cachedHash.clear();
@@ -83,6 +114,18 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
             }
             return cachedHash.get(key);
         }
+    }
+
+    final public boolean isEmpty() throws RemoteException {
+        return size()==0;
+    }
+
+    final public int size() throws RemoteException {
+        return getSet().size();
+    }
+
+    final public int getSize() throws RemoteException {
+        return size();
     }
 
     /**
