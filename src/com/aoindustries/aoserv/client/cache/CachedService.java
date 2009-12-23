@@ -117,15 +117,11 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
     }
 
     final public boolean isEmpty() throws RemoteException {
-        return size()==0;
-    }
-
-    final public int size() throws RemoteException {
-        return getSet().size();
+        return getSet().isEmpty();
     }
 
     final public int getSize() throws RemoteException {
-        return size();
+        return getSet().size();
     }
 
     /**

@@ -51,39 +51,13 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         }
     }
 
-    static interface RetryCallable<T> {
-        T call() throws RemoteException;
-    }
-
-    <T> T retry(RetryCallable<T> callable) throws RemoteException {
-        int attempt = 1;
-        while(!Thread.interrupted()) {
-            try {
-                return callable.call();
-            } catch(RuntimeException err) {
-                connector.disconnectIfNeeded(err);
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-            } catch(RemoteException err) {
-                connector.disconnectIfNeeded(err);
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-            }
-            try {
-                Thread.sleep(RetryUtils.retryAttemptDelays[attempt-1]);
-            } catch(InterruptedException err) {
-                throw new RemoteException(err.getMessage(), err);
-            }
-            attempt++;
-        }
-        throw new RemoteException("interrupted", new InterruptedException("interrupted"));
-    }
-
     final public RetryConnector getConnector() {
         return connector;
     }
 
     final public Set<V> getSet() throws RemoteException {
-        return retry(
-            new RetryCallable<Set<V>>() {
+        return connector.retry(
+            new RetryConnector.RetryCallable<Set<V>>() {
                 public Set<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().getSet(), RetryService.this);
                 }
@@ -92,8 +66,8 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
     }
 
     final public SortedSet<V> getSortedSet() throws RemoteException {
-        return retry(
-            new RetryCallable<SortedSet<V>>() {
+        return connector.retry(
+            new RetryConnector.RetryCallable<SortedSet<V>>() {
                 public SortedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().getSortedSet(), RetryService.this);
                 }
@@ -114,8 +88,8 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
     }
 
     final public V get(final K key) throws RemoteException {
-        return retry(
-            new RetryCallable<V>() {
+        return connector.retry(
+            new RetryConnector.RetryCallable<V>() {
                 public V call() throws RemoteException {
                     return AOServServiceUtils.setService(getWrapped().get(key), RetryService.this);
                 }
@@ -123,10 +97,9 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         );
     }
 
-    @Override
     final public boolean isEmpty() throws RemoteException {
-        return retry(
-            new RetryCallable<Boolean>() {
+        return connector.retry(
+            new RetryConnector.RetryCallable<Boolean>() {
                 public Boolean call() throws RemoteException {
                     return getWrapped().isEmpty();
                 }
@@ -134,21 +107,9 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         );
     }
 
-    @Override
-    final public int size() throws RemoteException {
-        return retry(
-            new RetryCallable<Integer>() {
-                public Integer call() throws RemoteException {
-                    return getWrapped().size();
-                }
-            }
-        );
-    }
-
-    @Override
     final public int getSize() throws RemoteException {
-        return retry(
-            new RetryCallable<Integer>() {
+        return connector.retry(
+            new RetryConnector.RetryCallable<Integer>() {
                 public Integer call() throws RemoteException {
                     return getWrapped().getSize();
                 }

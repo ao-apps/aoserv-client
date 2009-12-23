@@ -50,7 +50,7 @@ final public class RetryConnectorFactory implements AOServConnectorFactory<Retry
         throw new RemoteException("interrupted", new InterruptedException("interrupted"));
     }
 
-    public RetryConnector getConnector(final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
+    public RetryConnector newConnector(final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
         return retry(
             new RetryCallable<RetryConnector>() {
                 public RetryConnector call() throws LoginException, RemoteException {

@@ -24,7 +24,7 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
         this.wrapped = wrapped;
     }
 
-    public CachedConnector getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
-        return new CachedConnector(this, wrapped.getConnector(locale, connectAs, authenticateAs, password, daemonServer));
+    public CachedConnector newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+        return new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
     }
 }

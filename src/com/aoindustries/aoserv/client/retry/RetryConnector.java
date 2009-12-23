@@ -73,7 +73,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         assert Thread.holdsLock(connectionLock);
 
         // Connect to the remote registry and get each of the stubs
-        AOServConnector<?,?> newWrapped = factory.wrapped.getConnector(locale, connectAs, authenticateAs, password, daemonServer);
+        AOServConnector<?,?> newWrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
 
         // Now that each stub has been successfully received, store as the current connection
         this.wrapped = newWrapped;
@@ -84,6 +84,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
 
     /**
      * Disconnects if appropriate for the provided type of RemoteException.
+     * TODO: Clear all caches on disconnect, how to signal outer cache layers?
      */
     void disconnectIfNeeded(Throwable err) {
         while(err!=null) {
@@ -115,6 +116,45 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         }
     }
 
+    AOServConnector<?,?> getWrapped() throws RemoteException {
+        synchronized(connectionLock) {
+            if(wrapped==null) {
+                try {
+                    connect();
+                } catch(Exception err) {
+                    throw new RemoteException(err.getMessage(), err);
+                }
+            }
+            return wrapped;
+        }
+    }
+
+    static interface RetryCallable<T> {
+        T call() throws RemoteException;
+    }
+
+    <T> T retry(RetryCallable<T> callable) throws RemoteException {
+        int attempt = 1;
+        while(!Thread.interrupted()) {
+            try {
+                return callable.call();
+            } catch(RuntimeException err) {
+                disconnectIfNeeded(err);
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            } catch(RemoteException err) {
+                disconnectIfNeeded(err);
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            }
+            try {
+                Thread.sleep(RetryUtils.retryAttemptDelays[attempt-1]);
+            } catch(InterruptedException err) {
+                throw new RemoteException(err.getMessage(), err);
+            }
+            attempt++;
+        }
+        throw new RemoteException("interrupted", new InterruptedException("interrupted"));
+    }
+
     public RetryConnectorFactory getFactory() {
         return factory;
     }
@@ -123,9 +163,18 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return locale;
     }
 
-    public void setLocale(Locale locale) throws RemoteException {
-        wrapped.setLocale(locale);
-        this.locale = locale;
+    public void setLocale(final Locale locale) throws RemoteException {
+        if(!this.locale.equals(locale)) {
+            this.locale = locale;
+            retry(
+                new RetryCallable<Object>() {
+                    public Object call() throws RemoteException {
+                        getWrapped().setLocale(locale);
+                        return null;
+                    }
+                }
+            );
+        }
     }
 
     public String getConnectAs() {
@@ -139,7 +188,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>>>();
-    final public Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>> getServices() throws RemoteException {
+    public Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>> getServices() throws RemoteException {
         Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>> ts = tables.get();
         if(ts==null) {
             ts = AOServConnectorUtils.createServiceMap(this);
@@ -148,27 +197,22 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return ts;
     }
 
-    @Override
     public BusinessAdministratorService<RetryConnector,RetryConnectorFactory> getBusinessAdministrators() {
         return businessAdministrators;
     }
 
-    @Override
     public BusinessService<RetryConnector,RetryConnectorFactory> getBusinesses() {
         return businesses;
     }
 
-    @Override
     public DisableLogService<RetryConnector,RetryConnectorFactory> getDisableLogs() {
         return disabledLogs;
     }
 
-    @Override
     public PackageCategoryService<RetryConnector,RetryConnectorFactory> getPackageCategories() {
         return packageCategories;
     }
 
-    @Override
     public ResourceTypeService<RetryConnector,RetryConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }

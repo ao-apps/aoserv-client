@@ -18,18 +18,17 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.util.Locale;
 
 /**
- * An implementation of <code>AOServConnectorFactory</code> that connects to the master
- * server over RMI.
+ * An implementation of <code>AOServConnectorFactory</code> that connects to an RMI server.
  *
  * @author  AO Industries, Inc.
  */
-final public class RmiConnectorFactory implements AOServConnectorFactory {
+final public class RmiClientConnectorFactory implements AOServConnectorFactory {
 
     final String serverAddress;
     final int serverPort;
     final RMIClientSocketFactory csf;
 
-    public RmiConnectorFactory(
+    public RmiClientConnectorFactory(
         String serverAddress,
         int serverPort,
         String localAddress,
@@ -61,12 +60,12 @@ final public class RmiConnectorFactory implements AOServConnectorFactory {
         }
     }
 
-    public AOServConnector<?,?> getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public AOServConnector<?,?> newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
         try {
             // Connect to the remote registry and get each of the stubs
             Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
             AOServConnectorFactory<?,?> serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
-            return serverFactory.getConnector(locale, connectAs, authenticateAs, password, daemonServer);
+            return serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
         } catch(NotBoundException err) {
             throw new RemoteException(err.getMessage(), err);
         }

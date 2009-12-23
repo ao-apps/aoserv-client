@@ -33,8 +33,8 @@ final public class NoSwingConnectorFactory implements AOServConnectorFactory<NoS
         this.wrapped = wrapped;
     }
 
-    public NoSwingConnector getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public NoSwingConnector newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
         checkNotSwing();
-        return new NoSwingConnector(this, wrapped.getConnector(locale, connectAs, authenticateAs, password, daemonServer));
+        return new NoSwingConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
     }
 }

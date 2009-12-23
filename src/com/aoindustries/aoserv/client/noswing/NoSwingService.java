@@ -84,11 +84,6 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
         return wrapped.isEmpty();
     }
 
-    final public int size() throws RemoteException {
-        NoSwingConnectorFactory.checkNotSwing();
-        return wrapped.size();
-    }
-
     final public int getSize() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return wrapped.getSize();

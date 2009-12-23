@@ -60,8 +60,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
 
     public void setLocale(Locale locale) throws RemoteException {
-        wrapped.setLocale(locale);
-        this.locale = locale;
+        if(!this.locale.equals(locale)) {
+            wrapped.setLocale(locale);
+            this.locale = locale;
+        }
     }
 
     public String getConnectAs() {
