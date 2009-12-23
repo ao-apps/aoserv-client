@@ -5,7 +5,7 @@ package com.aoindustries.aoserv.client.rmi;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.AbstractConnectorFactory;
+import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.rmi.RMIClientSocketFactorySSL;
 import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
 import com.aoindustries.security.LoginException;
@@ -13,7 +13,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.util.Locale;
-import java.util.UUID;
 
 /**
  * An implementation of <code>AOServConnectorFactory</code> that connects to the master
@@ -21,7 +20,7 @@ import java.util.UUID;
  *
  * @author  AO Industries, Inc.
  */
-final public class RmiConnectorFactory extends AbstractConnectorFactory<RmiConnector,RmiConnectorFactory> {
+final public class RmiConnectorFactory implements AOServConnectorFactory<RmiConnector,RmiConnectorFactory> {
 
     final String serverAddress;
     final int serverPort;
@@ -85,12 +84,12 @@ final public class RmiConnectorFactory extends AbstractConnectorFactory<RmiConne
         throw new RemoteException("interrupted", new InterruptedException("interrupted"));
     }
 
-    protected RmiConnector createConnector(final UUID connectorId, final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
+    public RmiConnector getConnector(final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
         return retry(
             new RetryCallable<RmiConnector>() {
                 public RmiConnector call() throws LoginException, RemoteException {
                     try {
-                        return new RmiConnector(RmiConnectorFactory.this, connectorId, locale, connectAs, authenticateAs, password, daemonServer);
+                        return new RmiConnector(RmiConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
                     } catch(NotBoundException err) {
                         throw new RemoteException(err.getMessage(), err);
                     }

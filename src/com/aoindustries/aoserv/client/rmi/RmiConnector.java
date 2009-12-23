@@ -7,8 +7,9 @@ package com.aoindustries.aoserv.client.rmi;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
+import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServService;
-import com.aoindustries.aoserv.client.AbstractConnector;
+import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.DisableLogService;
@@ -24,7 +25,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Locale;
-import java.util.UUID;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,10 +35,16 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
-final public class RmiConnector extends AbstractConnector<RmiConnector,RmiConnectorFactory> {
+final public class RmiConnector implements AOServConnector<RmiConnector,RmiConnectorFactory> {
 
     private static final Logger logger = Logger.getLogger(RmiConnector.class.getName());
 
+    final RmiConnectorFactory factory;
+    Locale locale;
+    final String connectAs;
+    private final String authenticateAs;
+    private final String password;
+    private final String daemonServer;
     final RmiBusinessAdministratorService businessAdministratorsRmi;
     final RmiBusinessService businessesRmi;
     final RmiDisableLogService disabledLogsRmi;
@@ -46,8 +54,13 @@ final public class RmiConnector extends AbstractConnector<RmiConnector,RmiConnec
     final Object connectionLock = new Object();
     private AOServConnector<?,?> wrapped;
 
-    RmiConnector(RmiConnectorFactory factory, UUID connectorId, Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, NotBoundException, LoginException {
-        super(factory, connectorId, locale, connectAs, authenticateAs, password, daemonServer);
+    RmiConnector(RmiConnectorFactory factory, Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, NotBoundException, LoginException {
+        this.factory = factory;
+        this.locale = locale;
+        this.connectAs = connectAs;
+        this.authenticateAs = authenticateAs;
+        this.password = password;
+        this.daemonServer = daemonServer;
         businessAdministratorsRmi = new RmiBusinessAdministratorService(this);
         businessesRmi = new RmiBusinessService(this);
         disabledLogsRmi = new RmiDisableLogService(this);
@@ -59,19 +72,13 @@ final public class RmiConnector extends AbstractConnector<RmiConnector,RmiConnec
         }
     }
 
-    @Override
-    public void setLocale(Locale locale) throws RemoteException {
-        wrapped.setLocale(locale);
-        super.setLocale(locale);
-    }
-
     @SuppressWarnings("unchecked")
     void connect() throws RemoteException, NotBoundException, LoginException {
         assert Thread.holdsLock(connectionLock);
         // Connect to the remote registry and get each of the stubs
         Registry remoteRegistry = LocateRegistry.getRegistry(factory.serverAddress, factory.serverPort, factory.csf);
         AOServConnectorFactory<?,?> serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
-        AOServConnector<?,?> newWrapped = serverFactory.getConnector(connectorId, locale, connectAs, authenticateAs, password, daemonServer);
+        AOServConnector<?,?> newWrapped = serverFactory.getConnector(locale, connectAs, authenticateAs, password, daemonServer);
 
         // Now that each stub has been successfully received, store as the current connection
         this.wrapped = newWrapped;
@@ -111,6 +118,39 @@ final public class RmiConnector extends AbstractConnector<RmiConnector,RmiConnec
                 ((RmiService<?,?>)service).wrapped = null;
             }
         }
+    }
+
+    public RmiConnectorFactory getFactory() {
+        return factory;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) throws RemoteException {
+        wrapped.setLocale(locale);
+        this.locale = locale;
+    }
+
+    public String getConnectAs() {
+        return connectAs;
+    }
+
+    public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
+        BusinessAdministrator obj = getBusinessAdministrators().get(connectAs);
+        if(obj==null) throw new RemoteException("Unable to find BusinessAdministrator: "+connectAs);
+        return obj;
+    }
+
+    private final AtomicReference<Map<ServiceName,AOServService<RmiConnector,RmiConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<RmiConnector,RmiConnectorFactory,?,?>>>();
+    final public Map<ServiceName,AOServService<RmiConnector,RmiConnectorFactory,?,?>> getServices() throws RemoteException {
+        Map<ServiceName,AOServService<RmiConnector,RmiConnectorFactory,?,?>> ts = tables.get();
+        if(ts==null) {
+            ts = AOServConnectorUtils.createServiceMap(this);
+            if(!tables.compareAndSet(null, ts)) ts = tables.get();
+        }
+        return ts;
     }
 
     @Override
