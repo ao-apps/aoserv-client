@@ -5,14 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * Each <code>Username</code> is unique across all systems and must
@@ -26,20 +20,92 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class Username extends CachedObjectStringKey<Username> implements PasswordProtected, Removable, Disablable {
+final public class Username extends AOServObjectStringKey<Username> /* TODO: implements PasswordProtected, Removable, Disablable*/ {
 	
-    static final int
-        COLUMN_USERNAME = 0,
-        COLUMN_ACCOUNTING = 1,
-        COLUMN_DISABLE_LOG = 2
-    ;
-    static final String COLUMN_USERNAME_name = "username";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final int MAX_LENGTH=255;
+    // </editor-fold>
 
-    String accounting;
-    int disable_log;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final String accounting;
+    final int disable_log;
 
+    public Username(UsernameService<?,?> table, String username, String accounting, int disable_log) {
+        super(table, username);
+        this.accounting = accounting.intern();
+        this.disable_log = disable_log;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="username", unique=true, description="the unique username")
+    public String getUsername() {
+        return key;
+    }
+
+    /**
+     * May be filtered.
+     */
+    @SchemaColumn(order=1, name="accounting", description="the business that this user is part of")
+    public Business getBusiness() throws RemoteException {
+    	return getService().getConnector().getBusinesses().get(accounting);
+    }
+
+    @SchemaColumn(order=2, name="disable_log", description="indicates that the username is disabled")
+    public DisableLog getDisableLog() throws RemoteException {
+        if(disable_log==-1) return null;
+        DisableLog obj=getService().getConnector().getDisableLogs().get(disable_log);
+        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disable_log);
+        return obj;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getBusiness(),
+            getDisableLog()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            createDependencySet(
+                getBusinessAdministrator()
+                // TODO: getLinuxAccount(),
+                // TODO: getPostgresUser()
+            )
+            // TODO: getMySQLUsers()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
+    	return getService().getConnector().getBusinessAdministrators().get(key);
+    }
+
+    /* TODO
+    public LinuxAccount getLinuxAccount() throws IOException, SQLException {
+        return table.connector.getLinuxAccounts().get(pkey);
+    }
+
+    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
+        return table.connector.getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_USERNAME, pkey);
+    }
+
+    public PostgresUser getPostgresUser() throws IOException, SQLException {
+        return table.connector.getPostgresUsers().get(pkey);
+    }
+     */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /*
     public void addBusinessAdministrator(
         String name,
         String title,
@@ -148,10 +214,11 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         if(dl==null) return false;
         else return dl.canEnable() && getBusiness().disable_log==-1;
     }
-
+    */
     /**
      * Checks the strength of a password as used by this <code>Username</code>.
      */
+    /*
     public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException, SQLException {
         BusinessAdministrator ba=getBusinessAdministrator();
         if(ba!=null) {
@@ -187,10 +254,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
-    public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
-	return table.connector.getBusinessAdministrators().get(pkey);
-    }
-
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_USERNAME: return pkey;
@@ -204,47 +267,13 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         return disable_log!=-1;
     }
 
-    public DisableLog getDisableLog() throws SQLException, IOException {
-        if(disable_log==-1) return null;
-        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
-        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
-        return obj;
-    }
-
-    public LinuxAccount getLinuxAccount() throws IOException, SQLException {
-        return table.connector.getLinuxAccounts().get(pkey);
-    }
-
-    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-        return table.connector.getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_USERNAME, pkey);
-    }
-
-    /**
-     * May be filtered.
-     */
-    public Business getBusiness() throws SQLException, IOException {
-    	return table.connector.getBusinesses().get(accounting);
-    }
-
-    public PostgresUser getPostgresUser() throws IOException, SQLException {
-        return table.connector.getPostgresUsers().get(pkey);
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.USERNAMES;
-    }
-
-    public String getUsername() {
-	return pkey;
-    }
-
     static int groupPasswordsSet(List<? extends PasswordProtected> pps) throws IOException, SQLException {
         int totalAll=0;
-	for(int c=0;c<pps.size();c++) {
+    	for(int c=0;c<pps.size();c++) {
             int result=pps.get(c).arePasswordsSet();
             if(result==PasswordProtected.SOME) return PasswordProtected.SOME;
             if(result==PasswordProtected.ALL) totalAll++;
-	}
+        }
         return totalAll==pps.size()?PasswordProtected.ALL:totalAll==0?PasswordProtected.NONE:PasswordProtected.SOME;
     }
 
@@ -263,7 +292,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
             || getPostgresUser()!=null
     	;
     }
-
+    */
     /**
      * Determines if a name can be used as a username.  A name is valid if
      * it is between 1 and 255 characters in length and uses only ASCII 0x21
@@ -272,6 +301,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
      *
      * @return  <code>null</code> if the username is valid or a locale-specific reason why it is not valid
      */
+    /* TODO
     public static String checkUsername(String username, Locale locale) {
 	int len = username.length();
         if(len==0) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.noUsername");
@@ -315,7 +345,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
         return null;
     }
-
+    */
     /**
      * Determines if a name can be used as a username.  A name is valid if
      * it is between 1 and 255 characters in length and uses only ASCII 0x21
@@ -324,6 +354,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
      *
      * @deprecated  Please use <code>checkUsername(String)</code> instead to provide user with specific problems.
      */
+    /* TODO
     public static boolean isValidUsername(String username) {
         return checkUsername(username, Locale.getDefault())==null;
     }
@@ -332,25 +363,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         pkey=in.readUTF().intern();
         accounting=in.readUTF().intern();
         disable_log=in.readCompressedInt();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getBusiness(),
-            getDisableLog()
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            createDependencyList(
-                getBusinessAdministrator(),
-                getLinuxAccount(),
-                getPostgresUser()
-            ),
-            getMySQLUsers()
-        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
@@ -413,4 +425,6 @@ final public class Username extends CachedObjectStringKey<Username> implements P
         out.writeUTF(accounting);
         out.writeCompressedInt(disable_log);
     }
+     */
+    // </editor-fold>
 }
