@@ -11,6 +11,7 @@ import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
+import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
@@ -21,6 +22,7 @@ import com.aoindustries.aoserv.client.TicketPriorityService;
 import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
+import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -65,7 +67,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     /* TODO
     final CachedBusinessServerService businessServers;
     final CachedClientJvmProfileService clientJvmProfiles;
+     */
     final CachedCountryCodeService countryCodes;
+    /*
     final CachedCreditCardProcessorService creditCardProcessors;
     final CachedCreditCardTransactionService creditCardTransactions;
     final CachedCreditCardService creditCards;
@@ -209,7 +213,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedTransactionTypeService transactionTypes;
     final CachedTransactionService transactions;
     final CachedUSStateService usStates;
+     */
     final CachedUsernameService usernames;
+    /* TODO
     final CachedVirtualDiskService virtualDisks;
     final CachedVirtualServerService virtualServers;
     final CachedWhoisHistoryService whoisHistories;
@@ -246,7 +252,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         /* TODO
         businessServers = new CachedBusinessServerService(this, wrapped.getBusinessServers());
         clientJvmProfiles = new CachedClientJvmProfileService(this, wrapped.getClientJvmProfiles());
+         */
         countryCodes = new CachedCountryCodeService(this, wrapped.getCountryCodes());
+        /* TODO
         creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
         creditCardTransactions = new CachedCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
         creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
@@ -390,7 +398,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         transactionTypes = new CachedTransactionTypeService(this, wrapped.getTransactionTypes());
         transactions = new CachedTransactionService(this, wrapped.getTransactions());
         usStates = new CachedUSStateService(this, wrapped.getUSStates());
+         */
         usernames = new CachedUsernameService(this, wrapped.getUsernames());
+        /* TODO
         virtualDisks = new CachedVirtualDiskService(this, wrapped.getVirtualDisks());
         virtualServers = new CachedVirtualServerService(this, wrapped.getVirtualServers());
         whoisHistories = new CachedWhoisHistoryService(this, wrapped.getWhoisHistorys());
@@ -434,306 +444,309 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
 
     /*
      * TODO
-    AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts();
+    public AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts();
 
-    AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources();
+    public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources();
 
-    AOServerService<CachedConnector,CachedConnectorFactory> getAoServers();
+    public AOServerService<CachedConnector,CachedConnectorFactory> getAoServers();
 
-    AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions();
+    public AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions();
 
-    AOServProtocolService<CachedConnector,CachedConnectorFactory> getAoservProtocols();
+    public AOServProtocolService<CachedConnector,CachedConnectorFactory> getAoservProtocols();
 
-    AOSHCommandService<CachedConnector,CachedConnectorFactory> getAoshCommands();
+    public AOSHCommandService<CachedConnector,CachedConnectorFactory> getAoshCommands();
 
-    ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures();
+    public ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures();
 
-    BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions();
+    public BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions();
 
-    BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions();
+    public BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions();
 
-    BankAccountService<CachedConnector,CachedConnectorFactory> getBankAccounts();
+    public BankAccountService<CachedConnector,CachedConnectorFactory> getBankAccounts();
 
-    BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes();
+    public BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes();
 
-    BankTransactionService<CachedConnector,CachedConnectorFactory> getBankTransactions();
+    public BankTransactionService<CachedConnector,CachedConnectorFactory> getBankTransactions();
 
-    BankService<CachedConnector,CachedConnectorFactory> getBanks();
+    public BankService<CachedConnector,CachedConnectorFactory> getBanks();
 
-    BlackholeEmailAddressService<CachedConnector,CachedConnectorFactory> getBlackholeEmailAddresses();
+    public BlackholeEmailAddressService<CachedConnector,CachedConnectorFactory> getBlackholeEmailAddresses();
 
-    BrandService<CachedConnector,CachedConnectorFactory> getBrands();
+    public BrandService<CachedConnector,CachedConnectorFactory> getBrands();
      */
     public BusinessAdministratorService<CachedConnector,CachedConnectorFactory> getBusinessAdministrators() {
         return businessAdministrators;
     }
     /*
-    BusinessAdministratorPermissionService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorPermissions();
+    public BusinessAdministratorPermissionService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorPermissions();
 
-    BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles();
+    public BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles();
      */
     public BusinessService<CachedConnector,CachedConnectorFactory> getBusinesses() {
         return businesses;
     }
 
-    /*
-    BusinessServerService<CachedConnector,CachedConnectorFactory> getBusinessServers();
+    /* TODO
+    public BusinessServerService<CachedConnector,CachedConnectorFactory> getBusinessServers();
 
-    ClientJvmProfileService<CachedConnector,CachedConnectorFactory> getClientJvmProfiles();
+    public ClientJvmProfileService<CachedConnector,CachedConnectorFactory> getClientJvmProfiles();
+    */
+    public CountryCodeService<CachedConnector,CachedConnectorFactory> getCountryCodes() {
+        return countryCodes;
+    }
+    /* TODO
 
-    CountryCodeService<CachedConnector,CachedConnectorFactory> getCountryCodes();
+    public CreditCardProcessorService<CachedConnector,CachedConnectorFactory> getCreditCardProcessors();
 
-    CreditCardProcessorService<CachedConnector,CachedConnectorFactory> getCreditCardProcessors();
+    public CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions();
 
-    CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions();
+    public CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards();
 
-    CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards();
-
-    CvsRepositoryService<CachedConnector,CachedConnectorFactory> getCvsRepositories();
+    public CvsRepositoryService<CachedConnector,CachedConnectorFactory> getCvsRepositories();
      */
     public DisableLogService<CachedConnector,CachedConnectorFactory> getDisableLogs() {
         return disableLogs;
     }
     /*
-    DistroFileTypeService<CachedConnector,CachedConnectorFactory> getDistroFileTypes();
+    public DistroFileTypeService<CachedConnector,CachedConnectorFactory> getDistroFileTypes();
 
-    DistroFileService<CachedConnector,CachedConnectorFactory> getDistroFiles();
+    public DistroFileService<CachedConnector,CachedConnectorFactory> getDistroFiles();
 
-    DNSForbiddenZoneService<CachedConnector,CachedConnectorFactory> getDnsForbiddenZones();
+    public DNSForbiddenZoneService<CachedConnector,CachedConnectorFactory> getDnsForbiddenZones();
 
-    DNSRecordService<CachedConnector,CachedConnectorFactory> getDnsRecords();
+    public DNSRecordService<CachedConnector,CachedConnectorFactory> getDnsRecords();
 
-    DNSTLDService<CachedConnector,CachedConnectorFactory> getDnsTLDs();
+    public DNSTLDService<CachedConnector,CachedConnectorFactory> getDnsTLDs();
 
-    DNSTypeService<CachedConnector,CachedConnectorFactory> getDnsTypes();
+    public DNSTypeService<CachedConnector,CachedConnectorFactory> getDnsTypes();
 
-    DNSZoneService<CachedConnector,CachedConnectorFactory> getDnsZones();
+    public DNSZoneService<CachedConnector,CachedConnectorFactory> getDnsZones();
 
-    EmailAddressService<CachedConnector,CachedConnectorFactory> getEmailAddresses();
+    public EmailAddressService<CachedConnector,CachedConnectorFactory> getEmailAddresses();
 
-    EmailAttachmentBlockService<CachedConnector,CachedConnectorFactory> getEmailAttachmentBlocks();
+    public EmailAttachmentBlockService<CachedConnector,CachedConnectorFactory> getEmailAttachmentBlocks();
 
-    EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> getEmailAttachmentTypes();
+    public EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> getEmailAttachmentTypes();
 
-    EmailDomainService<CachedConnector,CachedConnectorFactory> getEmailDomains();
+    public EmailDomainService<CachedConnector,CachedConnectorFactory> getEmailDomains();
 
-    EmailForwardingService<CachedConnector,CachedConnectorFactory> getEmailForwardings();
+    public EmailForwardingService<CachedConnector,CachedConnectorFactory> getEmailForwardings();
 
-    EmailListAddressService<CachedConnector,CachedConnectorFactory> getEmailListAddresses();
+    public EmailListAddressService<CachedConnector,CachedConnectorFactory> getEmailListAddresses();
 
-    EmailListService<CachedConnector,CachedConnectorFactory> getEmailLists();
+    public EmailListService<CachedConnector,CachedConnectorFactory> getEmailLists();
 
-    EmailPipeAddressService<CachedConnector,CachedConnectorFactory> getEmailPipeAddresses();
+    public EmailPipeAddressService<CachedConnector,CachedConnectorFactory> getEmailPipeAddresses();
 
-    EmailPipeService<CachedConnector,CachedConnectorFactory> getEmailPipes();
+    public EmailPipeService<CachedConnector,CachedConnectorFactory> getEmailPipes();
 
-    EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelayTypes();
+    public EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelayTypes();
 
-    EmailSmtpRelayService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelays();
+    public EmailSmtpRelayService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelays();
 
-    EmailSmtpSmartHostDomainService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHostDomains();
+    public EmailSmtpSmartHostDomainService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHostDomains();
 
-    EmailSmtpSmartHostService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHosts();
+    public EmailSmtpSmartHostService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHosts();
 
-    EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> getEmailSpamAssassinIntegrationModes();
+    public EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> getEmailSpamAssassinIntegrationModes();
 
-    EncryptionKeyService<CachedConnector,CachedConnectorFactory> getEncryptionKeys();
+    public EncryptionKeyService<CachedConnector,CachedConnectorFactory> getEncryptionKeys();
 
-    ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories();
+    public ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories();
 
-    FailoverFileLogService<CachedConnector,CachedConnectorFactory> getFailoverFileLogs();
+    public FailoverFileLogService<CachedConnector,CachedConnectorFactory> getFailoverFileLogs();
 
-    FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> getFailoverFileReplications();
+    public FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> getFailoverFileReplications();
 
-    FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> getFailoverFileSchedules();
+    public FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> getFailoverFileSchedules();
 
-    FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> getFailoverMySQLReplications();
+    public FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> getFailoverMySQLReplications();
 
-    FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings();
+    public FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings();
 
-    FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers();
+    public FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers();
 
-    HttpdBindService<CachedConnector,CachedConnectorFactory> getHttpdBinds();
+    public HttpdBindService<CachedConnector,CachedConnectorFactory> getHttpdBinds();
 
-    HttpdJBossSiteService<CachedConnector,CachedConnectorFactory> getHttpdJBossSites();
+    public HttpdJBossSiteService<CachedConnector,CachedConnectorFactory> getHttpdJBossSites();
 
-    HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions();
+    public HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions();
 
-    HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes();
+    public HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes();
 
-    HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols();
+    public HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols();
 
-    HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers();
+    public HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers();
 
-    HttpdSharedTomcatService<CachedConnector,CachedConnectorFactory> getHttpdSharedTomcats();
+    public HttpdSharedTomcatService<CachedConnector,CachedConnectorFactory> getHttpdSharedTomcats();
 
-    HttpdSiteAuthenticatedLocationService<CachedConnector,CachedConnectorFactory> getHttpdSiteAuthenticatedLocations();
+    public HttpdSiteAuthenticatedLocationService<CachedConnector,CachedConnectorFactory> getHttpdSiteAuthenticatedLocations();
 
-    HttpdSiteBindService<CachedConnector,CachedConnectorFactory> getHttpdSiteBinds();
+    public HttpdSiteBindService<CachedConnector,CachedConnectorFactory> getHttpdSiteBinds();
 
-    HttpdSiteURLService<CachedConnector,CachedConnectorFactory> getHttpdSiteURLs();
+    public HttpdSiteURLService<CachedConnector,CachedConnectorFactory> getHttpdSiteURLs();
 
-    HttpdSiteService<CachedConnector,CachedConnectorFactory> getHttpdSites();
+    public HttpdSiteService<CachedConnector,CachedConnectorFactory> getHttpdSites();
 
-    HttpdStaticSiteService<CachedConnector,CachedConnectorFactory> getHttpdStaticSites();
+    public HttpdStaticSiteService<CachedConnector,CachedConnectorFactory> getHttpdStaticSites();
 
-    HttpdTomcatContextService<CachedConnector,CachedConnectorFactory> getHttpdTomcatContexts();
+    public HttpdTomcatContextService<CachedConnector,CachedConnectorFactory> getHttpdTomcatContexts();
 
-    HttpdTomcatDataSourceService<CachedConnector,CachedConnectorFactory> getHttpdTomcatDataSources();
+    public HttpdTomcatDataSourceService<CachedConnector,CachedConnectorFactory> getHttpdTomcatDataSources();
 
-    HttpdTomcatParameterService<CachedConnector,CachedConnectorFactory> getHttpdTomcatParameters();
+    public HttpdTomcatParameterService<CachedConnector,CachedConnectorFactory> getHttpdTomcatParameters();
 
-    HttpdTomcatSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSites();
+    public HttpdTomcatSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSites();
 
-    HttpdTomcatSharedSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSharedSites();
+    public HttpdTomcatSharedSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSharedSites();
 
-    HttpdTomcatStdSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatStdSites();
+    public HttpdTomcatStdSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatStdSites();
 
-    HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions();
+    public HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions();
 
-    HttpdWorkerService<CachedConnector,CachedConnectorFactory> getHttpdWorkers();
+    public HttpdWorkerService<CachedConnector,CachedConnectorFactory> getHttpdWorkers();
 
-    IPAddressService<CachedConnector,CachedConnectorFactory> getIpAddresses();
+    public IPAddressService<CachedConnector,CachedConnectorFactory> getIpAddresses();
     */
     public LanguageService<CachedConnector,CachedConnectorFactory> getLanguages() {
         return languages;
     }
     /* TODO
-    LinuxAccAddressService<CachedConnector,CachedConnectorFactory> getLinuxAccAddresses();
+    public LinuxAccAddressService<CachedConnector,CachedConnectorFactory> getLinuxAccAddresses();
 
-    LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes();
+    public LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes();
 
-    LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts();
+    public LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts();
 
-    LinuxGroupAccountService<CachedConnector,CachedConnectorFactory> getLinuxGroupAccounts();
+    public LinuxGroupAccountService<CachedConnector,CachedConnectorFactory> getLinuxGroupAccounts();
 
-    LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes();
+    public LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes();
 
-    LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups();
+    public LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups();
 
-    LinuxIDService<CachedConnector,CachedConnectorFactory> getLinuxIDs();
+    public LinuxIDService<CachedConnector,CachedConnectorFactory> getLinuxIDs();
 
-    LinuxServerAccountService<CachedConnector,CachedConnectorFactory> getLinuxServerAccounts();
+    public LinuxServerAccountService<CachedConnector,CachedConnectorFactory> getLinuxServerAccounts();
 
-    LinuxServerGroupService<CachedConnector,CachedConnectorFactory> getLinuxServerGroups();
+    public LinuxServerGroupService<CachedConnector,CachedConnectorFactory> getLinuxServerGroups();
 
-    MajordomoListService<CachedConnector,CachedConnectorFactory> getMajordomoLists();
+    public MajordomoListService<CachedConnector,CachedConnectorFactory> getMajordomoLists();
 
-    MajordomoServerService<CachedConnector,CachedConnectorFactory> getMajordomoServers();
+    public MajordomoServerService<CachedConnector,CachedConnectorFactory> getMajordomoServers();
 
-    MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions();
+    public MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions();
 
-    MasterHistoryService<CachedConnector,CachedConnectorFactory> getMasterHistory();
+    public MasterHistoryService<CachedConnector,CachedConnectorFactory> getMasterHistory();
 
-    MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts();
+    public MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts();
 
-    MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers();
+    public MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers();
 
-    MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers();
+    public MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers();
 
-    MonthlyChargeService<CachedConnector,CachedConnectorFactory> getMonthlyCharges();
+    public MonthlyChargeService<CachedConnector,CachedConnectorFactory> getMonthlyCharges();
 
-    MySQLDatabaseService<CachedConnector,CachedConnectorFactory> getMysqlDatabases();
+    public MySQLDatabaseService<CachedConnector,CachedConnectorFactory> getMysqlDatabases();
 
-    MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers();
+    public MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers();
 
-    MySQLReservedWordService<CachedConnector,CachedConnectorFactory> getMysqlReservedWords();
+    public MySQLReservedWordService<CachedConnector,CachedConnectorFactory> getMysqlReservedWords();
 
-    MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers();
+    public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers();
 
-    MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers();
+    public MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers();
 
-    NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds();
+    public NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds();
 
-    NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs();
+    public NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs();
 
-    NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices();
+    public NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices();
 
-    NetPortService<CachedConnector,CachedConnectorFactory> getNetPorts();
+    public NetPortService<CachedConnector,CachedConnectorFactory> getNetPorts();
 
-    NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols();
+    public NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols();
 
-    NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects();
+    public NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects();
 
-    NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
+    public NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
 
-    NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes();
+    public NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes();
 
-    OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> getOperatingSystemVersions();
+    public OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> getOperatingSystemVersions();
 
-    OperatingSystemService<CachedConnector,CachedConnectorFactory> getOperatingSystems();
+    public OperatingSystemService<CachedConnector,CachedConnectorFactory> getOperatingSystems();
     */
     public PackageCategoryService<CachedConnector,CachedConnectorFactory> getPackageCategories() {
         return packageCategories;
     }
     /*
-    PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> getPackageDefinitionLimits();
+    public PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> getPackageDefinitionLimits();
 
-    PackageDefinitionService<CachedConnector,CachedConnectorFactory> getPackageDefinitions();
+    public PackageDefinitionService<CachedConnector,CachedConnectorFactory> getPackageDefinitions();
 
-    PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes();
+    public PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes();
 
-    PhysicalServerService<CachedConnector,CachedConnectorFactory> getPhysicalServers();
+    public PhysicalServerService<CachedConnector,CachedConnectorFactory> getPhysicalServers();
 
-    PostgresDatabaseService<CachedConnector,CachedConnectorFactory> getPostgresDatabases();
+    public PostgresDatabaseService<CachedConnector,CachedConnectorFactory> getPostgresDatabases();
 
-    PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings();
+    public PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings();
 
-    PostgresReservedWordService<CachedConnector,CachedConnectorFactory> getPostgresReservedWords();
+    public PostgresReservedWordService<CachedConnector,CachedConnectorFactory> getPostgresReservedWords();
 
-    PostgresServerUserService<CachedConnector,CachedConnectorFactory> getPostgresServerUsers();
+    public PostgresServerUserService<CachedConnector,CachedConnectorFactory> getPostgresServerUsers();
 
-    PostgresServerService<CachedConnector,CachedConnectorFactory> getPostgresServers();
+    public PostgresServerService<CachedConnector,CachedConnectorFactory> getPostgresServers();
 
-    PostgresUserService<CachedConnector,CachedConnectorFactory> getPostgresUsers();
+    public PostgresUserService<CachedConnector,CachedConnectorFactory> getPostgresUsers();
 
-    PostgresVersionService<CachedConnector,CachedConnectorFactory> getPostgresVersions();
+    public PostgresVersionService<CachedConnector,CachedConnectorFactory> getPostgresVersions();
 
-    PrivateFTPServerService<CachedConnector,CachedConnectorFactory> getPrivateFTPServers();
+    public PrivateFTPServerService<CachedConnector,CachedConnectorFactory> getPrivateFTPServers();
 
-    ProcessorTypeService<CachedConnector,CachedConnectorFactory> getProcessorTypes();
+    public ProcessorTypeService<CachedConnector,CachedConnectorFactory> getProcessorTypes();
 
-    ProtocolService<CachedConnector,CachedConnectorFactory> getProtocols();
+    public ProtocolService<CachedConnector,CachedConnectorFactory> getProtocols();
 
-    RackService<CachedConnector,CachedConnectorFactory> getRacks();
+    public RackService<CachedConnector,CachedConnectorFactory> getRacks();
 
-    ResellerService<CachedConnector,CachedConnectorFactory> getResellers();
+    public ResellerService<CachedConnector,CachedConnectorFactory> getResellers();
 */
     public ResourceTypeService<CachedConnector,CachedConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }
 /* TODO
-    ResourceService<CachedConnector,CachedConnectorFactory> getResources();
+    public ResourceService<CachedConnector,CachedConnectorFactory> getResources();
 
-    ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms();
+    public ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms();
 
-    ServerTable getServers();
+    public ServerTable getServers();
 
-    ShellService<CachedConnector,CachedConnectorFactory> getShells();
+    public ShellService<CachedConnector,CachedConnectorFactory> getShells();
 
-    SignupRequestOptionService<CachedConnector,CachedConnectorFactory> getSignupRequestOptions();
+    public SignupRequestOptionService<CachedConnector,CachedConnectorFactory> getSignupRequestOptions();
 
-    SignupRequestService<CachedConnector,CachedConnectorFactory> getSignupRequests();
+    public SignupRequestService<CachedConnector,CachedConnectorFactory> getSignupRequests();
 
-    SpamEmailMessageService<CachedConnector,CachedConnectorFactory> getSpamEmailMessages();
+    public SpamEmailMessageService<CachedConnector,CachedConnectorFactory> getSpamEmailMessages();
 
-    SystemEmailAliasService<CachedConnector,CachedConnectorFactory> getSystemEmailAliases();
+    public SystemEmailAliasService<CachedConnector,CachedConnectorFactory> getSystemEmailAliases();
 
-    TechnologyService<CachedConnector,CachedConnectorFactory> getTechnologies();
+    public TechnologyService<CachedConnector,CachedConnectorFactory> getTechnologies();
 
-    TechnologyClassService<CachedConnector,CachedConnectorFactory> getTechnologyClasses();
+    public TechnologyClassService<CachedConnector,CachedConnectorFactory> getTechnologyClasses();
 
-    TechnologyNameService<CachedConnector,CachedConnectorFactory> getTechnologyNames();
+    public TechnologyNameService<CachedConnector,CachedConnectorFactory> getTechnologyNames();
 
-    TechnologyVersionService<CachedConnector,CachedConnectorFactory> getTechnologyVersions();
+    public TechnologyVersionService<CachedConnector,CachedConnectorFactory> getTechnologyVersions();
 
-    TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes();
+    public TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes();
 
-    TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions();
+    public TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions();
 
-    TicketAssignmentService<CachedConnector,CachedConnectorFactory> getTicketAssignments();
+    public TicketAssignmentService<CachedConnector,CachedConnectorFactory> getTicketAssignments();
 
-    TicketBrandCategoryService<CachedConnector,CachedConnectorFactory> getTicketBrandCategories();
+    public TicketBrandCategoryService<CachedConnector,CachedConnectorFactory> getTicketBrandCategories();
     */
     public TicketCategoryService<CachedConnector,CachedConnectorFactory> getTicketCategories() {
         return ticketCategories;
@@ -751,24 +764,26 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return ticketTypes;
     }
     /* TODO
-    TicketService<CachedConnector,CachedConnectorFactory> getTickets();
+    public TicketService<CachedConnector,CachedConnectorFactory> getTickets();
     */
     public TimeZoneService<CachedConnector,CachedConnectorFactory> getTimeZones() {
         return timeZones;
     }
     /* TODO
-    TransactionTypeService<CachedConnector,CachedConnectorFactory> getTransactionTypes();
+    public TransactionTypeService<CachedConnector,CachedConnectorFactory> getTransactionTypes();
 
-    TransactionService<CachedConnector,CachedConnectorFactory> getTransactions();
+    public TransactionService<CachedConnector,CachedConnectorFactory> getTransactions();
 
-    USStateService<CachedConnector,CachedConnectorFactory> getUsStates();
+    public USStateService<CachedConnector,CachedConnectorFactory> getUsStates();
+    */
+    public UsernameService<CachedConnector,CachedConnectorFactory> getUsernames() {
+        return usernames;
+    }
+    /* TODO
+    public VirtualDiskService<CachedConnector,CachedConnectorFactory> getVirtualDisks();
 
-    UsernameService<CachedConnector,CachedConnectorFactory> getUsernames();
+    public VirtualServerService<CachedConnector,CachedConnectorFactory> getVirtualServers();
 
-    VirtualDiskService<CachedConnector,CachedConnectorFactory> getVirtualDisks();
-
-    VirtualServerService<CachedConnector,CachedConnectorFactory> getVirtualServers();
-
-    WhoisHistoryService<CachedConnector,CachedConnectorFactory> getWhoisHistory();
+    public WhoisHistoryService<CachedConnector,CachedConnectorFactory> getWhoisHistory();
  */
 }

@@ -11,6 +11,7 @@ import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
+import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
@@ -21,6 +22,7 @@ import com.aoindustries.aoserv.client.TicketPriorityService;
 import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
+import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -62,7 +64,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     /* TODO
     final NoSwingBusinessServerService businessServers;
     final NoSwingClientJvmProfileService clientJvmProfiles;
+     */
     final NoSwingCountryCodeService countryCodes;
+    /* TODO
     final NoSwingCreditCardProcessorService creditCardProcessors;
     final NoSwingCreditCardTransactionService creditCardTransactions;
     final NoSwingCreditCardService creditCards;
@@ -206,7 +210,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingTransactionTypeService transactionTypes;
     final NoSwingTransactionService transactions;
     final NoSwingUSStateService usStates;
+     */
     final NoSwingUsernameService usernames;
+    /* TODO
     final NoSwingVirtualDiskService virtualDisks;
     final NoSwingVirtualServerService virtualServers;
     final NoSwingWhoisHistoryService whoisHistories;
@@ -241,7 +247,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         /* TODO
         businessServers = new NoSwingBusinessServerService(this, wrapped.getBusinessServers());
         clientJvmProfiles = new NoSwingClientJvmProfileService(this, wrapped.getClientJvmProfiles());
+         */
         countryCodes = new NoSwingCountryCodeService(this, wrapped.getCountryCodes());
+        /* TODO
         creditCardProcessors = new NoSwingCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
         creditCardTransactions = new NoSwingCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
         creditCards = new NoSwingCreditCardService(this, wrapped.getCreditCards());
@@ -385,7 +393,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         transactionTypes = new NoSwingTransactionTypeService(this, wrapped.getTransactionTypes());
         transactions = new NoSwingTransactionService(this, wrapped.getTransactions());
         usStates = new NoSwingUSStateService(this, wrapped.getUSStates());
+         */
         usernames = new NoSwingUsernameService(this, wrapped.getUsernames());
+        /* TODO
         virtualDisks = new NoSwingVirtualDiskService(this, wrapped.getVirtualDisks());
         virtualServers = new NoSwingVirtualServerService(this, wrapped.getVirtualServers());
         whoisHistories = new NoSwingWhoisHistoryService(this, wrapped.getWhoisHistorys());
@@ -432,312 +442,314 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
 
     /*
      * TODO
-    AOServerDaemonHostService<NoSwingConnector,NoSwingConnectorFactory> getAoServerDaemonHosts() throws RemoteException;
+    public AOServerDaemonHostService<NoSwingConnector,NoSwingConnectorFactory> getAoServerDaemonHosts() throws RemoteException;
 
-    AOServerResourceService<NoSwingConnector,NoSwingConnectorFactory> getAoServerResources() throws RemoteException;
+    public AOServerResourceService<NoSwingConnector,NoSwingConnectorFactory> getAoServerResources() throws RemoteException;
 
-    AOServerService<NoSwingConnector,NoSwingConnectorFactory> getAoServers() throws RemoteException;
+    public AOServerService<NoSwingConnector,NoSwingConnectorFactory> getAoServers() throws RemoteException;
 
-    AOServPermissionService<NoSwingConnector,NoSwingConnectorFactory> getAoservPermissions() throws RemoteException;
+    public AOServPermissionService<NoSwingConnector,NoSwingConnectorFactory> getAoservPermissions() throws RemoteException;
 
-    AOServProtocolService<NoSwingConnector,NoSwingConnectorFactory> getAoservProtocols() throws RemoteException;
+    public AOServProtocolService<NoSwingConnector,NoSwingConnectorFactory> getAoservProtocols() throws RemoteException;
 
-    AOSHCommandService<NoSwingConnector,NoSwingConnectorFactory> getAoshCommands() throws RemoteException;
+    public AOSHCommandService<NoSwingConnector,NoSwingConnectorFactory> getAoshCommands() throws RemoteException;
 
-    ArchitectureService<NoSwingConnector,NoSwingConnectorFactory> getArchitectures() throws RemoteException;
+    public ArchitectureService<NoSwingConnector,NoSwingConnectorFactory> getArchitectures() throws RemoteException;
 
-    BackupPartitionService<NoSwingConnector,NoSwingConnectorFactory> getBackupPartitions() throws RemoteException;
+    public BackupPartitionService<NoSwingConnector,NoSwingConnectorFactory> getBackupPartitions() throws RemoteException;
 
-    BackupRetentionService<NoSwingConnector,NoSwingConnectorFactory> getBackupRetentions() throws RemoteException;
+    public BackupRetentionService<NoSwingConnector,NoSwingConnectorFactory> getBackupRetentions() throws RemoteException;
 
-    BankAccountService<NoSwingConnector,NoSwingConnectorFactory> getBankAccounts() throws RemoteException;
+    public BankAccountService<NoSwingConnector,NoSwingConnectorFactory> getBankAccounts() throws RemoteException;
 
-    BankTransactionTypeService<NoSwingConnector,NoSwingConnectorFactory> getBankTransactionTypes() throws RemoteException;
+    public BankTransactionTypeService<NoSwingConnector,NoSwingConnectorFactory> getBankTransactionTypes() throws RemoteException;
 
-    BankTransactionService<NoSwingConnector,NoSwingConnectorFactory> getBankTransactions() throws RemoteException;
+    public BankTransactionService<NoSwingConnector,NoSwingConnectorFactory> getBankTransactions() throws RemoteException;
 
-    BankService<NoSwingConnector,NoSwingConnectorFactory> getBanks() throws RemoteException;
+    public BankService<NoSwingConnector,NoSwingConnectorFactory> getBanks() throws RemoteException;
 
-    BlackholeEmailAddressService<NoSwingConnector,NoSwingConnectorFactory> getBlackholeEmailAddresses() throws RemoteException;
+    public BlackholeEmailAddressService<NoSwingConnector,NoSwingConnectorFactory> getBlackholeEmailAddresses() throws RemoteException;
 
-    BrandService<NoSwingConnector,NoSwingConnectorFactory> getBrands() throws RemoteException;
+    public BrandService<NoSwingConnector,NoSwingConnectorFactory> getBrands() throws RemoteException;
      */
     public BusinessAdministratorService<NoSwingConnector,NoSwingConnectorFactory> getBusinessAdministrators() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return businessAdministrators;
     }
     /*
-    BusinessAdministratorPermissionService<NoSwingConnector,NoSwingConnectorFactory> getBusinessAdministratorPermissions() throws RemoteException;
+    public BusinessAdministratorPermissionService<NoSwingConnector,NoSwingConnectorFactory> getBusinessAdministratorPermissions() throws RemoteException;
 
-    BusinessProfileService<NoSwingConnector,NoSwingConnectorFactory> getBusinessProfiles() throws RemoteException;
+    public BusinessProfileService<NoSwingConnector,NoSwingConnectorFactory> getBusinessProfiles() throws RemoteException;
      */
     public BusinessService<NoSwingConnector,NoSwingConnectorFactory> getBusinesses() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return businesses;
     }
 
-    /*
-    BusinessServerService<NoSwingConnector,NoSwingConnectorFactory> getBusinessServers() throws RemoteException;
+    /* TODO
+    public BusinessServerService<NoSwingConnector,NoSwingConnectorFactory> getBusinessServers() throws RemoteException;
 
-    ClientJvmProfileService<NoSwingConnector,NoSwingConnectorFactory> getClientJvmProfiles() throws RemoteException;
+    public ClientJvmProfileService<NoSwingConnector,NoSwingConnectorFactory> getClientJvmProfiles() throws RemoteException;
+    */
+    public CountryCodeService<NoSwingConnector,NoSwingConnectorFactory> getCountryCodes() throws RemoteException {
+        return countryCodes;
+    }
+    /* TODO
+    public CreditCardProcessorService<NoSwingConnector,NoSwingConnectorFactory> getCreditCardProcessors() throws RemoteException;
 
-    CountryCodeService<NoSwingConnector,NoSwingConnectorFactory> getCountryCodes() throws RemoteException;
+    public CreditCardTransactionService<NoSwingConnector,NoSwingConnectorFactory> getCreditCardTransactions() throws RemoteException;
 
-    CreditCardProcessorService<NoSwingConnector,NoSwingConnectorFactory> getCreditCardProcessors() throws RemoteException;
+    public CreditCardService<NoSwingConnector,NoSwingConnectorFactory> getCreditCards() throws RemoteException;
 
-    CreditCardTransactionService<NoSwingConnector,NoSwingConnectorFactory> getCreditCardTransactions() throws RemoteException;
-
-    CreditCardService<NoSwingConnector,NoSwingConnectorFactory> getCreditCards() throws RemoteException;
-
-    CvsRepositoryService<NoSwingConnector,NoSwingConnectorFactory> getCvsRepositories() throws RemoteException;
+    public CvsRepositoryService<NoSwingConnector,NoSwingConnectorFactory> getCvsRepositories() throws RemoteException;
      */
     public DisableLogService<NoSwingConnector,NoSwingConnectorFactory> getDisableLogs() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return disableLogs;
     }
     /*
-    DistroFileTypeService<NoSwingConnector,NoSwingConnectorFactory> getDistroFileTypes() throws RemoteException;
+    public DistroFileTypeService<NoSwingConnector,NoSwingConnectorFactory> getDistroFileTypes() throws RemoteException;
 
-    DistroFileService<NoSwingConnector,NoSwingConnectorFactory> getDistroFiles() throws RemoteException;
+    public DistroFileService<NoSwingConnector,NoSwingConnectorFactory> getDistroFiles() throws RemoteException;
 
-    DNSForbiddenZoneService<NoSwingConnector,NoSwingConnectorFactory> getDnsForbiddenZones() throws RemoteException;
+    public DNSForbiddenZoneService<NoSwingConnector,NoSwingConnectorFactory> getDnsForbiddenZones() throws RemoteException;
 
-    DNSRecordService<NoSwingConnector,NoSwingConnectorFactory> getDnsRecords() throws RemoteException;
+    public DNSRecordService<NoSwingConnector,NoSwingConnectorFactory> getDnsRecords() throws RemoteException;
 
-    DNSTLDService<NoSwingConnector,NoSwingConnectorFactory> getDnsTLDs() throws RemoteException;
+    public DNSTLDService<NoSwingConnector,NoSwingConnectorFactory> getDnsTLDs() throws RemoteException;
 
-    DNSTypeService<NoSwingConnector,NoSwingConnectorFactory> getDnsTypes() throws RemoteException;
+    public DNSTypeService<NoSwingConnector,NoSwingConnectorFactory> getDnsTypes() throws RemoteException;
 
-    DNSZoneService<NoSwingConnector,NoSwingConnectorFactory> getDnsZones() throws RemoteException;
+    public DNSZoneService<NoSwingConnector,NoSwingConnectorFactory> getDnsZones() throws RemoteException;
 
-    EmailAddressService<NoSwingConnector,NoSwingConnectorFactory> getEmailAddresses() throws RemoteException;
+    public EmailAddressService<NoSwingConnector,NoSwingConnectorFactory> getEmailAddresses() throws RemoteException;
 
-    EmailAttachmentBlockService<NoSwingConnector,NoSwingConnectorFactory> getEmailAttachmentBlocks() throws RemoteException;
+    public EmailAttachmentBlockService<NoSwingConnector,NoSwingConnectorFactory> getEmailAttachmentBlocks() throws RemoteException;
 
-    EmailAttachmentTypeService<NoSwingConnector,NoSwingConnectorFactory> getEmailAttachmentTypes() throws RemoteException;
+    public EmailAttachmentTypeService<NoSwingConnector,NoSwingConnectorFactory> getEmailAttachmentTypes() throws RemoteException;
 
-    EmailDomainService<NoSwingConnector,NoSwingConnectorFactory> getEmailDomains() throws RemoteException;
+    public EmailDomainService<NoSwingConnector,NoSwingConnectorFactory> getEmailDomains() throws RemoteException;
 
-    EmailForwardingService<NoSwingConnector,NoSwingConnectorFactory> getEmailForwardings() throws RemoteException;
+    public EmailForwardingService<NoSwingConnector,NoSwingConnectorFactory> getEmailForwardings() throws RemoteException;
 
-    EmailListAddressService<NoSwingConnector,NoSwingConnectorFactory> getEmailListAddresses() throws RemoteException;
+    public EmailListAddressService<NoSwingConnector,NoSwingConnectorFactory> getEmailListAddresses() throws RemoteException;
 
-    EmailListService<NoSwingConnector,NoSwingConnectorFactory> getEmailLists() throws RemoteException;
+    public EmailListService<NoSwingConnector,NoSwingConnectorFactory> getEmailLists() throws RemoteException;
 
-    EmailPipeAddressService<NoSwingConnector,NoSwingConnectorFactory> getEmailPipeAddresses() throws RemoteException;
+    public EmailPipeAddressService<NoSwingConnector,NoSwingConnectorFactory> getEmailPipeAddresses() throws RemoteException;
 
-    EmailPipeService<NoSwingConnector,NoSwingConnectorFactory> getEmailPipes() throws RemoteException;
+    public EmailPipeService<NoSwingConnector,NoSwingConnectorFactory> getEmailPipes() throws RemoteException;
 
-    EmailSmtpRelayTypeService<NoSwingConnector,NoSwingConnectorFactory> getEmailSmtpRelayTypes() throws RemoteException;
+    public EmailSmtpRelayTypeService<NoSwingConnector,NoSwingConnectorFactory> getEmailSmtpRelayTypes() throws RemoteException;
 
-    EmailSmtpRelayService<NoSwingConnector,NoSwingConnectorFactory> getEmailSmtpRelays() throws RemoteException;
+    public EmailSmtpRelayService<NoSwingConnector,NoSwingConnectorFactory> getEmailSmtpRelays() throws RemoteException;
 
-    EmailSmtpSmartHostDomainService<NoSwingConnector,NoSwingConnectorFactory> getEmailSmtpSmartHostDomains() throws RemoteException;
+    public EmailSmtpSmartHostDomainService<NoSwingConnector,NoSwingConnectorFactory> getEmailSmtpSmartHostDomains() throws RemoteException;
 
-    EmailSmtpSmartHostService<NoSwingConnector,NoSwingConnectorFactory> getEmailSmtpSmartHosts() throws RemoteException;
+    public EmailSmtpSmartHostService<NoSwingConnector,NoSwingConnectorFactory> getEmailSmtpSmartHosts() throws RemoteException;
 
-    EmailSpamAssassinIntegrationModeService<NoSwingConnector,NoSwingConnectorFactory> getEmailSpamAssassinIntegrationModes() throws RemoteException;
+    public EmailSpamAssassinIntegrationModeService<NoSwingConnector,NoSwingConnectorFactory> getEmailSpamAssassinIntegrationModes() throws RemoteException;
 
-    EncryptionKeyService<NoSwingConnector,NoSwingConnectorFactory> getEncryptionKeys() throws RemoteException;
+    public EncryptionKeyService<NoSwingConnector,NoSwingConnectorFactory> getEncryptionKeys() throws RemoteException;
 
-    ExpenseCategoryService<NoSwingConnector,NoSwingConnectorFactory> getExpenseCategories() throws RemoteException;
+    public ExpenseCategoryService<NoSwingConnector,NoSwingConnectorFactory> getExpenseCategories() throws RemoteException;
 
-    FailoverFileLogService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileLogs() throws RemoteException;
+    public FailoverFileLogService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileLogs() throws RemoteException;
 
-    FailoverFileReplicationService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileReplications() throws RemoteException;
+    public FailoverFileReplicationService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileReplications() throws RemoteException;
 
-    FailoverFileScheduleService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileSchedules() throws RemoteException;
+    public FailoverFileScheduleService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileSchedules() throws RemoteException;
 
-    FailoverMySQLReplicationService<NoSwingConnector,NoSwingConnectorFactory> getFailoverMySQLReplications() throws RemoteException;
+    public FailoverMySQLReplicationService<NoSwingConnector,NoSwingConnectorFactory> getFailoverMySQLReplications() throws RemoteException;
 
-    FileBackupSettingService<NoSwingConnector,NoSwingConnectorFactory> getFileBackupSettings() throws RemoteException;
+    public FileBackupSettingService<NoSwingConnector,NoSwingConnectorFactory> getFileBackupSettings() throws RemoteException;
 
-    FTPGuestUserService<NoSwingConnector,NoSwingConnectorFactory> getFtpGuestUsers() throws RemoteException;
+    public FTPGuestUserService<NoSwingConnector,NoSwingConnectorFactory> getFtpGuestUsers() throws RemoteException;
 
-    HttpdBindService<NoSwingConnector,NoSwingConnectorFactory> getHttpdBinds() throws RemoteException;
+    public HttpdBindService<NoSwingConnector,NoSwingConnectorFactory> getHttpdBinds() throws RemoteException;
 
-    HttpdJBossSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJBossSites() throws RemoteException;
+    public HttpdJBossSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJBossSites() throws RemoteException;
 
-    HttpdJBossVersionService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJBossVersions() throws RemoteException;
+    public HttpdJBossVersionService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJBossVersions() throws RemoteException;
 
-    HttpdJKCodeService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJKCodes() throws RemoteException;
+    public HttpdJKCodeService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJKCodes() throws RemoteException;
 
-    HttpdJKProtocolService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJKProtocols() throws RemoteException;
+    public HttpdJKProtocolService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJKProtocols() throws RemoteException;
 
-    HttpdServerService<NoSwingConnector,NoSwingConnectorFactory> getHttpdServers() throws RemoteException;
+    public HttpdServerService<NoSwingConnector,NoSwingConnectorFactory> getHttpdServers() throws RemoteException;
 
-    HttpdSharedTomcatService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSharedTomcats() throws RemoteException;
+    public HttpdSharedTomcatService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSharedTomcats() throws RemoteException;
 
-    HttpdSiteAuthenticatedLocationService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSiteAuthenticatedLocations() throws RemoteException;
+    public HttpdSiteAuthenticatedLocationService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSiteAuthenticatedLocations() throws RemoteException;
 
-    HttpdSiteBindService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSiteBinds() throws RemoteException;
+    public HttpdSiteBindService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSiteBinds() throws RemoteException;
 
-    HttpdSiteURLService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSiteURLs() throws RemoteException;
+    public HttpdSiteURLService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSiteURLs() throws RemoteException;
 
-    HttpdSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSites() throws RemoteException;
+    public HttpdSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSites() throws RemoteException;
 
-    HttpdStaticSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdStaticSites() throws RemoteException;
+    public HttpdStaticSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdStaticSites() throws RemoteException;
 
-    HttpdTomcatContextService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatContexts() throws RemoteException;
+    public HttpdTomcatContextService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatContexts() throws RemoteException;
 
-    HttpdTomcatDataSourceService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatDataSources() throws RemoteException;
+    public HttpdTomcatDataSourceService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatDataSources() throws RemoteException;
 
-    HttpdTomcatParameterService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatParameters() throws RemoteException;
+    public HttpdTomcatParameterService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatParameters() throws RemoteException;
 
-    HttpdTomcatSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatSites() throws RemoteException;
+    public HttpdTomcatSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatSites() throws RemoteException;
 
-    HttpdTomcatSharedSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatSharedSites() throws RemoteException;
+    public HttpdTomcatSharedSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatSharedSites() throws RemoteException;
 
-    HttpdTomcatStdSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatStdSites() throws RemoteException;
+    public HttpdTomcatStdSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatStdSites() throws RemoteException;
 
-    HttpdTomcatVersionService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatVersions() throws RemoteException;
+    public HttpdTomcatVersionService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatVersions() throws RemoteException;
 
-    HttpdWorkerService<NoSwingConnector,NoSwingConnectorFactory> getHttpdWorkers() throws RemoteException;
+    public HttpdWorkerService<NoSwingConnector,NoSwingConnectorFactory> getHttpdWorkers() throws RemoteException;
 
-    IPAddressService<NoSwingConnector,NoSwingConnectorFactory> getIpAddresses() throws RemoteException;
+    public IPAddressService<NoSwingConnector,NoSwingConnectorFactory> getIpAddresses() throws RemoteException;
     */
     public LanguageService<NoSwingConnector,NoSwingConnectorFactory> getLanguages() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return languages;
     }
     /* TODO
-    LinuxAccAddressService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccAddresses() throws RemoteException;
+    public LinuxAccAddressService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccAddresses() throws RemoteException;
 
-    LinuxAccountTypeService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccountTypes() throws RemoteException;
+    public LinuxAccountTypeService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccountTypes() throws RemoteException;
 
-    LinuxAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccounts() throws RemoteException;
+    public LinuxAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccounts() throws RemoteException;
 
-    LinuxGroupAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupAccounts() throws RemoteException;
+    public LinuxGroupAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupAccounts() throws RemoteException;
 
-    LinuxGroupTypeService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupTypes() throws RemoteException;
+    public LinuxGroupTypeService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupTypes() throws RemoteException;
 
-    LinuxGroupService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroups() throws RemoteException;
+    public LinuxGroupService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroups() throws RemoteException;
 
-    LinuxIDService<NoSwingConnector,NoSwingConnectorFactory> getLinuxIDs() throws RemoteException;
+    public LinuxIDService<NoSwingConnector,NoSwingConnectorFactory> getLinuxIDs() throws RemoteException;
 
-    LinuxServerAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxServerAccounts() throws RemoteException;
+    public LinuxServerAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxServerAccounts() throws RemoteException;
 
-    LinuxServerGroupService<NoSwingConnector,NoSwingConnectorFactory> getLinuxServerGroups() throws RemoteException;
+    public LinuxServerGroupService<NoSwingConnector,NoSwingConnectorFactory> getLinuxServerGroups() throws RemoteException;
 
-    MajordomoListService<NoSwingConnector,NoSwingConnectorFactory> getMajordomoLists() throws RemoteException;
+    public MajordomoListService<NoSwingConnector,NoSwingConnectorFactory> getMajordomoLists() throws RemoteException;
 
-    MajordomoServerService<NoSwingConnector,NoSwingConnectorFactory> getMajordomoServers() throws RemoteException;
+    public MajordomoServerService<NoSwingConnector,NoSwingConnectorFactory> getMajordomoServers() throws RemoteException;
 
-    MajordomoVersionService<NoSwingConnector,NoSwingConnectorFactory> getMajordomoVersions() throws RemoteException;
+    public MajordomoVersionService<NoSwingConnector,NoSwingConnectorFactory> getMajordomoVersions() throws RemoteException;
 
-    MasterHistoryService<NoSwingConnector,NoSwingConnectorFactory> getMasterHistory() throws RemoteException;
+    public MasterHistoryService<NoSwingConnector,NoSwingConnectorFactory> getMasterHistory() throws RemoteException;
 
-    MasterHostService<NoSwingConnector,NoSwingConnectorFactory> getMasterHosts() throws RemoteException;
+    public MasterHostService<NoSwingConnector,NoSwingConnectorFactory> getMasterHosts() throws RemoteException;
 
-    MasterServerService<NoSwingConnector,NoSwingConnectorFactory> getMasterServers() throws RemoteException;
+    public MasterServerService<NoSwingConnector,NoSwingConnectorFactory> getMasterServers() throws RemoteException;
 
-    MasterUserService<NoSwingConnector,NoSwingConnectorFactory> getMasterUsers() throws RemoteException;
+    public MasterUserService<NoSwingConnector,NoSwingConnectorFactory> getMasterUsers() throws RemoteException;
 
-    MonthlyChargeService<NoSwingConnector,NoSwingConnectorFactory> getMonthlyCharges() throws RemoteException;
+    public MonthlyChargeService<NoSwingConnector,NoSwingConnectorFactory> getMonthlyCharges() throws RemoteException;
 
-    MySQLDatabaseService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDatabases() throws RemoteException;
+    public MySQLDatabaseService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDatabases() throws RemoteException;
 
-    MySQLDBUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDBUsers() throws RemoteException;
+    public MySQLDBUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDBUsers() throws RemoteException;
 
-    MySQLReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getMysqlReservedWords() throws RemoteException;
+    public MySQLReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getMysqlReservedWords() throws RemoteException;
 
-    MySQLServerService<NoSwingConnector,NoSwingConnectorFactory> getMysqlServers() throws RemoteException;
+    public MySQLServerService<NoSwingConnector,NoSwingConnectorFactory> getMysqlServers() throws RemoteException;
 
-    MySQLUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlUsers() throws RemoteException;
+    public MySQLUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlUsers() throws RemoteException;
 
-    NetBindService<NoSwingConnector,NoSwingConnectorFactory> getNetBinds() throws RemoteException;
+    public NetBindService<NoSwingConnector,NoSwingConnectorFactory> getNetBinds() throws RemoteException;
 
-    NetDeviceIDService<NoSwingConnector,NoSwingConnectorFactory> getNetDeviceIDs() throws RemoteException;
+    public NetDeviceIDService<NoSwingConnector,NoSwingConnectorFactory> getNetDeviceIDs() throws RemoteException;
 
-    NetDeviceService<NoSwingConnector,NoSwingConnectorFactory> getNetDevices() throws RemoteException;
+    public NetDeviceService<NoSwingConnector,NoSwingConnectorFactory> getNetDevices() throws RemoteException;
 
-    NetPortService<NoSwingConnector,NoSwingConnectorFactory> getNetPorts() throws RemoteException;
+    public NetPortService<NoSwingConnector,NoSwingConnectorFactory> getNetPorts() throws RemoteException;
 
-    NetProtocolService<NoSwingConnector,NoSwingConnectorFactory> getNetProtocols() throws RemoteException;
+    public NetProtocolService<NoSwingConnector,NoSwingConnectorFactory> getNetProtocols() throws RemoteException;
 
-    NetTcpRedirectService<NoSwingConnector,NoSwingConnectorFactory> getNetTcpRedirects() throws RemoteException;
+    public NetTcpRedirectService<NoSwingConnector,NoSwingConnectorFactory> getNetTcpRedirects() throws RemoteException;
 
-    NoticeLogService<NoSwingConnector,NoSwingConnectorFactory> getNoticeLogs() throws RemoteException;
+    public NoticeLogService<NoSwingConnector,NoSwingConnectorFactory> getNoticeLogs() throws RemoteException;
 
-    NoticeTypeService<NoSwingConnector,NoSwingConnectorFactory> getNoticeTypes() throws RemoteException;
+    public NoticeTypeService<NoSwingConnector,NoSwingConnectorFactory> getNoticeTypes() throws RemoteException;
 
-    OperatingSystemVersionService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystemVersions() throws RemoteException;
+    public OperatingSystemVersionService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystemVersions() throws RemoteException;
 
-    OperatingSystemService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystems() throws RemoteException;
+    public OperatingSystemService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystems() throws RemoteException;
     */
     public PackageCategoryService<NoSwingConnector,NoSwingConnectorFactory> getPackageCategories() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return packageCategories;
     }
     /*
-    PackageDefinitionLimitService<NoSwingConnector,NoSwingConnectorFactory> getPackageDefinitionLimits() throws RemoteException;
+    public PackageDefinitionLimitService<NoSwingConnector,NoSwingConnectorFactory> getPackageDefinitionLimits() throws RemoteException;
 
-    PackageDefinitionService<NoSwingConnector,NoSwingConnectorFactory> getPackageDefinitions() throws RemoteException;
+    public PackageDefinitionService<NoSwingConnector,NoSwingConnectorFactory> getPackageDefinitions() throws RemoteException;
 
-    PaymentTypeService<NoSwingConnector,NoSwingConnectorFactory> getPaymentTypes() throws RemoteException;
+    public PaymentTypeService<NoSwingConnector,NoSwingConnectorFactory> getPaymentTypes() throws RemoteException;
 
-    PhysicalServerService<NoSwingConnector,NoSwingConnectorFactory> getPhysicalServers() throws RemoteException;
+    public PhysicalServerService<NoSwingConnector,NoSwingConnectorFactory> getPhysicalServers() throws RemoteException;
 
-    PostgresDatabaseService<NoSwingConnector,NoSwingConnectorFactory> getPostgresDatabases() throws RemoteException;
+    public PostgresDatabaseService<NoSwingConnector,NoSwingConnectorFactory> getPostgresDatabases() throws RemoteException;
 
-    PostgresEncodingService<NoSwingConnector,NoSwingConnectorFactory> getPostgresEncodings() throws RemoteException;
+    public PostgresEncodingService<NoSwingConnector,NoSwingConnectorFactory> getPostgresEncodings() throws RemoteException;
 
-    PostgresReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getPostgresReservedWords() throws RemoteException;
+    public PostgresReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getPostgresReservedWords() throws RemoteException;
 
-    PostgresServerUserService<NoSwingConnector,NoSwingConnectorFactory> getPostgresServerUsers() throws RemoteException;
+    public PostgresServerUserService<NoSwingConnector,NoSwingConnectorFactory> getPostgresServerUsers() throws RemoteException;
 
-    PostgresServerService<NoSwingConnector,NoSwingConnectorFactory> getPostgresServers() throws RemoteException;
+    public PostgresServerService<NoSwingConnector,NoSwingConnectorFactory> getPostgresServers() throws RemoteException;
 
-    PostgresUserService<NoSwingConnector,NoSwingConnectorFactory> getPostgresUsers() throws RemoteException;
+    public PostgresUserService<NoSwingConnector,NoSwingConnectorFactory> getPostgresUsers() throws RemoteException;
 
-    PostgresVersionService<NoSwingConnector,NoSwingConnectorFactory> getPostgresVersions() throws RemoteException;
+    public PostgresVersionService<NoSwingConnector,NoSwingConnectorFactory> getPostgresVersions() throws RemoteException;
 
-    PrivateFTPServerService<NoSwingConnector,NoSwingConnectorFactory> getPrivateFTPServers() throws RemoteException;
+    public PrivateFTPServerService<NoSwingConnector,NoSwingConnectorFactory> getPrivateFTPServers() throws RemoteException;
 
-    ProcessorTypeService<NoSwingConnector,NoSwingConnectorFactory> getProcessorTypes() throws RemoteException;
+    public ProcessorTypeService<NoSwingConnector,NoSwingConnectorFactory> getProcessorTypes() throws RemoteException;
 
-    ProtocolService<NoSwingConnector,NoSwingConnectorFactory> getProtocols() throws RemoteException;
+    public ProtocolService<NoSwingConnector,NoSwingConnectorFactory> getProtocols() throws RemoteException;
 
-    RackService<NoSwingConnector,NoSwingConnectorFactory> getRacks() throws RemoteException;
+    public RackService<NoSwingConnector,NoSwingConnectorFactory> getRacks() throws RemoteException;
 
-    ResellerService<NoSwingConnector,NoSwingConnectorFactory> getResellers() throws RemoteException;
+    public ResellerService<NoSwingConnector,NoSwingConnectorFactory> getResellers() throws RemoteException;
 */
     public ResourceTypeService<NoSwingConnector,NoSwingConnectorFactory> getResourceTypes() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return resourceTypes;
     }
 /* TODO
-    ResourceService<NoSwingConnector,NoSwingConnectorFactory> getResources() throws RemoteException;
+    public ResourceService<NoSwingConnector,NoSwingConnectorFactory> getResources() throws RemoteException;
 
-    ServerFarmService<NoSwingConnector,NoSwingConnectorFactory> getServerFarms() throws RemoteException;
+    public ServerFarmService<NoSwingConnector,NoSwingConnectorFactory> getServerFarms() throws RemoteException;
 
-    ServerTable getServers() throws RemoteException;
+    public ServerTable getServers() throws RemoteException;
 
-    ShellService<NoSwingConnector,NoSwingConnectorFactory> getShells() throws RemoteException;
+    public ShellService<NoSwingConnector,NoSwingConnectorFactory> getShells() throws RemoteException;
 
-    SignupRequestOptionService<NoSwingConnector,NoSwingConnectorFactory> getSignupRequestOptions() throws RemoteException;
+    public SignupRequestOptionService<NoSwingConnector,NoSwingConnectorFactory> getSignupRequestOptions() throws RemoteException;
 
-    SignupRequestService<NoSwingConnector,NoSwingConnectorFactory> getSignupRequests() throws RemoteException;
+    public SignupRequestService<NoSwingConnector,NoSwingConnectorFactory> getSignupRequests() throws RemoteException;
 
-    SpamEmailMessageService<NoSwingConnector,NoSwingConnectorFactory> getSpamEmailMessages() throws RemoteException;
+    public SpamEmailMessageService<NoSwingConnector,NoSwingConnectorFactory> getSpamEmailMessages() throws RemoteException;
 
-    SystemEmailAliasService<NoSwingConnector,NoSwingConnectorFactory> getSystemEmailAliases() throws RemoteException;
+    public SystemEmailAliasService<NoSwingConnector,NoSwingConnectorFactory> getSystemEmailAliases() throws RemoteException;
 
-    TechnologyService<NoSwingConnector,NoSwingConnectorFactory> getTechnologies() throws RemoteException;
+    public TechnologyService<NoSwingConnector,NoSwingConnectorFactory> getTechnologies() throws RemoteException;
 
-    TechnologyClassService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyClasses() throws RemoteException;
+    public TechnologyClassService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyClasses() throws RemoteException;
 
-    TechnologyNameService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyNames() throws RemoteException;
+    public TechnologyNameService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyNames() throws RemoteException;
 
-    TechnologyVersionService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyVersions() throws RemoteException;
+    public TechnologyVersionService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyVersions() throws RemoteException;
 
-    TicketActionTypeService<NoSwingConnector,NoSwingConnectorFactory> getTicketActionTypes() throws RemoteException;
+    public TicketActionTypeService<NoSwingConnector,NoSwingConnectorFactory> getTicketActionTypes() throws RemoteException;
 
-    TicketActionService<NoSwingConnector,NoSwingConnectorFactory> getTicketActions() throws RemoteException;
+    public TicketActionService<NoSwingConnector,NoSwingConnectorFactory> getTicketActions() throws RemoteException;
 
-    TicketAssignmentService<NoSwingConnector,NoSwingConnectorFactory> getTicketAssignments() throws RemoteException;
+    public TicketAssignmentService<NoSwingConnector,NoSwingConnectorFactory> getTicketAssignments() throws RemoteException;
 
-    TicketBrandCategoryService<NoSwingConnector,NoSwingConnectorFactory> getTicketBrandCategories() throws RemoteException;
+    public TicketBrandCategoryService<NoSwingConnector,NoSwingConnectorFactory> getTicketBrandCategories() throws RemoteException;
     */
     public TicketCategoryService<NoSwingConnector,NoSwingConnectorFactory> getTicketCategories() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
@@ -759,25 +771,27 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         return ticketTypes;
     }
     /* TODO
-    TicketService<NoSwingConnector,NoSwingConnectorFactory> getTickets() throws RemoteException;
+    public TicketService<NoSwingConnector,NoSwingConnectorFactory> getTickets() throws RemoteException;
     */
     public TimeZoneService<NoSwingConnector,NoSwingConnectorFactory> getTimeZones() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return timeZones;
     }
     /* TODO
-    TransactionTypeService<NoSwingConnector,NoSwingConnectorFactory> getTransactionTypes() throws RemoteException;
+    public TransactionTypeService<NoSwingConnector,NoSwingConnectorFactory> getTransactionTypes() throws RemoteException;
 
-    TransactionService<NoSwingConnector,NoSwingConnectorFactory> getTransactions() throws RemoteException;
+    public TransactionService<NoSwingConnector,NoSwingConnectorFactory> getTransactions() throws RemoteException;
 
-    USStateService<NoSwingConnector,NoSwingConnectorFactory> getUsStates() throws RemoteException;
+    public USStateService<NoSwingConnector,NoSwingConnectorFactory> getUsStates() throws RemoteException;
+    */
+    public UsernameService<NoSwingConnector,NoSwingConnectorFactory> getUsernames() throws RemoteException {
+        return usernames;
+    }
+    /* TODO
+    public VirtualDiskService<NoSwingConnector,NoSwingConnectorFactory> getVirtualDisks() throws RemoteException;
 
-    UsernameService<NoSwingConnector,NoSwingConnectorFactory> getUsernames() throws RemoteException;
+    public VirtualServerService<NoSwingConnector,NoSwingConnectorFactory> getVirtualServers() throws RemoteException;
 
-    VirtualDiskService<NoSwingConnector,NoSwingConnectorFactory> getVirtualDisks() throws RemoteException;
-
-    VirtualServerService<NoSwingConnector,NoSwingConnectorFactory> getVirtualServers() throws RemoteException;
-
-    WhoisHistoryService<NoSwingConnector,NoSwingConnectorFactory> getWhoisHistory() throws RemoteException;
+    public WhoisHistoryService<NoSwingConnector,NoSwingConnectorFactory> getWhoisHistory() throws RemoteException;
  */
 }

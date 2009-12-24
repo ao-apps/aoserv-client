@@ -11,6 +11,7 @@ import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
+import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
@@ -21,6 +22,7 @@ import com.aoindustries.aoserv.client.TicketPriorityService;
 import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
+import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.security.LoginException;
 import java.rmi.ConnectException;
 import java.rmi.MarshalException;
@@ -77,7 +79,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     /* TODO
     final RetryBusinessServerService businessServers;
     final RetryClientJvmProfileService clientJvmProfiles;
+     */
     final RetryCountryCodeService countryCodes;
+    /* TODO
     final RetryCreditCardProcessorService creditCardProcessors;
     final RetryCreditCardTransactionService creditCardTransactions;
     final RetryCreditCardService creditCards;
@@ -221,7 +225,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryTransactionTypeService transactionTypes;
     final RetryTransactionService transactions;
     final RetryUSStateService usStates;
+     */
     final RetryUsernameService usernames;
+    /* TODO
     final RetryVirtualDiskService virtualDisks;
     final RetryVirtualServerService virtualServers;
     final RetryWhoisHistoryService whoisHistories;
@@ -263,7 +269,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         /* TODO
         businessServers = new RetryBusinessServerService(this);
         clientJvmProfiles = new RetryClientJvmProfileService(this);
+         */
         countryCodes = new RetryCountryCodeService(this);
+        /* TODO
         creditCardProcessors = new RetryCreditCardProcessorService(this);
         creditCardTransactions = new RetryCreditCardTransactionService(this);
         creditCards = new RetryCreditCardService(this);
@@ -407,7 +415,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         transactionTypes = new RetryTransactionTypeService(this);
         transactions = new RetryTransactionService(this);
         usStates = new RetryUSStateService(this);
+         */
         usernames = new RetryUsernameService(this);
+        /* TODO
         virtualDisks = new RetryVirtualDiskService(this);
         virtualServers = new RetryVirtualServerService(this);
         whoisHistories = new RetryWhoisHistoryService(this);
@@ -572,306 +582,308 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
 
     /*
      * TODO
-    AOServerDaemonHostService<RetryConnector,RetryConnectorFactory> getAoServerDaemonHosts();
+    public AOServerDaemonHostService<RetryConnector,RetryConnectorFactory> getAoServerDaemonHosts();
 
-    AOServerResourceService<RetryConnector,RetryConnectorFactory> getAoServerResources();
+    public AOServerResourceService<RetryConnector,RetryConnectorFactory> getAoServerResources();
 
-    AOServerService<RetryConnector,RetryConnectorFactory> getAoServers();
+    public AOServerService<RetryConnector,RetryConnectorFactory> getAoServers();
 
-    AOServPermissionService<RetryConnector,RetryConnectorFactory> getAoservPermissions();
+    public AOServPermissionService<RetryConnector,RetryConnectorFactory> getAoservPermissions();
 
-    AOServProtocolService<RetryConnector,RetryConnectorFactory> getAoservProtocols();
+    public AOServProtocolService<RetryConnector,RetryConnectorFactory> getAoservProtocols();
 
-    AOSHCommandService<RetryConnector,RetryConnectorFactory> getAoshCommands();
+    public AOSHCommandService<RetryConnector,RetryConnectorFactory> getAoshCommands();
 
-    ArchitectureService<RetryConnector,RetryConnectorFactory> getArchitectures();
+    public ArchitectureService<RetryConnector,RetryConnectorFactory> getArchitectures();
 
-    BackupPartitionService<RetryConnector,RetryConnectorFactory> getBackupPartitions();
+    public BackupPartitionService<RetryConnector,RetryConnectorFactory> getBackupPartitions();
 
-    BackupRetentionService<RetryConnector,RetryConnectorFactory> getBackupRetentions();
+    public BackupRetentionService<RetryConnector,RetryConnectorFactory> getBackupRetentions();
 
-    BankAccountService<RetryConnector,RetryConnectorFactory> getBankAccounts();
+    public BankAccountService<RetryConnector,RetryConnectorFactory> getBankAccounts();
 
-    BankTransactionTypeService<RetryConnector,RetryConnectorFactory> getBankTransactionTypes();
+    public BankTransactionTypeService<RetryConnector,RetryConnectorFactory> getBankTransactionTypes();
 
-    BankTransactionService<RetryConnector,RetryConnectorFactory> getBankTransactions();
+    public BankTransactionService<RetryConnector,RetryConnectorFactory> getBankTransactions();
 
-    BankService<RetryConnector,RetryConnectorFactory> getBanks();
+    public BankService<RetryConnector,RetryConnectorFactory> getBanks();
 
-    BlackholeEmailAddressService<RetryConnector,RetryConnectorFactory> getBlackholeEmailAddresses();
+    public BlackholeEmailAddressService<RetryConnector,RetryConnectorFactory> getBlackholeEmailAddresses();
 
-    BrandService<RetryConnector,RetryConnectorFactory> getBrands();
+    public BrandService<RetryConnector,RetryConnectorFactory> getBrands();
      */
     public BusinessAdministratorService<RetryConnector,RetryConnectorFactory> getBusinessAdministrators() {
         return businessAdministrators;
     }
     /*
-    BusinessAdministratorPermissionService<RetryConnector,RetryConnectorFactory> getBusinessAdministratorPermissions();
+    public BusinessAdministratorPermissionService<RetryConnector,RetryConnectorFactory> getBusinessAdministratorPermissions();
 
-    BusinessProfileService<RetryConnector,RetryConnectorFactory> getBusinessProfiles();
+    public BusinessProfileService<RetryConnector,RetryConnectorFactory> getBusinessProfiles();
      */
     public BusinessService<RetryConnector,RetryConnectorFactory> getBusinesses() {
         return businesses;
     }
 
-    /*
-    BusinessServerService<RetryConnector,RetryConnectorFactory> getBusinessServers();
+    /* TODO
+    public BusinessServerService<RetryConnector,RetryConnectorFactory> getBusinessServers();
 
-    ClientJvmProfileService<RetryConnector,RetryConnectorFactory> getClientJvmProfiles();
+    public ClientJvmProfileService<RetryConnector,RetryConnectorFactory> getClientJvmProfiles();
+    */
+    public CountryCodeService<RetryConnector,RetryConnectorFactory> getCountryCodes() {
+        return countryCodes;
+    }
+    /* TODO
+    public CreditCardProcessorService<RetryConnector,RetryConnectorFactory> getCreditCardProcessors();
 
-    CountryCodeService<RetryConnector,RetryConnectorFactory> getCountryCodes();
+    public CreditCardTransactionService<RetryConnector,RetryConnectorFactory> getCreditCardTransactions();
 
-    CreditCardProcessorService<RetryConnector,RetryConnectorFactory> getCreditCardProcessors();
+    public CreditCardService<RetryConnector,RetryConnectorFactory> getCreditCards();
 
-    CreditCardTransactionService<RetryConnector,RetryConnectorFactory> getCreditCardTransactions();
-
-    CreditCardService<RetryConnector,RetryConnectorFactory> getCreditCards();
-
-    CvsRepositoryService<RetryConnector,RetryConnectorFactory> getCvsRepositories();
+    public CvsRepositoryService<RetryConnector,RetryConnectorFactory> getCvsRepositories();
      */
     public DisableLogService<RetryConnector,RetryConnectorFactory> getDisableLogs() {
         return disableLogs;
     }
     /*
-    DistroFileTypeService<RetryConnector,RetryConnectorFactory> getDistroFileTypes();
+    public DistroFileTypeService<RetryConnector,RetryConnectorFactory> getDistroFileTypes();
 
-    DistroFileService<RetryConnector,RetryConnectorFactory> getDistroFiles();
+    public DistroFileService<RetryConnector,RetryConnectorFactory> getDistroFiles();
 
-    DNSForbiddenZoneService<RetryConnector,RetryConnectorFactory> getDnsForbiddenZones();
+    public DNSForbiddenZoneService<RetryConnector,RetryConnectorFactory> getDnsForbiddenZones();
 
-    DNSRecordService<RetryConnector,RetryConnectorFactory> getDnsRecords();
+    public DNSRecordService<RetryConnector,RetryConnectorFactory> getDnsRecords();
 
-    DNSTLDService<RetryConnector,RetryConnectorFactory> getDnsTLDs();
+    public DNSTLDService<RetryConnector,RetryConnectorFactory> getDnsTLDs();
 
-    DNSTypeService<RetryConnector,RetryConnectorFactory> getDnsTypes();
+    public DNSTypeService<RetryConnector,RetryConnectorFactory> getDnsTypes();
 
-    DNSZoneService<RetryConnector,RetryConnectorFactory> getDnsZones();
+    public DNSZoneService<RetryConnector,RetryConnectorFactory> getDnsZones();
 
-    EmailAddressService<RetryConnector,RetryConnectorFactory> getEmailAddresses();
+    public EmailAddressService<RetryConnector,RetryConnectorFactory> getEmailAddresses();
 
-    EmailAttachmentBlockService<RetryConnector,RetryConnectorFactory> getEmailAttachmentBlocks();
+    public EmailAttachmentBlockService<RetryConnector,RetryConnectorFactory> getEmailAttachmentBlocks();
 
-    EmailAttachmentTypeService<RetryConnector,RetryConnectorFactory> getEmailAttachmentTypes();
+    public EmailAttachmentTypeService<RetryConnector,RetryConnectorFactory> getEmailAttachmentTypes();
 
-    EmailDomainService<RetryConnector,RetryConnectorFactory> getEmailDomains();
+    public EmailDomainService<RetryConnector,RetryConnectorFactory> getEmailDomains();
 
-    EmailForwardingService<RetryConnector,RetryConnectorFactory> getEmailForwardings();
+    public EmailForwardingService<RetryConnector,RetryConnectorFactory> getEmailForwardings();
 
-    EmailListAddressService<RetryConnector,RetryConnectorFactory> getEmailListAddresses();
+    public EmailListAddressService<RetryConnector,RetryConnectorFactory> getEmailListAddresses();
 
-    EmailListService<RetryConnector,RetryConnectorFactory> getEmailLists();
+    public EmailListService<RetryConnector,RetryConnectorFactory> getEmailLists();
 
-    EmailPipeAddressService<RetryConnector,RetryConnectorFactory> getEmailPipeAddresses();
+    public EmailPipeAddressService<RetryConnector,RetryConnectorFactory> getEmailPipeAddresses();
 
-    EmailPipeService<RetryConnector,RetryConnectorFactory> getEmailPipes();
+    public EmailPipeService<RetryConnector,RetryConnectorFactory> getEmailPipes();
 
-    EmailSmtpRelayTypeService<RetryConnector,RetryConnectorFactory> getEmailSmtpRelayTypes();
+    public EmailSmtpRelayTypeService<RetryConnector,RetryConnectorFactory> getEmailSmtpRelayTypes();
 
-    EmailSmtpRelayService<RetryConnector,RetryConnectorFactory> getEmailSmtpRelays();
+    public EmailSmtpRelayService<RetryConnector,RetryConnectorFactory> getEmailSmtpRelays();
 
-    EmailSmtpSmartHostDomainService<RetryConnector,RetryConnectorFactory> getEmailSmtpSmartHostDomains();
+    public EmailSmtpSmartHostDomainService<RetryConnector,RetryConnectorFactory> getEmailSmtpSmartHostDomains();
 
-    EmailSmtpSmartHostService<RetryConnector,RetryConnectorFactory> getEmailSmtpSmartHosts();
+    public EmailSmtpSmartHostService<RetryConnector,RetryConnectorFactory> getEmailSmtpSmartHosts();
 
-    EmailSpamAssassinIntegrationModeService<RetryConnector,RetryConnectorFactory> getEmailSpamAssassinIntegrationModes();
+    public EmailSpamAssassinIntegrationModeService<RetryConnector,RetryConnectorFactory> getEmailSpamAssassinIntegrationModes();
 
-    EncryptionKeyService<RetryConnector,RetryConnectorFactory> getEncryptionKeys();
+    public EncryptionKeyService<RetryConnector,RetryConnectorFactory> getEncryptionKeys();
 
-    ExpenseCategoryService<RetryConnector,RetryConnectorFactory> getExpenseCategories();
+    public ExpenseCategoryService<RetryConnector,RetryConnectorFactory> getExpenseCategories();
 
-    FailoverFileLogService<RetryConnector,RetryConnectorFactory> getFailoverFileLogs();
+    public FailoverFileLogService<RetryConnector,RetryConnectorFactory> getFailoverFileLogs();
 
-    FailoverFileReplicationService<RetryConnector,RetryConnectorFactory> getFailoverFileReplications();
+    public FailoverFileReplicationService<RetryConnector,RetryConnectorFactory> getFailoverFileReplications();
 
-    FailoverFileScheduleService<RetryConnector,RetryConnectorFactory> getFailoverFileSchedules();
+    public FailoverFileScheduleService<RetryConnector,RetryConnectorFactory> getFailoverFileSchedules();
 
-    FailoverMySQLReplicationService<RetryConnector,RetryConnectorFactory> getFailoverMySQLReplications();
+    public FailoverMySQLReplicationService<RetryConnector,RetryConnectorFactory> getFailoverMySQLReplications();
 
-    FileBackupSettingService<RetryConnector,RetryConnectorFactory> getFileBackupSettings();
+    public FileBackupSettingService<RetryConnector,RetryConnectorFactory> getFileBackupSettings();
 
-    FTPGuestUserService<RetryConnector,RetryConnectorFactory> getFtpGuestUsers();
+    public FTPGuestUserService<RetryConnector,RetryConnectorFactory> getFtpGuestUsers();
 
-    HttpdBindService<RetryConnector,RetryConnectorFactory> getHttpdBinds();
+    public HttpdBindService<RetryConnector,RetryConnectorFactory> getHttpdBinds();
 
-    HttpdJBossSiteService<RetryConnector,RetryConnectorFactory> getHttpdJBossSites();
+    public HttpdJBossSiteService<RetryConnector,RetryConnectorFactory> getHttpdJBossSites();
 
-    HttpdJBossVersionService<RetryConnector,RetryConnectorFactory> getHttpdJBossVersions();
+    public HttpdJBossVersionService<RetryConnector,RetryConnectorFactory> getHttpdJBossVersions();
 
-    HttpdJKCodeService<RetryConnector,RetryConnectorFactory> getHttpdJKCodes();
+    public HttpdJKCodeService<RetryConnector,RetryConnectorFactory> getHttpdJKCodes();
 
-    HttpdJKProtocolService<RetryConnector,RetryConnectorFactory> getHttpdJKProtocols();
+    public HttpdJKProtocolService<RetryConnector,RetryConnectorFactory> getHttpdJKProtocols();
 
-    HttpdServerService<RetryConnector,RetryConnectorFactory> getHttpdServers();
+    public HttpdServerService<RetryConnector,RetryConnectorFactory> getHttpdServers();
 
-    HttpdSharedTomcatService<RetryConnector,RetryConnectorFactory> getHttpdSharedTomcats();
+    public HttpdSharedTomcatService<RetryConnector,RetryConnectorFactory> getHttpdSharedTomcats();
 
-    HttpdSiteAuthenticatedLocationService<RetryConnector,RetryConnectorFactory> getHttpdSiteAuthenticatedLocations();
+    public HttpdSiteAuthenticatedLocationService<RetryConnector,RetryConnectorFactory> getHttpdSiteAuthenticatedLocations();
 
-    HttpdSiteBindService<RetryConnector,RetryConnectorFactory> getHttpdSiteBinds();
+    public HttpdSiteBindService<RetryConnector,RetryConnectorFactory> getHttpdSiteBinds();
 
-    HttpdSiteURLService<RetryConnector,RetryConnectorFactory> getHttpdSiteURLs();
+    public HttpdSiteURLService<RetryConnector,RetryConnectorFactory> getHttpdSiteURLs();
 
-    HttpdSiteService<RetryConnector,RetryConnectorFactory> getHttpdSites();
+    public HttpdSiteService<RetryConnector,RetryConnectorFactory> getHttpdSites();
 
-    HttpdStaticSiteService<RetryConnector,RetryConnectorFactory> getHttpdStaticSites();
+    public HttpdStaticSiteService<RetryConnector,RetryConnectorFactory> getHttpdStaticSites();
 
-    HttpdTomcatContextService<RetryConnector,RetryConnectorFactory> getHttpdTomcatContexts();
+    public HttpdTomcatContextService<RetryConnector,RetryConnectorFactory> getHttpdTomcatContexts();
 
-    HttpdTomcatDataSourceService<RetryConnector,RetryConnectorFactory> getHttpdTomcatDataSources();
+    public HttpdTomcatDataSourceService<RetryConnector,RetryConnectorFactory> getHttpdTomcatDataSources();
 
-    HttpdTomcatParameterService<RetryConnector,RetryConnectorFactory> getHttpdTomcatParameters();
+    public HttpdTomcatParameterService<RetryConnector,RetryConnectorFactory> getHttpdTomcatParameters();
 
-    HttpdTomcatSiteService<RetryConnector,RetryConnectorFactory> getHttpdTomcatSites();
+    public HttpdTomcatSiteService<RetryConnector,RetryConnectorFactory> getHttpdTomcatSites();
 
-    HttpdTomcatSharedSiteService<RetryConnector,RetryConnectorFactory> getHttpdTomcatSharedSites();
+    public HttpdTomcatSharedSiteService<RetryConnector,RetryConnectorFactory> getHttpdTomcatSharedSites();
 
-    HttpdTomcatStdSiteService<RetryConnector,RetryConnectorFactory> getHttpdTomcatStdSites();
+    public HttpdTomcatStdSiteService<RetryConnector,RetryConnectorFactory> getHttpdTomcatStdSites();
 
-    HttpdTomcatVersionService<RetryConnector,RetryConnectorFactory> getHttpdTomcatVersions();
+    public HttpdTomcatVersionService<RetryConnector,RetryConnectorFactory> getHttpdTomcatVersions();
 
-    HttpdWorkerService<RetryConnector,RetryConnectorFactory> getHttpdWorkers();
+    public HttpdWorkerService<RetryConnector,RetryConnectorFactory> getHttpdWorkers();
 
-    IPAddressService<RetryConnector,RetryConnectorFactory> getIpAddresses();
+    public IPAddressService<RetryConnector,RetryConnectorFactory> getIpAddresses();
     */
     public LanguageService<RetryConnector,RetryConnectorFactory> getLanguages() {
         return languages;
     }
     /* TODO
-    LinuxAccAddressService<RetryConnector,RetryConnectorFactory> getLinuxAccAddresses();
+    public LinuxAccAddressService<RetryConnector,RetryConnectorFactory> getLinuxAccAddresses();
 
-    LinuxAccountTypeService<RetryConnector,RetryConnectorFactory> getLinuxAccountTypes();
+    public LinuxAccountTypeService<RetryConnector,RetryConnectorFactory> getLinuxAccountTypes();
 
-    LinuxAccountService<RetryConnector,RetryConnectorFactory> getLinuxAccounts();
+    public LinuxAccountService<RetryConnector,RetryConnectorFactory> getLinuxAccounts();
 
-    LinuxGroupAccountService<RetryConnector,RetryConnectorFactory> getLinuxGroupAccounts();
+    public LinuxGroupAccountService<RetryConnector,RetryConnectorFactory> getLinuxGroupAccounts();
 
-    LinuxGroupTypeService<RetryConnector,RetryConnectorFactory> getLinuxGroupTypes();
+    public LinuxGroupTypeService<RetryConnector,RetryConnectorFactory> getLinuxGroupTypes();
 
-    LinuxGroupService<RetryConnector,RetryConnectorFactory> getLinuxGroups();
+    public LinuxGroupService<RetryConnector,RetryConnectorFactory> getLinuxGroups();
 
-    LinuxIDService<RetryConnector,RetryConnectorFactory> getLinuxIDs();
+    public LinuxIDService<RetryConnector,RetryConnectorFactory> getLinuxIDs();
 
-    LinuxServerAccountService<RetryConnector,RetryConnectorFactory> getLinuxServerAccounts();
+    public LinuxServerAccountService<RetryConnector,RetryConnectorFactory> getLinuxServerAccounts();
 
-    LinuxServerGroupService<RetryConnector,RetryConnectorFactory> getLinuxServerGroups();
+    public LinuxServerGroupService<RetryConnector,RetryConnectorFactory> getLinuxServerGroups();
 
-    MajordomoListService<RetryConnector,RetryConnectorFactory> getMajordomoLists();
+    public MajordomoListService<RetryConnector,RetryConnectorFactory> getMajordomoLists();
 
-    MajordomoServerService<RetryConnector,RetryConnectorFactory> getMajordomoServers();
+    public MajordomoServerService<RetryConnector,RetryConnectorFactory> getMajordomoServers();
 
-    MajordomoVersionService<RetryConnector,RetryConnectorFactory> getMajordomoVersions();
+    public MajordomoVersionService<RetryConnector,RetryConnectorFactory> getMajordomoVersions();
 
-    MasterHistoryService<RetryConnector,RetryConnectorFactory> getMasterHistory();
+    public MasterHistoryService<RetryConnector,RetryConnectorFactory> getMasterHistory();
 
-    MasterHostService<RetryConnector,RetryConnectorFactory> getMasterHosts();
+    public MasterHostService<RetryConnector,RetryConnectorFactory> getMasterHosts();
 
-    MasterServerService<RetryConnector,RetryConnectorFactory> getMasterServers();
+    public MasterServerService<RetryConnector,RetryConnectorFactory> getMasterServers();
 
-    MasterUserService<RetryConnector,RetryConnectorFactory> getMasterUsers();
+    public MasterUserService<RetryConnector,RetryConnectorFactory> getMasterUsers();
 
-    MonthlyChargeService<RetryConnector,RetryConnectorFactory> getMonthlyCharges();
+    public MonthlyChargeService<RetryConnector,RetryConnectorFactory> getMonthlyCharges();
 
-    MySQLDatabaseService<RetryConnector,RetryConnectorFactory> getMysqlDatabases();
+    public MySQLDatabaseService<RetryConnector,RetryConnectorFactory> getMysqlDatabases();
 
-    MySQLDBUserService<RetryConnector,RetryConnectorFactory> getMysqlDBUsers();
+    public MySQLDBUserService<RetryConnector,RetryConnectorFactory> getMysqlDBUsers();
 
-    MySQLReservedWordService<RetryConnector,RetryConnectorFactory> getMysqlReservedWords();
+    public MySQLReservedWordService<RetryConnector,RetryConnectorFactory> getMysqlReservedWords();
 
-    MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers();
+    public MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers();
 
-    MySQLUserService<RetryConnector,RetryConnectorFactory> getMysqlUsers();
+    public MySQLUserService<RetryConnector,RetryConnectorFactory> getMysqlUsers();
 
-    NetBindService<RetryConnector,RetryConnectorFactory> getNetBinds();
+    public NetBindService<RetryConnector,RetryConnectorFactory> getNetBinds();
 
-    NetDeviceIDService<RetryConnector,RetryConnectorFactory> getNetDeviceIDs();
+    public NetDeviceIDService<RetryConnector,RetryConnectorFactory> getNetDeviceIDs();
 
-    NetDeviceService<RetryConnector,RetryConnectorFactory> getNetDevices();
+    public NetDeviceService<RetryConnector,RetryConnectorFactory> getNetDevices();
 
-    NetPortService<RetryConnector,RetryConnectorFactory> getNetPorts();
+    public NetPortService<RetryConnector,RetryConnectorFactory> getNetPorts();
 
-    NetProtocolService<RetryConnector,RetryConnectorFactory> getNetProtocols();
+    public NetProtocolService<RetryConnector,RetryConnectorFactory> getNetProtocols();
 
-    NetTcpRedirectService<RetryConnector,RetryConnectorFactory> getNetTcpRedirects();
+    public NetTcpRedirectService<RetryConnector,RetryConnectorFactory> getNetTcpRedirects();
 
-    NoticeLogService<RetryConnector,RetryConnectorFactory> getNoticeLogs();
+    public NoticeLogService<RetryConnector,RetryConnectorFactory> getNoticeLogs();
 
-    NoticeTypeService<RetryConnector,RetryConnectorFactory> getNoticeTypes();
+    public NoticeTypeService<RetryConnector,RetryConnectorFactory> getNoticeTypes();
 
-    OperatingSystemVersionService<RetryConnector,RetryConnectorFactory> getOperatingSystemVersions();
+    public OperatingSystemVersionService<RetryConnector,RetryConnectorFactory> getOperatingSystemVersions();
 
-    OperatingSystemService<RetryConnector,RetryConnectorFactory> getOperatingSystems();
+    public OperatingSystemService<RetryConnector,RetryConnectorFactory> getOperatingSystems();
     */
     public PackageCategoryService<RetryConnector,RetryConnectorFactory> getPackageCategories() {
         return packageCategories;
     }
     /*
-    PackageDefinitionLimitService<RetryConnector,RetryConnectorFactory> getPackageDefinitionLimits();
+    public PackageDefinitionLimitService<RetryConnector,RetryConnectorFactory> getPackageDefinitionLimits();
 
-    PackageDefinitionService<RetryConnector,RetryConnectorFactory> getPackageDefinitions();
+    public PackageDefinitionService<RetryConnector,RetryConnectorFactory> getPackageDefinitions();
 
-    PaymentTypeService<RetryConnector,RetryConnectorFactory> getPaymentTypes();
+    public PaymentTypeService<RetryConnector,RetryConnectorFactory> getPaymentTypes();
 
-    PhysicalServerService<RetryConnector,RetryConnectorFactory> getPhysicalServers();
+    public PhysicalServerService<RetryConnector,RetryConnectorFactory> getPhysicalServers();
 
-    PostgresDatabaseService<RetryConnector,RetryConnectorFactory> getPostgresDatabases();
+    public PostgresDatabaseService<RetryConnector,RetryConnectorFactory> getPostgresDatabases();
 
-    PostgresEncodingService<RetryConnector,RetryConnectorFactory> getPostgresEncodings();
+    public PostgresEncodingService<RetryConnector,RetryConnectorFactory> getPostgresEncodings();
 
-    PostgresReservedWordService<RetryConnector,RetryConnectorFactory> getPostgresReservedWords();
+    public PostgresReservedWordService<RetryConnector,RetryConnectorFactory> getPostgresReservedWords();
 
-    PostgresServerUserService<RetryConnector,RetryConnectorFactory> getPostgresServerUsers();
+    public PostgresServerUserService<RetryConnector,RetryConnectorFactory> getPostgresServerUsers();
 
-    PostgresServerService<RetryConnector,RetryConnectorFactory> getPostgresServers();
+    public PostgresServerService<RetryConnector,RetryConnectorFactory> getPostgresServers();
 
-    PostgresUserService<RetryConnector,RetryConnectorFactory> getPostgresUsers();
+    public PostgresUserService<RetryConnector,RetryConnectorFactory> getPostgresUsers();
 
-    PostgresVersionService<RetryConnector,RetryConnectorFactory> getPostgresVersions();
+    public PostgresVersionService<RetryConnector,RetryConnectorFactory> getPostgresVersions();
 
-    PrivateFTPServerService<RetryConnector,RetryConnectorFactory> getPrivateFTPServers();
+    public PrivateFTPServerService<RetryConnector,RetryConnectorFactory> getPrivateFTPServers();
 
-    ProcessorTypeService<RetryConnector,RetryConnectorFactory> getProcessorTypes();
+    public ProcessorTypeService<RetryConnector,RetryConnectorFactory> getProcessorTypes();
 
-    ProtocolService<RetryConnector,RetryConnectorFactory> getProtocols();
+    public ProtocolService<RetryConnector,RetryConnectorFactory> getProtocols();
 
-    RackService<RetryConnector,RetryConnectorFactory> getRacks();
+    public RackService<RetryConnector,RetryConnectorFactory> getRacks();
 
-    ResellerService<RetryConnector,RetryConnectorFactory> getResellers();
+    public ResellerService<RetryConnector,RetryConnectorFactory> getResellers();
 */
     public ResourceTypeService<RetryConnector,RetryConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }
 /* TODO
-    ResourceService<RetryConnector,RetryConnectorFactory> getResources();
+    public ResourceService<RetryConnector,RetryConnectorFactory> getResources();
 
-    ServerFarmService<RetryConnector,RetryConnectorFactory> getServerFarms();
+    public ServerFarmService<RetryConnector,RetryConnectorFactory> getServerFarms();
 
-    ServerTable getServers();
+    public ServerTable getServers();
 
-    ShellService<RetryConnector,RetryConnectorFactory> getShells();
+    public ShellService<RetryConnector,RetryConnectorFactory> getShells();
 
-    SignupRequestOptionService<RetryConnector,RetryConnectorFactory> getSignupRequestOptions();
+    public SignupRequestOptionService<RetryConnector,RetryConnectorFactory> getSignupRequestOptions();
 
-    SignupRequestService<RetryConnector,RetryConnectorFactory> getSignupRequests();
+    public SignupRequestService<RetryConnector,RetryConnectorFactory> getSignupRequests();
 
-    SpamEmailMessageService<RetryConnector,RetryConnectorFactory> getSpamEmailMessages();
+    public SpamEmailMessageService<RetryConnector,RetryConnectorFactory> getSpamEmailMessages();
 
-    SystemEmailAliasService<RetryConnector,RetryConnectorFactory> getSystemEmailAliases();
+    public SystemEmailAliasService<RetryConnector,RetryConnectorFactory> getSystemEmailAliases();
 
-    TechnologyService<RetryConnector,RetryConnectorFactory> getTechnologies();
+    public TechnologyService<RetryConnector,RetryConnectorFactory> getTechnologies();
 
-    TechnologyClassService<RetryConnector,RetryConnectorFactory> getTechnologyClasses();
+    public TechnologyClassService<RetryConnector,RetryConnectorFactory> getTechnologyClasses();
 
-    TechnologyNameService<RetryConnector,RetryConnectorFactory> getTechnologyNames();
+    public TechnologyNameService<RetryConnector,RetryConnectorFactory> getTechnologyNames();
 
-    TechnologyVersionService<RetryConnector,RetryConnectorFactory> getTechnologyVersions();
+    public TechnologyVersionService<RetryConnector,RetryConnectorFactory> getTechnologyVersions();
 
-    TicketActionTypeService<RetryConnector,RetryConnectorFactory> getTicketActionTypes();
+    public TicketActionTypeService<RetryConnector,RetryConnectorFactory> getTicketActionTypes();
 
-    TicketActionService<RetryConnector,RetryConnectorFactory> getTicketActions();
+    public TicketActionService<RetryConnector,RetryConnectorFactory> getTicketActions();
 
-    TicketAssignmentService<RetryConnector,RetryConnectorFactory> getTicketAssignments();
+    public TicketAssignmentService<RetryConnector,RetryConnectorFactory> getTicketAssignments();
 
-    TicketBrandCategoryService<RetryConnector,RetryConnectorFactory> getTicketBrandCategories();
+    public TicketBrandCategoryService<RetryConnector,RetryConnectorFactory> getTicketBrandCategories();
     */
     public TicketCategoryService<RetryConnector,RetryConnectorFactory> getTicketCategories() {
         return ticketCategories;
@@ -889,24 +901,26 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return ticketTypes;
     }
     /* TODO
-    TicketService<RetryConnector,RetryConnectorFactory> getTickets();
+    public TicketService<RetryConnector,RetryConnectorFactory> getTickets();
     */
     public TimeZoneService<RetryConnector,RetryConnectorFactory> getTimeZones() {
         return timeZones;
     }
     /* TODO
-    TransactionTypeService<RetryConnector,RetryConnectorFactory> getTransactionTypes();
+    public TransactionTypeService<RetryConnector,RetryConnectorFactory> getTransactionTypes();
 
-    TransactionService<RetryConnector,RetryConnectorFactory> getTransactions();
+    public TransactionService<RetryConnector,RetryConnectorFactory> getTransactions();
 
-    USStateService<RetryConnector,RetryConnectorFactory> getUsStates();
+    public USStateService<RetryConnector,RetryConnectorFactory> getUsStates();
+    */
+    public UsernameService<RetryConnector,RetryConnectorFactory> getUsernames() {
+        return usernames;
+    }
+    /* TODO
+    public VirtualDiskService<RetryConnector,RetryConnectorFactory> getVirtualDisks();
 
-    UsernameService<RetryConnector,RetryConnectorFactory> getUsernames();
+    public VirtualServerService<RetryConnector,RetryConnectorFactory> getVirtualServers();
 
-    VirtualDiskService<RetryConnector,RetryConnectorFactory> getVirtualDisks();
-
-    VirtualServerService<RetryConnector,RetryConnectorFactory> getVirtualServers();
-
-    WhoisHistoryService<RetryConnector,RetryConnectorFactory> getWhoisHistory();
+    public WhoisHistoryService<RetryConnector,RetryConnectorFactory> getWhoisHistory();
  */
 }
