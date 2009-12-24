@@ -5,9 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
 
 /**
  * <code>Ticket</code>s are prioritized by both the client and
@@ -15,14 +12,12 @@ import java.sql.*;
  *
  * @see  Ticket
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> implements Comparable<TicketPriority> {
+final public class TicketPriority extends AOServObjectStringKey<TicketPriority> {
 
-    static final int COLUMN_PRIORITY=0;
-    static final String COLUMN_PRIORITY_name = "priority";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The possible ticket priorities.
@@ -33,33 +28,18 @@ final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> 
         HIGH="2-High",
         URGENT="3-Urgent"
     ;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_PRIORITY) return pkey;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public TicketPriority(TicketPriorityService<?,?> table, String priority) {
+        super(table, priority);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="priority", unique=true, description="the unique priority")
     public String getPriority() {
-	return pkey;
+    	return key;
     }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TICKET_PRIORITIES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-    }
-
-    public int compareTo(TicketPriority o) {
-        return pkey.compareTo(o.pkey);
-    }
+    // </editor-fold>
 }

@@ -5,55 +5,39 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Locale;
 
 /**
  * @author  AO Industries, Inc.
  */
-final public class Language extends GlobalObjectStringKey<Language> {
+final public class Language extends AOServObjectStringKey<Language> {
 
-    static final int COLUMN_CODE = 0;
-    static final String COLUMN_CODE_name = "code";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         EN="en",
         JA="ja"
     ;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_CODE: return pkey;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public Language(LanguageService<?,?> table, String code) {
+        super(table, code);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="code", unique=true, description="the language code")
+    public String getCode() {
+        return key;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "Language."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "Language."+key+".toString");
     }
-
-    public String getCode() {
-        return pkey;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.LANGUAGES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readUTF().intern();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-    }
+    // </editor-fold>
 }

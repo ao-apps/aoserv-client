@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -110,11 +111,11 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         float email_relay_rate
     ) {
         super(service, accounting);
-        this.contractVersion = contractVersion;
+        this.contractVersion = contractVersion.intern();
         this.created = created;
         this.canceled = canceled;
         this.cancelReason = cancelReason;
-        this.parent = parent;
+        this.parent = StringUtility.intern(parent);
         this.can_add_backup_server = can_add_backup_server;
         this.can_add_businesses = can_add_businesses;
         this.can_see_prices = can_see_prices;
@@ -123,7 +124,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         this.auto_enable = auto_enable;
         this.bill_parent = bill_parent;
         this.package_definition = package_definition;
-        this.created_by = created_by;
+        this.created_by = StringUtility.intern(created_by);
         this.email_in_burst = email_in_burst;
         this.email_in_rate = email_in_rate;
         this.email_out_burst = email_out_burst;
@@ -134,32 +135,32 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(name="accounting", unique=true, description="the unique identifier for this business.")
+    @SchemaColumn(order=0, name="accounting", unique=true, description="the unique identifier for this business.")
     public String getAccounting() {
         return key;
     }
 
-    @SchemaColumn(name="contract_version", description="the version number of the contract")
+    @SchemaColumn(order=1, name="contract_version", description="the version number of the contract")
     public String getContractVersion() {
     	return contractVersion;
     }
 
-    @SchemaColumn(name="created", description="the time the account was created")
+    @SchemaColumn(order=2, name="created", description="the time the account was created")
     public Timestamp getCreated() {
     	return created;
     }
 
-    @SchemaColumn(name="canceled", description="the time the account was deactivated")
+    @SchemaColumn(order=3, name="canceled", description="the time the account was deactivated")
     public Timestamp getCanceled() {
     	return canceled;
     }
 
-    @SchemaColumn(name="cancel_reason", description="the reason the account was canceled")
+    @SchemaColumn(order=4, name="cancel_reason", description="the reason the account was canceled")
     public String getCancelReason() {
         return cancelReason;
     }
 
-    @SchemaColumn(name="parent", description="the parent business to this one")
+    @SchemaColumn(order=5, name="parent", description="the parent business to this one")
     public Business getParentBusiness() throws IOException, SQLException {
         if(parent==null) return null;
         // The parent business might not be found, even when the value is set.  This is normal due
@@ -167,22 +168,22 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         return getService().get(parent);
     }
 
-    @SchemaColumn(name="can_add_backup_server", description="the business may add servers to the backup system")
+    @SchemaColumn(order=6, name="can_add_backup_server", description="the business may add servers to the backup system")
     public boolean canAddBackupServer() {
         return can_add_backup_server;
     }
 
-    @SchemaColumn(name="can_add_businesses", description="if <code>true</code> this business can create and be the parent of other businesses")
+    @SchemaColumn(order=7, name="can_add_businesses", description="if <code>true</code> this business can create and be the parent of other businesses")
     public boolean canAddBusinesses() {
     	return can_add_businesses;
     }
 
-    @SchemaColumn(name="can_see_prices", description="control whether prices will be visible or filtered")
+    @SchemaColumn(order=8, name="can_see_prices", description="control whether prices will be visible or filtered")
     public boolean canSeePrices() {
         return can_see_prices;
     }
 
-    @SchemaColumn(name="disable_log", description="indicates the business is disabled")
+    @SchemaColumn(order=9, name="disable_log", description="indicates the business is disabled")
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=getService().getConnector().getDisableLogs().get(disable_log);
@@ -190,23 +191,23 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         return obj;
     }
 
-    @SchemaColumn(name="do_not_disable_reason", description="a reason why we should not disable the account")
+    @SchemaColumn(order=10, name="do_not_disable_reason", description="a reason why we should not disable the account")
     public String getDoNotDisableReason() {
         return do_not_disable_reason;
     }
 
-    @SchemaColumn(name="auto_enable", description="allows the account to be automatically reenabled on payment")
+    @SchemaColumn(order=11, name="auto_enable", description="allows the account to be automatically reenabled on payment")
     public boolean getAutoEnable() {
         return auto_enable;
     }
 
-    @SchemaColumn(name="bill_parent", description="if <code>true</code>, the parent business will be charged for all resources used by this account")
+    @SchemaColumn(order=12, name="bill_parent", description="if <code>true</code>, the parent business will be charged for all resources used by this account")
     public boolean billParent() {
         return bill_parent;
     }
 
     /** TODO
-    @SchemaColumn(name="package_definition", description="the definition of the package")
+    @SchemaColumn(order=13, name="package_definition", description="the definition of the package")
     public PackageDefinition getPackageDefinition() throws SQLException, IOException {
         PackageDefinition pd = service.connector.getPackageDefinitions().get(package_definition);
         if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
@@ -216,7 +217,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     /**
      * May be filtered.  May also be null for the root business only.
      */
-    @SchemaColumn(name="created_by", description="the user who added this business")
+    @SchemaColumn(order=14, name="created_by", description="the user who added this business")
     public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
         if(created_by==null) return null;
         return getService().getConnector().getBusinessAdministrators().get(created_by);
@@ -226,7 +227,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>-1</code> indicates unlimited.
      */
-    @SchemaColumn(name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
+    @SchemaColumn(order=15, name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
     public int getEmailInBurst() {
         return email_in_burst;
     }
@@ -235,7 +236,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the inbound sustained email rate in emails/second.
      * A value of <code>Float.NaN</code> indicates unlimited.
      */
-    @SchemaColumn(name="email_in_rate", description="the number of sustained inbound emails per second")
+    @SchemaColumn(order=16, name="email_in_rate", description="the number of sustained inbound emails per second")
     public float getEmailInRate() {
         return email_in_rate;
     }
@@ -244,7 +245,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>-1</code> indicates unlimited.
      */
-    @SchemaColumn(name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
+    @SchemaColumn(order=17, name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
     public int getEmailOutBurst() {
         return email_out_burst;
     }
@@ -253,7 +254,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the outbound sustained email rate in emails/second.
      * A value of <code>Float.NaN</code> indicates unlimited.
      */
-    @SchemaColumn(name="email_out_rate", description="the number of sustained outbound emails per second")
+    @SchemaColumn(order=18, name="email_out_rate", description="the number of sustained outbound emails per second")
     public float getEmailOutRate() {
         return email_out_rate;
     }
@@ -262,7 +263,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>-1</code> indicates unlimited.
      */
-    @SchemaColumn(name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
+    @SchemaColumn(order=19, name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
     public int getEmailRelayBurst() {
         return email_relay_burst;
     }
@@ -271,7 +272,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the relay sustained email rate in emails/second.
      * A value of <code>Float.NaN</code> indicates unlimited.
      */
-    @SchemaColumn(name="email_relay_rate", description="the number of sustained relay emails per second")
+    @SchemaColumn(order=20, name="email_relay_rate", description="the number of sustained relay emails per second")
     public float getEmailRelayRate() {
         return email_relay_rate;
     }

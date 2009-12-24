@@ -44,7 +44,7 @@ final public class PackageCategory extends AOServObjectStringKey<PackageCategory
     /**
      * Gets the unique name of this resource type.
      */
-    @SchemaColumn(name="name", unique=true, description="the category name")
+    @SchemaColumn(order=0, name="name", unique=true, description="the category name")
     public String getName() {
         return key;
     }

@@ -21,6 +21,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface SchemaColumn {
+    short order();
     String name();
     boolean unique() default false;
     String description();

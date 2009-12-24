@@ -9,7 +9,6 @@ import com.aoindustries.security.LoginException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Locale;
-import java.util.UUID;
 
 /**
  * <p>
@@ -24,5 +23,5 @@ public interface AOServConnectorFactory<C extends AOServConnector<C,F>, F extend
     /**
      * Gets the <code>AOServConnector</code> for the provided connectAs, authenticateAs, and password.
      */
-    C getConnector(UUID connectorId, Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, LoginException;
+    C newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, LoginException;
 }

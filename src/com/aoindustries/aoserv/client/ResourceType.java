@@ -60,7 +60,7 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> {
     /**
      * Gets the unique name of this resource type.
      */
-    @SchemaColumn(name="name", unique=true, description="the name of the resource type")
+    @SchemaColumn(order=0, name="name", unique=true, description="the name of the resource type")
     public String getName() {
         return key;
     }

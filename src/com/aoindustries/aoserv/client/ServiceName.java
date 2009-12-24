@@ -34,12 +34,12 @@ public enum ServiceName {
     brands("Brands", "Each brand has separate website, packages, nameservers, and support"),
      */
     business_administrators("Business Administrators", "The business_administrators service stores details about the people who are allowed to access the aoserv and aoweb utilities."),
-    /*
+    /* TODO
     business_administrator_permissions("Business Administrator Permissions", "Grants administrative permissions."),
     business_profiles("Business Profiles", "The business_profiles stores all the old profile data for a business.  This is done so that old contacts may be used in case of an emergency."),
      */
     businesses("Businesses", "The businesses service stores details about businesses"),
-    /*
+    /* TODO
     business_servers("Business Servers", "The business_servers service stores which servers may be accessed by which business.  A child business can only access a subset of the parent business' servers.  Only one entry per business is flagged as default."),
     client_jvm_profile("Client JVM Profile", ""),
     country_codes("Country Codes", "The country_codes service contains all of the valid country codes.  This data was obtained from http://digitalid.verisign.com/ccodes.html"),
@@ -50,7 +50,7 @@ public enum ServiceName {
     daemon_profile("Daemon Profile", ""),
      */
     disable_log("Disable Log", "The <code>disable_log</code> logs all the times things are disabled."),
-    /*
+    /* TODO
     distro_file_types("Distro File Types", "The distro_file_types stores all of the possible file types."),
     distro_files("Distro Files", "The distro_files stores all of the file attributes in the templates."),
     dns_forbidden_zones("DNS Forbidden Zones", "<code>dns_forbidden_zones</code> stores all of the DNS zones that may not be hosted by the name servers"),
@@ -101,7 +101,9 @@ public enum ServiceName {
     httpd_tomcat_versions("Httpd Tomcat Versions", "The <code>httpd_tomcat_versions</code> is a lookup of all the available versions of Tomcat."),
     httpd_workers("Httpd Workers", "The httpd_workers service contains all of the workers that are registered on each server."),
     ip_addresses("IP Addresses", "The ip_addresses service has an entry for every IP address hosted on our machines."),
+     */
     languages("Languages", "The languages service provides all the possible languages for brands."),
+    /* TODO
     linux_acc_addresses("Linux Account Addresses", "The linux_acc_addresses service links email addresses to linux accounts."),
     linux_account_types("Linux Account Types", "The linux_account_types service stores all the different types of linux accounts."),
     linux_accounts("Linux Accounts", "The linux_accounts service stores all of the linux account info that is common to all machines."),
@@ -161,7 +163,7 @@ public enum ServiceName {
     operating_systems("Operating Systems", "The operating_systems service stores represents each type of operating system."),
      */
     package_categories("Package Categories", "The various categories for package_definitions."),
-    /*
+    /* TODO
     package_definition_limits("Package Definition Limits", "The package_definition_limits service defines the limits for each package_definition and resource combination."),
     package_definitions("Package Definitions", "The package_definitions service stores a list of supported services."),
     payment_types("Payment Types", "The payment_types service stores all the accepservice payment forms"),
@@ -180,7 +182,7 @@ public enum ServiceName {
     resellers("Resellers", "A reseller may provide ticket-based support"),
      */
     resource_types("Resource Types", "The types of billable resources"),
-    /*
+    /* TODO
     resources("Resources", "All billable resources"),
     schema_columns("Schema Columns", "<code>schema_columns</code> stores the details about the data contained in each column."),
     schema_foreign_keys("Schema Foreign Keys", "<code>schema_foreign_keys</code> services stores all the foreign key info for the database."),
@@ -201,12 +203,16 @@ public enum ServiceName {
     ticket_actions("Ticket Actions", "The ticket_actions service represent a complete history of the changes that have been made to a ticket.  When a ticket is initially created it has no actions.  Any change from its initial state will cause an action to be logged."),
     ticket_assignments("Ticket Assignments", "Tickets may be assigned to specific administrators at each reseller level."),
     ticket_brand_categories("Ticket Brand Categories", "Each brand may select which categories will be visible for ticket support."),
+     */
     ticket_categories("Ticket Categories", "Each ticket may be associated with one of these hierichical categories."),
     ticket_priorities("Ticket Priorities", "Service ticket_priorities is a lookup service for tickets"),
     ticket_stati("Ticket Statuses", "Service ticket_stati is a lookup service for tickets"),
     ticket_types("Ticket Types", "Service ticket_types is a lookup for tickets showing types of service requests"),
+    /* TODO
     tickets("Tickets", "Service tickets contains information on service requests"),
+     */
     time_zones("Time Zones", "The allowed time zones for a server"),
+    /* TODO
     transaction_types("Transaction Types", "The transaction_types service stores all the types of transactions."),
     transactions("Transactions", "The transactions service keeps track of all transactions that have occured with the businesses"),
     us_states("US States", "The us_states service contains an entry for each state in the United States."),

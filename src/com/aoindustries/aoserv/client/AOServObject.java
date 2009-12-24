@@ -5,19 +5,23 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.Column;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.i18n.LocalizedToString;
 import com.aoindustries.util.WrappedException;
-import java.beans.IntrospectionException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * An <code>AOServObject</code> is the lowest level object
@@ -28,7 +32,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  *
- * @see  AOServTable
+ * @see  AOServService
  */
 abstract public class AOServObject<K extends Comparable<K>,T extends AOServObject<K,T>> implements Row, Serializable, LocalizedToString, Comparable<T>, Cloneable {
 
@@ -45,10 +49,10 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         return i1<i2 ? -1 : i1==i2 ? 0 : 1;
     }
 
-    private volatile transient AOServService<?,?,K,T> table;
+    private volatile transient AOServService<?,?,K,T> service;
 
-    protected AOServObject(AOServService<?,?,K,T> table) {
-        this.table = table;
+    protected AOServObject(AOServService<?,?,K,T> service) {
+        this.service = service;
     }
 
     /**
@@ -65,39 +69,41 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     }
 
     /**
-     * Gets the table that this object belongs to.
+     * Gets the service that this object belongs to.
      */
-    final public AOServService<?,?,K,T> getTable() {
-        return table;
+    final public AOServService<?,?,K,T> getService() {
+        return service;
     }
 
     /**
-     * Returns a (possibly new) instance of this object set to a different table.
+     * Returns a (possibly new) instance of this object set to a different service.
      * <p>
-     * The <code>table</code> field is marked <code>transient</code>, and thus
-     * deserialized objects will initially have a <code>null</code> table
+     * The <code>service</code> field is marked <code>transient</code>, and thus
+     * deserialized objects will initially have a <code>null</code> service
      * reference.  The code that deserializes the objects should call this
-     * setTable method on all objects received.
+     * setService method on all objects received.
      * </p>
      * <p>
-     * Also, caching layers should call setTable on all objects in order to make
+     * Also, caching layers should call setService on all objects in order to make
      * subsequent method invocations use the caches.  This will cause additional
      * copying within the cache layers, but the reduction of round-trips to the
      * server should payoff.
      * </p>
      *
-     * @return  if the table field is currently <code>null</code>, sets the field and returns this object.  Next, if the table is equal to the provided table returns this object.  Otherwise, returns a clone with the table field updated.
+     * @return  if the service field is currently <code>null</code>, sets the field and
+     *          returns this object.  Next, if the service is equal to the provided service
+     *          returns this object.  Otherwise, returns a clone with the service field updated.
      */
     @SuppressWarnings("unchecked")
-    final public T setService(AOServService<?,?,K,T> table) {
-        if(this.table==null) {
-            this.table = table;
+    final public T setService(AOServService<?,?,K,T> service) {
+        if(this.service==null) {
+            this.service = service;
             return (T)this;
-        } else if(this.table==table) {
+        } else if(this.service==service) {
             return (T)this;
         } else {
             T newObj = clone();
-            newObj.table = table;
+            newObj.service = service;
             return newObj;
         }
     }
@@ -151,7 +157,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     @Override
     final public String toString() {
         try {
-            return toString(table.getConnector().getLocale());
+            return toString(service.getConnector().getLocale());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -212,8 +218,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         for(AOServObject obj : objs) {
             if(obj!=null) set.add(obj);
         }
-        if(set.size()==0) return Collections.emptySet();
-        return Collections.unmodifiableSet(set);
+        return AOServServiceUtils.unmodifiableSet(set);
     }
 
     /**
@@ -229,7 +234,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
             }
         }
         if(set.size()==0) return Collections.emptySet();
-        return Collections.unmodifiableSet(set);
+        return AOServServiceUtils.unmodifiableSet(set);
     }
 
     /**
@@ -241,7 +246,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
             if(obj!=null) set.add(obj);
         }
         if(set.size()==0) return Collections.emptySet();
-        return Collections.unmodifiableSet(set);
+        return AOServServiceUtils.unmodifiableSet(set);
     }
 
     /**
@@ -270,21 +275,78 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         );
     }
 
+    final static class MethodColumn extends Column {
+
+        private final Method method;
+
+        MethodColumn(String columnName, boolean unique, Method method) {
+            super(columnName, unique);
+            this.method = method;
+        }
+
+        Method getMethod() {
+            return method;
+        }
+    }
+
+    private static final ConcurrentMap<Class<? extends AOServObject>,List<MethodColumn>> columns = new ConcurrentHashMap<Class<? extends AOServObject>, List<MethodColumn>>();
+
     /**
-     * Gets value of the column with the provided name, by using the ColumnName annotation.
+     * Gets the columns for the provided class, in column index order.
+     * Also ensures that no column name is duplicated.
+     * Also ensures that there is no gap in column index numbers.
      */
-    final public Object getColumn(String name) {
-        try {
-            for(Method method : getClass().getMethods()) {
-                SchemaColumn columnName = method.getAnnotation(SchemaColumn.class);
-                if(columnName.name().equals(name)) return method.invoke(this);
+    static List<MethodColumn> getMethodColumns(Class<? extends AOServObject> clazz) {
+        List<MethodColumn> methodColumns = columns.get(clazz);
+        if(methodColumns==null) {
+            ArrayList<MethodColumn> newColumns = new ArrayList<MethodColumn>();
+            Set<String> columnNames = new HashSet<String>();
+            for(Method method : clazz.getMethods()) {
+                SchemaColumn schemaColumn = method.getAnnotation(SchemaColumn.class);
+                if(schemaColumn!=null) {
+                    String cname = schemaColumn.name();
+                    if(!columnNames.add(cname)) throw new AssertionError("Column name found twice: "+clazz.getName()+"->"+cname);
+                    int order = schemaColumn.order();
+                    newColumns.ensureCapacity(order+1);
+                    if(newColumns.set(order, new MethodColumn(cname, schemaColumn.unique(), method))!=null) throw new AssertionError("Column index found twice: "+clazz.getName()+"->"+order);
+                }
             }
-            throw new IntrospectionException("Unable to find column named "+name);
+            int size = newColumns.size();
+            // Make sure each column index is used in succession
+            if(size!=columnNames.size()) {
+                // Find missing column(s)
+                StringBuilder SB = new StringBuilder("The following column indexes do not have a corresponding column method: "+clazz.getName()+"->");
+                boolean didOne = false;
+                for(int c=0; c<size; c++) {
+                    if(newColumns.get(c)==null) {
+                        if(didOne) SB.append(", ");
+                        else didOne = true;
+                        SB.append(c);
+                    }
+                }
+                throw new AssertionError(SB.toString());
+            }
+            // Make unmodifiable
+            List<MethodColumn> unmod;
+            if(size==0) throw new AssertionError("No columns found");
+            if(size==1) unmod = Collections.singletonList(newColumns.get(0));
+            else unmod = Collections.unmodifiableList(newColumns);
+            // Put in cache
+            List<MethodColumn> existingColumns = columns.putIfAbsent(clazz, unmod);
+            methodColumns = existingColumns==null ? unmod : existingColumns;
+        }
+        return methodColumns;
+    }
+
+    /**
+     * Gets value of the column with the provided index, by using the SchemaColumn annotation.
+     */
+    final public Object getColumn(int index) {
+        try {
+            return getMethodColumns(getClass()).get(index).getMethod().invoke(this);
         } catch(IllegalAccessException err) {
             throw new WrappedException(err);
         } catch(InvocationTargetException err) {
-            throw new WrappedException(err);
-        } catch(IntrospectionException err) {
             throw new WrappedException(err);
         }
     }

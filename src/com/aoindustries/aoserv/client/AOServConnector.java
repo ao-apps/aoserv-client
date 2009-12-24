@@ -9,7 +9,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * <p>
@@ -32,16 +31,6 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
      * Gets the factory that was used to create this connector.
      */
     F getFactory() throws RemoteException;
-
-    /**
-     * Each connector is assigned a unique identifier, which the
-     * server uses to not send events originating from
-     * this connector back to connections of this
-     * connector.
-     *
-     * @return  the globally unique identifier
-     */
-    UUID getConnectorId() throws RemoteException;
 
     /**
      * Gets the user's locale for this connector.  Defaults to the locale
@@ -236,9 +225,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     HttpdWorkerService<C,F> getHttpdWorkers() throws RemoteException;
 
     IPAddressService<C,F> getIpAddresses() throws RemoteException;
-
+    */
     LanguageService<C,F> getLanguages() throws RemoteException;
-
+    /* TODO
     LinuxAccAddressService<C,F> getLinuxAccAddresses() throws RemoteException;
 
     LinuxAccountTypeService<C,F> getLinuxAccountTypes() throws RemoteException;
@@ -370,7 +359,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     TicketAssignmentService<C,F> getTicketAssignments() throws RemoteException;
 
     TicketBrandCategoryService<C,F> getTicketBrandCategories() throws RemoteException;
-
+    */
     TicketCategoryService<C,F> getTicketCategories() throws RemoteException;
 
     TicketPriorityService<C,F> getTicketPriorities() throws RemoteException;
@@ -378,11 +367,11 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     TicketStatusService<C,F> getTicketStatuses() throws RemoteException;
 
     TicketTypeService<C,F> getTicketTypes() throws RemoteException;
-
+    /* TODO
     TicketService<C,F> getTickets() throws RemoteException;
-
+    */
     TimeZoneService<C,F> getTimeZones() throws RemoteException;
-
+    /* TODO
     TransactionTypeService<C,F> getTransactionTypes() throws RemoteException;
 
     TransactionService<C,F> getTransactions() throws RemoteException;

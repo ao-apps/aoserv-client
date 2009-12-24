@@ -5,55 +5,32 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * All of the time zones on a server.
  *
- * @since  1.2
- *
  * @author  AO Industries, Inc.
  */
-final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
+final public class TimeZone extends AOServObjectStringKey<TimeZone> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public TimeZone(TimeZoneService<?,?> table, String name) {
+        super(table, name);
     }
+    // </editor-fold>
 
-    /**
-     * Gets the unique name for this time zone.
-     */
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", unique=true, description="the unique name of this time zone")
     public String getName() {
-        return pkey;
+        return key;
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.TIME_ZONES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-    }
- 
-    private java.util.TimeZone timeZone;
+    private volatile transient java.util.TimeZone timeZone;
 
     /**
      * Gets the Java TimeZone for this TimeZone.
@@ -65,13 +42,13 @@ final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
             String[] ids = java.util.TimeZone.getAvailableIDs();
             boolean found = false;
             for(String id : ids) {
-                if(id.equals(pkey)) {
+                if(id.equals(key)) {
                     found = true;
                     break;
                 }
             }
-            if(!found) throw new IllegalArgumentException("TimeZone not found: "+pkey);
-            timeZone = java.util.TimeZone.getTimeZone(pkey);
+            if(!found) throw new IllegalArgumentException("TimeZone not found: "+key);
+            timeZone = java.util.TimeZone.getTimeZone(key);
         }
         return timeZone;
     }

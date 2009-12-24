@@ -5,11 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -20,12 +15,10 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> implements Comparable<TicketStatus> {
+final public class TicketStatus extends AOServObjectStringKey<TicketStatus> {
 
-    static final int COLUMN_STATUS = 0;
-    static final int COLUMN_SORT_ORDER = 1;
-    static final String COLUMN_STATUS_name = "status";
-    static final String COLUMN_SORT_ORDER_name = "sort_order";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The different ticket statuses.
@@ -38,60 +31,47 @@ final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> impl
         HOLD="hold",
         OPEN="open"
     ;
+    // </editor-fold>
 
-    private short sort_order;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private short sort_order;
 
-    Object getColumnImpl(int i) {
-        if(i==COLUMN_STATUS) return pkey;
-        if(i==1) return sort_order;
-        throw new IllegalArgumentException("Invalid index: "+i);
+    public TicketStatus(TicketStatusService<?,?> table, String status, short sort_order) {
+        super(table, status);
+        this.sort_order = sort_order;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(TicketStatus other) {
+        return compare(sort_order, other.sort_order);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="status", unique=true, description="the name of this status")
+    public String getStatus() {
+        return key;
     }
 
+    @SchemaColumn(order=1, name="sort_order", unique=true, description="the default sort ordering")
     public short getSortOrder() {
         return sort_order;
     }
+    // </editor-fold>
 
-    public String getStatus() {
-        return pkey;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.TICKET_STATI;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        sort_order = result.getShort(2);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readUTF().intern();
-        sort_order = in.readShort();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeUTF(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeShort(sort_order);
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+key+".toString");
     }
 
     /**
      * Localized description.
      */
     public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+pkey+".description");
+        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+key+".description");
     }
-
-    public int compareTo(TicketStatus o) {
-        short sortOrder1 = sort_order;
-        short sortOrder2 = o.sort_order;
-        if(sortOrder1<sortOrder2) return -1;
-        if(sortOrder1>sortOrder2) return 1;
-        return 0;
-    }
+    // </editor-fold>
 }

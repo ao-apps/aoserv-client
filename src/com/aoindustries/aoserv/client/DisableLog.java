@@ -36,8 +36,8 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
     ) {
         super(service, pkey);
         this.time = time;
-        this.accounting = accounting;
-        this.disabled_by = disabled_by;
+        this.accounting = accounting.intern();
+        this.disabled_by = disabled_by.intern();
         this.disable_reason = disable_reason;
     }
     // </editor-fold>
@@ -54,17 +54,17 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(name="pkey", unique=true, description="a generated primary key")
+    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated primary key")
     public int getPkey() {
         return key;
     }
 
-    @SchemaColumn(name="time", description="the time the stuff was disabled")
+    @SchemaColumn(order=1, name="time", description="the time the stuff was disabled")
     public Timestamp getTime() {
         return time;
     }
 
-    @SchemaColumn(name="accounting", description="the business whos resources are being disabled")
+    @SchemaColumn(order=2, name="accounting", description="the business whos resources are being disabled")
     public Business getBusiness() throws SQLException, IOException {
         Business bu=getService().getConnector().getBusinesses().get(accounting);
         if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
@@ -74,12 +74,12 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
     /**
      * May be filtered.
      */
-    @SchemaColumn(name="disabled_by", description="the person who disabled the accounts")
+    @SchemaColumn(order=3, name="disabled_by", description="the person who disabled the accounts")
     public BusinessAdministrator getDisabledBy() throws IOException, SQLException {
         return getService().getConnector().getBusinessAdministrators().get(disabled_by);
     }
 
-    @SchemaColumn(name="disable_reason", description="the optional reason the accounts were disabled")
+    @SchemaColumn(order=4, name="disable_reason", description="the optional reason the accounts were disabled")
     public String getDisableReason() {
         return disable_reason;
     }

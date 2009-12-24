@@ -68,7 +68,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingCreditCardService creditCards;
     final NoSwingCvsRepositoryService cvsRepositories;
      */
-    final NoSwingDisableLogService disabledLogs;
+    final NoSwingDisableLogService disableLogs;
     /*
     final NoSwingDistroFileTypeService distroFileTypes;
     final NoSwingDistroFileService distroFiles;
@@ -247,7 +247,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         creditCards = new NoSwingCreditCardService(this, wrapped.getCreditCards());
         cvsRepositories = new NoSwingCvsRepositoryService(this, wrapped.getCvsRepositorys());
          */
-        disabledLogs = new NoSwingDisableLogService(this, wrapped.getDisableLogs());
+        disableLogs = new NoSwingDisableLogService(this, wrapped.getDisableLogs());
         /*
         distroFileTypes = new NoSwingDistroFileTypeService(this, wrapped.getDistroFileTypes());
         distroFiles = new NoSwingDistroFileService(this, wrapped.getDistroFiles());
@@ -493,7 +493,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
      */
     public DisableLogService<NoSwingConnector,NoSwingConnectorFactory> getDisableLogs() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
-        return disabledLogs;
+        return disableLogs;
     }
     /*
     DistroFileTypeService<NoSwingConnector,NoSwingConnectorFactory> getDistroFileTypes() throws RemoteException;

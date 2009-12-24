@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.util.Base64Coder;
+import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
@@ -146,7 +147,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         this.address2 = address2;
         this.city = city;
         this.state = state;
-        this.country = country;
+        this.country = StringUtility.intern(country);
         this.zip = zip;
         this.disable_log = disable_log;
         this.can_switch_users = can_switch_users;
@@ -156,95 +157,95 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     
     // <editor-fold defaultstate="collapsed" desc="Columns">
     /* TODO
-    @SchemaColumn(name="username", unique=true, description="the unique identifier for this admin")
+    @SchemaColumn(order=0, name="username", unique=true, description="the unique identifier for this admin")
     public Username getUsername() throws SQLException, IOException {
         Username usernameObject = service.connector.getUsernames().get(pkey);
         if (usernameObject == null) throw new SQLException("Username not found: " + pkey);
         return usernameObject;
     }*/
 
-    @SchemaColumn(name="password", description="the encrypted password for this admin")
+    @SchemaColumn(order=1, name="password", description="the encrypted password for this admin")
     public String getPassword() {
     	return password;
     }
 
-    @SchemaColumn(name="name", description="the name of this admin")
+    @SchemaColumn(order=2, name="name", description="the name of this admin")
     public String getName() {
     	return name;
     }
 
-    @SchemaColumn(name="title", description="the admins title within their organization")
+    @SchemaColumn(order=3, name="title", description="the admins title within their organization")
     public String getTitle() {
         return title;
     }
 
-    @SchemaColumn(name="birthday", description="the admins birthday")
+    @SchemaColumn(order=4, name="birthday", description="the admins birthday")
     public Date getBirthday() {
     	return birthday;
     }
 
-    @SchemaColumn(name="is_preferred", description="if true, customers is preferred")
+    @SchemaColumn(order=5, name="is_preferred", description="if true, customers is preferred")
     public boolean isPreferred() {
     	return isPreferred;
     }
 
-    @SchemaColumn(name="private", description="indicates if the admin should not be listed in publicly available lists")
+    @SchemaColumn(order=6, name="private", description="indicates if the admin should not be listed in publicly available lists")
     public boolean isPrivate() {
         return isPrivate;
     }
 
-    @SchemaColumn(name="created", description="the time the admin entry was created")
+    @SchemaColumn(order=7, name="created", description="the time the admin entry was created")
     public Timestamp getCreated() {
     	return created;
     }
 
-    @SchemaColumn(name="work_phone", description="the work phone number (if different than business)")
+    @SchemaColumn(order=8, name="work_phone", description="the work phone number (if different than business)")
     public String getWorkPhone() {
     	return work_phone;
     }
 
-    @SchemaColumn(name="home_phone", description="the home phone number")
+    @SchemaColumn(order=9, name="home_phone", description="the home phone number")
     public String getHomePhone() {
     	return home_phone;
     }
 
-    @SchemaColumn(name="cell_phone", description="the cellular phone number")
+    @SchemaColumn(order=10, name="cell_phone", description="the cellular phone number")
     public String getCellPhone() {
     	return cell_phone;
     }
 
-    @SchemaColumn(name="fax", description="the fax number (if different than business)")
+    @SchemaColumn(order=11, name="fax", description="the fax number (if different than business)")
     public String getFax() {
     	return fax;
     }
 
-    @SchemaColumn(name="email", description="the email address")
+    @SchemaColumn(order=12, name="email", description="the email address")
     public String getEmail() {
     	return email;
     }
 
-    @SchemaColumn(name="address1", description="the street address (if different than business)")
+    @SchemaColumn(order=13, name="address1", description="the street address (if different than business)")
     public String getAddress1() {
         return address1;
     }
 
-    @SchemaColumn(name="address2", description="the street address (if different than business)")
+    @SchemaColumn(order=14, name="address2", description="the street address (if different than business)")
     public String getAddress2() {
     	return address2;
     }
 
-    @SchemaColumn(name="city", description="the city (if different than business)")
+    @SchemaColumn(order=15, name="city", description="the city (if different than business)")
     public String getCity() {
     	return city;
     }
 
-    @SchemaColumn(name="state", description="the state (if different than business)")
+    @SchemaColumn(order=16, name="state", description="the state (if different than business)")
     public String getState() {
     	return state;
     }
 
     /* TODO
-    @SchemaColumn(name="country", description="the country (if different than business)")
+    @SchemaColumn(order=17, name="country", description="the country (if different than business)")
     public CountryCode getCountry() throws SQLException, IOException {
         if(country == null) return null;
         CountryCode countryCode=service.connector.getCountryCodes().get(country);
@@ -252,12 +253,12 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         return countryCode;
     }*/
 
-    @SchemaColumn(name="zip", description="the zip code (if different than business)")
+    @SchemaColumn(order=18, name="zip", description="the zip code (if different than business)")
     public String getZIP() {
         return zip;
     }
 
-    @SchemaColumn(name="disable_log", description="indicates that this account is disabled")
+    @SchemaColumn(order=19, name="disable_log", description="indicates that this account is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disable_log==-1) return null;
         DisableLog obj = getService().getConnector().getDisableLogs().get(disable_log);
@@ -265,12 +266,12 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         return obj;
     }
 
-    @SchemaColumn(name="can_switch_users", description="allows this person to switch users to any subaccounts")
+    @SchemaColumn(order=20, name="can_switch_users", description="allows this person to switch users to any subaccounts")
     public boolean canSwitchUsers() {
         return can_switch_users;
     }
 
-    @SchemaColumn(name="support_code", unique=true, description="used to authenticate for email-based supprt")
+    @SchemaColumn(order=21, name="support_code", unique=true, description="used to authenticate for email-based supprt")
     public String getSupportCode() {
         return support_code;
     }

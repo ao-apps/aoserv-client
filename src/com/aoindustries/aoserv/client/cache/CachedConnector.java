@@ -71,7 +71,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedCreditCardService creditCards;
     final CachedCvsRepositoryService cvsRepositories;
      */
-    final CachedDisableLogService disabledLogs;
+    final CachedDisableLogService disableLogs;
     /*
     final CachedDistroFileTypeService distroFileTypes;
     final CachedDistroFileService distroFiles;
@@ -252,7 +252,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
         cvsRepositories = new CachedCvsRepositoryService(this, wrapped.getCvsRepositorys());
          */
-        disabledLogs = new CachedDisableLogService(this, wrapped.getDisableLogs());
+        disableLogs = new CachedDisableLogService(this, wrapped.getDisableLogs());
         /*
         distroFileTypes = new CachedDistroFileTypeService(this, wrapped.getDistroFileTypes());
         distroFiles = new CachedDistroFileService(this, wrapped.getDistroFiles());
@@ -492,7 +492,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     CvsRepositoryService<CachedConnector,CachedConnectorFactory> getCvsRepositories();
      */
     public DisableLogService<CachedConnector,CachedConnectorFactory> getDisableLogs() {
-        return disabledLogs;
+        return disableLogs;
     }
     /*
     DistroFileTypeService<CachedConnector,CachedConnectorFactory> getDistroFileTypes();

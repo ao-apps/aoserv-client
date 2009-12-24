@@ -25,6 +25,11 @@ import java.util.SortedSet;
 public interface AOServService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>, K extends Comparable<K>,V extends AOServObject<K,V>> extends Remote {
 
     /**
+     * The toString should be the service name.
+     */
+    //String toString();
+
+    /**
      * Gets the connector that this service is part of.
      */
     C getConnector() throws RemoteException;
@@ -84,11 +89,6 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
 
     /**
      * Gets the size of this service as obtained by <code>getSet().size()</code>.
-     */
-    int size() throws RemoteException;
-
-    /**
-     * This is size for JavaBeans compatibility.
      *
      * @see #size()
      */

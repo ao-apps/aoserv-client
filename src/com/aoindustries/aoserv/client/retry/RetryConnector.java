@@ -83,7 +83,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryCreditCardService creditCards;
     final RetryCvsRepositoryService cvsRepositories;
      */
-    final RetryDisableLogService disabledLogs;
+    final RetryDisableLogService disableLogs;
     /*
     final RetryDistroFileTypeService distroFileTypes;
     final RetryDistroFileService distroFiles;
@@ -269,7 +269,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         creditCards = new RetryCreditCardService(this);
         cvsRepositories = new RetryCvsRepositoryService(this);
          */
-        disabledLogs = new RetryDisableLogService(this);
+        disableLogs = new RetryDisableLogService(this);
         /*
         distroFileTypes = new RetryDistroFileTypeService(this);
         distroFiles = new RetryDistroFileService(this);
@@ -630,7 +630,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     CvsRepositoryService<RetryConnector,RetryConnectorFactory> getCvsRepositories();
      */
     public DisableLogService<RetryConnector,RetryConnectorFactory> getDisableLogs() {
-        return disabledLogs;
+        return disableLogs;
     }
     /*
     DistroFileTypeService<RetryConnector,RetryConnectorFactory> getDistroFileTypes();

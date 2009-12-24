@@ -5,118 +5,107 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * @see  Ticket
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory> {
+final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_PARENT=1,
-        COLUMN_NAME=2
-    ;
-    static final String COLUMN_PKEY_name = "pkey";
-    static final String COLUMN_PARENT_name = "parent";
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * Some conveniences constants for specific categories.
      */
     public static final int AOSERV_MASTER_PKEY = 110;
+    // </editor-fold>
 
-    int parent;
-    String name;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final int parent;
+    final String name;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return pkey;
-            case COLUMN_PARENT: return parent==-1 ? null : parent;
-            case COLUMN_NAME: return name;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public TicketCategory(TicketCategoryService<?,?> table, int pkey, int parent, String name) {
+        super(table, pkey);
+        this.parent = parent;
+        this.name = name.intern();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(TicketCategory other) {
+        int diff = compare(parent, other.parent);
+        if(diff!=0) return diff;
+        return compareIgnoreCaseConsistentWithEquals(name, other.name);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="the unique category id")
+    public int getPkey() {
+        return key;
     }
 
-    /**
-     * Gets the parent category or <code>null</code> if this is a top-level category.
-     */
-    public TicketCategory getParent() throws IOException, SQLException {
+    @SchemaColumn(order=1, name="parent", description="the category id of its parent or null if this is a top-level category")
+    public TicketCategory getParent() throws RemoteException {
         if(parent==-1) return null;
-        TicketCategory tc = table.connector.getTicketCategories().get(parent);
-        if(tc==null) throw new SQLException("Unable to find TicketCategory: "+parent);
+        TicketCategory tc = getService().getConnector().getTicketCategories().get(parent);
+        if(tc==null) throw new RemoteException("Unable to find TicketCategory: "+parent);
         return tc;
     }
 
+    @SchemaColumn(order=2, name="name", description="the name of this category, unique per parent")
     public String getName() {
         return name;
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.TICKET_CATEGORIES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        parent = result.getInt(2);
-        if(result.wasNull()) parent = -1;
-        name = result.getString(3);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        parent = in.readCompressedInt();
-        name = in.readUTF().intern();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
             getParent()
         );
     }
 
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getTickets(),
-            getChildrenCategories(),
-            getTicketActionsByOldCategory(),
-            getTicketActionsByNewCategory(),
-            getTicketBrandCategorys()
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getTickets(),
+            // TODO: getChildrenCategories(),
+            // TODO: getTicketActionsByOldCategory(),
+            // TODO: getTicketActionsByNewCategory(),
+            // TODO: getTicketBrandCategorys()
         );
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     private String slashPath = null;
-    synchronized public String getSlashPath() throws IOException, SQLException {
+    synchronized public String getSlashPath() throws RemoteException {
         if(slashPath==null) slashPath = parent==-1 ? name : (getParent().getSlashPath()+'/'+name);
         return slashPath;
     }
 
     private String dotPath = null;
-    synchronized public String getDotPath() throws IOException, SQLException {
+    synchronized public String getDotPath() throws RemoteException {
         if(dotPath==null) dotPath = parent==-1 ? name : (getParent().getDotPath()+'.'+name);
         return dotPath;
     }
 
     @Override
-    String toStringImpl(Locale userLocale) throws IOException, SQLException {
+    String toStringImpl(Locale userLocale) throws RemoteException {
         return ApplicationResources.accessor.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");
     }
+    // </editor-fold>
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(parent);
-        out.writeUTF(name);
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
     public List<TicketBrandCategory> getTicketBrandCategorys() throws IOException, SQLException {
         return table.connector.getTicketBrandCategories().getTicketBrandCategories(this);
     }
@@ -135,5 +124,6 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
 
     public List<TicketAction> getTicketActionsByNewCategory() throws IOException, SQLException {
         return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_CATEGORY, pkey);
-    }
+    }*/
+    // </editor-fold>
 }
