@@ -36,7 +36,7 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
 
     @Override
     final public String toString() {
-        return getServiceName().getDisplay();
+        return getServiceName().toString(connector.getLocale());
     }
 
     AOServService<?,?,K,V> getWrapped() throws RemoteException {

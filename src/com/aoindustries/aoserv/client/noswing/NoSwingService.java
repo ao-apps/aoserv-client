@@ -38,7 +38,7 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
     @Override
     final public String toString() {
         try {
-            return getServiceName().getDisplay();
+            return getServiceName().toString(connector.getLocale());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }

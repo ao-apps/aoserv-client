@@ -66,7 +66,7 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
 
     @Override
     final public String toString() {
-        return getServiceName().getDisplay();
+        return getServiceName().toString(connector.getLocale());
     }
 
     final public CachedConnector getConnector() {
