@@ -7,6 +7,9 @@ package com.aoindustries.aoserv.client.retry;
  */
 import com.aoindustries.security.LoginException;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author  AO Industries, Inc.
@@ -74,4 +77,12 @@ final class RetryUtils {
         }
         return false;
     }
+
+    static final ExecutorService executorService = Executors.newCachedThreadPool(
+        new ThreadFactory() {
+            public Thread newThread(Runnable r) {
+                return new Thread(r, RetryUtils.class.getName());
+            }
+        }
+    );
 }

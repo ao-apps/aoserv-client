@@ -14,6 +14,7 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.concurrent.Callable;
 
 /**
  * @author  AO Industries, Inc.
@@ -57,7 +58,7 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
 
     final public Set<V> getSet() throws RemoteException {
         return connector.retry(
-            new RetryConnector.RetryCallable<Set<V>>() {
+            new Callable<Set<V>>() {
                 public Set<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().getSet(), RetryService.this);
                 }
@@ -67,7 +68,7 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
 
     final public SortedSet<V> getSortedSet() throws RemoteException {
         return connector.retry(
-            new RetryConnector.RetryCallable<SortedSet<V>>() {
+            new Callable<SortedSet<V>>() {
                 public SortedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().getSortedSet(), RetryService.this);
                 }
@@ -89,7 +90,7 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
 
     final public V get(final K key) throws RemoteException {
         return connector.retry(
-            new RetryConnector.RetryCallable<V>() {
+            new Callable<V>() {
                 public V call() throws RemoteException {
                     return AOServServiceUtils.setService(getWrapped().get(key), RetryService.this);
                 }
@@ -99,7 +100,7 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
 
     final public boolean isEmpty() throws RemoteException {
         return connector.retry(
-            new RetryConnector.RetryCallable<Boolean>() {
+            new Callable<Boolean>() {
                 public Boolean call() throws RemoteException {
                     return getWrapped().isEmpty();
                 }
@@ -109,7 +110,7 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
 
     final public int getSize() throws RemoteException {
         return connector.retry(
-            new RetryConnector.RetryCallable<Integer>() {
+            new Callable<Integer>() {
                 public Integer call() throws RemoteException {
                     return getWrapped().getSize();
                 }

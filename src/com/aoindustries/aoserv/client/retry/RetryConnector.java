@@ -22,6 +22,10 @@ import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -129,21 +133,44 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         }
     }
 
-    static interface RetryCallable<T> {
-        T call() throws RemoteException;
-    }
-
-    <T> T retry(RetryCallable<T> callable) throws RemoteException {
+    <T> T retry(Callable<T> callable) throws RemoteException {
         int attempt = 1;
         while(!Thread.interrupted()) {
-            try {
-                return callable.call();
-            } catch(RuntimeException err) {
-                disconnectIfNeeded(err);
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-            } catch(RemoteException err) {
-                disconnectIfNeeded(err);
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            if(factory.timeout>0) {
+                Future<T> future = RetryUtils.executorService.submit(callable);
+                try {
+                    return future.get(factory.timeout, factory.unit);
+                } catch(RuntimeException err) {
+                    disconnectIfNeeded(err);
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                } catch(ExecutionException err) {
+                    disconnectIfNeeded(err);
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) {
+                        Throwable cause = err.getCause();
+                        if(cause instanceof RemoteException) throw (RemoteException)cause;
+                        throw new RemoteException(err.getMessage(), err);
+                    }
+                } catch(TimeoutException err) {
+                    future.cancel(true);
+                    disconnectIfNeeded(err);
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                } catch(Exception err) {
+                    disconnectIfNeeded(err);
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                }
+            } else {
+                try {
+                    return callable.call();
+                } catch(RuntimeException err) {
+                    disconnectIfNeeded(err);
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                } catch(RemoteException err) {
+                    disconnectIfNeeded(err);
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                } catch(Exception err) {
+                    disconnectIfNeeded(err);
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                }
             }
             try {
                 Thread.sleep(RetryUtils.retryAttemptDelays[attempt-1]);
@@ -167,7 +194,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         if(!this.locale.equals(locale)) {
             this.locale = locale;
             retry(
-                new RetryCallable<Object>() {
+                new Callable<Object>() {
                     public Object call() throws RemoteException {
                         getWrapped().setLocale(locale);
                         return null;

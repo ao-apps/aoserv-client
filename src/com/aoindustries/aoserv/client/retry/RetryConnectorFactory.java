@@ -9,6 +9,11 @@ import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * An implementation of <code>AOServConnectorFactory</code> that obtains a new wrapped connector from the wrapped
@@ -18,27 +23,50 @@ import java.util.Locale;
  */
 final public class RetryConnectorFactory implements AOServConnectorFactory<RetryConnector,RetryConnectorFactory> {
 
+    final long timeout;
+    final TimeUnit unit;
     final AOServConnectorFactory<?,?> wrapped;
 
-    public RetryConnectorFactory(AOServConnectorFactory<?,?> wrapped) {
+    public RetryConnectorFactory(long timeout, TimeUnit unit, AOServConnectorFactory<?,?> wrapped) {
+        this.timeout = timeout;
+        this.unit = unit;
         this.wrapped = wrapped;
     }
 
-    static interface RetryCallable<T> {
-        T call() throws LoginException, RemoteException;
-    }
-
-    static <T> T retry(RetryCallable<T> callable) throws LoginException, RemoteException {
+    private <T> T retry(Callable<T> callable) throws LoginException, RemoteException {
         int attempt = 1;
         while(!Thread.interrupted()) {
-            try {
-                return callable.call();
-            } catch(RuntimeException err) {
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-            } catch(LoginException err) {
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-            } catch(RemoteException err) {
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            if(timeout>0) {
+                Future<T> future = RetryUtils.executorService.submit(callable);
+                try {
+                    return future.get(timeout, unit);
+                } catch(RuntimeException err) {
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                } catch(ExecutionException err) {
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) {
+                        Throwable cause = err.getCause();
+                        if(cause instanceof LoginException) throw (LoginException)cause;
+                        if(cause instanceof RemoteException) throw (RemoteException)cause;
+                        throw new RemoteException(err.getMessage(), err);
+                    }
+                } catch(TimeoutException err) {
+                    future.cancel(true);
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                } catch(Exception err) {
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                }
+            } else {
+                try {
+                    return callable.call();
+                } catch(RuntimeException err) {
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                } catch(LoginException err) {
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                } catch(RemoteException err) {
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                } catch(Exception err) {
+                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                }
             }
             try {
                 Thread.sleep(RetryUtils.retryAttemptDelays[attempt-1]);
@@ -52,7 +80,7 @@ final public class RetryConnectorFactory implements AOServConnectorFactory<Retry
 
     public RetryConnector newConnector(final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
         return retry(
-            new RetryCallable<RetryConnector>() {
+            new Callable<RetryConnector>() {
                 public RetryConnector call() throws LoginException, RemoteException {
                     return new RetryConnector(RetryConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
                 }
