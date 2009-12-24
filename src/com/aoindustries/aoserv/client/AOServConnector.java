@@ -113,9 +113,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     BusinessServerService<C,F> getBusinessServers() throws RemoteException;
 
     ClientJvmProfileService<C,F> getClientJvmProfiles() throws RemoteException;
-
+    */
     CountryCodeService<C,F> getCountryCodes() throws RemoteException;
-
+    /*
     CreditCardProcessorService<C,F> getCreditCardProcessors() throws RemoteException;
 
     CreditCardTransactionService<C,F> getCreditCardTransactions() throws RemoteException;
@@ -377,9 +377,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     TransactionService<C,F> getTransactions() throws RemoteException;
 
     USStateService<C,F> getUsStates() throws RemoteException;
-
+    */
     UsernameService<C,F> getUsernames() throws RemoteException;
-
+    /* TODO
     VirtualDiskService<C,F> getVirtualDisks() throws RemoteException;
 
     VirtualServerService<C,F> getVirtualServers() throws RemoteException;

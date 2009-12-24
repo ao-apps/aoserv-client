@@ -307,7 +307,10 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
                     String cname = schemaColumn.name();
                     if(!columnNames.add(cname)) throw new AssertionError("Column name found twice: "+clazz.getName()+"->"+cname);
                     int order = schemaColumn.order();
-                    newColumns.ensureCapacity(order+1);
+                    if(order<0) throw new AssertionError("Column order<0: "+clazz.getName()+"->"+order);
+                    int newSize = order+1;
+                    newColumns.ensureCapacity(newSize);
+                    while(newColumns.size()<newSize) newColumns.add(null);
                     if(newColumns.set(order, new MethodColumn(cname, schemaColumn.unique(), method))!=null) throw new AssertionError("Column index found twice: "+clazz.getName()+"->"+order);
                 }
             }
@@ -330,7 +333,10 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
             List<MethodColumn> unmod;
             if(size==0) throw new AssertionError("No columns found");
             if(size==1) unmod = Collections.singletonList(newColumns.get(0));
-            else unmod = Collections.unmodifiableList(newColumns);
+            else {
+                newColumns.trimToSize();
+                unmod = Collections.unmodifiableList(newColumns);
+            }
             // Put in cache
             List<MethodColumn> existingColumns = columns.putIfAbsent(clazz, unmod);
             methodColumns = existingColumns==null ? unmod : existingColumns;

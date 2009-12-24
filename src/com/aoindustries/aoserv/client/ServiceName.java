@@ -42,7 +42,9 @@ public enum ServiceName {
     /* TODO
     business_servers("Business Servers", "The business_servers service stores which servers may be accessed by which business.  A child business can only access a subset of the parent business' servers.  Only one entry per business is flagged as default."),
     client_jvm_profile("Client JVM Profile", ""),
+     */
     country_codes("Country Codes", "The country_codes service contains all of the valid country codes.  This data was obtained from http://digitalid.verisign.com/ccodes.html"),
+    /* TODO
     credit_card_processors("Credit Card Processors", "The credit_card_processors service stores all of the different credit card processing merchant accounts."),
     credit_card_transactions("Credit Card Transactions", "The credit_card_transactions service stores the complete history of credit card processor transactions."),
     credit_cards("Credit Cards", "The credit_cards service stores all of the client credit card information in an encrypted format."),
@@ -216,7 +218,9 @@ public enum ServiceName {
     transaction_types("Transaction Types", "The transaction_types service stores all the types of transactions."),
     transactions("Transactions", "The transactions service keeps track of all transactions that have occured with the businesses"),
     us_states("US States", "The us_states service contains an entry for each state in the United States."),
+     */
     usernames("Usernames", "The usernames service stores information about each username.  Every username is unique across the system, and may be used for multiple services.  Regardless of the system, the username always belongs to one business, and preferrably one actual person or system."),
+    /* TODO
     virtual_disks("Virtual Disks", "The virtual disk configurations for cluster QoS management."),
     virtual_servers("Virtual Servers", "A virtual server is any server that is a guest in the virtualized clustering."),
     whois_history("Whois History", "The output from whois lookups are logged weekly to keep track of when customers begin and end using the systems.")

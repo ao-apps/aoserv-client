@@ -6,9 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.util.StringUtility;
-import java.io.IOException;
-import java.sql.SQLException;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.Set;
 
 /**
  * A <code>Business</code> is one distinct set of resources and permissions.
@@ -161,7 +161,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     @SchemaColumn(order=5, name="parent", description="the parent business to this one")
-    public Business getParentBusiness() throws IOException, SQLException {
+    public Business getParentBusiness() throws RemoteException {
         if(parent==null) return null;
         // The parent business might not be found, even when the value is set.  This is normal due
         // to filtering.
@@ -184,10 +184,10 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     @SchemaColumn(order=9, name="disable_log", description="indicates the business is disabled")
-    public DisableLog getDisableLog() throws SQLException, IOException {
+    public DisableLog getDisableLog() throws RemoteException {
         if(disable_log==-1) return null;
         DisableLog obj=getService().getConnector().getDisableLogs().get(disable_log);
-        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disable_log);
         return obj;
     }
 
@@ -206,19 +206,19 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         return bill_parent;
     }
 
-    /** TODO
+    /* TODO
     @SchemaColumn(order=13, name="package_definition", description="the definition of the package")
-    public PackageDefinition getPackageDefinition() throws SQLException, IOException {
-        PackageDefinition pd = service.connector.getPackageDefinitions().get(package_definition);
-        if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
+    public PackageDefinition getPackageDefinition() {
+        PackageDefinition pd = getService().getConnector().getPackageDefinitions().get(package_definition);
+        if(pd == null) throw new RemoteException("Unable to find PackageDefinition: "+package_definition);
         return pd;
-    }*/
+    } */
 
     /**
      * May be filtered.  May also be null for the root business only.
      */
-    @SchemaColumn(order=14, name="created_by", description="the user who added this business")
-    public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
+    @SchemaColumn(order=13, name="created_by", description="the user who added this business")
+    public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(created_by==null) return null;
         return getService().getConnector().getBusinessAdministrators().get(created_by);
     }
@@ -227,7 +227,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>-1</code> indicates unlimited.
      */
-    @SchemaColumn(order=15, name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
+    @SchemaColumn(order=14, name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
     public int getEmailInBurst() {
         return email_in_burst;
     }
@@ -236,7 +236,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the inbound sustained email rate in emails/second.
      * A value of <code>Float.NaN</code> indicates unlimited.
      */
-    @SchemaColumn(order=16, name="email_in_rate", description="the number of sustained inbound emails per second")
+    @SchemaColumn(order=15, name="email_in_rate", description="the number of sustained inbound emails per second")
     public float getEmailInRate() {
         return email_in_rate;
     }
@@ -245,7 +245,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>-1</code> indicates unlimited.
      */
-    @SchemaColumn(order=17, name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
+    @SchemaColumn(order=16, name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
     public int getEmailOutBurst() {
         return email_out_burst;
     }
@@ -254,7 +254,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the outbound sustained email rate in emails/second.
      * A value of <code>Float.NaN</code> indicates unlimited.
      */
-    @SchemaColumn(order=18, name="email_out_rate", description="the number of sustained outbound emails per second")
+    @SchemaColumn(order=17, name="email_out_rate", description="the number of sustained outbound emails per second")
     public float getEmailOutRate() {
         return email_out_rate;
     }
@@ -263,7 +263,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>-1</code> indicates unlimited.
      */
-    @SchemaColumn(order=19, name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
+    @SchemaColumn(order=18, name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
     public int getEmailRelayBurst() {
         return email_relay_burst;
     }
@@ -272,13 +272,62 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      * Gets the relay sustained email rate in emails/second.
      * A value of <code>Float.NaN</code> indicates unlimited.
      */
-    @SchemaColumn(order=20, name="email_relay_rate", description="the number of sustained relay emails per second")
+    @SchemaColumn(order=19, name="email_relay_rate", description="the number of sustained relay emails per second")
     public float getEmailRelayRate() {
         return email_relay_rate;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getParentBusiness(),
+            // TODO: getPackageDefinition(),
+            getCreatedBy()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() {
+        return createDependencySet(
+            /* TODO
+            createDependencyList(
+                getBrand()
+            ),
+            getChildBusinesses(),
+            getBusinessProfiles(),
+            getBusinessServers(),
+            getCreditCards(),
+            getServers(),
+            getServerFarms(),
+            getCreditCardProcessors(),
+            getCreditCardTransactions(),
+            getCreditCardTransactionsByCreditCardAccounting(),
+            getDisableLogs(),
+            getDNSZones(),
+            getIPAddresses(),
+            getUsernames(),
+            getEmailDomains(),
+            getLinuxGroups(),
+            getEncryptionKeys(),
+            getEmailPipes(),
+            getEmailSmtpRelays(),
+            getHttpdServers(),
+            getHttpdSites(),
+            getMonthlyCharges(),
+            getMonthlyChargesBySourceBusiness(),
+            getMysqlDatabases(),
+            getNoticeLogs(),
+            getPackageDefinitions(),
+            getResources(),
+            getTickets(),
+            getTicketActionsByOldBusiness(),
+            getTicketActionsByNewBusiness(),
+            getTransactions(),
+            getTransactionsBySourceAccounting()*/
+        );
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
@@ -1184,54 +1233,6 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         email_out_rate=in.readFloat();
         email_relay_burst=in.readCompressedInt();
         email_relay_rate=in.readFloat();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getParentBusiness(),
-            getCreatedBy()
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            createDependencyList(
-                getBrand()
-            ),
-            getChildBusinesses(),
-            getBusinessProfiles(),
-            getBusinessServers(),
-            getCreditCards(),
-            getServers(),
-            getServerFarms(),
-            getCreditCardProcessors(),
-            getCreditCardTransactions(),
-            getCreditCardTransactionsByCreditCardAccounting(),
-            getDisableLogs(),
-            getDNSZones(),
-            //getNetBinds(),
-            getIPAddresses(),
-            getUsernames(),
-            getEmailDomains(),
-            getLinuxGroups(),
-            getEncryptionKeys(),
-            getEmailPipes(),
-            getEmailSmtpRelays(),
-            getHttpdServers(),
-            getHttpdSites(),
-            getMonthlyCharges(),
-            getMonthlyChargesBySourceBusiness(),
-            getMysqlDatabases(),
-            //getMysqlServers(),
-            getNoticeLogs(),
-            getPackageDefinitions(),
-            getResources(),
-            getTickets(),
-            getTicketActionsByOldBusiness(),
-            getTicketActionsByNewBusiness(),
-            getTransactions(),
-            getTransactionsBySourceAccounting()
-        );
     }
 
     public void setAccounting(String accounting) throws SQLException, IOException {

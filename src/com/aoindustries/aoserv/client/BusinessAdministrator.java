@@ -14,6 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Set;
 
 /**
  * A <code>BusinessAdministrator</code> is a username and password pair, usually
@@ -156,13 +157,12 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    /* TODO
     @SchemaColumn(order=0, name="username", unique=true, description="the unique identifier for this admin")
-    public Username getUsername() throws SQLException, IOException {
-        Username usernameObject = service.connector.getUsernames().get(pkey);
-        if (usernameObject == null) throw new SQLException("Username not found: " + pkey);
+    public Username getUsername() throws RemoteException {
+        Username usernameObject = getService().getConnector().getUsernames().get(key);
+        if (usernameObject == null) throw new RemoteException("Username not found: " + key);
         return usernameObject;
-    }*/
+    }
 
     @SchemaColumn(order=1, name="password", description="the encrypted password for this admin")
     public String getPassword() {
@@ -244,14 +244,13 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     	return state;
     }
 
-    /* TODO
     @SchemaColumn(order=17, name="country", description="the country (if different than business)")
-    public CountryCode getCountry() throws SQLException, IOException {
+    public CountryCode getCountry() throws RemoteException {
         if(country == null) return null;
-        CountryCode countryCode=service.connector.getCountryCodes().get(country);
-        if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
+        CountryCode countryCode=getService().getConnector().getCountryCodes().get(country);
+        if(countryCode == null) throw new RemoteException("CountryCode not found: " + country);
         return countryCode;
-    }*/
+    }
 
     @SchemaColumn(order=18, name="zip", description="the zip code (if different than business)")
     public String getZIP() {
@@ -278,6 +277,40 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getUsername()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() {
+        return createDependencySet(
+            /* TODO
+            createDependencyList(
+                getMasterUser()
+            ),
+            getBusinessesByCreatedBy(),
+            getPermissions(),
+            getCreditCardsByCreatedBy(),
+            getCreditCardTransactionsByAuthorizationUsername(),
+            getCreditCardTransactionsByCaptureUsername(),
+            getCreditCardTransactionsByVoidUsername(),
+            getDisableLogsByDisabledBy(),
+            getMonthlyCharges(),
+            getMonthlyChargesByCreatedBy(),
+            getResources(),
+            getCreatedTickets(),
+            getCompletedSignupRequests(),
+            getTicketActions(),
+            getTicketActionsByOldAssignedTo(),
+            getTicketActionsByNewAssignedTo(),
+            getTicketAssignments(),
+            getTransactions()
+             */
+        );
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
@@ -512,37 +545,6 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         disable_log=in.readCompressedInt();
         can_switch_users=in.readBoolean();
         support_code = in.readNullUTF();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getUsername()
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            createDependencyList(
-                getMasterUser()
-            ),
-            getBusinessesByCreatedBy(),
-            getPermissions(),
-            getCreditCardsByCreatedBy(),
-            getCreditCardTransactionsByAuthorizationUsername(),
-            getCreditCardTransactionsByCaptureUsername(),
-            getCreditCardTransactionsByVoidUsername(),
-            getDisableLogsByDisabledBy(),
-            getMonthlyCharges(),
-            getMonthlyChargesByCreatedBy(),
-            getResources(),
-            getCreatedTickets(),
-            getCompletedSignupRequests(),
-            getTicketActions(),
-            getTicketActionsByOldAssignedTo(),
-            getTicketActionsByNewAssignedTo(),
-            getTicketAssignments(),
-            getTransactions()
-        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
