@@ -434,341 +434,341 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
 
     /*
      * TODO
-    AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts() throws RemoteException;
+    AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts();
 
-    AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources() throws RemoteException;
+    AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources();
 
-    AOServerService<CachedConnector,CachedConnectorFactory> getAoServers() throws RemoteException;
+    AOServerService<CachedConnector,CachedConnectorFactory> getAoServers();
 
-    AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions() throws RemoteException;
+    AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions();
 
-    AOServProtocolService<CachedConnector,CachedConnectorFactory> getAoservProtocols() throws RemoteException;
+    AOServProtocolService<CachedConnector,CachedConnectorFactory> getAoservProtocols();
 
-    AOSHCommandService<CachedConnector,CachedConnectorFactory> getAoshCommands() throws RemoteException;
+    AOSHCommandService<CachedConnector,CachedConnectorFactory> getAoshCommands();
 
-    ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures() throws RemoteException;
+    ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures();
 
-    BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions() throws RemoteException;
+    BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions();
 
-    BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions() throws RemoteException;
+    BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions();
 
-    BankAccountService<CachedConnector,CachedConnectorFactory> getBankAccounts() throws RemoteException;
+    BankAccountService<CachedConnector,CachedConnectorFactory> getBankAccounts();
 
-    BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes() throws RemoteException;
+    BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes();
 
-    BankTransactionService<CachedConnector,CachedConnectorFactory> getBankTransactions() throws RemoteException;
+    BankTransactionService<CachedConnector,CachedConnectorFactory> getBankTransactions();
 
-    BankService<CachedConnector,CachedConnectorFactory> getBanks() throws RemoteException;
+    BankService<CachedConnector,CachedConnectorFactory> getBanks();
 
-    BlackholeEmailAddressService<CachedConnector,CachedConnectorFactory> getBlackholeEmailAddresses() throws RemoteException;
+    BlackholeEmailAddressService<CachedConnector,CachedConnectorFactory> getBlackholeEmailAddresses();
 
-    BrandService<CachedConnector,CachedConnectorFactory> getBrands() throws RemoteException;
+    BrandService<CachedConnector,CachedConnectorFactory> getBrands();
      */
     public BusinessAdministratorService<CachedConnector,CachedConnectorFactory> getBusinessAdministrators() {
         return businessAdministrators;
     }
     /*
-    BusinessAdministratorPermissionService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorPermissions() throws RemoteException;
+    BusinessAdministratorPermissionService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorPermissions();
 
-    BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles() throws RemoteException;
+    BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles();
      */
     public BusinessService<CachedConnector,CachedConnectorFactory> getBusinesses() {
         return businesses;
     }
 
     /*
-    BusinessServerService<CachedConnector,CachedConnectorFactory> getBusinessServers() throws RemoteException;
+    BusinessServerService<CachedConnector,CachedConnectorFactory> getBusinessServers();
 
-    ClientJvmProfileService<CachedConnector,CachedConnectorFactory> getClientJvmProfiles() throws RemoteException;
+    ClientJvmProfileService<CachedConnector,CachedConnectorFactory> getClientJvmProfiles();
 
-    CountryCodeService<CachedConnector,CachedConnectorFactory> getCountryCodes() throws RemoteException;
+    CountryCodeService<CachedConnector,CachedConnectorFactory> getCountryCodes();
 
-    CreditCardProcessorService<CachedConnector,CachedConnectorFactory> getCreditCardProcessors() throws RemoteException;
+    CreditCardProcessorService<CachedConnector,CachedConnectorFactory> getCreditCardProcessors();
 
-    CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions() throws RemoteException;
+    CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions();
 
-    CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards() throws RemoteException;
+    CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards();
 
-    CvsRepositoryService<CachedConnector,CachedConnectorFactory> getCvsRepositories() throws RemoteException;
+    CvsRepositoryService<CachedConnector,CachedConnectorFactory> getCvsRepositories();
      */
     public DisableLogService<CachedConnector,CachedConnectorFactory> getDisableLogs() {
         return disabledLogs;
     }
     /*
-    DistroFileTypeService<CachedConnector,CachedConnectorFactory> getDistroFileTypes() throws RemoteException;
+    DistroFileTypeService<CachedConnector,CachedConnectorFactory> getDistroFileTypes();
 
-    DistroFileService<CachedConnector,CachedConnectorFactory> getDistroFiles() throws RemoteException;
+    DistroFileService<CachedConnector,CachedConnectorFactory> getDistroFiles();
 
-    DNSForbiddenZoneService<CachedConnector,CachedConnectorFactory> getDnsForbiddenZones() throws RemoteException;
+    DNSForbiddenZoneService<CachedConnector,CachedConnectorFactory> getDnsForbiddenZones();
 
-    DNSRecordService<CachedConnector,CachedConnectorFactory> getDnsRecords() throws RemoteException;
+    DNSRecordService<CachedConnector,CachedConnectorFactory> getDnsRecords();
 
-    DNSTLDService<CachedConnector,CachedConnectorFactory> getDnsTLDs() throws RemoteException;
+    DNSTLDService<CachedConnector,CachedConnectorFactory> getDnsTLDs();
 
-    DNSTypeService<CachedConnector,CachedConnectorFactory> getDnsTypes() throws RemoteException;
+    DNSTypeService<CachedConnector,CachedConnectorFactory> getDnsTypes();
 
-    DNSZoneService<CachedConnector,CachedConnectorFactory> getDnsZones() throws RemoteException;
+    DNSZoneService<CachedConnector,CachedConnectorFactory> getDnsZones();
 
-    EmailAddressService<CachedConnector,CachedConnectorFactory> getEmailAddresses() throws RemoteException;
+    EmailAddressService<CachedConnector,CachedConnectorFactory> getEmailAddresses();
 
-    EmailAttachmentBlockService<CachedConnector,CachedConnectorFactory> getEmailAttachmentBlocks() throws RemoteException;
+    EmailAttachmentBlockService<CachedConnector,CachedConnectorFactory> getEmailAttachmentBlocks();
 
-    EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> getEmailAttachmentTypes() throws RemoteException;
+    EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> getEmailAttachmentTypes();
 
-    EmailDomainService<CachedConnector,CachedConnectorFactory> getEmailDomains() throws RemoteException;
+    EmailDomainService<CachedConnector,CachedConnectorFactory> getEmailDomains();
 
-    EmailForwardingService<CachedConnector,CachedConnectorFactory> getEmailForwardings() throws RemoteException;
+    EmailForwardingService<CachedConnector,CachedConnectorFactory> getEmailForwardings();
 
-    EmailListAddressService<CachedConnector,CachedConnectorFactory> getEmailListAddresses() throws RemoteException;
+    EmailListAddressService<CachedConnector,CachedConnectorFactory> getEmailListAddresses();
 
-    EmailListService<CachedConnector,CachedConnectorFactory> getEmailLists() throws RemoteException;
+    EmailListService<CachedConnector,CachedConnectorFactory> getEmailLists();
 
-    EmailPipeAddressService<CachedConnector,CachedConnectorFactory> getEmailPipeAddresses() throws RemoteException;
+    EmailPipeAddressService<CachedConnector,CachedConnectorFactory> getEmailPipeAddresses();
 
-    EmailPipeService<CachedConnector,CachedConnectorFactory> getEmailPipes() throws RemoteException;
+    EmailPipeService<CachedConnector,CachedConnectorFactory> getEmailPipes();
 
-    EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelayTypes() throws RemoteException;
+    EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelayTypes();
 
-    EmailSmtpRelayService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelays() throws RemoteException;
+    EmailSmtpRelayService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelays();
 
-    EmailSmtpSmartHostDomainService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHostDomains() throws RemoteException;
+    EmailSmtpSmartHostDomainService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHostDomains();
 
-    EmailSmtpSmartHostService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHosts() throws RemoteException;
+    EmailSmtpSmartHostService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHosts();
 
-    EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> getEmailSpamAssassinIntegrationModes() throws RemoteException;
+    EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> getEmailSpamAssassinIntegrationModes();
 
-    EncryptionKeyService<CachedConnector,CachedConnectorFactory> getEncryptionKeys() throws RemoteException;
+    EncryptionKeyService<CachedConnector,CachedConnectorFactory> getEncryptionKeys();
 
-    ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories() throws RemoteException;
+    ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories();
 
-    FailoverFileLogService<CachedConnector,CachedConnectorFactory> getFailoverFileLogs() throws RemoteException;
+    FailoverFileLogService<CachedConnector,CachedConnectorFactory> getFailoverFileLogs();
 
-    FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> getFailoverFileReplications() throws RemoteException;
+    FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> getFailoverFileReplications();
 
-    FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> getFailoverFileSchedules() throws RemoteException;
+    FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> getFailoverFileSchedules();
 
-    FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> getFailoverMySQLReplications() throws RemoteException;
+    FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> getFailoverMySQLReplications();
 
-    FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings() throws RemoteException;
+    FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings();
 
-    FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers() throws RemoteException;
+    FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers();
 
-    HttpdBindService<CachedConnector,CachedConnectorFactory> getHttpdBinds() throws RemoteException;
+    HttpdBindService<CachedConnector,CachedConnectorFactory> getHttpdBinds();
 
-    HttpdJBossSiteService<CachedConnector,CachedConnectorFactory> getHttpdJBossSites() throws RemoteException;
+    HttpdJBossSiteService<CachedConnector,CachedConnectorFactory> getHttpdJBossSites();
 
-    HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions() throws RemoteException;
+    HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions();
 
-    HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes() throws RemoteException;
+    HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes();
 
-    HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols() throws RemoteException;
+    HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols();
 
-    HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers() throws RemoteException;
+    HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers();
 
-    HttpdSharedTomcatService<CachedConnector,CachedConnectorFactory> getHttpdSharedTomcats() throws RemoteException;
+    HttpdSharedTomcatService<CachedConnector,CachedConnectorFactory> getHttpdSharedTomcats();
 
-    HttpdSiteAuthenticatedLocationService<CachedConnector,CachedConnectorFactory> getHttpdSiteAuthenticatedLocations() throws RemoteException;
+    HttpdSiteAuthenticatedLocationService<CachedConnector,CachedConnectorFactory> getHttpdSiteAuthenticatedLocations();
 
-    HttpdSiteBindService<CachedConnector,CachedConnectorFactory> getHttpdSiteBinds() throws RemoteException;
+    HttpdSiteBindService<CachedConnector,CachedConnectorFactory> getHttpdSiteBinds();
 
-    HttpdSiteURLService<CachedConnector,CachedConnectorFactory> getHttpdSiteURLs() throws RemoteException;
+    HttpdSiteURLService<CachedConnector,CachedConnectorFactory> getHttpdSiteURLs();
 
-    HttpdSiteService<CachedConnector,CachedConnectorFactory> getHttpdSites() throws RemoteException;
+    HttpdSiteService<CachedConnector,CachedConnectorFactory> getHttpdSites();
 
-    HttpdStaticSiteService<CachedConnector,CachedConnectorFactory> getHttpdStaticSites() throws RemoteException;
+    HttpdStaticSiteService<CachedConnector,CachedConnectorFactory> getHttpdStaticSites();
 
-    HttpdTomcatContextService<CachedConnector,CachedConnectorFactory> getHttpdTomcatContexts() throws RemoteException;
+    HttpdTomcatContextService<CachedConnector,CachedConnectorFactory> getHttpdTomcatContexts();
 
-    HttpdTomcatDataSourceService<CachedConnector,CachedConnectorFactory> getHttpdTomcatDataSources() throws RemoteException;
+    HttpdTomcatDataSourceService<CachedConnector,CachedConnectorFactory> getHttpdTomcatDataSources();
 
-    HttpdTomcatParameterService<CachedConnector,CachedConnectorFactory> getHttpdTomcatParameters() throws RemoteException;
+    HttpdTomcatParameterService<CachedConnector,CachedConnectorFactory> getHttpdTomcatParameters();
 
-    HttpdTomcatSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSites() throws RemoteException;
+    HttpdTomcatSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSites();
 
-    HttpdTomcatSharedSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSharedSites() throws RemoteException;
+    HttpdTomcatSharedSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSharedSites();
 
-    HttpdTomcatStdSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatStdSites() throws RemoteException;
+    HttpdTomcatStdSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatStdSites();
 
-    HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions() throws RemoteException;
+    HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions();
 
-    HttpdWorkerService<CachedConnector,CachedConnectorFactory> getHttpdWorkers() throws RemoteException;
+    HttpdWorkerService<CachedConnector,CachedConnectorFactory> getHttpdWorkers();
 
-    IPAddressService<CachedConnector,CachedConnectorFactory> getIpAddresses() throws RemoteException;
+    IPAddressService<CachedConnector,CachedConnectorFactory> getIpAddresses();
     */
-    public LanguageService<CachedConnector,CachedConnectorFactory> getLanguages() throws RemoteException {
+    public LanguageService<CachedConnector,CachedConnectorFactory> getLanguages() {
         return languages;
     }
     /* TODO
-    LinuxAccAddressService<CachedConnector,CachedConnectorFactory> getLinuxAccAddresses() throws RemoteException;
+    LinuxAccAddressService<CachedConnector,CachedConnectorFactory> getLinuxAccAddresses();
 
-    LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes() throws RemoteException;
+    LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes();
 
-    LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts() throws RemoteException;
+    LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts();
 
-    LinuxGroupAccountService<CachedConnector,CachedConnectorFactory> getLinuxGroupAccounts() throws RemoteException;
+    LinuxGroupAccountService<CachedConnector,CachedConnectorFactory> getLinuxGroupAccounts();
 
-    LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes() throws RemoteException;
+    LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes();
 
-    LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups() throws RemoteException;
+    LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups();
 
-    LinuxIDService<CachedConnector,CachedConnectorFactory> getLinuxIDs() throws RemoteException;
+    LinuxIDService<CachedConnector,CachedConnectorFactory> getLinuxIDs();
 
-    LinuxServerAccountService<CachedConnector,CachedConnectorFactory> getLinuxServerAccounts() throws RemoteException;
+    LinuxServerAccountService<CachedConnector,CachedConnectorFactory> getLinuxServerAccounts();
 
-    LinuxServerGroupService<CachedConnector,CachedConnectorFactory> getLinuxServerGroups() throws RemoteException;
+    LinuxServerGroupService<CachedConnector,CachedConnectorFactory> getLinuxServerGroups();
 
-    MajordomoListService<CachedConnector,CachedConnectorFactory> getMajordomoLists() throws RemoteException;
+    MajordomoListService<CachedConnector,CachedConnectorFactory> getMajordomoLists();
 
-    MajordomoServerService<CachedConnector,CachedConnectorFactory> getMajordomoServers() throws RemoteException;
+    MajordomoServerService<CachedConnector,CachedConnectorFactory> getMajordomoServers();
 
-    MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions() throws RemoteException;
+    MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions();
 
-    MasterHistoryService<CachedConnector,CachedConnectorFactory> getMasterHistory() throws RemoteException;
+    MasterHistoryService<CachedConnector,CachedConnectorFactory> getMasterHistory();
 
-    MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts() throws RemoteException;
+    MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts();
 
-    MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers() throws RemoteException;
+    MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers();
 
-    MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers() throws RemoteException;
+    MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers();
 
-    MonthlyChargeService<CachedConnector,CachedConnectorFactory> getMonthlyCharges() throws RemoteException;
+    MonthlyChargeService<CachedConnector,CachedConnectorFactory> getMonthlyCharges();
 
-    MySQLDatabaseService<CachedConnector,CachedConnectorFactory> getMysqlDatabases() throws RemoteException;
+    MySQLDatabaseService<CachedConnector,CachedConnectorFactory> getMysqlDatabases();
 
-    MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers() throws RemoteException;
+    MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers();
 
-    MySQLReservedWordService<CachedConnector,CachedConnectorFactory> getMysqlReservedWords() throws RemoteException;
+    MySQLReservedWordService<CachedConnector,CachedConnectorFactory> getMysqlReservedWords();
 
-    MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers() throws RemoteException;
+    MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers();
 
-    MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers() throws RemoteException;
+    MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers();
 
-    NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds() throws RemoteException;
+    NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds();
 
-    NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs() throws RemoteException;
+    NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs();
 
-    NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices() throws RemoteException;
+    NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices();
 
-    NetPortService<CachedConnector,CachedConnectorFactory> getNetPorts() throws RemoteException;
+    NetPortService<CachedConnector,CachedConnectorFactory> getNetPorts();
 
-    NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols() throws RemoteException;
+    NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols();
 
-    NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects() throws RemoteException;
+    NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects();
 
-    NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs() throws RemoteException;
+    NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
 
-    NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes() throws RemoteException;
+    NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes();
 
-    OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> getOperatingSystemVersions() throws RemoteException;
+    OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> getOperatingSystemVersions();
 
-    OperatingSystemService<CachedConnector,CachedConnectorFactory> getOperatingSystems() throws RemoteException;
+    OperatingSystemService<CachedConnector,CachedConnectorFactory> getOperatingSystems();
     */
     public PackageCategoryService<CachedConnector,CachedConnectorFactory> getPackageCategories() {
         return packageCategories;
     }
     /*
-    PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> getPackageDefinitionLimits() throws RemoteException;
+    PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> getPackageDefinitionLimits();
 
-    PackageDefinitionService<CachedConnector,CachedConnectorFactory> getPackageDefinitions() throws RemoteException;
+    PackageDefinitionService<CachedConnector,CachedConnectorFactory> getPackageDefinitions();
 
-    PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes() throws RemoteException;
+    PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes();
 
-    PhysicalServerService<CachedConnector,CachedConnectorFactory> getPhysicalServers() throws RemoteException;
+    PhysicalServerService<CachedConnector,CachedConnectorFactory> getPhysicalServers();
 
-    PostgresDatabaseService<CachedConnector,CachedConnectorFactory> getPostgresDatabases() throws RemoteException;
+    PostgresDatabaseService<CachedConnector,CachedConnectorFactory> getPostgresDatabases();
 
-    PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings() throws RemoteException;
+    PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings();
 
-    PostgresReservedWordService<CachedConnector,CachedConnectorFactory> getPostgresReservedWords() throws RemoteException;
+    PostgresReservedWordService<CachedConnector,CachedConnectorFactory> getPostgresReservedWords();
 
-    PostgresServerUserService<CachedConnector,CachedConnectorFactory> getPostgresServerUsers() throws RemoteException;
+    PostgresServerUserService<CachedConnector,CachedConnectorFactory> getPostgresServerUsers();
 
-    PostgresServerService<CachedConnector,CachedConnectorFactory> getPostgresServers() throws RemoteException;
+    PostgresServerService<CachedConnector,CachedConnectorFactory> getPostgresServers();
 
-    PostgresUserService<CachedConnector,CachedConnectorFactory> getPostgresUsers() throws RemoteException;
+    PostgresUserService<CachedConnector,CachedConnectorFactory> getPostgresUsers();
 
-    PostgresVersionService<CachedConnector,CachedConnectorFactory> getPostgresVersions() throws RemoteException;
+    PostgresVersionService<CachedConnector,CachedConnectorFactory> getPostgresVersions();
 
-    PrivateFTPServerService<CachedConnector,CachedConnectorFactory> getPrivateFTPServers() throws RemoteException;
+    PrivateFTPServerService<CachedConnector,CachedConnectorFactory> getPrivateFTPServers();
 
-    ProcessorTypeService<CachedConnector,CachedConnectorFactory> getProcessorTypes() throws RemoteException;
+    ProcessorTypeService<CachedConnector,CachedConnectorFactory> getProcessorTypes();
 
-    ProtocolService<CachedConnector,CachedConnectorFactory> getProtocols() throws RemoteException;
+    ProtocolService<CachedConnector,CachedConnectorFactory> getProtocols();
 
-    RackService<CachedConnector,CachedConnectorFactory> getRacks() throws RemoteException;
+    RackService<CachedConnector,CachedConnectorFactory> getRacks();
 
-    ResellerService<CachedConnector,CachedConnectorFactory> getResellers() throws RemoteException;
+    ResellerService<CachedConnector,CachedConnectorFactory> getResellers();
 */
     public ResourceTypeService<CachedConnector,CachedConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }
 /* TODO
-    ResourceService<CachedConnector,CachedConnectorFactory> getResources() throws RemoteException;
+    ResourceService<CachedConnector,CachedConnectorFactory> getResources();
 
-    ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms() throws RemoteException;
+    ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms();
 
-    ServerTable getServers() throws RemoteException;
+    ServerTable getServers();
 
-    ShellService<CachedConnector,CachedConnectorFactory> getShells() throws RemoteException;
+    ShellService<CachedConnector,CachedConnectorFactory> getShells();
 
-    SignupRequestOptionService<CachedConnector,CachedConnectorFactory> getSignupRequestOptions() throws RemoteException;
+    SignupRequestOptionService<CachedConnector,CachedConnectorFactory> getSignupRequestOptions();
 
-    SignupRequestService<CachedConnector,CachedConnectorFactory> getSignupRequests() throws RemoteException;
+    SignupRequestService<CachedConnector,CachedConnectorFactory> getSignupRequests();
 
-    SpamEmailMessageService<CachedConnector,CachedConnectorFactory> getSpamEmailMessages() throws RemoteException;
+    SpamEmailMessageService<CachedConnector,CachedConnectorFactory> getSpamEmailMessages();
 
-    SystemEmailAliasService<CachedConnector,CachedConnectorFactory> getSystemEmailAliases() throws RemoteException;
+    SystemEmailAliasService<CachedConnector,CachedConnectorFactory> getSystemEmailAliases();
 
-    TechnologyService<CachedConnector,CachedConnectorFactory> getTechnologies() throws RemoteException;
+    TechnologyService<CachedConnector,CachedConnectorFactory> getTechnologies();
 
-    TechnologyClassService<CachedConnector,CachedConnectorFactory> getTechnologyClasses() throws RemoteException;
+    TechnologyClassService<CachedConnector,CachedConnectorFactory> getTechnologyClasses();
 
-    TechnologyNameService<CachedConnector,CachedConnectorFactory> getTechnologyNames() throws RemoteException;
+    TechnologyNameService<CachedConnector,CachedConnectorFactory> getTechnologyNames();
 
-    TechnologyVersionService<CachedConnector,CachedConnectorFactory> getTechnologyVersions() throws RemoteException;
+    TechnologyVersionService<CachedConnector,CachedConnectorFactory> getTechnologyVersions();
 
-    TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes() throws RemoteException;
+    TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes();
 
-    TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions() throws RemoteException;
+    TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions();
 
-    TicketAssignmentService<CachedConnector,CachedConnectorFactory> getTicketAssignments() throws RemoteException;
+    TicketAssignmentService<CachedConnector,CachedConnectorFactory> getTicketAssignments();
 
-    TicketBrandCategoryService<CachedConnector,CachedConnectorFactory> getTicketBrandCategories() throws RemoteException;
+    TicketBrandCategoryService<CachedConnector,CachedConnectorFactory> getTicketBrandCategories();
     */
-    public TicketCategoryService<CachedConnector,CachedConnectorFactory> getTicketCategories() throws RemoteException {
+    public TicketCategoryService<CachedConnector,CachedConnectorFactory> getTicketCategories() {
         return ticketCategories;
     }
 
-    public TicketPriorityService<CachedConnector,CachedConnectorFactory> getTicketPriorities() throws RemoteException {
+    public TicketPriorityService<CachedConnector,CachedConnectorFactory> getTicketPriorities() {
         return ticketPriorities;
     }
 
-    public TicketStatusService<CachedConnector,CachedConnectorFactory> getTicketStatuses() throws RemoteException {
+    public TicketStatusService<CachedConnector,CachedConnectorFactory> getTicketStatuses() {
         return ticketStatuses;
     }
 
-    public TicketTypeService<CachedConnector,CachedConnectorFactory> getTicketTypes() throws RemoteException {
+    public TicketTypeService<CachedConnector,CachedConnectorFactory> getTicketTypes() {
         return ticketTypes;
     }
     /* TODO
-    TicketService<CachedConnector,CachedConnectorFactory> getTickets() throws RemoteException;
+    TicketService<CachedConnector,CachedConnectorFactory> getTickets();
     */
-    public TimeZoneService<CachedConnector,CachedConnectorFactory> getTimeZones() throws RemoteException {
+    public TimeZoneService<CachedConnector,CachedConnectorFactory> getTimeZones() {
         return timeZones;
     }
     /* TODO
-    TransactionTypeService<CachedConnector,CachedConnectorFactory> getTransactionTypes() throws RemoteException;
+    TransactionTypeService<CachedConnector,CachedConnectorFactory> getTransactionTypes();
 
-    TransactionService<CachedConnector,CachedConnectorFactory> getTransactions() throws RemoteException;
+    TransactionService<CachedConnector,CachedConnectorFactory> getTransactions();
 
-    USStateService<CachedConnector,CachedConnectorFactory> getUsStates() throws RemoteException;
+    USStateService<CachedConnector,CachedConnectorFactory> getUsStates();
 
-    UsernameService<CachedConnector,CachedConnectorFactory> getUsernames() throws RemoteException;
+    UsernameService<CachedConnector,CachedConnectorFactory> getUsernames();
 
-    VirtualDiskService<CachedConnector,CachedConnectorFactory> getVirtualDisks() throws RemoteException;
+    VirtualDiskService<CachedConnector,CachedConnectorFactory> getVirtualDisks();
 
-    VirtualServerService<CachedConnector,CachedConnectorFactory> getVirtualServers() throws RemoteException;
+    VirtualServerService<CachedConnector,CachedConnectorFactory> getVirtualServers();
 
-    WhoisHistoryService<CachedConnector,CachedConnectorFactory> getWhoisHistory() throws RemoteException;
+    WhoisHistoryService<CachedConnector,CachedConnectorFactory> getWhoisHistory();
  */
 }
