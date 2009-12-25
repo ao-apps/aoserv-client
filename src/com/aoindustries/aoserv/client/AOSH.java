@@ -6,55 +6,77 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.security.LoginException;
 import com.aoindustries.util.ShellInterpreter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.CharArrayReader;
+import java.io.CharArrayWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.sql.SQLException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
  * <code>AOSH</code> is a command interpreter and scripting language
  * based on the Bourne shell.  It may be used to control the
  * <code>AOServ Client</code> utilities.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class AOSH extends ShellInterpreter {
 
-    private static final Logger logger = Logger.getLogger(AOSH.class.getName());
+    private static final Reader nullInput=new CharArrayReader(new char[0]);
 
-    private static final InputStream nullInput=new ByteArrayInputStream(new byte[0]);
+    /**
+     * Built-in commands.
+     *
+     * TODO: Add to help command.
+     */
+    public enum BuiltIn {
+        clear,
+        echo,
+        exit,
+        jobs,
+        repeat,
+        sleep
+    }
 
-    final private AOServConnector connector;
+    static class CommandResult {
+        final String out;
+        final String err;
+        CommandResult(String out, String err) {
+            this.out = out;
+            this.err = err;
+        }
+    }
 
-    public AOSH(AOServConnector connector, InputStream in, TerminalWriter out, TerminalWriter err) {
-	super(in, out, err);
+    static CommandResult executeCommand(AOServConnector<?,?> connector, String[] args) throws IOException {
+        CharArrayWriter outChars=new CharArrayWriter();
+        TerminalWriter out = new TerminalWriter(outChars);
+        out.setEnabled(false);
+        CharArrayWriter errChars=new CharArrayWriter();
+        TerminalWriter err = new TerminalWriter(errChars);
+        err.setEnabled(false);
+        AOSH sh=new AOSH(connector, nullInput, out, err);
+        sh.handleCommand(args);
+        out.flush();
+        err.flush();
+        return new CommandResult(outChars.toString(), errChars.toString());
+    }
+
+    final private AOServConnector<?,?> connector;
+
+    public AOSH(AOServConnector<?,?> connector, Reader in, TerminalWriter out, TerminalWriter err) {
+    	super(in, out, err);
         this.connector=connector;
     }
 
-    public AOSH(AOServConnector connector, InputStream in, TerminalWriter out, TerminalWriter err, String[] args) {
-	super(in, out, err, args);
+    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
+    	super(in, out, err, args);
         this.connector=connector;
     }
 
-    public AOSH(AOServConnector connector, InputStream in, OutputStream out, OutputStream err) {
-	super(in, out, err);
-        this.connector=connector;
-    }
-
-    public AOSH(AOServConnector connector, InputStream in, OutputStream out, OutputStream err, String[] args) {
-	super(in, out, err, args);
-        this.connector=connector;
-    }
-
+    /* TODO
     static boolean checkMinParamCount(String function, String[] args, int minCount, PrintWriter err) {
         int paramCount=args.length-1;
         if(paramCount<minCount) {
@@ -88,6 +110,7 @@ final public class AOSH extends ShellInterpreter {
         }
         return true;
     }
+    */
 
     private void echo(String[] args) {
         for(int c=1;c<args.length;c++) {
@@ -98,26 +121,13 @@ final public class AOSH extends ShellInterpreter {
         out.flush();
     }
 
-    static String executeCommand(AOServConnector connector, String[] args) throws IOException, SQLException {
-        ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        TerminalWriter out=new TerminalWriter(bytes);
-        out.setEnabled(false);
-        AOSH sh=new AOSH(connector, nullInput, out, out);
-        sh.handleCommand(args);
-        out.flush();
-        return new String(bytes.toByteArray());
-    }
-
     protected String getName() {
         return "aosh";
     }
 
-    protected String getPrompt() throws SQLException, IOException {
-        return '['+connector.getThisBusinessAdministrator().toString(Locale.getDefault())+'@'+connector.getHostname()+"]$ ";
+    protected String getPrompt() throws IOException {
+        return ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.prompt", connector.getConnectAs());
     }
-
-    /** Avoid repeated array copies. */
-    private static final int numTables = SchemaTable.TableID.values().length;
 
     /**
      * Processes one command and returns.
@@ -126,28 +136,29 @@ final public class AOSH extends ShellInterpreter {
      *
      * @return  <code>true</code> if more commands should be processed
      */
-    protected boolean handleCommand(String[] args) throws IOException, SQLException {
+    protected boolean handleCommand(String[] args) throws IOException {
         int argCount=args.length;
         if(argCount>0) {
             String command=args[0];
-            if(AOSHCommand.EXIT.equalsIgnoreCase(command)) {
+            if(BuiltIn.exit.name().equalsIgnoreCase(command)) {
                 if(argCount!=1) {
-                    err.println("aosh: "+AOSHCommand.EXIT+": too many parameters");
+                    err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.tooManyParameters", BuiltIn.exit));
                     err.flush();
                 } else return false;
             } else {
-                if(AOSHCommand.CLEAR.equalsIgnoreCase(command)) clear(args);
-                else if(AOSHCommand.ECHO.equalsIgnoreCase(command)) echo(args);
-                else if(AOSHCommand.INVALIDATE.equalsIgnoreCase(command)) invalidate(args);
-                else if(AOSHCommand.JOBS.equalsIgnoreCase(command)) jobs(args);
-                else if(AOSHCommand.PING.equalsIgnoreCase(command)) ping(args);
-                else if(AOSHCommand.REPEAT.equalsIgnoreCase(command)) repeat(args);
-                else if(AOSHCommand.SLEEP.equalsIgnoreCase(command)) sleep(args);
-                else if(AOSHCommand.SU.equalsIgnoreCase(command)) su(args);
-                else if(AOSHCommand.TIME.equalsIgnoreCase(command)) time(args);
-                else if(AOSHCommand.WHOAMI.equalsIgnoreCase(command)) whoami(args);
+                if(BuiltIn.clear.name().equalsIgnoreCase(command)) clear(args);
+                else if(BuiltIn.echo.name().equalsIgnoreCase(command)) echo(args);
+                // TODO: else if(AOSHCommand.INVALIDATE.equalsIgnoreCase(command)) invalidate(args);
+                else if(BuiltIn.jobs.name().equalsIgnoreCase(command)) jobs(args);
+                // TODO: else if(AOSHCommand.PING.equalsIgnoreCase(command)) ping(args);
+                else if(BuiltIn.repeat.name().equalsIgnoreCase(command)) repeat(args);
+                // TODO: else if(AOSHCommand.SLEEP.equalsIgnoreCase(command)) sleep(args);
+                // TODO: else if(AOSHCommand.SU.equalsIgnoreCase(command)) su(args);
+                // TODO: else if(AOSHCommand.TIME.equalsIgnoreCase(command)) time(args);
+                // TODO: else if(AOSHCommand.WHOAMI.equalsIgnoreCase(command)) whoami(args);
                 else {
                     boolean done=false;
+                    /* TODO
                     // Use the aosh_commands table for faster lookups
                     String lowerCommand=command.toLowerCase();
                     AOSHCommand aoshCommand=connector.getAoshCommands().get(lowerCommand);
@@ -156,16 +167,16 @@ final public class AOSH extends ShellInterpreter {
                         done=table.handleCommand(args, in, out, err, isInteractive());
                         if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+lowerCommand+"', table='"+table.getTableName()+'\'');
                     }
-                    /*
-                    for(int c=0;c<numTables;c++) {
-                        AOServTable table=connector.getTable(c);
-                        if(table.handleCommand(args, in, out, err, isInteractive())) {
-                            done=true;
-                            break;
-                        }
-                    }*/
+                    //for(int c=0;c<numTables;c++) {
+                    //    AOServTable table=connector.getTable(c);
+                    //    if(table.handleCommand(args, in, out, err, isInteractive())) {
+                    //        done=true;
+                    //        break;
+                    //    }
+                    //}
+                     */
                     if(!done) {
-                        err.println("aosh: "+command+": command not found");
+                        err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.commandNotFound", command));
                         err.flush();
                     }
                 }
@@ -174,7 +185,8 @@ final public class AOSH extends ShellInterpreter {
         return true;
     }
 
-    private void invalidate(String[] args) throws IllegalArgumentException, SQLException, IOException {
+    /* TODO
+    private void invalidate(String[] args) throws IllegalArgumentException, IOException {
         if(checkRangeParamCount(AOSHCommand.INVALIDATE, args, 1, 2, err)) {
             String tableName=args[1];
             SchemaTableTable schemaTableTable=connector.getSchemaTables();
@@ -194,54 +206,71 @@ final public class AOSH extends ShellInterpreter {
                 err.flush();
             }
         }
-    }
+    }*/
 
     public static void main(String[] args) {
-        TerminalWriter out=new TerminalWriter(System.out);
-        TerminalWriter err=new TerminalWriter(System.err);
+        Reader in = new InputStreamReader(System.in);
+        TerminalWriter out = new TerminalWriter(new OutputStreamWriter(System.out));
+        TerminalWriter err = new TerminalWriter(new OutputStreamWriter(System.err));
         try {
-            String username=getConfigUsername(System.in, err);
-            String password=getConfigPassword(System.in, err);
-            AOServConnector connector=AOServConnector.getConnector(username, password, logger);
-            AOSH aosh=new AOSH(connector, System.in, out, err, args);
+            String username = getConfigUsername(in, err);
+            String password = getConfigPassword(in, err);
+            AOServConnector<?,?> connector = AOServClientConfiguration.getConnector(username, password);
+            AOSH aosh = new AOSH(connector, in, out, err, args);
             aosh.run();
             if(aosh.isInteractive()) {
                 out.println();
                 out.flush();
             }
         } catch(IOException exc) {
-            err.println("aosh: unable to connect: "+exc.getMessage());
+            err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.main.IOException", exc.getMessage()));
+            err.flush();
+        } catch(LoginException exc) {
+            err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.main.LoginException", exc.getMessage()));
             err.flush();
         }
     }
 
-    public static String getConfigUsername(InputStream in, TerminalWriter err) throws IOException {
+    public static String getConfigUsername(Reader in, TerminalWriter err) throws IOException {
         String username=AOServClientConfiguration.getUsername();
         if(username==null || username.length()==0) {
             // Prompt for the username
-            err.print("Username: ");
-            err.flush();
-            username=readLine(in);
+            err.print(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.prompt.username"));
+            err.echoOff();
+            try {
+                err.flush();
+                username = readLine(in);
+            } finally {
+                err.echoOn();
+                err.flush();
+            }
         }
         return username;
     }
-    
-    public static String getConfigPassword(InputStream in, TerminalWriter err) throws IOException {
+
+    public static String getConfigPassword(Reader in, TerminalWriter err) throws IOException {
         String password=AOServClientConfiguration.getPassword();
         if(password==null || password.length()==0) {
             // Prompt for the password
+            err.print(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.prompt.password"));
             err.print("Password: ");
-            err.flush();
-            password=readLine(in);
-            err.flush();
+            err.echoOff();
+            try {
+                err.flush();
+                password=readLine(in);
+            } finally {
+                err.echoOn();
+                err.flush();
+            }
         }
         return password;
     }
 
-    protected ShellInterpreter newShellInterpreter(InputStream in, TerminalWriter out, TerminalWriter err, String[] args) {
+    protected ShellInterpreter newShellInterpreter(Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
         return new AOSH(connector, in, out, err, args);
     }
 
+    /* TODO
     static boolean parseBoolean(String S, String field) {
         if(
             S.equalsIgnoreCase("true")
@@ -341,27 +370,27 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    private void ping(String[] args) throws IOException, SQLException {
+    private void ping(String[] args) throws IOException {
         if(checkParamCount(AOSHCommand.PING, args, 0, err)) {
             out.print(connector.getSimpleAOClient().ping());
             out.println(" ms");
             out.flush();
         }
     }
-
-    public static String readLine(InputStream in) throws IOException {
+    */
+    public static String readLine(Reader in) throws IOException {
         StringBuilder SB=new StringBuilder();
         readLine(in, SB);
         return SB.toString();
     }
     
-    public static void readLine(InputStream in, StringBuilder SB) throws IOException {
+    public static void readLine(Reader in, StringBuilder SB) throws IOException {
         SB.setLength(0);
         int ch;
         while((ch=in.read())!=-1 && ch!='\n') if(ch!='\r') SB.append((char)ch);
     }
 
-    private void repeat(String[] args) throws IOException, SQLException {
+    private void repeat(String[] args) throws IOException {
         int argCount=args.length;
         if(argCount>2) {
             try {
@@ -372,21 +401,20 @@ final public class AOSH extends ShellInterpreter {
 
                     for(int c=0;c<count;c++) handleCommand(newArgs);
                 } else {
-                    err.print("aosh: "+AOSHCommand.REPEAT+": invalid loop count: ");
-                    err.println(count);
+                    err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.invalidLoopCount", BuiltIn.repeat, count));
                     err.flush();
                 }
             } catch(NumberFormatException nfe) {
-                err.print("aosh: "+AOSHCommand.REPEAT+": invalid loop count: ");
-                err.println(args[1]);
+                err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.invalidLoopCount", BuiltIn.repeat, args[1]));
                 err.flush();
             }
         } else {
-            err.println("aosh: "+AOSHCommand.REPEAT+": not enough parameters");
+            err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.notEnoughParameters", BuiltIn.repeat));
             err.flush();
         }
     }
 
+    /* TODO
     private void sleep(String[] args) {
         if(args.length>1) {
             try {
@@ -430,7 +458,7 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    private void time(String[] args) throws IOException, SQLException {
+    private void time(String[] args) throws IOException {
         int argCount=args.length;
         if(argCount>1) {
             String[] newArgs=new String[argCount-1];
@@ -456,7 +484,7 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    private void whoami(String[] args) throws SQLException, IOException {
+    private void whoami(String[] args) throws IOException {
         if(args.length==1) {
             out.println(connector.getThisBusinessAdministrator().getUsername().getUsername());
             out.flush();
@@ -464,5 +492,5 @@ final public class AOSH extends ShellInterpreter {
             err.println("aosh: "+AOSHCommand.WHOAMI+": too many parameters");
             err.flush();
         }
-    }
+    }*/
 }
