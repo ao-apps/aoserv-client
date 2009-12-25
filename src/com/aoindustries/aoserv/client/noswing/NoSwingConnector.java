@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.noswing;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
+import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
@@ -42,7 +43,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingAOServerDaemonHostService aoserverDaemonHosts;
     final NoSwingAOServerResourceService aoserverResources;
     final NoSwingAOServerService aoservers;
+     */
     final NoSwingAOServPermissionService aoservPermissions;
+    /* TODO
     final NoSwingAOServProtocolService aoservProtocols;
     final NoSwingAOSHCommandService aoshCommands;
     final NoSwingArchitectureService architectures;
@@ -225,7 +228,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         aoserverDaemonHosts = new NoSwingAOServerDaemonHostService(this, wrapped.getAOServerDaemonHosts());
         aoserverResources = new NoSwingAOServerResourceService(this, wrapped.getAOServerResources());
         aoservers = new NoSwingAOServerService(this, wrapped.getAOServers());
-        aoservPermissions = new NoSwingAOServPermissionService(this, wrapped.getAOServPermissions());
+         */
+        aoservPermissions = new NoSwingAOServPermissionService(this, wrapped.getAoservPermissions());
+        /* TODO
         aoservProtocols = new NoSwingAOServProtocolService(this, wrapped.getAOServProtocols());
         aoshCommands = new NoSwingAOSHCommandService(this, wrapped.getAOSHCommands());
         architectures = new NoSwingArchitectureService(this, wrapped.getArchitectures());
@@ -447,9 +452,11 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public AOServerResourceService<NoSwingConnector,NoSwingConnectorFactory> getAoServerResources() throws RemoteException;
 
     public AOServerService<NoSwingConnector,NoSwingConnectorFactory> getAoServers() throws RemoteException;
-
-    public AOServPermissionService<NoSwingConnector,NoSwingConnectorFactory> getAoservPermissions() throws RemoteException;
-
+    */
+    public AOServPermissionService<NoSwingConnector,NoSwingConnectorFactory> getAoservPermissions() throws RemoteException {
+        return aoservPermissions;
+    }
+    /* TODO
     public AOServProtocolService<NoSwingConnector,NoSwingConnectorFactory> getAoservProtocols() throws RemoteException;
 
     public AOSHCommandService<NoSwingConnector,NoSwingConnectorFactory> getAoshCommands() throws RemoteException;

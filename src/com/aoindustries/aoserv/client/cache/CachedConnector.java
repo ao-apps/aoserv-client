@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.cache;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
+import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
@@ -45,7 +46,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedAOServerDaemonHostService aoserverDaemonHosts;
     final CachedAOServerResourceService aoserverResources;
     final CachedAOServerService aoservers;
+     */
     final CachedAOServPermissionService aoservPermissions;
+    /* TODO
     final CachedAOServProtocolService aoservProtocols;
     final CachedAOSHCommandService aoshCommands;
     final CachedArchitectureService architectures;
@@ -230,7 +233,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAOServerDaemonHosts());
         aoserverResources = new CachedAOServerResourceService(this, wrapped.getAOServerResources());
         aoservers = new CachedAOServerService(this, wrapped.getAOServers());
-        aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAOServPermissions());
+         */
+        aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAoservPermissions());
+        /* TODO
         aoservProtocols = new CachedAOServProtocolService(this, wrapped.getAOServProtocols());
         aoshCommands = new CachedAOSHCommandService(this, wrapped.getAOSHCommands());
         architectures = new CachedArchitectureService(this, wrapped.getArchitectures());
@@ -449,9 +454,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources();
 
     public AOServerService<CachedConnector,CachedConnectorFactory> getAoServers();
-
-    public AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions();
-
+    */
+    public AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions() {
+        return aoservPermissions;
+    }
+    /* TODO
     public AOServProtocolService<CachedConnector,CachedConnectorFactory> getAoservProtocols();
 
     public AOSHCommandService<CachedConnector,CachedConnectorFactory> getAoshCommands();

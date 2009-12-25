@@ -6,6 +6,9 @@ package com.aoindustries.aoserv.client.command;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.ServiceName;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -15,10 +18,20 @@ import java.util.Locale;
  * @author  AO Industries, Inc.
  */
 public enum CommandName {
-    desc(DescribeCommand.class, null),
+
+    describe(DescribeCommand.class, null)
     // TODO: select(SelectCommand.class, null),
     // TODO: show(ShowCommand.class, null);
     ;
+
+    /**
+     * An unmodifiable list of all command names.
+     */
+    public static final List<CommandName> values = Collections.unmodifiableList(
+        Arrays.asList(
+            values()
+        )
+    );
 
     private final Class<? extends AOServCommand> commandClass;
     private final ServiceName serviceName;

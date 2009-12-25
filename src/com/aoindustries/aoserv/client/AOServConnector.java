@@ -76,9 +76,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     AOServerResourceService<C,F> getAoServerResources() throws RemoteException;
 
     AOServerService<C,F> getAoServers() throws RemoteException;
-
+    */
     AOServPermissionService<C,F> getAoservPermissions() throws RemoteException;
-
+    /* TODO
     AOServProtocolService<C,F> getAoservProtocols() throws RemoteException;
 
     AOSHCommandService<C,F> getAoshCommands() throws RemoteException;

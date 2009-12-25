@@ -29,8 +29,8 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     final int parent;
     final String name;
 
-    public TicketCategory(TicketCategoryService<?,?> table, int pkey, int parent, String name) {
-        super(table, pkey);
+    public TicketCategory(TicketCategoryService<?,?> service, int pkey, int parent, String name) {
+        super(service, pkey);
         this.parent = parent;
         this.name = name.intern();
     }

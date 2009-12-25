@@ -18,7 +18,9 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.CONSTRUCTOR)
-public @interface Syntax {
-    String value();
+@Target(ElementType.PARAMETER)
+public @interface Param {
+    String name();
+    boolean required();
+    String syntax();
 }

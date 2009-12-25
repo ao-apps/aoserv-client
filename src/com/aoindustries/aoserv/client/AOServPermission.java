@@ -5,25 +5,18 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.i18n.LocalizedToString;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Locale;
 
 /**
  * All of the permissions within the system.
  *
- * @version  1.0
- *
  * @author  AO Industries, Inc.
  */
-final public class AOServPermission extends GlobalObjectStringKey<AOServPermission> {
+final public class AOServPermission extends AOServObjectStringKey<AOServPermission> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_SORT_ORDER_name = "sort_order";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The possible permissions.
@@ -79,50 +72,47 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
             return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+name()+".toString");
         }
     }
+    // </editor-fold>
 
-    // From database
-    private short sort_order;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private short sort_order;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return sort_order;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public AOServPermission(AOServPermissionService<?,?> service, String name, short sort_order) {
+        super(service, name);
+        this.sort_order = sort_order;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(AOServPermission other) {
+        return compare(sort_order, other.sort_order);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", unique=true, description="the unique name of the permission")
+    public String getName() {
+        return key;
     }
 
+    @SchemaColumn(order=1, name="sort_order", unique=true, description="the sort order for the permission")
+    public short getSortOrder() {
+        return sort_order;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+key+".toString");
     }
 
     /**
      * Gets the locale-specific description of this permission.
      */
     public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+pkey+".description");
+        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+key+".description");
     }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.AOSERV_PERMISSIONS;
-    }
-
-    public String getName() {
-        return pkey;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        sort_order = result.getShort(2);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        sort_order = in.readShort();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeShort(sort_order);
-    }
+    // </editor-fold>
 }

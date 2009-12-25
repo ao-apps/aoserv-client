@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.retry;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
+import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
@@ -57,7 +58,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryAOServerDaemonHostService aoserverDaemonHosts;
     final RetryAOServerResourceService aoserverResources;
     final RetryAOServerService aoservers;
+     */
     final RetryAOServPermissionService aoservPermissions;
+    /* TODO
     final RetryAOServProtocolService aoservProtocols;
     final RetryAOSHCommandService aoshCommands;
     final RetryArchitectureService architectures;
@@ -247,7 +250,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         aoserverDaemonHosts = new RetryAOServerDaemonHostService(this);
         aoserverResources = new RetryAOServerResourceService(this);
         aoservers = new RetryAOServerService(this);
+         */
         aoservPermissions = new RetryAOServPermissionService(this);
+        /* TODO
         aoservProtocols = new RetryAOServProtocolService(this);
         aoshCommands = new RetryAOSHCommandService(this);
         architectures = new RetryArchitectureService(this);
@@ -587,9 +592,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public AOServerResourceService<RetryConnector,RetryConnectorFactory> getAoServerResources();
 
     public AOServerService<RetryConnector,RetryConnectorFactory> getAoServers();
-
-    public AOServPermissionService<RetryConnector,RetryConnectorFactory> getAoservPermissions();
-
+    */
+    public AOServPermissionService<RetryConnector,RetryConnectorFactory> getAoservPermissions() {
+        return aoservPermissions;
+    }
+    /* TODO
     public AOServProtocolService<RetryConnector,RetryConnectorFactory> getAoservProtocols();
 
     public AOSHCommandService<RetryConnector,RetryConnectorFactory> getAoshCommands();
