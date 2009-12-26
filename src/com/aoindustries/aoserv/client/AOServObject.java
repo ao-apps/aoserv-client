@@ -275,20 +275,6 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         );
     }
 
-    final static class MethodColumn extends Column {
-
-        private final Method method;
-
-        MethodColumn(String columnName, boolean unique, Method method) {
-            super(columnName, unique);
-            this.method = method;
-        }
-
-        Method getMethod() {
-            return method;
-        }
-    }
-
     private static final ConcurrentMap<Class<? extends AOServObject>,List<MethodColumn>> columns = new ConcurrentHashMap<Class<? extends AOServObject>, List<MethodColumn>>();
 
     /**
@@ -311,7 +297,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
                     int newSize = order+1;
                     newColumns.ensureCapacity(newSize);
                     while(newColumns.size()<newSize) newColumns.add(null);
-                    if(newColumns.set(order, new MethodColumn(cname, schemaColumn.unique(), method))!=null) throw new AssertionError("Column index found twice: "+clazz.getName()+"->"+order);
+                    if(newColumns.set(order, new MethodColumn(cname, schemaColumn.unique(), method, schemaColumn))!=null) throw new AssertionError("Column index found twice: "+clazz.getName()+"->"+order);
                 }
             }
             int size = newColumns.size();

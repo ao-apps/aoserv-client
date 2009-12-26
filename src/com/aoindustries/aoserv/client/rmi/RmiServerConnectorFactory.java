@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.rmi;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
+import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.rmi.RMIClientSocketFactorySSL;
 import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
@@ -83,16 +84,45 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
         this.wrapped = wrapped;
     }
 
+    private final AOServConnectorFactoryCache<C,F> connectors = new AOServConnectorFactoryCache<C,F>();
+
+    public C getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+        synchronized(connectors) {
+            C connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+            if(connector!=null) {
+                connector.setLocale(locale);
+            } else {
+                connector = newConnector(
+                    locale,
+                    connectAs,
+                    authenticateAs,
+                    password,
+                    daemonServer
+                );
+            }
+            return connector;
+        }
+    }
+
     /**
      * Connectors are exported as they are created.
      */
     public C newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
-        C connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
-        UnicastRemoteObject.exportObject(connector, port, csf, ssf);
-        for(AOServService<C,F,?,?> service : connector.getServices().values()) {
-            UnicastRemoteObject.exportObject(service, port, csf, ssf);
+        synchronized(connectors) {
+            C connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+            UnicastRemoteObject.exportObject(connector, port, csf, ssf);
+            for(AOServService<C,F,?,?> service : connector.getServices().values()) {
+                UnicastRemoteObject.exportObject(service, port, csf, ssf);
+            }
+            connectors.put(
+                connectAs,
+                authenticateAs,
+                password,
+                daemonServer,
+                connector
+            );
+            return connector;
         }
-        return connector;
     }
 
     // TODO: Unexport and shutdown idle connectors.

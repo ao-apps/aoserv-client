@@ -5,8 +5,14 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.command.AOServPermissionException;
+import com.aoindustries.aoserv.client.command.CommandName;
+import com.aoindustries.aoserv.client.command.Param;
+import com.aoindustries.aoserv.client.command.ValidationException;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.security.LoginException;
+import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ShellInterpreter;
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
@@ -14,7 +20,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * <code>AOSH</code> is a command interpreter and scripting language
@@ -24,6 +36,8 @@ import java.util.Locale;
  * @author  AO Industries, Inc.
  */
 final public class AOSH extends ShellInterpreter {
+
+    private static final String eol = System.getProperty("line.separator");
 
     private static final Reader nullInput=new CharArrayReader(new char[0]);
 
@@ -38,7 +52,10 @@ final public class AOSH extends ShellInterpreter {
         exit,
         jobs,
         repeat,
-        sleep
+        sleep,
+        su,
+        time,
+        whoami
     }
 
     static class CommandResult {
@@ -62,6 +79,60 @@ final public class AOSH extends ShellInterpreter {
         out.flush();
         err.flush();
         return new CommandResult(outChars.toString(), errChars.toString());
+    }
+
+    /**
+     * Prints, converting bold HTML to TerminalWriter calls.
+     */
+    static void printBoldItalic(String s, TerminalWriter out) throws IOException {
+        int len = s.length();
+        int pos = 0;
+        int bOn = s.indexOf("<b>");
+        if(bOn==-1) bOn=len;
+        int BOn = s.indexOf("<B>");
+        if(BOn==-1) BOn=len;
+        int bOff = s.indexOf("</b>");
+        if(bOff==-1) bOff=len;
+        int BOff = s.indexOf("</B>");
+        if(BOff==-1) BOff=len;
+        while(
+            pos<len
+            && (
+                bOn!=len
+                || BOn!=len
+                || bOff!=len
+                || BOff!=len
+            )
+        ) {
+            if(bOn<BOn && bOn<bOff && bOn<BOff) {
+                out.print(s.substring(pos, bOn));
+                out.boldOn();
+                pos = bOn+3;
+                bOn = s.indexOf("<b>", pos);
+                if(bOn==-1) bOn=len;
+            } else if(BOn<bOn && BOn<bOff && BOn<BOff) {
+                out.print(s.substring(pos, BOn));
+                out.boldOn();
+                pos = BOn+3;
+                BOn = s.indexOf("<B>", pos);
+                if(BOn==-1) BOn=len;
+            } else if(bOff<bOn && bOff<BOn && bOff<BOff) {
+                out.print(s.substring(pos, bOff));
+                out.attributesOff();
+                pos = bOff+4;
+                bOff = s.indexOf("</b>", pos);
+                if(bOff==-1) bOff=len;
+            } else if(BOff<bOn && BOff<BOn && BOff<bOff) {
+                out.print(s.substring(pos, BOff));
+                out.attributesOff();
+                pos = BOff+4;
+                BOff = s.indexOf("</B>", pos);
+                if(BOff==-1) BOff=len;
+            } else {
+                throw new AssertionError();
+            }
+        }
+        if(pos<len) out.print(s.substring(pos, len));
     }
 
     final private AOServConnector<?,?> connector;
@@ -134,49 +205,108 @@ final public class AOSH extends ShellInterpreter {
      *
      * @param  args  the command and argments to process
      *
-     * @return  <code>true</code> if more commands should be processed
+     * @return  <code>true</code> if more commands should be processed (used for exit command)
      */
     protected boolean handleCommand(String[] args) throws IOException {
         int argCount=args.length;
         if(argCount>0) {
             String command=args[0];
-            if(BuiltIn.exit.name().equalsIgnoreCase(command)) {
+            if(BuiltIn.exit.name().equals(command)) {
                 if(argCount!=1) {
-                    err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.tooManyParameters", BuiltIn.exit));
+                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.tooManyParameters", BuiltIn.exit));
                     err.flush();
                 } else return false;
             } else {
-                if(BuiltIn.clear.name().equalsIgnoreCase(command)) clear(args);
-                else if(BuiltIn.echo.name().equalsIgnoreCase(command)) echo(args);
-                // TODO: else if(AOSHCommand.INVALIDATE.equalsIgnoreCase(command)) invalidate(args);
-                else if(BuiltIn.jobs.name().equalsIgnoreCase(command)) jobs(args);
-                // TODO: else if(AOSHCommand.PING.equalsIgnoreCase(command)) ping(args);
-                else if(BuiltIn.repeat.name().equalsIgnoreCase(command)) repeat(args);
-                // TODO: else if(AOSHCommand.SLEEP.equalsIgnoreCase(command)) sleep(args);
-                // TODO: else if(AOSHCommand.SU.equalsIgnoreCase(command)) su(args);
-                // TODO: else if(AOSHCommand.TIME.equalsIgnoreCase(command)) time(args);
-                // TODO: else if(AOSHCommand.WHOAMI.equalsIgnoreCase(command)) whoami(args);
+                if(BuiltIn.clear.name().equals(command)) clear(args);
+                else if(BuiltIn.echo.name().equals(command)) echo(args);
+                // TODO: else if(AOSHCommand.INVALIDATE.equals(command)) invalidate(args);
+                else if(BuiltIn.jobs.name().equals(command)) jobs(args);
+                // TODO: else if(AOSHCommand.PING.equals(command)) ping(args);
+                else if(BuiltIn.repeat.name().equals(command)) repeat(args);
+                else if(BuiltIn.sleep.name().equals(command)) sleep(args);
+                else if(BuiltIn.su.name().equals(command)) su(args);
+                else if(BuiltIn.time.name().equals(command)) time(args);
+                else if(BuiltIn.whoami.name().equals(command)) whoami(args);
                 else {
-                    boolean done=false;
-                    /* TODO
-                    // Use the aosh_commands table for faster lookups
-                    String lowerCommand=command.toLowerCase();
-                    AOSHCommand aoshCommand=connector.getAoshCommands().get(lowerCommand);
-                    if(aoshCommand!=null) {
-                        AOServTable table=aoshCommand.getSchemaTable(connector).getAOServTable(connector);
-                        done=table.handleCommand(args, in, out, err, isInteractive());
-                        if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+lowerCommand+"', table='"+table.getTableName()+'\'');
-                    }
-                    //for(int c=0;c<numTables;c++) {
-                    //    AOServTable table=connector.getTable(c);
-                    //    if(table.handleCommand(args, in, out, err, isInteractive())) {
-                    //        done=true;
-                    //        break;
-                    //    }
-                    //}
-                     */
-                    if(!done) {
-                        err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.commandNotFound", command));
+                    try {
+                        Constructor<? extends AOServCommand<?>> constructor = AOServCommand.getCommandConstructor(CommandName.valueOf(command));
+                        Class<?>[] parameterTypes = constructor.getParameterTypes();
+                        if(args.length<(parameterTypes.length+1)) {
+                            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.notEnoughParameters", command));
+                            err.flush();
+                        } else {
+                            if(args.length>(parameterTypes.length+1)) {
+                                err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.tooManyParameters", command));
+                                err.flush();
+                            } else {
+                                // Convert the parameters
+                                Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
+                                Object[] parameters = new Object[parameterTypes.length];
+                                for(int c=0; c<parameterTypes.length; c++) {
+                                    // Find the @Param annotation
+                                    Param paramAnnotation = null;
+                                    String arg = args[c+1];
+                                    for(Annotation anno : parameterAnnotations[c]) {
+                                        if(anno instanceof Param) {
+                                            paramAnnotation = (Param)anno;
+                                            break;
+                                        }
+                                    }
+                                    Class<?> parameterType = parameterTypes[c];
+                                    if(parameterType==String.class) {
+                                        // If allows null, convert empty string to null
+                                        if(arg.length()==0 && paramAnnotation.nullible()) parameters[c] = null;
+                                        else parameters[c] = arg;
+                                    } else {
+                                        throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
+                                    }
+                                }
+                                try {
+                                    AOServCommand<?> aoservCommand = constructor.newInstance(parameters);
+                                    Object resultObj = aoservCommand.execute(connector, isInteractive());
+                                    if(resultObj!=null) {
+                                        String s = resultObj.toString();
+                                        if(isInteractive()) {
+                                            printBoldItalic(s, out);
+                                        } else {
+                                            out.print(s);
+                                        }
+                                        if(!s.endsWith(eol)) out.println();
+                                        out.flush();
+                                    }
+                                } catch(InstantiationException exc) {
+                                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.InstantiationException", command, exc.getMessage()));
+                                    err.flush();
+                                } catch(IllegalAccessException exc) {
+                                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.IllegalAccessException", command, exc.getMessage()));
+                                    err.flush();
+                                } catch(InvocationTargetException exc) {
+                                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.InvocationTargetException", command, exc.getMessage()));
+                                    err.flush();
+                                } catch(AOServPermissionException exc) {
+                                    err.println("TODO: AOServPermission: "+exc.getMessage());
+                                    // TODO
+                                    err.flush();
+                                } catch(ValidationException exc) {
+                                    StringBuilder SB = new StringBuilder();
+                                    SB.append(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.validationFailed", command)).append(eol);
+                                    for(Map.Entry<String,List<String>> entry : exc.getErrors().entrySet()) {
+                                        String paramName = entry.getKey();
+                                        for(String message : entry.getValue()) SB.append(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.validationFailedError", paramName, message)).append(eol);
+                                    }
+                                    err.print(SB.toString());
+                                    err.flush();
+                                } catch(RemoteException exc) {
+                                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.RemoteException", command, exc.getMessage()));
+                                    err.flush();
+                                } catch(RuntimeException exc) {
+                                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.RuntimeException", command, exc.getMessage()));
+                                    err.flush();
+                                }
+                            }
+                        }
+                    } catch(IllegalArgumentException exc) {
+                        err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.commandNotFound", command));
                         err.flush();
                     }
                 }
@@ -193,7 +323,7 @@ final public class AOSH extends ShellInterpreter {
             // Find the table ID
             int tableID=-1;
             for(int d=0;d<numTables;d++) {
-                if(schemaTableTable.get(d).getName().equalsIgnoreCase(tableName)) {
+                if(schemaTableTable.get(d).getName().equals(tableName)) {
                     tableID=d;
                     break;
                 }
@@ -222,12 +352,15 @@ final public class AOSH extends ShellInterpreter {
                 out.println();
                 out.flush();
             }
-        } catch(IOException exc) {
-            err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.main.IOException", exc.getMessage()));
-            err.flush();
+            System.exit(0);
         } catch(LoginException exc) {
             err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.main.LoginException", exc.getMessage()));
             err.flush();
+            System.exit(1);
+        } catch(IOException exc) {
+            err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.main.IOException", exc.getMessage()));
+            err.flush();
+            System.exit(2);
         }
     }
 
@@ -236,14 +369,8 @@ final public class AOSH extends ShellInterpreter {
         if(username==null || username.length()==0) {
             // Prompt for the username
             err.print(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.prompt.username"));
-            err.echoOff();
-            try {
-                err.flush();
-                username = readLine(in);
-            } finally {
-                err.echoOn();
-                err.flush();
-            }
+            err.flush();
+            username = readLine(in);
         }
         return username;
     }
@@ -251,17 +378,17 @@ final public class AOSH extends ShellInterpreter {
     public static String getConfigPassword(Reader in, TerminalWriter err) throws IOException {
         String password=AOServClientConfiguration.getPassword();
         if(password==null || password.length()==0) {
-            // Prompt for the password
             err.print(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.prompt.password"));
-            err.print("Password: ");
-            err.echoOff();
+            err.flush();
             try {
-                err.flush();
-                password=readLine(in);
-            } finally {
-                err.echoOn();
-                err.flush();
+                // Java 1.6: return new String(System.console().readPassword());
+                Object console = System.class.getMethod("console").invoke(null);
+                return new String((char[])console.getClass().getMethod("readPassword").invoke(console));
+            } catch(Exception exception) {
+                // Not Java 1.6
             }
+            // Prompt for the password
+            password=readLine(in);
         }
         return password;
     }
@@ -401,44 +528,43 @@ final public class AOSH extends ShellInterpreter {
 
                     for(int c=0;c<count;c++) handleCommand(newArgs);
                 } else {
-                    err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.invalidLoopCount", BuiltIn.repeat, count));
+                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidLoopCount", BuiltIn.repeat, count));
                     err.flush();
                 }
             } catch(NumberFormatException nfe) {
-                err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.invalidLoopCount", BuiltIn.repeat, args[1]));
+                err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidLoopCount", BuiltIn.repeat, args[1]));
                 err.flush();
             }
         } else {
-            err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.notEnoughParameters", BuiltIn.repeat));
+            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.notEnoughParameters", BuiltIn.repeat));
             err.flush();
         }
     }
 
-    /* TODO
-    private void sleep(String[] args) {
+    private void sleep(String[] args) throws RemoteException {
         if(args.length>1) {
             try {
                 for(int c=1;c<args.length;c++) {
                     try {
                         long time=1000*Integer.parseInt(args[c]);
                         if(time<0) {
-                            err.println("aosh: "+AOSHCommand.SLEEP+": invalid time interval: "+args[c]);
+                            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidTimeInterval", BuiltIn.sleep, args[c]));
                             err.flush();
                         } else {
                             Thread.sleep(time);
                         }
                     } catch(NumberFormatException nfe) {
-                        err.println("aosh: "+AOSHCommand.SLEEP+": invalid time interval: "+args[c]);
+                        err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidTimeInterval", BuiltIn.sleep, args[c]));
                         err.flush();
                     }
                 }
             } catch(InterruptedException ie) {
                 status="Interrupted";
-                err.println("aosh: "+AOSHCommand.SLEEP+": interrupted");
+                err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.interrupted", BuiltIn.sleep));
                 err.flush();
             }
         } else {
-            err.println("aosh: "+AOSHCommand.SLEEP+": too few arguments");
+            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.notEnoughParameters", BuiltIn.sleep));
             err.flush();
         }
     }
@@ -451,9 +577,26 @@ final public class AOSH extends ShellInterpreter {
             if(isInteractive()) newArgs[pos++]="-i";
             newArgs[pos++]="--";
             System.arraycopy(args, 2, newArgs, pos, argCount-2);
-            new AOSH(connector.switchUsers(args[1]), in, out, err, newArgs).run();
+            try {
+                new AOSH(
+                    connector.getFactory().getConnector(
+                        connector.getLocale(),
+                        args[1],
+                        connector.getAuthenticateAs(),
+                        connector.getPassword(),
+                        null
+                    ),
+                    in,
+                    out,
+                    err,
+                    newArgs
+                ).run();
+            } catch(LoginException exc) {
+                err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.LoginException", BuiltIn.su, exc.getMessage()));
+                err.flush();
+            }
         } else {
-            err.println("aosh: "+AOSHCommand.SU+": not enough parameters");
+            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.notEnoughParameters", BuiltIn.su));
             err.flush();
         }
     }
@@ -479,18 +622,18 @@ final public class AOSH extends ShellInterpreter {
                 out.flush();
             }
         } else {
-            err.println("aosh: "+AOSHCommand.TIME+": not enough parameters");
+            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.notEnoughParameters", BuiltIn.time));
             err.flush();
         }
     }
 
     private void whoami(String[] args) throws IOException {
         if(args.length==1) {
-            out.println(connector.getThisBusinessAdministrator().getUsername().getUsername());
+            out.println(connector.getConnectAs());
             out.flush();
         } else {
-            err.println("aosh: "+AOSHCommand.WHOAMI+": too many parameters");
+            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.notEnoughParameters", BuiltIn.whoami));
             err.flush();
         }
-    }*/
+    }
 }

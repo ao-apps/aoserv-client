@@ -21,6 +21,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Param {
     String name();
-    boolean required();
+    boolean nullible();
     String syntax();
 }

@@ -10,14 +10,11 @@ import com.aoindustries.aoserv.client.noswing.NoSwingConnectorFactory;
 import com.aoindustries.aoserv.client.retry.RetryConnectorFactory;
 import com.aoindustries.aoserv.client.rmi.RmiClientConnectorFactory;
 import com.aoindustries.security.LoginException;
-import com.aoindustries.util.StringUtility;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -242,50 +239,6 @@ final public class AOServClientConfiguration {
         return getConnector(Locale.getDefault(), username, password, username, null);
     }
 
-    static class CacheKey {
-
-        final String username;
-        final String password;
-        final String switchUser;
-        final String daemonServer;
-
-        CacheKey(
-            String username,
-            String password,
-            String switchUser,
-            String daemonServer
-        ) {
-            this.username = username;
-            this.password = password;
-            this.switchUser = switchUser;
-            this.daemonServer = daemonServer;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if(o==null || !(o instanceof CacheKey)) return false;
-            CacheKey other = (CacheKey)o;
-            return
-                username.equals(other.username)
-                && password.equals(other.password)
-                && switchUser.equals(other.switchUser)
-                && StringUtility.equals(daemonServer, other.daemonServer)
-            ;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 29 * hash + username.hashCode();
-            hash = 29 * hash + password.hashCode();
-            hash = 29 * hash + switchUser.hashCode();
-            hash = 29 * hash + (daemonServer!=null ? daemonServer.hashCode() : 0);
-            return hash;
-        }
-    }
-
-    private static final Map<CacheKey,AOServConnector<?,?>> connectors = new HashMap<CacheKey,AOServConnector<?,?>>();
-
     /**
      * Gets the <code>AOServConnector</code> with the provided authentication
      * information.  The <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
@@ -297,24 +250,12 @@ final public class AOServClientConfiguration {
      * @param  password  the password to connect with
      */
     public static AOServConnector<?,?> getConnector(Locale locale, String username, String password, String switchUser, String daemonServer) throws RemoteException, LoginException {
-        CacheKey cacheKey = new CacheKey(username, password, switchUser, daemonServer);
-        synchronized(connectors) {
-            AOServConnector<?,?> connector = connectors.get(cacheKey);
-            if(connector!=null) {
-                connector.setLocale(locale);
-            } else {
-                connectors.put(
-                    cacheKey,
-                    connector = getAOServConnectorFactory().newConnector(
-                        locale,
-                        switchUser,
-                        username,
-                        password,
-                        daemonServer
-                    )
-                );
-            }
-            return connector;
-        }
+        return getAOServConnectorFactory().getConnector(
+            locale,
+            switchUser,
+            username,
+            password,
+            daemonServer
+        );
     }
 }

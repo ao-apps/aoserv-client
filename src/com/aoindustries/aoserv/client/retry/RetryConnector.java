@@ -575,6 +575,14 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return obj;
     }
 
+    public String getAuthenticateAs() {
+        return authenticateAs;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
     private final AtomicReference<Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>>>();
     public Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>> getServices() throws RemoteException {
         Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>> ts = tables.get();

@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client.cache;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
+import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -24,7 +25,37 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
         this.wrapped = wrapped;
     }
 
+    private final AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory> connectors = new AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory>();
+
+    public CachedConnector getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+        synchronized(connectors) {
+            CachedConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+            if(connector!=null) {
+                connector.setLocale(locale);
+            } else {
+                connector = newConnector(
+                    locale,
+                    connectAs,
+                    authenticateAs,
+                    password,
+                    daemonServer
+                );
+            }
+            return connector;
+        }
+    }
+
     public CachedConnector newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
-        return new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
+        synchronized(connectors) {
+            CachedConnector connector = new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
+            connectors.put(
+                connectAs,
+                authenticateAs,
+                password,
+                daemonServer,
+                connector
+            );
+            return connector;
+        }
     }
 }

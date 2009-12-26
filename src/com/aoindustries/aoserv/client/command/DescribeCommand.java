@@ -9,7 +9,12 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.MethodColumn;
+import com.aoindustries.aoserv.client.SchemaColumn;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.table.Table;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +40,7 @@ final public class DescribeCommand extends AOServCommand<String> {
     }
 
     public DescribeCommand(
-        @Param(name=PARAM_TABLE_NAME, required=true, syntax="<i>"+PARAM_TABLE_NAME+"</i>") String table_name
+        @Param(name=PARAM_TABLE_NAME, nullible=false, syntax="<"+PARAM_TABLE_NAME+">") String table_name
     ) {
         this.table_name = table_name;
     }
@@ -46,6 +51,14 @@ final public class DescribeCommand extends AOServCommand<String> {
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
         // Must be able to find the command name
+        if(table_name==null) {
+            return Collections.singletonMap(
+                PARAM_TABLE_NAME,
+                Collections.singletonList(
+                    ApplicationResources.accessor.getMessage(locale, "AOServCommand.validate.paramRequired", PARAM_TABLE_NAME)
+                )
+            );
+        }
         try {
             ServiceName.valueOf(table_name);
             return Collections.emptyMap();
@@ -59,15 +72,13 @@ final public class DescribeCommand extends AOServCommand<String> {
         }
     }
 
-    protected String doExecute(AOServConnector<?,?> connector) throws RemoteException {
+    protected String doExecute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         // Find the table given its name
         AOServService<?,?,?,?> service = connector.getServices().get(ServiceName.valueOf(table_name));
         Locale locale = connector.getLocale();
         StringBuilder SB = new StringBuilder();
-        SB.append(eol);
         SB.append("<b>").append(ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.tableName")).append("</b>").append(eol);
-        SB.append(eol);
-        SB.append("       ").append(CommandName.describe).append(eol);
+        SB.append("       ").append(table_name).append(eol);
         String description = service.getServiceName().getDescription(locale);
         if(description!=null && description.length()>0) {
             SB.append(eol);
@@ -78,58 +89,45 @@ final public class DescribeCommand extends AOServCommand<String> {
         SB.append("<b>").append(ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns")).append("</b>").append(eol);
         SB.append(eol);
 
-        SB.append("TODO: Show columns");
-        /* TODO
         // Get the list of columns
-        List<SchemaColumn> columns=getSchemaColumns(connector);
+        Table<MethodColumn,?> table = service.getTable();
+        List<? extends MethodColumn> columns = table.getColumns();
         int len=columns.size();
 
         // Build the Object[] of values
-        Object[] values=new Object[len*7];
+        Object[] values=new Object[len*4];
         int pos=0;
         for(int c=0;c<len;c++) {
-            SchemaColumn column=columns.get(c);
-            values[pos++]=column.column_name;
-            values[pos++]=column.getSchemaType(connector).getType();
-            values[pos++]=column.isNullable()?"true":"false";
-            values[pos++]=column.isUnique()?"true":"false";
-            List<SchemaForeignKey> fkeys=column.getReferences(connector);
-            if(!fkeys.isEmpty()) {
-                StringBuilder SB=new StringBuilder();
-                for(int d=0;d<fkeys.size();d++) {
-                    SchemaForeignKey key=fkeys.get(d);
-                    if(d>0) SB.append('\n');
-                    SchemaColumn other=key.getForeignColumn(connector);
-                    SB
-                        .append(other.getSchemaTable(connector).getName())
-                        .append('.')
-                        .append(other.column_name)
-                    ;
-                }
-                values[pos++]=SB.toString();
-            } else values[pos++]=null;
-
-            fkeys=column.getReferencedBy(connector);
-            if(!fkeys.isEmpty()) {
-                StringBuilder SB=new StringBuilder();
-                for(int d=0;d<fkeys.size();d++) {
-                    SchemaForeignKey key=fkeys.get(d);
-                    if(d>0) SB.append('\n');
-                    SchemaColumn other=key.getKeyColumn(connector);
-                    SB
-                        .append(other.getSchemaTable(connector).getName())
-                        .append('.')
-                        .append(other.column_name)
-                    ;
-                }
-                values[pos++]=SB.toString();
-            } else values[pos++]=null;
-            values[pos++]=column.getDescription();
+            MethodColumn methodColumn = columns.get(c);
+            SchemaColumn schemaColumn = methodColumn.getSchemaColumn();
+            values[pos++]=methodColumn.getColumnName();
+            values[pos++]=methodColumn.getMethod().getReturnType().getName();
+            values[pos++]=methodColumn.isUnique()?"true":"false";
+            values[pos++]=schemaColumn.description();
         }
 
         // Display the results
-        SQLUtility.printTable(descColumns, values, out, isInteractive, descRightAligns);
-         */
-        return SB.toString();
+        try {
+            SQLUtility.printTable(
+                new String[] {
+                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.column"),
+                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.type"),
+                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.unique"),
+                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.description")
+                },
+                values,
+                SB,
+                isInteractive,
+                new boolean[] {
+                    false,
+                    false,
+                    false,
+                    false
+                }
+            );
+            return SB.toString();
+        } catch(IOException err) {
+            throw new RemoteException(err.getMessage(), err);
+        }
     }
 }

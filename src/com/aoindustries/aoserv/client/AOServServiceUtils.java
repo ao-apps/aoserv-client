@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.table.Column;
 import com.aoindustries.table.Table;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.WrappedException;
@@ -95,25 +94,25 @@ final public class AOServServiceUtils {
      *
      * @see AOServService#getTable()
      */
-    final public static class AnnotationTable<K extends Comparable<K>,V extends AOServObject<K,V>> implements Table<V> {
+    final public static class AnnotationTable<K extends Comparable<K>,V extends AOServObject<K,V>> implements Table<MethodColumn,V> {
 
         final private AOServService<?,?,K,V> service;
-        final private List<? extends Column> columns;
+        final private List<? extends MethodColumn> columns;
 
         public AnnotationTable(AOServService<?,?,K,V> service, Class<V> valueClass) {
             this.service = service;
             columns = AOServObject.getMethodColumns(valueClass);
         }
 
-        public void addTableListener(TableListener<? super V> listener) {
+        public void addTableListener(TableListener<? super MethodColumn, ? super V> listener) {
             addTableListener(listener, 1000);
         }
 
-        public void addTableListener(TableListener<? super V> listener, long batchTime) {
+        public void addTableListener(TableListener<? super MethodColumn, ? super V> listener, long batchTime) {
             throw new RuntimeException("TODO: Implement method");
         }
 
-        public void removeTableListener(TableListener<? super V> listener) {
+        public void removeTableListener(TableListener<? super MethodColumn, ? super V> listener) {
             throw new RuntimeException("TODO: Implement method");
         }
 
@@ -131,7 +130,7 @@ final public class AOServServiceUtils {
         /**
          * Gets the column names based on the methods that are marked as ColumnName annotation in class of this object.
          */
-        public List<? extends Column> getColumns() {
+        public List<? extends MethodColumn> getColumns() {
             return columns;
         }
 

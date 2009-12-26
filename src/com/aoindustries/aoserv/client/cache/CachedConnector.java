@@ -42,6 +42,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final AOServConnector<?,?> wrapped;
     Locale locale;
     final String connectAs;
+    private final String authenticateAs;
+    private final String password;
     /* TODO
     final CachedAOServerDaemonHostService aoserverDaemonHosts;
     final CachedAOServerResourceService aoserverResources;
@@ -229,6 +231,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         this.wrapped = wrapped;
         locale = wrapped.getLocale();
         connectAs = wrapped.getConnectAs();
+        authenticateAs = wrapped.getAuthenticateAs();
+        password = wrapped.getPassword();
         /* TODO
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAOServerDaemonHosts());
         aoserverResources = new CachedAOServerResourceService(this, wrapped.getAOServerResources());
@@ -435,6 +439,14 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         BusinessAdministrator obj = getBusinessAdministrators().get(connectAs);
         if(obj==null) throw new RemoteException("Unable to find BusinessAdministrator: "+connectAs);
         return obj;
+    }
+
+    public String getAuthenticateAs() {
+        return authenticateAs;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>>>();

@@ -62,6 +62,16 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     BusinessAdministrator getThisBusinessAdministrator() throws RemoteException;
 
     /**
+     * Gets the username they logged-in as.
+     */
+    String getAuthenticateAs() throws RemoteException;
+
+    /**
+     * Gets the password used to login.
+     */
+    String getPassword() throws RemoteException;
+
+    /**
      * Gets an unmodifiable map of all of the services in the system.
      *
      * @return  a <code>Map</code> containing all the services.  Each

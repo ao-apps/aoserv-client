@@ -9,6 +9,9 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
@@ -24,12 +27,11 @@ import java.util.Set;
  * checks may be used in interface design.
  * </p>
  * <p>
- * Each command may have one or two constructors.  When two constructors are provided,
- * they should each have the same number of parameters.  Only one of them should have its
- * parameters matched with the <code>Param</code> annotation.  The other constructor
- * provides the expected types.  In essence, one constructor represents the type-specific
- * parameters while the other represents the standard Java and web-services-compatible
- * types.
+ * Each command may have any number of public constructors.  One of the public constructors should
+ * have its parameters marked with the Param annotation.  If there are no parameters with the Param
+ * annotations, an empty constructor will be used.  Generally, a command will have up to two
+ * constructors, one that is AOSH-compatible with the Param annotation, and the other that
+ * is more type-specific.
  * </p>
  *
  * @author  AO Industries, Inc.
@@ -39,10 +41,60 @@ abstract public class AOServCommand<R> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Map<Class<? extends AOServCommand>,CommandName> commandNames = new HashMap<Class<? extends AOServCommand>,CommandName>();
-    static {
+    private static final Map<CommandName,Constructor<? extends AOServCommand<?>>> commandConstructors = new HashMap<CommandName,Constructor<? extends AOServCommand<?>>>();
+
+    @SuppressWarnings("unchecked")
+    private static void initMaps() {
         for(CommandName commandName : CommandName.values) {
-            if(commandNames.put(commandName.getCommandClass(), commandName)!=null) throw new AssertionError("Command class found more than once: "+commandName);
+            Class<? extends AOServCommand> commandClass = commandName.getCommandClass();
+            // Populate commandNames
+            if(commandNames.put(commandClass, commandName)!=null) throw new AssertionError("Command class found more than once: "+commandName);
+            // Populate commandConstructors
+            Constructor<?>[] constructors = commandClass.getConstructors();
+            Constructor<?> emptyConstructor = null;
+            Constructor<?> commandConstructor = null;
+            for(Constructor<?> constructor : constructors) {
+                if(Modifier.isPublic(constructor.getModifiers())) {
+                    Annotation[][] paramAnnotations = constructor.getParameterAnnotations();
+                    if(paramAnnotations.length==0) {
+                        emptyConstructor = constructor;
+                    } else {
+                        // Must have annotation on all parameters or none of the parameters
+                        int annotationCount = 0;
+                        for(Annotation[] annotations : paramAnnotations) {
+                            boolean hasParam = false;
+                            for(Annotation annotation : annotations) {
+                                if(annotation instanceof Param /*annotation.annotationType()==Param.class*/) {
+                                    if(hasParam) throw new AssertionError("Duplicate @Param annotations on constructor: commandName="+commandName+", commandClass="+commandClass.getName());
+                                    hasParam = true;
+                                }
+                            }
+                            if(hasParam) annotationCount++;
+                        }
+                        if(annotationCount!=0) {
+                            if(annotationCount!=paramAnnotations.length) throw new AssertionError("Constructor parameter must either have no @Param annotations are one @Param annotation per parameter: commandName="+commandName+", commandClass="+commandClass.getName());
+                            if(commandConstructor!=null) throw new AssertionError("Command contains more than one @Param constructor: commandName="+commandName+", commandClass="+commandClass.getName());
+                            commandConstructor = constructor;
+                        }
+                    }
+                }
+            }
+            if(commandConstructor==null) commandConstructor = emptyConstructor;
+            if(commandConstructor==null) throw new AssertionError("No empty or @Param constructor found: commandName="+commandName+", commandClass="+commandClass.getName());
+            commandConstructors.put(commandName, (Constructor<? extends AOServCommand<?>>)commandConstructor);
         }
+    }
+    static {
+        initMaps();
+    }
+
+    /**
+     * Gets the AOSH constructor for the provided command.
+     */
+    public static Constructor<? extends AOServCommand<?>> getCommandConstructor(CommandName commandName) {
+        Constructor<? extends AOServCommand<?>> commandConstructor = commandConstructors.get(commandName);
+        if(commandConstructor==null) throw new AssertionError("commandConstructor==null");
+        return commandConstructor;
     }
 
     /**
@@ -77,18 +129,18 @@ abstract public class AOServCommand<R> implements Serializable {
      * have the correct permissions.  This will first call <code>validate</code>
      * and throw an exception if the validation fails.
      */
-    final public R execute(AOServConnector<?,?> connector) throws AOServPermissionException, ValidationException, RemoteException {
+    final public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws AOServPermissionException, ValidationException, RemoteException {
         // TODO: Check permissions
 
         // Validate
         Map<String,List<String>> errors = validate(connector.getLocale(), connector.getThisBusinessAdministrator());
         if(!errors.isEmpty()) throw new ValidationException(this, errors);
 
-        return doExecute(connector);
+        return doExecute(connector, isInteractive);
     }
 
     /**
      * Called after security checks and validation succeeds.
      */
-    abstract protected R doExecute(AOServConnector<?,?> connector) throws RemoteException;
+    abstract protected R doExecute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException;
 }

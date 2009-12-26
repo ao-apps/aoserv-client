@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client.retry;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServServiceUtils;
+import com.aoindustries.aoserv.client.MethodColumn;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.table.Table;
 import java.rmi.RemoteException;
@@ -23,7 +24,7 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
 
     final RetryConnector connector;
     final ServiceName serviceName;
-    final Table<V> table;
+    final Table<MethodColumn,V> table;
     final Map<K,V> map;
     AOServService<?,?,K,V> wrapped;
 
@@ -80,7 +81,7 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         return serviceName;
     }
 
-    final public Table<V> getTable() {
+    final public Table<MethodColumn,V> getTable() {
         return table;
     }
 

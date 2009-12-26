@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client.retry;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
+import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -78,13 +79,43 @@ final public class RetryConnectorFactory implements AOServConnectorFactory<Retry
         throw new RemoteException("interrupted", new InterruptedException("interrupted"));
     }
 
-    public RetryConnector newConnector(final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
-        return retry(
-            new Callable<RetryConnector>() {
-                public RetryConnector call() throws LoginException, RemoteException {
-                    return new RetryConnector(RetryConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
-                }
+    private final AOServConnectorFactoryCache<RetryConnector,RetryConnectorFactory> connectors = new AOServConnectorFactoryCache<RetryConnector,RetryConnectorFactory>();
+
+    public RetryConnector getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+        synchronized(connectors) {
+            RetryConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+            if(connector!=null) {
+                connector.setLocale(locale);
+            } else {
+                connector = newConnector(
+                    locale,
+                    connectAs,
+                    authenticateAs,
+                    password,
+                    daemonServer
+                );
             }
-        );
+            return connector;
+        }
+    }
+
+    public RetryConnector newConnector(final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
+        synchronized(connectors) {
+            RetryConnector connector = retry(
+                new Callable<RetryConnector>() {
+                    public RetryConnector call() throws LoginException, RemoteException {
+                        return new RetryConnector(RetryConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
+                    }
+                }
+            );
+            connectors.put(
+                connectAs,
+                authenticateAs,
+                password,
+                daemonServer,
+                connector
+            );
+            return connector;
+        }
     }
 }

@@ -66,7 +66,7 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * <code>getSet</code> and <code>getSortedSet</code> methods, this does not
      * completely act as a snapshot of the underlying data.
      */
-    Table<V> getTable() throws RemoteException;
+    Table<MethodColumn,V> getTable() throws RemoteException;
 
     /**
      * Gets a <code>Map</code> view of this service.  Unlike the <code>getSet</code>

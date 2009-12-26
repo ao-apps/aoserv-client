@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client.noswing;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
+import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -33,8 +34,38 @@ final public class NoSwingConnectorFactory implements AOServConnectorFactory<NoS
         this.wrapped = wrapped;
     }
 
+    private final AOServConnectorFactoryCache<NoSwingConnector,NoSwingConnectorFactory> connectors = new AOServConnectorFactoryCache<NoSwingConnector,NoSwingConnectorFactory>();
+
+    public NoSwingConnector getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+        synchronized(connectors) {
+            NoSwingConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+            if(connector!=null) {
+                connector.setLocale(locale);
+            } else {
+                connector = newConnector(
+                    locale,
+                    connectAs,
+                    authenticateAs,
+                    password,
+                    daemonServer
+                );
+            }
+            return connector;
+        }
+    }
+
     public NoSwingConnector newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
         checkNotSwing();
-        return new NoSwingConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
+        synchronized(connectors) {
+            NoSwingConnector connector = new NoSwingConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
+            connectors.put(
+                connectAs,
+                authenticateAs,
+                password,
+                daemonServer,
+                connector
+            );
+            return connector;
+        }
     }
 }

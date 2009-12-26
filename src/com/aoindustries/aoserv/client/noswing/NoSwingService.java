@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client.noswing;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServServiceUtils;
+import com.aoindustries.aoserv.client.MethodColumn;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.table.Table;
 import com.aoindustries.util.WrappedException;
@@ -24,7 +25,7 @@ import java.util.SortedSet;
 abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V>> implements AOServService<NoSwingConnector,NoSwingConnectorFactory,K,V> {
 
     final NoSwingConnector connector;
-    final Table<V> table;
+    final Table<MethodColumn,V> table;
     final Map<K,V> map;
     final AOServService<?,?,K,V> wrapped;
 
@@ -64,7 +65,7 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
         return wrapped.getServiceName();
     }
 
-    final public Table<V> getTable() throws RemoteException {
+    final public Table<MethodColumn,V> getTable() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return table;
     }

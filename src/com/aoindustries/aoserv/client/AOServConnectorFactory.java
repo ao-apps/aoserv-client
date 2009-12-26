@@ -21,7 +21,12 @@ import java.util.Locale;
 public interface AOServConnectorFactory<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends Remote {
 
     /**
-     * Gets the <code>AOServConnector</code> for the provided connectAs, authenticateAs, and password.
+     * Gets an existing <code>AOServConnector</code> or creates a new one if does not yet exist.
+     */
+    C getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, LoginException;
+
+    /**
+     * Creates a new <code>AOServConnector</code> for the provided connectAs, authenticateAs, and password.
      */
     C newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, LoginException;
 }

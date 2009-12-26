@@ -434,6 +434,16 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         return obj;
     }
 
+    public String getAuthenticateAs() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return wrapped.getAuthenticateAs();
+    }
+
+    public String getPassword() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return wrapped.getPassword();
+    }
+
     private final AtomicReference<Map<ServiceName,AOServService<NoSwingConnector,NoSwingConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<NoSwingConnector,NoSwingConnectorFactory,?,?>>>();
     public Map<ServiceName,AOServService<NoSwingConnector,NoSwingConnectorFactory,?,?>> getServices() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();

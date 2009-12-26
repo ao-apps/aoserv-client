@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.rmi;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
+import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.rmi.RMIClientSocketFactorySSL;
 import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
 import com.aoindustries.security.LoginException;
@@ -60,12 +61,43 @@ final public class RmiClientConnectorFactory implements AOServConnectorFactory {
         }
     }
 
+    private final AOServConnectorFactoryCache connectors = new AOServConnectorFactoryCache();
+
+    public AOServConnector<?,?> getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+        synchronized(connectors) {
+            AOServConnector<?,?> connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+            if(connector!=null) {
+                connector.setLocale(locale);
+            } else {
+                connector = newConnector(
+                    locale,
+                    connectAs,
+                    authenticateAs,
+                    password,
+                    daemonServer
+                );
+            }
+            return connector;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     public AOServConnector<?,?> newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
         try {
             // Connect to the remote registry and get each of the stubs
             Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
             AOServConnectorFactory<?,?> serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
-            return serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+            synchronized(connectors) {
+                AOServConnector<?,?> connector = serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+                connectors.put(
+                    connectAs,
+                    authenticateAs,
+                    password,
+                    daemonServer,
+                    connector
+                );
+                return connector;
+            }
         } catch(NotBoundException err) {
             throw new RemoteException(err.getMessage(), err);
         }
