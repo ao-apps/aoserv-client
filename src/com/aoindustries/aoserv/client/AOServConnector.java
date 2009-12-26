@@ -396,4 +396,115 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
 
     WhoisHistoryService<C,F> getWhoisHistory() throws RemoteException;
  */
+
+    /**
+     * Clears all caches used by this connector.
+     */
+    /* TODO
+    public void clearCaches() {
+        for(AOServTable table : tables) table.clearCache();
+    }*/
+
+    /**
+     * Executes an aosh command and captures its output into a <code>String</code>.
+     *
+     * @param  args  the command and arguments to be processed
+     *
+     * @return  the results of the command wrapped into a <code>String</code>
+     *
+     * @exception  IOException  if unable to access the server
+     * @exception  SQLException  if unable to access the database or data integrity
+     *                           checks fail
+     */
+    /* TODO
+    public String executeCommand(String[] args) throws IOException, SQLException {
+        return AOSH.executeCommand(this, args);
+    }
+
+    private static final Random random = new SecureRandom();
+    public static Random getRandom() {
+        return random;
+    }
+    */
+    /**
+     * Manually invalidates the system caches.
+     *
+     * @param tableID the table ID
+     * @param server the pkey of the server or <code>-1</code> for all servers
+     */
+    /* TODO
+    public void invalidateTable(final int tableID, final int server) throws IOException, SQLException {
+        requestUpdate(
+            true,
+            new UpdateRequest() {
+                IntList tableList;
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
+                    out.writeCompressedInt(tableID);
+                    out.writeCompressedInt(server);
+                }
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) tableList=readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unknown response code: "+code);
+                    }
+                }
+                public void afterRelease() {
+                    tablesUpdated(tableList);
+                }
+            }
+        );
+    }
+    */
+    /**
+     * Times how long it takes to make one request with the server.
+     * This will not retry and will return the first error encountered.
+     *
+     * @return  the connection latency in milliseconds
+     */
+    /* TODO
+    final public int ping() throws IOException, SQLException {
+        long startTime=System.currentTimeMillis();
+        requestUpdate(false, AOServProtocol.CommandID.PING);
+        long timeSpan=System.currentTimeMillis()-startTime;
+        if(timeSpan>Integer.MAX_VALUE) return Integer.MAX_VALUE;
+        return (int)timeSpan;
+    }
+
+    final public void removeFromAllTables(TableListener listener) {
+        for(AOServTable table : tables) table.removeTableListener(listener);
+    }
+
+    protected final void tablesUpdated(IntList invalidateList) {
+        if(invalidateList!=null) {
+            int size=invalidateList.size();
+
+            // Clear the caches
+            for(int c=0;c<size;c++) {
+                int tableID=invalidateList.getInt(c);
+                tables.get(tableID).clearCache();
+            }
+
+            // Then send the events
+            for(int c=0;c<size;c++) {
+                int tableID=invalidateList.getInt(c);
+                tables.get(tableID).tableUpdated();
+            }
+        }
+    }
+
+    @Override
+    final public String toString() {
+        return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&local_ip="+local_ip+"&port="+port+"&connectAs="+connectAs+"&authenticateAs="+authenticateAs;
+    }
+    */
+    /**
+     * Is notified when a table listener is being added.
+     */
+    /* TODO
+    void addingTableListener() {
+    }
+     */
 }
