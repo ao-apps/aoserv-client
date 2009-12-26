@@ -51,7 +51,7 @@ public class TableNameTest extends TestCase {
             tableNames.clear();
             for(ServiceName schemaTableName : ServiceName.values) {
                 AOServService aoTable=conn.getServices().get(schemaTableName);
-                Table<?> table = aoTable.getTable();
+                Table<MethodColumn,?> table = aoTable.getTable();
                 String tableName = table.getTableName();
                 System.out.println("        "+tableName);
                 if(!tableNames.add(tableName)) fail("Table name found twice in tables: "+tableNames);
