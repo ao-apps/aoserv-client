@@ -40,7 +40,7 @@ final public class DescribeCommand extends AOServCommand<String> {
     }
 
     public DescribeCommand(
-        @Param(name=PARAM_TABLE_NAME, nullible=false, syntax="<"+PARAM_TABLE_NAME+">") String table_name
+        @Param(name=PARAM_TABLE_NAME, nullible=false, syntax="<i>"+PARAM_TABLE_NAME+"</i>") String table_name
     ) {
         this.table_name = table_name;
     }

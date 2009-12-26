@@ -19,7 +19,7 @@ import java.util.Locale;
  */
 public enum CommandName {
 
-    // No specific service
+    // Global Commands
     describe(DescribeCommand.class, null),
     // TODO: select(SelectCommand.class, null),
     show(ShowCommand.class, null)
@@ -166,7 +166,6 @@ public enum CommandName {
     // TODO: get_majordomo_intro_file(TODO.class, TODO),
     // TODO: get_mrtg_file(TODO.class, TODO),
     // TODO: get_root_business(TODO.class, TODO),
-    // TODO: help(TODO.class, TODO),
     // TODO: hold_ticket(TODO.class, TODO),
     // TODO: initialize_httpd_site_passwd_file(TODO.class, TODO),
     // TODO: invalidate(TODO.class, TODO),
@@ -345,7 +344,7 @@ public enum CommandName {
     }
 
     /**
-     * Gets a short description of the service.
+     * Gets a short description of the command.
      */
     public String getShortDesc(Locale userLocale) {
         return ApplicationResources.accessor.getMessage(userLocale, "CommandName."+name()+".shortDesc");
