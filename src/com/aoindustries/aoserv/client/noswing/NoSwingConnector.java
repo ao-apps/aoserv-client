@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
@@ -16,6 +17,8 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.NetBindService;
+import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
@@ -24,6 +27,7 @@ import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
+import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
@@ -49,8 +53,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     /* TODO
     final NoSwingAOServerDaemonHostService aoserverDaemonHosts;
     final NoSwingAOServerResourceService aoserverResources;
-    final NoSwingAOServerService aoservers;
      */
+    final NoSwingAOServerService aoservers;
     final NoSwingAOServPermissionService aoservPermissions;
     /* TODO
     final NoSwingAOServProtocolService aoservProtocols;
@@ -161,8 +165,10 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingMySQLReservedWordService mysqlReservedWords;
     final NoSwingMySQLServerService mysqlServers;
     final NoSwingMySQLUserService mysqlUsers;
+     */
     final NoSwingNetBindService netBinds;
     final NoSwingNetDeviceIDService netDeviceIDs;
+    /* TODO
     final NoSwingNetDeviceService netDevices;
     final NoSwingNetPortService netPorts;
      */
@@ -198,8 +204,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingResourceTypeService resourceTypes;
     final NoSwingResourceService resources;
     final NoSwingServerFarmService serverFarms;
-    /* TODO
     final NoSwingServerService servers;
+    /* TODO
     final NoSwingShellService shells;
     final NoSwingSignupRequestOptionService signupRequestOptions;
     final NoSwingSignupRequestService signupRequests;
@@ -240,8 +246,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         /* TODO
         aoserverDaemonHosts = new NoSwingAOServerDaemonHostService(this, wrapped.getAOServerDaemonHosts());
         aoserverResources = new NoSwingAOServerResourceService(this, wrapped.getAOServerResources());
-        aoservers = new NoSwingAOServerService(this, wrapped.getAOServers());
          */
+        aoservers = new NoSwingAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new NoSwingAOServPermissionService(this, wrapped.getAoservPermissions());
         /* TODO
         aoservProtocols = new NoSwingAOServProtocolService(this, wrapped.getAOServProtocols());
@@ -352,8 +358,10 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         mysqlReservedWords = new NoSwingMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
         mysqlServers = new NoSwingMySQLServerService(this, wrapped.getMySQLServers());
         mysqlUsers = new NoSwingMySQLUserService(this, wrapped.getMySQLUsers());
+         */
         netBinds = new NoSwingNetBindService(this, wrapped.getNetBinds());
         netDeviceIDs = new NoSwingNetDeviceIDService(this, wrapped.getNetDeviceIDs());
+        /* TODO
         netDevices = new NoSwingNetDeviceService(this, wrapped.getNetDevices());
         netPorts = new NoSwingNetPortService(this, wrapped.getNetPorts());
          */
@@ -389,8 +397,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         resourceTypes = new NoSwingResourceTypeService(this, wrapped.getResourceTypes());
         resources = new NoSwingResourceService(this, wrapped.getResources());
         serverFarms = new NoSwingServerFarmService(this, wrapped.getServerFarms());
-        /* TODO
         servers = new NoSwingServerService(this, wrapped.getServers());
+        /* TODO
         shells = new NoSwingShellService(this, wrapped.getShells());
         signupRequestOptions = new NoSwingSignupRequestOptionService(this, wrapped.getSignupRequestOptions());
         signupRequests = new NoSwingSignupRequestService(this, wrapped.getSignupRequests());
@@ -479,10 +487,14 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public AOServerDaemonHostService<NoSwingConnector,NoSwingConnectorFactory> getAoServerDaemonHosts() throws RemoteException;
 
     public AOServerResourceService<NoSwingConnector,NoSwingConnectorFactory> getAoServerResources() throws RemoteException;
-
-    public AOServerService<NoSwingConnector,NoSwingConnectorFactory> getAoServers() throws RemoteException;
     */
+    public AOServerService<NoSwingConnector,NoSwingConnectorFactory> getAoServers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return aoservers;
+    }
+
     public AOServPermissionService<NoSwingConnector,NoSwingConnectorFactory> getAoservPermissions() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
         return aoservPermissions;
     }
     /* TODO
@@ -491,6 +503,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public AOSHCommandService<NoSwingConnector,NoSwingConnectorFactory> getAoshCommands() throws RemoteException;
     */
     public ArchitectureService<NoSwingConnector,NoSwingConnectorFactory> getArchitectures() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
         return architectures;
     }
     /* TODO
@@ -530,6 +543,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public ClientJvmProfileService<NoSwingConnector,NoSwingConnectorFactory> getClientJvmProfiles() throws RemoteException;
     */
     public CountryCodeService<NoSwingConnector,NoSwingConnectorFactory> getCountryCodes() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
         return countryCodes;
     }
     /* TODO
@@ -694,16 +708,23 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public MySQLServerService<NoSwingConnector,NoSwingConnectorFactory> getMysqlServers() throws RemoteException;
 
     public MySQLUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlUsers() throws RemoteException;
+    */
+    public NetBindService<NoSwingConnector,NoSwingConnectorFactory> getNetBinds() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return netBinds;
+    }
 
-    public NetBindService<NoSwingConnector,NoSwingConnectorFactory> getNetBinds() throws RemoteException;
-
-    public NetDeviceIDService<NoSwingConnector,NoSwingConnectorFactory> getNetDeviceIDs() throws RemoteException;
-
+    public NetDeviceIDService<NoSwingConnector,NoSwingConnectorFactory> getNetDeviceIDs() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return netDeviceIDs;
+    }
+    /* TODO
     public NetDeviceService<NoSwingConnector,NoSwingConnectorFactory> getNetDevices() throws RemoteException;
 
     public NetPortService<NoSwingConnector,NoSwingConnectorFactory> getNetPorts() throws RemoteException;
     */
     public NetProtocolService<NoSwingConnector,NoSwingConnectorFactory> getNetProtocols() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
         return netProtocols;
     }
     /* TODO
@@ -714,10 +735,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public NoticeTypeService<NoSwingConnector,NoSwingConnectorFactory> getNoticeTypes() throws RemoteException;
     */
     public OperatingSystemVersionService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystemVersions() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
         return operatingSystemVersions;
     }
 
     public OperatingSystemService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystems() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
         return operatingSystems;
     }
 
@@ -753,6 +776,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public ProcessorTypeService<NoSwingConnector,NoSwingConnectorFactory> getProcessorTypes() throws RemoteException;
     */
     public ProtocolService<NoSwingConnector,NoSwingConnectorFactory> getProtocols() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
         return protocols;
     }
     /* TODO
@@ -774,9 +798,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         NoSwingConnectorFactory.checkNotSwing();
         return serverFarms;
     }
-    /* TODO
-    public ServerTable getServers() throws RemoteException;
 
+    public ServerService<NoSwingConnector,NoSwingConnectorFactory> getServers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return servers;
+    }
+    /* TODO
     public ShellService<NoSwingConnector,NoSwingConnectorFactory> getShells() throws RemoteException;
 
     public SignupRequestOptionService<NoSwingConnector,NoSwingConnectorFactory> getSignupRequestOptions() throws RemoteException;
@@ -837,6 +864,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public USStateService<NoSwingConnector,NoSwingConnectorFactory> getUsStates() throws RemoteException;
     */
     public UsernameService<NoSwingConnector,NoSwingConnectorFactory> getUsernames() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
         return usernames;
     }
     /* TODO

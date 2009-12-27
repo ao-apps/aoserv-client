@@ -107,23 +107,23 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public List<TicketBrandCategory> getTicketBrandCategorys() throws IOException, SQLException {
-        return table.connector.getTicketBrandCategories().getTicketBrandCategories(this);
+        return getService().getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
     }
 
     public List<TicketCategory> getChildrenCategories() throws IOException, SQLException {
-        return table.connector.getTicketCategories().getChildrenCategories(this);
+        return getService().getConnector().getTicketCategories().getChildrenCategories(this);
     }
 
     public List<Ticket> getTickets() throws IOException, SQLException {
-        return table.connector.getTickets().getIndexedRows(Ticket.COLUMN_CATEGORY, pkey);
+        return getService().getConnector().getTickets().getIndexedRows(Ticket.COLUMN_CATEGORY, pkey);
     }
 
     public List<TicketAction> getTicketActionsByOldCategory() throws IOException, SQLException {
-        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_CATEGORY, pkey);
+        return getService().getConnector().getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_CATEGORY, pkey);
     }
 
     public List<TicketAction> getTicketActionsByNewCategory() throws IOException, SQLException {
-        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_CATEGORY, pkey);
+        return getService().getConnector().getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_CATEGORY, pkey);
     }*/
     // </editor-fold>
 }

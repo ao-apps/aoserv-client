@@ -5,10 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
 
 /**
  * An <code>NetDeviceID</code> is a simple wrapper for the
@@ -16,14 +12,12 @@ import java.sql.*;
  *
  * @see  NetDevice
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implements Comparable<NetDeviceID> {
+final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         BOND0="bond0",
@@ -36,43 +30,26 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
         ETH5="eth5",
         ETH6="eth6"
     ;
+    // </editor-fold>
 
-    private boolean is_loopback;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private boolean is_loopback;
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_NAME) return pkey;
-	if(i==1) return is_loopback?Boolean.TRUE:Boolean.FALSE;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    public NetDeviceID(NetDeviceIDService<?,?> service, String name, boolean is_loopback) {
+        super(service, name);
+        this.is_loopback = is_loopback;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", unique=true, description="the unique name of the device")
     public String getName() {
-	return pkey;
+    	return key;
     }
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.NET_DEVICE_IDS;
-    }
-
-    public void init(ResultSet results) throws SQLException {
-	pkey=results.getString(1);
-	is_loopback=results.getBoolean(2);
-    }
-
+    @SchemaColumn(order=1, name="is_loopback", description="if the device is the loopback device")
     public boolean isLoopback() {
-	return is_loopback;
+        return is_loopback;
     }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	is_loopback=in.readBoolean();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeBoolean(is_loopback);
-    }
-    
-    public int compareTo(NetDeviceID other) {
-        return pkey.compareTo(other.pkey);
-    }
+    // </editor-fold>
 }

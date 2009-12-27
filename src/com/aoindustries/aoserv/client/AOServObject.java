@@ -5,7 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.table.Column;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.i18n.LocalizedToString;
 import com.aoindustries.util.WrappedException;
@@ -47,6 +46,34 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
 
     static int compare(int i1, int i2) {
         return i1<i2 ? -1 : i1==i2 ? 0 : 1;
+    }
+
+    static int compareHostnames(String host1, String host2) {
+        while(host1.length()>0 && host2.length()>0) {
+            int pos=host1.lastIndexOf('.');
+            String section1;
+            if(pos==-1) {
+                section1=host1;
+                host1="";
+            } else {
+                section1=host1.substring(pos+1);
+                host1=host1.substring(0, pos);
+            }
+
+            pos=host2.lastIndexOf('.');
+            String section2;
+            if(pos==-1) {
+                section2=host2;
+                host2="";
+            } else {
+                section2=host2.substring(pos+1);
+                host2=host2.substring(0, pos);
+            }
+
+            int diff=compareIgnoreCaseConsistentWithEquals(section1, section2);
+            if(diff!=0) return diff;
+        }
+        return compareIgnoreCaseConsistentWithEquals(host1, host2);
     }
 
     private volatile transient AOServService<?,?,K,T> service;

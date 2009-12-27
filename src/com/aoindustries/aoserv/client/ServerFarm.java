@@ -86,11 +86,11 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> {
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public List<Server> getServers() throws IOException, SQLException {
-        return table.connector.getServers().getIndexedRows(Server.COLUMN_FARM, pkey);
+        return getService().getConnector().getServers().getIndexedRows(Server.COLUMN_FARM, pkey);
     }
 
     public List<Rack> getRacks() throws IOException, SQLException {
-        return table.connector.getRacks().getIndexedRows(Rack.COLUMN_FARM, pkey);
+        return getService().getConnector().getRacks().getIndexedRows(Rack.COLUMN_FARM, pkey);
     }*/
     // </editor-fold>
 }

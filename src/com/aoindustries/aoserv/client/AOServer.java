@@ -5,63 +5,449 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.io.OutputStream;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServer extends CachedObjectIntegerKey<AOServer> {
+final public class AOServer extends AOServObjectIntegerKey<AOServer> {
 
-    static final int COLUMN_SERVER=0;
-    static final int COLUMN_HOSTNAME=1;
-    static final String COLUMN_HOSTNAME_name = "hostname";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    private String hostname;
-    int daemon_bind;
-    private String daemon_key;
-    private int pool_size;
-    private int distro_hour;
-    private long last_distro_time;
-    int failover_server;
-    private String daemon_device_id;
-    int daemon_connect_bind;
-    private String time_zone;
-    int jilter_bind;
-    private boolean restrict_outbound_email;
-    private String daemon_connect_address;
-    private int failover_batch_size;
-    private float monitoring_load_low;
-    private float monitoring_load_medium;
-    private float monitoring_load_high;
-    private float monitoring_load_critical;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String hostname;
+    final private int daemon_bind;
+    final private String daemon_key;
+    final private int pool_size;
+    final private int distro_hour;
+    final private Timestamp last_distro_time;
+    final private int failover_server;
+    final private String daemon_device_id;
+    final private int daemon_connect_bind;
+    final private String time_zone;
+    final private int jilter_bind;
+    final private boolean restrict_outbound_email;
+    final private String daemon_connect_address;
+    final private int failover_batch_size;
+    final private float monitoring_load_low;
+    final private float monitoring_load_medium;
+    final private float monitoring_load_high;
+    final private float monitoring_load_critical;
 
+    public AOServer(
+        AOServerService<?,?> service,
+        int server,
+        String hostname,
+        int daemon_bind,
+        String daemon_key,
+        int pool_size,
+        int distro_hour,
+        Timestamp last_distro_time,
+        int failover_server,
+        String daemon_device_id,
+        int daemon_connect_bind,
+        String time_zone,
+        int jilter_bind,
+        boolean restrict_outbound_email,
+        String daemon_connect_address,
+        int failover_batch_size,
+        float monitoring_load_low,
+        float monitoring_load_medium,
+        float monitoring_load_high,
+        float monitoring_load_critical
+    ) {
+        super(service, server);
+        this.hostname = hostname.intern();
+        this.daemon_bind = daemon_bind;
+        this.daemon_key = daemon_key;
+        this.pool_size = pool_size;
+        this.distro_hour = distro_hour;
+        this.last_distro_time = last_distro_time;
+        this.failover_server = failover_server;
+        this.daemon_device_id = daemon_device_id.intern();
+        this.daemon_connect_bind = daemon_connect_bind;
+        this.time_zone = time_zone.intern();
+        this.jilter_bind = jilter_bind;
+        this.restrict_outbound_email = restrict_outbound_email;
+        this.daemon_connect_address = StringUtility.intern(daemon_connect_address);
+        this.failover_batch_size = failover_batch_size;
+        this.monitoring_load_low = monitoring_load_low;
+        this.monitoring_load_medium = monitoring_load_medium;
+        this.monitoring_load_high = monitoring_load_high;
+        this.monitoring_load_critical = monitoring_load_critical;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(AOServer other) {
+        return compareHostnames(hostname, other.hostname);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="server", unique=true, description="a reference to servers")
+    public Server getServer() throws RemoteException {
+        Server se=getService().getConnector().getServers().get(key);
+        if(se==null) throw new RemoteException("Unable to find Server: "+key);
+        return se;
+    }
+
+    /**
+     * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
+     */
+    @SchemaColumn(order=1, name="hostname", unique=true, description="the unique hostname of the server")
+    public String getHostname() {
+        return hostname;
+    }
+
+    /**
+     * Gets the port information to bind to.
+     *
+     * May be filtered.
+     */
+    @SchemaColumn(order=2, name="daemon_bind", description="the network bind info for the AOServ Daemon")
+    public NetBind getDaemonBind() throws RemoteException {
+    	if(daemon_bind==-1) return null;
+        return getService().getConnector().getNetBinds().get(daemon_bind);
+    }
+
+    @SchemaColumn(
+        order=3,
+        name="daemon_key",
+        description="the hashed key used to connect to this server, this info MUST be filtered\n"
+                  + "because it grants complete control over the server."
+    )
+    public String getDaemonKey() {
+        return daemon_key;
+    }
+
+    @SchemaColumn(order=4, name="pool_size", description="the recommended connection pool size for the AOServ Master")
+    public int getPoolSize() {
+        return pool_size;
+    }
+
+    @SchemaColumn(order=5, name="distro_hour", description="the hour the distribution will occur, in server time zone")
+    public int getDistroHour() {
+        return distro_hour;
+    }
+
+    @SchemaColumn(order=6, name="last_distro_time", description="the time the last distro check was started")
+    public Timestamp getLastDistroTime() {
+        return last_distro_time;
+    }
+
+    @SchemaColumn(order=7, name="failover_server", description="the server that is currently running this server")
+    public AOServer getFailoverServer() throws RemoteException {
+        if(failover_server==-1) return null;
+        AOServer se=getService().getConnector().getAoServers().get(failover_server);
+        if(se==null) new RemoteException("Unable to find AOServer: "+failover_server);
+        return se;
+    }
+
+    @SchemaColumn(order=8, name="daemon_device_id", description="the device name the master connects to")
+    public NetDeviceID getDaemonDeviceID() throws RemoteException {
+        NetDeviceID ndi=getService().getConnector().getNetDeviceIDs().get(daemon_device_id);
+        if(ndi==null) throw new RemoteException("Unable to find NetDeviceID: "+daemon_device_id);
+        return ndi;
+    }
+
+    /**
+     * Gets the port information to connect to.
+     *
+     * May be filtered.
+     */
+    @SchemaColumn(order=9, name="daemon_connect_bind", description="the bind to connect to")
+    public NetBind getDaemonConnectBind() throws RemoteException {
+        if(daemon_connect_bind==-1) return null;
+        return getService().getConnector().getNetBinds().get(daemon_connect_bind);
+    }
+
+    @SchemaColumn(order=10, name="time_zone", description="the time zone setting for the server")
+    public TimeZone getTimeZone() throws RemoteException {
+        TimeZone tz=getService().getConnector().getTimeZones().get(time_zone);
+        if(tz==null) throw new RemoteException("Unable to find TimeZone: "+time_zone);
+        return tz;
+    }
+
+    /**
+     * May be filtered.
+     */
+    @SchemaColumn(order=11, name="jilter_bind", description="the bind that sendmail uses to connect to jilter")
+    public NetBind getJilterBind() throws RemoteException {
+    	if(jilter_bind==-1) return null;
+        return getService().getConnector().getNetBinds().get(jilter_bind);
+    }
+
+    @SchemaColumn(order=12, name="restrict_outbound_email", description="controls if outbound email may only come from address hosted on this machine")
+    public boolean getRestrictOutboundEmail() {
+        return restrict_outbound_email;
+    }
+
+    /**
+     * Gets the address that should be connected to in order to reach this server.
+     * This overrides both getDaemonConnectBind and getDaemonBind.
+     *
+     * @see  #getDaemonConnectBind
+     * @see  #getDaemonBind
+     */
+    @SchemaColumn(order=13, name="daemon_connect_address", description="provides a specific address to use for connecting to AOServDaemon")
+    public String getDaemonConnectAddress() {
+        return daemon_connect_address;
+    }
+
+    /**
+     * Gets the number of filesystem entries sent per batch during failover replications.
+     */
+    @SchemaColumn(order=14, name="failover_batch_size", description="the batch size used for failover replications coming from this server")
+    public int getFailoverBatchSize() {
+        return failover_batch_size;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a low-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    @SchemaColumn(order=15, name="monitoring_load_low", description="the 5-minute load average that will trigger a low-level alert")
+    public float getMonitoringLoadLow() {
+        return monitoring_load_low;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a medium-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    @SchemaColumn(order=16, name="monitoring_load_medium", description="the 5-minute load average that will trigger a medium-level alert")
+    public float getMonitoringLoadMedium() {
+        return monitoring_load_medium;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a high-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    @SchemaColumn(order=17, name="monitoring_load_high", description="the 5-minute load average that will trigger a high-level alert")
+    public float getMonitoringLoadHigh() {
+        return monitoring_load_high;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a critical-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.  This is the level
+     * that will alert people 24x7.
+     */
+    @SchemaColumn(order=18, name="monitoring_load_critical", description="the 5-minute load average that will trigger a critical-level alert")
+    public float getMonitoringLoadCritical() {
+        return monitoring_load_critical;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getServer(),
+            getDaemonBind(),
+            getFailoverServer(),
+            getDaemonConnectBind(),
+            getJilterBind()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getNestedAOServers(),
+            // TODO: getAOServerDaemonHosts(),
+            // TODO: getBackupPartitions(),
+            // TODO: getLinuxServerAccounts(),
+            // TODO: getEmailDomains(),
+            // TODO: getLinuxServerGroups(),
+            // TODO: getEmailPipes(),
+            // TODO: getSystemEmailAliases(),
+            // TODO: getEmailSmtpRelays(),
+            // TODO: getHttpdServers(),
+            // TODO: getHttpdSites(),
+            // TODO: getFailoverMySQLReplications(),
+            // TODO: getHttpdSharedTomcats(),
+            // TODO: getPostgresServers(),
+            // TODO: getAoServerResources()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public List<AOServerDaemonHost> getAOServerDaemonHosts() throws IOException, SQLException {
+    	return getService().getConnector().getAoServerDaemonHosts().getAOServerDaemonHosts(this);
+    }
+
+    public List<BackupPartition> getBackupPartitions() throws IOException, SQLException {
+        return getService().getConnector().getBackupPartitions().getBackupPartitions(this);
+    }
+
+    public List<BlackholeEmailAddress> getBlackholeEmailAddresses() throws IOException, SQLException {
+    	return getService().getConnector().getBlackholeEmailAddresses().getBlackholeEmailAddresses(this);
+    }
+
+    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
+        return getService().getConnector().getCvsRepositories().getCvsRepositories(this);
+    }
+
+    public IPAddress getDaemonIPAddress() throws SQLException, IOException {
+        NetBind nb=getDaemonBind();
+        if(nb==null) throw new SQLException("Unable to find daemon NetBind for AOServer: "+pkey);
+        IPAddress ia=nb.getIPAddress();
+        String ip=ia.getIPAddress();
+        if(ip.equals(IPAddress.WILDCARD_IP)) {
+            NetDeviceID ndi=getDaemonDeviceID();
+            NetDevice nd=getServer().getNetDevice(ndi.getName());
+            if(nd==null) throw new SQLException("Unable to find NetDevice: "+ndi.getName()+" on "+pkey);
+            ia=nd.getPrimaryIPAddress();
+            if(ia==null) throw new SQLException("Unable to find primary IPAddress: "+ndi.getName()+" on "+pkey);
+        }
+        return ia;
+    }
+
+    public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
+        return getService().getConnector().getEmailAddresses().getEmailAddresses(this);
+    }
+
+    public List<EmailDomain> getEmailDomains() throws IOException, SQLException {
+    	return getService().getConnector().getEmailDomains().getEmailDomains(this);
+    }
+
+    public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
+        return getService().getConnector().getEmailForwardings().getEmailForwarding(this);
+    }
+
+    public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
+        return getService().getConnector().getEmailListAddresses().getEmailListAddresses(this);
+    }
+
+    public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
+        return getService().getConnector().getEmailPipeAddresses().getEmailPipeAddresses(this);
+    }
+
+    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
+        return getService().getConnector().getEmailPipes().getEmailPipes(this);
+    }
+    */
+    /**
+     * Gets all of the smtp relays settings that apply to either all servers or this server specifically.
+     */
+    /* TODO
+    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
+        return getService().getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
+    }
+
+    public List<FTPGuestUser> getFTPGuestUsers() throws IOException, SQLException {
+        return getService().getConnector().getFtpGuestUsers().getFTPGuestUsers(this);
+    }
+
+    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
+        return getService().getConnector().getHttpdServers().getHttpdServers(this);
+    }
+
+    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
+        return getService().getConnector().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
+    }
+
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
+        return getService().getConnector().getHttpdSites().getHttpdSites(this);
+    }
+
+    public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
+        return getService().getConnector().getLinuxAccAddresses().getLinuxAccAddresses(this);
+    }
+
+    public List<LinuxAccount> getLinuxAccounts() throws SQLException, IOException {
+        List<LinuxServerAccount> lsa=getLinuxServerAccounts();
+        int len=lsa.size();
+        List<LinuxAccount> la=new ArrayList<LinuxAccount>(len);
+        for(int c=0;c<len;c++) la.add(lsa.get(c).getLinuxAccount());
+        return la;
+    }
+
+    public List<LinuxGroup> getLinuxGroups() throws SQLException, IOException {
+        List<LinuxServerGroup> lsg=getLinuxServerGroups();
+        int len=lsg.size();
+        List<LinuxGroup> lg=new ArrayList<LinuxGroup>(len);
+        for(int c=0;c<len;c++) lg.add(lsg.get(c).getLinuxGroup());
+        return lg;
+    }
+
+    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
+    	return getService().getConnector().getLinuxServerAccounts().getLinuxServerAccounts(this);
+    }
+
+    public List<LinuxServerGroup> getLinuxServerGroups() throws IOException, SQLException {
+    	return getService().getConnector().getLinuxServerGroups().getLinuxServerGroups(this);
+    }
+
+    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
+        return getService().getConnector().getMajordomoServers().getMajordomoServers(this);
+    }
+
+    public List<MySQLServer> getMySQLServers() throws IOException, SQLException {
+        List<Resource> resources = getService().getConnector().getResources().getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, ResourceType.MYSQL_SERVER);
+        List<MySQLServer> matches = new ArrayList<MySQLServer>(resources.size());
+        for(Resource resource : resources) {
+            matches.add(resource.getAoServerResource().getMySQLServer());
+        }
+        return Collections.unmodifiableList(matches);
+    }
+
+    public List<AOServer> getNestedAOServers() throws IOException, SQLException {
+        return getService().getConnector().getAoServers().getNestedAOServers(this);
+    }
+
+    public List<PostgresServer> getPostgresServers() throws IOException, SQLException {
+        return getService().getConnector().getPostgresServers().getPostgresServers(this);
+    }
+
+    public List<PrivateFTPServer> getPrivateFTPServers() throws IOException, SQLException {
+    	return getService().getConnector().getPrivateFTPServers().getPrivateFTPServers(this);
+    }
+
+    public List<SystemEmailAlias> getSystemEmailAliases() throws IOException, SQLException {
+        return getService().getConnector().getSystemEmailAliases().getSystemEmailAliases(this);
+    }
+
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
+        return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+    }
+
+    public List<AOServerResource> getAoServerResources() throws IOException, SQLException {
+        return getService().getConnector().getAoServerResources().getIndexedRows(AOServerResource.COLUMN_AO_SERVER, pkey);
+    }
+     */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    protected String toStringImpl(Locale userLocale) {
+        return hostname;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public int addCvsRepository(
         String path,
         LinuxServerAccount lsa,
         LinuxServerGroup lsg,
         long mode
     ) throws IOException, SQLException {
-    	return table.connector.getCvsRepositories().addCvsRepository(
+    	return getService().getConnector().getCvsRepositories().addCvsRepository(
             this,
             path,
             lsa,
@@ -71,11 +457,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public int addEmailDomain(String domain, Business business) throws SQLException, IOException {
-        return table.connector.getEmailDomains().addEmailDomain(domain, this, business);
+        return getService().getConnector().getEmailDomains().addEmailDomain(domain, this, business);
     }
 
     public int addEmailPipe(String path, Business bu) throws IOException, SQLException {
-        return table.connector.getEmailPipes().addEmailPipe(this, path, bu);
+        return getService().getConnector().getEmailPipes().addEmailPipe(this, path, bu);
     }
 
     public int addHttpdJBossSite(
@@ -90,7 +476,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         String[] altHttpHostnames,
         int jBossVersion
     ) throws IOException, SQLException {
-        return table.connector.getHttpdJBossSites().addHttpdJBossSite(
+        return getService().getConnector().getHttpdJBossSites().addHttpdJBossSite(
             this,
             siteName,
             business,
@@ -113,7 +499,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         boolean isSecure,
         boolean isOverflow
     ) throws IOException, SQLException {
-        return table.connector.getHttpdSharedTomcats().addHttpdSharedTomcat(
+        return getService().getConnector().getHttpdSharedTomcats().addHttpdSharedTomcat(
             name,
             this,
             version,
@@ -136,7 +522,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         String[] altHttpHostnames,
         String sharedTomcatName
     ) throws IOException, SQLException {
-        return table.connector.getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
+        return getService().getConnector().getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
             this,
             siteName,
             business,
@@ -163,7 +549,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         String[] altHttpHostnames,
         HttpdTomcatVersion tomcatVersion
     ) throws IOException, SQLException {
-        return table.connector.getHttpdTomcatStdSites().addHttpdTomcatStdSite(
+        return getService().getConnector().getHttpdTomcatStdSites().addHttpdTomcatStdSite(
             this,
             siteName,
             business,
@@ -178,303 +564,52 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         );
     }
 
-    public List<AOServerDaemonHost> getAOServerDaemonHosts() throws IOException, SQLException {
-	return table.connector.getAoServerDaemonHosts().getAOServerDaemonHosts(this);
-    }
-
-    public List<BackupPartition> getBackupPartitions() throws IOException, SQLException {
-        return table.connector.getBackupPartitions().getBackupPartitions(this);
-    }
-
     public BackupPartition getBackupPartitionForPath(String path) throws IOException, SQLException {
-        return table.connector.getBackupPartitions().getBackupPartitionForPath(this, path);
-    }
-
-    public List<BlackholeEmailAddress> getBlackholeEmailAddresses() throws IOException, SQLException {
-	return table.connector.getBlackholeEmailAddresses().getBlackholeEmailAddresses(this);
-    }
-
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_SERVER: return Integer.valueOf(pkey);
-            case COLUMN_HOSTNAME: return hostname;
-            case 2: return daemon_bind==-1?null:Integer.valueOf(daemon_bind);
-            case 3: return daemon_key;
-            case 4: return Integer.valueOf(pool_size);
-            case 5: return Integer.valueOf(distro_hour);
-            case 6: return last_distro_time==-1?null:new Date(last_distro_time);
-            case 7: return failover_server==-1?null:Integer.valueOf(failover_server);
-            case 8: return daemon_device_id;
-            case 9: return daemon_connect_bind==-1?null:Integer.valueOf(daemon_connect_bind);
-            case 10: return time_zone;
-            case 11: return jilter_bind;
-            case 12: return restrict_outbound_email;
-            case 13: return daemon_connect_address;
-            case 14: return failover_batch_size;
-            case 15: return Float.isNaN(monitoring_load_low) ? null : Float.valueOf(monitoring_load_low);
-            case 16: return Float.isNaN(monitoring_load_medium) ? null : Float.valueOf(monitoring_load_medium);
-            case 17: return Float.isNaN(monitoring_load_high) ? null : Float.valueOf(monitoring_load_high);
-            case 18: return Float.isNaN(monitoring_load_critical) ? null : Float.valueOf(monitoring_load_critical);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+        return getService().getConnector().getBackupPartitions().getBackupPartitionForPath(this, path);
     }
 
     public CvsRepository getCvsRepository(String path) throws IOException, SQLException {
-        return table.connector.getCvsRepositories().getCvsRepository(this, path);
-    }
-
-    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-        return table.connector.getCvsRepositories().getCvsRepositories(this);
-    }
-
-    /**
-     * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
-     */
-    public String getHostname() {
-        return hostname;
-    }
-
-    /**
-     * Gets the port information to bind to.
-     */
-    public NetBind getDaemonBind() throws IOException, SQLException {
-    	if(daemon_bind==-1) return null;
-        // May be filtered
-        return table.connector.getNetBinds().get(daemon_bind);
-    }
-
-    /**
-     * Gets the port information to connect to.
-     */
-    public NetBind getDaemonConnectBind() throws IOException, SQLException {
-	if(daemon_connect_bind==-1) return null;
-        // May be filtered
-        return table.connector.getNetBinds().get(daemon_connect_bind);
-    }
-    
-    public TimeZone getTimeZone() throws SQLException, IOException {
-        TimeZone tz=table.connector.getTimeZones().get(time_zone);
-        if(tz==null) throw new SQLException("Unable to find TimeZone: "+time_zone);
-        return tz;
-    }
-
-    public NetBind getJilterBind() throws IOException, SQLException {
-	if(jilter_bind==-1) return null;
-        // May be filtered
-        return table.connector.getNetBinds().get(jilter_bind);
-    }
-    
-    public boolean getRestrictOutboundEmail() {
-        return restrict_outbound_email;
-    }
-    
-    /**
-     * Gets the address that should be connected to in order to reach this server.
-     * This overrides both getDaemonConnectBind and getDaemonBind.
-     *
-     * @see  #getDaemonConnectBind
-     * @see  #getDaemonBind
-     */
-    public String getDaemonConnectAddress() {
-        return daemon_connect_address;
-    }
-    
-    /**
-     * Gets the number of filesystem entries sent per batch during failover replications.
-     */
-    public int getFailoverBatchSize() {
-        return failover_batch_size;
-    }
-
-    /**
-     * Gets the 5-minute load average that is considered a low-priority alert or
-     * <code>NaN</code> if no alert allowed at this level.
-     */
-    public float getMonitoringLoadLow() {
-        return monitoring_load_low;
-    }
-
-    /**
-     * Gets the 5-minute load average that is considered a medium-priority alert or
-     * <code>NaN</code> if no alert allowed at this level.
-     */
-    public float getMonitoringLoadMedium() {
-        return monitoring_load_medium;
-    }
-
-    /**
-     * Gets the 5-minute load average that is considered a high-priority alert or
-     * <code>NaN</code> if no alert allowed at this level.
-     */
-    public float getMonitoringLoadHigh() {
-        return monitoring_load_high;
-    }
-
-    /**
-     * Gets the 5-minute load average that is considered a critical-priority alert or
-     * <code>NaN</code> if no alert allowed at this level.  This is the level
-     * that will alert people 24x7.
-     */
-    public float getMonitoringLoadCritical() {
-        return monitoring_load_critical;
-    }
-
-    public NetDeviceID getDaemonDeviceID() throws SQLException, IOException {
-        NetDeviceID ndi=table.connector.getNetDeviceIDs().get(daemon_device_id);
-        if(ndi==null) throw new SQLException("Unable to find NetDeviceID: "+daemon_device_id);
-        return ndi;
-    }
-
-    public IPAddress getDaemonIPAddress() throws SQLException, IOException {
-        NetBind nb=getDaemonBind();
-        if(nb==null) throw new SQLException("Unable to find daemon NetBind for AOServer: "+pkey);
-        IPAddress ia=nb.getIPAddress();
-        String ip=ia.getIPAddress();
-        if(ip.equals(IPAddress.WILDCARD_IP)) {
-            NetDeviceID ndi=getDaemonDeviceID();
-            NetDevice nd=getServer().getNetDevice(ndi.getName());
-            if(nd==null) throw new SQLException("Unable to find NetDevice: "+ndi.getName()+" on "+pkey);
-            ia=nd.getPrimaryIPAddress();
-            if(ia==null) throw new SQLException("Unable to find primary IPAddress: "+ndi.getName()+" on "+pkey);
-        }
-        return ia;
-    }
-
-    public String getDaemonKey() {
-	return daemon_key;
-    }
-
-    public int getDistroHour() {
-        return distro_hour;
-    }
-
-    public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
-	return table.connector.getEmailAddresses().getEmailAddresses(this);
+        return getService().getConnector().getCvsRepositories().getCvsRepository(this, path);
     }
 
     public EmailDomain getEmailDomain(String domain) throws IOException, SQLException {
-        return table.connector.getEmailDomains().getEmailDomain(this, domain);
+        return getService().getConnector().getEmailDomains().getEmailDomain(this, domain);
     }
-
-    public List<EmailDomain> getEmailDomains() throws IOException, SQLException {
-	return table.connector.getEmailDomains().getEmailDomains(this);
-    }
-
-    public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
-	return table.connector.getEmailForwardings().getEmailForwarding(this);
-    }
-
+    */
     /**
      * Rename to getEmailList when all uses updated.
      */
+    /* TODO
     public EmailList getEmailList(String path) throws IOException, SQLException {
-        return table.connector.getEmailLists().getEmailList(this, path);
-    }
-
-    public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
-        return table.connector.getEmailListAddresses().getEmailListAddresses(this);
-    }
-
-    public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
-        return table.connector.getEmailPipeAddresses().getEmailPipeAddresses(this);
-    }
-
-    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-        return table.connector.getEmailPipes().getEmailPipes(this);
+        return getService().getConnector().getEmailLists().getEmailList(this, path);
     }
 
     public EmailSmtpRelay getEmailSmtpRelay(Business bu, String host) throws IOException, SQLException {
-    	return table.connector.getEmailSmtpRelays().getEmailSmtpRelay(bu, this, host);
-    }
-
-    /**
-     * Gets all of the smtp relays settings that apply to either all servers or this server specifically.
-     */
-    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-	return table.connector.getEmailSmtpRelays().getEmailSmtpRelays(this);
-    }
-
-    public AOServer getFailoverServer() throws SQLException, IOException {
-        if(failover_server==-1) return null;
-        AOServer se=table.connector.getAoServers().get(failover_server);
-        if(se==null) new SQLException("Unable to find AOServer: "+failover_server);
-        return se;
-    }
-
-    public List<FTPGuestUser> getFTPGuestUsers() throws IOException, SQLException {
-	return table.connector.getFtpGuestUsers().getFTPGuestUsers(this);
-    }
-
-    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
-	return table.connector.getHttpdServers().getHttpdServers(this);
-    }
-
-    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-	return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcats(this);
+    	return getService().getConnector().getEmailSmtpRelays().getEmailSmtpRelay(bu, this, host);
     }
 
     public HttpdSharedTomcat getHttpdSharedTomcat(String jvmName) throws IOException, SQLException {
-	return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcat(jvmName, this);
+        return getService().getConnector().getHttpdSharedTomcats().getHttpdSharedTomcat(jvmName, this);
     }
 
     public HttpdSite getHttpdSite(String siteName) throws IOException, SQLException {
-	return table.connector.getHttpdSites().getHttpdSite(siteName, this);
-    }
-
-    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-	return table.connector.getHttpdSites().getHttpdSites(this);
-    }
-
-    public long getLastDistroTime() {
-        return last_distro_time;
-    }
-
-    public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
-	return table.connector.getLinuxAccAddresses().getLinuxAccAddresses(this);
-    }
-
-    public List<LinuxAccount> getLinuxAccounts() throws SQLException, IOException {
-	List<LinuxServerAccount> lsa=getLinuxServerAccounts();
-	int len=lsa.size();
-	List<LinuxAccount> la=new ArrayList<LinuxAccount>(len);
-	for(int c=0;c<len;c++) la.add(lsa.get(c).getLinuxAccount());
-	return la;
-    }
-
-    public List<LinuxGroup> getLinuxGroups() throws SQLException, IOException {
-	List<LinuxServerGroup> lsg=getLinuxServerGroups();
-	int len=lsg.size();
-	List<LinuxGroup> lg=new ArrayList<LinuxGroup>(len);
-	for(int c=0;c<len;c++) lg.add(lsg.get(c).getLinuxGroup());
-	return lg;
+    	return getService().getConnector().getHttpdSites().getHttpdSite(siteName, this);
     }
 
     public LinuxServerAccount getLinuxServerAccount(String username) throws IOException, SQLException {
-        return table.connector.getLinuxServerAccounts().getLinuxServerAccount(this, username);
+        return getService().getConnector().getLinuxServerAccounts().getLinuxServerAccount(this, username);
     }
 
     public LinuxServerAccount getLinuxServerAccount(int uid) throws IOException, SQLException {
-        return table.connector.getLinuxServerAccounts().getLinuxServerAccount(this, uid);
-    }
-
-    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
-	return table.connector.getLinuxServerAccounts().getLinuxServerAccounts(this);
+        return getService().getConnector().getLinuxServerAccounts().getLinuxServerAccount(this, uid);
     }
 
     public LinuxServerGroup getLinuxServerGroup(int gid) throws IOException, SQLException {
-        return table.connector.getLinuxServerGroups().getLinuxServerGroup(this, gid);
+        return getService().getConnector().getLinuxServerGroups().getLinuxServerGroup(this, gid);
     }
 
     public LinuxServerGroup getLinuxServerGroup(String groupName) throws IOException, SQLException {
-        return table.connector.getLinuxServerGroups().getLinuxServerGroup(this, groupName);
-    }
-
-    public List<LinuxServerGroup> getLinuxServerGroups() throws IOException, SQLException {
-	return table.connector.getLinuxServerGroups().getLinuxServerGroups(this);
-    }
-
-    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
-        return table.connector.getMajordomoServers().getMajordomoServers(this);
+        return getService().getConnector().getLinuxServerGroups().getLinuxServerGroup(this, groupName);
     }
 
     private static final Map<Integer,Object> mrtgLocks = new HashMap<Integer,Object>();
@@ -504,7 +639,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
 
         try {
-            table.connector.requestUpdate(
+            getService().getConnector().requestUpdate(
                 false,
                 new AOServConnector.UpdateRequest() {
                     public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
@@ -542,22 +677,13 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     public MySQLServer getMySQLServer(String name) throws IOException, SQLException {
         // Use the index first
-        for(MySQLServer ms : table.connector.getMysqlServers().getIndexedRows(MySQLServer.COLUMN_NAME, name)) {
+        for(MySQLServer ms : getService().getConnector().getMysqlServers().getIndexedRows(MySQLServer.COLUMN_NAME, name)) {
             if(ms.getAoServerResource().ao_server==pkey) return ms;
         }
         return null;
     }
-
-    public List<MySQLServer> getMySQLServers() throws IOException, SQLException {
-        List<Resource> resources = table.connector.getResources().getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, ResourceType.MYSQL_SERVER);
-        List<MySQLServer> matches = new ArrayList<MySQLServer>(resources.size());
-        for(Resource resource : resources) {
-            matches.add(resource.getAoServerResource().getMySQLServer());
-        }
-        return Collections.unmodifiableList(matches);
-    }
-
-    /*
+    */
+    /* TODO
     public MySQLServer getPreferredMySQLServer() throws IOException, SQLException {
         // Look for the most-preferred version that has an instance on the server
         List<MySQLServer> pss=getMySQLServers();
@@ -576,20 +702,9 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return pss.isEmpty()?null:pss.get(0);
     }*/
 
-    public List<AOServer> getNestedAOServers() throws IOException, SQLException {
-        return table.connector.getAoServers().getNestedAOServers(this);
-    }
-
-    public int getPoolSize() {
-        return pool_size;
-    }
-
+    /* TODO
     public PostgresServer getPostgresServer(String name) throws IOException, SQLException {
-        return table.connector.getPostgresServers().getPostgresServer(name, this);
-    }
-
-    public List<PostgresServer> getPostgresServers() throws IOException, SQLException {
-        return table.connector.getPostgresServers().getPostgresServers(this);
+        return getService().getConnector().getPostgresServers().getPostgresServer(name, this);
     }
 
     public PostgresServer getPreferredPostgresServer() throws SQLException, IOException {
@@ -617,113 +732,43 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         if(nd==null) throw new SQLException("Unable to find NetDevice: "+name+" on "+pkey);
         return nd.getPrimaryIPAddress();
     }
-
-    /*
+    */
+    /* TODO
     public PrivateFTPServer getPrivateFTPServer(String path) {
-    	return table.connector.privateFTPServers.getPrivateFTPServer(this, path);
+    	return getService().getConnector().privateFTPServers.getPrivateFTPServer(this, path);
     }*/
 
-    public List<PrivateFTPServer> getPrivateFTPServers() throws IOException, SQLException {
-	return table.connector.getPrivateFTPServers().getPrivateFTPServers(this);
-    }
-
-    public Server getServer() throws SQLException, IOException {
-        Server se=table.connector.getServers().get(pkey);
-        if(se==null) throw new SQLException("Unable to find Server: "+pkey);
-        return se;
-    }
-
-    public List<SystemEmailAlias> getSystemEmailAliases() throws IOException, SQLException {
-	return table.connector.getSystemEmailAliases().getSystemEmailAliases(this);
-    }
-    
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.AO_SERVERS;
-    }
-
+    /* TODO
     public boolean isEmailDomainAvailable(String domain) throws SQLException, IOException {
-        return table.connector.getEmailDomains().isEmailDomainAvailable(this, domain);
+        return getService().getConnector().getEmailDomains().isEmailDomainAvailable(this, domain);
     }
 
     public boolean isHomeUsed(String directory) throws IOException, SQLException {
-	return table.connector.getLinuxServerAccounts().isHomeUsed(this, directory);
+    	return getService().getConnector().getLinuxServerAccounts().isHomeUsed(this, directory);
     }
 
     public boolean isMySQLServerNameAvailable(String name) throws IOException, SQLException {
-        return table.connector.getMysqlServers().isMySQLServerNameAvailable(name, this);
+        return getService().getConnector().getMysqlServers().isMySQLServerNameAvailable(name, this);
     }
 
     public boolean isPostgresServerNameAvailable(String name) throws IOException, SQLException {
-	return table.connector.getPostgresServers().isPostgresServerNameAvailable(name, this);
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey=result.getInt(pos++);
-        hostname=result.getString(pos++);
-	daemon_bind=result.getInt(pos++);
-	if(result.wasNull()) daemon_bind=-1;
-	daemon_key=result.getString(pos++);
-	pool_size=result.getInt(pos++);
-        distro_hour=result.getInt(pos++);
-        Timestamp T=result.getTimestamp(pos++);
-        last_distro_time=T==null?-1:T.getTime();
-        failover_server=result.getInt(pos++);
-        if(result.wasNull()) failover_server=-1;
-        daemon_device_id=result.getString(pos++);
-        daemon_connect_bind=result.getInt(pos++);
-        time_zone=result.getString(pos++);
-        jilter_bind=result.getInt(pos++);
-        if(result.wasNull()) jilter_bind=-1;
-        restrict_outbound_email=result.getBoolean(pos++);
-        daemon_connect_address=result.getString(pos++);
-        failover_batch_size=result.getInt(pos++);
-        monitoring_load_low = result.getFloat(pos++);
-        if(result.wasNull()) monitoring_load_low = Float.NaN;
-        monitoring_load_medium = result.getFloat(pos++);
-        if(result.wasNull()) monitoring_load_medium = Float.NaN;
-        monitoring_load_high = result.getFloat(pos++);
-        if(result.wasNull()) monitoring_load_high = Float.NaN;
-        monitoring_load_critical = result.getFloat(pos++);
-        if(result.wasNull()) monitoring_load_critical = Float.NaN;
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        hostname=in.readUTF();
-	daemon_bind=in.readCompressedInt();
-	daemon_key=in.readUTF();
-	pool_size=in.readCompressedInt();
-        distro_hour=in.readCompressedInt();
-        last_distro_time=in.readLong();
-        failover_server=in.readCompressedInt();
-        daemon_device_id=StringUtility.intern(in.readNullUTF());
-        daemon_connect_bind=in.readCompressedInt();
-        time_zone=in.readUTF().intern();
-        jilter_bind=in.readCompressedInt();
-        restrict_outbound_email=in.readBoolean();
-        daemon_connect_address=StringUtility.intern(in.readNullUTF());
-        failover_batch_size=in.readCompressedInt();
-        monitoring_load_low = in.readFloat();
-        monitoring_load_medium = in.readFloat();
-        monitoring_load_high = in.readFloat();
-        monitoring_load_critical = in.readFloat();
+    	return getService().getConnector().getPostgresServers().isPostgresServerNameAvailable(name, this);
     }
 
     public void restartApache() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_APACHE, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_APACHE, pkey);
     }
 
     public void restartCron() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_CRON, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_CRON, pkey);
     }
 
     public void restartXfs() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_XFS, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_XFS, pkey);
     }
 
     public void restartXvfb() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_XVFB, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_XVFB, pkey);
     }
 
     public static class DaemonAccess {
@@ -758,163 +803,103 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public void setLastDistroTime(long distroTime) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
+        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
     }
 
     public void startApache() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_APACHE, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.START_APACHE, pkey);
     }
 
     public void startCron() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_CRON, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.START_CRON, pkey);
     }
 
     public void startDistro(boolean includeUser) throws IOException, SQLException {
-        table.connector.getDistroFiles().startDistro(this, includeUser);
+        getService().getConnector().getDistroFiles().startDistro(this, includeUser);
     }
 
     public void startXfs() throws IOException, SQLException {
-        table.connector.requestUpdate(false,AOServProtocol.CommandID.START_XFS, pkey);
+        getService().getConnector().requestUpdate(false,AOServProtocol.CommandID.START_XFS, pkey);
     }
 
     public void startXvfb() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_XVFB, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.START_XVFB, pkey);
     }
 
     public void stopApache() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_APACHE, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_APACHE, pkey);
     }
 
     public void stopCron() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_CRON, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_CRON, pkey);
     }
 
     public void stopXfs() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_XFS, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_XFS, pkey);
     }
 
     public void stopXvfb() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_XVFB, pkey);
-    }
-
-    @Override
-    protected String toStringImpl(Locale userLocale) {
-        return hostname;
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_XVFB, pkey);
     }
 
     public void waitForHttpdSiteRebuild() throws IOException, SQLException {
-	    table.connector.getHttpdSites().waitForRebuild(this);
+	    getService().getConnector().getHttpdSites().waitForRebuild(this);
     }
 
     public void waitForLinuxAccountRebuild() throws IOException, SQLException {
-	    table.connector.getLinuxAccounts().waitForRebuild(this);
+	    getService().getConnector().getLinuxAccounts().waitForRebuild(this);
     }
 
     public void waitForMySQLDatabaseRebuild() throws IOException, SQLException {
-	    table.connector.getMysqlDatabases().waitForRebuild(this);
+	    getService().getConnector().getMysqlDatabases().waitForRebuild(this);
     }
 
     public void waitForMySQLDBUserRebuild() throws IOException, SQLException {
-	    table.connector.getMysqlDBUsers().waitForRebuild(this);
+	    getService().getConnector().getMysqlDBUsers().waitForRebuild(this);
     }
 
     public void waitForMySQLServerRebuild() throws IOException, SQLException {
-	    table.connector.getMysqlServers().waitForRebuild(this);
+	    getService().getConnector().getMysqlServers().waitForRebuild(this);
     }
 
     public void waitForMySQLUserRebuild() throws IOException, SQLException {
-	    table.connector.getMysqlUsers().waitForRebuild(this);
+	    getService().getConnector().getMysqlUsers().waitForRebuild(this);
     }
 
     public void waitForPostgresDatabaseRebuild() throws IOException, SQLException {
-	    table.connector.getPostgresDatabases().waitForRebuild(this);
+	    getService().getConnector().getPostgresDatabases().waitForRebuild(this);
     }
 
     public void waitForPostgresServerRebuild() throws IOException, SQLException {
-	    table.connector.getPostgresServers().waitForRebuild(this);
+	    getService().getConnector().getPostgresServers().waitForRebuild(this);
     }
 
     public void waitForPostgresUserRebuild() throws IOException, SQLException {
-	    table.connector.getPostgresUsers().waitForRebuild(this);
+	    getService().getConnector().getPostgresUsers().waitForRebuild(this);
     }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeCompressedInt(1);
-            out.writeCompressedInt(2000);
-            out.writeCompressedInt(1024);
-            out.writeCompressedInt(2);
-            out.writeCompressedInt(240);
-            out.writeNullUTF(null);
-            out.writeBoolean(false);
-            out.writeBoolean(false);
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeBoolean(true);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeBoolean(false);
-            out.writeUTF("AOServer #"+pkey);
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
-            out.writeUTF(hostname);
-        }
-	out.writeCompressedInt(daemon_bind);
-	out.writeUTF(daemon_key);
-	out.writeCompressedInt(pool_size);
-        out.writeCompressedInt(distro_hour);
-        out.writeLong(last_distro_time);
-        out.writeCompressedInt(failover_server);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeCompressedInt(60*1000);
-            out.writeCompressedInt(5*60*1000);
-            out.writeBoolean(false);
-        }
-        out.writeNullUTF(daemon_device_id);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeNullUTF(null);
-            out.writeCompressedInt(1200*100);
-            out.writeBoolean(true);
-            if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) {
-                out.writeNullUTF(null);
-                out.writeNullUTF(null);
-            } else if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
-                out.writeUTF(AOServProtocol.FILTERED);
-                out.writeUTF(AOServProtocol.FILTERED);
-            }
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(daemon_connect_address);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
-            out.writeFloat(monitoring_load_low);
-            out.writeFloat(monitoring_load_medium);
-            out.writeFloat(monitoring_load_high);
-            out.writeFloat(monitoring_load_critical);
-        }
-    }
-
+    */
     /**
      * Gets the 3ware RAID report.
      */
+    /* TODO
     public String get3wareRaidReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_3WARE_RAID_REPORT, pkey);
+        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_3WARE_RAID_REPORT, pkey);
     }
-
+    */
     /**
      * Gets the MD RAID report.
      */
+    /* TODO
     public String getMdRaidReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
+        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
     }
 
     public static class DrbdReport {
-
+    */
         /**
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-connection-states
          */
+    /* TODO
         public enum ConnectionState {
             StandAlone,
             Disconnecting,
@@ -939,20 +924,22 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             VerifyS,
             VerifyT,
             Unconfigured
-        }
+        }*/
 
         /**
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-roles
          */
+    /* TODO
         public enum Role {
             Primary,
             Secondary,
             Unknown
         }
-
+*/
         /**
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-disk-states
          */
+    /* TODO
         public enum DiskState {
             Diskless,
             Attaching,
@@ -1026,17 +1013,19 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             return resourceHostname;
         }
     }
-
+    */
     /**
      * Gets the DRBD report.
      */
+    /* TODO
     public List<DrbdReport> getDrbdReport(Locale locale) throws IOException, SQLException, ParseException {
-        return parseDrbdReport(locale, table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey));
+        return parseDrbdReport(locale, getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey));
     }
-
+    */
     /**
      * Parses a DRBD report.
      */
+    /* TODO
     public static List<DrbdReport> parseDrbdReport(Locale locale, String drbdReport) throws ParseException {
         List<String> lines = StringUtility.splitLines(drbdReport);
         int lineNum = 0;
@@ -1143,10 +1132,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
 
         public static class VolumeGroup implements Comparable<VolumeGroup> {
-
+*/
             /**
              * Parses the output of vgs --noheadings --separator=$'\t' --units=b -o vg_name,vg_extent_size,vg_extent_count,vg_free_count,pv_count,lv_count
              */
+    /* TODO
             private static Map<String,VolumeGroup> parseVgsReport(Locale locale, String vgs) throws ParseException {
                 List<String> lines = StringUtility.splitLines(vgs);
                 int size = lines.size();
@@ -1223,13 +1213,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             public String toString() {
                 return vgName;
             }
-
+*/
             /**
              * Sorts ascending by:
              * <ol>
              *   <li>vgName</li>
              * </ol>
              */
+    /* TODO
             public int compareTo(VolumeGroup other) {
                 return vgName.compareTo(other.vgName);
             }
@@ -1268,10 +1259,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
 
         public static class PhysicalVolume implements Comparable<PhysicalVolume> {
-
+*/
             /**
              * Parses the output of pvs --noheadings --separator=$'\t' --units=b -o pv_name,pv_pe_count,pv_pe_alloc_count,pv_size,vg_name
              */
+    /* TODO
             private static Map<String,PhysicalVolume> parsePvsReport(Locale locale, String pvs, Map<String,VolumeGroup> volumeGroups) throws ParseException {
                 List<String> lines = StringUtility.splitLines(pvs);
                 int size = lines.size();
@@ -1431,13 +1423,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             public String toString() {
                 return pvName;
             }
-
+*/
             /**
              * Sorts ascending by:
              * <ol>
              *   <li>pvName</li>
              * </ol>
              */
+    /* TODO
             public int compareTo(PhysicalVolume other) {
                 return pvName.compareTo(other.pvName);
             }
@@ -1445,25 +1438,28 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             public String getPvName() {
                 return pvName;
             }
-
+*/
             /**
              * The number of extents allocated, this is 0 when not allocated.
              */
+    /* TODO
             public long getPvPeAllocCount() {
                 return pvPeAllocCount;
             }
-
+*/
             /**
              * The total number of extents, this is 0 when not allocated.
              */
+    /* TODO
             public long getPvPeCount() {
                 return pvPeCount;
             }
-            
+*/
             /**
              * The size of the physical volume in bytes.  This is always available,
              * even when not allocated.
              */
+    /* TODO
             public long getPvSize() {
                 return pvSize;
             }
@@ -1474,10 +1470,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
 
         public static class LogicalVolume implements Comparable<LogicalVolume> {
-
+*/
             /**
              * Parses the output from lvs --noheadings --separator=$'\t' -o vg_name,lv_name,seg_count,segtype,stripes,seg_start_pe,seg_pe_ranges
              */
+    /* TODO
             private static void parseLvsReport(Locale locale, String lvs, Map<String,VolumeGroup> volumeGroups, Map<String,PhysicalVolume> physicalVolumes) throws ParseException {
                 final List<String> lines = StringUtility.splitLines(lvs);
                 final int size = lines.size();
@@ -1684,7 +1681,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             public String toString() {
                 return volumeGroup+"/"+lvName;
             }
-
+*/
             /**
              * Sorts ascending by:
              * <ol>
@@ -1692,6 +1689,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
              *   <li>lvName</li>
              * </ol>
              */
+    /* TODO
             public int compareTo(LogicalVolume other) {
                 int diff = volumeGroup.compareTo(other.volumeGroup);
                 if(diff!=0) return diff;
@@ -1740,7 +1738,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             public String toString() {
                 return logicalVolume+"("+segStartPe+"-"+getSegEndPe()+")";
             }
-
+*/
             /**
              * Sorts ascending by:
              * <ol>
@@ -1748,6 +1746,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
              *   <li>segStartPe</li>
              * </ol>
              */
+    /* TODO
             public int compareTo(Segment other) {
                 int diff = logicalVolume.compareTo(other.logicalVolume);
                 if(diff!=0) return diff;
@@ -1771,12 +1770,13 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             public long getSegStartPe() {
                 return segStartPe;
             }
-
+*/
             /**
              * Gets the last logical physical extent as determined by counting
              * the total size of the stripes and using the following function:
              * <pre>segStartPe + totalStripePE - 1</pre>
              */
+    /* TODO
             public long getSegEndPe() {
                 long segmentCount = 0;
                 for(Stripe stripe : stripes) segmentCount += stripe.getLastPe()-stripe.getFirstPe()+1;
@@ -1820,7 +1820,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             public String toString() {
                 return segment+":"+physicalVolume+"("+firstPe+"-"+lastPe+")";
             }
-
+*/
             /**
              * Sorts ascending by:
              * <ol>
@@ -1828,6 +1828,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
              *   <li>firstPe</li>
              * </ol>
              */
+    /* TODO
             public int compareTo(Stripe other) {
                 int diff = segment.compareTo(other.segment);
                 if(diff!=0) return diff;
@@ -1892,13 +1893,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             return volumeGroups;
         }
     }
-
+*/
     /**
      * Gets the LVM report.
      */
+    /* TODO
     public LvmReport getLvmReport(final Locale locale) throws IOException, SQLException, ParseException {
         try {
-            return table.connector.requestResult(
+            return getService().getConnector().requestResult(
                 true,
                 new AOServConnector.ResultRequest<LvmReport>() {
                     String vgs;
@@ -1934,20 +1936,22 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             throw err;
         }
     }
-
+*/
     /**
      * Gets the hard drive temperature report.
      */
+    /* TODO
     public String getHddTempReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_TEMP_REPORT, pkey);
+        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_TEMP_REPORT, pkey);
     }
-
+*/
     /**
      * Gets the model of each hard drive on the server.  The key
      * is the device name and the value is the model name.
      */
+    /* TODO
     public Map<String,String> getHddModelReport(Locale locale) throws IOException, SQLException, ParseException {
-        String report = table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
+        String report = getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
         List<String> lines = StringUtility.splitLines(report);
         int lineNum = 0;
         Map<String,String> results = new HashMap<String,String>(lines.size()*4/3+1);
@@ -1975,33 +1979,37 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
         return results;
     }
-
+*/
     /**
      * Gets the filesystem states report.
      */
+    /* TODO
     public String getFilesystemsCsvReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
+        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
     }
-    
+*/
     /**
      * Gets the output of /proc/loadavg
      */
+    /* TODO
     public String getLoadAvgReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_LOADAVG_REPORT, pkey);
+        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_LOADAVG_REPORT, pkey);
     }
-    
+    */
     /**
      * Gets the output of /proc/meminfo
      */
+    /* TODO
     public String getMemInfoReport() throws IOException, SQLException {
-        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
+        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
     }
-    
+*/
     /**
      * Checks a port from the daemon's point of view.  This is required for monitoring of private and loopback IPs.
      */
+    /* TODO
     public String checkPort(String ipAddress, int port, String netProtocol, String appProtocol, Map<String,String> monitoringParameters) throws IOException, SQLException {
-        return table.connector.requestStringQuery(
+        return getService().getConnector().requestStringQuery(
             true,
             AOServProtocol.CommandID.AO_SERVER_CHECK_PORT,
             pkey,
@@ -2012,57 +2020,22 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             NetBind.encodeParameters(monitoringParameters)
         );
     }
-
+*/
     /**
      * Gets the current system time in milliseconds.
      */
+    /* TODO
     public long getSystemTimeMillis() throws IOException, SQLException {
-        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
+        return getService().getConnector().requestLongQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
     }
-
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
-    }
-
+*/
     /**
      * Gets the status line of a SMTP server from the server from the provided source IP.
      */
+    /* TODO
     public String checkSmtpBlacklist(String sourceIp, String connectIp) throws IOException, SQLException {
-        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
+        return getService().getConnector().requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
     }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getServer(),
-            getDaemonBind(),
-            getFailoverServer(),
-            getDaemonConnectBind(),
-            getJilterBind()
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getNestedAOServers(),
-            getAOServerDaemonHosts(),
-            getBackupPartitions(),
-            getLinuxServerAccounts(),
-            getEmailDomains(),
-            getLinuxServerGroups(),
-            getEmailPipes(),
-            getSystemEmailAliases(),
-            getEmailSmtpRelays(),
-            getHttpdServers(),
-            getHttpdSites(),
-            getFailoverMySQLReplications(),
-            getHttpdSharedTomcats(),
-            getPostgresServers(),
-            getAoServerResources()
-        );
-    }
-
-    public List<AOServerResource> getAoServerResources() throws IOException, SQLException {
-        return table.connector.getAoServerResources().getIndexedRows(AOServerResource.COLUMN_AO_SERVER, pkey);
-    }
+     */
+    // </editor-fold>
 }

@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
@@ -16,6 +17,8 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.NetBindService;
+import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
@@ -24,6 +27,7 @@ import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
+import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
@@ -64,8 +68,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     /* TODO
     final RetryAOServerDaemonHostService aoserverDaemonHosts;
     final RetryAOServerResourceService aoserverResources;
-    final RetryAOServerService aoservers;
      */
+    final RetryAOServerService aoservers;
     final RetryAOServPermissionService aoservPermissions;
     /* TODO
     final RetryAOServProtocolService aoservProtocols;
@@ -176,8 +180,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryMySQLReservedWordService mysqlReservedWords;
     final RetryMySQLServerService mysqlServers;
     final RetryMySQLUserService mysqlUsers;
+     */
     final RetryNetBindService netBinds;
     final RetryNetDeviceIDService netDeviceIDs;
+    /* TODO
     final RetryNetDeviceService netDevices;
     final RetryNetPortService netPorts;*/
     final RetryNetProtocolService netProtocols;
@@ -212,8 +218,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryResourceTypeService resourceTypes;
     final RetryResourceService resources;
     final RetryServerFarmService serverFarms;
-    /* TODO
     final RetryServerService servers;
+    /* TODO
     final RetryShellService shells;
     final RetrySignupRequestOptionService signupRequestOptions;
     final RetrySignupRequestService signupRequests;
@@ -261,8 +267,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         /* TODO
         aoserverDaemonHosts = new RetryAOServerDaemonHostService(this);
         aoserverResources = new RetryAOServerResourceService(this);
-        aoservers = new RetryAOServerService(this);
          */
+        aoservers = new RetryAOServerService(this);
         aoservPermissions = new RetryAOServPermissionService(this);
         /* TODO
         aoservProtocols = new RetryAOServProtocolService(this);
@@ -373,8 +379,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         mysqlReservedWords = new RetryMySQLReservedWordService(this);
         mysqlServers = new RetryMySQLServerService(this);
         mysqlUsers = new RetryMySQLUserService(this);
+         */
         netBinds = new RetryNetBindService(this);
         netDeviceIDs = new RetryNetDeviceIDService(this);
+        /* TODO
         netDevices = new RetryNetDeviceService(this);
         netPorts = new RetryNetPortService(this);
          */
@@ -410,8 +418,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         resourceTypes = new RetryResourceTypeService(this);
         resources = new RetryResourceService(this);
         serverFarms = new RetryServerFarmService(this);
-        /* TODO
         servers = new RetryServerService(this);
+        /* TODO
         shells = new RetryShellService(this);
         signupRequestOptions = new RetrySignupRequestOptionService(this);
         signupRequests = new RetrySignupRequestService(this);
@@ -616,9 +624,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public AOServerDaemonHostService<RetryConnector,RetryConnectorFactory> getAoServerDaemonHosts();
 
     public AOServerResourceService<RetryConnector,RetryConnectorFactory> getAoServerResources();
-
-    public AOServerService<RetryConnector,RetryConnectorFactory> getAoServers();
     */
+    public AOServerService<RetryConnector,RetryConnectorFactory> getAoServers() {
+        return aoservers;
+    }
+
     public AOServPermissionService<RetryConnector,RetryConnectorFactory> getAoservPermissions() {
         return aoservPermissions;
     }
@@ -827,11 +837,15 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers();
 
     public MySQLUserService<RetryConnector,RetryConnectorFactory> getMysqlUsers();
+    */
+    public NetBindService<RetryConnector,RetryConnectorFactory> getNetBinds() {
+        return netBinds;
+    }
 
-    public NetBindService<RetryConnector,RetryConnectorFactory> getNetBinds();
-
-    public NetDeviceIDService<RetryConnector,RetryConnectorFactory> getNetDeviceIDs();
-
+    public NetDeviceIDService<RetryConnector,RetryConnectorFactory> getNetDeviceIDs() {
+        return netDeviceIDs;
+    }
+    /* TODO
     public NetDeviceService<RetryConnector,RetryConnectorFactory> getNetDevices();
 
     public NetPortService<RetryConnector,RetryConnectorFactory> getNetPorts();
@@ -903,9 +917,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public ServerFarmService<RetryConnector,RetryConnectorFactory> getServerFarms() {
         return serverFarms;
     }
-    /* TODO
-    public ServerTable getServers();
 
+    public ServerService<RetryConnector,RetryConnectorFactory> getServers() {
+        return servers;
+    }
+    /* TODO
     public ShellService<RetryConnector,RetryConnectorFactory> getShells();
 
     public SignupRequestOptionService<RetryConnector,RetryConnectorFactory> getSignupRequestOptions();

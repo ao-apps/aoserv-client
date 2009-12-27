@@ -5,49 +5,34 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.Streamable;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * <code>InboxAttributes</code> stores all the details of a mail inbox.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class InboxAttributes implements Streamable {
+final public class InboxAttributes implements Streamable, Serializable {
 
-    final private AOServConnector connector;
-    final private int linuxServerAccount;
+    private static final long serialVersionUID = 1L;
+
     private long systemTime;
     private long fileSize;
     private long lastModified;
-
-    public InboxAttributes(AOServConnector connector, LinuxServerAccount lsa) {
-        this.connector=connector;
-        this.linuxServerAccount=lsa.getPkey();
-    }
 
     public InboxAttributes(
         long fileSize,
         long lastModified
     ) {
-        this.connector=null;
-        this.linuxServerAccount=-1;
         this.systemTime=System.currentTimeMillis();
         this.fileSize=fileSize;
         this.lastModified=lastModified;
     }
 
-    public AOServConnector getAOServConnector() {
-        return connector;
-    }
-
-    public LinuxServerAccount getLinuxServerAccount() throws IOException, SQLException {
-        return connector.getLinuxServerAccounts().get(linuxServerAccount);
-    }
-    
     public long getSystemTime() {
         return systemTime;
     }
@@ -69,16 +54,7 @@ final public class InboxAttributes implements Streamable {
         lastModified=in.readLong();
     }
 
-    /**
-     * @deprecated  This is maintained only for compatibility with the <code>Streamable</code> interface.
-     * 
-     * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
-     */
-    final public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
-        write(out, AOServProtocol.Version.getVersion(protocolVersion));
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+    public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
         out.writeLong(systemTime);
         out.writeLong(fileSize);
         out.writeLong(lastModified);

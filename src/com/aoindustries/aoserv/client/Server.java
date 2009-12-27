@@ -5,44 +5,246 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>Server</code> stores the details about a single, physical server.
  *
  * @author  AO Industries, Inc.
  */
-final public class Server extends CachedObjectIntegerKey<Server> implements Comparable<Server> {
+final public class Server extends AOServObjectIntegerKey<Server> {
 
-    static final int
-        COLUMN_PKEY = 0,
-        COLUMN_FARM = 1,
-        COLUMN_ACCOUNTING = 4
-    ;
-    static final String COLUMN_ACCOUNTING_name = "accounting";
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The daemon key is only available to <code>MasterUser</code>s.  This value is used
      * in place of the key when not accessible.
      */
     public static final String HIDDEN_PASSWORD="*";
+    // </editor-fold>
 
-    String farm;
-    private String description;
-    private int operating_system_version;
-    private String accounting;
-    private String name;
-    private boolean monitoring_enabled;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String farm;
+    final private String description;
+    final private int operating_system_version;
+    final private String accounting;
+    final private String name;
+    final private boolean monitoring_enabled;
 
+    public Server(
+        ServerService<?,?> service,
+        int pkey,
+        String farm,
+        String description,
+        int operating_system_version,
+        String accounting,
+        String name,
+        boolean monitoring_enabled
+    ) {
+        super(service, pkey);
+        this.farm = farm.intern();
+        this.description = description;
+        this.operating_system_version = operating_system_version;
+        this.accounting = accounting.intern();
+        this.name = name;
+        this.monitoring_enabled = monitoring_enabled;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(Server other) {
+        int diff = compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
+        if(diff!=0) return diff;
+        return compareIgnoreCaseConsistentWithEquals(name, other.name);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated, unique ID")
+    public int getPkey() {
+        return key;
+    }
+
+    @SchemaColumn(order=1, name="farm", description="the name of the farm the server is located in")
+    public ServerFarm getServerFarm() throws RemoteException {
+        ServerFarm sf=getService().getConnector().getServerFarms().get(farm);
+        if(sf==null) throw new RemoteException("Unable to find ServerFarm: "+farm);
+        return sf;
+    }
+
+    @SchemaColumn(order=2, name="description", description="a description of the servers purpose")
+    public String getDescription() {
+        return description;
+    }
+
+    @SchemaColumn(order=3, name="operating_system_version", description="the version of operating system running on the server, if known")
+    public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
+        if(operating_system_version==-1) return null;
+        OperatingSystemVersion osv=getService().getConnector().getOperatingSystemVersions().get(operating_system_version);
+        if(osv==null) new RemoteException("Unable to find OperatingSystemVersion: "+operating_system_version);
+        return osv;
+    }
+
+    /**
+     * May be filtered.
+     *
+     * @see #getAccounting()
+     */
+    @SchemaColumn(order=4, name="accounting", description="the business accountable for resources used by the server")
+    public Business getBusiness() throws RemoteException {
+        return getService().getConnector().getBusinesses().get(accounting);
+    }
+
+    @SchemaColumn(order=5, name="name", description="the per-package unique name of the server (no special formatting required)")
+    public String getName() {
+        return name;
+    }
+
+    @SchemaColumn(order=6, name="monitoring_enabled", description="enables/disables monitoring")
+    public boolean isMonitoringEnabled() {
+        return monitoring_enabled;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getServerFarm(),
+            getBusiness()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: createDependencySet(
+                // TODO: getAOServer(),
+                // TODO: getPhysicalServer(),
+                // TODO: getVirtualServer()
+            // TODO: ),
+            // TODO: getBusinessServers(),
+            // TODO: getNetDevices(),
+            // TODO: getFailoverFileReplications(),
+            // TODO: getMasterServers()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public AOServer getAOServer() throws IOException, SQLException {
+        return getService().getConnector().getAoServers().get(pkey);
+    }
+
+    public PhysicalServer getPhysicalServer() throws IOException, SQLException {
+        return getService().getConnector().getPhysicalServers().get(pkey);
+    }
+
+    public VirtualServer getVirtualServer() throws IOException, SQLException {
+        return getService().getConnector().getVirtualServers().get(pkey);
+    }
+
+    public List<Business> getBusinesses() throws IOException, SQLException {
+        return getService().getConnector().getBusinessServers().getBusinesses(this);
+    }
+     */
+    /**
+     * Gets the list of all replications coming from this server.
+     */
+    /* TODO
+    public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
+        return getService().getConnector().getFailoverFileReplications().getFailoverFileReplications(this);
+    }*/
+
+    /* TODO
+    public NetBind getNetBind(
+        IPAddress ipAddress,
+        NetPort port,
+        NetProtocol netProtocol
+    ) throws IOException, SQLException {
+        return getService().getConnector().getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
+    }
+    */
+    /* TODO
+    public List<NetBind> getNetBinds() throws IOException, SQLException {
+        List<NetBind> nbs = getService().getConnector().getNetBinds().getRows();
+        List<NetBind> matches = new ArrayList<NetBind>(nbs.size());
+        for(NetBind nb : nbs) {
+            if(nb.getBusinessServer().server==pkey) matches.add(nb);
+        }
+        return Collections.unmodifiableList(nbs);
+    }
+
+    public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
+        // Use the index first
+        List<NetBind> cached = getService().getConnector().getNetBinds().getIndexedRows(NetBind.COLUMN_IP_ADDRESS, ipAddress.pkey);
+        int size=cached.size();
+        List<NetBind> matches=new ArrayList<NetBind>(size);
+        for(NetBind nb : cached) {
+            if(nb.getBusinessServer().server==pkey) matches.add(nb);
+        }
+        return Collections.unmodifiableList(matches);
+    }
+
+    public List<NetBind> getNetBinds(Protocol protocol) throws IOException, SQLException {
+        // Use the index first
+        List<NetBind> cached = getService().getConnector().getNetBinds().getIndexedRows(NetBind.COLUMN_APP_PROTOCOL, protocol.pkey);
+        int size=cached.size();
+        List<NetBind> matches=new ArrayList<NetBind>(size);
+        for(NetBind nb : cached) {
+            if(nb.getBusinessServer().server==pkey) matches.add(nb);
+        }
+        return Collections.unmodifiableList(matches);
+    }
+
+    public NetDevice getNetDevice(String deviceID) throws IOException, SQLException {
+    	return getService().getConnector().getNetDevices().getNetDevice(this, deviceID);
+    }
+
+    public List<NetDevice> getNetDevices() throws IOException, SQLException {
+    	return getService().getConnector().getNetDevices().getNetDevices(this);
+    }
+
+    public List<IPAddress> getIPAddresses() throws IOException, SQLException {
+        return getService().getConnector().getIpAddresses().getIPAddresses(this);
+    }
+
+    public IPAddress getAvailableIPAddress() throws SQLException, IOException {
+        for(IPAddress ip : getIPAddresses()) {
+            if(
+                ip.isAvailable()
+                && ip.isAlias()
+                && !ip.getNetDevice().getNetDeviceID().isLoopback()
+            ) return ip;
+        }
+        return null;
+    }
+
+    public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
+        return getService().getConnector().getBusinessServers().getIndexedRows(BusinessServer.COLUMN_SERVER, pkey);
+    }
+
+    public List<MasterServer> getMasterServers() throws IOException, SQLException {
+        return getService().getConnector().getMasterServers().getIndexedRows(MasterServer.COLUMN_SERVER, pkey);
+    }*/
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+        // TODO: AOServer aoServer = getAOServer();
+        // TODO: if(aoServer!=null) return aoServer.toStringImpl(userLocale);
+        return accounting+'/'+name;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public void addBusiness(
         String accounting,
         String contractVersion,
@@ -53,7 +255,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         boolean billParent,
         PackageDefinition packageDefinition
     ) throws IOException, SQLException {
-	    table.connector.getBusinesses().addBusiness(
+	    getService().getConnector().getBusinesses().addBusiness(
             accounting,
             contractVersion,
             this,
@@ -75,7 +277,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
         boolean openFirewall,
         boolean monitoringEnabled
     ) throws IOException, SQLException {
-        return table.connector.getNetBinds().addNetBind(
+        return getService().getConnector().getNetBinds().addNetBind(
             this,
             bu,
             ia,
@@ -86,52 +288,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
             monitoringEnabled
         );
     }
-
-    public AOServer getAOServer() throws IOException, SQLException {
-        return table.connector.getAoServers().get(pkey);
-    }
-
-    public PhysicalServer getPhysicalServer() throws IOException, SQLException {
-        return table.connector.getPhysicalServers().get(pkey);
-    }
-
-    public VirtualServer getVirtualServer() throws IOException, SQLException {
-        return table.connector.getVirtualServers().get(pkey);
-    }
-
-    public List<Business> getBusinesses() throws IOException, SQLException {
-        return table.connector.getBusinessServers().getBusinesses(this);
-    }
-
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_FARM: return farm;
-            case 2: return description;
-            case 3: return operating_system_version==-1 ? null : Integer.valueOf(operating_system_version);
-            case COLUMN_ACCOUNTING: return accounting;
-            case 5: return name;
-            case 6: return monitoring_enabled;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
-    public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
-        if(operating_system_version==-1) return null;
-        OperatingSystemVersion osv=table.connector.getOperatingSystemVersions().get(operating_system_version);
-        if(osv==null) new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
-        return osv;
-    }
-    
-    /**
-     * May be filtered.
-     *
-     * @see #getAccounting()
-     */
-    public Business getBusiness() throws IOException, SQLException {
-        return table.connector.getBusinesses().get(accounting);
-    }
-
+    */
     /**
      * Gets the accounting code, will not be filtered.
      *
@@ -140,212 +297,5 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     public String getAccounting() {
         return accounting;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isMonitoringEnabled() {
-        return monitoring_enabled;
-    }
-
-    public ServerFarm getServerFarm() throws SQLException, IOException {
-        ServerFarm sf=table.connector.getServerFarms().get(farm);
-        if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
-        return sf;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.SERVERS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        farm = result.getString(2);
-        description = result.getString(3);
-        operating_system_version=result.getInt(4);
-        if(result.wasNull()) operating_system_version = -1;
-        accounting = result.getString(5);
-        name = result.getString(6);
-        monitoring_enabled = result.getBoolean(7);
-    }
-
-    @Override
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        farm=in.readUTF().intern();
-        description = in.readUTF();
-        operating_system_version=in.readCompressedInt();
-        accounting = in.readUTF().intern();
-        name = in.readUTF();
-        monitoring_enabled = in.readBoolean();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getServerFarm(),
-            getBusiness()
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            createDependencyList(
-                getAOServer(),
-                getPhysicalServer(),
-                getVirtualServer()
-            ),
-            getBusinessServers(),
-            getNetDevices(),
-            getFailoverFileReplications(),
-            getMasterServers()
-        );
-    }
-
-    @Override
-    protected String toStringImpl(Locale userLocale) throws IOException, SQLException {
-        AOServer aoServer = getAOServer();
-        if(aoServer!=null) return aoServer.toStringImpl(userLocale);
-        return accounting+'/'+name;
-        // return Integer.toString(pkey);
-    }
-
-    @Override
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeUTF(name); // hostname
-        }
-    	out.writeUTF(farm);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeUTF("AOINDUSTRIES"); // owner
-            out.writeUTF("orion"); // administrator
-        }
-        out.writeUTF(description);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_107)<=0) out.writeUTF(Architecture.I686);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeCompressedInt(0); // backup_hour
-            out.writeLong(-1); // last_backup_time
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeCompressedInt(operating_system_version==-1 ? OperatingSystemVersion.MANDRIVA_2006_0_I586 : operating_system_version);
-        } else {
-            out.writeCompressedInt(operating_system_version);
-        }
-        if(
-            version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0
-            && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
-        ) {
-            out.writeNullUTF(null); // asset_label
-        }
-        if(
-            version.compareTo(AOServProtocol.Version.VERSION_1_16)>=0
-            && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
-        ) {
-            out.writeFloat(Float.NaN); // minimum_power
-            out.writeFloat(Float.NaN); // maximum_power
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeCompressedInt(308); // packageId
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) out.writeUTF(accounting);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeUTF(name);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_32)>=0) {
-            out.writeBoolean(monitoring_enabled);
-        }
-    }
-
-    /**
-     * Gets the list of all replications coming from this server.
-     */
-    public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
-        return table.connector.getFailoverFileReplications().getFailoverFileReplications(this);
-    }
-
-    /*
-    public NetBind getNetBind(
-        IPAddress ipAddress,
-        NetPort port,
-        NetProtocol netProtocol
-    ) throws IOException, SQLException {
-        return table.connector.getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
-    }
-    */
-
-    public List<NetBind> getNetBinds() throws IOException, SQLException {
-        List<NetBind> nbs = table.connector.getNetBinds().getRows();
-        List<NetBind> matches = new ArrayList<NetBind>(nbs.size());
-        for(NetBind nb : nbs) {
-            if(nb.getBusinessServer().server==pkey) matches.add(nb);
-        }
-        return Collections.unmodifiableList(nbs);
-    }
-
-    public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
-        // Use the index first
-        List<NetBind> cached = table.connector.getNetBinds().getIndexedRows(NetBind.COLUMN_IP_ADDRESS, ipAddress.pkey);
-        int size=cached.size();
-        List<NetBind> matches=new ArrayList<NetBind>(size);
-        for(NetBind nb : cached) {
-            if(nb.getBusinessServer().server==pkey) matches.add(nb);
-        }
-        return Collections.unmodifiableList(matches);
-    }
-
-    public List<NetBind> getNetBinds(Protocol protocol) throws IOException, SQLException {
-        // Use the index first
-        List<NetBind> cached = table.connector.getNetBinds().getIndexedRows(NetBind.COLUMN_APP_PROTOCOL, protocol.pkey);
-        int size=cached.size();
-        List<NetBind> matches=new ArrayList<NetBind>(size);
-        for(NetBind nb : cached) {
-            if(nb.getBusinessServer().server==pkey) matches.add(nb);
-        }
-        return Collections.unmodifiableList(matches);
-    }
-
-    public NetDevice getNetDevice(String deviceID) throws IOException, SQLException {
-    	return table.connector.getNetDevices().getNetDevice(this, deviceID);
-    }
-
-    public List<NetDevice> getNetDevices() throws IOException, SQLException {
-    	return table.connector.getNetDevices().getNetDevices(this);
-    }
-
-    public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-        return table.connector.getIpAddresses().getIPAddresses(this);
-    }
-
-    public IPAddress getAvailableIPAddress() throws SQLException, IOException {
-        for(IPAddress ip : getIPAddresses()) {
-            if(
-                ip.isAvailable()
-                && ip.isAlias()
-                && !ip.getNetDevice().getNetDeviceID().isLoopback()
-            ) return ip;
-        }
-        return null;
-    }
-
-    public int compareTo(Server o) {
-        String accounting1 = accounting;
-        String accounting2 = o.accounting;
-        int diff = accounting1.compareToIgnoreCase(accounting2);
-        if(diff!=0) return diff;
-        diff = accounting1.compareTo(accounting2);
-        if(diff!=0) return diff;
-        diff = name.compareToIgnoreCase(o.name);
-        if(diff!=0) return diff;
-        return name.compareTo(o.name);
-    }
-
-    public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
-        return table.connector.getBusinessServers().getIndexedRows(BusinessServer.COLUMN_SERVER, pkey);
-    }
-
-    public List<MasterServer> getMasterServers() throws IOException, SQLException {
-        return table.connector.getMasterServers().getIndexedRows(MasterServer.COLUMN_SERVER, pkey);
-    }
+    // </editor-fold>
 }

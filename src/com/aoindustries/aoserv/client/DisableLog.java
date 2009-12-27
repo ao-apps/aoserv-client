@@ -141,51 +141,51 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
     }
 
     public List<Resource> getResources() throws IOException, SQLException {
-        return table.connector.getResources().getIndexedRows(Resource.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getResources().getIndexedRows(Resource.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
-        return table.connector.getLinuxServerAccounts().getIndexedRows(LinuxServerAccount.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getLinuxServerAccounts().getIndexedRows(LinuxServerAccount.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<Username> getUsernames() throws IOException, SQLException {
-        return table.connector.getUsernames().getIndexedRows(Username.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getUsernames().getIndexedRows(Username.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-        return table.connector.getEmailLists().getIndexedRows(EmailList.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getEmailLists().getIndexedRows(EmailList.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-        return table.connector.getEmailPipes().getIndexedRows(EmailPipe.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getEmailPipes().getIndexedRows(EmailPipe.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-        return table.connector.getEmailSmtpRelays().getIndexedRows(EmailSmtpRelay.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getEmailSmtpRelays().getIndexedRows(EmailSmtpRelay.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return table.connector.getHttpdSites().getIndexedRows(HttpdSite.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getHttpdSites().getIndexedRows(HttpdSite.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
-        return table.connector.getHttpdSiteBinds().getIndexedRows(HttpdSiteBind.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getHttpdSiteBinds().getIndexedRows(HttpdSiteBind.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return table.connector.getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-        return table.connector.getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
-        return table.connector.getPostgresServerUsers().getIndexedRows(PostgresServerUser.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getPostgresServerUsers().getIndexedRows(PostgresServerUser.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<PostgresUser> getPostgresUsers() throws IOException, SQLException {
-        return table.connector.getPostgresUsers().getIndexedRows(PostgresUser.COLUMN_DISABLE_LOG, pkey);
+        return getService().getConnector().getPostgresUsers().getIndexedRows(PostgresUser.COLUMN_DISABLE_LOG, pkey);
     }
      */
     // </editor-fold>

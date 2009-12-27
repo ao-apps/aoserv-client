@@ -288,7 +288,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
     */
     /* TODO
     public AOServerResource getAoServerResource() throws IOException, SQLException {
-        return table.connector.getAoServerResources().get(pkey);
+        return getService().getConnector().getAoServerResources().get(pkey);
     }
      */
 }

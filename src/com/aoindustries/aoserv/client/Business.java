@@ -786,7 +786,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
-    	return table.connector.getTransactions().getConfirmedAccountBalance(pkey);
+    	return getService().getConnector().getTransactions().getConfirmedAccountBalance(pkey);
     }
 
     public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
@@ -798,20 +798,20 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public List<CreditCardTransaction> getCreditCardTransactions() throws IOException, SQLException {
-    	return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_ACCOUNTING, pkey);
+    	return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws IOException, SQLException {
-    	return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, pkey);
+    	return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, pkey);
     }
 
     public List<CreditCard> getCreditCards() throws IOException, SQLException {
-    	return table.connector.getCreditCards().getCreditCards(this);
+    	return getService().getConnector().getCreditCards().getCreditCards(this);
     }
 
     public Server getDefaultServer() throws IOException, SQLException {
         // May be null when the account is canceled or not using servers
-	return table.connector.getBusinessServers().getDefaultServer(this);
+	return getService().getConnector().getBusinessServers().getDefaultServer(this);
     }
 
     public boolean isDisabled() {
@@ -819,31 +819,31 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
-    	return table.connector.getEmailForwardings().getEmailForwarding(this);
+    	return getService().getConnector().getEmailForwardings().getEmailForwarding(this);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-    	return table.connector.getEmailLists().getEmailLists(this);
+    	return getService().getConnector().getEmailLists().getEmailLists(this);
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-    	return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
+    	return getService().getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
     }
 
     public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
-	return table.connector.getLinuxAccounts().getMailAccounts(this);
+	return getService().getConnector().getLinuxAccounts().getMailAccounts(this);
     }
 
     public CreditCard getMonthlyCreditCard() throws IOException, SQLException {
-        return table.connector.getCreditCards().getMonthlyCreditCard(this);
+        return getService().getConnector().getCreditCards().getMonthlyCreditCard(this);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
-        return table.connector.getMonthlyCharges().getMonthlyCharges(this);
+        return getService().getConnector().getMonthlyCharges().getMonthlyCharges(this);
     }
 
     public List<MonthlyCharge> getMonthlyChargesBySourceBusiness() throws SQLException, IOException {
-        return table.connector.getMonthlyCharges().getMonthlyChargesBySourceBusiness(this);
+        return getService().getConnector().getMonthlyCharges().getMonthlyChargesBySourceBusiness(this);
     }*/
 
     /**
@@ -866,11 +866,11 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
-        return table.connector.getNoticeLogs().getNoticeLogs(this);
+        return getService().getConnector().getNoticeLogs().getNoticeLogs(this);
     }
 
     public List<EmailDomain> getEmailDomains() throws SQLException, IOException {
-        return table.connector.getEmailDomains().getEmailDomains(this);
+        return getService().getConnector().getEmailDomains().getEmailDomains(this);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -890,11 +890,11 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public List<Transaction> getTransactions() throws IOException, SQLException {
-        return table.connector.getTransactions().getTransactions(pkey);
+        return getService().getConnector().getTransactions().getTransactions(pkey);
     }
 
     public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
-        return table.connector.getWhoisHistory().getWhoisHistory(this);
+        return getService().getConnector().getWhoisHistory().getWhoisHistory(this);
     }
     */
     /**
@@ -991,7 +991,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         List<LinuxServerGroup> fromLinuxServerGroups=new ArrayList<LinuxServerGroup>();
         List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<LinuxServerGroup>();
         {
-            for(LinuxServerGroup lsg : table.connector.getLinuxServerGroups().getRows()) {
+            for(LinuxServerGroup lsg : getService().getConnector().getLinuxServerGroups().getRows()) {
                 if(pkey.equals(lsg.getLinuxGroup().accounting)) {
                     AOServer ao=lsg.getAOServer();
                     if(ao.equals(from)) fromLinuxServerGroups.add(lsg);
@@ -1023,7 +1023,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         List<LinuxServerAccount> fromLinuxServerAccounts=new ArrayList<LinuxServerAccount>();
         List<LinuxServerAccount> toLinuxServerAccounts=new SortedArrayList<LinuxServerAccount>();
         {
-            List<LinuxServerAccount> lsas=table.connector.getLinuxServerAccounts().getRows();
+            List<LinuxServerAccount> lsas=getService().getConnector().getLinuxServerAccounts().getRows();
             for(int c=0;c<lsas.size();c++) {
                 LinuxServerAccount lsa=lsas.get(c);
                 if(pkey.equals(lsa.getLinuxAccount().getUsername().accounting)) {
@@ -1142,7 +1142,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
             out.attributesOff();
             out.flush();
         }
-        List<IPAddress> ips=table.connector.getIpAddresses().getRows();
+        List<IPAddress> ips=getService().getConnector().getIpAddresses().getRows();
         for(int c=0;c<ips.size();c++) {
             IPAddress ip=ips.get(c);
             if(
@@ -1237,7 +1237,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
 
     public void setAccounting(String accounting) throws SQLException, IOException {
         if(!isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
+        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
@@ -1268,7 +1268,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public List<Ticket> getTickets() throws SQLException, IOException {
-        return table.connector.getTickets().getTickets(this);
+        return getService().getConnector().getTickets().getTickets(this);
     }
     */
     /**
@@ -1276,7 +1276,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      */
     /* TODO
     public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
-        return table.connector.getEncryptionKeys().getEncryptionKeys(this);
+        return getService().getConnector().getEncryptionKeys().getEncryptionKeys(this);
     }*/
 
     /**
@@ -1285,7 +1285,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      */
     /*
     public void setUseMonthlyCreditCard(CreditCard creditCard) throws IOException, SQLException {
-        table.connector.requestUpdateIL(
+        getService().getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
             pkey,
@@ -1298,7 +1298,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      */
     /*
     public CreditCardTransaction getLastCreditCardTransaction() throws IOException, SQLException {
-        return table.connector.getCreditCardTransactions().getLastCreditCardTransaction(this);
+        return getService().getConnector().getCreditCardTransactions().getLastCreditCardTransaction(this);
     }*/
 
     /**
@@ -1306,7 +1306,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      */
     /*
     public Brand getBrand() throws IOException, SQLException {
-        return table.connector.getBrands().get(pkey);
+        return getService().getConnector().getBrands().get(pkey);
     }*/
 
     /*
@@ -1321,7 +1321,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         int monthlyRate,
         TransactionType monthlyRateTransactionType
     ) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().addPackageDefinition(
+        return getService().getConnector().getPackageDefinitions().addPackageDefinition(
             this,
             category,
             name,
@@ -1336,11 +1336,11 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().getPackageDefinition(this, category, name, version);
+        return getService().getConnector().getPackageDefinitions().getPackageDefinition(this, category, name, version);
     }
 
     public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
+        return getService().getConnector().getPackageDefinitions().getPackageDefinitions(this, category);
     }*/
 
     /**
@@ -1349,7 +1349,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     /*
     public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
         // Determine the active packages per category
-        List<PackageCategory> allCategories = table.connector.getPackageCategories().getRows();
+        List<PackageCategory> allCategories = getService().getConnector().getPackageCategories().getRows();
         Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<PackageCategory,List<PackageDefinition>>(allCategories.size()*4/3+1);
         for(PackageCategory category : allCategories) {
             List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
@@ -1364,11 +1364,11 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
 
     /*
     public void addDNSZone(String zone, String ip, int ttl) throws IOException, SQLException {
-	    table.connector.getDnsZones().addDNSZone(this, zone, ip, ttl);
+	    getService().getConnector().getDnsZones().addDNSZone(this, zone, ip, ttl);
     }
 
     public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
-        return table.connector.getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
+        return getService().getConnector().getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
     }
 
     public void addLinuxGroup(String name, LinuxGroupType type) throws IOException, SQLException {
@@ -1376,82 +1376,82 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public void addLinuxGroup(String name, String type) throws IOException, SQLException {
-	    table.connector.getLinuxGroups().addLinuxGroup(name, this, type);
+	    getService().getConnector().getLinuxGroups().addLinuxGroup(name, this, type);
     }
 
     public void addUsername(String username) throws IOException, SQLException {
-	    table.connector.getUsernames().addUsername(this, username);
+	    getService().getConnector().getUsernames().addUsername(this, username);
     }
 
     public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-        return table.connector.getCvsRepositories().getCvsRepositories(this);
+        return getService().getConnector().getCvsRepositories().getCvsRepositories(this);
     }
 
     public List<DNSZone> getDNSZones() throws IOException, SQLException {
-        return table.connector.getDnsZones().getDNSZones(this);
+        return getService().getConnector().getDnsZones().getDNSZones(this);
     }
 
     public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-        return table.connector.getEmailPipes().getEmailPipes(this);
+        return getService().getConnector().getEmailPipes().getEmailPipes(this);
     }
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcats(this);
+        return getService().getConnector().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
     }
 
     public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
-        return table.connector.getHttpdServers().getHttpdServers(this);
+        return getService().getConnector().getHttpdServers().getHttpdServers(this);
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return table.connector.getHttpdSites().getHttpdSites(this);
+        return getService().getConnector().getHttpdSites().getHttpdSites(this);
     }
 
     public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-        return table.connector.getIpAddresses().getIPAddresses(this);
+        return getService().getConnector().getIpAddresses().getIPAddresses(this);
     }
 
     public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
-        return table.connector.getLinuxGroups().getLinuxGroups(this);
+        return getService().getConnector().getLinuxGroups().getLinuxGroups(this);
     }
 
     public List<MySQLDatabase> getMysqlDatabases() throws IOException, SQLException {
-        return table.connector.getMysqlDatabases().getMySQLDatabases(this);
+        return getService().getConnector().getMysqlDatabases().getMySQLDatabases(this);
     }
     */
 
     /*
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+        return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
     }
 
     public List<MySQLServer> getMysqlServers() throws IOException, SQLException {
-        return table.connector.getMysqlServers().getMySQLServers(this);
+        return getService().getConnector().getMysqlServers().getMySQLServers(this);
     }
      */
 
     /*
     public List<MySQLUser> getMysqlUsers() throws IOException, SQLException {
-        return table.connector.getMysqlUsers().getMySQLUsers(this);
+        return getService().getConnector().getMysqlUsers().getMySQLUsers(this);
     }*/
 
     /*
     public List<NetBind> getNetBinds() throws IOException, SQLException {
-        return table.connector.getNetBinds().getNetBinds(this);
+        return getService().getConnector().getNetBinds().getNetBinds(this);
     }
 
     public List<NetBind> getNetBinds(IPAddress ip) throws IOException, SQLException {
-        return table.connector.getNetBinds().getNetBinds(this, ip);
+        return getService().getConnector().getNetBinds().getNetBinds(this, ip);
     }
      */
 
     /*
     public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
-        return table.connector.getPostgresDatabases().getPostgresDatabases(this);
+        return getService().getConnector().getPostgresDatabases().getPostgresDatabases(this);
     }
 
     public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
-        return table.connector.getPostgresUsers().getPostgresUsers(this);
+        return getService().getConnector().getPostgresUsers().getPostgresUsers(this);
     }
 
     public Server getServer(String name) throws IOException, SQLException {
@@ -1461,43 +1461,43 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public List<Server> getServers() throws IOException, SQLException {
-        return table.connector.getServers().getIndexedRows(Server.COLUMN_ACCOUNTING, pkey);
+        return getService().getConnector().getServers().getIndexedRows(Server.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<ServerFarm> getServerFarms() throws IOException, SQLException {
-        return table.connector.getServerFarms().getIndexedRows(ServerFarm.COLUMN_OWNER, pkey);
+        return getService().getConnector().getServerFarms().getIndexedRows(ServerFarm.COLUMN_OWNER, pkey);
     }
 
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-        return table.connector.getEmailSmtpRelays().getEmailSmtpRelays(this);
+        return getService().getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
     }
 
     public List<Username> getUsernames() throws IOException, SQLException {
-        return table.connector.getUsernames().getUsernames(this);
+        return getService().getConnector().getUsernames().getUsernames(this);
     }
 
     public List<Resource> getResources() throws IOException, SQLException {
-        return table.connector.getResources().getIndexedRows(Resource.COLUMN_ACCOUNTING, pkey);
+        return getService().getConnector().getResources().getIndexedRows(Resource.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<DisableLog> getDisableLogs() throws IOException, SQLException {
-        return table.connector.getDisableLogs().getIndexedRows(DisableLog.COLUMN_ACCOUNTING, pkey);
+        return getService().getConnector().getDisableLogs().getIndexedRows(DisableLog.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<PackageDefinition> getPackageDefinitions() throws IOException, SQLException {
-        return table.connector.getPackageDefinitions().getIndexedRows(PackageDefinition.COLUMN_ACCOUNTING, pkey);
+        return getService().getConnector().getPackageDefinitions().getIndexedRows(PackageDefinition.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<TicketAction> getTicketActionsByOldBusiness() throws IOException, SQLException {
-        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_ACCOUNTING, pkey);
+        return getService().getConnector().getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_ACCOUNTING, pkey);
     }
 
     public List<TicketAction> getTicketActionsByNewBusiness() throws IOException, SQLException {
-        return table.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_ACCOUNTING, pkey);
+        return getService().getConnector().getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_ACCOUNTING, pkey);
     }
 
     public List<Transaction> getTransactionsBySourceAccounting() throws IOException, SQLException {
-        return table.connector.getTransactions().getIndexedRows(Transaction.COLUMN_SOURCE_ACCOUNTING, pkey);
+        return getService().getConnector().getTransactions().getIndexedRows(Transaction.COLUMN_SOURCE_ACCOUNTING, pkey);
     }
      */
     // </editor-fold>

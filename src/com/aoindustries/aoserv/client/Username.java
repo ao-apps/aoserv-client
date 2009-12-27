@@ -91,15 +91,15 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
 
     /* TODO
     public LinuxAccount getLinuxAccount() throws IOException, SQLException {
-        return table.connector.getLinuxAccounts().get(pkey);
+        return getService().getConnector().getLinuxAccounts().get(pkey);
     }
 
     public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-        return table.connector.getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_USERNAME, pkey);
+        return getService().getConnector().getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_USERNAME, pkey);
     }
 
     public PostgresUser getPostgresUser() throws IOException, SQLException {
-        return table.connector.getPostgresUsers().get(pkey);
+        return getService().getConnector().getPostgresUsers().get(pkey);
     }
      */
     // </editor-fold>
@@ -124,7 +124,7 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
         String zip,
         boolean enableEmailSupport
     ) throws IOException, SQLException {
-	    table.connector.getBusinessAdministrators().addBusinessAdministrator(
+	    getService().getConnector().getBusinessAdministrators().addBusinessAdministrator(
             this,
             name,
             title,
@@ -166,7 +166,7 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
         String type,
         String shell
     ) throws IOException, SQLException {
-	    table.connector.getLinuxAccounts().addLinuxAccount(
+	    getService().getConnector().getLinuxAccounts().addLinuxAccount(
             this,
             primaryGroup,
             name,
@@ -179,11 +179,11 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
     }
 
     public int addMySQLUser(MySQLServer mysqlServer, String host) throws IOException, SQLException {
-    	return table.connector.getMysqlUsers().addMySQLUser(pkey, mysqlServer, host);
+    	return getService().getConnector().getMysqlUsers().addMySQLUser(pkey, mysqlServer, host);
     }
 
     public void addPostgresUser() throws IOException, SQLException {
-        table.connector.getPostgresUsers().addPostgresUser(pkey);
+        getService().getConnector().getPostgresUsers().addPostgresUser(pkey);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
@@ -247,11 +247,11 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
+        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
+        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -381,7 +381,7 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
     }
 
     public void remove() throws IOException, SQLException {
-    	table.connector.requestUpdateIL(
+    	getService().getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.USERNAMES,

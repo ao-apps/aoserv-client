@@ -83,8 +83,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
      * TODO
     AOServerDaemonHostService<C,F> getAoServerDaemonHosts() throws RemoteException;
     AOServerResourceService<C,F> getAoServerResources() throws RemoteException;
-    AOServerService<C,F> getAoServers() throws RemoteException;
     */
+    AOServerService<C,F> getAoServers() throws RemoteException;
     AOServPermissionService<C,F> getAoservPermissions() throws RemoteException;
     /* TODO
     AOServProtocolService<C,F> getAoservProtocols() throws RemoteException;
@@ -195,8 +195,10 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     MySQLReservedWordService<C,F> getMysqlReservedWords() throws RemoteException;
     MySQLServerService<C,F> getMysqlServers() throws RemoteException;
     MySQLUserService<C,F> getMysqlUsers() throws RemoteException;
+     */
     NetBindService<C,F> getNetBinds() throws RemoteException;
     NetDeviceIDService<C,F> getNetDeviceIDs() throws RemoteException;
+    /* TODO
     NetDeviceService<C,F> getNetDevices() throws RemoteException;
     NetPortService<C,F> getNetPorts() throws RemoteException;
     */
@@ -232,8 +234,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     ResourceTypeService<C,F> getResourceTypes() throws RemoteException;
     ResourceService<C,F> getResources() throws RemoteException;
     ServerFarmService<C,F> getServerFarms() throws RemoteException;
+    ServerService<C,F> getServers() throws RemoteException;
     /* TODO
-    ServerTable getServers() throws RemoteException;
     ShellService<C,F> getShells() throws RemoteException;
     SignupRequestOptionService<C,F> getSignupRequestOptions() throws RemoteException;
     SignupRequestService<C,F> getSignupRequests() throws RemoteException;

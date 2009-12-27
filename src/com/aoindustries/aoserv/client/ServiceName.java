@@ -21,7 +21,8 @@ public enum ServiceName implements LocalizedToString {
     /*TODO
     ao_server_daemon_hosts,
     ao_server_resources,
-    ao_servers,*/
+     */
+    ao_servers,
     aoserv_permissions,
     /*
     aoserv_protocols,
@@ -136,8 +137,10 @@ public enum ServiceName implements LocalizedToString {
     mysql_reserved_words,
     mysql_servers,
     mysql_users,
+     */
     net_binds,
     net_device_ids,
+    /* TODO
     net_devices,
     net_ports,
      */
@@ -179,8 +182,8 @@ public enum ServiceName implements LocalizedToString {
     schema_types,
      */
     server_farms,
-    /* TODO
     servers,
+    /* TODO
     shells,
     signup_request_options,
     signup_requests,

@@ -550,7 +550,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServConnector conn=table.connector;
+        AOServConnector conn=getService().getConnector();
 
         if(equals(conn.getThisBusinessAdministrator())) reasons.add(new CannotRemoveReason<BusinessAdministrator>("Not allowed to remove self", this));
 
@@ -567,7 +567,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     }
 
     public void remove() throws IOException, SQLException {
-        table.connector.requestUpdateIL(
+        getService().getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.BUSINESS_ADMINISTRATORS,
@@ -583,7 +583,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
      */
     /* TODO
     public void setPassword(String plaintext) throws IOException, SQLException {
-        AOServConnector connector=table.connector;
+        AOServConnector connector=getService().getConnector();
         if(!connector.isSecure()) throw new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
     	connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
     }
@@ -625,7 +625,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         final String finalCountry = country;
         if(zip!=null && zip.length()==0) zip=null;
         final String finalZip = zip;
-        table.connector.requestUpdate(
+        getService().getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -660,7 +660,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
                 }
 
                 public void afterRelease() {
-                    table.connector.tablesUpdated(invalidateList);
+                    getService().getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
@@ -721,7 +721,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     }
 
     public List<BusinessAdministratorPermission> getPermissions() throws IOException, SQLException {
-        return table.connector.getBusinessAdministratorPermissions().getPermissions(this);
+        return getService().getConnector().getBusinessAdministratorPermissions().getPermissions(this);
     }*/
 
     /**
@@ -745,48 +745,48 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
      */
     /* TODO
     public boolean hasPermission(String permission) throws IOException, SQLException {
-        return table.connector.getBusinessAdministratorPermissions().hasPermission(this, permission);
+        return getService().getConnector().getBusinessAdministratorPermissions().hasPermission(this, permission);
     }*/
 
     /* TODO
     public List<Resource> getResources() throws IOException, SQLException {
-        return table.connector.getResources().getIndexedRows(Resource.COLUMN_CREATED_BY, pkey);
+        return getService().getConnector().getResources().getIndexedRows(Resource.COLUMN_CREATED_BY, pkey);
     }
 
     public List<Business> getBusinessesByCreatedBy() throws IOException, SQLException {
-        return table.connector.getBusinesses().getIndexedRows(Business.COLUMN_CREATED_BY, pkey);
+        return getService().getConnector().getBusinesses().getIndexedRows(Business.COLUMN_CREATED_BY, pkey);
     }
 
     public List<CreditCard> getCreditCardsByCreatedBy() throws IOException, SQLException {
-        return table.connector.getCreditCards().getIndexedRows(CreditCard.COLUMN_CREATED_BY, pkey);
+        return getService().getConnector().getCreditCards().getIndexedRows(CreditCard.COLUMN_CREATED_BY, pkey);
     }
 
     public List<CreditCardTransaction> getCreditCardTransactionsByCreditCardCreatedBy() throws IOException, SQLException {
-        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_CREATED_BY, pkey);
+        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_CREATED_BY, pkey);
     }
 
     public List<CreditCardTransaction> getCreditCardTransactionsByAuthorizationUsername() throws IOException, SQLException {
-        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_AUTHORIZATION_USERNAME, pkey);
+        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_AUTHORIZATION_USERNAME, pkey);
     }
 
     public List<CreditCardTransaction> getCreditCardTransactionsByCaptureUsername() throws IOException, SQLException {
-        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CAPTURE_USERNAME, pkey);
+        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CAPTURE_USERNAME, pkey);
     }
 
     public List<CreditCardTransaction> getCreditCardTransactionsByVoidUsername() throws IOException, SQLException {
-        return table.connector.getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_VOID_USERNAME, pkey);
+        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_VOID_USERNAME, pkey);
     }
 
     public List<DisableLog> getDisableLogsByDisabledBy() throws IOException, SQLException {
-        return table.connector.getDisableLogs().getIndexedRows(DisableLog.COLUMN_DISABLED_BY, pkey);
+        return getService().getConnector().getDisableLogs().getIndexedRows(DisableLog.COLUMN_DISABLED_BY, pkey);
     }
 
     public List<MonthlyCharge> getMonthlyChargesByCreatedBy() throws IOException, SQLException {
-        return table.connector.getMonthlyCharges().getMonthlyChargesByCreatedBy(this);
+        return getService().getConnector().getMonthlyCharges().getMonthlyChargesByCreatedBy(this);
     }
 
     public List<SignupRequest> getCompletedSignupRequests() throws IOException, SQLException {
-        return table.connector.getSignupRequests().getIndexedRows(SignupRequest.COLUMN_COMPLETED_BY, pkey);
+        return getService().getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_COMPLETED_BY, pkey);
     }*/
     // </editor-fold>
 }

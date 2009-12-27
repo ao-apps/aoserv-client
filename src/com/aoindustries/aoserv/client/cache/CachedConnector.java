@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
@@ -16,6 +17,8 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.NetBindService;
+import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
@@ -24,6 +27,7 @@ import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
+import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
@@ -54,8 +58,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     /* TODO
     final CachedAOServerDaemonHostService aoserverDaemonHosts;
     final CachedAOServerResourceService aoserverResources;
-    final CachedAOServerService aoservers;
      */
+    final CachedAOServerService aoservers;
     final CachedAOServPermissionService aoservPermissions;
     /* TODO
     final CachedAOServProtocolService aoservProtocols;
@@ -166,8 +170,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedMySQLReservedWordService mysqlReservedWords;
     final CachedMySQLServerService mysqlServers;
     final CachedMySQLUserService mysqlUsers;
+     */
     final CachedNetBindService netBinds;
     final CachedNetDeviceIDService netDeviceIDs;
+    /* TODO
     final CachedNetDeviceService netDevices;
     final CachedNetPortService netPorts;
      */
@@ -203,8 +209,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedResourceTypeService resourceTypes;
     final CachedResourceService resources;
     final CachedServerFarmService serverFarms;
-    /* TODO
     final CachedServerService servers;
+    /* TODO
     final CachedShellService shells;
     final CachedSignupRequestOptionService signupRequestOptions;
     final CachedSignupRequestService signupRequests;
@@ -249,8 +255,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         /* TODO
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAOServerDaemonHosts());
         aoserverResources = new CachedAOServerResourceService(this, wrapped.getAOServerResources());
-        aoservers = new CachedAOServerService(this, wrapped.getAOServers());
          */
+        aoservers = new CachedAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAoservPermissions());
         /* TODO
         aoservProtocols = new CachedAOServProtocolService(this, wrapped.getAOServProtocols());
@@ -361,8 +367,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         mysqlReservedWords = new CachedMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
         mysqlServers = new CachedMySQLServerService(this, wrapped.getMySQLServers());
         mysqlUsers = new CachedMySQLUserService(this, wrapped.getMySQLUsers());
+         */
         netBinds = new CachedNetBindService(this, wrapped.getNetBinds());
         netDeviceIDs = new CachedNetDeviceIDService(this, wrapped.getNetDeviceIDs());
+        /* TODO
         netDevices = new CachedNetDeviceService(this, wrapped.getNetDevices());
         netPorts = new CachedNetPortService(this, wrapped.getNetPorts());
          */
@@ -398,8 +406,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         resourceTypes = new CachedResourceTypeService(this, wrapped.getResourceTypes());
         resources = new CachedResourceService(this, wrapped.getResources());
         serverFarms = new CachedServerFarmService(this, wrapped.getServerFarms());
-        /* TODO
         servers = new CachedServerService(this, wrapped.getServers());
+        /* TODO
         shells = new CachedShellService(this, wrapped.getShells());
         signupRequestOptions = new CachedSignupRequestOptionService(this, wrapped.getSignupRequestOptions());
         signupRequests = new CachedSignupRequestService(this, wrapped.getSignupRequests());
@@ -483,9 +491,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts();
 
     public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources();
-
-    public AOServerService<CachedConnector,CachedConnectorFactory> getAoServers();
     */
+    public AOServerService<CachedConnector,CachedConnectorFactory> getAoServers() {
+        return aoservers;
+    }
+
     public AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions() {
         return aoservPermissions;
     }
@@ -695,11 +705,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers();
 
     public MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers();
+    */
+    public NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds() {
+        return netBinds;
+    }
 
-    public NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds();
-
-    public NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs();
-
+    public NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs() {
+        return netDeviceIDs;
+    }
+    /* TODO
     public NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices();
 
     public NetPortService<CachedConnector,CachedConnectorFactory> getNetPorts();
@@ -771,9 +785,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms() {
         return serverFarms;
     }
-    /* TODO
-    public ServerTable getServers();
 
+    public ServerService<CachedConnector,CachedConnectorFactory> getServers() {
+        return servers;
+    }
+    /* TODO
     public ShellService<CachedConnector,CachedConnectorFactory> getShells();
 
     public SignupRequestOptionService<CachedConnector,CachedConnectorFactory> getSignupRequestOptions();
