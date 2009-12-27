@@ -15,7 +15,9 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
@@ -156,7 +158,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingNetDeviceIDService netDeviceIDs;
     final NoSwingNetDeviceService netDevices;
     final NoSwingNetPortService netPorts;
+     */
     final NoSwingNetProtocolService netProtocols;
+    /* TODO
     final NoSwingNetTcpRedirectService netTcpRedirects;
     final NoSwingNoticeLogService noticeLogs;
     final NoSwingNoticeTypeService noticeTypes;
@@ -178,7 +182,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingPostgresVersionService postgresVersions;
     final NoSwingPrivateFTPServerService privateFTPServers;
     final NoSwingProcessorTypeService processorTypes;
+     */
     final NoSwingProtocolService protocols;
+    /*
     final NoSwingRackService racks;
     final NoSwingResellerService resellers;
      */
@@ -341,7 +347,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         netDeviceIDs = new NoSwingNetDeviceIDService(this, wrapped.getNetDeviceIDs());
         netDevices = new NoSwingNetDeviceService(this, wrapped.getNetDevices());
         netPorts = new NoSwingNetPortService(this, wrapped.getNetPorts());
+         */
         netProtocols = new NoSwingNetProtocolService(this, wrapped.getNetProtocols());
+        /* TODO
         netTcpRedirects = new NoSwingNetTcpRedirectService(this, wrapped.getNetTcpRedirects());
         noticeLogs = new NoSwingNoticeLogService(this, wrapped.getNoticeLogs());
         noticeTypes = new NoSwingNoticeTypeService(this, wrapped.getNoticeTypes());
@@ -363,7 +371,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         postgresVersions = new NoSwingPostgresVersionService(this, wrapped.getPostgresVersions());
         privateFTPServers = new NoSwingPrivateFTPServerService(this, wrapped.getPrivateFTPServers());
         processorTypes = new NoSwingProcessorTypeService(this, wrapped.getProcessorTypes());
+         */
         protocols = new NoSwingProtocolService(this, wrapped.getProtocols());
+        /* TODO
         racks = new NoSwingRackService(this, wrapped.getRacks());
         resellers = new NoSwingResellerService(this, wrapped.getResellers());
          */
@@ -681,9 +691,11 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public NetDeviceService<NoSwingConnector,NoSwingConnectorFactory> getNetDevices() throws RemoteException;
 
     public NetPortService<NoSwingConnector,NoSwingConnectorFactory> getNetPorts() throws RemoteException;
-
-    public NetProtocolService<NoSwingConnector,NoSwingConnectorFactory> getNetProtocols() throws RemoteException;
-
+    */
+    public NetProtocolService<NoSwingConnector,NoSwingConnectorFactory> getNetProtocols() throws RemoteException {
+        return netProtocols;
+    }
+    /* TODO
     public NetTcpRedirectService<NoSwingConnector,NoSwingConnectorFactory> getNetTcpRedirects() throws RemoteException;
 
     public NoticeLogService<NoSwingConnector,NoSwingConnectorFactory> getNoticeLogs() throws RemoteException;
@@ -724,13 +736,15 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public PrivateFTPServerService<NoSwingConnector,NoSwingConnectorFactory> getPrivateFTPServers() throws RemoteException;
 
     public ProcessorTypeService<NoSwingConnector,NoSwingConnectorFactory> getProcessorTypes() throws RemoteException;
-
-    public ProtocolService<NoSwingConnector,NoSwingConnectorFactory> getProtocols() throws RemoteException;
-
+    */
+    public ProtocolService<NoSwingConnector,NoSwingConnectorFactory> getProtocols() throws RemoteException {
+        return protocols;
+    }
+    /* TODO
     public RackService<NoSwingConnector,NoSwingConnectorFactory> getRacks() throws RemoteException;
 
     public ResellerService<NoSwingConnector,NoSwingConnectorFactory> getResellers() throws RemoteException;
-*/
+    */
     public ResourceTypeService<NoSwingConnector,NoSwingConnectorFactory> getResourceTypes() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return resourceTypes;

@@ -15,7 +15,9 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
@@ -161,7 +163,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedNetDeviceIDService netDeviceIDs;
     final CachedNetDeviceService netDevices;
     final CachedNetPortService netPorts;
+     */
     final CachedNetProtocolService netProtocols;
+    /* TODO
     final CachedNetTcpRedirectService netTcpRedirects;
     final CachedNoticeLogService noticeLogs;
     final CachedNoticeTypeService noticeTypes;
@@ -183,7 +187,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedPostgresVersionService postgresVersions;
     final CachedPrivateFTPServerService privateFTPServers;
     final CachedProcessorTypeService processorTypes;
+     */
     final CachedProtocolService protocols;
+    /* TODO
     final CachedRackService racks;
     final CachedResellerService resellers;
      */
@@ -350,7 +356,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         netDeviceIDs = new CachedNetDeviceIDService(this, wrapped.getNetDeviceIDs());
         netDevices = new CachedNetDeviceService(this, wrapped.getNetDevices());
         netPorts = new CachedNetPortService(this, wrapped.getNetPorts());
+         */
         netProtocols = new CachedNetProtocolService(this, wrapped.getNetProtocols());
+        /* TODO
         netTcpRedirects = new CachedNetTcpRedirectService(this, wrapped.getNetTcpRedirects());
         noticeLogs = new CachedNoticeLogService(this, wrapped.getNoticeLogs());
         noticeTypes = new CachedNoticeTypeService(this, wrapped.getNoticeTypes());
@@ -372,7 +380,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         postgresVersions = new CachedPostgresVersionService(this, wrapped.getPostgresVersions());
         privateFTPServers = new CachedPrivateFTPServerService(this, wrapped.getPrivateFTPServers());
         processorTypes = new CachedProcessorTypeService(this, wrapped.getProcessorTypes());
+         */
         protocols = new CachedProtocolService(this, wrapped.getProtocols());
+        /* TODO
         racks = new CachedRackService(this, wrapped.getRacks());
         resellers = new CachedResellerService(this, wrapped.getResellers());
          */
@@ -682,9 +692,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices();
 
     public NetPortService<CachedConnector,CachedConnectorFactory> getNetPorts();
-
-    public NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols();
-
+    */
+    public NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols() {
+        return netProtocols;
+    }
+    /* TODO
     public NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects();
 
     public NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
@@ -724,13 +736,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public PrivateFTPServerService<CachedConnector,CachedConnectorFactory> getPrivateFTPServers();
 
     public ProcessorTypeService<CachedConnector,CachedConnectorFactory> getProcessorTypes();
-
-    public ProtocolService<CachedConnector,CachedConnectorFactory> getProtocols();
-
+    */
+    public ProtocolService<CachedConnector,CachedConnectorFactory> getProtocols() {
+        return protocols;
+    }
+    /* TODO
     public RackService<CachedConnector,CachedConnectorFactory> getRacks();
 
     public ResellerService<CachedConnector,CachedConnectorFactory> getResellers();
-*/
+    */
     public ResourceTypeService<CachedConnector,CachedConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }

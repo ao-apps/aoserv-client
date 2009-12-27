@@ -15,7 +15,9 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
@@ -170,8 +172,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryNetBindService netBinds;
     final RetryNetDeviceIDService netDeviceIDs;
     final RetryNetDeviceService netDevices;
-    final RetryNetPortService netPorts;
+    final RetryNetPortService netPorts;*/
     final RetryNetProtocolService netProtocols;
+    /* TODO
     final RetryNetTcpRedirectService netTcpRedirects;
     final RetryNoticeLogService noticeLogs;
     final RetryNoticeTypeService noticeTypes;
@@ -193,7 +196,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryPostgresVersionService postgresVersions;
     final RetryPrivateFTPServerService privateFTPServers;
     final RetryProcessorTypeService processorTypes;
+     */
     final RetryProtocolService protocols;
+    /* TODO
     final RetryRackService racks;
     final RetryResellerService resellers;
      */
@@ -363,7 +368,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         netDeviceIDs = new RetryNetDeviceIDService(this);
         netDevices = new RetryNetDeviceService(this);
         netPorts = new RetryNetPortService(this);
+         */
         netProtocols = new RetryNetProtocolService(this);
+        /* TODO
         netTcpRedirects = new RetryNetTcpRedirectService(this);
         noticeLogs = new RetryNoticeLogService(this);
         noticeTypes = new RetryNoticeTypeService(this);
@@ -385,7 +392,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         postgresVersions = new RetryPostgresVersionService(this);
         privateFTPServers = new RetryPrivateFTPServerService(this);
         processorTypes = new RetryProcessorTypeService(this);
+         */
         protocols = new RetryProtocolService(this);
+        /* TODO
         racks = new RetryRackService(this);
         resellers = new RetryResellerService(this);
          */
@@ -815,9 +824,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public NetDeviceService<RetryConnector,RetryConnectorFactory> getNetDevices();
 
     public NetPortService<RetryConnector,RetryConnectorFactory> getNetPorts();
-
-    public NetProtocolService<RetryConnector,RetryConnectorFactory> getNetProtocols();
-
+    */
+    public NetProtocolService<RetryConnector,RetryConnectorFactory> getNetProtocols() {
+        return netProtocols;
+    }
+    /* TODO
     public NetTcpRedirectService<RetryConnector,RetryConnectorFactory> getNetTcpRedirects();
 
     public NoticeLogService<RetryConnector,RetryConnectorFactory> getNoticeLogs();
@@ -857,13 +868,15 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public PrivateFTPServerService<RetryConnector,RetryConnectorFactory> getPrivateFTPServers();
 
     public ProcessorTypeService<RetryConnector,RetryConnectorFactory> getProcessorTypes();
-
-    public ProtocolService<RetryConnector,RetryConnectorFactory> getProtocols();
-
+    */
+    public ProtocolService<RetryConnector,RetryConnectorFactory> getProtocols() {
+        return protocols;
+    }
+    /* TODO
     public RackService<RetryConnector,RetryConnectorFactory> getRacks();
 
     public ResellerService<RetryConnector,RetryConnectorFactory> getResellers();
-*/
+    */
     public ResourceTypeService<RetryConnector,RetryConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }
