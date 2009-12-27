@@ -12,11 +12,15 @@ import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServerResourceService;
 import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
+import com.aoindustries.aoserv.client.BackupPartitionService;
+import com.aoindustries.aoserv.client.BackupRetentionService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.FailoverFileReplicationService;
+import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.NetBindService;
@@ -72,9 +76,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedAOSHCommandService aoshCommands;
      */
     final CachedArchitectureService architectures;
-    /*
     final CachedBackupPartitionService backupPartitions;
     final CachedBackupRetentionService backupRetentions;
+    /* TODO
     final CachedBankAccountService bankAccounts;
     final CachedBankTransactionTypeService bankTransactionTypes;
     final CachedBankTransactionService bankTransactions;
@@ -125,9 +129,13 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedEncryptionKeyService encryptionKeys;
     final CachedExpenseCategoryService expenseCategories;
     final CachedFailoverFileLogService failoverFileLogs;
+     */
     final CachedFailoverFileReplicationService failoverFileReplications;
+    /* TODO
     final CachedFailoverFileScheduleService failoverFileSchedules;
+     */
     final CachedFailoverMySQLReplicationService failoverMySQLReplications;
+    /* TODO
     final CachedFileBackupSettingService fileBackupSettings;
     final CachedFTPGuestUserService ftpGuestUsers;
     final CachedHttpdBindService httpdBinds;
@@ -273,9 +281,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         aoshCommands = new CachedAOSHCommandService(this, wrapped.getAOSHCommands());
          */
         architectures = new CachedArchitectureService(this, wrapped.getArchitectures());
-        /* TODO
         backupPartitions = new CachedBackupPartitionService(this, wrapped.getBackupPartitions());
         backupRetentions = new CachedBackupRetentionService(this, wrapped.getBackupRetentions());
+        /* TODO
         bankAccounts = new CachedBankAccountService(this, wrapped.getBankAccounts());
         bankTransactionTypes = new CachedBankTransactionTypeService(this, wrapped.getBankTransactionTypes());
         bankTransactions = new CachedBankTransactionService(this, wrapped.getBankTransactions());
@@ -326,9 +334,13 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         encryptionKeys = new CachedEncryptionKeyService(this, wrapped.getEncryptionKeys());
         expenseCategories = new CachedExpenseCategoryService(this, wrapped.getExpenseCategorys());
         failoverFileLogs = new CachedFailoverFileLogService(this, wrapped.getFailoverFileLogs());
+         */
         failoverFileReplications = new CachedFailoverFileReplicationService(this, wrapped.getFailoverFileReplications());
+        /* TODO
         failoverFileSchedules = new CachedFailoverFileScheduleService(this, wrapped.getFailoverFileSchedules());
+         */
         failoverMySQLReplications = new CachedFailoverMySQLReplicationService(this, wrapped.getFailoverMySQLReplications());
+        /* TODO
         fileBackupSettings = new CachedFileBackupSettingService(this, wrapped.getFileBackupSettings());
         ftpGuestUsers = new CachedFTPGuestUserService(this, wrapped.getFTPGuestUsers());
         httpdBinds = new CachedHttpdBindService(this, wrapped.getHttpdBinds());
@@ -523,11 +535,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures() {
         return architectures;
     }
+
+    public BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions() {
+        return backupPartitions;
+    }
+
+    public BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions() {
+        return backupRetentions;
+    }
     /* TODO
-    public BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions();
-
-    public BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions();
-
     public BankAccountService<CachedConnector,CachedConnectorFactory> getBankAccounts();
 
     public BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes();
@@ -621,13 +637,17 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories();
 
     public FailoverFileLogService<CachedConnector,CachedConnectorFactory> getFailoverFileLogs();
-
-    public FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> getFailoverFileReplications();
-
+    */
+    public FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> getFailoverFileReplications() {
+        return failoverFileReplications;
+    }
+    /* TODO
     public FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> getFailoverFileSchedules();
-
-    public FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> getFailoverMySQLReplications();
-
+    */
+    public FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> getFailoverMySQLReplications() {
+        return failoverMySQLReplications;
+    }
+    /* TODO
     public FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings();
 
     public FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers();

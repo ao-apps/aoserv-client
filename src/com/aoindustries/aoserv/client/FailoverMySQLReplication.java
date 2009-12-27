@@ -8,152 +8,130 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Represents MySQL replication for one a <code>FailoverFileReplication</code> or <code>AOServer</code>.
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverMySQLReplication extends CachedObjectIntegerKey<FailoverMySQLReplication> {
+final public class FailoverMySQLReplication extends AOServObjectIntegerKey<FailoverMySQLReplication> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=1,
-        COLUMN_REPLICATION=2,
-        COLUMN_MYSQL_SERVER=3
-    ;
-    static final String COLUMN_AO_SERVER_name = "ao_server";
-    static final String COLUMN_REPLICATION_name = "replication";
-    static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    int ao_server;
-    int replication;
-    private int mysql_server;
-    private int monitoring_seconds_behind_low;
-    private int monitoring_seconds_behind_medium;
-    private int monitoring_seconds_behind_high;
-    private int monitoring_seconds_behind_critical;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int ao_server;
+    final private int replication;
+    final private int mysql_server;
+    final private int monitoring_seconds_behind_low;
+    final private int monitoring_seconds_behind_medium;
+    final private int monitoring_seconds_behind_high;
+    final private int monitoring_seconds_behind_critical;
 
+    public FailoverMySQLReplication(
+        FailoverMySQLReplicationService<?,?> service,
+        int pkey,
+        int ao_server,
+        int replication,
+        int mysql_server,
+        int monitoring_seconds_behind_low,
+        int monitoring_seconds_behind_medium,
+        int monitoring_seconds_behind_high,
+        int monitoring_seconds_behind_critical
+    ) {
+        super(service, pkey);
+        this.ao_server = ao_server;
+        this.replication = replication;
+        this.mysql_server = mysql_server;
+        this.monitoring_seconds_behind_low = monitoring_seconds_behind_low;
+        this.monitoring_seconds_behind_medium = monitoring_seconds_behind_medium;
+        this.monitoring_seconds_behind_high = monitoring_seconds_behind_high;
+        this.monitoring_seconds_behind_critical = monitoring_seconds_behind_critical;
+    }
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_AO_SERVER: return ao_server==-1 ? null : ao_server;
-            case COLUMN_REPLICATION: return replication==-1 ? null : replication;
-            case COLUMN_MYSQL_SERVER: return mysql_server;
-            case 4: return monitoring_seconds_behind_low==-1 ? null : monitoring_seconds_behind_low;
-            case 5: return monitoring_seconds_behind_medium==-1 ? null : monitoring_seconds_behind_medium;
-            case 6: return monitoring_seconds_behind_high==-1 ? null : monitoring_seconds_behind_high;
-            case 7: return monitoring_seconds_behind_critical==-1 ? null : monitoring_seconds_behind_critical;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(FailoverMySQLReplication other) throws RemoteException {
+        int diff = getMySQLServer().compareTo(other.getMySQLServer());
+        if(diff!=0) return diff;
+        diff = getAOServer().compareTo(other.getAOServer());
+        if(diff!=0) return diff;
+        return getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated, unique id")
+    public int getPkey() {
+        return key;
     }
 
-    public AOServer getAOServer() throws SQLException, IOException {
+    @SchemaColumn(order=1, name="ao_server", description="the ao_server the receives the replication")
+    public AOServer getAOServer() throws RemoteException {
         if(ao_server==-1) return null;
-        AOServer ao=table.connector.getAoServers().get(ao_server);
-        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-        return ao;
+        return getService().getConnector().getAoServers().get(ao_server);
     }
 
-    public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
+    @SchemaColumn(order=2, name="replication", description="the failover server that receives the replication")
+    public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
         if(replication==-1) return null;
-        FailoverFileReplication ffr=table.connector.getFailoverFileReplications().get(replication);
-        if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
-        return ffr;
+        return getService().getConnector().getFailoverFileReplications().get(replication);
     }
 
-    public MySQLServer getMySQLServer() throws IOException, SQLException {
-        MySQLServer ms=table.connector.getMysqlServers().get(mysql_server);
-        if(ms==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
-        return ms;
+    @SchemaColumn(order=3, name="mysql_server", description="the MySQL Server that is being replicated")
+    public MySQLServer getMySQLServer() throws RemoteException {
+        return getService().getConnector().getMysqlServers().get(mysql_server);
     }
 
+    @SchemaColumn(order=4, name="monitoring_seconds_behind_low", description="the seconds behind where will trigger low alert level")
     public int getMonitoringSecondsBehindLow() {
         return monitoring_seconds_behind_low;
     }
 
+    @SchemaColumn(order=5, name="monitoring_seconds_behind_medium", description="the seconds behind where will trigger medium alert level")
     public int getMonitoringSecondsBehindMedium() {
         return monitoring_seconds_behind_medium;
     }
 
+    @SchemaColumn(order=6, name="monitoring_seconds_behind_high", description="the seconds behind where will trigger high alert level")
     public int getMonitoringSecondsBehindHigh() {
         return monitoring_seconds_behind_high;
     }
 
+    @SchemaColumn(order=7, name="monitoring_seconds_behind_critical", description="the seconds behind where will trigger critical alert level")
     public int getMonitoringSecondsBehindCritical() {
         return monitoring_seconds_behind_critical;
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.FAILOVER_MYSQL_REPLICATIONS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey=result.getInt(pos++);
-        ao_server=result.getInt(pos++);
-        if(result.wasNull()) ao_server = -1;
-        replication=result.getInt(pos++);
-        if(result.wasNull()) replication = -1;
-        mysql_server=result.getInt(pos++);
-        monitoring_seconds_behind_low = result.getInt(pos++);
-        if(result.wasNull()) monitoring_seconds_behind_low = -1;
-        monitoring_seconds_behind_medium = result.getInt(pos++);
-        if(result.wasNull()) monitoring_seconds_behind_medium = -1;
-        monitoring_seconds_behind_high = result.getInt(pos++);
-        if(result.wasNull()) monitoring_seconds_behind_high = -1;
-        monitoring_seconds_behind_critical = result.getInt(pos++);
-        if(result.wasNull()) monitoring_seconds_behind_critical = -1;
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        ao_server = in.readCompressedInt();
-        replication = in.readCompressedInt();
-        mysql_server = in.readCompressedInt();
-        monitoring_seconds_behind_low = in.readCompressedInt();
-        monitoring_seconds_behind_medium = in.readCompressedInt();
-        monitoring_seconds_behind_high = in.readCompressedInt();
-        monitoring_seconds_behind_critical = in.readCompressedInt();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
             getAOServer(),
             getFailoverFileReplication(),
             getMySQLServer()
         );
     }
+    // </editor-fold>
 
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-        );
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws IOException, SQLException {
+    String toStringImpl(Locale userLocale) throws RemoteException {
         if(ao_server!=-1) return getMySQLServer().toString(userLocale)+"->"+getAOServer().toString(userLocale);
         else return getMySQLServer().toString(userLocale)+"->"+getFailoverFileReplication().toString(userLocale);
     }
+    // </editor-fold>
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_59)>=0) out.writeCompressedInt(ao_server);
-        out.writeCompressedInt(replication);
-        out.writeCompressedInt(mysql_server);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_56)>=0) {
-            out.writeCompressedInt(monitoring_seconds_behind_low);
-            out.writeCompressedInt(monitoring_seconds_behind_medium);
-            out.writeCompressedInt(monitoring_seconds_behind_high);
-            out.writeCompressedInt(monitoring_seconds_behind_critical);
-        }
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /*
     final public static class SlaveStatus {
 
         final private String slaveIOState;
@@ -259,13 +237,14 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
             return secondsBehindMaster;
         }
     }
-
+    */
     /**
      * Gets the slave status or <code>null</code> if no slave status provided by MySQL.  If any error occurs, throws either
      * IOException or SQLException.
      */
+    /* TODO
     public SlaveStatus getSlaveStatus() throws IOException, SQLException {
-        return table.connector.requestResult(
+        return getService().getConnector().requestResult(
             true,
             new AOServConnector.ResultRequest<SlaveStatus>() {
                 SlaveStatus result;
@@ -308,4 +287,6 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
             }
         );
     }
+     */
+    // </editor-fold>
 }

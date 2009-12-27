@@ -5,81 +5,44 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
 import java.util.Locale;
 
 /**
  * The possible backup retention values allowed in the system.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
+final public class BackupRetention extends AOServObjectShortKey<BackupRetention> {
 
-    static final int COLUMN_DAYS=0;
-    static final String COLUMN_DAYS_name = "days";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    // public static final short DEFAULT_BACKUP_RETENTION=7;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String display;
 
-    short days;
-    private String display;
-
-    @Override
-    boolean equalsImpl(Object O) {
-	return
-            O instanceof BackupRetention
-            && ((BackupRetention)O).days==days
-	;
+    public BackupRetention(BackupRetentionService<?,?> service, short days, String display) {
+        super(service, days);
+        this.display = display;
     }
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_DAYS) return Short.valueOf(days);
-	if(i==1) return display;
-	throw new IllegalArgumentException("Invalid index: "+i);
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="days", unique=true, description="the number of days to keep the backup data")
     public short getDays() {
-	return days;
+        return key;
     }
 
+    @SchemaColumn(order=1, name="display", description="the text displayed for this time increment")
     public String getDisplay() {
-	return display;
+        return display;
     }
+    // </editor-fold>
 
-    public Short getKey() {
-	return days;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BACKUP_RETENTIONS;
-    }
-
-    @Override
-    int hashCodeImpl() {
-	return days;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	days=result.getShort(1);
-	display=result.getString(2);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	days=in.readShort();
-	display=in.readUTF();
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-	return display;
+    	return display;
     }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeShort(days);
-	out.writeUTF(display);
-    }
+    // </editor-fold>
 }

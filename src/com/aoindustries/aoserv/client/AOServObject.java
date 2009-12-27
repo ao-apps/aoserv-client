@@ -53,6 +53,10 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         return i1<i2 ? -1 : i1==i2 ? 0 : 1;
     }
 
+    static int compare(short s1, short s2) {
+        return s1<s2 ? -1 : s1==s2 ? 0 : 1;
+    }
+
     static int compareHostnames(String host1, String host2) {
         while(host1.length()>0 && host2.length()>0) {
             int pos=host1.lastIndexOf('.');

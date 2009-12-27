@@ -5,139 +5,127 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.List;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * <code>BackupPartition</code> stores backup data.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class BackupPartition extends CachedObjectIntegerKey<BackupPartition> {
+final public class BackupPartition extends AOServObjectIntegerKey<BackupPartition> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=1
-    ;
-    static final String COLUMN_AO_SERVER_name = "ao_server";
-    static final String COLUMN_PATH_name = "path";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    int ao_server;
-    String path;
-    private boolean enabled;
-    private boolean quota_enabled;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int ao_server;
+    final private String path;
+    final private boolean enabled;
+    final private boolean quota_enabled;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
-            case 2: return path;
-            case 3: return enabled;
-            case 4: return quota_enabled;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public BackupPartition(
+        BackupPartitionService<?,?> service,
+        int pkey,
+        int ao_server,
+        String path,
+        boolean enabled,
+        boolean quota_enabled
+    ) {
+        super(service, pkey);
+        this.ao_server = ao_server;
+        this.path = path.intern();
+        this.enabled = enabled;
+        this.quota_enabled = quota_enabled;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(BackupPartition other) throws RemoteException {
+        int diff = getAOServer().compareTo(other.getAOServer());
+        if(diff!=0) return diff;
+        return compareIgnoreCaseConsistentWithEquals(path, other.path);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="the unique category id")
+    public int getPkey() {
+        return key;
     }
 
-    public long getDiskTotalSize() throws IOException, SQLException {
-        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
+    @SchemaColumn(order=1, name="ao_server", description="the pkey of the server that stores the backup data")
+    public AOServer getAOServer() throws RemoteException {
+        return getService().getConnector().getAoServers().get(ao_server);
     }
 
-    public long getDiskUsedSize() throws IOException, SQLException {
-        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
-    }
-
-    public AOServer getAOServer() throws SQLException, IOException {
-        AOServer ao=table.connector.getAoServers().get(ao_server);
-        if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-        return ao;
-    }
-
+    @SchemaColumn(order=2, name="path", description="the full path to the root of the backup data")
     public String getPath() {
         return path;
     }
-    
-    @Override
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.BACKUP_PARTITIONS;
-    }
 
-    @Override
-    String toStringImpl(Locale userLocale) throws SQLException, IOException {
-        return getAOServer().getHostname()+":"+path;
-    }
-
-    @Override
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        ao_server=result.getInt(2);
-        path=result.getString(3);
-        enabled=result.getBoolean(4);
-        quota_enabled=result.getBoolean(5);
-    }
-
+    @SchemaColumn(order=3, name="enabled", description="flags the partition as currently accepting new data")
     public boolean isEnabled() {
         return enabled;
     }
-    
+
     /**
      * When quota is enabled, all replications/backups into the partition must have quota_gid set.
      * When quota is disabled, all replications/backups into the partition must have quota_gid not set.
      * This generally means that ao_servers, which backup full Unix permissions, will be backed-up to non-quota partitions,
      * while other backups (such as from Windows) will go to quota-enabled partitions for billing purposes.
-     * 
+     *
      * @return the enabled flag
      */
+    @SchemaColumn(order=4, name="quota_enabled", description="When quota is enabled, all replications/backups into the partition must have quota_gid set.")
     public boolean isQuotaEnabled() {
         return quota_enabled;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        ao_server=in.readCompressedInt();
-        path=in.readUTF().intern();
-        enabled=in.readBoolean();
-        quota_enabled=in.readBoolean();
-    }
-
-    @Override
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(ao_server);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeUTF(path);
-        out.writeUTF(path);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeLong((long)512*1024*1024); // min free space
-            out.writeLong((long)1024*1024*1024); // desired free space
-        }
-        out.writeBoolean(enabled);
-        if(
-            version.compareTo(AOServProtocol.Version.VERSION_1_0_A_117)>=0
-            && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
-        ) {
-            out.writeCompressedInt(1); // fill_order
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeBoolean(quota_enabled);
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
             getAOServer()
         );
     }
 
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getFailoverFileReplications()
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getFailoverFileReplications()
         );
     }
+    // </editor-fold>
 
-    public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
-        return table.connector.getFailoverFileReplications().getIndexedRows(FailoverFileReplication.COLUMN_BACKUP_PARTITION, pkey);
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+        return getAOServer().getHostname()+":"+path;
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
+        return getService().getConnector().getFailoverFileReplications().getIndexedRows(FailoverFileReplication.COLUMN_BACKUP_PARTITION, pkey);
+    }
+     */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
+    public long getDiskTotalSize() throws IOException, SQLException {
+        return getService().getConnector().requestLongQuery(true, AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
+    }
+
+    public long getDiskUsedSize() throws IOException, SQLException {
+        return getService().getConnector().requestLongQuery(true, AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
+    }
+     */
+    // </editor-fold>
 }

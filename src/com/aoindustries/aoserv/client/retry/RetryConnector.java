@@ -12,11 +12,15 @@ import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServerResourceService;
 import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
+import com.aoindustries.aoserv.client.BackupPartitionService;
+import com.aoindustries.aoserv.client.BackupRetentionService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.FailoverFileReplicationService;
+import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.NetBindService;
@@ -82,9 +86,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryAOSHCommandService aoshCommands;
      */
     final RetryArchitectureService architectures;
-    /* TODO
     final RetryBackupPartitionService backupPartitions;
     final RetryBackupRetentionService backupRetentions;
+    /* TODO
     final RetryBankAccountService bankAccounts;
     final RetryBankTransactionTypeService bankTransactionTypes;
     final RetryBankTransactionService bankTransactions;
@@ -135,9 +139,13 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryEncryptionKeyService encryptionKeys;
     final RetryExpenseCategoryService expenseCategories;
     final RetryFailoverFileLogService failoverFileLogs;
+     */
     final RetryFailoverFileReplicationService failoverFileReplications;
+    /* TODO
     final RetryFailoverFileScheduleService failoverFileSchedules;
+     */
     final RetryFailoverMySQLReplicationService failoverMySQLReplications;
+    /* TODO
     final RetryFileBackupSettingService fileBackupSettings;
     final RetryFTPGuestUserService ftpGuestUsers;
     final RetryHttpdBindService httpdBinds;
@@ -285,9 +293,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         aoshCommands = new RetryAOSHCommandService(this);
          */
         architectures = new RetryArchitectureService(this);
-        /* TODO
         backupPartitions = new RetryBackupPartitionService(this);
         backupRetentions = new RetryBackupRetentionService(this);
+        /* TODO
         bankAccounts = new RetryBankAccountService(this);
         bankTransactionTypes = new RetryBankTransactionTypeService(this);
         bankTransactions = new RetryBankTransactionService(this);
@@ -338,9 +346,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         encryptionKeys = new RetryEncryptionKeyService(this);
         expenseCategories = new RetryExpenseCategoryService(this);
         failoverFileLogs = new RetryFailoverFileLogService(this);
+         */
         failoverFileReplications = new RetryFailoverFileReplicationService(this);
-        failoverFileSchedules = new RetryFailoverFileScheduleService(this);
+        // TODO: failoverFileSchedules = new RetryFailoverFileScheduleService(this);
         failoverMySQLReplications = new RetryFailoverMySQLReplicationService(this);
+        /* TODO
         fileBackupSettings = new RetryFileBackupSettingService(this);
         ftpGuestUsers = new RetryFTPGuestUserService(this);
         httpdBinds = new RetryHttpdBindService(this);
@@ -656,11 +666,15 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public ArchitectureService<RetryConnector,RetryConnectorFactory> getArchitectures() {
         return architectures;
     }
+
+    public BackupPartitionService<RetryConnector,RetryConnectorFactory> getBackupPartitions() {
+        return backupPartitions;
+    }
+
+    public BackupRetentionService<RetryConnector,RetryConnectorFactory> getBackupRetentions() {
+        return backupRetentions;
+    }
     /* TODO
-    public BackupPartitionService<RetryConnector,RetryConnectorFactory> getBackupPartitions();
-
-    public BackupRetentionService<RetryConnector,RetryConnectorFactory> getBackupRetentions();
-
     public BankAccountService<RetryConnector,RetryConnectorFactory> getBankAccounts();
 
     public BankTransactionTypeService<RetryConnector,RetryConnectorFactory> getBankTransactionTypes();
@@ -753,13 +767,17 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public ExpenseCategoryService<RetryConnector,RetryConnectorFactory> getExpenseCategories();
 
     public FailoverFileLogService<RetryConnector,RetryConnectorFactory> getFailoverFileLogs();
-
-    public FailoverFileReplicationService<RetryConnector,RetryConnectorFactory> getFailoverFileReplications();
-
+    */
+    public FailoverFileReplicationService<RetryConnector,RetryConnectorFactory> getFailoverFileReplications() {
+        return failoverFileReplications;
+    }
+    /* TODO
     public FailoverFileScheduleService<RetryConnector,RetryConnectorFactory> getFailoverFileSchedules();
-
-    public FailoverMySQLReplicationService<RetryConnector,RetryConnectorFactory> getFailoverMySQLReplications();
-
+    */
+    public FailoverMySQLReplicationService<RetryConnector,RetryConnectorFactory> getFailoverMySQLReplications() {
+        return failoverMySQLReplications;
+    }
+    /* TODO
     public FileBackupSettingService<RetryConnector,RetryConnectorFactory> getFileBackupSettings();
 
     public FTPGuestUserService<RetryConnector,RetryConnectorFactory> getFtpGuestUsers();

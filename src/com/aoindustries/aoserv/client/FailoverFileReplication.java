@@ -6,118 +6,110 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.BitRateProvider;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
-import java.sql.ResultSet;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Causes a server to replicate itself to another machine on a regular basis.
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileReplication extends CachedObjectIntegerKey<FailoverFileReplication> implements BitRateProvider {
+final public class FailoverFileReplication extends AOServObjectIntegerKey<FailoverFileReplication> implements BitRateProvider {
 
-    static final int
-        COLUMN_PKEY = 0,
-        COLUMN_SERVER = 1,
-        COLUMN_BACKUP_PARTITION = 2
-    ;
-    static final String COLUMN_SERVER_name = "server";
-    static final String COLUMN_BACKUP_PARTITION_name = "backup_partition";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    int server;
-    private int backup_partition;
-    private int max_bit_rate;
-    private boolean use_compression;
-    private short retention;
-    private String connect_address;
-    private String connect_from;
-    private boolean enabled;
-    private int quota_gid;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int server;
+    final private int backup_partition;
+    final private int max_bit_rate;
+    final private boolean use_compression;
+    final private short retention;
+    final private String connect_address;
+    final private String connect_from;
+    final private boolean enabled;
+    final private int quota_gid;
 
-    public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws IOException, SQLException {
-    	return table.connector.getFailoverFileLogs().addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
+    public FailoverFileReplication(
+        FailoverFileReplicationService<?,?> service,
+        int pkey,
+        int server,
+        int backup_partition,
+        int max_bit_rate,
+        boolean use_compression,
+        short retention,
+        String connect_address,
+        String connect_from,
+        boolean enabled,
+        int quota_gid
+    ) {
+        super(service, pkey);
+        this.server = server;
+        this.backup_partition = backup_partition;
+        this.max_bit_rate = max_bit_rate;
+        this.use_compression = use_compression;
+        this.retention = retention;
+        this.connect_address = StringUtility.intern(connect_address);
+        this.connect_from = StringUtility.intern(connect_from);
+        this.enabled = enabled;
+        this.quota_gid = quota_gid;
     }
+    // </editor-fold>
 
-    public int getBitRate() {
-        return max_bit_rate;
-    }
-
-    public void setBitRate(int bitRate) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
-    }
-
-    public int getBlockSize() {
-        return BufferManager.BUFFER_SIZE;
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_SERVER: return server;
-            case COLUMN_BACKUP_PARTITION: return backup_partition;
-            case 3: return max_bit_rate==-1?null:Integer.valueOf(max_bit_rate);
-            case 4: return use_compression;
-            case 5: return retention;
-            case 6: return connect_address;
-            case 7: return connect_from;
-            case 8: return enabled;
-            case 9: return quota_gid==-1?null:Integer.valueOf(quota_gid);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    protected int compareToImpl(FailoverFileReplication other) throws RemoteException {
+        int diff = getServer().compareTo(other.getServer());
+        if(diff!=0) return diff;
+        return getBackupPartition().compareTo(other.getBackupPartition());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated, unique id")
+    public int getPkey() {
+        return key;
     }
 
-    public List<FailoverFileSchedule> getFailoverFileSchedules() throws IOException, SQLException {
-        return table.connector.getFailoverFileSchedules().getFailoverFileSchedules(this);
-    }
-
-    public Server getServer() throws SQLException, IOException {
-        Server se=table.connector.getServers().get(server);
-        if(se==null) throw new SQLException("Unable to find Server: "+server);
-        return se;
+    @SchemaColumn(order=1, name="server", description="the pkey of the server that the files are coming from")
+    public Server getServer() throws RemoteException {
+        return getService().getConnector().getServers().get(server);
     }
 
     /**
      * May be filtered.
      */
-    public BackupPartition getBackupPartition() throws SQLException, IOException {
-        return table.connector.getBackupPartitions().get(backup_partition);
+    @SchemaColumn(order=2, name="backup_partition", description="the pkey of the backup partition that the files are going to")
+    public BackupPartition getBackupPartition() throws RemoteException {
+        return getService().getConnector().getBackupPartitions().get(backup_partition);
     }
 
-    /**
-     * Gets the most recent (by start time) log entries for failover file replications, up to the
-     * maximum number of rows.  May return less than this number of rows.  The results
-     * are sorted by start_time descending (most recent at index zero).
-     */
-    public List<FailoverFileLog> getFailoverFileLogs(int maxRows) throws IOException, SQLException {
-        return table.connector.getFailoverFileLogs().getFailoverFileLogs(this, maxRows);
+    @SchemaColumn(order=3, name="max_bit_rate", description="the maximum bit rate for files being replicated")
+    public int getBitRate() {
+        return max_bit_rate;
     }
 
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
-    }
-
+    @SchemaColumn(order=4, name="use_compression", description="when compression is enabled, chunk mode is used on mirroring, resulting in more CPU and disk, but less bandwidth")
     public boolean getUseCompression() {
         return use_compression;
     }
 
+    @SchemaColumn(order=5, name="retention", description="the number of days backups will be kept")
     public BackupRetention getRetention() throws SQLException, IOException {
-        BackupRetention br=table.connector.getBackupRetentions().get(retention);
-        if(br==null) throw new SQLException("Unable to find BackupRetention: "+retention);
-        return br;
+        return getService().getConnector().getBackupRetentions().get(retention);
     }
-    
+
     /**
      * Gets a connect address that should override the normal address resolution mechanisms.  This allows
      * a replication to be specifically sent through a gigabit connection or alternate route.
      */
+    @SchemaColumn(order=6, name="connect_address", description="an address that overrides regular AOServ connections for failovers")
     public String getConnectAddress() {
         return connect_address;
     }
@@ -126,6 +118,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
      * Gets the address connections should be made from that overrides the normal address resolution mechanism.  This
      * allows a replication to be specifically sent through a gigabit connection or alternate route.
      */
+    @SchemaColumn(order=7, name="connect_from", description="an address that overrides regular AOServ connection source addresses for failovers")
     public String getConnectFrom() {
         return connect_from;
     }
@@ -133,6 +126,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     /**
      * Gets the enabled flag for this replication.
      */
+    @SchemaColumn(order=8, name="enabled", description="the enabled flag for failovers")
     public boolean getEnabled() {
         return enabled;
     }
@@ -145,115 +139,98 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
      * partition by group ID.  This may only be set (and must be set) when stored on a
      * backup_partition with quota_enabled.
      */
+    /* TODO
+    @SchemaColumn(order=9, name="quota_gid", description="the gid used on the backup_partition for quota reports, required if backup_partitions quotas are enabled, not allowed otherwise")
     public LinuxID getQuotaGID() throws SQLException {
         if(quota_gid==-1) return null;
-        LinuxID lid = table.connector.getLinuxIDs().get(quota_gid);
-        if(lid==null) throw new SQLException("Unable to find LinuxID: "+quota_gid);
-        return lid;
-    }
+        return getService().getConnector().getLinuxIDs().get(quota_gid);
+    }*/
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.FAILOVER_FILE_REPLICATIONS;
-    }
-
-    @Override
-    public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey=result.getInt(pos++);
-        server=result.getInt(pos++);
-        backup_partition=result.getInt(pos++);
-        max_bit_rate=result.getInt(pos++);
-        if(result.wasNull()) max_bit_rate=-1;
-        use_compression=result.getBoolean(pos++);
-        retention=result.getShort(pos++);
-        connect_address=result.getString(pos++);
-        connect_from=result.getString(pos++);
-        enabled=result.getBoolean(pos++);
-        quota_gid=result.getInt(pos++);
-        if(result.wasNull()) quota_gid=-1;
-    }
-
-    @Override
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        server=in.readCompressedInt();
-        backup_partition=in.readCompressedInt();
-        max_bit_rate=in.readInt();
-        use_compression=in.readBoolean();
-        retention=in.readShort();
-        connect_address=StringUtility.intern(in.readNullUTF());
-        connect_from=StringUtility.intern(in.readNullUTF());
-        enabled=in.readBoolean();
-        quota_gid=in.readCompressedInt();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
             getServer(),
             getBackupPartition()
         );
     }
 
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getFailoverFileSchedules(),
-            getFailoverMySQLReplications(),
-            getFileBackupSettings()
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getFailoverFileSchedules(),
+            // TODO: getFailoverMySQLReplications(),
+            // TODO: getFileBackupSettings()
         );
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+    String toStringImpl(Locale userLocale) throws RemoteException {
         return getServer().toStringImpl(userLocale)+"->"+getBackupPartition().toStringImpl(userLocale);
     }
+    // </editor-fold>
 
-    @Override
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(server);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeCompressedInt(149); // to_server (hard-coded xen2.mob.aoindustries.com)
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(backup_partition);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0) out.writeInt(max_bit_rate);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeLong(-1); // last_start_time
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_9)>=0) out.writeBoolean(use_compression);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_13)>=0) out.writeShort(retention);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_14)>=0) out.writeNullUTF(connect_address);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_22)>=0) out.writeNullUTF(connect_from);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_15)>=0) out.writeBoolean(enabled);
-        if(
-            version.compareTo(AOServProtocol.Version.VERSION_1_17)>=0
-            && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
-        ) {
-            out.writeUTF("/var/backup"); // to_path (hard-coded /var/backup like found on xen2.mob.aoindustries.com)
-            out.writeBoolean(false); // chunk_always
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(quota_gid);
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public List<FailoverFileSchedule> getFailoverFileSchedules() throws IOException, SQLException {
+        return getService().getConnector().getFailoverFileSchedules().getFailoverFileSchedules(this);
     }
 
-    public int addFileBackupSetting(String path, boolean backupEnabled) throws IOException, SQLException {
-        return table.connector.getFileBackupSettings().addFileBackupSetting(this, path, backupEnabled);
-    }
-
-    public FileBackupSetting getFileBackupSetting(String path) throws IOException, SQLException {
-        return table.connector.getFileBackupSettings().getFileBackupSetting(this, path);
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
+        return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
     }
 
     public List<FileBackupSetting> getFileBackupSettings() throws IOException, SQLException {
-        return table.connector.getFileBackupSettings().getFileBackupSettings(this);
+        return getService().getConnector().getFileBackupSettings().getFileBackupSettings(this);
     }
-    
+     */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /*
+    public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws IOException, SQLException {
+    	return getService().getConnector().getFailoverFileLogs().addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
+    }
+
+    public void setBitRate(int bitRate) throws IOException, SQLException {
+        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
+    }
+    */
+    public int getBlockSize() {
+        return BufferManager.BUFFER_SIZE;
+    }
+
+    /**
+     * Gets the most recent (by start time) log entries for failover file replications, up to the
+     * maximum number of rows.  May return less than this number of rows.  The results
+     * are sorted by start_time descending (most recent at index zero).
+     */
+    /*
+    public List<FailoverFileLog> getFailoverFileLogs(int maxRows) throws IOException, SQLException {
+        return getService().getConnector().getFailoverFileLogs().getFailoverFileLogs(this, maxRows);
+    }
+
+    public int addFileBackupSetting(String path, boolean backupEnabled) throws IOException, SQLException {
+        return getService().getConnector().getFileBackupSettings().addFileBackupSetting(this, path, backupEnabled);
+    }
+
+    public FileBackupSetting getFileBackupSetting(String path) throws IOException, SQLException {
+        return getService().getConnector().getFileBackupSettings().getFileBackupSetting(this, path);
+    }
+
     public void setFailoverFileSchedules(List<Short> hours, List<Short> minutes) throws IOException, SQLException {
-        table.connector.getFailoverFileSchedules().setFailoverFileSchedules(this, hours, minutes);
+        getService().getConnector().getFailoverFileSchedules().setFailoverFileSchedules(this, hours, minutes);
     }
 
     public void setFileBackupSettings(List<String> paths, List<Boolean> backupEnableds) throws IOException, SQLException {
-        table.connector.getFileBackupSettings().setFileBackupSettings(this, paths, backupEnableds);
+        getService().getConnector().getFileBackupSettings().setFileBackupSettings(this, paths, backupEnableds);
     }
 
     public AOServer.DaemonAccess requestReplicationDaemonAccess() throws IOException, SQLException {
-        return table.connector.requestResult(
+        return getService().getConnector().requestResult(
             true,
             new AOServConnector.ResultRequest<AOServer.DaemonAccess>() {
                 private AOServer.DaemonAccess daemonAccess;
@@ -281,4 +258,6 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
             }
         );
     }
+     */
+    // </editor-fold>
 }

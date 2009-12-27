@@ -29,9 +29,9 @@ public enum ServiceName implements LocalizedToString {
     aosh_commands,
      */
     architectures,
-    /*
     backup_partitions,
     backup_retentions,
+    /* TODO
     bank_accounts,
     bank_transaction_types,
     bank_transactions,
@@ -83,9 +83,13 @@ public enum ServiceName implements LocalizedToString {
     encryption_keys,
     expense_categories,
     failover_file_log,
+     */
     failover_file_replications,
+    /* TODO
     failover_file_schedule,
+     */
     failover_mysql_replications,
+    /* TODO
     file_backup_settings,
     ftp_guest_users,
     httpd_binds,

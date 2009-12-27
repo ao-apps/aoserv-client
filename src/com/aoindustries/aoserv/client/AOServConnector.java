@@ -91,9 +91,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     AOSHCommandService<C,F> getAoshCommands() throws RemoteException;
      */
     ArchitectureService<C,F> getArchitectures() throws RemoteException;
-    /*
     BackupPartitionService<C,F> getBackupPartitions() throws RemoteException;
     BackupRetentionService<C,F> getBackupRetentions() throws RemoteException;
+    /*
     BankAccountService<C,F> getBankAccounts() throws RemoteException;
     BankTransactionTypeService<C,F> getBankTransactionTypes() throws RemoteException;
     BankTransactionService<C,F> getBankTransactions() throws RemoteException;
@@ -144,9 +144,13 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     EncryptionKeyService<C,F> getEncryptionKeys() throws RemoteException;
     ExpenseCategoryService<C,F> getExpenseCategories() throws RemoteException;
     FailoverFileLogService<C,F> getFailoverFileLogs() throws RemoteException;
+     */
     FailoverFileReplicationService<C,F> getFailoverFileReplications() throws RemoteException;
+    /* TODO
     FailoverFileScheduleService<C,F> getFailoverFileSchedules() throws RemoteException;
+     */
     FailoverMySQLReplicationService<C,F> getFailoverMySQLReplications() throws RemoteException;
+    /* TODO
     FileBackupSettingService<C,F> getFileBackupSettings() throws RemoteException;
     FTPGuestUserService<C,F> getFtpGuestUsers() throws RemoteException;
     HttpdBindService<C,F> getHttpdBinds() throws RemoteException;
