@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
@@ -16,9 +17,13 @@ import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.NetProtocolService;
+import com.aoindustries.aoserv.client.OperatingSystemService;
+import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.ProtocolService;
+import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
+import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
@@ -55,7 +60,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     /* TODO
     final CachedAOServProtocolService aoservProtocols;
     final CachedAOSHCommandService aoshCommands;
+     */
     final CachedArchitectureService architectures;
+    /*
     final CachedBackupPartitionService backupPartitions;
     final CachedBackupRetentionService backupRetentions;
     final CachedBankAccountService bankAccounts;
@@ -169,9 +176,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedNetTcpRedirectService netTcpRedirects;
     final CachedNoticeLogService noticeLogs;
     final CachedNoticeTypeService noticeTypes;
+    */
     final CachedOperatingSystemVersionService operatingSystemVersions;
     final CachedOperatingSystemService operatingSystems;
-    */
     final CachedPackageCategoryService packageCategories;
     /* TODO
     final CachedPackageDefinitionLimitService packageDefinitionLimits;
@@ -194,9 +201,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedResellerService resellers;
      */
     final CachedResourceTypeService resourceTypes;
-    /* TODO
     final CachedResourceService resources;
     final CachedServerFarmService serverFarms;
+    /* TODO
     final CachedServerService servers;
     final CachedShellService shells;
     final CachedSignupRequestOptionService signupRequestOptions;
@@ -248,7 +255,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         /* TODO
         aoservProtocols = new CachedAOServProtocolService(this, wrapped.getAOServProtocols());
         aoshCommands = new CachedAOSHCommandService(this, wrapped.getAOSHCommands());
+         */
         architectures = new CachedArchitectureService(this, wrapped.getArchitectures());
+        /* TODO
         backupPartitions = new CachedBackupPartitionService(this, wrapped.getBackupPartitions());
         backupRetentions = new CachedBackupRetentionService(this, wrapped.getBackupRetentions());
         bankAccounts = new CachedBankAccountService(this, wrapped.getBankAccounts());
@@ -362,9 +371,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         netTcpRedirects = new CachedNetTcpRedirectService(this, wrapped.getNetTcpRedirects());
         noticeLogs = new CachedNoticeLogService(this, wrapped.getNoticeLogs());
         noticeTypes = new CachedNoticeTypeService(this, wrapped.getNoticeTypes());
+        */
         operatingSystemVersions = new CachedOperatingSystemVersionService(this, wrapped.getOperatingSystemVersions());
         operatingSystems = new CachedOperatingSystemService(this, wrapped.getOperatingSystems());
-        */
         packageCategories = new CachedPackageCategoryService(this, wrapped.getPackageCategories());
         /* TODO
         packageDefinitionLimits = new CachedPackageDefinitionLimitService(this, wrapped.getPackageDefinitionLimits());
@@ -387,9 +396,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         resellers = new CachedResellerService(this, wrapped.getResellers());
          */
         resourceTypes = new CachedResourceTypeService(this, wrapped.getResourceTypes());
-        /* TODO
         resources = new CachedResourceService(this, wrapped.getResources());
         serverFarms = new CachedServerFarmService(this, wrapped.getServerFarms());
+        /* TODO
         servers = new CachedServerService(this, wrapped.getServers());
         shells = new CachedShellService(this, wrapped.getShells());
         signupRequestOptions = new CachedSignupRequestOptionService(this, wrapped.getSignupRequestOptions());
@@ -484,9 +493,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public AOServProtocolService<CachedConnector,CachedConnectorFactory> getAoservProtocols();
 
     public AOSHCommandService<CachedConnector,CachedConnectorFactory> getAoshCommands();
-
-    public ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures();
-
+    */
+    public ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures() {
+        return architectures;
+    }
+    /* TODO
     public BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions();
 
     public BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions();
@@ -702,11 +713,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
 
     public NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes();
-
-    public OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> getOperatingSystemVersions();
-
-    public OperatingSystemService<CachedConnector,CachedConnectorFactory> getOperatingSystems();
     */
+    public OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> getOperatingSystemVersions() {
+        return operatingSystemVersions;
+    }
+
+    public OperatingSystemService<CachedConnector,CachedConnectorFactory> getOperatingSystems() {
+        return operatingSystems;
+    }
+
     public PackageCategoryService<CachedConnector,CachedConnectorFactory> getPackageCategories() {
         return packageCategories;
     }
@@ -748,11 +763,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public ResourceTypeService<CachedConnector,CachedConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }
-/* TODO
-    public ResourceService<CachedConnector,CachedConnectorFactory> getResources();
 
-    public ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms();
+    public ResourceService<CachedConnector,CachedConnectorFactory> getResources() {
+        return resources;
+    }
 
+    public ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms() {
+        return serverFarms;
+    }
+    /* TODO
     public ServerTable getServers();
 
     public ShellService<CachedConnector,CachedConnectorFactory> getShells();

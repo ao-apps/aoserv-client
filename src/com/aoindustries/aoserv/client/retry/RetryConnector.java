@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
@@ -16,9 +17,13 @@ import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.NetProtocolService;
+import com.aoindustries.aoserv.client.OperatingSystemService;
+import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.ProtocolService;
+import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
+import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
@@ -65,7 +70,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     /* TODO
     final RetryAOServProtocolService aoservProtocols;
     final RetryAOSHCommandService aoshCommands;
+     */
     final RetryArchitectureService architectures;
+    /* TODO
     final RetryBackupPartitionService backupPartitions;
     final RetryBackupRetentionService backupRetentions;
     final RetryBankAccountService bankAccounts;
@@ -178,9 +185,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryNetTcpRedirectService netTcpRedirects;
     final RetryNoticeLogService noticeLogs;
     final RetryNoticeTypeService noticeTypes;
+    */
     final RetryOperatingSystemVersionService operatingSystemVersions;
     final RetryOperatingSystemService operatingSystems;
-    */
     final RetryPackageCategoryService packageCategories;
     /* TODO
     final RetryPackageDefinitionLimitService packageDefinitionLimits;
@@ -203,9 +210,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryResellerService resellers;
      */
     final RetryResourceTypeService resourceTypes;
-    /* TODO
     final RetryResourceService resources;
     final RetryServerFarmService serverFarms;
+    /* TODO
     final RetryServerService servers;
     final RetryShellService shells;
     final RetrySignupRequestOptionService signupRequestOptions;
@@ -260,7 +267,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         /* TODO
         aoservProtocols = new RetryAOServProtocolService(this);
         aoshCommands = new RetryAOSHCommandService(this);
+         */
         architectures = new RetryArchitectureService(this);
+        /* TODO
         backupPartitions = new RetryBackupPartitionService(this);
         backupRetentions = new RetryBackupRetentionService(this);
         bankAccounts = new RetryBankAccountService(this);
@@ -374,9 +383,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         netTcpRedirects = new RetryNetTcpRedirectService(this);
         noticeLogs = new RetryNoticeLogService(this);
         noticeTypes = new RetryNoticeTypeService(this);
+        */
         operatingSystemVersions = new RetryOperatingSystemVersionService(this);
         operatingSystems = new RetryOperatingSystemService(this);
-        */
         packageCategories = new RetryPackageCategoryService(this);
         /* TODO
         packageDefinitionLimits = new RetryPackageDefinitionLimitService(this);
@@ -399,9 +408,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         resellers = new RetryResellerService(this);
          */
         resourceTypes = new RetryResourceTypeService(this);
-        /* TODO
         resources = new RetryResourceService(this);
         serverFarms = new RetryServerFarmService(this);
+        /* TODO
         servers = new RetryServerService(this);
         shells = new RetryShellService(this);
         signupRequestOptions = new RetrySignupRequestOptionService(this);
@@ -617,9 +626,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public AOServProtocolService<RetryConnector,RetryConnectorFactory> getAoservProtocols();
 
     public AOSHCommandService<RetryConnector,RetryConnectorFactory> getAoshCommands();
-
-    public ArchitectureService<RetryConnector,RetryConnectorFactory> getArchitectures();
-
+    */
+    public ArchitectureService<RetryConnector,RetryConnectorFactory> getArchitectures() {
+        return architectures;
+    }
+    /* TODO
     public BackupPartitionService<RetryConnector,RetryConnectorFactory> getBackupPartitions();
 
     public BackupRetentionService<RetryConnector,RetryConnectorFactory> getBackupRetentions();
@@ -834,11 +845,15 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public NoticeLogService<RetryConnector,RetryConnectorFactory> getNoticeLogs();
 
     public NoticeTypeService<RetryConnector,RetryConnectorFactory> getNoticeTypes();
-
-    public OperatingSystemVersionService<RetryConnector,RetryConnectorFactory> getOperatingSystemVersions();
-
-    public OperatingSystemService<RetryConnector,RetryConnectorFactory> getOperatingSystems();
     */
+    public OperatingSystemVersionService<RetryConnector,RetryConnectorFactory> getOperatingSystemVersions() {
+        return operatingSystemVersions;
+    }
+
+    public OperatingSystemService<RetryConnector,RetryConnectorFactory> getOperatingSystems() {
+        return operatingSystems;
+    }
+
     public PackageCategoryService<RetryConnector,RetryConnectorFactory> getPackageCategories() {
         return packageCategories;
     }
@@ -880,11 +895,15 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public ResourceTypeService<RetryConnector,RetryConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }
-/* TODO
-    public ResourceService<RetryConnector,RetryConnectorFactory> getResources();
 
-    public ServerFarmService<RetryConnector,RetryConnectorFactory> getServerFarms();
+    public ResourceService<RetryConnector,RetryConnectorFactory> getResources() {
+        return resources;
+    }
 
+    public ServerFarmService<RetryConnector,RetryConnectorFactory> getServerFarms() {
+        return serverFarms;
+    }
+    /* TODO
     public ServerTable getServers();
 
     public ShellService<RetryConnector,RetryConnectorFactory> getShells();

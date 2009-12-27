@@ -5,11 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.rmi.RemoteException;
 import java.util.Locale;
 
 /**
@@ -17,14 +13,12 @@ import java.util.Locale;
  *
  * @see OperatingSystem
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystemVersion extends GlobalObjectIntegerKey<OperatingSystemVersion> {
+final public class OperatingSystemVersion extends AOServObjectIntegerKey<OperatingSystemVersion> {
 
-    static final int COLUMN_PKEY=0;
-    static final String COLUMN_SORT_ORDER_name = "sort_order";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         //VERSION_1_4="1.4",
@@ -63,113 +57,112 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
      */
     @Deprecated
     public static final int MANDRAKE_10_1_I586=14;
+    // </editor-fold>
 
-    private String operating_system;
-    String version_number;
-    String version_name;
-    String architecture;
-    private String display;
-    private boolean is_aoserv_daemon_supported;
-    private short sort_order;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String operating_system;
+    final private String version_number;
+    final private String version_name;
+    final private String architecture;
+    final private String display;
+    final private boolean is_aoserv_daemon_supported;
+    final private short sort_order;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return operating_system;
-            case 2: return version_number;
-            case 3: return version_name;
-            case 4: return architecture;
-            case 5: return display;
-            case 6: return is_aoserv_daemon_supported?Boolean.TRUE:Boolean.FALSE;
-            case 7: return Short.valueOf(sort_order);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public OperatingSystemVersion(
+        OperatingSystemVersionService<?,?> service,
+        int pkey,
+        String operating_system,
+        String version_number,
+        String version_name,
+        String architecture,
+        String display,
+        boolean is_aoserv_daemon_supported,
+        short sort_order
+    ) {
+        super(service, pkey);
+        this.operating_system = operating_system.intern();
+        this.version_number = version_number;
+        this.version_name = version_name;
+        this.architecture = architecture.intern();
+        this.display = display;
+        this.is_aoserv_daemon_supported = is_aoserv_daemon_supported;
+        this.sort_order = sort_order;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(OperatingSystemVersion other) {
+        return compare(sort_order, other.sort_order);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated, unique ID")
+    public int getPkey() {
+        return key;
     }
 
-    public OperatingSystem getOperatingSystem(AOServConnector conn) throws IOException, SQLException {
-        return conn.getOperatingSystems().get(operating_system);
+    @SchemaColumn(order=1, name="operating_system", description="the name of the OS")
+    public OperatingSystem getOperatingSystem() throws RemoteException {
+        return getService().getConnector().getOperatingSystems().get(operating_system);
     }
 
+    @SchemaColumn(order=2, name="version_number", description="the number of OS version")
     public String getVersionNumber() {
         return version_number;
     }
 
+    @SchemaColumn(order=3, name="version_name", description="the name of this OS release")
     public String getVersionName() {
         return version_name;
     }
 
-    public Architecture getArchitecture(AOServConnector connector) throws SQLException, IOException {
-        Architecture ar=connector.getArchitectures().get(architecture);
-        if(ar==null) throw new SQLException("Unable to find Architecture: "+architecture);
+    @SchemaColumn(order=4, name="architecture", description="the name of the architecture")
+    public Architecture getArchitecture(AOServConnector connector) throws RemoteException {
+        Architecture ar=getService().getConnector().getArchitectures().get(architecture);
+        if(ar==null) throw new RemoteException("Unable to find Architecture: "+architecture);
         return ar;
     }
 
+    @SchemaColumn(order=5, name="display", unique=true, description="the full display name for this version")
     public String getDisplay() {
         return display;
     }
 
+    @SchemaColumn(order=6, name="is_aoserv_daemon_supported", description="can AOServ Daemon be ran on this OS")
     public boolean isAOServDaemonSupported() {
         return is_aoserv_daemon_supported;
     }
-    
+
+    @SchemaColumn(order=7, name="sort_order", unique=true, description="the default sort order")
     public short getSortOrder() {
         return sort_order;
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.OPERATING_SYSTEM_VERSIONS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        operating_system=result.getString(2);
-        version_number=result.getString(3);
-        version_name=result.getString(4);
-        architecture=result.getString(5);
-        display=result.getString(6);
-        is_aoserv_daemon_supported=result.getBoolean(7);
-        sort_order=result.getShort(8);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        operating_system=in.readUTF().intern();
-        version_number=in.readUTF();
-        version_name=in.readUTF();
-        architecture=in.readUTF().intern();
-        display=in.readUTF();
-        is_aoserv_daemon_supported=in.readBoolean();
-        sort_order=in.readShort();
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
         return display;
     }
+    // </editor-fold>
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeUTF(operating_system);
-        out.writeUTF(version_number);
-        out.writeUTF(version_name);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeUTF(architecture);
-        out.writeUTF(display);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_3)>=0) out.writeShort(sort_order);
-    }
-    
+    // <editor-fold defaultstate="collapsed" desc="TODO">
     /**
      * Gets the directory that stores websites for this operating system or <code>null</code>
      * if this OS doesn't support web sites.
      */
+    /* TODO
     public String getHttpdSitesDirectory() {
         return getHttpdSitesDirectory(pkey);
     }
-
+    */
     /**
      * Gets the directory that stores websites for this operating system or <code>null</code>
      * if this OS doesn't support web sites.
      */
+    /* TODO
     public static String getHttpdSitesDirectory(int osv) {
         switch(osv) {
             case MANDRAKE_10_1_I586 :
@@ -183,20 +176,22 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
             default :
                 throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
         }
-    }
+    }*/
 
     /**
      * Gets the directory that contains the shared tomcat directories or <code>null</code>
      * if this OS doesn't support shared tomcats.
      */
+    /* TODO
     public String getHttpdSharedTomcatsDirectory() {
         return getHttpdSharedTomcatsDirectory(pkey);
     }
-
+    */
     /**
      * Gets the directory that contains the shared tomcat directories or <code>null</code>
      * if this OS doesn't support shared tomcats.
      */
+    /* TODO
     public static String getHttpdSharedTomcatsDirectory(int osv) {
         switch(osv) {
             case MANDRAKE_10_1_I586 :
@@ -211,4 +206,6 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
                 throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
         }
     }
+     */
+    // </editor-fold>
 }

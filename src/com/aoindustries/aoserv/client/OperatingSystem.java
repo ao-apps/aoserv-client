@@ -5,9 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
 import java.util.Locale;
 
 /**
@@ -15,14 +12,12 @@ import java.util.Locale;
  *
  * @see Server
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem> {
+final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         CENTOS="centos",
@@ -34,60 +29,48 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
         WINDOWS="windows"
     ;
     
-    public static final String DEFAULT_OPERATING_SYSTEM=MANDRAKE;
+    public static final String DEFAULT_OPERATING_SYSTEM=CENTOS;
+    // </editor-fold>
 
-    private String display;
-    private boolean is_unix;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String display;
+    final private boolean is_unix;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return display;
-            case 2: return is_unix?Boolean.TRUE:Boolean.FALSE;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public OperatingSystem(OperatingSystemService<?,?> service, String name, String display, boolean is_unix) {
+        super(service, name);
+        this.display = display;
+        this.is_unix = is_unix;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", unique=true, description="the unique name of the operating system")
     public String getName() {
-        return pkey;
+        return key;
     }
 
+    @SchemaColumn(order=1, name="display", description="the display version of the name")
     public String getDisplay() {
         return display;
     }
 
+    @SchemaColumn(order=2, name="is_unix", description="indicates that this is a Unix-based OS")
     public boolean isUnix() {
         return is_unix;
     }
+    // </editor-fold>
 
-    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
-        return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.OPERATING_SYSTEMS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getString(1);
-        display=result.getString(2);
-        is_unix=result.getBoolean(3);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        display=in.readUTF();
-        is_unix=in.readBoolean();
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
         return display;
     }
+    // </editor-fold>
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeUTF(display);
-        out.writeBoolean(is_unix);
-    }
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
+    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
+        return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
+    }*/
+    // </editor-fold>
 }

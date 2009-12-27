@@ -5,10 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
 
 /**
  * Each <code>NetBind</code> is listening on a <code>NetProtocol</code>.  The
@@ -16,43 +12,30 @@ import java.sql.*;
  *
  * @see  NetBind
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class NetProtocol extends GlobalObjectStringKey<NetProtocol> {
+final public class NetProtocol extends AOServObjectStringKey<NetProtocol> {
 
-    static final int COLUMN_PROTOCOL=0;
-    static final String COLUMN_PROTOCOL_name = "protocol";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         RAW="raw",
         UDP="udp",
         TCP="tcp"
     ;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_PROTOCOL) return pkey;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public NetProtocol(NetProtocolService<?,?> service, String protocol) {
+        super(service, protocol);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="protocol", unique=true, description="the network protocol")
     public String getProtocol() {
-	return pkey;
+        return key;
     }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.NET_PROTOCOLS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getString(1);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-    }
+    // </editor-fold>
 }

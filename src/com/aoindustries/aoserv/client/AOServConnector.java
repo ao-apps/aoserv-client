@@ -82,300 +82,175 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /*
      * TODO
     AOServerDaemonHostService<C,F> getAoServerDaemonHosts() throws RemoteException;
-
     AOServerResourceService<C,F> getAoServerResources() throws RemoteException;
-
     AOServerService<C,F> getAoServers() throws RemoteException;
     */
     AOServPermissionService<C,F> getAoservPermissions() throws RemoteException;
     /* TODO
     AOServProtocolService<C,F> getAoservProtocols() throws RemoteException;
-
     AOSHCommandService<C,F> getAoshCommands() throws RemoteException;
-
+     */
     ArchitectureService<C,F> getArchitectures() throws RemoteException;
-
+    /*
     BackupPartitionService<C,F> getBackupPartitions() throws RemoteException;
-
     BackupRetentionService<C,F> getBackupRetentions() throws RemoteException;
-
     BankAccountService<C,F> getBankAccounts() throws RemoteException;
-
     BankTransactionTypeService<C,F> getBankTransactionTypes() throws RemoteException;
-
     BankTransactionService<C,F> getBankTransactions() throws RemoteException;
-
     BankService<C,F> getBanks() throws RemoteException;
-
     BlackholeEmailAddressService<C,F> getBlackholeEmailAddresses() throws RemoteException;
-
     BrandService<C,F> getBrands() throws RemoteException;
      */
     BusinessAdministratorService<C,F> getBusinessAdministrators() throws RemoteException;
     /*
     BusinessAdministratorPermissionService<C,F> getBusinessAdministratorPermissions() throws RemoteException;
-
     BusinessProfileService<C,F> getBusinessProfiles() throws RemoteException;
      */
     BusinessService<C,F> getBusinesses() throws RemoteException;
-
     /*
     BusinessServerService<C,F> getBusinessServers() throws RemoteException;
-
     ClientJvmProfileService<C,F> getClientJvmProfiles() throws RemoteException;
     */
     CountryCodeService<C,F> getCountryCodes() throws RemoteException;
     /*
     CreditCardProcessorService<C,F> getCreditCardProcessors() throws RemoteException;
-
     CreditCardTransactionService<C,F> getCreditCardTransactions() throws RemoteException;
-
     CreditCardService<C,F> getCreditCards() throws RemoteException;
-
     CvsRepositoryService<C,F> getCvsRepositories() throws RemoteException;
      */
     DisableLogService<C,F> getDisableLogs() throws RemoteException;
     /*
     DistroFileTypeService<C,F> getDistroFileTypes() throws RemoteException;
-
     DistroFileService<C,F> getDistroFiles() throws RemoteException;
-
     DNSForbiddenZoneService<C,F> getDnsForbiddenZones() throws RemoteException;
-
     DNSRecordService<C,F> getDnsRecords() throws RemoteException;
-
     DNSTLDService<C,F> getDnsTLDs() throws RemoteException;
-
     DNSTypeService<C,F> getDnsTypes() throws RemoteException;
-
     DNSZoneService<C,F> getDnsZones() throws RemoteException;
-
     EmailAddressService<C,F> getEmailAddresses() throws RemoteException;
-
     EmailAttachmentBlockService<C,F> getEmailAttachmentBlocks() throws RemoteException;
-
     EmailAttachmentTypeService<C,F> getEmailAttachmentTypes() throws RemoteException;
-
     EmailDomainService<C,F> getEmailDomains() throws RemoteException;
-
     EmailForwardingService<C,F> getEmailForwardings() throws RemoteException;
-
     EmailListAddressService<C,F> getEmailListAddresses() throws RemoteException;
-
     EmailListService<C,F> getEmailLists() throws RemoteException;
-
     EmailPipeAddressService<C,F> getEmailPipeAddresses() throws RemoteException;
-
     EmailPipeService<C,F> getEmailPipes() throws RemoteException;
-
     EmailSmtpRelayTypeService<C,F> getEmailSmtpRelayTypes() throws RemoteException;
-
     EmailSmtpRelayService<C,F> getEmailSmtpRelays() throws RemoteException;
-
     EmailSmtpSmartHostDomainService<C,F> getEmailSmtpSmartHostDomains() throws RemoteException;
-
     EmailSmtpSmartHostService<C,F> getEmailSmtpSmartHosts() throws RemoteException;
-
     EmailSpamAssassinIntegrationModeService<C,F> getEmailSpamAssassinIntegrationModes() throws RemoteException;
-
     EncryptionKeyService<C,F> getEncryptionKeys() throws RemoteException;
-
     ExpenseCategoryService<C,F> getExpenseCategories() throws RemoteException;
-
     FailoverFileLogService<C,F> getFailoverFileLogs() throws RemoteException;
-
     FailoverFileReplicationService<C,F> getFailoverFileReplications() throws RemoteException;
-
     FailoverFileScheduleService<C,F> getFailoverFileSchedules() throws RemoteException;
-
     FailoverMySQLReplicationService<C,F> getFailoverMySQLReplications() throws RemoteException;
-
     FileBackupSettingService<C,F> getFileBackupSettings() throws RemoteException;
-
     FTPGuestUserService<C,F> getFtpGuestUsers() throws RemoteException;
-
     HttpdBindService<C,F> getHttpdBinds() throws RemoteException;
-
     HttpdJBossSiteService<C,F> getHttpdJBossSites() throws RemoteException;
-
     HttpdJBossVersionService<C,F> getHttpdJBossVersions() throws RemoteException;
-
     HttpdJKCodeService<C,F> getHttpdJKCodes() throws RemoteException;
-
     HttpdJKProtocolService<C,F> getHttpdJKProtocols() throws RemoteException;
-
     HttpdServerService<C,F> getHttpdServers() throws RemoteException;
-
     HttpdSharedTomcatService<C,F> getHttpdSharedTomcats() throws RemoteException;
-
     HttpdSiteAuthenticatedLocationService<C,F> getHttpdSiteAuthenticatedLocations() throws RemoteException;
-
     HttpdSiteBindService<C,F> getHttpdSiteBinds() throws RemoteException;
-
     HttpdSiteURLService<C,F> getHttpdSiteURLs() throws RemoteException;
-
     HttpdSiteService<C,F> getHttpdSites() throws RemoteException;
-
     HttpdStaticSiteService<C,F> getHttpdStaticSites() throws RemoteException;
-
     HttpdTomcatContextService<C,F> getHttpdTomcatContexts() throws RemoteException;
-
     HttpdTomcatDataSourceService<C,F> getHttpdTomcatDataSources() throws RemoteException;
-
     HttpdTomcatParameterService<C,F> getHttpdTomcatParameters() throws RemoteException;
-
     HttpdTomcatSiteService<C,F> getHttpdTomcatSites() throws RemoteException;
-
     HttpdTomcatSharedSiteService<C,F> getHttpdTomcatSharedSites() throws RemoteException;
-
     HttpdTomcatStdSiteService<C,F> getHttpdTomcatStdSites() throws RemoteException;
-
     HttpdTomcatVersionService<C,F> getHttpdTomcatVersions() throws RemoteException;
-
     HttpdWorkerService<C,F> getHttpdWorkers() throws RemoteException;
-
     IPAddressService<C,F> getIpAddresses() throws RemoteException;
     */
     LanguageService<C,F> getLanguages() throws RemoteException;
     /* TODO
     LinuxAccAddressService<C,F> getLinuxAccAddresses() throws RemoteException;
-
     LinuxAccountTypeService<C,F> getLinuxAccountTypes() throws RemoteException;
-
     LinuxAccountService<C,F> getLinuxAccounts() throws RemoteException;
-
     LinuxGroupAccountService<C,F> getLinuxGroupAccounts() throws RemoteException;
-
     LinuxGroupTypeService<C,F> getLinuxGroupTypes() throws RemoteException;
-
     LinuxGroupService<C,F> getLinuxGroups() throws RemoteException;
-
     LinuxIDService<C,F> getLinuxIDs() throws RemoteException;
-
     LinuxServerAccountService<C,F> getLinuxServerAccounts() throws RemoteException;
-
     LinuxServerGroupService<C,F> getLinuxServerGroups() throws RemoteException;
-
     MajordomoListService<C,F> getMajordomoLists() throws RemoteException;
-
     MajordomoServerService<C,F> getMajordomoServers() throws RemoteException;
-
     MajordomoVersionService<C,F> getMajordomoVersions() throws RemoteException;
-
     MasterHistoryService<C,F> getMasterHistory() throws RemoteException;
-
     MasterHostService<C,F> getMasterHosts() throws RemoteException;
-
     MasterServerService<C,F> getMasterServers() throws RemoteException;
-
     MasterUserService<C,F> getMasterUsers() throws RemoteException;
-
     MonthlyChargeService<C,F> getMonthlyCharges() throws RemoteException;
-
     MySQLDatabaseService<C,F> getMysqlDatabases() throws RemoteException;
-
     MySQLDBUserService<C,F> getMysqlDBUsers() throws RemoteException;
-
     MySQLReservedWordService<C,F> getMysqlReservedWords() throws RemoteException;
-
     MySQLServerService<C,F> getMysqlServers() throws RemoteException;
-
     MySQLUserService<C,F> getMysqlUsers() throws RemoteException;
-
     NetBindService<C,F> getNetBinds() throws RemoteException;
-
     NetDeviceIDService<C,F> getNetDeviceIDs() throws RemoteException;
-
     NetDeviceService<C,F> getNetDevices() throws RemoteException;
-
     NetPortService<C,F> getNetPorts() throws RemoteException;
-
-    NetProtocolService<C,F> getNetProtocols() throws RemoteException;
-
-    NetTcpRedirectService<C,F> getNetTcpRedirects() throws RemoteException;
-
-    NoticeLogService<C,F> getNoticeLogs() throws RemoteException;
-
-    NoticeTypeService<C,F> getNoticeTypes() throws RemoteException;
-
-    OperatingSystemVersionService<C,F> getOperatingSystemVersions() throws RemoteException;
-
-    OperatingSystemService<C,F> getOperatingSystems() throws RemoteException;
     */
+    NetProtocolService<C,F> getNetProtocols() throws RemoteException;
+    /* TODO
+    NetTcpRedirectService<C,F> getNetTcpRedirects() throws RemoteException;
+    NoticeLogService<C,F> getNoticeLogs() throws RemoteException;
+    NoticeTypeService<C,F> getNoticeTypes() throws RemoteException;
+    */
+    OperatingSystemVersionService<C,F> getOperatingSystemVersions() throws RemoteException;
+    OperatingSystemService<C,F> getOperatingSystems() throws RemoteException;
     PackageCategoryService<C,F> getPackageCategories() throws RemoteException;
     /*
     PackageDefinitionLimitService<C,F> getPackageDefinitionLimits() throws RemoteException;
-
     PackageDefinitionService<C,F> getPackageDefinitions() throws RemoteException;
-
     PaymentTypeService<C,F> getPaymentTypes() throws RemoteException;
-
     PhysicalServerService<C,F> getPhysicalServers() throws RemoteException;
-
     PostgresDatabaseService<C,F> getPostgresDatabases() throws RemoteException;
-
     PostgresEncodingService<C,F> getPostgresEncodings() throws RemoteException;
-
     PostgresReservedWordService<C,F> getPostgresReservedWords() throws RemoteException;
-
     PostgresServerUserService<C,F> getPostgresServerUsers() throws RemoteException;
-
     PostgresServerService<C,F> getPostgresServers() throws RemoteException;
-
     PostgresUserService<C,F> getPostgresUsers() throws RemoteException;
-
     PostgresVersionService<C,F> getPostgresVersions() throws RemoteException;
-
     PrivateFTPServerService<C,F> getPrivateFTPServers() throws RemoteException;
-
     ProcessorTypeService<C,F> getProcessorTypes() throws RemoteException;
-
+    */
     ProtocolService<C,F> getProtocols() throws RemoteException;
-
+    /* TODO
     RackService<C,F> getRacks() throws RemoteException;
-
     ResellerService<C,F> getResellers() throws RemoteException;
-*/
+    */
     ResourceTypeService<C,F> getResourceTypes() throws RemoteException;
-/* TODO
     ResourceService<C,F> getResources() throws RemoteException;
-
     ServerFarmService<C,F> getServerFarms() throws RemoteException;
-
+    /* TODO
     ServerTable getServers() throws RemoteException;
-
     ShellService<C,F> getShells() throws RemoteException;
-
     SignupRequestOptionService<C,F> getSignupRequestOptions() throws RemoteException;
-
     SignupRequestService<C,F> getSignupRequests() throws RemoteException;
-
     SpamEmailMessageService<C,F> getSpamEmailMessages() throws RemoteException;
-
     SystemEmailAliasService<C,F> getSystemEmailAliases() throws RemoteException;
-
     TechnologyService<C,F> getTechnologies() throws RemoteException;
-
     TechnologyClassService<C,F> getTechnologyClasses() throws RemoteException;
-
     TechnologyNameService<C,F> getTechnologyNames() throws RemoteException;
-
     TechnologyVersionService<C,F> getTechnologyVersions() throws RemoteException;
-
     TicketActionTypeService<C,F> getTicketActionTypes() throws RemoteException;
-
     TicketActionService<C,F> getTicketActions() throws RemoteException;
-
     TicketAssignmentService<C,F> getTicketAssignments() throws RemoteException;
-
     TicketBrandCategoryService<C,F> getTicketBrandCategories() throws RemoteException;
     */
     TicketCategoryService<C,F> getTicketCategories() throws RemoteException;
-
     TicketPriorityService<C,F> getTicketPriorities() throws RemoteException;
-
     TicketStatusService<C,F> getTicketStatuses() throws RemoteException;
-
     TicketTypeService<C,F> getTicketTypes() throws RemoteException;
     /* TODO
     TicketService<C,F> getTickets() throws RemoteException;
@@ -383,17 +258,13 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     TimeZoneService<C,F> getTimeZones() throws RemoteException;
     /* TODO
     TransactionTypeService<C,F> getTransactionTypes() throws RemoteException;
-
     TransactionService<C,F> getTransactions() throws RemoteException;
-
     USStateService<C,F> getUsStates() throws RemoteException;
     */
     UsernameService<C,F> getUsernames() throws RemoteException;
     /* TODO
     VirtualDiskService<C,F> getVirtualDisks() throws RemoteException;
-
     VirtualServerService<C,F> getVirtualServers() throws RemoteException;
-
     WhoisHistoryService<C,F> getWhoisHistory() throws RemoteException;
  */
 

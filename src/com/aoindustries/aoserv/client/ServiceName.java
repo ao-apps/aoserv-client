@@ -26,7 +26,9 @@ public enum ServiceName implements LocalizedToString {
     /*
     aoserv_protocols,
     aosh_commands,
+     */
     architectures,
+    /*
     backup_partitions,
     backup_retentions,
     bank_accounts,
@@ -138,13 +140,15 @@ public enum ServiceName implements LocalizedToString {
     net_device_ids,
     net_devices,
     net_ports,
+     */
     net_protocols,
+    /* TODO
     net_tcp_redirects,
     notice_log,
     notice_types,
+     */
     operating_system_versions,
     operating_systems,
-     */
     package_categories,
     /* TODO
     package_definition_limits,
@@ -160,18 +164,22 @@ public enum ServiceName implements LocalizedToString {
     postgres_versions,
     private_ftp_servers,
     processor_types,
+     */
     protocols,
+    /* TODO
     racks,
     resellers,
      */
     resource_types,
-    /* TODO
     resources,
+    /* TODO
     schema_columns,
     schema_foreign_keys,
     schema_tables,
     schema_types,
+     */
     server_farms,
+    /* TODO
     servers,
     shells,
     signup_request_options,

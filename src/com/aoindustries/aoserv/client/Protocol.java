@@ -5,11 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.rmi.RemoteException;
 
 /**
  * A <code>Protocol</code> represents one type of application
@@ -20,16 +16,10 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Protocol extends GlobalObjectStringKey<Protocol> {
+final public class Protocol extends AOServObjectStringKey<Protocol> {
 
-    static final int COLUMN_PROTOCOL=0;
-    static final String COLUMN_PORT_name = "port";
-    static final String COLUMN_NET_PROTOCOL_name = "net_protocol";
-
-    private int port;
-    private String name;
-    private boolean is_user_service;
-    private String net_protocol;
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         AOSERV_DAEMON="aoserv-daemon",
@@ -65,76 +55,68 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         TOMCAT4_SHUTDOWN="tomcat4-shutdown",
         WEBSERVER="webserver"
     ;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PROTOCOL: return pkey;
-            case 1: return Integer.valueOf(port);
-            case 2: return name;
-            case 3: return is_user_service?Boolean.TRUE:Boolean.FALSE;
-            case 4: return net_protocol;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int port;
+    final private String name;
+    final private boolean is_user_service;
+    final private String net_protocol;
+
+    public Protocol(ProtocolService<?,?> service, String protocol, int port, String name, boolean is_user_service, String net_protocol) {
+        super(service, protocol);
+        this.port = port;
+        this.name = name;
+        this.is_user_service = is_user_service;
+        this.net_protocol = net_protocol.intern();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(Protocol other) {
+        int diff = compare(port, other.port);
+        if(diff!=0) return diff;
+        return compareIgnoreCaseConsistentWithEquals(net_protocol, other.net_protocol);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="protocol", unique=true, description="the unique name of the protocol")
+    public String getProtocol() {
+        return key;
     }
 
-    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
-        return connector.getHttpdJKProtocols().get(pkey);
-    }
+    /* TODO
+    @SchemaColumn(order=1, name="port", description="the default port of the protocol")
+    public NetPort getPort(AOServConnector connector) throws RemoteException {
+        NetPort obj=connector.getNetPorts().get(port);
+        if(obj==null) throw new RemoteException("Unable to find NetPort: "+port);
+        return obj;
+    }*/
 
+    @SchemaColumn(order=1, name="name", description="the name of the service")
     public String getName() {
         return name;
     }
-    
+
+    @SchemaColumn(order=2, name="is_user_service", description="indicates that a user may add and remove this service")
     public boolean isUserService() {
         return is_user_service;
     }
 
-    public NetProtocol getNetProtocol(AOServConnector connector) throws SQLException, IOException {
-        NetProtocol np=connector.getNetProtocols().get(net_protocol);
-        if(np==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
+    @SchemaColumn(order=3, name="net_protocol", description="the default network protocol for this protocol")
+    public NetProtocol getNetProtocol() throws RemoteException {
+        NetProtocol np=getService().getConnector().getNetProtocols().get(net_protocol);
+        if(np==null) throw new RemoteException("Unable to find NetProtocol: "+net_protocol);
         return np;
     }
+    // </editor-fold>
 
-    public NetPort getPort(AOServConnector connector) throws SQLException {
-        NetPort obj=connector.getNetPorts().get(port);
-        if(obj==null) throw new SQLException("Unable to find NetPort: "+port);
-        return obj;
-    }
-
-    /**
-     * Gets the unique name of the protocol.
-     */
-    public String getProtocol() {
-        return pkey;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.PROTOCOLS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        port = result.getInt(2);
-        name = result.getString(3);
-        is_user_service = result.getBoolean(4);
-        net_protocol = result.getString(5);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        port=in.readCompressedInt();
-        name=in.readUTF();
-        is_user_service=in.readBoolean();
-        net_protocol=in.readUTF().intern();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeCompressedInt(port);
-        out.writeUTF(name);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0) {
-            out.writeBoolean(is_user_service);
-            out.writeUTF(net_protocol);
-        }
-    }
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
+        return connector.getHttpdJKProtocols().get(pkey);
+    }*/
+    // </editor-fold>
 }

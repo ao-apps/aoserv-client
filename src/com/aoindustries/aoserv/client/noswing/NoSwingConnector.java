@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
@@ -16,9 +17,13 @@ import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.NetProtocolService;
+import com.aoindustries.aoserv.client.OperatingSystemService;
+import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.ProtocolService;
+import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
+import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
@@ -50,7 +55,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     /* TODO
     final NoSwingAOServProtocolService aoservProtocols;
     final NoSwingAOSHCommandService aoshCommands;
+     */
     final NoSwingArchitectureService architectures;
+    /* TODO
     final NoSwingBackupPartitionService backupPartitions;
     final NoSwingBackupRetentionService backupRetentions;
     final NoSwingBankAccountService bankAccounts;
@@ -164,9 +171,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingNetTcpRedirectService netTcpRedirects;
     final NoSwingNoticeLogService noticeLogs;
     final NoSwingNoticeTypeService noticeTypes;
+    */
     final NoSwingOperatingSystemVersionService operatingSystemVersions;
     final NoSwingOperatingSystemService operatingSystems;
-    */
     final NoSwingPackageCategoryService packageCategories;
     /* TODO
     final NoSwingPackageDefinitionLimitService packageDefinitionLimits;
@@ -189,9 +196,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingResellerService resellers;
      */
     final NoSwingResourceTypeService resourceTypes;
-    /* TODO
     final NoSwingResourceService resources;
     final NoSwingServerFarmService serverFarms;
+    /* TODO
     final NoSwingServerService servers;
     final NoSwingShellService shells;
     final NoSwingSignupRequestOptionService signupRequestOptions;
@@ -239,7 +246,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         /* TODO
         aoservProtocols = new NoSwingAOServProtocolService(this, wrapped.getAOServProtocols());
         aoshCommands = new NoSwingAOSHCommandService(this, wrapped.getAOSHCommands());
+         */
         architectures = new NoSwingArchitectureService(this, wrapped.getArchitectures());
+        /* TODO
         backupPartitions = new NoSwingBackupPartitionService(this, wrapped.getBackupPartitions());
         backupRetentions = new NoSwingBackupRetentionService(this, wrapped.getBackupRetentions());
         bankAccounts = new NoSwingBankAccountService(this, wrapped.getBankAccounts());
@@ -353,9 +362,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         netTcpRedirects = new NoSwingNetTcpRedirectService(this, wrapped.getNetTcpRedirects());
         noticeLogs = new NoSwingNoticeLogService(this, wrapped.getNoticeLogs());
         noticeTypes = new NoSwingNoticeTypeService(this, wrapped.getNoticeTypes());
+        */
         operatingSystemVersions = new NoSwingOperatingSystemVersionService(this, wrapped.getOperatingSystemVersions());
         operatingSystems = new NoSwingOperatingSystemService(this, wrapped.getOperatingSystems());
-        */
         packageCategories = new NoSwingPackageCategoryService(this, wrapped.getPackageCategories());
         /* TODO
         packageDefinitionLimits = new NoSwingPackageDefinitionLimitService(this, wrapped.getPackageDefinitionLimits());
@@ -378,9 +387,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         resellers = new NoSwingResellerService(this, wrapped.getResellers());
          */
         resourceTypes = new NoSwingResourceTypeService(this, wrapped.getResourceTypes());
-        /* TODO
         resources = new NoSwingResourceService(this, wrapped.getResources());
         serverFarms = new NoSwingServerFarmService(this, wrapped.getServerFarms());
+        /* TODO
         servers = new NoSwingServerService(this, wrapped.getServers());
         shells = new NoSwingShellService(this, wrapped.getShells());
         signupRequestOptions = new NoSwingSignupRequestOptionService(this, wrapped.getSignupRequestOptions());
@@ -480,9 +489,11 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public AOServProtocolService<NoSwingConnector,NoSwingConnectorFactory> getAoservProtocols() throws RemoteException;
 
     public AOSHCommandService<NoSwingConnector,NoSwingConnectorFactory> getAoshCommands() throws RemoteException;
-
-    public ArchitectureService<NoSwingConnector,NoSwingConnectorFactory> getArchitectures() throws RemoteException;
-
+    */
+    public ArchitectureService<NoSwingConnector,NoSwingConnectorFactory> getArchitectures() throws RemoteException {
+        return architectures;
+    }
+    /* TODO
     public BackupPartitionService<NoSwingConnector,NoSwingConnectorFactory> getBackupPartitions() throws RemoteException;
 
     public BackupRetentionService<NoSwingConnector,NoSwingConnectorFactory> getBackupRetentions() throws RemoteException;
@@ -701,11 +712,15 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public NoticeLogService<NoSwingConnector,NoSwingConnectorFactory> getNoticeLogs() throws RemoteException;
 
     public NoticeTypeService<NoSwingConnector,NoSwingConnectorFactory> getNoticeTypes() throws RemoteException;
-
-    public OperatingSystemVersionService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystemVersions() throws RemoteException;
-
-    public OperatingSystemService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystems() throws RemoteException;
     */
+    public OperatingSystemVersionService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystemVersions() throws RemoteException {
+        return operatingSystemVersions;
+    }
+
+    public OperatingSystemService<NoSwingConnector,NoSwingConnectorFactory> getOperatingSystems() throws RemoteException {
+        return operatingSystems;
+    }
+
     public PackageCategoryService<NoSwingConnector,NoSwingConnectorFactory> getPackageCategories() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return packageCategories;
@@ -749,11 +764,17 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         NoSwingConnectorFactory.checkNotSwing();
         return resourceTypes;
     }
-/* TODO
-    public ResourceService<NoSwingConnector,NoSwingConnectorFactory> getResources() throws RemoteException;
 
-    public ServerFarmService<NoSwingConnector,NoSwingConnectorFactory> getServerFarms() throws RemoteException;
+    public ResourceService<NoSwingConnector,NoSwingConnectorFactory> getResources() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return resources;
+    }
 
+    public ServerFarmService<NoSwingConnector,NoSwingConnectorFactory> getServerFarms() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return serverFarms;
+    }
+    /* TODO
     public ServerTable getServers() throws RemoteException;
 
     public ShellService<NoSwingConnector,NoSwingConnectorFactory> getShells() throws RemoteException;

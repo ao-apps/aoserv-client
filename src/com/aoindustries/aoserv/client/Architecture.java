@@ -5,10 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
 
 /**
  * An <code>Architecture</code> is a simple wrapper for the type
@@ -16,14 +12,12 @@ import java.sql.*;
  *
  * @see  Server
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class Architecture extends GlobalObjectStringKey<Architecture> {
+final public class Architecture extends AOServObjectStringKey<Architecture> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         ALPHA="alpha",
@@ -41,41 +35,26 @@ final public class Architecture extends GlobalObjectStringKey<Architecture> {
     ;
 
     public static final String DEFAULT_ARCHITECTURE=I686;
+    // </editor-fold>
 
-    private int bits;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int bits;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return Integer.valueOf(bits);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public Architecture(ArchitectureService<?,?> service, String name, int bits) {
+        super(service, name);
+        this.bits = bits;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", unique=true, description="the unique name of the architecture")
     public String getName() {
-        return pkey;
+        return key;
     }
 
+    @SchemaColumn(order=1, name="bits", description="the number of bits used by the architecture")
     public int getBits() {
         return bits;
     }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.ARCHITECTURES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getString(1);
-        bits=result.getInt(2);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        bits=in.readCompressedInt();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeCompressedInt(bits);
-    }
+    // </editor-fold>
 }
