@@ -5,9 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
 
 /**
  * Each <code>TechnologyName</code> may have multiple versions installed.
@@ -15,92 +14,86 @@ import java.sql.*;
  *
  * @see  TechnologyName
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVersion> {
+final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVersion> {
 
-    static final int COLUMN_PKEY=0;
-    static final String COLUMN_VERSION_name = "version";
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    String name, version;
-    long updated;
-    private String owner;
-    int operating_system_version;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String name;
+    final private String version;
+    final private Timestamp updated;
+    final private String owner;
+    final private int operating_system_version;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return name;
-            case 2: return version;
-            case 3: return new java.sql.Date(updated);
-            case 4: return owner;
-            case 5: return operating_system_version==-1?null:Integer.valueOf(operating_system_version);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public TechnologyVersion(
+        TechnologyVersionService<?,?> service,
+        int pkey,
+        String name,
+        String version,
+        Timestamp updated,
+        String owner,
+        int operating_system_version
+    ) {
+        super(service, pkey);
+        this.name = name.intern();
+        this.version = version;
+        this.updated = updated;
+        this.owner = owner.intern();
+        this.operating_system_version = operating_system_version;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(TechnologyVersion other) {
+        int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
+        if(diff!=0) return diff;
+        return compareIgnoreCaseConsistentWithEquals(version, other.version);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated unique key")
+    public int getPkey() {
+        return key;
     }
 
-    public HttpdTomcatVersion getHttpdTomcatVersion(AOServConnector connector) throws IOException, SQLException {
-	return connector.getHttpdTomcatVersions().get(pkey);
+    @SchemaColumn(order=1, name="name", description="the name of the software package")
+    public TechnologyName getTechnologyName() throws RemoteException {
+        return getService().getConnector().getTechnologyNames().get(name);
     }
 
-    public MasterUser getOwner(AOServConnector connector) throws SQLException, IOException {
-	MasterUser obj = connector.getMasterUsers().get(owner);
-	if (obj == null) throw new SQLException("Unable to find MasterUser: " + owner);
-	return obj;
-    }
-
-    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn) throws SQLException, IOException {
-        OperatingSystemVersion osv=conn.getOperatingSystemVersions().get(operating_system_version);
-        if(osv==null) throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
-        return osv;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TECHNOLOGY_VERSIONS;
-    }
-
-    public TechnologyName getTechnologyName(AOServConnector connector) throws SQLException, IOException {
-        TechnologyName technologyName = connector.getTechnologyNames().get(name);
-        if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
-        return technologyName;
-    }
-
-    public long getUpdated() {
-	return updated;
-    }
-
+    @SchemaColumn(order=2, name="version", description="the version number of the package in #.##.##-## format")
     public String getVersion() {
-	return version;
+        return version;
     }
 
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getInt(1);
-	name = result.getString(2);
-	version = result.getString(3);
-	updated = result.getTimestamp(4).getTime();
-	owner = result.getString(5);
-        operating_system_version = result.getInt(6);
-        if(result.wasNull()) operating_system_version=-1;
+    @SchemaColumn(order=3, name="updated", description="the time this package was last updated")
+    public Timestamp getUpdated() {
+    	return updated;
     }
 
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	name=in.readUTF().intern();
-	version=in.readUTF();
-	updated=in.readLong();
-	owner=in.readUTF().intern();
-        operating_system_version=in.readCompressedInt();
-    }
+    /* TODO
+    @SchemaColumn(order=4, name="owner", description="the business_administrator who is responsible for maintaining this package")
+    public MasterUser getOwner() throws RemoteException {
+        return getService().getConnector().getMasterUsers().get(owner);
+    }*/
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(name);
-	out.writeUTF(version);
-	out.writeLong(updated);
-	out.writeUTF(owner);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeCompressedInt(operating_system_version);
+    @SchemaColumn(order=4, name="operating_system_version", description="the version of the OS that this packages is installed")
+    public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
+        return getService().getConnector().getOperatingSystemVersions().get(operating_system_version);
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public HttpdTomcatVersion getHttpdTomcatVersion() throws RemoteException, SQLException {
+    	return connector.getHttpdTomcatVersions().get(pkey);
+    }
+     */
+    // </editor-fold>
 }

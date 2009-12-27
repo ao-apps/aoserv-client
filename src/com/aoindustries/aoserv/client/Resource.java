@@ -25,7 +25,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String resource_type;
+    final String resource_type;
     final private String accounting;
     final private Timestamp created;
     final private String created_by;

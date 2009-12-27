@@ -5,10 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
 
 /**
  * A <code>TechnologyClass</code> is one type of software package
@@ -16,14 +12,12 @@ import java.sql.*;
  *
  * @see  Technology
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass> {
+final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The possible <code>TechnologyClass</code>es.
@@ -42,40 +36,26 @@ final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass
         X11="X11",
         XML="XML"
     ;
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String description;
 
-    private String description;
-
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_NAME) return pkey;
-	if(i==1) return description;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    public TechnologyClass(TechnologyClassService<?,?> service, String name, String description) {
+        super(service, name);
+        this.description = description;
     }
+    // </editor-fold>
 
-    public String getDescription() {
-	return description;
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", unique=true, description="the name of the class")
     public String getName() {
-	return pkey;
+    	return key;
     }
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TECHNOLOGY_CLASSES;
+    @SchemaColumn(order=1, name="description", description="a description of the class")
+    public String getDescription() {
+        return description;
     }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	description = result.getString(2);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	description=in.readUTF();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(description);
-    }
+    // </editor-fold>
 }

@@ -15,6 +15,7 @@ import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.table.Table;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -72,6 +73,11 @@ final public class DescribeCommand extends AOServCommand<String> {
         }
     }
 
+    private static String getReturnType(Method method) {
+        String generic = method.getGenericReturnType().toString();
+        return generic.indexOf('<')!=-1 ? generic : method.getReturnType().getName();
+    }
+
     protected String doExecute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         // Find the table given its name
         AOServService<?,?,?,?> service = connector.getServices().get(ServiceName.valueOf(table_name));
@@ -101,7 +107,7 @@ final public class DescribeCommand extends AOServCommand<String> {
             MethodColumn methodColumn = columns.get(c);
             SchemaColumn schemaColumn = methodColumn.getSchemaColumn();
             values[pos++]=methodColumn.getColumnName();
-            values[pos++]=methodColumn.getMethod().getReturnType().getName();
+            values[pos++]=getReturnType(methodColumn.getMethod());
             values[pos++]=methodColumn.isUnique()?"true":"false";
             values[pos++]=schemaColumn.description();
         }

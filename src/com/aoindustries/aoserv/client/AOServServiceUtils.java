@@ -46,7 +46,7 @@ final public class AOServServiceUtils {
                 }
             }
         }
-        if(tname==null) throw new AssertionError("Unable to find service name");
+        if(tname==null) throw new AssertionError("Unable to find service name: clazz="+clazz.getName());
         return tname;
     }
 

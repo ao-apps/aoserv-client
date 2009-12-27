@@ -5,13 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>MySQLServer</code> corresponds to a unique MySQL install
@@ -24,15 +20,10 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
+final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> {
 
-    static final int
-        COLUMN_AO_SERVER_RESOURCE = 0,
-        COLUMN_NAME = 1,
-        COLUMN_NET_BIND = 4
-    ;
-    static final String COLUMN_AO_SERVER_RESOURCE_name = "ao_server_resource";
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The supported versions of MySQL.
@@ -67,17 +58,120 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      * The maximum length of the name.
      */
     public static final int MAX_SERVER_NAME_LENGTH=31;
+    // </editor-fold>
 
-    String name;
-    private int version;
-    private int max_connections;
-    int net_bind;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String name;
+    final private int version;
+    final private int max_connections;
+    final private int net_bind;
 
+    public MySQLServer(MySQLServerService<?,?> service, int ao_server_resource, String name, int version, int max_connections, int net_bind) {
+        super(service, ao_server_resource);
+        this.name = name.intern();
+        this.version = version;
+        this.max_connections = max_connections;
+        this.net_bind = net_bind;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(MySQLServer other) throws RemoteException {
+        int diff = getAoServerResource().getAoServer().compareTo(other.getAoServerResource().getAoServer());
+        if(diff!=0) return diff;
+        return compareIgnoreCaseConsistentWithEquals(name, other.name);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="ao_server_resource", unique=true, description="the unique resource id")
+    public AOServerResource getAoServerResource() throws RemoteException {
+        return getService().getConnector().getAoServerResources().get(key);
+    }
+
+    @SchemaColumn(order=1, name="name", description="the name of the database")
+    public String getName() {
+    	return name;
+    }
+
+    @SchemaColumn(order=2, name="version", description="the pkey of the MySQL version")
+    public TechnologyVersion getVersion() throws RemoteException {
+        TechnologyVersion obj=getService().getConnector().getTechnologyVersions().get(version);
+        if(obj==null) throw new RemoteException("Unable to find TechnologyVersion: "+version);
+        if(
+            obj.getOperatingSystemVersion().getPkey()
+            != getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey()
+        ) {
+            throw new RemoteException("resource/operating system version mismatch on MySQLServer: #"+key);
+        }
+    	return obj;
+    }
+
+    @SchemaColumn(order=3, name="max_connections", description="the maximum number of connections for the db")
+    public int getMaxConnections() {
+        return max_connections;
+    }
+
+    @SchemaColumn(order=4, name="net_bind", description="the port the servers binds to")
+    public NetBind getNetBind() throws RemoteException {
+        return getService().getConnector().getNetBinds().get(net_bind);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getAoServerResource(),
+            getNetBind()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getFailoverMySQLReplications(),
+            // TODO: getMySQLDatabases(),
+            // TODO: getMySQLUsers()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+        return name+" on "+getAoServerResource().getAoServer().getHostname();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
+        return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+    }
+
+    public List<MySQLDatabase> getMySQLDatabases() throws IOException, SQLException {
+        return getService().getConnector().getMysqlDatabases().getMySQLDatabases(this);
+    }
+
+    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
+        return getService().getConnector().getMysqlDBUsers().getMySQLDBUsers(this);
+    }
+
+    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
+    	return getService().getConnector().getMysqlUsers().getMySQLUsers(this);
+    }
+     */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public int addMySQLDatabase(
         String name,
         Business bu
     ) throws IOException, SQLException {
-    	return table.connector.getMysqlDatabases().addMySQLDatabase(
+    	return getService().getConnector().getMysqlDatabases().addMySQLDatabase(
             name,
             this,
             bu
@@ -104,29 +198,15 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
     	}
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_AO_SERVER_RESOURCE: return pkey;
-            case COLUMN_NAME: return name;
-            case 2: return Integer.valueOf(version);
-            case 3: return Integer.valueOf(max_connections);
-            case COLUMN_NET_BIND: return Integer.valueOf(net_bind);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
     public String getDataDirectory() {
         return DATA_BASE_DIR+'/'+name;
     }
-
-    public String getName() {
-    	return name;
-    }
-
+    */
     /**
      * Gets the minor version number in X.X[-max] format.  This corresponds to the installation
      * directory under /usr/mysql/X.X[-max] or /opt/mysql-X.X[-max]
      */
+    /* TODO
     public String getMinorVersion() throws SQLException, IOException {
         String techVersion=getVersion().getVersion();
         int pos=techVersion.indexOf('.');
@@ -138,123 +218,28 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
         return S;
     }
 
-    public TechnologyVersion getVersion() throws SQLException, IOException {
-        TechnologyVersion obj=table.connector.getTechnologyVersions().get(version);
-        if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+version);
-        if(
-            obj.getOperatingSystemVersion(table.connector).getPkey()
-            != getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey()
-        ) {
-            throw new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey);
-        }
-    	return obj;
-    }
-
-    public AOServerResource getAoServerResource() throws SQLException, IOException {
-        AOServerResource re=table.connector.getAoServerResources().get(pkey);
-        if(re==null) throw new SQLException("Unable to find AOServerResource: "+pkey);
-        return re;
-    }
-
-    public int getMaxConnections() {
-        return max_connections;
-    }
-
-    public NetBind getNetBind() throws SQLException, IOException {
-        NetBind nb=table.connector.getNetBinds().get(net_bind);
-        if(nb==null) throw new SQLException("Unable to find NetBind: "+net_bind);
-        return nb;
-    }
-
     public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
-    	return table.connector.getMysqlDatabases().getMySQLDatabase(name, this);
-    }
-
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
-    }
-
-    public List<MySQLDatabase> getMySQLDatabases() throws IOException, SQLException {
-        return table.connector.getMysqlDatabases().getMySQLDatabases(this);
-    }
-
-    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
-        return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
+    	return getService().getConnector().getMysqlDatabases().getMySQLDatabase(name, this);
     }
 
     public MySQLUser getMySQLUser(String username) throws IOException, SQLException {
-    	return table.connector.getMysqlUsers().getMySQLUser(username, this);
-    }
-
-    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-    	return table.connector.getMysqlUsers().getMySQLUsers(this);
-    }
-
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.MYSQL_SERVERS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        name=result.getString(2);
-        version=result.getInt(3);
-        max_connections=result.getInt(4);
-        net_bind=result.getInt(5);
+    	return getService().getConnector().getMysqlUsers().getMySQLUser(username, this);
     }
 
     public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
-    	return table.connector.getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        name=in.readUTF().intern();
-        version=in.readCompressedInt();
-        max_connections=in.readCompressedInt();
-        net_bind=in.readCompressedInt();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getAoServerResource(),
-            getNetBind()
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getFailoverMySQLReplications(),
-            getMySQLDatabases(),
-            getMySQLUsers()
-        );
+    	return getService().getConnector().getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
     }
 
     public void restartMySQL() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_MYSQL, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_MYSQL, pkey);
     }
 
     public void startMySQL() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_MYSQL, pkey);
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.START_MYSQL, pkey);
     }
 
     public void stopMySQL() throws IOException, SQLException {
-        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_MYSQL, pkey);
-    }
-
-    @Override
-    String toStringImpl(Locale userLocale) throws SQLException, IOException {
-        return name+" on "+getAoServerResource().getAoServer().getHostname();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeUTF(name);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeCompressedInt(-1);
-        out.writeCompressedInt(version);
-        out.writeCompressedInt(max_connections);
-        out.writeCompressedInt(net_bind);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeUTF("AOINDUSTRIES"); // accounting
+        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_MYSQL, pkey);
     }
 
     final public static class MasterStatus {
@@ -278,13 +263,14 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
             return position;
         }
     }
-
+    */
     /**
      * Gets the master status or <code>null</code> if no master status provided by MySQL.  If any error occurs, throws either
      * IOException or SQLException.
      */
+    /* TODO
     public MasterStatus getMasterStatus() throws IOException, SQLException {
-        return table.connector.requestResult(
+        return getService().getConnector().requestResult(
             true,
             new AOServConnector.ResultRequest<MasterStatus>() {
                 MasterStatus result;
@@ -315,4 +301,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
             }
         );
     }
+     */
+    // </editor-fold>
 }

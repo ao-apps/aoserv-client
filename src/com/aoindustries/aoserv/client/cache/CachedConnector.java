@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServerResourceService;
 import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
@@ -17,6 +18,7 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
@@ -29,6 +31,10 @@ import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.aoserv.client.TechnologyClassService;
+import com.aoindustries.aoserv.client.TechnologyNameService;
+import com.aoindustries.aoserv.client.TechnologyService;
+import com.aoindustries.aoserv.client.TechnologyVersionService;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
 import com.aoindustries.aoserv.client.TicketStatusService;
@@ -57,8 +63,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     private final String password;
     /* TODO
     final CachedAOServerDaemonHostService aoserverDaemonHosts;
-    final CachedAOServerResourceService aoserverResources;
      */
+    final CachedAOServerResourceService aoserverResources;
     final CachedAOServerService aoservers;
     final CachedAOServPermissionService aoservPermissions;
     /* TODO
@@ -168,7 +174,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedMySQLDatabaseService mysqlDatabases;
     final CachedMySQLDBUserService mysqlDBUsers;
     final CachedMySQLReservedWordService mysqlReservedWords;
+     */
     final CachedMySQLServerService mysqlServers;
+    /* TODO
     final CachedMySQLUserService mysqlUsers;
      */
     final CachedNetBindService netBinds;
@@ -216,10 +224,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedSignupRequestService signupRequests;
     final CachedSpamEmailMessageService spamEmailMessages;
     final CachedSystemEmailAliasService systemEmailAliass;
+     */
     final CachedTechnologyService technologies;
-    final CachedTechnologyClassService technologyClasss;
+    final CachedTechnologyClassService technologyClasses;
     final CachedTechnologyNameService technologyNames;
     final CachedTechnologyVersionService technologyVersions;
+    /* TODO
     final CachedTicketActionTypeService ticketActionTypes;
     final CachedTicketActionService ticketActions;
     final CachedTicketAssignmentService ticketAssignments;
@@ -254,8 +264,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         password = wrapped.getPassword();
         /* TODO
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAOServerDaemonHosts());
-        aoserverResources = new CachedAOServerResourceService(this, wrapped.getAOServerResources());
          */
+        aoserverResources = new CachedAOServerResourceService(this, wrapped.getAoServerResources());
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAoservPermissions());
         /* TODO
@@ -365,7 +375,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         mysqlDatabases = new CachedMySQLDatabaseService(this, wrapped.getMySQLDatabases());
         mysqlDBUsers = new CachedMySQLDBUserService(this, wrapped.getMySQLDBUsers());
         mysqlReservedWords = new CachedMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
-        mysqlServers = new CachedMySQLServerService(this, wrapped.getMySQLServers());
+         */
+        mysqlServers = new CachedMySQLServerService(this, wrapped.getMysqlServers());
+        /* TODO
         mysqlUsers = new CachedMySQLUserService(this, wrapped.getMySQLUsers());
          */
         netBinds = new CachedNetBindService(this, wrapped.getNetBinds());
@@ -413,10 +425,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         signupRequests = new CachedSignupRequestService(this, wrapped.getSignupRequests());
         spamEmailMessages = new CachedSpamEmailMessageService(this, wrapped.getSpamEmailMessages());
         systemEmailAliass = new CachedSystemEmailAliasService(this, wrapped.getSystemEmailAliass());
-        technologies = new CachedTechnologyService(this, wrapped.getTechnologys());
-        technologyClasss = new CachedTechnologyClassService(this, wrapped.getTechnologyClasss());
+         */
+        technologies = new CachedTechnologyService(this, wrapped.getTechnologies());
+        technologyClasses = new CachedTechnologyClassService(this, wrapped.getTechnologyClasses());
         technologyNames = new CachedTechnologyNameService(this, wrapped.getTechnologyNames());
         technologyVersions = new CachedTechnologyVersionService(this, wrapped.getTechnologyVersions());
+        /* TODO
         ticketActionTypes = new CachedTicketActionTypeService(this, wrapped.getTicketActionTypes());
         ticketActions = new CachedTicketActionService(this, wrapped.getTicketActions());
         ticketAssignments = new CachedTicketAssignmentService(this, wrapped.getTicketAssignments());
@@ -489,9 +503,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     /*
      * TODO
     public AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts();
-
-    public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources();
     */
+    public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources() {
+        return aoserverResources;
+    }
+
     public AOServerService<CachedConnector,CachedConnectorFactory> getAoServers() {
         return aoservers;
     }
@@ -701,9 +717,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers();
 
     public MySQLReservedWordService<CachedConnector,CachedConnectorFactory> getMysqlReservedWords();
-
-    public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers();
-
+    */
+    public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers() {
+        return mysqlServers;
+    }
+    /* TODO
     public MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers();
     */
     public NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds() {
@@ -799,15 +817,23 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public SpamEmailMessageService<CachedConnector,CachedConnectorFactory> getSpamEmailMessages();
 
     public SystemEmailAliasService<CachedConnector,CachedConnectorFactory> getSystemEmailAliases();
+    */
+    public TechnologyService<CachedConnector,CachedConnectorFactory> getTechnologies() {
+        return technologies;
+    }
 
-    public TechnologyService<CachedConnector,CachedConnectorFactory> getTechnologies();
+    public TechnologyClassService<CachedConnector,CachedConnectorFactory> getTechnologyClasses() {
+        return technologyClasses;
+    }
 
-    public TechnologyClassService<CachedConnector,CachedConnectorFactory> getTechnologyClasses();
+    public TechnologyNameService<CachedConnector,CachedConnectorFactory> getTechnologyNames() {
+        return technologyNames;
+    }
 
-    public TechnologyNameService<CachedConnector,CachedConnectorFactory> getTechnologyNames();
-
-    public TechnologyVersionService<CachedConnector,CachedConnectorFactory> getTechnologyVersions();
-
+    public TechnologyVersionService<CachedConnector,CachedConnectorFactory> getTechnologyVersions() {
+        return technologyVersions;
+    }
+    /* TODO
     public TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes();
 
     public TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions();

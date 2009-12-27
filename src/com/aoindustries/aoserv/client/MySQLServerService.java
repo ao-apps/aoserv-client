@@ -5,31 +5,16 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.TerminalWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
 
 /**
  * @see  MySQLServer
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
+@ServiceAnnotation(ServiceName.mysql_servers)
+public interface MySQLServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,MySQLServer> {
 
-    MySQLServerTable(AOServConnector connector) {
-    	super(connector, MySQLServer.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(MySQLServer.COLUMN_AO_SERVER_RESOURCE_name+'.'+AOServerResource.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
-        new OrderBy(MySQLServer.COLUMN_NAME_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addMySQLServer(
         String name,
         AOServer aoServer,
@@ -48,21 +33,12 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
     	);
     }
 
-    public MySQLServer get(int ao_server_resource) throws IOException, SQLException {
-        return getUniqueRow(MySQLServer.COLUMN_AO_SERVER_RESOURCE, ao_server_resource);
-    }
-
     MySQLServer getMySQLServer(NetBind nb) throws IOException, SQLException {
     	return getUniqueRow(MySQLServer.COLUMN_NET_BIND, nb.pkey);
     }
 
-    /*
     List<MySQLServer> getMySQLServers(Business bu) throws IOException, SQLException {
         return getIndexedRows(MySQLServer.COLUMN_ACCOUNTING, bu.pkey);
-    }*/
-
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.MYSQL_SERVERS;
     }
 
     @Override
@@ -143,4 +119,5 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
             aoServer.pkey
         );
     }
+     */
 }

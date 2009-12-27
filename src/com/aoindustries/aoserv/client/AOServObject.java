@@ -37,6 +37,11 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Value used when data has been filtered.
+     */
+    public static final String FILTERED = "*";
+
     private static final Collator collator = Collator.getInstance(Locale.ENGLISH);
     static int compareIgnoreCaseConsistentWithEquals(String S1, String S2) {
         int diff = collator.compare(S1, S2);

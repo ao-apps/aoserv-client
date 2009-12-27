@@ -135,7 +135,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> /*implements 
     /**
      * Gets the unmodifiable map of parameters for this bind.
      */
-    @SchemaColumn(order=8, name="monitoring_parameters", description="the URL-encoded name=value pairs of monitoring parameters")
+    @SchemaColumn(order=5, name="monitoring_parameters", description="the URL-encoded name=value pairs of monitoring parameters")
     public Map<String,String> getMonitoringParameters() {
         String myParamString = monitoring_parameters;
         if(myParamString==null) return Collections.emptyMap();

@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServerResourceService;
 import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
@@ -17,6 +18,7 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
@@ -29,6 +31,10 @@ import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.aoserv.client.TechnologyClassService;
+import com.aoindustries.aoserv.client.TechnologyNameService;
+import com.aoindustries.aoserv.client.TechnologyService;
+import com.aoindustries.aoserv.client.TechnologyVersionService;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
 import com.aoindustries.aoserv.client.TicketStatusService;
@@ -67,8 +73,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     private final String daemonServer;
     /* TODO
     final RetryAOServerDaemonHostService aoserverDaemonHosts;
-    final RetryAOServerResourceService aoserverResources;
      */
+    final RetryAOServerResourceService aoserverResources;
     final RetryAOServerService aoservers;
     final RetryAOServPermissionService aoservPermissions;
     /* TODO
@@ -178,7 +184,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryMySQLDatabaseService mysqlDatabases;
     final RetryMySQLDBUserService mysqlDBUsers;
     final RetryMySQLReservedWordService mysqlReservedWords;
+     */
     final RetryMySQLServerService mysqlServers;
+    /* TODO
     final RetryMySQLUserService mysqlUsers;
      */
     final RetryNetBindService netBinds;
@@ -225,10 +233,12 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetrySignupRequestService signupRequests;
     final RetrySpamEmailMessageService spamEmailMessages;
     final RetrySystemEmailAliasService systemEmailAliass;
+     */
     final RetryTechnologyService technologies;
-    final RetryTechnologyClassService technologyClasss;
+    final RetryTechnologyClassService technologyClasses;
     final RetryTechnologyNameService technologyNames;
     final RetryTechnologyVersionService technologyVersions;
+    /* TODO
     final RetryTicketActionTypeService ticketActionTypes;
     final RetryTicketActionService ticketActions;
     final RetryTicketAssignmentService ticketAssignments;
@@ -266,8 +276,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         this.daemonServer = daemonServer;
         /* TODO
         aoserverDaemonHosts = new RetryAOServerDaemonHostService(this);
-        aoserverResources = new RetryAOServerResourceService(this);
          */
+        aoserverResources = new RetryAOServerResourceService(this);
         aoservers = new RetryAOServerService(this);
         aoservPermissions = new RetryAOServPermissionService(this);
         /* TODO
@@ -377,7 +387,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         mysqlDatabases = new RetryMySQLDatabaseService(this);
         mysqlDBUsers = new RetryMySQLDBUserService(this);
         mysqlReservedWords = new RetryMySQLReservedWordService(this);
+         */
         mysqlServers = new RetryMySQLServerService(this);
+        /* TODO
         mysqlUsers = new RetryMySQLUserService(this);
          */
         netBinds = new RetryNetBindService(this);
@@ -425,10 +437,12 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         signupRequests = new RetrySignupRequestService(this);
         spamEmailMessages = new RetrySpamEmailMessageService(this);
         systemEmailAliass = new RetrySystemEmailAliasService(this);
+         */
         technologies = new RetryTechnologyService(this);
-        technologyClasss = new RetryTechnologyClassService(this);
+        technologyClasses = new RetryTechnologyClassService(this);
         technologyNames = new RetryTechnologyNameService(this);
         technologyVersions = new RetryTechnologyVersionService(this);
+        /* TODO
         ticketActionTypes = new RetryTicketActionTypeService(this);
         ticketActions = new RetryTicketActionService(this);
         ticketAssignments = new RetryTicketAssignmentService(this);
@@ -622,9 +636,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     /*
      * TODO
     public AOServerDaemonHostService<RetryConnector,RetryConnectorFactory> getAoServerDaemonHosts();
-
-    public AOServerResourceService<RetryConnector,RetryConnectorFactory> getAoServerResources();
     */
+    public AOServerResourceService<RetryConnector,RetryConnectorFactory> getAoServerResources() {
+        return aoserverResources;
+    }
+
     public AOServerService<RetryConnector,RetryConnectorFactory> getAoServers() {
         return aoservers;
     }
@@ -833,9 +849,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public MySQLDBUserService<RetryConnector,RetryConnectorFactory> getMysqlDBUsers();
 
     public MySQLReservedWordService<RetryConnector,RetryConnectorFactory> getMysqlReservedWords();
-
-    public MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers();
-
+    */
+    public MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers() {
+        return mysqlServers;
+    }
+    /* TODO
     public MySQLUserService<RetryConnector,RetryConnectorFactory> getMysqlUsers();
     */
     public NetBindService<RetryConnector,RetryConnectorFactory> getNetBinds() {
@@ -931,15 +949,23 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public SpamEmailMessageService<RetryConnector,RetryConnectorFactory> getSpamEmailMessages();
 
     public SystemEmailAliasService<RetryConnector,RetryConnectorFactory> getSystemEmailAliases();
+    */
+    public TechnologyService<RetryConnector,RetryConnectorFactory> getTechnologies() {
+        return technologies;
+    }
 
-    public TechnologyService<RetryConnector,RetryConnectorFactory> getTechnologies();
+    public TechnologyClassService<RetryConnector,RetryConnectorFactory> getTechnologyClasses() {
+        return technologyClasses;
+    }
 
-    public TechnologyClassService<RetryConnector,RetryConnectorFactory> getTechnologyClasses();
+    public TechnologyNameService<RetryConnector,RetryConnectorFactory> getTechnologyNames() {
+        return technologyNames;
+    }
 
-    public TechnologyNameService<RetryConnector,RetryConnectorFactory> getTechnologyNames();
-
-    public TechnologyVersionService<RetryConnector,RetryConnectorFactory> getTechnologyVersions();
-
+    public TechnologyVersionService<RetryConnector,RetryConnectorFactory> getTechnologyVersions() {
+        return technologyVersions;
+    }
+    /* TODO
     public TicketActionTypeService<RetryConnector,RetryConnectorFactory> getTicketActionTypes();
 
     public TicketActionService<RetryConnector,RetryConnectorFactory> getTicketActions();

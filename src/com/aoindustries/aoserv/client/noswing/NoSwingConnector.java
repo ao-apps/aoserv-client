@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServerResourceService;
 import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
@@ -17,6 +18,7 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
@@ -29,6 +31,10 @@ import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.aoserv.client.TechnologyClassService;
+import com.aoindustries.aoserv.client.TechnologyNameService;
+import com.aoindustries.aoserv.client.TechnologyService;
+import com.aoindustries.aoserv.client.TechnologyVersionService;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriorityService;
 import com.aoindustries.aoserv.client.TicketStatusService;
@@ -52,8 +58,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final AOServConnector<?,?> wrapped;
     /* TODO
     final NoSwingAOServerDaemonHostService aoserverDaemonHosts;
-    final NoSwingAOServerResourceService aoserverResources;
      */
+    final NoSwingAOServerResourceService aoserverResources;
     final NoSwingAOServerService aoservers;
     final NoSwingAOServPermissionService aoservPermissions;
     /* TODO
@@ -162,8 +168,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingMonthlyChargeService monthlyCharges;
     final NoSwingMySQLDatabaseService mysqlDatabases;
     final NoSwingMySQLDBUserService mysqlDBUsers;
-    final NoSwingMySQLReservedWordService mysqlReservedWords;
+    final NoSwingMySQLReservedWordService mysqlReservedWords;*/
     final NoSwingMySQLServerService mysqlServers;
+    /* TODO
     final NoSwingMySQLUserService mysqlUsers;
      */
     final NoSwingNetBindService netBinds;
@@ -211,10 +218,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingSignupRequestService signupRequests;
     final NoSwingSpamEmailMessageService spamEmailMessages;
     final NoSwingSystemEmailAliasService systemEmailAliass;
+     */
     final NoSwingTechnologyService technologies;
-    final NoSwingTechnologyClassService technologyClasss;
+    final NoSwingTechnologyClassService technologyClasses;
     final NoSwingTechnologyNameService technologyNames;
     final NoSwingTechnologyVersionService technologyVersions;
+    /* TODO
     final NoSwingTicketActionTypeService ticketActionTypes;
     final NoSwingTicketActionService ticketActions;
     final NoSwingTicketAssignmentService ticketAssignments;
@@ -245,8 +254,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         this.wrapped = wrapped;
         /* TODO
         aoserverDaemonHosts = new NoSwingAOServerDaemonHostService(this, wrapped.getAOServerDaemonHosts());
-        aoserverResources = new NoSwingAOServerResourceService(this, wrapped.getAOServerResources());
          */
+        aoserverResources = new NoSwingAOServerResourceService(this, wrapped.getAoServerResources());
         aoservers = new NoSwingAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new NoSwingAOServPermissionService(this, wrapped.getAoservPermissions());
         /* TODO
@@ -356,7 +365,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         mysqlDatabases = new NoSwingMySQLDatabaseService(this, wrapped.getMySQLDatabases());
         mysqlDBUsers = new NoSwingMySQLDBUserService(this, wrapped.getMySQLDBUsers());
         mysqlReservedWords = new NoSwingMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
-        mysqlServers = new NoSwingMySQLServerService(this, wrapped.getMySQLServers());
+         */
+        mysqlServers = new NoSwingMySQLServerService(this, wrapped.getMysqlServers());
+        /* TODO
         mysqlUsers = new NoSwingMySQLUserService(this, wrapped.getMySQLUsers());
          */
         netBinds = new NoSwingNetBindService(this, wrapped.getNetBinds());
@@ -404,10 +415,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         signupRequests = new NoSwingSignupRequestService(this, wrapped.getSignupRequests());
         spamEmailMessages = new NoSwingSpamEmailMessageService(this, wrapped.getSpamEmailMessages());
         systemEmailAliass = new NoSwingSystemEmailAliasService(this, wrapped.getSystemEmailAliass());
-        technologies = new NoSwingTechnologyService(this, wrapped.getTechnologys());
-        technologyClasss = new NoSwingTechnologyClassService(this, wrapped.getTechnologyClasss());
+         */
+        technologies = new NoSwingTechnologyService(this, wrapped.getTechnologies());
+        technologyClasses = new NoSwingTechnologyClassService(this, wrapped.getTechnologyClasses());
         technologyNames = new NoSwingTechnologyNameService(this, wrapped.getTechnologyNames());
         technologyVersions = new NoSwingTechnologyVersionService(this, wrapped.getTechnologyVersions());
+        /* TODO
         ticketActionTypes = new NoSwingTicketActionTypeService(this, wrapped.getTicketActionTypes());
         ticketActions = new NoSwingTicketActionService(this, wrapped.getTicketActions());
         ticketAssignments = new NoSwingTicketAssignmentService(this, wrapped.getTicketAssignments());
@@ -485,9 +498,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     /*
      * TODO
     public AOServerDaemonHostService<NoSwingConnector,NoSwingConnectorFactory> getAoServerDaemonHosts() throws RemoteException;
-
-    public AOServerResourceService<NoSwingConnector,NoSwingConnectorFactory> getAoServerResources() throws RemoteException;
     */
+    public AOServerResourceService<NoSwingConnector,NoSwingConnectorFactory> getAoServerResources() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return aoserverResources;
+    }
+
     public AOServerService<NoSwingConnector,NoSwingConnectorFactory> getAoServers() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return aoservers;
@@ -704,9 +720,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public MySQLDBUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDBUsers() throws RemoteException;
 
     public MySQLReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getMysqlReservedWords() throws RemoteException;
-
-    public MySQLServerService<NoSwingConnector,NoSwingConnectorFactory> getMysqlServers() throws RemoteException;
-
+    */
+    public MySQLServerService<NoSwingConnector,NoSwingConnectorFactory> getMysqlServers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return mysqlServers;
+    }
+    /* TODO
     public MySQLUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlUsers() throws RemoteException;
     */
     public NetBindService<NoSwingConnector,NoSwingConnectorFactory> getNetBinds() throws RemoteException {
@@ -813,15 +832,27 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public SpamEmailMessageService<NoSwingConnector,NoSwingConnectorFactory> getSpamEmailMessages() throws RemoteException;
 
     public SystemEmailAliasService<NoSwingConnector,NoSwingConnectorFactory> getSystemEmailAliases() throws RemoteException;
+    */
+    public TechnologyService<NoSwingConnector,NoSwingConnectorFactory> getTechnologies() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return technologies;
+    }
 
-    public TechnologyService<NoSwingConnector,NoSwingConnectorFactory> getTechnologies() throws RemoteException;
+    public TechnologyClassService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyClasses() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return technologyClasses;
+    }
 
-    public TechnologyClassService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyClasses() throws RemoteException;
+    public TechnologyNameService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyNames() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return technologyNames;
+    }
 
-    public TechnologyNameService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyNames() throws RemoteException;
-
-    public TechnologyVersionService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyVersions() throws RemoteException;
-
+    public TechnologyVersionService<NoSwingConnector,NoSwingConnectorFactory> getTechnologyVersions() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return technologyVersions;
+    }
+    /* TODO
     public TicketActionTypeService<NoSwingConnector,NoSwingConnectorFactory> getTicketActionTypes() throws RemoteException;
 
     public TicketActionService<NoSwingConnector,NoSwingConnectorFactory> getTicketActions() throws RemoteException;

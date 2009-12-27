@@ -20,8 +20,8 @@ import java.util.Locale;
 public enum ServiceName implements LocalizedToString {
     /*TODO
     ao_server_daemon_hosts,
-    ao_server_resources,
      */
+    ao_server_resources,
     ao_servers,
     aoserv_permissions,
     /*
@@ -135,7 +135,9 @@ public enum ServiceName implements LocalizedToString {
     mysql_databases,
     mysql_db_users,
     mysql_reserved_words,
+     */
     mysql_servers,
+    /* TODO
     mysql_users,
      */
     net_binds,
@@ -189,10 +191,12 @@ public enum ServiceName implements LocalizedToString {
     signup_requests,
     spam_email_messages,
     system_email_aliases,
+     */
     technologies,
     technology_classes,
     technology_names,
     technology_versions,
+    /* TODO
     ticket_action_types,
     ticket_actions,
     ticket_assignments,

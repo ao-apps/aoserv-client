@@ -50,7 +50,7 @@ public class TableNameTest extends TestCase {
             System.out.println("    "+conn.getThisBusinessAdministrator());
             tableNames.clear();
             for(ServiceName schemaTableName : ServiceName.values) {
-                AOServService aoTable=conn.getServices().get(schemaTableName);
+                AOServService<?,?,?,?> aoTable=conn.getServices().get(schemaTableName);
                 Table<MethodColumn,?> table = aoTable.getTable();
                 String tableName = table.getTableName();
                 System.out.println("        "+tableName);

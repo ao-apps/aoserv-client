@@ -5,12 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A <code>Resource</code> that exists on an <code>AOServer</code>.  All resources on a server must
@@ -20,101 +16,95 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServerResource extends CachedObjectIntegerKey<AOServerResource> {
+final public class AOServerResource extends AOServObjectIntegerKey<AOServerResource> {
 
-    static final int
-        COLUMN_RESOURCE=0,
-        COLUMN_AO_SERVER=1
-    ;
-    static final String COLUMN_RESOURCE_name = "resource";
-    static final String COLUMN_AO_SERVER_name = "ao_server";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    int ao_server;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int ao_server;
 
+    public AOServerResource(AOServerResourceService<?,?> service, int resource, int ao_server) {
+        super(service, resource);
+        this.ao_server = ao_server;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(AOServerResource other) throws RemoteException {
+        return getResource().compareTo(other.getResource());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
     /**
      * Gets the resource that this represents.
      */
-    public Resource getResource() throws IOException, SQLException {
-        Resource re = table.connector.getResources().get(pkey);
-        if(re==null) throw new SQLException("Unable to find Resource: "+pkey);
-        return re;
+    @SchemaColumn(order=0, name="resource", unique=true, description="a resource id")
+    public Resource getResource() throws RemoteException {
+        return getService().getConnector().getResources().get(key);
     }
 
     /**
      * Gets the server that this resource is on.
      */
-    public AOServer getAoServer() throws SQLException, IOException {
-        AOServer s=table.connector.getAoServers().get(ao_server);
-        if(s==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-        return s;
+    @SchemaColumn(order=1, name="ao_server", description="the ao_server")
+    public AOServer getAoServer() throws RemoteException {
+        return getService().getConnector().getAoServers().get(ao_server);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getResource(),
+            getAoServer()
+            // TODO: getBusinessServer()
+        );
     }
 
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getDependentObjectByResourceType()
+        );
+    }
+
+    /* TODO
+    private AOServObject getDependentObjectByResourceType() throws RemoteException {
+        String resource_type = getResource().resource_type;
+        AOServObject obj;
+        if(resource_type.equals(ResourceType.MYSQL_SERVER)) obj = getMySQLServer();
+        else throw new AssertionError("Unexpected resource type: "+resource_type);
+        if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
+        return obj;
+    }*/
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
     private Server getServer() throws SQLException, IOException {
-        Server s=table.connector.getServers().get(ao_server);
+        Server s=getService().getConnector().getServers().get(ao_server);
         if(s==null) throw new SQLException("Unable to find Server: "+ao_server);
         return s;
-    }
+    }*/
 
     /**
      * Gets the <code>BusinessServer</code> that this depends on.  This resource
      * must be removed before the business' access to the server may be revoked.
      * This may be filtered.
      */
+    /* TODO
     public BusinessServer getBusinessServer() throws IOException, SQLException {
-        return table.connector.getBusinessServers().getBusinessServer(getResource().accounting, ao_server);
-    }
-
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_RESOURCE: return pkey;
-            case COLUMN_AO_SERVER: return ao_server;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.AO_SERVER_RESOURCES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        ao_server = result.getInt(2);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        ao_server = in.readCompressedInt();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(ao_server);
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getResource(),
-            getAoServer(),
-            getBusinessServer()
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getDependentObjectByResourceType()
-        );
-    }
-
-    private AOServObject getDependentObjectByResourceType() throws IOException, SQLException {
-        String resource_type = getResource().resource_type;
-        AOServObject obj;
-        if(resource_type.equals(ResourceType.MYSQL_SERVER)) obj = getMySQLServer();
-        else throw new AssertionError("Unexpected resource type: "+resource_type);
-        if(obj==null) throw new SQLException("Type-specific aoserver resource object not found: "+pkey);
-        return obj;
+        return getService().getConnector().getBusinessServers().getBusinessServer(getResource().accounting, ao_server);
     }
 
     public MySQLServer getMySQLServer() throws IOException, SQLException {
-        return table.connector.getMysqlServers().get(pkey);
+        return getService().getConnector().getMysqlServers().get(pkey);
     }
+     */
+    // </editor-fold>
 }

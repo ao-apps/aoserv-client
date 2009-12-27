@@ -5,61 +5,42 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
 
 /**
  * @see  TechnologyVersion
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyVersionTable extends GlobalTableIntegerKey<TechnologyVersion> {
+@ServiceAnnotation(ServiceName.technology_versions)
+public interface TechnologyVersionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,TechnologyVersion> {
 
     /**
      * Fields used in an <code>order by</code> search.
      */
+    /* TODO
     public static final int NONE = 0, NAME = 1, VERSION = 2, UPDATED = 3;
+    */
 
     /**
      * Labels for the different sort orders.
      */
+    /* TODO
     static final String[] orderLabels = { "None", "Name", "Version", "Updated" };
 
     public static final int NUM_ORDER_LABELS=4;
 
     private static long maximumUpdatedTime=-1;
 
-    TechnologyVersionTable(AOServConnector connector) {
-	super(connector, TechnologyVersion.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(TechnologyVersion.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(TechnologyVersion.COLUMN_VERSION_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
     @Override
     public void clearCache() {
         super.clearCache();
-        synchronized(TechnologyVersionTable.class) {
+        synchronized(TechnologyVersionService.class) {
             maximumUpdatedTime=-1;
         }
     }
 
-    public TechnologyVersion get(int pkey) throws IOException, SQLException {
-    	return getUniqueRow(TechnologyVersion.COLUMN_PKEY, pkey);
-    }
-
     public long getMaximumUpdatedTime() throws IOException, SQLException {
-        synchronized(TechnologyVersionTable.class) {
+        synchronized(TechnologyVersionService.class) {
             if(maximumUpdatedTime==-1) {
              	List<TechnologyVersion> versions=getRows();
                 int size=versions.size();
@@ -79,10 +60,6 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
 	return orderLabels[index];
     }
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TECHNOLOGY_VERSIONS;
-    }
-
     TechnologyVersion getTechnologyVersion(TechnologyName techName, String version, OperatingSystemVersion osv) throws IOException, SQLException {
 	String name=techName.getName();
         int osvPKey=osv.pkey;
@@ -94,6 +71,7 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
 	}
 	return null;
     }
+    */
 
     /**
      * Searches the list of all technologies (names, versions, and classes) in the database.
@@ -107,6 +85,7 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
      *
      * @return  a <code>TechnologyVersion[]</code> of all the matches
      */
+    /* TODO
     public List<TechnologyVersion> getTechnologyVersions(OperatingSystemVersion osv, String name, List<TechnologyClass> classes, String version, int orderBy) throws IOException, SQLException {
 	// Prepare names
 	String[] nameWords = null;
@@ -196,4 +175,5 @@ final public class TechnologyVersionTable extends GlobalTableIntegerKey<Technolo
 	// Convert and return the matches
 	return matches;
     }
+    */
 }

@@ -82,8 +82,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /*
      * TODO
     AOServerDaemonHostService<C,F> getAoServerDaemonHosts() throws RemoteException;
-    AOServerResourceService<C,F> getAoServerResources() throws RemoteException;
     */
+    AOServerResourceService<C,F> getAoServerResources() throws RemoteException;
     AOServerService<C,F> getAoServers() throws RemoteException;
     AOServPermissionService<C,F> getAoservPermissions() throws RemoteException;
     /* TODO
@@ -193,7 +193,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     MySQLDatabaseService<C,F> getMysqlDatabases() throws RemoteException;
     MySQLDBUserService<C,F> getMysqlDBUsers() throws RemoteException;
     MySQLReservedWordService<C,F> getMysqlReservedWords() throws RemoteException;
+     */
     MySQLServerService<C,F> getMysqlServers() throws RemoteException;
+    /* TODO
     MySQLUserService<C,F> getMysqlUsers() throws RemoteException;
      */
     NetBindService<C,F> getNetBinds() throws RemoteException;
@@ -241,10 +243,12 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     SignupRequestService<C,F> getSignupRequests() throws RemoteException;
     SpamEmailMessageService<C,F> getSpamEmailMessages() throws RemoteException;
     SystemEmailAliasService<C,F> getSystemEmailAliases() throws RemoteException;
+     */
     TechnologyService<C,F> getTechnologies() throws RemoteException;
     TechnologyClassService<C,F> getTechnologyClasses() throws RemoteException;
     TechnologyNameService<C,F> getTechnologyNames() throws RemoteException;
     TechnologyVersionService<C,F> getTechnologyVersions() throws RemoteException;
+    /* TODO
     TicketActionTypeService<C,F> getTicketActionTypes() throws RemoteException;
     TicketActionService<C,F> getTicketActions() throws RemoteException;
     TicketAssignmentService<C,F> getTicketAssignments() throws RemoteException;
