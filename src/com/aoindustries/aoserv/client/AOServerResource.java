@@ -82,7 +82,8 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
         String resourceType = getResource().resourceType;
         AOServObject obj;
-        if(resourceType.equals(ResourceType.Constant.mysql_server.name())) obj = getMysqlServer();
+        if(resourceType.equals(ResourceType.Constant.mysql_database.name())) obj = getMysqlDatabase();
+        else if(resourceType.equals(ResourceType.Constant.mysql_server.name())) obj = getMysqlServer();
         else if(resourceType.equals(ResourceType.Constant.mysql_user.name())) obj = getMysqlUser();
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
@@ -108,6 +109,10 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
         return getService().getConnector().getBusinessServers().getBusinessServer(getResource().accounting, ao_server);
     }
     */
+    public MySQLDatabase getMysqlDatabase() throws RemoteException {
+        return getService().getConnector().getMysqlDatabases().get(key);
+    }
+
     public MySQLServer getMysqlServer() throws RemoteException {
         return getService().getConnector().getMysqlServers().get(key);
     }

@@ -37,6 +37,7 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         ip,
         javavm,
         joomla,
+        mysql_database,
         mysql_replication,
         mysql_server,
         mysql_user,

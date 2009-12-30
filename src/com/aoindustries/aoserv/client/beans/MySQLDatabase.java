@@ -10,27 +10,25 @@ package com.aoindustries.aoserv.client.beans;
  */
 public class MySQLDatabase {
 
-    private int pkey;
+    private int aoServerResource;
     private String name;
     private int mysqlServer;
-    private String accounting;
 
     public MySQLDatabase() {
     }
 
-    public MySQLDatabase(int pkey, String name, int mysqlServer, String accounting) {
-        this.pkey = pkey;
+    public MySQLDatabase(int aoServerResource, String name, int mysqlServer) {
+        this.aoServerResource = aoServerResource;
         this.name = name;
         this.mysqlServer = mysqlServer;
-        this.accounting = accounting;
     }
 
-    public int getPkey() {
-        return pkey;
+    public int getAoServerResource() {
+        return aoServerResource;
     }
 
-    public void setPkey(int pkey) {
-        this.pkey = pkey;
+    public void setAoServerResource(int aoServerResource) {
+        this.aoServerResource = aoServerResource;
     }
 
     public String getName() {
@@ -47,13 +45,5 @@ public class MySQLDatabase {
 
     public void setMysqlServer(int mysqlServer) {
         this.mysqlServer = mysqlServer;
-    }
-
-    public String getAccounting() {
-        return accounting;
-    }
-
-    public void setAccounting(String accounting) {
-        this.accounting = accounting;
     }
 }

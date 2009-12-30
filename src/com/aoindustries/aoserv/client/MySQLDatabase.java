@@ -60,19 +60,16 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String name;
     final private int mysqlServer;
-    final private String accounting;
 
     public MySQLDatabase(
         MySQLDatabaseService<?,?> service,
-        int pkey,
+        int aoServerResource,
         String name,
-        int mysqlServer,
-        String accounting
+        int mysqlServer
     ) {
-        super(service, pkey);
+        super(service, aoServerResource);
         this.name = name;
         this.mysqlServer = mysqlServer;
-        this.accounting = accounting.intern();
     }
     // </editor-fold>
 
@@ -86,9 +83,9 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="a unique, generated primary key")
-    public int getPkey() {
-        return key;
+    @SchemaColumn(order=0, name="ao_server_resource", unique=true, description="the unique resource id")
+    public AOServerResource getAoServerResource() throws RemoteException {
+        return getService().getConnector().getAoServerResources().get(key);
     }
 
     @SchemaColumn(order=1, name="name", description="the name of the database")
@@ -100,16 +97,11 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     public MySQLServer getMySQLServer() throws RemoteException {
         return getService().getConnector().getMysqlServers().get(mysqlServer);
     }
-
-    @SchemaColumn(order=3, name="accounting", description="the business that this database is part of")
-    public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
-    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MySQLDatabase getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, name, mysqlServer, accounting);
+        return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, name, mysqlServer);
     }
     // </editor-fold>
 
@@ -117,8 +109,8 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
-            getMySQLServer(),
-            getBusiness()
+            getAoServerResource(),
+            getMySQLServer()
         );
     }
 
