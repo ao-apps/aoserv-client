@@ -23,7 +23,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private int ao_server;
+    final int ao_server;
 
     public AOServerResource(AOServerResourceService<?,?> service, int resource, int ao_server) {
         super(service, resource);
@@ -34,7 +34,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(AOServerResource other) throws RemoteException {
-        return getResource().compareTo(other.getResource());
+        return key==other.key ? 0 : getResource().compareTo(other.getResource());
     }
     // </editor-fold>
 

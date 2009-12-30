@@ -44,6 +44,9 @@ final public class AOSH extends ShellInterpreter {
 
     private static final Reader nullInput=new CharArrayReader(new char[0]);
 
+    // TODO: Make this be a -d (debug) switch
+    private static final boolean STACK_TRACES = true;
+
     /**
      * Built-in commands.
      */
@@ -301,16 +304,20 @@ final public class AOSH extends ShellInterpreter {
                                     }
                                 } catch(InstantiationException exc) {
                                     err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.InstantiationException", command, exc.getMessage()));
+                                    if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(IllegalAccessException exc) {
                                     err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.IllegalAccessException", command, exc.getMessage()));
+                                    if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(InvocationTargetException exc) {
                                     err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.InvocationTargetException", command, exc.getMessage()));
+                                    if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(AOServPermissionException exc) {
                                     err.println("TODO: AOServPermission: "+exc.getMessage());
                                     // TODO
+                                    if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(ValidationException exc) {
                                     StringBuilder SB = new StringBuilder();
@@ -320,18 +327,22 @@ final public class AOSH extends ShellInterpreter {
                                         for(String message : entry.getValue()) SB.append(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.validationFailedError", paramName, message)).append(eol);
                                     }
                                     err.print(SB.toString());
+                                    if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(RemoteException exc) {
                                     err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.RemoteException", command, exc.getMessage()));
+                                    if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(RuntimeException exc) {
                                     err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.RuntimeException", command, exc.getMessage()));
+                                    if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 }
                             }
                         }
                     } catch(IllegalArgumentException exc) {
                         err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.commandNotFound", command));
+                        if(STACK_TRACES) exc.printStackTrace(err);
                         err.flush();
                     }
                 }
@@ -380,10 +391,12 @@ final public class AOSH extends ShellInterpreter {
             System.exit(0);
         } catch(LoginException exc) {
             err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.main.LoginException", exc.getMessage()));
+            if(STACK_TRACES) exc.printStackTrace(err);
             err.flush();
             System.exit(1);
         } catch(IOException exc) {
             err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.main.IOException", exc.getMessage()));
+            if(STACK_TRACES) exc.printStackTrace(err);
             err.flush();
             System.exit(2);
         }
@@ -734,6 +747,7 @@ final public class AOSH extends ShellInterpreter {
                             out.flush();
                         } catch(IllegalArgumentException exc3) {
                             err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidParameterValue", BuiltIn.help, "object", args[1]));
+                            if(STACK_TRACES) exc3.printStackTrace(err);
                             err.flush();
                         }
                     }
@@ -783,6 +797,7 @@ final public class AOSH extends ShellInterpreter {
                             }
                         } catch(IllegalArgumentException exc3) {
                             err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidParameterValue", BuiltIn.help, "object", args[1]));
+                            if(STACK_TRACES) exc3.printStackTrace(err);
                             err.flush();
                         }
                     }
@@ -810,6 +825,7 @@ final public class AOSH extends ShellInterpreter {
                 }
             } catch(NumberFormatException nfe) {
                 err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidLoopCount", BuiltIn.repeat, args[1]));
+                if(STACK_TRACES) nfe.printStackTrace(err);
                 err.flush();
             }
         } else {
@@ -832,12 +848,14 @@ final public class AOSH extends ShellInterpreter {
                         }
                     } catch(NumberFormatException nfe) {
                         err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidTimeInterval", BuiltIn.sleep, args[c]));
+                        if(STACK_TRACES) nfe.printStackTrace(err);
                         err.flush();
                     }
                 }
             } catch(InterruptedException ie) {
                 status="Interrupted";
                 err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.interrupted", BuiltIn.sleep));
+                if(STACK_TRACES) ie.printStackTrace(err);
                 err.flush();
             }
         } else {
@@ -870,6 +888,7 @@ final public class AOSH extends ShellInterpreter {
                 ).run();
             } catch(LoginException exc) {
                 err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.LoginException", BuiltIn.su, exc.getMessage()));
+                if(STACK_TRACES) exc.printStackTrace(err);
                 err.flush();
             }
         } else {

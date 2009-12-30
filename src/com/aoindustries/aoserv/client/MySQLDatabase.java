@@ -5,23 +5,10 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.BufferManager;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.List;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>MySQLDatabase</code> corresponds to a unique MySQL table
@@ -33,32 +20,24 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> implements Removable, Dumpable, JdbcProvider {
+final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_MYSQL_SERVER=2,
-        COLUMN_ACCOUNTING=3
-    ;
-    static final String COLUMN_NAME_name = "name";
-    static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The classname of the JDBC driver used for the <code>MySQLDatabase</code>.
      */
     public static final String
         REDHAT_JDBC_DRIVER="com.mysql.jdbc.Driver",
-        MANDRAKE_JDBC_DRIVER="com.mysql.jdbc.Driver",
         CENTOS_JDBC_DRIVER="com.mysql.jdbc.Driver"
     ;
     
     /**
      * The URL for MySQL JDBC documentation.
-     * TODO: put the Mandrake documentation on http://www.aoindustries.com/docs/
      */
     public static final String
         REDHAT_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
-        MANDRAKE_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
         CENTOS_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html"
     ;
 
@@ -76,11 +55,85 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
      * A special database that is never removed.
      */
     public static final String INFORMATION_SCHEMA="information_schema";
+    // </editor-fold>
 
-    String name;
-    int mysql_server;
-    String accounting;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String name;
+    final private int mysql_server;
+    final private String accounting;
 
+    public MySQLDatabase(MySQLDatabaseService<?,?> service, int pkey, String name, int mysql_server, String accounting) {
+        super(service, pkey);
+        this.name = name;
+        this.mysql_server = mysql_server;
+        this.accounting = accounting.intern();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(MySQLDatabase other) throws RemoteException {
+        int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
+        if(diff!=0) return diff;
+        return mysql_server==other.mysql_server ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="a unique, generated primary key")
+    public int getPkey() {
+        return key;
+    }
+
+    @SchemaColumn(order=1, name="name", description="the name of the database")
+    public String getName() {
+        return name;
+    }
+
+    @SchemaColumn(order=2, name="mysql_server", description="the pkey of the server that this database is hosted on")
+    public MySQLServer getMySQLServer() throws RemoteException {
+        return getService().getConnector().getMysqlServers().get(mysql_server);
+    }
+
+    @SchemaColumn(order=3, name="accounting", description="the business that this database is part of")
+    public Business getBusiness() throws RemoteException {
+        return getService().getConnector().getBusinesses().get(accounting);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getMySQLServer(),
+            getBusiness()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getMySQLDBUsers()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) {
+        return name;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
+        return getService().getConnector().getMysqlDBUsers().getMySQLDBUsers(this);
+    }*/
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /*
     public int addMySQLDBUser(
         MySQLUser mu,
         boolean canSelect,
@@ -101,7 +154,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         boolean canEvent,
         boolean canTrigger
     ) throws IOException, SQLException {
-        return table.connector.getMysqlDBUsers().addMySQLDBUser(
+        return getService().getConnector().getMysqlDBUsers().addMySQLDBUser(
             this,
             mu,
             canSelect,
@@ -129,7 +182,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public void dump(final Writer out) throws IOException, SQLException {
-        table.connector.requestUpdate(
+        getService().getConnector().requestUpdate(
             false,
             new AOServConnector.UpdateRequest() {
                 public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
@@ -138,24 +191,6 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
                 }
 
                 public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
-                    /*int code;
-                    byte[] buff=BufferManager.getBytes();
-                    try {
-                        char[] chars=BufferManager.getChars();
-                        try {
-                            while((code=masterIn.readByte())==AOServProtocol.NEXT) {
-                                int len=masterIn.readShort();
-                                masterIn.readFully(buff, 0, len);
-                                for(int c=0;c<len;c++) chars[c]=(char)buff[c];
-                                out.write(chars, 0, len);
-                            }
-                        } finally {
-                            BufferManager.release(chars);
-                        }
-                    } finally {
-                        BufferManager.release(buff);
-                    }
-                    if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);*/
                     Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8");
                     try {
                         char[] chars=BufferManager.getChars();
@@ -178,20 +213,9 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         );
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return name;
-            case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
-            case COLUMN_ACCOUNTING: return accounting;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
     public String getJdbcDriver() throws SQLException, IOException {
         int osv=getMySQLServer().getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
-            case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DRIVER;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
             case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: return CENTOS_JDBC_DRIVER;
             default : throw new SQLException("Unsupported OperatingSystemVersion: "+osv);
@@ -225,62 +249,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public MySQLDBUser getMySQLDBUser(MySQLUser mu) throws IOException, SQLException {
-    	return table.connector.getMysqlDBUsers().getMySQLDBUser(this, mu);
-    }
-
-    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
-        return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
-    }
-
-    //public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-    //    return table.connector.getMysqlDBUsers().getMySQLUsers(this);
-    //}
-
-    public String getName() {
-        return name;
-    }
-
-    public Business getBusiness() throws SQLException, IOException {
-        Business obj=table.connector.getBusinesses().get(accounting);
-        if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
-        return obj;
-    }
-
-    public MySQLServer getMySQLServer() throws SQLException, IOException {
-        MySQLServer obj=table.connector.getMysqlServers().get(mysql_server);
-        if(obj==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
-        return obj;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.MYSQL_DATABASES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        name=result.getString(2);
-        mysql_server=result.getInt(3);
-        accounting=result.getString(4);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        name=in.readUTF();
-        mysql_server=in.readCompressedInt();
-        accounting=in.readUTF().intern();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getMySQLServer(),
-            getBusiness()
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getMySQLDBUsers()
-        );
+    	return getService().getConnector().getMysqlDBUsers().getMySQLDBUser(this, mu);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
@@ -297,31 +266,14 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     }
 
     public void remove() throws IOException, SQLException {
-    	table.connector.requestUpdateIL(
+    	getService().getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DATABASES,
             pkey
     	);
     }
-
-    @Override
-    String toStringImpl(Locale userLocale) {
-        return name;
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeUTF(name);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
-        else out.writeCompressedInt(mysql_server);
-        out.writeUTF(accounting);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeShort(0);
-            out.writeShort(7);
-        }
-    }
-
+*/
     public enum Engine {
         CSV,
         MyISAM,
@@ -330,7 +282,9 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         MEMORY
     }
 
-    public static class TableStatus {
+    public static class TableStatus implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         public enum RowFormat {
             Compact,
@@ -404,128 +358,74 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             this.comment = comment;
         }
 
-        /**
-         * @return the name
-         */
         public String getName() {
             return name;
         }
 
-        /**
-         * @return the engine
-         */
         public Engine getEngine() {
             return engine;
         }
 
-        /**
-         * @return the version
-         */
         public Integer getVersion() {
             return version;
         }
 
-        /**
-         * @return the rowFormat
-         */
         public RowFormat getRowFormat() {
             return rowFormat;
         }
 
-        /**
-         * @return the rows
-         */
         public Long getRows() {
             return rows;
         }
 
-        /**
-         * @return the avgRowLength
-         */
         public Long getAvgRowLength() {
             return avgRowLength;
         }
 
-        /**
-         * @return the dataLength
-         */
         public Long getDataLength() {
             return dataLength;
         }
 
-        /**
-         * @return the maxDataLength
-         */
         public Long getMaxDataLength() {
             return maxDataLength;
         }
 
-        /**
-         * @return the indexLength
-         */
         public Long getIndexLength() {
             return indexLength;
         }
 
-        /**
-         * @return the dataFree
-         */
         public Long getDataFree() {
             return dataFree;
         }
 
-        /**
-         * @return the autoIncrement
-         */
         public Long getAutoIncrement() {
             return autoIncrement;
         }
 
-        /**
-         * @return the createTime
-         */
         public String getCreateTime() {
             return createTime;
         }
 
-        /**
-         * @return the updateTime
-         */
         public String getUpdateTime() {
             return updateTime;
         }
 
-        /**
-         * @return the checkTime
-         */
         public String getCheckTime() {
             return checkTime;
         }
 
-        /**
-         * @return the collation
-         */
         public Collation getCollation() {
             return collation;
         }
 
-        /**
-         * @return the checksum
-         */
         public String getChecksum() {
             return checksum;
         }
 
-        /**
-         * @return the createOptions
-         */
         public String getCreateOptions() {
             return createOptions;
         }
 
-        /**
-         * @return the comment
-         */
         public String getComment() {
             return comment;
         }
@@ -534,15 +434,17 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     /**
      * Gets the table status on the master server.
      */
+/* TODO
     public List<TableStatus> getTableStatus() throws IOException, SQLException {
         return getTableStatus(null);
     }
-
+*/
     /**
      * Gets the table status on the master server or provided slave server.
      */
+/* TODO
     public List<TableStatus> getTableStatus(final FailoverMySQLReplication mysqlSlave) throws IOException, SQLException {
-        return table.connector.requestResult(
+        return getService().getConnector().requestResult(
             true,
             new AOServConnector.ResultRequest<List<TableStatus>>() {
                 private List<TableStatus> result;
@@ -595,8 +497,10 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             }
         );
     }
+    */
+    public static class CheckTableResult implements Serializable {
 
-    public static class CheckTableResult {
+        private static final long serialVersionUID = 1L;
 
         public enum MsgType {
             status,
@@ -625,30 +529,18 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             this.msgText = msgText;
         }
 
-        /**
-         * @return the table
-         */
         public String getTable() {
             return table;
         }
 
-        /**
-         * @return the duration
-         */
         public long getDuration() {
             return duration;
         }
 
-        /**
-         * @return the msgType
-         */
         public MsgType getMsgType() {
             return msgType;
         }
 
-        /**
-         * @return the msgText
-         */
         public String getMsgText() {
             return msgText;
         }
@@ -657,16 +549,18 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
     /**
      * Gets the table status on the master server.
      */
+/* TODO
     public List<CheckTableResult> checkTables(final Collection<String> tableNames) throws IOException, SQLException {
         return checkTables(null, tableNames);
     }
-
+*/
     /**
      * Gets the table status on the master server or provided slave server.
      */
+/* TODO
     public List<CheckTableResult> checkTables(final FailoverMySQLReplication mysqlSlave, final Collection<String> tableNames) throws IOException, SQLException {
         if(tableNames.isEmpty()) return Collections.emptyList();
-        return table.connector.requestResult(
+        return getService().getConnector().requestResult(
             true,
             new AOServConnector.ResultRequest<List<CheckTableResult>>() {
                 private List<CheckTableResult> result;
@@ -714,11 +608,12 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
             }
         );
     }
-
+*/
     /**
      * Determines if a name is safe for use as a table/column name, the name identifier
      * should be enclosed with backticks (`).
      */
+/* TODO
     public static boolean isSafeName(String name) {
         // Must be a-z first, then a-z or 0-9 or _ or -
         int len = name.length();
@@ -733,10 +628,12 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         }
 
         // Also must not be a reserved word
-        /*int size=reservedWords.size();
-        for(int c=0;c<size;c++) {
-            if(name.equalsIgnoreCase(reservedWords.get(c).toString())) return false;
-    	}*/
+        //int size=reservedWords.size();
+        //for(int c=0;c<size;c++) {
+        //    if(name.equalsIgnoreCase(reservedWords.get(c).toString())) return false;
+    	//}
     	return true;
     }
+    */
+    // </editor-fold>
 }

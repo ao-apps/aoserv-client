@@ -36,9 +36,9 @@ final public class Technology extends AOServObjectIntegerKey<Technology> {
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(Technology other) throws RemoteException {
-        int diff = getTechnologyName().compareTo(other.getTechnologyName());
+        int diff = name.equals(other.name) ? 0 : getTechnologyName().compareTo(other.getTechnologyName());
         if(diff!=0) return diff;
-        return getTechnologyClass().compareTo(other.getTechnologyClass());
+        return clazz.equals(other.clazz) ? 0 : getTechnologyClass().compareTo(other.getTechnologyClass());
     }
     // </editor-fold>
 

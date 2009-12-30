@@ -16,7 +16,8 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class ResourceType extends AOServObjectStringKey<ResourceType> {
+// TODO: Make all AOServObject be a BeanFactory
+final public class ResourceType extends AOServObjectStringKey<ResourceType> implements BeanFactory<com.aoindustries.aoserv.client.beans.ResourceType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -51,8 +52,8 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public ResourceType(ResourceTypeService<?,?> table, String name) {
-        super(table, name);
+    public ResourceType(ResourceTypeService<?,?> service, String name) {
+        super(service, name);
     }
     // </editor-fold>
     
@@ -63,6 +64,12 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> {
     @SchemaColumn(order=0, name="name", unique=true, description="the name of the resource type")
     public String getName() {
         return key;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.ResourceType getBean() {
+        return new com.aoindustries.aoserv.client.beans.ResourceType(key);
     }
     // </editor-fold>
 

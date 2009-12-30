@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -44,10 +45,10 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(DisableLog other) {
+    protected int compareToImpl(DisableLog other) throws RemoteException {
         int diff = time.compareTo(other.time);
         if(diff!=0) return diff;
-        diff = compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
+        diff = accounting.equals(other.accounting) ? 0 : getBusiness().compareTo(other.getBusiness());
         if(diff!=0) return diff;
         return compare(key, other.key);
     }
@@ -65,10 +66,8 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
     }
 
     @SchemaColumn(order=2, name="accounting", description="the business whos resources are being disabled")
-    public Business getBusiness() throws SQLException, IOException {
-        Business bu=getService().getConnector().getBusinesses().get(accounting);
-        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
-        return bu;
+    public Business getBusiness() throws RemoteException {
+        return getService().getConnector().getBusinesses().get(accounting);
     }
 
     /**

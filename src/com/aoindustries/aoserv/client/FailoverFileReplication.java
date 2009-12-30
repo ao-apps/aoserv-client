@@ -65,9 +65,9 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(FailoverFileReplication other) throws RemoteException {
-        int diff = getServer().compareTo(other.getServer());
+        int diff = server==other.server ? 0 : getServer().compareTo(other.getServer());
         if(diff!=0) return diff;
-        return getBackupPartition().compareTo(other.getBackupPartition());
+        return backup_partition==other.backup_partition ? 0 : getBackupPartition().compareTo(other.getBackupPartition());
     }
     // </editor-fold>
 

@@ -25,7 +25,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator extends AOServObjectStringKey<BusinessAdministrator> /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
+final public class BusinessAdministrator extends AOServObjectStringKey<BusinessAdministrator> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessAdministrator> /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -91,9 +91,9 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     final private boolean isPreferred;
     final private boolean isPrivate;
     final private Timestamp created;
-    final private String work_phone;
-    final private String home_phone;
-    final private String cell_phone;
+    final private String workPhone;
+    final private String homePhone;
+    final private String cellPhone;
     final private String fax;
     final private String email;
     final private String address1;
@@ -102,9 +102,9 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     final private String state;
     final private String country;
     final private String zip;
-    final private int disable_log;
-    final private boolean can_switch_users;
-    final private String support_code;
+    final private int disableLog;
+    final private boolean canSwitchUsers;
+    final private String supportCode;
 
     public BusinessAdministrator(
         BusinessAdministratorService<?,?> service,
@@ -116,9 +116,9 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         boolean isPreferred,
         boolean isPrivate,
         Timestamp created,
-        String work_phone,
-        String home_phone,
-        String cell_phone,
+        String workPhone,
+        String homePhone,
+        String cellPhone,
         String fax,
         String email,
         String address1,
@@ -127,9 +127,9 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         String state,
         String country,
         String zip,
-        int disable_log,
-        boolean can_switch_users,
-        String support_code
+        int disableLog,
+        boolean canSwitchUsers,
+        String supportCode
     ) {
         super(service, username);
         this.password = password;
@@ -139,9 +139,9 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         this.isPreferred = isPreferred;
         this.isPrivate = isPrivate;
         this.created = created;
-        this.work_phone = work_phone;
-        this.home_phone = home_phone;
-        this.cell_phone = cell_phone;
+        this.workPhone = workPhone;
+        this.homePhone = homePhone;
+        this.cellPhone = cellPhone;
         this.fax = fax;
         this.email = email;
         this.address1 = address1;
@@ -150,9 +150,9 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         this.state = state;
         this.country = StringUtility.intern(country);
         this.zip = zip;
-        this.disable_log = disable_log;
-        this.can_switch_users = can_switch_users;
-        this.support_code = support_code;
+        this.disableLog = disableLog;
+        this.canSwitchUsers = canSwitchUsers;
+        this.supportCode = supportCode;
     }
     // </editor-fold>
     
@@ -201,17 +201,17 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     @SchemaColumn(order=8, name="work_phone", description="the work phone number (if different than business)")
     public String getWorkPhone() {
-    	return work_phone;
+    	return workPhone;
     }
 
     @SchemaColumn(order=9, name="home_phone", description="the home phone number")
     public String getHomePhone() {
-    	return home_phone;
+    	return homePhone;
     }
 
     @SchemaColumn(order=10, name="cell_phone", description="the cellular phone number")
     public String getCellPhone() {
-    	return cell_phone;
+    	return cellPhone;
     }
 
     @SchemaColumn(order=11, name="fax", description="the fax number (if different than business)")
@@ -259,20 +259,49 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     @SchemaColumn(order=19, name="disable_log", description="indicates that this account is disabled")
     public DisableLog getDisableLog() throws RemoteException {
-        if(disable_log==-1) return null;
-        DisableLog obj = getService().getConnector().getDisableLogs().get(disable_log);
-        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disable_log);
+        if(disableLog==-1) return null;
+        DisableLog obj = getService().getConnector().getDisableLogs().get(disableLog);
+        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disableLog);
         return obj;
     }
 
     @SchemaColumn(order=20, name="can_switch_users", description="allows this person to switch users to any subaccounts")
     public boolean canSwitchUsers() {
-        return can_switch_users;
+        return canSwitchUsers;
     }
 
     @SchemaColumn(order=21, name="support_code", unique=true, description="used to authenticate for email-based supprt")
     public String getSupportCode() {
-        return support_code;
+        return supportCode;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
+        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(
+            key,
+            password,
+            name,
+            title,
+            birthday,
+            isPreferred,
+            isPrivate,
+            created,
+            workPhone,
+            homePhone,
+            cellPhone,
+            fax,
+            email,
+            address1,
+            address2,
+            city,
+            state,
+            country,
+            zip,
+            disableLog,
+            canSwitchUsers,
+            supportCode
+        );
     }
     // </editor-fold>
 

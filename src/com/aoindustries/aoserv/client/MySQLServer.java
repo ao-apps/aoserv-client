@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -78,7 +79,10 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> {
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(MySQLServer other) throws RemoteException {
-        int diff = getAoServerResource().getAoServer().compareTo(other.getAoServerResource().getAoServer());
+        if(key==other.key) return 0;
+        AOServerResource aoResource1 = getAoServerResource();
+        AOServerResource aoResource2 = other.getAoServerResource();
+        int diff = aoResource1.ao_server==aoResource2.ao_server ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
         if(diff!=0) return diff;
         return compareIgnoreCaseConsistentWithEquals(name, other.name);
     }
@@ -241,8 +245,10 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> {
     public void stopMySQL() throws IOException, SQLException {
         getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_MYSQL, pkey);
     }
+    */
+    final public static class MasterStatus implements Serializable {
 
-    final public static class MasterStatus {
+        private static final long serialVersionUID = 1L;
 
         final private String file;
         final private String position;
@@ -263,7 +269,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> {
             return position;
         }
     }
-    */
+
     /**
      * Gets the master status or <code>null</code> if no master status provided by MySQL.  If any error occurs, throws either
      * IOException or SQLException.

@@ -13,6 +13,7 @@ import com.aoindustries.security.LoginException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Properties;
@@ -39,7 +40,7 @@ final public class AOServClientConfiguration {
             Properties newProps = new Properties();
             if (props == null) {
                 InputStream in = AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties");
-                if(in==null) throw new IOException("Unable to find configuration: aoserv-client.properties");
+                if(in==null) throw new IOException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToFindConfiguration", "aoserv-client.properties"));
                 try {
                     in = new BufferedInputStream(in);
                     newProps.load(in);
@@ -76,15 +77,15 @@ final public class AOServClientConfiguration {
     /**
      * Gets the server hostname.
      */
-    static String getHostname() throws IOException {
-        return getProperty("aoserv.client.hostname");
+    static String getRmiHostname() throws IOException {
+        return getProperty("aoserv.client.rmi.hostname");
     }
 
     /**
      * Gets the local IP to connect from or <code>null</code> if not configured.
      */
-    static String getLocalIp() throws IOException {
-        String S = getProperty("aoserv.client.local_ip");
+    static String getRmiLocalIp() throws IOException {
+        String S = getProperty("aoserv.client.rmi.local_ip");
         if(
             S==null
             || (S=S.trim()).length()==0
@@ -95,17 +96,24 @@ final public class AOServClientConfiguration {
     /**
      * Gets the server port.
      */
-    static int getPort() throws IOException {
-        return Integer.parseInt(getProperty("aoserv.client.port"));
+    static int getRmiPort() throws IOException {
+        return Integer.parseInt(getProperty("aoserv.client.rmi.port"));
     }
 
     /**
      * Gets the useSsl flag.  Defaults to true.
      */
-    static boolean getUseSsl() throws IOException {
-        return !"false".equals(getProperty("aoserv.client.useSsl"));
+    static boolean getRmiUseSsl() throws IOException {
+        return !"false".equals(getProperty("aoserv.client.rmi.useSsl"));
     }
     
+    /**
+     * Gets the soap target endpoint.  If empty or missing, will use the default.
+     */
+    static String getSoapTargetEndpoint() throws IOException {
+        return getProperty("aoserv.client.soap.targetEndpoint");
+    }
+
     /**
      * Gets the retry flag.  Defaults to true.
      */
@@ -183,20 +191,50 @@ final public class AOServClientConfiguration {
         synchronized(factoryLock) {
             if(factory==null) {
                 try {
-                    String trustStorePath = getTrustStorePath();
-                    if(trustStorePath!=null && trustStorePath.length()>0) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
-                    String trustStorePassword = getTrustStorePassword();
-                    if(trustStorePassword!=null && trustStorePassword.length()>0) System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
-                    AOServConnectorFactory<?,?> newFactory = new RmiClientConnectorFactory(
-                        getHostname(),
-                        getPort(),
-                        getLocalIp(),
-                        getUseSsl()
-                    );
-                    if(getRetry()) newFactory = new RetryConnectorFactory(getRetryTimeout(), getRetryTimeoutUnit(), newFactory);
-                    if(getUseCache()) newFactory = new CachedConnectorFactory(newFactory);
-                    if(getNoSwing()) newFactory = new NoSwingConnectorFactory(newFactory);
-                    factory = newFactory;
+                    String protocol = getProtocol();
+                    if(protocol.equalsIgnoreCase(Protocol.RMI)) {
+                        String trustStorePath = getTrustStorePath();
+                        if(trustStorePath!=null && trustStorePath.length()>0) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+                        String trustStorePassword = getTrustStorePassword();
+                        if(trustStorePassword!=null && trustStorePassword.length()>0) System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
+                        AOServConnectorFactory<?,?> newFactory = new RmiClientConnectorFactory(
+                            getRmiHostname(),
+                            getRmiPort(),
+                            getRmiLocalIp(),
+                            getRmiUseSsl()
+                        );
+                        if(getRetry()) newFactory = new RetryConnectorFactory(getRetryTimeout(), getRetryTimeoutUnit(), newFactory);
+                        if(getUseCache()) newFactory = new CachedConnectorFactory(newFactory);
+                        if(getNoSwing()) newFactory = new NoSwingConnectorFactory(newFactory);
+                        factory = newFactory;
+                    } else if(protocol.equalsIgnoreCase(Protocol.SOAP)) {
+                        // Load through reflection to avoid dependency relationship
+                        final String classname = "com.aoindustries.aoserv.client.ws.WsConnectorFactory";
+                        try {
+                            Class<? extends AOServConnectorFactory> clazz = Class.forName(classname).asSubclass(AOServConnectorFactory.class);
+                            String targetEndpoint = getSoapTargetEndpoint();
+                            if(targetEndpoint==null || targetEndpoint.length()==0) {
+                                // Default constructor
+                                factory = clazz.getConstructor().newInstance();
+                            } else {
+                                factory = clazz.getConstructor(String.class).newInstance(targetEndpoint);
+                            }
+                        } catch(ClassNotFoundException err) {
+                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                        } catch(ClassCastException err) {
+                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                        } catch(NoSuchMethodException err) {
+                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                        } catch(InstantiationException err) {
+                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                        } catch(IllegalAccessException err) {
+                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                        } catch(InvocationTargetException err) {
+                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                        }
+                    } else {
+                        throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unsupportedProtocol", protocol));
+                    }
                 } catch(IOException err) {
                     throw new RemoteException(err.getMessage(), err);
                 }

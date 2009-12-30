@@ -5,13 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
+import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -60,11 +55,11 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(FailoverMySQLReplication other) throws RemoteException {
-        int diff = getMySQLServer().compareTo(other.getMySQLServer());
+        int diff = mysql_server==other.mysql_server ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
         if(diff!=0) return diff;
-        diff = getAOServer().compareTo(other.getAOServer());
+        diff = ao_server==other.ao_server ? 0 : getAOServer().compareTo(other.getAOServer());
         if(diff!=0) return diff;
-        return getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+        return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
     }
     // </editor-fold>
 
@@ -74,7 +69,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
         return key;
     }
 
-    @SchemaColumn(order=1, name="ao_server", description="the ao_server the receives the replication")
+    @SchemaColumn(order=1, name="ao_server", description="the ao_server that receives the replication")
     public AOServer getAOServer() throws RemoteException {
         if(ao_server==-1) return null;
         return getService().getConnector().getAoServers().get(ao_server);
@@ -113,6 +108,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
             getAOServer(),
@@ -131,8 +127,9 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
-    /*
-    final public static class SlaveStatus {
+    final public static class SlaveStatus implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         final private String slaveIOState;
         final private String masterLogFile;
@@ -237,7 +234,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
             return secondsBehindMaster;
         }
     }
-    */
+
     /**
      * Gets the slave status or <code>null</code> if no slave status provided by MySQL.  If any error occurs, throws either
      * IOException or SQLException.

@@ -48,7 +48,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
     protected int compareToImpl(Resource other) throws RemoteException {
         int diff = compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
         if(diff!=0) return diff;
-        diff = getResourceType().compareTo(other.getResourceType());
+        diff = resource_type.equals(other.resource_type) ? 0 : getResourceType().compareTo(other.getResourceType());
         if(diff!=0) return diff;
         return compare(key, other.key);
     }

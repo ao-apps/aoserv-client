@@ -3,11 +3,12 @@ aoserv.client.truststore.path=
 aoserv.client.truststore.password=
 
 # Connection Parameters
-aoserv.client.protocol=RMI
-aoserv.client.hostname=master.aoindustries.com
-aoserv.client.local_ip=
-aoserv.client.port=4583
-aoserv.client.useSsl=true
+aoserv.client.protocol=rmi
+aoserv.client.rmi.hostname=master.aoindustries.com
+aoserv.client.rmi.local_ip=
+aoserv.client.rmi.port=1099
+aoserv.client.rmi.useSsl=true
+aoserv.client.soap.targetEndpoint=
 
 # Will retry failed operations when enabled.
 # Defaults to true.

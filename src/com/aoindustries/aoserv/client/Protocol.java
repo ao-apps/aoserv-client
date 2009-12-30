@@ -45,6 +45,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> {
         RMI="RMI",
         SIEVE="sieve",
         SIMAP="SIMAP",
+        SOAP="SOAP",
         SPOP3="SPOP3",
         SSH="SSH",
         SMTP="SMTP",

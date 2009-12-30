@@ -71,13 +71,13 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> /*implements 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(NetBind other) throws RemoteException {
-        // TODO: int diff = getBusinessServer().compareTo(other.getBusinessServer());
+        // TODO: int diff = business_server==other.business_server ? 0 : getBusinessServer().compareTo(other.getBusinessServer());
         // TODO: if(diff!=0) return diff;
-        // TODO: diff = getIPAddress().compareTo(other.getIPAddress());
+        // TODO: diff = ip_address==other.ip_address ? 0 : getIPAddress().compareTo(other.getIPAddress());
         // TODO: if(diff!=0) return diff;
         int diff = compare(port, other.port);
         if(diff!=0) return diff;
-        return getNetProtocol().compareTo(other.getNetProtocol());
+        return net_protocol.equals(other.net_protocol) ? 0 : getNetProtocol().compareTo(other.getNetProtocol());
     }
     // </editor-fold>
 

@@ -194,10 +194,10 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     MasterServerService<C,F> getMasterServers() throws RemoteException;
     MasterUserService<C,F> getMasterUsers() throws RemoteException;
     MonthlyChargeService<C,F> getMonthlyCharges() throws RemoteException;
-    MySQLDatabaseService<C,F> getMysqlDatabases() throws RemoteException;
-    MySQLDBUserService<C,F> getMysqlDBUsers() throws RemoteException;
-    MySQLReservedWordService<C,F> getMysqlReservedWords() throws RemoteException;
      */
+    MySQLDatabaseService<C,F> getMysqlDatabases() throws RemoteException;
+    // TODO: MySQLDBUserService<C,F> getMysqlDBUsers() throws RemoteException;
+    // TODO: MySQLReservedWordService<C,F> getMysqlReservedWords() throws RemoteException;
     MySQLServerService<C,F> getMysqlServers() throws RemoteException;
     /* TODO
     MySQLUserService<C,F> getMysqlUsers() throws RemoteException;
