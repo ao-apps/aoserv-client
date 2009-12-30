@@ -22,7 +22,9 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
+import com.aoindustries.aoserv.client.MySQLReservedWordService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
@@ -193,8 +195,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryMonthlyChargeService monthlyCharges;
      */
     final RetryMySQLDatabaseService mysqlDatabases;
-    // TODO: final RetryMySQLDBUserService mysqlDBUsers;
-    // TODO: final RetryMySQLReservedWordService mysqlReservedWords;
+    final RetryMySQLDBUserService mysqlDBUsers;
+    final RetryMySQLReservedWordService mysqlReservedWords;
     final RetryMySQLServerService mysqlServers;
     final RetryMySQLUserService mysqlUsers;
     final RetryNetBindService netBinds;
@@ -396,8 +398,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         monthlyCharges = new RetryMonthlyChargeService(this);
          */
         mysqlDatabases = new RetryMySQLDatabaseService(this);
-        // TODO: mysqlDBUsers = new RetryMySQLDBUserService(this);
-        // TODO: mysqlReservedWords = new RetryMySQLReservedWordService(this);
+        mysqlDBUsers = new RetryMySQLDBUserService(this);
+        mysqlReservedWords = new RetryMySQLReservedWordService(this);
         mysqlServers = new RetryMySQLServerService(this);
         mysqlUsers = new RetryMySQLUserService(this);
         netBinds = new RetryNetBindService(this);
@@ -864,8 +866,13 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return mysqlDatabases;
     }
 
-    // TODO: public MySQLDBUserService<RetryConnector,RetryConnectorFactory> getMysqlDBUsers();
-    // TODO: public MySQLReservedWordService<RetryConnector,RetryConnectorFactory> getMysqlReservedWords();
+    public MySQLDBUserService<RetryConnector,RetryConnectorFactory> getMysqlDBUsers() {
+        return mysqlDBUsers;
+    }
+
+    public MySQLReservedWordService<RetryConnector,RetryConnectorFactory> getMysqlReservedWords() {
+        return mysqlReservedWords;
+    }
 
     public MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers() {
         return mysqlServers;

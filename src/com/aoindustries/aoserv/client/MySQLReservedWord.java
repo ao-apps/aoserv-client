@@ -5,9 +5,6 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
 
 /**
  * A <code>MySQLReservedWord</code> cannot be used for database or
@@ -15,37 +12,30 @@ import java.sql.*;
  *
  * @see  MySQLDatabase
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class MySQLReservedWord extends GlobalObjectStringKey<MySQLReservedWord> {
+final public class MySQLReservedWord extends AOServObjectStringKey<MySQLReservedWord> implements BeanFactory<com.aoindustries.aoserv.client.beans.MySQLReservedWord> {
 
-    static final int COLUMN_WORD=0;
-    static final String COLUMN_WORD_name = "word";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_WORD) return pkey;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public MySQLReservedWord(MySQLReservedWordService<?,?> service, String word) {
+        super(service, word);
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MYSQL_RESERVED_WORDS;
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="word", unique=true, description="the word that may not be used")
     public String getWord() {
-	return pkey;
+    	return key;
     }
+    // </editor-fold>
 
-    public void init(ResultSet results) throws SQLException {
-	pkey=results.getString(1);
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.MySQLReservedWord getBean() {
+        return new com.aoindustries.aoserv.client.beans.MySQLReservedWord(key);
     }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-    }
+    // </editor-fold>
 }

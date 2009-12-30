@@ -5,14 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A <code>MySQLDBUser</code> grants a <code>MySQLUser</code>
@@ -24,223 +18,224 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> implements Removable {
+final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> implements BeanFactory<com.aoindustries.aoserv.client.beans.MySQLDBUser> /*, Removable*/ {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_MYSQL_DATABASE=1,
-        COLUMN_MYSQL_USER=2
-    ;
-    static final String COLUMN_MYSQL_DATABASE_name = "mysql_database";
-    static final String COLUMN_MYSQL_USER_name = "mysql_user";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    int mysql_database;
-    int mysql_user;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int mysqlDatabase;
+    final private int mysqlUser;
+    final private boolean selectPriv;
+    final private boolean insertPriv;
+    final private boolean updatePriv;
+    final private boolean deletePriv;
+    final private boolean createPriv;
+    final private boolean dropPriv;
+    final private boolean grantPriv;
+    final private boolean referencesPriv;
+    final private boolean indexPriv;
+    final private boolean alterPriv;
+    final private boolean createTmpTablePriv;
+    final private boolean lockTablesPriv;
+    final private boolean createViewPriv;
+    final private boolean showViewPriv;
+    final private boolean createRoutinePriv;
+    final private boolean alterRoutinePriv;
+    final private boolean executePriv;
+    final private boolean eventPriv;
+    final private boolean triggerPriv;
 
-    private boolean
-        select_priv,
-        insert_priv,
-        update_priv,
-        delete_priv,
-        create_priv,
-        drop_priv,
-        grant_priv,
-        references_priv,
-        index_priv,
-        alter_priv,
-        create_tmp_table_priv,
-        lock_tables_priv,
-        create_view_priv,
-        show_view_priv,
-        create_routine_priv,
-        alter_routine_priv,
-        execute_priv,
-        event_priv,
-        trigger_priv
-    ;
+    public MySQLDBUser(
+        MySQLDBUserService<?,?> service,
+        int pkey,
+        int mysqlDatabase,
+        int mysqlUser,
+        boolean selectPriv,
+        boolean insertPriv,
+        boolean updatePriv,
+        boolean deletePriv,
+        boolean createPriv,
+        boolean dropPriv,
+        boolean grantPriv,
+        boolean referencesPriv,
+        boolean indexPriv,
+        boolean alterPriv,
+        boolean createTmpTablePriv,
+        boolean lockTablesPriv,
+        boolean createViewPriv,
+        boolean showViewPriv,
+        boolean createRoutinePriv,
+        boolean alterRoutinePriv,
+        boolean executePriv,
+        boolean eventPriv,
+        boolean triggerPriv
+    ) {
+        super(service, pkey);
+        this.mysqlDatabase = mysqlDatabase;
+        this.mysqlUser = mysqlUser;
+        this.selectPriv = selectPriv;
+        this.insertPriv = insertPriv;
+        this.updatePriv = updatePriv;
+        this.deletePriv = deletePriv;
+        this.createPriv = createPriv;
+        this.dropPriv = dropPriv;
+        this.grantPriv = grantPriv;
+        this.referencesPriv = referencesPriv;
+        this.indexPriv = indexPriv;
+        this.alterPriv = alterPriv;
+        this.createTmpTablePriv = createTmpTablePriv;
+        this.lockTablesPriv = lockTablesPriv;
+        this.createViewPriv = createViewPriv;
+        this.showViewPriv = showViewPriv;
+        this.createRoutinePriv = createRoutinePriv;
+        this.alterRoutinePriv = alterRoutinePriv;
+        this.executePriv = executePriv;
+        this.eventPriv = eventPriv;
+        this.triggerPriv = triggerPriv;
+    }
+    // </editor-fold>
 
-    public boolean canAlter() {
-	return alter_priv;
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(MySQLDBUser other) throws RemoteException {
+        int diff = mysqlDatabase==other.mysqlDatabase ? 0 : getMysqlDatabase().compareTo(other.getMysqlDatabase());
+        if(diff!=0) return diff;
+        return mysqlUser==other.mysqlUser ? 0 : getMysqlUser().compareTo(other.getMysqlUser());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated primary key")
+    public int getPkey() {
+        return key;
     }
 
-    public boolean canCreateTempTable() {
-        return create_tmp_table_priv;
+    @SchemaColumn(order=1, name="mysql_database", description="the pkey in mysql_databases")
+    public MySQLDatabase getMysqlDatabase() throws RemoteException {
+    	return getService().getConnector().getMysqlDatabases().get(mysqlDatabase);
     }
 
-    public boolean canLockTables() {
-        return lock_tables_priv;
+    @SchemaColumn(order=2, name="mysql_user", description="the pkey in mysql_users")
+    public MySQLUser getMysqlUser() throws RemoteException {
+    	return getService().getConnector().getMysqlUsers().get(mysqlUser);
     }
 
-    public boolean canCreate() {
-	return create_priv;
-    }
-
-    public boolean canDelete() {
-	return delete_priv;
-    }
-
-    public boolean canDrop() {
-	return drop_priv;
-    }
-
-    public boolean canGrant() {
-	return grant_priv;
-    }
-
-    public boolean canIndex() {
-	return index_priv;
-    }
-
-    public boolean canInsert() {
-	return insert_priv;
-    }
-
-    public boolean canReference() {
-	return references_priv;
-    }
-
+    @SchemaColumn(order=3, name="select_priv", description="the SELECT privilege")
     public boolean canSelect() {
-	return select_priv;
+        return selectPriv;
     }
 
+    @SchemaColumn(order=4, name="insert_priv", description="the INSERT privilege")
+    public boolean canInsert() {
+        return insertPriv;
+    }
+
+    @SchemaColumn(order=5, name="update_priv", description="the UPDATE privilege")
     public boolean canUpdate() {
-	return update_priv;
+        return updatePriv;
     }
-    
+
+    @SchemaColumn(order=6, name="delete_priv", description="the DELETE privilege")
+    public boolean canDelete() {
+        return deletePriv;
+    }
+
+    @SchemaColumn(order=7, name="create_priv", description="the CREATE privilege")
+    public boolean canCreate() {
+        return createPriv;
+    }
+
+    @SchemaColumn(order=8, name="drop_priv", description="the DROP privilege")
+    public boolean canDrop() {
+        return dropPriv;
+    }
+
+    @SchemaColumn(order=9, name="grant_priv", description="the GRANT privilege")
+    public boolean canGrant() {
+        return grantPriv;
+    }
+
+    @SchemaColumn(order=10, name="references_priv", description="the REFERENCES privilege")
+    public boolean canReference() {
+        return referencesPriv;
+    }
+
+    @SchemaColumn(order=11, name="index_priv", description="the INDEX privilege")
+    public boolean canIndex() {
+        return indexPriv;
+    }
+
+    @SchemaColumn(order=12, name="alter_priv", description="the ALTER privilete")
+    public boolean canAlter() {
+    	return alterPriv;
+    }
+
+    @SchemaColumn(order=13, name="create_tmp_table_priv", description="the Create_tmp_table_priv")
+    public boolean canCreateTempTable() {
+        return createTmpTablePriv;
+    }
+
+    @SchemaColumn(order=14, name="lock_tables_priv", description="the Lock_tables_priv")
+    public boolean canLockTables() {
+        return lockTablesPriv;
+    }
+
+    @SchemaColumn(order=15, name="create_view_priv", description="the Create_view_priv")
     public boolean canCreateView() {
-        return create_view_priv;
+        return createViewPriv;
     }
-    
+
+    @SchemaColumn(order=16, name="show_view_priv", description="the Show_view_priv")
     public boolean canShowView() {
-        return show_view_priv;
+        return showViewPriv;
     }
-    
+
+    @SchemaColumn(order=17, name="create_routine_priv", description="the Create_routine_priv")
     public boolean canCreateRoutine() {
-        return create_routine_priv;
+        return createRoutinePriv;
     }
-    
+
+    @SchemaColumn(order=18, name="alter_routine_priv", description="the Alter_routine_priv")
     public boolean canAlterRoutine() {
-        return alter_routine_priv;
+        return alterRoutinePriv;
     }
-    
+
+    @SchemaColumn(order=19, name="execute_priv", description="the Execute_priv")
     public boolean canExecute() {
-        return execute_priv;
+        return executePriv;
     }
 
+    @SchemaColumn(order=20, name="event_priv", description="the Event_priv")
     public boolean canEvent() {
-        return event_priv;
+        return eventPriv;
     }
 
+    @SchemaColumn(order=21, name="trigger_priv", description="the Trigger_priv")
     public boolean canTrigger() {
-        return trigger_priv;
+        return triggerPriv;
     }
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return pkey;
-            case COLUMN_MYSQL_DATABASE: return mysql_database;
-            case COLUMN_MYSQL_USER: return mysql_user;
-            case 3: return select_priv;
-            case 4: return insert_priv;
-            case 5: return update_priv;
-            case 6: return delete_priv;
-            case 7: return create_priv;
-            case 8: return drop_priv;
-            case 9: return grant_priv;
-            case 10: return references_priv;
-            case 11: return index_priv;
-            case 12: return alter_priv;
-            case 13: return create_tmp_table_priv;
-            case 14: return lock_tables_priv;
-            case 15: return create_view_priv;
-            case 16: return show_view_priv;
-            case 17: return create_routine_priv;
-            case 18: return alter_routine_priv;
-            case 19: return execute_priv;
-            case 20: return event_priv;
-            case 21: return trigger_priv;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.MySQLDBUser getBean() {
+        return new com.aoindustries.aoserv.client.beans.MySQLDBUser(key, mysqlDatabase, mysqlUser, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, grantPriv, referencesPriv, indexPriv, alterPriv, createTmpTablePriv, lockTablesPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, executePriv, eventPriv, triggerPriv);
     }
+    // </editor-fold>
 
-    /**
-     * May be filtered.
-     */
-    public MySQLDatabase getMySQLDatabase() throws IOException, SQLException {
-    	return table.connector.getMysqlDatabases().get(mysql_database);
-    }
-
-    public MySQLUser getMySQLUser() throws IOException, SQLException {
-        // May be null due to filtering or a recently removed table
-    	return table.connector.getMysqlUsers().get(mysql_user);
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.MYSQL_DB_USERS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        mysql_database=result.getInt(2);
-        mysql_user=result.getInt(3);
-        select_priv=result.getBoolean(4);
-        insert_priv=result.getBoolean(5);
-        update_priv=result.getBoolean(6);
-        delete_priv=result.getBoolean(7);
-        create_priv=result.getBoolean(8);
-        drop_priv=result.getBoolean(9);
-        grant_priv=result.getBoolean(10);
-        references_priv=result.getBoolean(11);
-        index_priv=result.getBoolean(12);
-        alter_priv=result.getBoolean(13);
-        create_tmp_table_priv=result.getBoolean(14);
-        lock_tables_priv=result.getBoolean(15);
-        create_view_priv=result.getBoolean(16);
-        show_view_priv=result.getBoolean(17);
-        create_routine_priv=result.getBoolean(18);
-        alter_routine_priv=result.getBoolean(19);
-        execute_priv=result.getBoolean(20);
-        event_priv=result.getBoolean(21);
-        trigger_priv=result.getBoolean(22);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        mysql_database=in.readCompressedInt();
-        mysql_user=in.readCompressedInt();
-        select_priv=in.readBoolean();
-        insert_priv=in.readBoolean();
-        update_priv=in.readBoolean();
-        delete_priv=in.readBoolean();
-        create_priv=in.readBoolean();
-        drop_priv=in.readBoolean();
-        grant_priv=in.readBoolean();
-        references_priv=in.readBoolean();
-        index_priv=in.readBoolean();
-        alter_priv=in.readBoolean();
-        create_tmp_table_priv=in.readBoolean();
-        lock_tables_priv=in.readBoolean();
-        create_view_priv=in.readBoolean();
-        show_view_priv=in.readBoolean();
-        create_routine_priv=in.readBoolean();
-        alter_routine_priv=in.readBoolean();
-        execute_priv=in.readBoolean();
-        event_priv=in.readBoolean();
-        trigger_priv=in.readBoolean();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getMySQLDatabase(),
-            getMySQLUser()
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getMysqlDatabase(),
+            getMysqlUser()
         );
     }
+    // </editor-fold>
 
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-        );
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         reasons.addAll(getMySQLUser().getCannotRemoveReasons(userLocale));
@@ -249,42 +244,13 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
     }
 
     public void remove() throws IOException, SQLException {
-    	table.connector.requestUpdateIL(
+    	getService().getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DB_USERS,
             pkey
     	);
     }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(mysql_database);
-        out.writeCompressedInt(mysql_user);
-        out.writeBoolean(select_priv);
-        out.writeBoolean(insert_priv);
-        out.writeBoolean(update_priv);
-        out.writeBoolean(delete_priv);
-        out.writeBoolean(create_priv);
-        out.writeBoolean(drop_priv);
-        out.writeBoolean(grant_priv);
-        out.writeBoolean(references_priv);
-        out.writeBoolean(index_priv);
-        out.writeBoolean(alter_priv);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) {
-            out.writeBoolean(create_tmp_table_priv);
-            out.writeBoolean(lock_tables_priv);
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {
-            out.writeBoolean(create_view_priv);
-            out.writeBoolean(show_view_priv);
-            out.writeBoolean(create_routine_priv);
-            out.writeBoolean(alter_routine_priv);
-            out.writeBoolean(execute_priv);
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_54)>=0) {
-            out.writeBoolean(event_priv);
-            out.writeBoolean(trigger_priv);
-        }
-    }
+     */
+    // </editor-fold>
 }

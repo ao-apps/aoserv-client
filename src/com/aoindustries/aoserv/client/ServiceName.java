@@ -138,8 +138,8 @@ public enum ServiceName implements LocalizedToString {
     monthly_charges,
      */
     mysql_databases,
-    // TODO: mysql_db_users,
-    // TODO: mysql_reserved_words,
+    mysql_db_users,
+    mysql_reserved_words,
     mysql_servers,
     mysql_users,
     net_binds,
