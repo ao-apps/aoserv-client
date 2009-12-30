@@ -24,6 +24,7 @@ import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLServerService;
+import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
@@ -180,7 +181,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     // TODO: final NoSwingMySQLDBUserService mysqlDBUsers;
     // TODO: final NoSwingMySQLReservedWordService mysqlReservedWords;*/
     final NoSwingMySQLServerService mysqlServers;
-    // TODO: final NoSwingMySQLUserService mysqlUsers;
+    final NoSwingMySQLUserService mysqlUsers;
     final NoSwingNetBindService netBinds;
     final NoSwingNetDeviceIDService netDeviceIDs;
     /* TODO
@@ -379,9 +380,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         // TODO: mysqlDBUsers = new NoSwingMySQLDBUserService(this, wrapped.getMySQLDBUsers());
         // TODO: mysqlReservedWords = new NoSwingMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
         mysqlServers = new NoSwingMySQLServerService(this, wrapped.getMysqlServers());
-        /* TODO
-        mysqlUsers = new NoSwingMySQLUserService(this, wrapped.getMySQLUsers());
-         */
+        mysqlUsers = new NoSwingMySQLUserService(this, wrapped.getMysqlUsers());
         netBinds = new NoSwingNetBindService(this, wrapped.getNetBinds());
         netDeviceIDs = new NoSwingNetDeviceIDService(this, wrapped.getNetDeviceIDs());
         /* TODO
@@ -752,9 +751,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         NoSwingConnectorFactory.checkNotSwing();
         return mysqlServers;
     }
-    /* TODO
-    public MySQLUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlUsers() throws RemoteException;
-    */
+
+    public MySQLUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlUsers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return mysqlUsers;
+    }
+
     public NetBindService<NoSwingConnector,NoSwingConnectorFactory> getNetBinds() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return netBinds;

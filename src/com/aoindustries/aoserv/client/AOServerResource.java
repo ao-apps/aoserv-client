@@ -75,19 +75,19 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getDependentObjectByResourceType()
+            getDependentObjectByResourceType()
         );
     }
 
-    /* TODO
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
-        String resource_type = getResource().resource_type;
+        String resourceType = getResource().resourceType;
         AOServObject obj;
-        if(resource_type.equals(ResourceType.MYSQL_SERVER)) obj = getMySQLServer();
-        else throw new AssertionError("Unexpected resource type: "+resource_type);
+        if(resourceType.equals(ResourceType.Constant.mysql_server.name())) obj = getMysqlServer();
+        else if(resourceType.equals(ResourceType.Constant.mysql_user.name())) obj = getMysqlUser();
+        else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
         return obj;
-    }*/
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
@@ -107,10 +107,13 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     public BusinessServer getBusinessServer() throws IOException, SQLException {
         return getService().getConnector().getBusinessServers().getBusinessServer(getResource().accounting, ao_server);
     }
-
-    public MySQLServer getMySQLServer() throws IOException, SQLException {
-        return getService().getConnector().getMysqlServers().get(pkey);
+    */
+    public MySQLServer getMysqlServer() throws RemoteException {
+        return getService().getConnector().getMysqlServers().get(key);
     }
-     */
+
+    public MySQLUser getMysqlUser() throws RemoteException {
+        return getService().getConnector().getMysqlUsers().get(key);
+    }
     // </editor-fold>
 }

@@ -24,6 +24,7 @@ import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLServerService;
+import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
@@ -185,9 +186,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: final CachedMySQLDBUserService mysqlDBUsers;
     // TODO: final CachedMySQLReservedWordService mysqlReservedWords;
     final CachedMySQLServerService mysqlServers;
-    /* TODO
     final CachedMySQLUserService mysqlUsers;
-     */
     final CachedNetBindService netBinds;
     final CachedNetDeviceIDService netDeviceIDs;
     /* TODO
@@ -390,9 +389,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         // TODO: mysqlDBUsers = new CachedMySQLDBUserService(this, wrapped.getMySQLDBUsers());
         // TODO: mysqlReservedWords = new CachedMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
         mysqlServers = new CachedMySQLServerService(this, wrapped.getMysqlServers());
-        /* TODO
-        mysqlUsers = new CachedMySQLUserService(this, wrapped.getMySQLUsers());
-         */
+        mysqlUsers = new CachedMySQLUserService(this, wrapped.getMysqlUsers());
         netBinds = new CachedNetBindService(this, wrapped.getNetBinds());
         netDeviceIDs = new CachedNetDeviceIDService(this, wrapped.getNetDeviceIDs());
         /* TODO
@@ -744,9 +741,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers() {
         return mysqlServers;
     }
-    /* TODO
-    public MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers();
-    */
+
+    public MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers() {
+        return mysqlUsers;
+    }
+
     public NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds() {
         return netBinds;
     }

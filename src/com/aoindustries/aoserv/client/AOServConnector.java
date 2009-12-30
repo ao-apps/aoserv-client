@@ -199,9 +199,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     // TODO: MySQLDBUserService<C,F> getMysqlDBUsers() throws RemoteException;
     // TODO: MySQLReservedWordService<C,F> getMysqlReservedWords() throws RemoteException;
     MySQLServerService<C,F> getMysqlServers() throws RemoteException;
-    /* TODO
     MySQLUserService<C,F> getMysqlUsers() throws RemoteException;
-     */
     NetBindService<C,F> getNetBinds() throws RemoteException;
     NetDeviceIDService<C,F> getNetDeviceIDs() throws RemoteException;
     /* TODO

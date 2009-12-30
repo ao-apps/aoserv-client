@@ -24,6 +24,7 @@ import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLServerService;
+import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetProtocolService;
@@ -195,9 +196,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     // TODO: final RetryMySQLDBUserService mysqlDBUsers;
     // TODO: final RetryMySQLReservedWordService mysqlReservedWords;
     final RetryMySQLServerService mysqlServers;
-    /* TODO
     final RetryMySQLUserService mysqlUsers;
-     */
     final RetryNetBindService netBinds;
     final RetryNetDeviceIDService netDeviceIDs;
     /* TODO
@@ -400,9 +399,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         // TODO: mysqlDBUsers = new RetryMySQLDBUserService(this);
         // TODO: mysqlReservedWords = new RetryMySQLReservedWordService(this);
         mysqlServers = new RetryMySQLServerService(this);
-        /* TODO
         mysqlUsers = new RetryMySQLUserService(this);
-         */
         netBinds = new RetryNetBindService(this);
         netDeviceIDs = new RetryNetDeviceIDService(this);
         /* TODO
@@ -873,9 +870,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers() {
         return mysqlServers;
     }
-    /* TODO
-    public MySQLUserService<RetryConnector,RetryConnectorFactory> getMysqlUsers();
-    */
+
+    public MySQLUserService<RetryConnector,RetryConnectorFactory> getMysqlUsers() {
+        return mysqlUsers;
+    }
+
     public NetBindService<RetryConnector,RetryConnectorFactory> getNetBinds() {
         return netBinds;
     }

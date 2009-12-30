@@ -124,7 +124,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         return maxConnections;
     }
 
-    @SchemaColumn(order=4, name="net_bind", description="the port the servers binds to")
+    @SchemaColumn(order=4, name="net_bind", unique=true, description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
         return getService().getConnector().getNetBinds().get(netBind);
     }

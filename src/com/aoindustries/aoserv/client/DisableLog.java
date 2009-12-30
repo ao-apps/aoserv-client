@@ -138,10 +138,10 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
             getEmailSmtpRelays(),
             getHttpdSites(),
             getHttpdSharedTomcats(),
-            getMySQLUsers(),
             getHttpdSiteBinds(),
             getPostgresServerUsers(),
-            getPostgresUsers()
+            getPostgresUsers(),
+            getResources()
         );
     }
 
@@ -179,10 +179,6 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
         return getService().getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_DISABLE_LOG, pkey);
-    }
-
-    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-        return getService().getConnector().getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {

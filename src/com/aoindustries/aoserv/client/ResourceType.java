@@ -22,33 +22,34 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
 
-    public static final String
-        AOSERV_DAEMON="aoserv_daemon",
-        AOSERV_MASTER="aoserv_master",
-        BANDWIDTH="bandwidth",
-        CONSULTING="consulting",
-        DISK="disk",
-        DISTRIBUTION_SCAN="distribution_scan",
-        DRUPAL="drupal",
-        EMAIL="email",
-        FAILOVER="failover",
-        HARDWARE_DISK_7200_120="hardware_disk_7200_120",
-        HTTPD="httpd",
-        IP="ip",
-        JAVAVM="javavm",
-        JOOMLA="joomla",
-        MYSQL_REPLICATION="mysql_replication",
-        MYSQL_SERVER = "mysql_server",
-        RACK="rack",
-        SERVER_DATABASE="server_database",
-        SERVER_ENTERPRISE="server_enterprise",
-        SERVER_P4="server_p4",
-        SERVER_SCSI="server_scsi",
-        SERVER_XEON="server_xeon",
-        SITE="site",
-        SYSADMIN="sysadmin",
-        USER="user"
-    ;
+    public enum Constant {
+        aoserv_daemon,
+        aoserv_master,
+        bandwidth,
+        consulting,
+        disk,
+        distribution_scan,
+        drupal,
+        email,
+        failover,
+        hardware_disk_7200_120,
+        httpd,
+        ip,
+        javavm,
+        joomla,
+        mysql_replication,
+        mysql_server,
+        mysql_user,
+        rack,
+        server_database,
+        server_enterprise,
+        server_p4,
+        server_scsi,
+        server_xeon,
+        site,
+        sysadmin,
+        user
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
