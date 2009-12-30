@@ -192,21 +192,18 @@ final public class AOServClientConfiguration {
             if(factory==null) {
                 try {
                     String protocol = getProtocol();
+                    AOServConnectorFactory<?,?> newFactory;
                     if(protocol.equalsIgnoreCase(Protocol.RMI)) {
                         String trustStorePath = getTrustStorePath();
                         if(trustStorePath!=null && trustStorePath.length()>0) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
                         String trustStorePassword = getTrustStorePassword();
                         if(trustStorePassword!=null && trustStorePassword.length()>0) System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
-                        AOServConnectorFactory<?,?> newFactory = new RmiClientConnectorFactory(
+                        newFactory = new RmiClientConnectorFactory(
                             getRmiHostname(),
                             getRmiPort(),
                             getRmiLocalIp(),
                             getRmiUseSsl()
                         );
-                        if(getRetry()) newFactory = new RetryConnectorFactory(getRetryTimeout(), getRetryTimeoutUnit(), newFactory);
-                        if(getUseCache()) newFactory = new CachedConnectorFactory(newFactory);
-                        if(getNoSwing()) newFactory = new NoSwingConnectorFactory(newFactory);
-                        factory = newFactory;
                     } else if(protocol.equalsIgnoreCase(Protocol.SOAP)) {
                         // Load through reflection to avoid dependency relationship
                         final String classname = "com.aoindustries.aoserv.client.ws.WsConnectorFactory";
@@ -215,9 +212,9 @@ final public class AOServClientConfiguration {
                             String targetEndpoint = getSoapTargetEndpoint();
                             if(targetEndpoint==null || targetEndpoint.length()==0) {
                                 // Default constructor
-                                factory = clazz.getConstructor().newInstance();
+                                newFactory = clazz.getConstructor().newInstance();
                             } else {
-                                factory = clazz.getConstructor(String.class).newInstance(targetEndpoint);
+                                newFactory = clazz.getConstructor(String.class).newInstance(targetEndpoint);
                             }
                         } catch(ClassNotFoundException err) {
                             throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
@@ -235,6 +232,10 @@ final public class AOServClientConfiguration {
                     } else {
                         throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unsupportedProtocol", protocol));
                     }
+                    if(getRetry()) newFactory = new RetryConnectorFactory(getRetryTimeout(), getRetryTimeoutUnit(), newFactory);
+                    if(getUseCache()) newFactory = new CachedConnectorFactory(newFactory);
+                    if(getNoSwing()) newFactory = new NoSwingConnectorFactory(newFactory);
+                    factory = newFactory;
                 } catch(IOException err) {
                     throw new RemoteException(err.getMessage(), err);
                 }
