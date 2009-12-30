@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
@@ -189,10 +190,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryMasterServerService masterServers;
     final RetryMasterUserService masterUsers;
     final RetryMonthlyChargeService monthlyCharges;
-    final RetryMySQLDatabaseService mysqlDatabases;
-    final RetryMySQLDBUserService mysqlDBUsers;
-    final RetryMySQLReservedWordService mysqlReservedWords;
      */
+    final RetryMySQLDatabaseService mysqlDatabases;
+    // TODO: final RetryMySQLDBUserService mysqlDBUsers;
+    // TODO: final RetryMySQLReservedWordService mysqlReservedWords;
     final RetryMySQLServerService mysqlServers;
     /* TODO
     final RetryMySQLUserService mysqlUsers;
@@ -394,10 +395,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         masterServers = new RetryMasterServerService(this);
         masterUsers = new RetryMasterUserService(this);
         monthlyCharges = new RetryMonthlyChargeService(this);
-        mysqlDatabases = new RetryMySQLDatabaseService(this);
-        mysqlDBUsers = new RetryMySQLDBUserService(this);
-        mysqlReservedWords = new RetryMySQLReservedWordService(this);
          */
+        mysqlDatabases = new RetryMySQLDatabaseService(this);
+        // TODO: mysqlDBUsers = new RetryMySQLDBUserService(this);
+        // TODO: mysqlReservedWords = new RetryMySQLReservedWordService(this);
         mysqlServers = new RetryMySQLServerService(this);
         /* TODO
         mysqlUsers = new RetryMySQLUserService(this);
@@ -861,13 +862,14 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public MasterUserService<RetryConnector,RetryConnectorFactory> getMasterUsers();
 
     public MonthlyChargeService<RetryConnector,RetryConnectorFactory> getMonthlyCharges();
-
-    public MySQLDatabaseService<RetryConnector,RetryConnectorFactory> getMysqlDatabases();
-
-    public MySQLDBUserService<RetryConnector,RetryConnectorFactory> getMysqlDBUsers();
-
-    public MySQLReservedWordService<RetryConnector,RetryConnectorFactory> getMysqlReservedWords();
     */
+    public MySQLDatabaseService<RetryConnector,RetryConnectorFactory> getMysqlDatabases() {
+        return mysqlDatabases;
+    }
+
+    // TODO: public MySQLDBUserService<RetryConnector,RetryConnectorFactory> getMysqlDBUsers();
+    // TODO: public MySQLReservedWordService<RetryConnector,RetryConnectorFactory> getMysqlReservedWords();
+
     public MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers() {
         return mysqlServers;
     }

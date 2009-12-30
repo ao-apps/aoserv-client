@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
@@ -179,10 +180,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedMasterServerService masterServers;
     final CachedMasterUserService masterUsers;
     final CachedMonthlyChargeService monthlyCharges;
-    final CachedMySQLDatabaseService mysqlDatabases;
-    final CachedMySQLDBUserService mysqlDBUsers;
-    final CachedMySQLReservedWordService mysqlReservedWords;
      */
+    final CachedMySQLDatabaseService mysqlDatabases;
+    // TODO: final CachedMySQLDBUserService mysqlDBUsers;
+    // TODO: final CachedMySQLReservedWordService mysqlReservedWords;
     final CachedMySQLServerService mysqlServers;
     /* TODO
     final CachedMySQLUserService mysqlUsers;
@@ -384,10 +385,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         masterServers = new CachedMasterServerService(this, wrapped.getMasterServers());
         masterUsers = new CachedMasterUserService(this, wrapped.getMasterUsers());
         monthlyCharges = new CachedMonthlyChargeService(this, wrapped.getMonthlyCharges());
-        mysqlDatabases = new CachedMySQLDatabaseService(this, wrapped.getMySQLDatabases());
-        mysqlDBUsers = new CachedMySQLDBUserService(this, wrapped.getMySQLDBUsers());
-        mysqlReservedWords = new CachedMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
          */
+        mysqlDatabases = new CachedMySQLDatabaseService(this, wrapped.getMysqlDatabases());
+        // TODO: mysqlDBUsers = new CachedMySQLDBUserService(this, wrapped.getMySQLDBUsers());
+        // TODO: mysqlReservedWords = new CachedMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
         mysqlServers = new CachedMySQLServerService(this, wrapped.getMysqlServers());
         /* TODO
         mysqlUsers = new CachedMySQLUserService(this, wrapped.getMySQLUsers());
@@ -731,13 +732,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers();
 
     public MonthlyChargeService<CachedConnector,CachedConnectorFactory> getMonthlyCharges();
-
-    public MySQLDatabaseService<CachedConnector,CachedConnectorFactory> getMysqlDatabases();
-
-    public MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers();
-
-    public MySQLReservedWordService<CachedConnector,CachedConnectorFactory> getMysqlReservedWords();
     */
+    public MySQLDatabaseService<CachedConnector,CachedConnectorFactory> getMysqlDatabases() {
+        return mysqlDatabases;
+    }
+
+    // TODO: public MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers();
+
+    // TODO: public MySQLReservedWordService<CachedConnector,CachedConnectorFactory> getMysqlReservedWords();
+
     public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers() {
         return mysqlServers;
     }

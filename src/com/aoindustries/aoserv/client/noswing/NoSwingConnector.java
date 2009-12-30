@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
@@ -174,13 +175,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingMasterServerService masterServers;
     final NoSwingMasterUserService masterUsers;
     final NoSwingMonthlyChargeService monthlyCharges;
-    final NoSwingMySQLDatabaseService mysqlDatabases;
-    final NoSwingMySQLDBUserService mysqlDBUsers;
-    final NoSwingMySQLReservedWordService mysqlReservedWords;*/
-    final NoSwingMySQLServerService mysqlServers;
-    /* TODO
-    final NoSwingMySQLUserService mysqlUsers;
      */
+    final NoSwingMySQLDatabaseService mysqlDatabases;
+    // TODO: final NoSwingMySQLDBUserService mysqlDBUsers;
+    // TODO: final NoSwingMySQLReservedWordService mysqlReservedWords;*/
+    final NoSwingMySQLServerService mysqlServers;
+    // TODO: final NoSwingMySQLUserService mysqlUsers;
     final NoSwingNetBindService netBinds;
     final NoSwingNetDeviceIDService netDeviceIDs;
     /* TODO
@@ -374,10 +374,10 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         masterServers = new NoSwingMasterServerService(this, wrapped.getMasterServers());
         masterUsers = new NoSwingMasterUserService(this, wrapped.getMasterUsers());
         monthlyCharges = new NoSwingMonthlyChargeService(this, wrapped.getMonthlyCharges());
-        mysqlDatabases = new NoSwingMySQLDatabaseService(this, wrapped.getMySQLDatabases());
-        mysqlDBUsers = new NoSwingMySQLDBUserService(this, wrapped.getMySQLDBUsers());
-        mysqlReservedWords = new NoSwingMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
          */
+        mysqlDatabases = new NoSwingMySQLDatabaseService(this, wrapped.getMysqlDatabases());
+        // TODO: mysqlDBUsers = new NoSwingMySQLDBUserService(this, wrapped.getMySQLDBUsers());
+        // TODO: mysqlReservedWords = new NoSwingMySQLReservedWordService(this, wrapped.getMySQLReservedWords());
         mysqlServers = new NoSwingMySQLServerService(this, wrapped.getMysqlServers());
         /* TODO
         mysqlUsers = new NoSwingMySQLUserService(this, wrapped.getMySQLUsers());
@@ -738,13 +738,16 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public MasterUserService<NoSwingConnector,NoSwingConnectorFactory> getMasterUsers() throws RemoteException;
 
     public MonthlyChargeService<NoSwingConnector,NoSwingConnectorFactory> getMonthlyCharges() throws RemoteException;
-
-    public MySQLDatabaseService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDatabases() throws RemoteException;
-
-    public MySQLDBUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDBUsers() throws RemoteException;
-
-    public MySQLReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getMysqlReservedWords() throws RemoteException;
     */
+    public MySQLDatabaseService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDatabases() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return mysqlDatabases;
+    }
+
+    // TODO: public MySQLDBUserService<NoSwingConnector,NoSwingConnectorFactory> getMysqlDBUsers() throws RemoteException;
+
+    // TODO: public MySQLReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getMysqlReservedWords() throws RemoteException;
+
     public MySQLServerService<NoSwingConnector,NoSwingConnectorFactory> getMysqlServers() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return mysqlServers;
