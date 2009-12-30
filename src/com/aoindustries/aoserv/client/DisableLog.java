@@ -15,7 +15,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
+final public class DisableLog extends AOServObjectIntegerKey<DisableLog> implements BeanFactory<com.aoindustries.aoserv.client.beans.DisableLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -24,22 +24,22 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private Timestamp time;
     final private String accounting;
-    final private String disabled_by;
-    final private String disable_reason;
+    final private String disabledBy;
+    final private String disableReason;
 
     public DisableLog(
         DisableLogService<?,?> service,
         int pkey,
         Timestamp time,
         String accounting,
-        String disabled_by,
-        String disable_reason
+        String disabledBy,
+        String disableReason
     ) {
         super(service, pkey);
         this.time = time;
         this.accounting = accounting.intern();
-        this.disabled_by = disabled_by.intern();
-        this.disable_reason = disable_reason;
+        this.disabledBy = disabledBy.intern();
+        this.disableReason = disableReason;
     }
     // </editor-fold>
 
@@ -75,12 +75,18 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> {
      */
     @SchemaColumn(order=3, name="disabled_by", description="the person who disabled the accounts")
     public BusinessAdministrator getDisabledBy() throws IOException, SQLException {
-        return getService().getConnector().getBusinessAdministrators().get(disabled_by);
+        return getService().getConnector().getBusinessAdministrators().get(disabledBy);
     }
 
     @SchemaColumn(order=4, name="disable_reason", description="the optional reason the accounts were disabled")
     public String getDisableReason() {
-        return disable_reason;
+        return disableReason;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.DisableLog getBean() {
+        return new com.aoindustries.aoserv.client.beans.DisableLog(key, time, accounting, disabledBy, disableReason);
     }
     // </editor-fold>
 

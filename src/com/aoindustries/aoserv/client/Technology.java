@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Technology extends AOServObjectIntegerKey<Technology> {
+final public class Technology extends AOServObjectIntegerKey<Technology> implements BeanFactory<com.aoindustries.aoserv.client.beans.Technology> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -24,12 +24,12 @@ final public class Technology extends AOServObjectIntegerKey<Technology> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final String name;
-    final String clazz;
+    final String technologyClass;
 
-    public Technology(TechnologyService<?,?> service, int pkey, String name, String clazz) {
+    public Technology(TechnologyService<?,?> service, int pkey, String name, String technologyClass) {
         super(service, pkey);
         this.name = name.intern();
-        this.clazz = clazz.intern();
+        this.technologyClass = technologyClass.intern();
     }
     // </editor-fold>
 
@@ -38,7 +38,7 @@ final public class Technology extends AOServObjectIntegerKey<Technology> {
     protected int compareToImpl(Technology other) throws RemoteException {
         int diff = name.equals(other.name) ? 0 : getTechnologyName().compareTo(other.getTechnologyName());
         if(diff!=0) return diff;
-        return clazz.equals(other.clazz) ? 0 : getTechnologyClass().compareTo(other.getTechnologyClass());
+        return technologyClass.equals(other.technologyClass) ? 0 : getTechnologyClass().compareTo(other.getTechnologyClass());
     }
     // </editor-fold>
 
@@ -55,7 +55,13 @@ final public class Technology extends AOServObjectIntegerKey<Technology> {
 
     @SchemaColumn(order=2, name="class", description="the name of the group this package belongs to")
     public TechnologyClass getTechnologyClass() throws RemoteException {
-        return getService().getConnector().getTechnologyClasses().get(clazz);
+        return getService().getConnector().getTechnologyClasses().get(technologyClass);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Technology getBean() {
+        return new com.aoindustries.aoserv.client.beans.Technology(key, name, technologyClass);
     }
     // </editor-fold>
 }

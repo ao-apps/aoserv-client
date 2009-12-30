@@ -14,38 +14,38 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupPartition extends AOServObjectIntegerKey<BackupPartition> {
+final public class BackupPartition extends AOServObjectIntegerKey<BackupPartition> implements BeanFactory<com.aoindustries.aoserv.client.beans.BackupPartition> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private int ao_server;
+    final private int aoServer;
     final private String path;
     final private boolean enabled;
-    final private boolean quota_enabled;
+    final private boolean quotaEnabled;
 
     public BackupPartition(
         BackupPartitionService<?,?> service,
         int pkey,
-        int ao_server,
+        int aoServer,
         String path,
         boolean enabled,
-        boolean quota_enabled
+        boolean quotaEnabled
     ) {
         super(service, pkey);
-        this.ao_server = ao_server;
+        this.aoServer = aoServer;
         this.path = path.intern();
         this.enabled = enabled;
-        this.quota_enabled = quota_enabled;
+        this.quotaEnabled = quotaEnabled;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(BackupPartition other) throws RemoteException {
-        int diff = ao_server==other.ao_server ? 0 : getAOServer().compareTo(other.getAOServer());
+        int diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
         if(diff!=0) return diff;
         return compareIgnoreCaseConsistentWithEquals(path, other.path);
     }
@@ -59,7 +59,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
 
     @SchemaColumn(order=1, name="ao_server", description="the pkey of the server that stores the backup data")
     public AOServer getAOServer() throws RemoteException {
-        return getService().getConnector().getAoServers().get(ao_server);
+        return getService().getConnector().getAoServers().get(aoServer);
     }
 
     @SchemaColumn(order=2, name="path", description="the full path to the root of the backup data")
@@ -82,7 +82,13 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
      */
     @SchemaColumn(order=4, name="quota_enabled", description="When quota is enabled, all replications/backups into the partition must have quota_gid set.")
     public boolean isQuotaEnabled() {
-        return quota_enabled;
+        return quotaEnabled;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.BackupPartition getBean() {
+        return new com.aoindustries.aoserv.client.beans.BackupPartition(key, aoServer, path, enabled, quotaEnabled);
     }
     // </editor-fold>
 

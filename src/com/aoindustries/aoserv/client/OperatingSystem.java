@@ -14,7 +14,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem> {
+final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem> implements BeanFactory<com.aoindustries.aoserv.client.beans.OperatingSystem> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -34,12 +34,12 @@ final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String display;
-    final private boolean is_unix;
+    final private boolean isUnix;
 
     public OperatingSystem(OperatingSystemService<?,?> service, String name, String display, boolean is_unix) {
         super(service, name);
         this.display = display;
-        this.is_unix = is_unix;
+        this.isUnix = is_unix;
     }
     // </editor-fold>
 
@@ -56,7 +56,13 @@ final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem
 
     @SchemaColumn(order=2, name="is_unix", description="indicates that this is a Unix-based OS")
     public boolean isUnix() {
-        return is_unix;
+        return isUnix;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.OperatingSystem getBean() {
+        return new com.aoindustries.aoserv.client.beans.OperatingSystem(key, display, isUnix);
     }
     // </editor-fold>
 

@@ -14,7 +14,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> {
+final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implements BeanFactory<com.aoindustries.aoserv.client.beans.NetDeviceID> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -33,11 +33,11 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private boolean is_loopback;
+    final private boolean isLoopback;
 
-    public NetDeviceID(NetDeviceIDService<?,?> service, String name, boolean is_loopback) {
+    public NetDeviceID(NetDeviceIDService<?,?> service, String name, boolean isLoopback) {
         super(service, name);
-        this.is_loopback = is_loopback;
+        this.isLoopback = isLoopback;
     }
     // </editor-fold>
 
@@ -49,7 +49,13 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> {
 
     @SchemaColumn(order=1, name="is_loopback", description="if the device is the loopback device")
     public boolean isLoopback() {
-        return is_loopback;
+        return isLoopback;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.NetDeviceID getBean() {
+        return new com.aoindustries.aoserv.client.beans.NetDeviceID(key, isLoopback);
     }
     // </editor-fold>
 }

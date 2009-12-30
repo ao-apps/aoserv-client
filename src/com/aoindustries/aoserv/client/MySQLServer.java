@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> {
+final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.MySQLServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -64,15 +64,22 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String name;
     final private int version;
-    final private int max_connections;
-    final private int net_bind;
+    final private int maxConnections;
+    final private int netBind;
 
-    public MySQLServer(MySQLServerService<?,?> service, int ao_server_resource, String name, int version, int max_connections, int net_bind) {
-        super(service, ao_server_resource);
+    public MySQLServer(
+        MySQLServerService<?,?> service,
+        int aoServerResource,
+        String name,
+        int version,
+        int maxConnections,
+        int netBind
+    ) {
+        super(service, aoServerResource);
         this.name = name.intern();
         this.version = version;
-        this.max_connections = max_connections;
-        this.net_bind = net_bind;
+        this.maxConnections = maxConnections;
+        this.netBind = netBind;
     }
     // </editor-fold>
 
@@ -82,7 +89,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> {
         if(key==other.key) return 0;
         AOServerResource aoResource1 = getAoServerResource();
         AOServerResource aoResource2 = other.getAoServerResource();
-        int diff = aoResource1.ao_server==aoResource2.ao_server ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+        int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
         if(diff!=0) return diff;
         return compareIgnoreCaseConsistentWithEquals(name, other.name);
     }
@@ -114,12 +121,18 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> {
 
     @SchemaColumn(order=3, name="max_connections", description="the maximum number of connections for the db")
     public int getMaxConnections() {
-        return max_connections;
+        return maxConnections;
     }
 
     @SchemaColumn(order=4, name="net_bind", description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
-        return getService().getConnector().getNetBinds().get(net_bind);
+        return getService().getConnector().getNetBinds().get(netBind);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.MySQLServer getBean() {
+        return new com.aoindustries.aoserv.client.beans.MySQLServer(key, name, version, maxConnections, netBind);
     }
     // </editor-fold>
 

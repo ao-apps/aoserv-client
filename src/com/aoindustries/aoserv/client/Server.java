@@ -14,7 +14,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Server extends AOServObjectIntegerKey<Server> {
+final public class Server extends AOServObjectIntegerKey<Server> implements BeanFactory<com.aoindustries.aoserv.client.beans.Server> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -29,28 +29,28 @@ final public class Server extends AOServObjectIntegerKey<Server> {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String farm;
     final private String description;
-    final private int operating_system_version;
+    final private Integer operatingSystemVersion;
     final private String accounting;
     final private String name;
-    final private boolean monitoring_enabled;
+    final private boolean monitoringEnabled;
 
     public Server(
         ServerService<?,?> service,
         int pkey,
         String farm,
         String description,
-        int operating_system_version,
+        Integer operatingSystemVersion,
         String accounting,
         String name,
-        boolean monitoring_enabled
+        boolean monitoringEnabled
     ) {
         super(service, pkey);
         this.farm = farm.intern();
         this.description = description;
-        this.operating_system_version = operating_system_version;
+        this.operatingSystemVersion = operatingSystemVersion;
         this.accounting = accounting.intern();
         this.name = name;
-        this.monitoring_enabled = monitoring_enabled;
+        this.monitoringEnabled = monitoringEnabled;
     }
     // </editor-fold>
 
@@ -83,9 +83,9 @@ final public class Server extends AOServObjectIntegerKey<Server> {
 
     @SchemaColumn(order=3, name="operating_system_version", description="the version of operating system running on the server, if known")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
-        if(operating_system_version==-1) return null;
-        OperatingSystemVersion osv=getService().getConnector().getOperatingSystemVersions().get(operating_system_version);
-        if(osv==null) new RemoteException("Unable to find OperatingSystemVersion: "+operating_system_version);
+        if(operatingSystemVersion==null) return null;
+        OperatingSystemVersion osv=getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
+        if(osv==null) new RemoteException("Unable to find OperatingSystemVersion: "+operatingSystemVersion);
         return osv;
     }
 
@@ -106,7 +106,13 @@ final public class Server extends AOServObjectIntegerKey<Server> {
 
     @SchemaColumn(order=6, name="monitoring_enabled", description="enables/disables monitoring")
     public boolean isMonitoringEnabled() {
-        return monitoring_enabled;
+        return monitoringEnabled;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Server getBean() {
+        return new com.aoindustries.aoserv.client.beans.Server(key, farm, description, operatingSystemVersion, accounting, name, monitoringEnabled);
     }
     // </editor-fold>
 

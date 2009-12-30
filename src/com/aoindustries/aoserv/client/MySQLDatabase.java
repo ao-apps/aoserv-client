@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
+final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> implements BeanFactory<com.aoindustries.aoserv.client.beans.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -59,13 +59,19 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> /
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String name;
-    final private int mysql_server;
+    final private int mysqlServer;
     final private String accounting;
 
-    public MySQLDatabase(MySQLDatabaseService<?,?> service, int pkey, String name, int mysql_server, String accounting) {
+    public MySQLDatabase(
+        MySQLDatabaseService<?,?> service,
+        int pkey,
+        String name,
+        int mysqlServer,
+        String accounting
+    ) {
         super(service, pkey);
         this.name = name;
-        this.mysql_server = mysql_server;
+        this.mysqlServer = mysqlServer;
         this.accounting = accounting.intern();
     }
     // </editor-fold>
@@ -75,7 +81,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> /
     protected int compareToImpl(MySQLDatabase other) throws RemoteException {
         int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
         if(diff!=0) return diff;
-        return mysql_server==other.mysql_server ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
+        return mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
     }
     // </editor-fold>
 
@@ -92,12 +98,18 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> /
 
     @SchemaColumn(order=2, name="mysql_server", description="the pkey of the server that this database is hosted on")
     public MySQLServer getMySQLServer() throws RemoteException {
-        return getService().getConnector().getMysqlServers().get(mysql_server);
+        return getService().getConnector().getMysqlServers().get(mysqlServer);
     }
 
     @SchemaColumn(order=3, name="accounting", description="the business that this database is part of")
     public Business getBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(accounting);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.MySQLDatabase getBean() {
+        return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, name, mysqlServer, accounting);
     }
     // </editor-fold>
 

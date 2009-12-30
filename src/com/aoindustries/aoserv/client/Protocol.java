@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Protocol extends AOServObjectStringKey<Protocol> {
+final public class Protocol extends AOServObjectStringKey<Protocol> implements BeanFactory<com.aoindustries.aoserv.client.beans.Protocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -61,15 +61,22 @@ final public class Protocol extends AOServObjectStringKey<Protocol> {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int port;
     final private String name;
-    final private boolean is_user_service;
-    final private String net_protocol;
+    final private boolean isUserService;
+    final private String netProtocol;
 
-    public Protocol(ProtocolService<?,?> service, String protocol, int port, String name, boolean is_user_service, String net_protocol) {
+    public Protocol(
+        ProtocolService<?,?> service,
+        String protocol,
+        int port,
+        String name,
+        boolean isUserService,
+        String netProtocol
+    ) {
         super(service, protocol);
         this.port = port;
         this.name = name;
-        this.is_user_service = is_user_service;
-        this.net_protocol = net_protocol.intern();
+        this.isUserService = isUserService;
+        this.netProtocol = netProtocol.intern();
     }
     // </editor-fold>
 
@@ -78,7 +85,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> {
     protected int compareToImpl(Protocol other) {
         int diff = compare(port, other.port);
         if(diff!=0) return diff;
-        return compareIgnoreCaseConsistentWithEquals(net_protocol, other.net_protocol);
+        return compareIgnoreCaseConsistentWithEquals(netProtocol, other.netProtocol);
     }
     // </editor-fold>
 
@@ -103,14 +110,20 @@ final public class Protocol extends AOServObjectStringKey<Protocol> {
 
     @SchemaColumn(order=2, name="is_user_service", description="indicates that a user may add and remove this service")
     public boolean isUserService() {
-        return is_user_service;
+        return isUserService;
     }
 
     @SchemaColumn(order=3, name="net_protocol", description="the default network protocol for this protocol")
     public NetProtocol getNetProtocol() throws RemoteException {
-        NetProtocol np=getService().getConnector().getNetProtocols().get(net_protocol);
-        if(np==null) throw new RemoteException("Unable to find NetProtocol: "+net_protocol);
+        NetProtocol np=getService().getConnector().getNetProtocols().get(netProtocol);
+        if(np==null) throw new RemoteException("Unable to find NetProtocol: "+netProtocol);
         return np;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Protocol getBean() {
+        return new com.aoindustries.aoserv.client.beans.Protocol(key, port, name, isUserService, netProtocol);
     }
     // </editor-fold>
 

@@ -16,7 +16,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class CountryCode extends AOServObjectStringKey<CountryCode> {
+final public class CountryCode extends AOServObjectStringKey<CountryCode> implements BeanFactory<com.aoindustries.aoserv.client.beans.CountryCode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -29,14 +29,20 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String name;
-    final private boolean charge_com_supported;
-    final private String charge_com_name;
+    final private boolean chargeComSupported;
+    final private String chargeComName;
 
-    public CountryCode(CountryCodeService<?,?> table, String code, String name, boolean charge_com_supported, String charge_com_name) {
+    public CountryCode(
+        CountryCodeService<?,?> table,
+        String code,
+        String name,
+        boolean chargeComSupported,
+        String chargeComName
+    ) {
         super(table, code);
         this.name = name;
-        this.charge_com_supported = charge_com_supported;
-        this.charge_com_name = charge_com_name;
+        this.chargeComSupported = chargeComSupported;
+        this.chargeComName = chargeComName;
     }
     // </editor-fold>
 
@@ -63,12 +69,18 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> {
 
     @SchemaColumn(order=2, name="charge_com_supported", description="if the country is supported by Charge.Com")
     public boolean getChargeComSupported() {
-        return charge_com_supported;
+        return chargeComSupported;
     }
 
     @SchemaColumn(order=3, name="charge_com_name", description="the Charge.Com specific name")
     public String getChargeComName() {
-    	return charge_com_name==null?name:charge_com_name;
+    	return chargeComName==null?name:chargeComName;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.CountryCode getBean() {
+        return new com.aoindustries.aoserv.client.beans.CountryCode(key, name, chargeComSupported, chargeComName);
     }
     // </editor-fold>
 

@@ -29,7 +29,7 @@ public class BusinessAdministrator {
     private String state;
     private String country;
     private String zip;
-    private int disableLog;
+    private Integer disableLog;
     private boolean canSwitchUsers;
     private String supportCode;
 
@@ -56,7 +56,7 @@ public class BusinessAdministrator {
         String state,
         String country,
         String zip,
-        int disableLog,
+        Integer disableLog,
         boolean canSwitchUsers,
         String supportCode
     ) {
@@ -236,11 +236,11 @@ public class BusinessAdministrator {
         this.zip = zip;
     }
 
-    public int getDisableLog() {
+    public Integer getDisableLog() {
         return disableLog;
     }
 
-    public void setDisableLog(int disableLog) {
+    public void setDisableLog(Integer disableLog) {
         this.disableLog = disableLog;
     }
 

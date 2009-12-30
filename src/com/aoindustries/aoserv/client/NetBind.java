@@ -28,43 +28,43 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetBind extends AOServObjectIntegerKey<NetBind> /*implements Removable*/ {
+final public class NetBind extends AOServObjectIntegerKey<NetBind> implements BeanFactory<com.aoindustries.aoserv.client.beans.NetBind> /*implements Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private int business_server;
-    final private int ip_address;
+    final private int businessServer;
+    final private int ipAddress;
     final private int port;
-    final private String net_protocol;
-    final private String app_protocol;
-    final private boolean open_firewall;
-    final private boolean monitoring_enabled;
-    final private String monitoring_parameters;
+    final private String netProtocol;
+    final private String appProtocol;
+    final private boolean openFirewall;
+    final private boolean monitoringEnabled;
+    final private String monitoringParameters;
 
     public NetBind(
         NetBindService<?,?> service,
         int pkey,
-        int business_server,
-        int ip_address,
+        int businessServer,
+        int ipAddress,
         int port,
-        String net_protocol,
-        String app_protocol,
-        boolean open_firewall,
-        boolean monitoring_enabled,
-        String monitoring_parameters
+        String netProtocol,
+        String appProtocol,
+        boolean openFirewall,
+        boolean monitoringEnabled,
+        String monitoringParameters
     ) {
         super(service, pkey);
-        this.business_server = business_server;
-        this.ip_address = ip_address;
+        this.businessServer = businessServer;
+        this.ipAddress = ipAddress;
         this.port = port;
-        this.net_protocol = net_protocol.intern();
-        this.app_protocol = app_protocol.intern();
-        this.open_firewall = open_firewall;
-        this.monitoring_enabled = monitoring_enabled;
-        this.monitoring_parameters = monitoring_parameters;
+        this.netProtocol = netProtocol.intern();
+        this.appProtocol = appProtocol.intern();
+        this.openFirewall = openFirewall;
+        this.monitoringEnabled = monitoringEnabled;
+        this.monitoringParameters = monitoringParameters;
     }
     // </editor-fold>
 
@@ -77,7 +77,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> /*implements 
         // TODO: if(diff!=0) return diff;
         int diff = compare(port, other.port);
         if(diff!=0) return diff;
-        return net_protocol.equals(other.net_protocol) ? 0 : getNetProtocol().compareTo(other.getNetProtocol());
+        return netProtocol.equals(other.netProtocol) ? 0 : getNetProtocol().compareTo(other.getNetProtocol());
     }
     // </editor-fold>
 
@@ -114,22 +114,22 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> /*implements 
 
     @SchemaColumn(order=1, name="net_protocol", description="the network protocol (<code>net_protocols</code>)")
     public NetProtocol getNetProtocol() throws RemoteException {
-        return getService().getConnector().getNetProtocols().get(net_protocol);
+        return getService().getConnector().getNetProtocols().get(netProtocol);
     }
 
     @SchemaColumn(order=2, name="app_protocol", description="the application protocol (<code>protocols</code>)")
     public Protocol getAppProtocol() throws SQLException, IOException {
-        return getService().getConnector().getProtocols().get(app_protocol);
+        return getService().getConnector().getProtocols().get(appProtocol);
     }
 
     @SchemaColumn(order=3, name="open_firewall", description="flags if the firewall should be opened for this port")
     public boolean isFirewallOpen() {
-        return open_firewall;
+        return openFirewall;
     }
 
     @SchemaColumn(order=4, name="monitoring_enabled", description="turns on monitoring of the port")
     public boolean isMonitoringEnabled() {
-        return monitoring_enabled;
+        return monitoringEnabled;
     }
 
     /**
@@ -137,7 +137,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> /*implements 
      */
     @SchemaColumn(order=5, name="monitoring_parameters", description="the URL-encoded name=value pairs of monitoring parameters")
     public Map<String,String> getMonitoringParameters() {
-        String myParamString = monitoring_parameters;
+        String myParamString = monitoringParameters;
         if(myParamString==null) return Collections.emptyMap();
         Map<String,String> params = getMonitoringParametersCache.get(myParamString);
         if(params==null) {
@@ -146,6 +146,12 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> /*implements 
             if(previous!=null) params = previous;
         }
         return params;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.NetBind getBean() {
+        return new com.aoindustries.aoserv.client.beans.NetBind(key, businessServer, ipAddress, port, netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
     }
     // </editor-fold>
 

@@ -12,7 +12,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupRetention extends AOServObjectShortKey<BackupRetention> {
+final public class BackupRetention extends AOServObjectShortKey<BackupRetention> implements BeanFactory<com.aoindustries.aoserv.client.beans.BackupRetention> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -36,6 +36,12 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
     @SchemaColumn(order=1, name="display", description="the text displayed for this time increment")
     public String getDisplay() {
         return display;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.BackupRetention getBean() {
+        return new com.aoindustries.aoserv.client.beans.BackupRetention(key, display);
     }
     // </editor-fold>
 

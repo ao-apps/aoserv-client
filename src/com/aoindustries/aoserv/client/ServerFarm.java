@@ -15,7 +15,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerFarm extends AOServObjectStringKey<ServerFarm> {
+final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implements BeanFactory<com.aoindustries.aoserv.client.beans.ServerFarm> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -24,13 +24,13 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> {
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String description;
     final private String owner;
-    final private boolean use_restricted_smtp_port;
+    final private boolean useRestrictedSmtpPort;
 
-    public ServerFarm(ServerFarmService<?,?> service, String name, String description, String owner, boolean use_restricted_smtp_port) {
+    public ServerFarm(ServerFarmService<?,?> service, String name, String description, String owner, boolean useRestrictedSmtpPort) {
         super(service, name);
         this.description = description;
         this.owner = owner.intern();
-        this.use_restricted_smtp_port = use_restricted_smtp_port;
+        this.useRestrictedSmtpPort = useRestrictedSmtpPort;
     }
     // </editor-fold>
 
@@ -55,7 +55,13 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> {
 
     @SchemaColumn(order=3, name="use_restricted_smtp_port", description="outgoing servers should use restricted source ports (affects firewall rules)")
     public boolean useRestrictedSmtpPort() {
-        return use_restricted_smtp_port;
+        return useRestrictedSmtpPort;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.ServerFarm getBean() {
+        return new com.aoindustries.aoserv.client.beans.ServerFarm(key, description, owner, useRestrictedSmtpPort);
     }
     // </editor-fold>
 

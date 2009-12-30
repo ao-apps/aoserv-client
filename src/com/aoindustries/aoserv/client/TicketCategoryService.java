@@ -25,7 +25,7 @@ public interface TicketCategoryService<C extends AOServConnector<C,F>, F extends
         int size=cached.size();
         for(int c=0;c<size;c++) {
             TicketCategory tc=cached.get(c);
-            if(tc.parent==-1) matches.add(tc);
+            if(tc.parent==null) matches.add(tc);
         }
         return matches;
     }
@@ -43,7 +43,7 @@ public interface TicketCategoryService<C extends AOServConnector<C,F>, F extends
         if(parent==null) {
             // Search all top-level
             for(TicketCategory tc : getRows()) {
-                if(tc.parent==-1 && tc.name.equals(name)) return tc;
+                if(tc.parent==null && tc.name.equals(name)) return tc;
             }
         } else {
             // Use indexing from above

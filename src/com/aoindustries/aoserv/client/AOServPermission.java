@@ -13,7 +13,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServPermission extends AOServObjectStringKey<AOServPermission> {
+final public class AOServPermission extends AOServObjectStringKey<AOServPermission> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServPermission> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -75,18 +75,18 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private short sort_order;
+    final private short sortOrder;
 
-    public AOServPermission(AOServPermissionService<?,?> service, String name, short sort_order) {
+    public AOServPermission(AOServPermissionService<?,?> service, String name, short sortOrder) {
         super(service, name);
-        this.sort_order = sort_order;
+        this.sortOrder = sortOrder;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(AOServPermission other) {
-        return compare(sort_order, other.sort_order);
+        return compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
@@ -98,7 +98,13 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
 
     @SchemaColumn(order=1, name="sort_order", unique=true, description="the sort order for the permission")
     public short getSortOrder() {
-        return sort_order;
+        return sortOrder;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.AOServPermission getBean() {
+        return new com.aoindustries.aoserv.client.beans.AOServPermission(key, sortOrder);
     }
     // </editor-fold>
 

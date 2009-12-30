@@ -53,6 +53,15 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         return i1<i2 ? -1 : i1==i2 ? 0 : 1;
     }
 
+    /**
+     * Sorts nulls before non-nulls.
+     */
+    static int compare(Integer i1, Integer i2) {
+        // nulls before non-nulls
+        if(i1==null) return i2==null ? 0 : -1;
+        return i2==null ? 1 : i1<i2 ? -1 : i1==i2 ? 0 : 1;
+    }
+
     static int compare(short s1, short s2) {
         return s1<s2 ? -1 : s1==s2 ? 0 : 1;
     }

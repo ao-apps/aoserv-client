@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServer extends AOServObjectIntegerKey<AOServer> {
+final public class AOServer extends AOServObjectIntegerKey<AOServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -24,65 +24,65 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String hostname;
-    final private int daemon_bind;
-    final private String daemon_key;
-    final private int pool_size;
-    final private int distro_hour;
-    final private Timestamp last_distro_time;
-    final private int failover_server;
-    final private String daemon_device_id;
-    final private int daemon_connect_bind;
-    final private String time_zone;
-    final private int jilter_bind;
-    final private boolean restrict_outbound_email;
-    final private String daemon_connect_address;
-    final private int failover_batch_size;
-    final private float monitoring_load_low;
-    final private float monitoring_load_medium;
-    final private float monitoring_load_high;
-    final private float monitoring_load_critical;
+    final private Integer daemonBind;
+    final private String daemonKey;
+    final private int poolSize;
+    final private int distroHour;
+    final private Timestamp lastDistroTime;
+    final private Integer failoverServer;
+    final private String daemonDeviceId;
+    final private Integer daemonConnectBind;
+    final private String timeZone;
+    final private Integer jilterBind;
+    final private boolean restrictOutboundEmail;
+    final private String daemonConnectAddress;
+    final private int failoverBatchSize;
+    final private Float monitoringLoadLow;
+    final private Float monitoringLoadMedium;
+    final private Float monitoringLoadHigh;
+    final private Float monitoringLoadCritical;
 
     public AOServer(
         AOServerService<?,?> service,
         int server,
         String hostname,
-        int daemon_bind,
-        String daemon_key,
-        int pool_size,
-        int distro_hour,
-        Timestamp last_distro_time,
-        int failover_server,
-        String daemon_device_id,
-        int daemon_connect_bind,
-        String time_zone,
-        int jilter_bind,
-        boolean restrict_outbound_email,
-        String daemon_connect_address,
-        int failover_batch_size,
-        float monitoring_load_low,
-        float monitoring_load_medium,
-        float monitoring_load_high,
-        float monitoring_load_critical
+        Integer daemonBind,
+        String daemonKey,
+        int poolSize,
+        int distroHour,
+        Timestamp lastDistroTime,
+        Integer failoverServer,
+        String daemonDeviceId,
+        Integer daemonConnectBind,
+        String timeZone,
+        Integer jilterBind,
+        boolean restrictOutboundEmail,
+        String daemonConnectAddress,
+        int failoverBatchSize,
+        Float monitoringLoadLow,
+        Float monitoringLoadMedium,
+        Float monitoringLoadHigh,
+        Float monitoringLoadCritical
     ) {
         super(service, server);
         this.hostname = hostname.intern();
-        this.daemon_bind = daemon_bind;
-        this.daemon_key = daemon_key;
-        this.pool_size = pool_size;
-        this.distro_hour = distro_hour;
-        this.last_distro_time = last_distro_time;
-        this.failover_server = failover_server;
-        this.daemon_device_id = daemon_device_id.intern();
-        this.daemon_connect_bind = daemon_connect_bind;
-        this.time_zone = time_zone.intern();
-        this.jilter_bind = jilter_bind;
-        this.restrict_outbound_email = restrict_outbound_email;
-        this.daemon_connect_address = StringUtility.intern(daemon_connect_address);
-        this.failover_batch_size = failover_batch_size;
-        this.monitoring_load_low = monitoring_load_low;
-        this.monitoring_load_medium = monitoring_load_medium;
-        this.monitoring_load_high = monitoring_load_high;
-        this.monitoring_load_critical = monitoring_load_critical;
+        this.daemonBind = daemonBind;
+        this.daemonKey = daemonKey;
+        this.poolSize = poolSize;
+        this.distroHour = distroHour;
+        this.lastDistroTime = lastDistroTime;
+        this.failoverServer = failoverServer;
+        this.daemonDeviceId = daemonDeviceId.intern();
+        this.daemonConnectBind = daemonConnectBind;
+        this.timeZone = timeZone.intern();
+        this.jilterBind = jilterBind;
+        this.restrictOutboundEmail = restrictOutboundEmail;
+        this.daemonConnectAddress = StringUtility.intern(daemonConnectAddress);
+        this.failoverBatchSize = failoverBatchSize;
+        this.monitoringLoadLow = monitoringLoadLow;
+        this.monitoringLoadMedium = monitoringLoadMedium;
+        this.monitoringLoadHigh = monitoringLoadHigh;
+        this.monitoringLoadCritical = monitoringLoadCritical;
     }
     // </editor-fold>
 
@@ -116,8 +116,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      */
     @SchemaColumn(order=2, name="daemon_bind", description="the network bind info for the AOServ Daemon")
     public NetBind getDaemonBind() throws RemoteException {
-    	if(daemon_bind==-1) return null;
-        return getService().getConnector().getNetBinds().get(daemon_bind);
+    	if(daemonBind==null) return null;
+        return getService().getConnector().getNetBinds().get(daemonBind);
     }
 
     @SchemaColumn(
@@ -127,36 +127,36 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
                   + "because it grants complete control over the server."
     )
     public String getDaemonKey() {
-        return daemon_key;
+        return daemonKey;
     }
 
     @SchemaColumn(order=4, name="pool_size", description="the recommended connection pool size for the AOServ Master")
     public int getPoolSize() {
-        return pool_size;
+        return poolSize;
     }
 
     @SchemaColumn(order=5, name="distro_hour", description="the hour the distribution will occur, in server time zone")
     public int getDistroHour() {
-        return distro_hour;
+        return distroHour;
     }
 
     @SchemaColumn(order=6, name="last_distro_time", description="the time the last distro check was started")
     public Timestamp getLastDistroTime() {
-        return last_distro_time;
+        return lastDistroTime;
     }
 
     @SchemaColumn(order=7, name="failover_server", description="the server that is currently running this server")
     public AOServer getFailoverServer() throws RemoteException {
-        if(failover_server==-1) return null;
-        AOServer se=getService().getConnector().getAoServers().get(failover_server);
-        if(se==null) new RemoteException("Unable to find AOServer: "+failover_server);
+        if(failoverServer==null) return null;
+        AOServer se=getService().getConnector().getAoServers().get(failoverServer);
+        if(se==null) new RemoteException("Unable to find AOServer: "+failoverServer);
         return se;
     }
 
     @SchemaColumn(order=8, name="daemon_device_id", description="the device name the master connects to")
     public NetDeviceID getDaemonDeviceID() throws RemoteException {
-        NetDeviceID ndi=getService().getConnector().getNetDeviceIDs().get(daemon_device_id);
-        if(ndi==null) throw new RemoteException("Unable to find NetDeviceID: "+daemon_device_id);
+        NetDeviceID ndi=getService().getConnector().getNetDeviceIDs().get(daemonDeviceId);
+        if(ndi==null) throw new RemoteException("Unable to find NetDeviceID: "+daemonDeviceId);
         return ndi;
     }
 
@@ -167,14 +167,14 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      */
     @SchemaColumn(order=9, name="daemon_connect_bind", description="the bind to connect to")
     public NetBind getDaemonConnectBind() throws RemoteException {
-        if(daemon_connect_bind==-1) return null;
-        return getService().getConnector().getNetBinds().get(daemon_connect_bind);
+        if(daemonConnectBind==null) return null;
+        return getService().getConnector().getNetBinds().get(daemonConnectBind);
     }
 
     @SchemaColumn(order=10, name="time_zone", description="the time zone setting for the server")
     public TimeZone getTimeZone() throws RemoteException {
-        TimeZone tz=getService().getConnector().getTimeZones().get(time_zone);
-        if(tz==null) throw new RemoteException("Unable to find TimeZone: "+time_zone);
+        TimeZone tz=getService().getConnector().getTimeZones().get(timeZone);
+        if(tz==null) throw new RemoteException("Unable to find TimeZone: "+timeZone);
         return tz;
     }
 
@@ -183,13 +183,13 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      */
     @SchemaColumn(order=11, name="jilter_bind", description="the bind that sendmail uses to connect to jilter")
     public NetBind getJilterBind() throws RemoteException {
-    	if(jilter_bind==-1) return null;
-        return getService().getConnector().getNetBinds().get(jilter_bind);
+    	if(jilterBind==null) return null;
+        return getService().getConnector().getNetBinds().get(jilterBind);
     }
 
     @SchemaColumn(order=12, name="restrict_outbound_email", description="controls if outbound email may only come from address hosted on this machine")
     public boolean getRestrictOutboundEmail() {
-        return restrict_outbound_email;
+        return restrictOutboundEmail;
     }
 
     /**
@@ -201,7 +201,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      */
     @SchemaColumn(order=13, name="daemon_connect_address", description="provides a specific address to use for connecting to AOServDaemon")
     public String getDaemonConnectAddress() {
-        return daemon_connect_address;
+        return daemonConnectAddress;
     }
 
     /**
@@ -209,7 +209,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      */
     @SchemaColumn(order=14, name="failover_batch_size", description="the batch size used for failover replications coming from this server")
     public int getFailoverBatchSize() {
-        return failover_batch_size;
+        return failoverBatchSize;
     }
 
     /**
@@ -217,8 +217,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      * <code>NaN</code> if no alert allowed at this level.
      */
     @SchemaColumn(order=15, name="monitoring_load_low", description="the 5-minute load average that will trigger a low-level alert")
-    public float getMonitoringLoadLow() {
-        return monitoring_load_low;
+    public Float getMonitoringLoadLow() {
+        return monitoringLoadLow;
     }
 
     /**
@@ -226,8 +226,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      * <code>NaN</code> if no alert allowed at this level.
      */
     @SchemaColumn(order=16, name="monitoring_load_medium", description="the 5-minute load average that will trigger a medium-level alert")
-    public float getMonitoringLoadMedium() {
-        return monitoring_load_medium;
+    public Float getMonitoringLoadMedium() {
+        return monitoringLoadMedium;
     }
 
     /**
@@ -235,8 +235,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      * <code>NaN</code> if no alert allowed at this level.
      */
     @SchemaColumn(order=17, name="monitoring_load_high", description="the 5-minute load average that will trigger a high-level alert")
-    public float getMonitoringLoadHigh() {
-        return monitoring_load_high;
+    public Float getMonitoringLoadHigh() {
+        return monitoringLoadHigh;
     }
 
     /**
@@ -245,8 +245,14 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> {
      * that will alert people 24x7.
      */
     @SchemaColumn(order=18, name="monitoring_load_critical", description="the 5-minute load average that will trigger a critical-level alert")
-    public float getMonitoringLoadCritical() {
-        return monitoring_load_critical;
+    public Float getMonitoringLoadCritical() {
+        return monitoringLoadCritical;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.AOServer getBean() {
+        return new com.aoindustries.aoserv.client.beans.AOServer(key, hostname, daemonBind, daemonKey, poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, daemonConnectAddress, failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 

@@ -14,7 +14,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetProtocol extends AOServObjectStringKey<NetProtocol> {
+final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implements BeanFactory<com.aoindustries.aoserv.client.beans.NetProtocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -36,6 +36,12 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> {
     @SchemaColumn(order=0, name="protocol", unique=true, description="the network protocol")
     public String getProtocol() {
         return key;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.NetProtocol getBean() {
+        return new com.aoindustries.aoserv.client.beans.NetProtocol(key);
     }
     // </editor-fold>
 }

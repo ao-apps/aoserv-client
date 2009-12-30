@@ -16,18 +16,18 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServerResource extends AOServObjectIntegerKey<AOServerResource> {
+final public class AOServerResource extends AOServObjectIntegerKey<AOServerResource> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServerResource> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final int ao_server;
+    final int aoServer;
 
-    public AOServerResource(AOServerResourceService<?,?> service, int resource, int ao_server) {
+    public AOServerResource(AOServerResourceService<?,?> service, int resource, int aoServer) {
         super(service, resource);
-        this.ao_server = ao_server;
+        this.aoServer = aoServer;
     }
     // </editor-fold>
 
@@ -52,7 +52,13 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
      */
     @SchemaColumn(order=1, name="ao_server", description="the ao_server")
     public AOServer getAoServer() throws RemoteException {
-        return getService().getConnector().getAoServers().get(ao_server);
+        return getService().getConnector().getAoServers().get(aoServer);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.AOServerResource getBean() {
+        return new com.aoindustries.aoserv.client.beans.AOServerResource(key, aoServer);
     }
     // </editor-fold>
 

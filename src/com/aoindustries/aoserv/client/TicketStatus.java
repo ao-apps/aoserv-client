@@ -15,7 +15,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketStatus extends AOServObjectStringKey<TicketStatus> {
+final public class TicketStatus extends AOServObjectStringKey<TicketStatus> implements BeanFactory<com.aoindustries.aoserv.client.beans.TicketStatus> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -34,18 +34,18 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private short sort_order;
+    final private short sortOrder;
 
-    public TicketStatus(TicketStatusService<?,?> table, String status, short sort_order) {
+    public TicketStatus(TicketStatusService<?,?> table, String status, short sortOrder) {
         super(table, status);
-        this.sort_order = sort_order;
+        this.sortOrder = sortOrder;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(TicketStatus other) {
-        return compare(sort_order, other.sort_order);
+        return compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
@@ -57,7 +57,13 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> {
 
     @SchemaColumn(order=1, name="sort_order", unique=true, description="the default sort ordering")
     public short getSortOrder() {
-        return sort_order;
+        return sortOrder;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TicketStatus getBean() {
+        return new com.aoindustries.aoserv.client.beans.TicketStatus(key, sortOrder);
     }
     // </editor-fold>
 

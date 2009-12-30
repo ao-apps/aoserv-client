@@ -14,7 +14,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageCategory extends AOServObjectStringKey<PackageCategory> {
+final public class PackageCategory extends AOServObjectStringKey<PackageCategory> implements BeanFactory<com.aoindustries.aoserv.client.beans.PackageCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -47,6 +47,12 @@ final public class PackageCategory extends AOServObjectStringKey<PackageCategory
     @SchemaColumn(order=0, name="name", unique=true, description="the category name")
     public String getName() {
         return key;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.PackageCategory getBean() {
+        return new com.aoindustries.aoserv.client.beans.PackageCategory(key);
     }
     // </editor-fold>
 

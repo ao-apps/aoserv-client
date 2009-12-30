@@ -15,7 +15,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystemVersion extends AOServObjectIntegerKey<OperatingSystemVersion> {
+final public class OperatingSystemVersion extends AOServObjectIntegerKey<OperatingSystemVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.OperatingSystemVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -60,40 +60,40 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String operating_system;
-    final private String version_number;
-    final private String version_name;
+    final private String operatingSystem;
+    final private String versionNumber;
+    final private String versionName;
     final private String architecture;
     final private String display;
-    final private boolean is_aoserv_daemon_supported;
-    final private short sort_order;
+    final private boolean isAoservDaemonSupported;
+    final private short sortOrder;
 
     public OperatingSystemVersion(
         OperatingSystemVersionService<?,?> service,
         int pkey,
-        String operating_system,
-        String version_number,
-        String version_name,
+        String operatingSystem,
+        String versionNumber,
+        String versionName,
         String architecture,
         String display,
-        boolean is_aoserv_daemon_supported,
-        short sort_order
+        boolean isAoservDaemonSupported,
+        short sortOrder
     ) {
         super(service, pkey);
-        this.operating_system = operating_system.intern();
-        this.version_number = version_number;
-        this.version_name = version_name;
+        this.operatingSystem = operatingSystem.intern();
+        this.versionNumber = versionNumber;
+        this.versionName = versionName;
         this.architecture = architecture.intern();
         this.display = display;
-        this.is_aoserv_daemon_supported = is_aoserv_daemon_supported;
-        this.sort_order = sort_order;
+        this.isAoservDaemonSupported = isAoservDaemonSupported;
+        this.sortOrder = sortOrder;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(OperatingSystemVersion other) {
-        return compare(sort_order, other.sort_order);
+        return compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
@@ -105,17 +105,17 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
 
     @SchemaColumn(order=1, name="operating_system", description="the name of the OS")
     public OperatingSystem getOperatingSystem() throws RemoteException {
-        return getService().getConnector().getOperatingSystems().get(operating_system);
+        return getService().getConnector().getOperatingSystems().get(operatingSystem);
     }
 
     @SchemaColumn(order=2, name="version_number", description="the number of OS version")
     public String getVersionNumber() {
-        return version_number;
+        return versionNumber;
     }
 
     @SchemaColumn(order=3, name="version_name", description="the name of this OS release")
     public String getVersionName() {
-        return version_name;
+        return versionName;
     }
 
     @SchemaColumn(order=4, name="architecture", description="the name of the architecture")
@@ -132,12 +132,18 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
 
     @SchemaColumn(order=6, name="is_aoserv_daemon_supported", description="can AOServ Daemon be ran on this OS")
     public boolean isAOServDaemonSupported() {
-        return is_aoserv_daemon_supported;
+        return isAoservDaemonSupported;
     }
 
     @SchemaColumn(order=7, name="sort_order", unique=true, description="the default sort order")
     public short getSortOrder() {
-        return sort_order;
+        return sortOrder;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.OperatingSystemVersion getBean() {
+        return new com.aoindustries.aoserv.client.beans.OperatingSystemVersion(key, operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);
     }
     // </editor-fold>
 

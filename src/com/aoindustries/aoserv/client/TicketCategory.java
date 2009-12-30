@@ -14,7 +14,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory> {
+final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory> implements BeanFactory<com.aoindustries.aoserv.client.beans.TicketCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -26,10 +26,10 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final int parent;
-    final String name;
+    final private Integer parent;
+    final private String name;
 
-    public TicketCategory(TicketCategoryService<?,?> service, int pkey, int parent, String name) {
+    public TicketCategory(TicketCategoryService<?,?> service, int pkey, Integer parent, String name) {
         super(service, pkey);
         this.parent = parent;
         this.name = name.intern();
@@ -53,7 +53,7 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
 
     @SchemaColumn(order=1, name="parent", description="the category id of its parent or null if this is a top-level category")
     public TicketCategory getParent() throws RemoteException {
-        if(parent==-1) return null;
+        if(parent==null) return null;
         TicketCategory tc = getService().getConnector().getTicketCategories().get(parent);
         if(tc==null) throw new RemoteException("Unable to find TicketCategory: "+parent);
         return tc;
@@ -62,6 +62,12 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     @SchemaColumn(order=2, name="name", description="the name of this category, unique per parent")
     public String getName() {
         return name;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TicketCategory getBean() {
+        return new com.aoindustries.aoserv.client.beans.TicketCategory(key, parent, name);
     }
     // </editor-fold>
 
@@ -88,13 +94,13 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     // <editor-fold defaultstate="collapsed" desc="i18n">
     private String slashPath = null;
     synchronized public String getSlashPath() throws RemoteException {
-        if(slashPath==null) slashPath = parent==-1 ? name : (getParent().getSlashPath()+'/'+name);
+        if(slashPath==null) slashPath = parent==null ? name : (getParent().getSlashPath()+'/'+name);
         return slashPath;
     }
 
     private String dotPath = null;
     synchronized public String getDotPath() throws RemoteException {
-        if(dotPath==null) dotPath = parent==-1 ? name : (getParent().getDotPath()+'.'+name);
+        if(dotPath==null) dotPath = parent==null ? name : (getParent().getDotPath()+'.'+name);
         return dotPath;
     }
 

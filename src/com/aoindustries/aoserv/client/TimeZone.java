@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-final public class TimeZone extends AOServObjectStringKey<TimeZone> {
+final public class TimeZone extends AOServObjectStringKey<TimeZone> implements BeanFactory<com.aoindustries.aoserv.client.beans.TimeZone> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -27,6 +27,12 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> {
     @SchemaColumn(order=0, name="name", unique=true, description="the unique name of this time zone")
     public String getName() {
         return key;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TimeZone getBean() {
+        return new com.aoindustries.aoserv.client.beans.TimeZone(key);
     }
     // </editor-fold>
 

@@ -14,7 +14,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-final public class Architecture extends AOServObjectStringKey<Architecture> {
+final public class Architecture extends AOServObjectStringKey<Architecture> implements BeanFactory<com.aoindustries.aoserv.client.beans.Architecture> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -55,6 +55,12 @@ final public class Architecture extends AOServObjectStringKey<Architecture> {
     @SchemaColumn(order=1, name="bits", description="the number of bits used by the architecture")
     public int getBits() {
         return bits;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Architecture getBean() {
+        return new com.aoindustries.aoserv.client.beans.Architecture(key, bits);
     }
     // </editor-fold>
 }

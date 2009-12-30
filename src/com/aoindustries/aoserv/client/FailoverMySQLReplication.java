@@ -15,49 +15,49 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverMySQLReplication extends AOServObjectIntegerKey<FailoverMySQLReplication> {
+final public class FailoverMySQLReplication extends AOServObjectIntegerKey<FailoverMySQLReplication> implements BeanFactory<com.aoindustries.aoserv.client.beans.FailoverMySQLReplication> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private int ao_server;
-    final private int replication;
-    final private int mysql_server;
-    final private int monitoring_seconds_behind_low;
-    final private int monitoring_seconds_behind_medium;
-    final private int monitoring_seconds_behind_high;
-    final private int monitoring_seconds_behind_critical;
+    final private Integer aoServer;
+    final private Integer replication;
+    final private int mysqlServer;
+    final private int monitoringSecondsBehindLow;
+    final private int monitoringSecondsBehindMedium;
+    final private int monitoringSecondsBehindHigh;
+    final private int monitoringSecondsBehindCritical;
 
     public FailoverMySQLReplication(
         FailoverMySQLReplicationService<?,?> service,
         int pkey,
-        int ao_server,
-        int replication,
-        int mysql_server,
-        int monitoring_seconds_behind_low,
-        int monitoring_seconds_behind_medium,
-        int monitoring_seconds_behind_high,
-        int monitoring_seconds_behind_critical
+        Integer aoServer,
+        Integer replication,
+        int mysqlServer,
+        int monitoringSecondsBehindLow,
+        int monitoringSecondsBehindMedium,
+        int monitoringSecondsBehindHigh,
+        int monitoringSecondsBehindCritical
     ) {
         super(service, pkey);
-        this.ao_server = ao_server;
+        this.aoServer = aoServer;
         this.replication = replication;
-        this.mysql_server = mysql_server;
-        this.monitoring_seconds_behind_low = monitoring_seconds_behind_low;
-        this.monitoring_seconds_behind_medium = monitoring_seconds_behind_medium;
-        this.monitoring_seconds_behind_high = monitoring_seconds_behind_high;
-        this.monitoring_seconds_behind_critical = monitoring_seconds_behind_critical;
+        this.mysqlServer = mysqlServer;
+        this.monitoringSecondsBehindLow = monitoringSecondsBehindLow;
+        this.monitoringSecondsBehindMedium = monitoringSecondsBehindMedium;
+        this.monitoringSecondsBehindHigh = monitoringSecondsBehindHigh;
+        this.monitoringSecondsBehindCritical = monitoringSecondsBehindCritical;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(FailoverMySQLReplication other) throws RemoteException {
-        int diff = mysql_server==other.mysql_server ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
+        int diff = mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
         if(diff!=0) return diff;
-        diff = ao_server==other.ao_server ? 0 : getAOServer().compareTo(other.getAOServer());
+        diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
         if(diff!=0) return diff;
         return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
     }
@@ -71,39 +71,45 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
 
     @SchemaColumn(order=1, name="ao_server", description="the ao_server that receives the replication")
     public AOServer getAOServer() throws RemoteException {
-        if(ao_server==-1) return null;
-        return getService().getConnector().getAoServers().get(ao_server);
+        if(aoServer==null) return null;
+        return getService().getConnector().getAoServers().get(aoServer);
     }
 
     @SchemaColumn(order=2, name="replication", description="the failover server that receives the replication")
     public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
-        if(replication==-1) return null;
+        if(replication==null) return null;
         return getService().getConnector().getFailoverFileReplications().get(replication);
     }
 
     @SchemaColumn(order=3, name="mysql_server", description="the MySQL Server that is being replicated")
     public MySQLServer getMySQLServer() throws RemoteException {
-        return getService().getConnector().getMysqlServers().get(mysql_server);
+        return getService().getConnector().getMysqlServers().get(mysqlServer);
     }
 
     @SchemaColumn(order=4, name="monitoring_seconds_behind_low", description="the seconds behind where will trigger low alert level")
     public int getMonitoringSecondsBehindLow() {
-        return monitoring_seconds_behind_low;
+        return monitoringSecondsBehindLow;
     }
 
     @SchemaColumn(order=5, name="monitoring_seconds_behind_medium", description="the seconds behind where will trigger medium alert level")
     public int getMonitoringSecondsBehindMedium() {
-        return monitoring_seconds_behind_medium;
+        return monitoringSecondsBehindMedium;
     }
 
     @SchemaColumn(order=6, name="monitoring_seconds_behind_high", description="the seconds behind where will trigger high alert level")
     public int getMonitoringSecondsBehindHigh() {
-        return monitoring_seconds_behind_high;
+        return monitoringSecondsBehindHigh;
     }
 
     @SchemaColumn(order=7, name="monitoring_seconds_behind_critical", description="the seconds behind where will trigger critical alert level")
     public int getMonitoringSecondsBehindCritical() {
-        return monitoring_seconds_behind_critical;
+        return monitoringSecondsBehindCritical;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.FailoverMySQLReplication getBean() {
+        return new com.aoindustries.aoserv.client.beans.FailoverMySQLReplication(key, aoServer, replication, mysqlServer, monitoringSecondsBehindLow, monitoringSecondsBehindMedium, monitoringSecondsBehindHigh, monitoringSecondsBehindCritical);
     }
     // </editor-fold>
 
@@ -121,7 +127,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-        if(ao_server!=-1) return getMySQLServer().toString(userLocale)+"->"+getAOServer().toString(userLocale);
+        if(aoServer!=null) return getMySQLServer().toString(userLocale)+"->"+getAOServer().toString(userLocale);
         else return getMySQLServer().toString(userLocale)+"->"+getFailoverFileReplication().toString(userLocale);
     }
     // </editor-fold>

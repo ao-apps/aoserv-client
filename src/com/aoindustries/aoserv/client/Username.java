@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Username extends AOServObjectStringKey<Username> /* TODO: implements PasswordProtected, Removable, Disablable*/ {
+final public class Username extends AOServObjectStringKey<Username> implements BeanFactory<com.aoindustries.aoserv.client.beans.Username> /* TODO: implements PasswordProtected, Removable, Disablable*/ {
 	
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -30,12 +30,12 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final String accounting;
-    final int disable_log;
+    final Integer disableLog;
 
-    public Username(UsernameService<?,?> table, String username, String accounting, int disable_log) {
+    public Username(UsernameService<?,?> table, String username, String accounting, Integer disableLog) {
         super(table, username);
         this.accounting = accounting.intern();
-        this.disable_log = disable_log;
+        this.disableLog = disableLog;
     }
     // </editor-fold>
 
@@ -55,10 +55,16 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
 
     @SchemaColumn(order=2, name="disable_log", description="indicates that the username is disabled")
     public DisableLog getDisableLog() throws RemoteException {
-        if(disable_log==-1) return null;
-        DisableLog obj=getService().getConnector().getDisableLogs().get(disable_log);
-        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disable_log);
+        if(disableLog==null) return null;
+        DisableLog obj=getService().getConnector().getDisableLogs().get(disableLog);
+        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disableLog);
         return obj;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Username getBean() {
+        return new com.aoindustries.aoserv.client.beans.Username(key, accounting, disableLog);
     }
     // </editor-fold>
 
@@ -200,19 +206,19 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
     }
 
     public boolean canDisable() throws IOException, SQLException {
-        if(disable_log!=-1) return false;
+        if(disableLog!=null) return false;
         LinuxAccount la=getLinuxAccount();
-        if(la!=null && la.disable_log==-1) return false;
-        for(MySQLUser mu : getMySQLUsers()) if(mu.disable_log==-1) return false;
+        if(la!=null && la.disableLog==null) return false;
+        for(MySQLUser mu : getMySQLUsers()) if(mu.disableLog==null) return false;
         PostgresUser pu=getPostgresUser();
-        if(pu!=null && pu.disable_log==-1) return false;
+        if(pu!=null && pu.disableLog==null) return false;
         return true;
     }
     
     public boolean canEnable() throws SQLException, IOException {
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
-        else return dl.canEnable() && getBusiness().disable_log==-1;
+        else return dl.canEnable() && getBusiness().disableLog==null;
     }
     */
     /**
@@ -254,17 +260,8 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_USERNAME: return pkey;
-            case COLUMN_ACCOUNTING: return accounting;
-            case COLUMN_DISABLE_LOG: return disable_log==-1?null:Integer.valueOf(disable_log);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
     public boolean isDisabled() {
-        return disable_log!=-1;
+        return disableLog!=null;
     }
 
     static int groupPasswordsSet(List<? extends PasswordProtected> pps) throws IOException, SQLException {
@@ -275,13 +272,6 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
             if(result==PasswordProtected.ALL) totalAll++;
         }
         return totalAll==pps.size()?PasswordProtected.ALL:totalAll==0?PasswordProtected.NONE:PasswordProtected.SOME;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        accounting = result.getString(2);
-        disable_log=result.getInt(3);
-        if(result.wasNull()) disable_log=-1;
     }
 
     public boolean isUsed() throws IOException, SQLException {
@@ -359,12 +349,6 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
         return checkUsername(username, Locale.getDefault())==null;
     }
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        accounting=in.readUTF().intern();
-        disable_log=in.readCompressedInt();
-    }
-
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
@@ -403,7 +387,7 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
     }
 
     public boolean canSetPassword() throws IOException, SQLException {
-        if(disable_log!=-1) return false;
+        if(disableLog!=null) return false;
 
         BusinessAdministrator ba=getBusinessAdministrator();
     	if(ba!=null && !ba.canSetPassword()) return false;
@@ -418,12 +402,6 @@ final public class Username extends AOServObjectStringKey<Username> /* TODO: imp
         if(pu!=null && !pu.canSetPassword()) return false;
         
         return ba!=null || la!=null || !mus.isEmpty() || pu!=null;
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeUTF(accounting);
-        out.writeCompressedInt(disable_log);
     }
      */
     // </editor-fold>

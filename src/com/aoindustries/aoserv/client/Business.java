@@ -18,7 +18,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Business extends AOServObjectStringKey<Business> /* TODO: implements Disablable*/ {
+final public class Business extends AOServObjectStringKey<Business> implements BeanFactory<com.aoindustries.aoserv.client.beans.Business> /* TODO: implements Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -70,21 +70,21 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     final private Timestamp canceled;
     final private String cancelReason;
     final private String parent;
-    final private boolean can_add_backup_server;
-    final private boolean can_add_businesses;
-    final private boolean can_see_prices;
-    final private int disable_log;
-    final private String do_not_disable_reason;
-    final private boolean auto_enable;
-    final private boolean bill_parent;
-    final private int package_definition;
-    final private String created_by;
-    final private int email_in_burst;
-    final private float email_in_rate;
-    final private int email_out_burst;
-    final private float email_out_rate;
-    final private int email_relay_burst;
-    final private float email_relay_rate;
+    final private boolean canAddBackupServer;
+    final private boolean canAddBusinesses;
+    final private boolean canSeePrices;
+    final private Integer disableLog;
+    final private String doNotDisableReason;
+    final private boolean autoEnable;
+    final private boolean billParent;
+    final private int packageDefinition;
+    final private String createdBy;
+    final private Integer emailInBurst;
+    final private Float emailInRate;
+    final private Integer emailOutBurst;
+    final private Float emailOutRate;
+    final private Integer emailRelayBurst;
+    final private Float emailRelayRate;
 
     public Business(
         BusinessService<?,?> service,
@@ -94,21 +94,21 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         Timestamp canceled,
         String cancelReason,
         String parent,
-        boolean can_add_backup_server,
-        boolean can_add_businesses,
-        boolean can_see_prices,
-        int disable_log,
-        String do_not_disable_reason,
-        boolean auto_enable,
-        boolean bill_parent,
-        int package_definition,
-        String created_by,
-        int email_in_burst,
-        float email_in_rate,
-        int email_out_burst,
-        float email_out_rate,
-        int email_relay_burst,
-        float email_relay_rate
+        boolean canAddBackupServer,
+        boolean canAddBusinesses,
+        boolean canSeePrices,
+        Integer disableLog,
+        String doNotDisableReason,
+        boolean autoEnable,
+        boolean billParent,
+        int packageDefinition,
+        String createdBy,
+        Integer emailInBurst,
+        Float emailInRate,
+        Integer emailOutBurst,
+        Float emailOutRate,
+        Integer emailRelayBurst,
+        Float emailRelayRate
     ) {
         super(service, accounting);
         this.contractVersion = contractVersion.intern();
@@ -116,21 +116,21 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         this.canceled = canceled;
         this.cancelReason = cancelReason;
         this.parent = StringUtility.intern(parent);
-        this.can_add_backup_server = can_add_backup_server;
-        this.can_add_businesses = can_add_businesses;
-        this.can_see_prices = can_see_prices;
-        this.disable_log = disable_log;
-        this.do_not_disable_reason = do_not_disable_reason;
-        this.auto_enable = auto_enable;
-        this.bill_parent = bill_parent;
-        this.package_definition = package_definition;
-        this.created_by = StringUtility.intern(created_by);
-        this.email_in_burst = email_in_burst;
-        this.email_in_rate = email_in_rate;
-        this.email_out_burst = email_out_burst;
-        this.email_out_rate = email_out_rate;
-        this.email_relay_burst = email_relay_burst;
-        this.email_relay_rate = email_relay_rate;
+        this.canAddBackupServer = canAddBackupServer;
+        this.canAddBusinesses = canAddBusinesses;
+        this.canSeePrices = canSeePrices;
+        this.disableLog = disableLog;
+        this.doNotDisableReason = doNotDisableReason;
+        this.autoEnable = autoEnable;
+        this.billParent = billParent;
+        this.packageDefinition = packageDefinition;
+        this.createdBy = StringUtility.intern(createdBy);
+        this.emailInBurst = emailInBurst;
+        this.emailInRate = emailInRate;
+        this.emailOutBurst = emailOutBurst;
+        this.emailOutRate = emailOutRate;
+        this.emailRelayBurst = emailRelayBurst;
+        this.emailRelayRate = emailRelayRate;
     }
     // </editor-fold>
     
@@ -170,40 +170,40 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
 
     @SchemaColumn(order=6, name="can_add_backup_server", description="the business may add servers to the backup system")
     public boolean canAddBackupServer() {
-        return can_add_backup_server;
+        return canAddBackupServer;
     }
 
     @SchemaColumn(order=7, name="can_add_businesses", description="if <code>true</code> this business can create and be the parent of other businesses")
     public boolean canAddBusinesses() {
-    	return can_add_businesses;
+    	return canAddBusinesses;
     }
 
     @SchemaColumn(order=8, name="can_see_prices", description="control whether prices will be visible or filtered")
     public boolean canSeePrices() {
-        return can_see_prices;
+        return canSeePrices;
     }
 
     @SchemaColumn(order=9, name="disable_log", description="indicates the business is disabled")
     public DisableLog getDisableLog() throws RemoteException {
-        if(disable_log==-1) return null;
-        DisableLog obj=getService().getConnector().getDisableLogs().get(disable_log);
-        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disable_log);
+        if(disableLog==null) return null;
+        DisableLog obj=getService().getConnector().getDisableLogs().get(disableLog);
+        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disableLog);
         return obj;
     }
 
     @SchemaColumn(order=10, name="do_not_disable_reason", description="a reason why we should not disable the account")
     public String getDoNotDisableReason() {
-        return do_not_disable_reason;
+        return doNotDisableReason;
     }
 
     @SchemaColumn(order=11, name="auto_enable", description="allows the account to be automatically reenabled on payment")
     public boolean getAutoEnable() {
-        return auto_enable;
+        return autoEnable;
     }
 
     @SchemaColumn(order=12, name="bill_parent", description="if <code>true</code>, the parent business will be charged for all resources used by this account")
     public boolean billParent() {
-        return bill_parent;
+        return billParent;
     }
 
     /* TODO
@@ -219,62 +219,68 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
      */
     @SchemaColumn(order=13, name="created_by", description="the user who added this business")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
-        if(created_by==null) return null;
-        return getService().getConnector().getBusinessAdministrators().get(created_by);
+        if(createdBy==null) return null;
+        return getService().getConnector().getBusinessAdministrators().get(createdBy);
     }
 
     /**
      * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>-1</code> indicates unlimited.
+     * A value of <code>null</code> indicates unlimited.
      */
     @SchemaColumn(order=14, name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
-    public int getEmailInBurst() {
-        return email_in_burst;
+    public Integer getEmailInBurst() {
+        return emailInBurst;
     }
 
     /**
      * Gets the inbound sustained email rate in emails/second.
-     * A value of <code>Float.NaN</code> indicates unlimited.
+     * A value of <code>null</code> indicates unlimited.
      */
     @SchemaColumn(order=15, name="email_in_rate", description="the number of sustained inbound emails per second")
-    public float getEmailInRate() {
-        return email_in_rate;
+    public Float getEmailInRate() {
+        return emailInRate;
     }
 
     /**
      * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>-1</code> indicates unlimited.
+     * A value of <code>null</code> indicates unlimited.
      */
     @SchemaColumn(order=16, name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
-    public int getEmailOutBurst() {
-        return email_out_burst;
+    public Integer getEmailOutBurst() {
+        return emailOutBurst;
     }
 
     /**
      * Gets the outbound sustained email rate in emails/second.
-     * A value of <code>Float.NaN</code> indicates unlimited.
+     * A value of <code>null</code> indicates unlimited.
      */
     @SchemaColumn(order=17, name="email_out_rate", description="the number of sustained outbound emails per second")
-    public float getEmailOutRate() {
-        return email_out_rate;
+    public Float getEmailOutRate() {
+        return emailOutRate;
     }
 
     /**
      * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>-1</code> indicates unlimited.
+     * A value of <code>null</code> indicates unlimited.
      */
     @SchemaColumn(order=18, name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
-    public int getEmailRelayBurst() {
-        return email_relay_burst;
+    public Integer getEmailRelayBurst() {
+        return emailRelayBurst;
     }
 
     /**
      * Gets the relay sustained email rate in emails/second.
-     * A value of <code>Float.NaN</code> indicates unlimited.
+     * A value of <code>null</code> indicates unlimited.
      */
     @SchemaColumn(order=19, name="email_relay_rate", description="the number of sustained relay emails per second")
-    public float getEmailRelayRate() {
-        return email_relay_rate;
+    public Float getEmailRelayRate() {
+        return emailRelayRate;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Business getBean() {
+        return new com.aoindustries.aoserv.client.beans.Business(parent, contractVersion, created, canceled, cancelReason, parent, canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, createdBy, emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
     // </editor-fold>
 
@@ -591,7 +597,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     /* TODO
     public void cancel(String cancelReason) throws IllegalArgumentException, IOException, SQLException {
         // Automatically disable if not already disabled
-        if(disable_log==-1) {
+        if(disableLog==null) {
             new SimpleAOClient(service.connector).disableBusiness(pkey, "Account canceled");
         }
 
@@ -627,7 +633,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     */
     /* TODO
     public boolean canCancel() throws IOException, SQLException {
-        return canceled==-1 && !isRootBusiness();
+        return canceled==null && !isRootBusiness();
     }
 
     public boolean isRootBusiness() throws IOException, SQLException {
@@ -636,25 +642,25 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
 
     public boolean canDisable() throws IOException, SQLException {
         // already disabled
-        if(disable_log!=-1) return false;
+        if(disableLog!=null) return false;
 
         if(isRootBusiness()) return false;
 
         // Can only disabled when all dependent objects are already disabled
-        for(HttpdSharedTomcat hst : getHttpdSharedTomcats()) if(hst.disable_log==-1) return false;
-        for(EmailPipe ep : getEmailPipes()) if(ep.disable_log==-1) return false;
-        for(CvsRepository cr : getCvsRepositories()) if(cr.disable_log==-1) return false;
-        for(Username un : getUsernames()) if(un.disable_log==-1) return false;
-        for(HttpdSite hs : getHttpdSites()) if(hs.disable_log==-1) return false;
-        for(EmailList el : getEmailLists()) if(el.disable_log==-1) return false;
-        for(EmailSmtpRelay ssr : getEmailSmtpRelays()) if(ssr.disable_log==-1) return false;
+        for(HttpdSharedTomcat hst : getHttpdSharedTomcats()) if(hst.disableLog==null) return false;
+        for(EmailPipe ep : getEmailPipes()) if(ep.disableLog==null) return false;
+        for(CvsRepository cr : getCvsRepositories()) if(cr.disableLog==null) return false;
+        for(Username un : getUsernames()) if(un.disableLog==null) return false;
+        for(HttpdSite hs : getHttpdSites()) if(hs.disableLog==null) return false;
+        for(EmailList el : getEmailLists()) if(el.disableLog==null) return false;
+        for(EmailSmtpRelay ssr : getEmailSmtpRelays()) if(ssr.disableLog==null) return false;
 
         return true;
     }
 
     public boolean canEnable() throws SQLException, IOException {
         // Cannot enable a canceled business
-        if(canceled!=-1) return false;
+        if(canceled!=null) return false;
 
         // Can only enable if it is disabled
         DisableLog dl=getDisableLog();
@@ -758,33 +764,6 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         return service.connector.getBusinesses().getChildBusinesses(this);
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_ACCOUNTING: return pkey;
-            case 1: return contractVersion;
-            case 2: return new java.sql.Date(created);
-            case 3: return canceled==-1?null:new java.sql.Date(canceled);
-            case 4: return cancelReason;
-            case 5: return parent;
-            case 6: return can_add_backup_server?Boolean.TRUE:Boolean.FALSE;
-            case 7: return can_add_businesses?Boolean.TRUE:Boolean.FALSE;
-            case 8: return can_see_prices?Boolean.TRUE:Boolean.FALSE;
-            case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
-            case 10: return do_not_disable_reason;
-            case 11: return auto_enable?Boolean.TRUE:Boolean.FALSE;
-            case 12: return bill_parent?Boolean.TRUE:Boolean.FALSE;
-            case COLUMN_PACKAGE_DEFINITION: return Integer.valueOf(package_definition);
-            case COLUMN_CREATED_BY: return created_by;
-            case 15: return email_in_burst==-1 ? null : Integer.valueOf(email_in_burst);
-            case 16: return Float.isNaN(email_in_rate) ? null : Float.valueOf(email_in_rate);
-            case 17: return email_out_burst==-1 ? null : Integer.valueOf(email_out_burst);
-            case 18: return Float.isNaN(email_out_rate) ? null : Float.valueOf(email_out_rate);
-            case 19: return email_relay_burst==-1 ? null : Integer.valueOf(email_relay_burst);
-            case 20: return Float.isNaN(email_relay_rate) ? null : Float.valueOf(email_relay_rate);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
     public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
     	return getService().getConnector().getTransactions().getConfirmedAccountBalance(pkey);
     }
@@ -815,7 +794,7 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
     }
 
     public boolean isDisabled() {
-        return disable_log!=-1;
+        return disableLog!=null;
     }
 
     public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
@@ -1211,60 +1190,9 @@ final public class Business extends AOServObjectStringKey<Business> /* TODO: imp
         fromBusinessServer.remove();
     }
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        contractVersion=StringUtility.intern(in.readNullUTF());
-        created=in.readLong();
-        canceled=in.readLong();
-        cancelReason=in.readNullUTF();
-        parent=StringUtility.intern(in.readNullUTF());
-        can_add_backup_server=in.readBoolean();
-        can_add_businesses=in.readBoolean();
-        can_see_prices=in.readBoolean();
-        disable_log=in.readCompressedInt();
-        do_not_disable_reason=in.readNullUTF();
-        auto_enable=in.readBoolean();
-        bill_parent=in.readBoolean();
-        package_definition=in.readCompressedInt();
-        created_by=StringUtility.intern(in.readNullUTF());
-        email_in_burst=in.readCompressedInt();
-        email_in_rate=in.readFloat();
-        email_out_burst=in.readCompressedInt();
-        email_out_rate=in.readFloat();
-        email_relay_burst=in.readCompressedInt();
-        email_relay_rate=in.readFloat();
-    }
-
     public void setAccounting(String accounting) throws SQLException, IOException {
         if(!isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
-        out.writeLong(created);
-        out.writeLong(canceled);
-        out.writeNullUTF(cancelReason);
-        out.writeNullUTF(parent);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
-        out.writeBoolean(can_add_businesses);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) out.writeBoolean(can_see_prices);
-        out.writeCompressedInt(disable_log);
-        out.writeNullUTF(do_not_disable_reason);
-        out.writeBoolean(auto_enable);
-        out.writeBoolean(bill_parent);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
-            out.writeCompressedInt(package_definition);
-            out.writeNullUTF(created_by);
-            out.writeCompressedInt(email_in_burst);
-            out.writeFloat(email_in_rate);
-            out.writeCompressedInt(email_out_burst);
-            out.writeFloat(email_out_rate);
-            out.writeCompressedInt(email_relay_burst);
-            out.writeFloat(email_relay_rate);
-        }
     }
 
     public List<Ticket> getTickets() throws SQLException, IOException {

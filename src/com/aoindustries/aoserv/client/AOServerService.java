@@ -72,7 +72,7 @@ public interface AOServerService<C extends AOServConnector<C,F>, F extends AOSer
         for(int c=0;c<size;c++) {
             AOServer se=servers.get(c);
             int fs=se.failover_server;
-            if(fs!=-1 && fs==pkey) objs.add(se);
+            if(fs!=null && fs==pkey) objs.add(se);
         }
         return objs;
     }

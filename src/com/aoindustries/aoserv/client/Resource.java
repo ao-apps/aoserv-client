@@ -18,28 +18,37 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Resource extends AOServObjectIntegerKey<Resource> {
+final public class Resource extends AOServObjectIntegerKey<Resource> implements BeanFactory<com.aoindustries.aoserv.client.beans.Resource> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final String resource_type;
+    final String resourceType;
     final private String accounting;
     final private Timestamp created;
-    final private String created_by;
-    final private int disable_log;
-    final private Timestamp last_enabled;
+    final private String createdBy;
+    final private Integer disableLog;
+    final private Timestamp lastEnabled;
 
-    public Resource(ResourceService<?,?> service, int pkey, String resource_type, String accounting, Timestamp created, String created_by, int disable_log, Timestamp last_enabled) {
+    public Resource(
+        ResourceService<?,?> service,
+        int pkey,
+        String resourceType,
+        String accounting,
+        Timestamp created,
+        String createdBy,
+        Integer disableLog,
+        Timestamp lastEnabled
+    ) {
         super(service, pkey);
-        this.resource_type = resource_type.intern();
+        this.resourceType = resourceType.intern();
         this.accounting = accounting.intern();
         this.created = created;
-        this.created_by = accounting.intern();
-        this.disable_log = disable_log;
-        this.last_enabled = last_enabled;
+        this.createdBy = createdBy.intern();
+        this.disableLog = disableLog;
+        this.lastEnabled = lastEnabled;
     }
     // </editor-fold>
 
@@ -48,7 +57,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
     protected int compareToImpl(Resource other) throws RemoteException {
         int diff = compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
         if(diff!=0) return diff;
-        diff = resource_type.equals(other.resource_type) ? 0 : getResourceType().compareTo(other.getResourceType());
+        diff = resourceType.equals(other.resourceType) ? 0 : getResourceType().compareTo(other.getResourceType());
         if(diff!=0) return diff;
         return compare(key, other.key);
     }
@@ -62,8 +71,8 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
 
     @SchemaColumn(order=1, name="resource_type", description="the type of resource")
     public ResourceType getResourceType() throws RemoteException {
-        ResourceType r=getService().getConnector().getResourceTypes().get(resource_type);
-        if(r==null) throw new RemoteException("Unable to find ResourceType: "+resource_type);
+        ResourceType r=getService().getConnector().getResourceTypes().get(resourceType);
+        if(r==null) throw new RemoteException("Unable to find ResourceType: "+resourceType);
         return r;
     }
 
@@ -89,14 +98,14 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
      */
     @SchemaColumn(order=4, name="created_by", description="the administrator who created the resource")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(created_by);
+        return getService().getConnector().getBusinessAdministrators().get(createdBy);
     }
 
     @SchemaColumn(order=5, name="disable_log", description="indicates the resource is disabled")
     public DisableLog getDisableLog() throws RemoteException {
-        if(disable_log==-1) return null;
-        DisableLog obj=getService().getConnector().getDisableLogs().get(disable_log);
-        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disable_log);
+        if(disableLog==null) return null;
+        DisableLog obj=getService().getConnector().getDisableLogs().get(disableLog);
+        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disableLog);
         return obj;
     }
 
@@ -106,7 +115,13 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
      */
     @SchemaColumn(order=6, name="last_enabled", description="the time the resources was last enabled or the creation time if never disabled")
     public Timestamp getLastEnabled() {
-        return last_enabled;
+        return lastEnabled;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Resource getBean() {
+        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
     }
     // </editor-fold>
 
@@ -147,8 +162,8 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
         AOServObject obj;
-        if(resource_type.equals(ResourceType.MYSQL_SERVER)) return null;
-        else throw new AssertionError("Unexpected resource type: "+resource_type);
+        if(resourceType.equals(ResourceType.MYSQL_SERVER)) return null;
+        else throw new AssertionError("Unexpected resource type: "+resourceType);
         // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
         // TODO: return obj;
     }
@@ -157,7 +172,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public boolean isDisabled() {
-        return disable_log!=-1;
+        return disableLog!=null;
     }*/
 
     /**
@@ -291,4 +306,5 @@ final public class Resource extends AOServObjectIntegerKey<Resource> {
         return getService().getConnector().getAoServerResources().get(pkey);
     }
      */
+    // </editor-fold>
 }

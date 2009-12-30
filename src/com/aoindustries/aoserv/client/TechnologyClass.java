@@ -14,7 +14,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass> {
+final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass> implements BeanFactory<com.aoindustries.aoserv.client.beans.TechnologyClass> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -56,6 +56,12 @@ final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass
     @SchemaColumn(order=1, name="description", description="a description of the class")
     public String getDescription() {
         return description;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TechnologyClass getBean() {
+        return new com.aoindustries.aoserv.client.beans.TechnologyClass(key, description);
     }
     // </editor-fold>
 }

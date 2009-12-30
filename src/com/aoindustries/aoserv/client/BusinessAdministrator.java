@@ -102,7 +102,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     final private String state;
     final private String country;
     final private String zip;
-    final private int disableLog;
+    final private Integer disableLog;
     final private boolean canSwitchUsers;
     final private String supportCode;
 
@@ -127,7 +127,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         String state,
         String country,
         String zip,
-        int disableLog,
+        Integer disableLog,
         boolean canSwitchUsers,
         String supportCode
     ) {
@@ -259,7 +259,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     @SchemaColumn(order=19, name="disable_log", description="indicates that this account is disabled")
     public DisableLog getDisableLog() throws RemoteException {
-        if(disableLog==-1) return null;
+        if(disableLog==null) return null;
         DisableLog obj = getService().getConnector().getDisableLogs().get(disableLog);
         if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disableLog);
         return obj;
@@ -278,30 +278,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(
-            key,
-            password,
-            name,
-            title,
-            birthday,
-            isPreferred,
-            isPrivate,
-            created,
-            workPhone,
-            homePhone,
-            cellPhone,
-            fax,
-            email,
-            address1,
-            address2,
-            city,
-            state,
-            country,
-            zip,
-            disableLog,
-            canSwitchUsers,
-            supportCode
-        );
+        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(key, password, name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, email, address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
     // </editor-fold>
 
@@ -352,7 +329,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     }
 
     public boolean canDisable() throws SQLException, IOException {
-        return disable_log==-1 && !equals(service.connector.getThisBusinessAdministrator());
+        return disableLog==null && !equals(service.connector.getThisBusinessAdministrator());
     }
 
     public boolean canSwitchUser(BusinessAdministrator other) throws SQLException, IOException {
@@ -423,40 +400,12 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         return service.connector.getTicketAssignments().getTicketAssignments(this);
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_USERNAME: return pkey;
-            case 1: return password;
-            case 2: return name;
-            case 3: return title;
-            case 4: return birthday==-1?null:new java.sql.Date(birthday);
-            case 5: return isPreferred?Boolean.TRUE:Boolean.FALSE;
-            case 6: return isPrivate?Boolean.TRUE:Boolean.FALSE;
-            case 7: return new java.sql.Date(created);
-            case 8: return work_phone;
-            case 9: return home_phone;
-            case 10: return cell_phone;
-            case 11: return fax;
-            case 12: return email;
-            case 13: return address1;
-            case 14: return address2;
-            case 15: return city;
-            case 16: return state;
-            case 17: return country;
-            case 18: return zip;
-            case 19: return disable_log==-1?null:Integer.valueOf(disable_log);
-            case 20: return can_switch_users?Boolean.TRUE:Boolean.FALSE;
-            case 21: return support_code;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
     public List<Ticket> getCreatedTickets() throws IOException, SQLException {
         return service.connector.getTickets().getIndexedRows(Ticket.COLUMN_CREATED_BY, pkey);
     }
 
     public boolean isDisabled() {
-        return disable_log!=-1;
+        return disableLog!=null;
     }
 
     public MasterUser getMasterUser() throws IOException, SQLException {
@@ -522,58 +471,6 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     public boolean passwordMatches(String plaintext) {
         return passwordMatches(plaintext, password);
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        password = result.getString(2).trim();
-        name = result.getString(3);
-        title = result.getString(4);
-        String S=result.getString(5);
-        birthday = S==null?-1:SQLUtility.getDate(S.substring(0,10)).getTime();
-        isPreferred = result.getBoolean(6);
-        isPrivate = result.getBoolean(7);
-        created = result.getTimestamp(8).getTime();
-        work_phone = result.getString(9);
-        home_phone = result.getString(10);
-        cell_phone = result.getString(11);
-        fax = result.getString(12);
-        email = result.getString(13);
-        address1 = result.getString(14);
-        address2 = result.getString(15);
-        city = result.getString(16);
-        state = result.getString(17);
-        country = result.getString(18);
-        zip = result.getString(19);
-        disable_log=result.getInt(20);
-        if(result.wasNull()) disable_log=-1;
-        can_switch_users=result.getBoolean(21);
-        support_code = result.getString(22);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        password=in.readUTF();
-        name=in.readUTF();
-        title=in.readNullUTF();
-        birthday=in.readLong();
-        isPreferred=in.readBoolean();
-        isPrivate=in.readBoolean();
-        created=in.readLong();
-        work_phone=in.readUTF();
-        home_phone=in.readNullUTF();
-        cell_phone=in.readNullUTF();
-        fax=in.readNullUTF();
-        email=in.readUTF();
-        address1=in.readNullUTF();
-        address2=in.readNullUTF();
-        city=in.readNullUTF();
-        state=StringUtility.intern(in.readNullUTF());
-        country=StringUtility.intern(in.readNullUTF());
-        zip=in.readNullUTF();
-        disable_log=in.readCompressedInt();
-        can_switch_users=in.readBoolean();
-        support_code = in.readNullUTF();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
@@ -694,31 +591,6 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
             }
         );
     }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeUTF(password);
-        out.writeUTF(name);
-        out.writeNullUTF(title);
-        out.writeLong(birthday);
-        out.writeBoolean(isPreferred);
-        out.writeBoolean(isPrivate);
-        out.writeLong(created);
-        out.writeUTF(work_phone);
-        out.writeNullUTF(home_phone);
-        out.writeNullUTF(cell_phone);
-        out.writeNullUTF(fax);
-        out.writeUTF(email);
-        out.writeNullUTF(address1);
-        out.writeNullUTF(address2);
-        out.writeNullUTF(city);
-        out.writeNullUTF(state);
-        out.writeNullUTF(country);
-        out.writeNullUTF(zip);
-        out.writeCompressedInt(disable_log);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)>=0) out.writeBoolean(can_switch_users);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(support_code);
-    }
     */
 
     /**
@@ -746,7 +618,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     }
 
     public boolean canSetPassword() {
-        return disable_log==-1;
+        return disableLog==null;
     }
 
     public List<BusinessAdministratorPermission> getPermissions() throws IOException, SQLException {

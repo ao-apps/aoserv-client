@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVersion> {
+final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.TechnologyVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -27,7 +27,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     final private String version;
     final private Timestamp updated;
     final private String owner;
-    final private int operating_system_version;
+    final private int operatingSystemVersion;
 
     public TechnologyVersion(
         TechnologyVersionService<?,?> service,
@@ -36,14 +36,14 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
         String version,
         Timestamp updated,
         String owner,
-        int operating_system_version
+        int operatingSystemVersion
     ) {
         super(service, pkey);
         this.name = name.intern();
         this.version = version;
         this.updated = updated;
         this.owner = owner.intern();
-        this.operating_system_version = operating_system_version;
+        this.operatingSystemVersion = operatingSystemVersion;
     }
     // </editor-fold>
 
@@ -85,7 +85,13 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
 
     @SchemaColumn(order=4, name="operating_system_version", description="the version of the OS that this packages is installed")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
-        return getService().getConnector().getOperatingSystemVersions().get(operating_system_version);
+        return getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TechnologyVersion getBean() {
+        return new com.aoindustries.aoserv.client.beans.TechnologyVersion(key, name, version, updated, owner, operatingSystemVersion);
     }
     // </editor-fold>
 

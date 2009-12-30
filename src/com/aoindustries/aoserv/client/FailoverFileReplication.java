@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileReplication extends AOServObjectIntegerKey<FailoverFileReplication> implements BitRateProvider {
+final public class FailoverFileReplication extends AOServObjectIntegerKey<FailoverFileReplication> implements BeanFactory<com.aoindustries.aoserv.client.beans.FailoverFileReplication>, BitRateProvider {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -27,38 +27,38 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int server;
-    final private int backup_partition;
-    final private int max_bit_rate;
-    final private boolean use_compression;
+    final private int backupPartition;
+    final private int maxBitRate;
+    final private boolean useCompression;
     final private short retention;
-    final private String connect_address;
-    final private String connect_from;
+    final private String connectAddress;
+    final private String connectFrom;
     final private boolean enabled;
-    final private int quota_gid;
+    final private Integer quotaGid;
 
     public FailoverFileReplication(
         FailoverFileReplicationService<?,?> service,
         int pkey,
         int server,
-        int backup_partition,
-        int max_bit_rate,
-        boolean use_compression,
+        int backupPartition,
+        int maxBitRate,
+        boolean useCompression,
         short retention,
-        String connect_address,
-        String connect_from,
+        String connectAddress,
+        String connectFrom,
         boolean enabled,
-        int quota_gid
+        Integer quotaGid
     ) {
         super(service, pkey);
         this.server = server;
-        this.backup_partition = backup_partition;
-        this.max_bit_rate = max_bit_rate;
-        this.use_compression = use_compression;
+        this.backupPartition = backupPartition;
+        this.maxBitRate = maxBitRate;
+        this.useCompression = useCompression;
         this.retention = retention;
-        this.connect_address = StringUtility.intern(connect_address);
-        this.connect_from = StringUtility.intern(connect_from);
+        this.connectAddress = StringUtility.intern(connectAddress);
+        this.connectFrom = StringUtility.intern(connectFrom);
         this.enabled = enabled;
-        this.quota_gid = quota_gid;
+        this.quotaGid = quotaGid;
     }
     // </editor-fold>
 
@@ -67,7 +67,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     protected int compareToImpl(FailoverFileReplication other) throws RemoteException {
         int diff = server==other.server ? 0 : getServer().compareTo(other.getServer());
         if(diff!=0) return diff;
-        return backup_partition==other.backup_partition ? 0 : getBackupPartition().compareTo(other.getBackupPartition());
+        return backupPartition==other.backupPartition ? 0 : getBackupPartition().compareTo(other.getBackupPartition());
     }
     // </editor-fold>
 
@@ -87,17 +87,17 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
      */
     @SchemaColumn(order=2, name="backup_partition", description="the pkey of the backup partition that the files are going to")
     public BackupPartition getBackupPartition() throws RemoteException {
-        return getService().getConnector().getBackupPartitions().get(backup_partition);
+        return getService().getConnector().getBackupPartitions().get(backupPartition);
     }
 
     @SchemaColumn(order=3, name="max_bit_rate", description="the maximum bit rate for files being replicated")
     public int getBitRate() {
-        return max_bit_rate;
+        return maxBitRate;
     }
 
     @SchemaColumn(order=4, name="use_compression", description="when compression is enabled, chunk mode is used on mirroring, resulting in more CPU and disk, but less bandwidth")
     public boolean getUseCompression() {
-        return use_compression;
+        return useCompression;
     }
 
     @SchemaColumn(order=5, name="retention", description="the number of days backups will be kept")
@@ -111,7 +111,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
      */
     @SchemaColumn(order=6, name="connect_address", description="an address that overrides regular AOServ connections for failovers")
     public String getConnectAddress() {
-        return connect_address;
+        return connectAddress;
     }
 
     /**
@@ -120,7 +120,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
      */
     @SchemaColumn(order=7, name="connect_from", description="an address that overrides regular AOServ connection source addresses for failovers")
     public String getConnectFrom() {
-        return connect_from;
+        return connectFrom;
     }
 
     /**
@@ -142,9 +142,15 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     /* TODO
     @SchemaColumn(order=9, name="quota_gid", description="the gid used on the backup_partition for quota reports, required if backup_partitions quotas are enabled, not allowed otherwise")
     public LinuxID getQuotaGID() throws SQLException {
-        if(quota_gid==-1) return null;
-        return getService().getConnector().getLinuxIDs().get(quota_gid);
+        if(quotaGid==null) return null;
+        return getService().getConnector().getLinuxIDs().get(quotaGid);
     }*/
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.FailoverFileReplication getBean() {
+        return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, connectAddress, connectFrom, enabled, quotaGid);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">

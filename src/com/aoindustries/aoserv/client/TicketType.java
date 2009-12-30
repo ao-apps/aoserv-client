@@ -14,7 +14,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketType extends AOServObjectStringKey<TicketType> {
+final public class TicketType extends AOServObjectStringKey<TicketType> implements BeanFactory<com.aoindustries.aoserv.client.beans.TicketType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -41,6 +41,12 @@ final public class TicketType extends AOServObjectStringKey<TicketType> {
     @SchemaColumn(order=0, name="type", unique=true, description="the unique type name")
     public String getType() {
         return key;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TicketType getBean() {
+        return new com.aoindustries.aoserv.client.beans.TicketType(key);
     }
     // </editor-fold>
 

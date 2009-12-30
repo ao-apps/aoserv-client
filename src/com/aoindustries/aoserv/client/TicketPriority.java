@@ -14,7 +14,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketPriority extends AOServObjectStringKey<TicketPriority> {
+final public class TicketPriority extends AOServObjectStringKey<TicketPriority> implements BeanFactory<com.aoindustries.aoserv.client.beans.TicketPriority> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -40,6 +40,12 @@ final public class TicketPriority extends AOServObjectStringKey<TicketPriority> 
     @SchemaColumn(order=0, name="priority", unique=true, description="the unique priority")
     public String getPriority() {
     	return key;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TicketPriority getBean() {
+        return new com.aoindustries.aoserv.client.beans.TicketPriority(key);
     }
     // </editor-fold>
 }
