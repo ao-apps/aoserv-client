@@ -150,7 +150,7 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column not primary key or unique: "+columnName);
         if(value==null) return null;
         Method method = methodColumn.getMethod();
-        if(value.getClass()!=method.getReturnType()) throw new IllegalArgumentException("value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName());
+        if(!AOServServiceUtils.classesMatch(value.getClass(), method.getReturnType())) throw new IllegalArgumentException("value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName());
         synchronized(uniqueHashes) {
             Map<Object,V> uniqueHash = uniqueHashes.get(columnName);
             if(uniqueHash==null || Boolean.TRUE!=uniqueHashValids.get(columnName)) {
@@ -160,7 +160,9 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
                 try {
                     for(V obj : set) {
                         Object columnValue = method.invoke(obj);
-                        if(uniqueHash.put(columnValue, obj)!=null) throw new AssertionError("Duplicate value in unique column "+getServiceName()+"."+columnName+": "+columnValue);
+                        if(columnValue!=null) {
+                            if(uniqueHash.put(columnValue, obj)!=null) throw new AssertionError("Duplicate value in unique column "+getServiceName()+"."+columnName+": "+columnValue);
+                        }
                     }
                 } catch(IllegalAccessException err) {
                     throw new RemoteException(err.getMessage(), err);
@@ -178,7 +180,7 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         if(methodColumn.getIndexType()!=IndexType.INDEXED) throw new IllegalArgumentException("Column not indexed: "+columnName);
         if(value==null) return null;
         Method method = methodColumn.getMethod();
-        if(value.getClass()!=method.getReturnType()) throw new IllegalArgumentException("value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName());
+        if(!AOServServiceUtils.classesMatch(value.getClass(), method.getReturnType())) throw new IllegalArgumentException("value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName());
         synchronized(indexedHashes) {
             Map<Object,Set<V>> indexedHash = indexedHashes.get(columnName);
             if(indexedHash==null || Boolean.TRUE!=indexHashValids.get(columnName)) {
@@ -187,9 +189,11 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
                 try {
                     for(V obj : getSet()) {
                         Object columnValue = method.invoke(obj);
-                        Set<V> results = indexedHash.get(columnValue);
-                        if(results==null) indexedHash.put(columnValue, results = new HashSet<V>());
-                        results.add(obj);
+                        if(columnValue!=null) {
+                            Set<V> results = indexedHash.get(columnValue);
+                            if(results==null) indexedHash.put(columnValue, results = new HashSet<V>());
+                            results.add(obj);
+                        }
                     }
                 } catch(IllegalAccessException err) {
                     throw new RemoteException(err.getMessage(), err);

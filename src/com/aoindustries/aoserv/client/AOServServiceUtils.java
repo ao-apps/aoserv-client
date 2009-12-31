@@ -336,4 +336,38 @@ final public class AOServServiceUtils {
             }
         }
     }
+
+    /**
+     * Determines if two classes match.  Classes must be exactly the same to be considered a match - subclasses
+     * are not considered a match.  Allows primitive to wrapper conversions for compatibility with auto boxing.
+     */
+    public static boolean classesMatch(Class<?> class1, Class<?> class2) {
+        if(class1==class2) return true;
+        // int
+        if(class1==Integer.class) return class2==Integer.TYPE;
+        if(class1==Integer.TYPE) return class2==Integer.class;
+        // short
+        if(class1==Short.class) return class2==Short.TYPE;
+        if(class1==Short.TYPE) return class2==Short.class;
+        // byte
+        if(class1==Byte.class) return class2==Byte.TYPE;
+        if(class1==Byte.TYPE) return class2==Byte.class;
+        // long
+        if(class1==Long.class) return class2==Long.TYPE;
+        if(class1==Long.TYPE) return class2==Long.class;
+        // float
+        if(class1==Float.class) return class2==Float.TYPE;
+        if(class1==Float.TYPE) return class2==Float.class;
+        // double
+        if(class1==Double.class) return class2==Double.TYPE;
+        if(class1==Double.TYPE) return class2==Double.class;
+        // char
+        if(class1==Character.class) return class2==Character.TYPE;
+        if(class1==Character.TYPE) return class2==Character.class;
+        // boolean
+        if(class1==Boolean.class) return class2==Boolean.TYPE;
+        if(class1==Boolean.TYPE) return class2==Boolean.class;
+        // other classes need an exact match
+        return false;
+    }
 }
