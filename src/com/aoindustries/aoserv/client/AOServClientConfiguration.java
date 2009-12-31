@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * The default client configuration is stored in a properties resource named
  * <code>/com/aoindustries/aoserv/client/aoesrv-client.properties</code>.
  *
- * @see  AOServConnector#getConnector()
+ * @see  #getConnector()
  *
  * @author  AO Industries, Inc.
  */

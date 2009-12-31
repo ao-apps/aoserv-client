@@ -83,8 +83,6 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
 
     /**
      * Gets the size of this service as obtained by <code>getSet().size()</code>.
-     *
-     * @see #size()
      */
     int getSize() throws RemoteException;
 
