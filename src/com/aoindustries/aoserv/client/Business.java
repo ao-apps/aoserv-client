@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -135,7 +136,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="accounting", unique=true, description="the unique identifier for this business.")
+    @SchemaColumn(order=0, name="accounting", index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
     public String getAccounting() {
         return key;
     }
@@ -160,7 +161,8 @@ final public class Business extends AOServObjectStringKey<Business> implements B
         return cancelReason;
     }
 
-    @SchemaColumn(order=5, name="parent", description="the parent business to this one")
+    static final String COLUMN_PARENT = "parent";
+    @SchemaColumn(order=5, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the parent business to this one")
     public Business getParentBusiness() throws RemoteException {
         if(parent==null) return null;
         // The parent business might not be found, even when the value is set.  This is normal due
@@ -217,7 +219,8 @@ final public class Business extends AOServObjectStringKey<Business> implements B
     /**
      * May be filtered.  May also be null for the root business only.
      */
-    @SchemaColumn(order=13, name="created_by", description="the user who added this business")
+    static final String COLUMN_CREATED_BY = "created_by";
+    @SchemaColumn(order=13, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the user who added this business")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
         return getService().getConnector().getBusinessAdministrators().get(createdBy);
@@ -295,48 +298,66 @@ final public class Business extends AOServObjectStringKey<Business> implements B
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() {
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            /* TODO
-            createDependencyList(
-                getBrand()
-            ),
+            // TODO: createDependencyList(
+            // TODO:     getBrand()
+            // TODO: ),
             getChildBusinesses(),
-            getBusinessProfiles(),
-            getBusinessServers(),
-            getCreditCards(),
+            // TODO: getBusinessProfiles(),
+            // TODO: getBusinessServers(),
+            // TODO: getCreditCards(),
+            // TODO: getCreditCardProcessors(),
+            // TODO: getCreditCardTransactions(),
+            // TODO: getCreditCardTransactionsByCreditCardAccounting(),
+            // TODO: getDisableLogs(),
+            // TODO: getDNSZones(),
+            // TODO: getIPAddresses(),
+            // TODO: getEmailDomains(),
+            // TODO: getLinuxGroups(),
+            // TODO: getEncryptionKeys(),
+            // TODO: getEmailPipes(),
+            // TODO: getEmailSmtpRelays(),
+            // TODO: getHttpdServers(),
+            // TODO: getHttpdSites(),
+            // TODO: getMonthlyCharges(),
+            // TODO: getMonthlyChargesBySourceBusiness(),
+            // TODO: getMysqlDatabases(),
+            // TODO: getNoticeLogs(),
+            // TODO: getPackageDefinitions(),
+            getResources(),
             getServers(),
             getServerFarms(),
-            getCreditCardProcessors(),
-            getCreditCardTransactions(),
-            getCreditCardTransactionsByCreditCardAccounting(),
-            getDisableLogs(),
-            getDNSZones(),
-            getIPAddresses(),
-            getUsernames(),
-            getEmailDomains(),
-            getLinuxGroups(),
-            getEncryptionKeys(),
-            getEmailPipes(),
-            getEmailSmtpRelays(),
-            getHttpdServers(),
-            getHttpdSites(),
-            getMonthlyCharges(),
-            getMonthlyChargesBySourceBusiness(),
-            getMysqlDatabases(),
-            getNoticeLogs(),
-            getPackageDefinitions(),
-            getResources(),
-            getTickets(),
-            getTicketActionsByOldBusiness(),
-            getTicketActionsByNewBusiness(),
-            getTransactions(),
-            getTransactionsBySourceAccounting()*/
+            getUsernames()
+            // TODO: getTickets(),
+            // TODO: getTicketActionsByOldBusiness(),
+            // TODO: getTicketActionsByNewBusiness(),
+            // TODO: getTransactions(),
+            // TODO: getTransactionsBySourceAccounting()
         );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<Business> getChildBusinesses() throws RemoteException {
+        return getService().getConnector().getBusinesses().getIndexed(COLUMN_PARENT, this);
+    }
+
+    public Set<Resource> getResources() throws RemoteException {
+        return getService().getConnector().getResources().getIndexed(Resource.COLUMN_ACCOUNTING, this);
+    }
+
+    public Set<Server> getServers() throws RemoteException {
+        return getService().getConnector().getServers().getIndexed(Server.COLUMN_ACCOUNTING, this);
+    }
+
+    public Set<ServerFarm> getServerFarms() throws RemoteException {
+        return getService().getConnector().getServerFarms().getIndexed(ServerFarm.COLUMN_OWNER, this);
+    }
+
+    public Set<Username> getUsernames() throws RemoteException {
+        return getService().getConnector().getUsernames().getIndexed(Username.COLUMN_ACCOUNTING, this);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
@@ -758,10 +779,6 @@ final public class Business extends AOServObjectStringKey<Business> implements B
 
     public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
         return service.connector.getBusinessServers().getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, pkey);
-    }
-
-    public List<Business> getChildBusinesses() throws IOException, SQLException {
-        return service.connector.getBusinesses().getChildBusinesses(this);
     }
 
     public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
@@ -1388,24 +1405,8 @@ final public class Business extends AOServObjectStringKey<Business> implements B
         return null;
     }
 
-    public List<Server> getServers() throws IOException, SQLException {
-        return getService().getConnector().getServers().getIndexedRows(Server.COLUMN_ACCOUNTING, pkey);
-    }
-
-    public List<ServerFarm> getServerFarms() throws IOException, SQLException {
-        return getService().getConnector().getServerFarms().getIndexedRows(ServerFarm.COLUMN_OWNER, pkey);
-    }
-
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
         return getService().getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
-    }
-
-    public List<Username> getUsernames() throws IOException, SQLException {
-        return getService().getConnector().getUsernames().getUsernames(this);
-    }
-
-    public List<Resource> getResources() throws IOException, SQLException {
-        return getService().getConnector().getResources().getIndexedRows(Resource.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<DisableLog> getDisableLogs() throws IOException, SQLException {

@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -23,7 +24,7 @@ import junit.framework.TestSuite;
  */
 public class DependencyTest extends TestCase {
     
-    private List<AOServConnector> conns;
+    private List<AOServConnector<?,?>> conns;
 
     public DependencyTest(String testName) {
         super(testName);
@@ -44,19 +45,17 @@ public class DependencyTest extends TestCase {
     }
 
     abstract class ChildGetter {
-        abstract List<? extends AOServObject> getChildren(AOServObject obj) throws IOException, SQLException;
+        abstract Set<? extends AOServObject> getChildren(AOServObject<?,?> obj) throws IOException, SQLException;
     }
 
     class DependenciesGetter extends ChildGetter {
-        @SuppressWarnings("unchecked")
-        List<? extends AOServObject> getChildren(AOServObject obj) throws IOException, SQLException {
+        Set<? extends AOServObject> getChildren(AOServObject<?,?> obj) throws IOException, SQLException {
             return obj.getDependencies();
         }
     }
 
     class DependentObjectsGetter extends ChildGetter {
-        @SuppressWarnings("unchecked")
-        List<? extends AOServObject> getChildren(AOServObject obj) throws IOException, SQLException {
+        Set<? extends AOServObject> getChildren(AOServObject<?,?> obj) throws IOException, SQLException {
             return obj.getDependentObjects();
         }
     }
@@ -106,24 +105,23 @@ public class DependencyTest extends TestCase {
      *     http://www.eecs.berkeley.edu/~kamil/teaching/sp03/041403.pdf
      */
     private void doTestGetDependencies(ChildGetter childGetter, ChildGetter backGetter) throws Exception {
-        for(AOServConnector conn : conns) {
-            String username = conn.getThisBusinessAdministrator().pkey;
-            System.out.println("    "+username+":");
+        for(AOServConnector<?,?> conn : conns) {
+            System.out.println("    "+conn.getConnectAs()+":");
             System.out.print("        ");
-            for(SchemaTable.TableID tableId : SchemaTable.TableID.values()) System.out.print(tableId.name().charAt(0));
+            for(ServiceName serviceName : ServiceName.values) System.out.print(serviceName.name().charAt(0));
             System.out.println();
             System.out.print("        ");
             Map<AOServObject,Color> colors = new HashMap<AOServObject,Color>();
             Map<AOServObject,AOServObject> predecessors = new HashMap<AOServObject,AOServObject>();
             Sequence time = new UnsynchronizedSequence();
-            for(SchemaTable.TableID tableId : SchemaTable.TableID.values()) {
-                AOServTable<?,? extends AOServObject> table=conn.getTable(tableId.ordinal());
-                List<? extends AOServObject<?,? extends AOServObject>> rows=table.getRows();
-                int numRows = rows.size();
+            for(ServiceName serviceName : ServiceName.values) {
+
+                AOServService<?,?,?,?> service = conn.getServices().get(serviceName);
+                Set<? extends AOServObject<?,? extends AOServObject>> set = service.getSet();
+                int numRows = set.size();
                 if(numRows==0) System.out.print("E");
                 else {
-                    for(int c=0;c<numRows;c++) {
-                        AOServObject v = rows.get(c);
+                    for(AOServObject<?,?> v : set) {
                         if(!colors.containsKey(v)) doTestGetDependenciesDfsVisit(colors, predecessors, time, childGetter, backGetter, v);
                     }
                     System.out.print('.');

@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,6 +24,6 @@ import java.lang.annotation.Target;
 public @interface SchemaColumn {
     short order();
     String name();
-    boolean unique() default false;
+    IndexType index() default IndexType.NONE;
     String description();
 }

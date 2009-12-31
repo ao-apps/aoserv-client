@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
 
@@ -98,7 +99,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated, unique ID")
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique ID")
     public int getPkey() {
         return key;
     }
@@ -119,13 +120,13 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     }
 
     @SchemaColumn(order=4, name="architecture", description="the name of the architecture")
-    public Architecture getArchitecture(AOServConnector connector) throws RemoteException {
+    public Architecture getArchitecture() throws RemoteException {
         Architecture ar=getService().getConnector().getArchitectures().get(architecture);
         if(ar==null) throw new RemoteException("Unable to find Architecture: "+architecture);
         return ar;
     }
 
-    @SchemaColumn(order=5, name="display", unique=true, description="the full display name for this version")
+    @SchemaColumn(order=5, name="display", index=IndexType.UNIQUE, description="the full display name for this version")
     public String getDisplay() {
         return display;
     }
@@ -135,7 +136,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
         return isAoservDaemonSupported;
     }
 
-    @SchemaColumn(order=7, name="sort_order", unique=true, description="the default sort order")
+    @SchemaColumn(order=7, name="sort_order", index=IndexType.UNIQUE, description="the default sort order")
     public short getSortOrder() {
         return sortOrder;
     }

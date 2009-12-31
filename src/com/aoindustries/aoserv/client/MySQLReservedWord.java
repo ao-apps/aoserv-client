@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -27,7 +29,7 @@ final public class MySQLReservedWord extends AOServObjectStringKey<MySQLReserved
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="word", unique=true, description="the word that may not be used")
+    @SchemaColumn(order=0, name="word", index=IndexType.PRIMARY_KEY, description="the word that may not be used")
     public String getWord() {
     	return key;
     }

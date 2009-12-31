@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.util.Locale;
 
 /**
@@ -38,7 +39,7 @@ final public class TicketType extends AOServObjectStringKey<TicketType> implemen
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="type", unique=true, description="the unique type name")
+    @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the unique type name")
     public String getType() {
         return key;
     }

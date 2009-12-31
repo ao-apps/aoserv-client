@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -42,7 +44,7 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", unique=true, description="the unique name of the device")
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the device")
     public String getName() {
     	return key;
     }

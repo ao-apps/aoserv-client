@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.util.Locale;
 
 /**
@@ -28,7 +29,7 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="days", unique=true, description="the number of days to keep the backup data")
+    @SchemaColumn(order=0, name="days", index=IndexType.PRIMARY_KEY, description="the number of days to keep the backup data")
     public short getDays() {
         return key;
     }

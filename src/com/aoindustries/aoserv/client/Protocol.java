@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 
 /**
@@ -90,7 +91,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="protocol", unique=true, description="the unique name of the protocol")
+    @SchemaColumn(order=0, name="protocol", index=IndexType.PRIMARY_KEY, description="the unique name of the protocol")
     public String getProtocol() {
         return key;
     }

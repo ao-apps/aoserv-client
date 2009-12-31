@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -64,7 +65,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated unique pkey")
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique pkey")
     public int getPkey() {
         return key;
     }
@@ -80,7 +81,8 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      * Gets the business that is responsible for any charges caused by this resource.
      * This may be filtered.
      */
-    @SchemaColumn(order=2, name="accounting", description="the business that owns this resource")
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that owns this resource")
     public Business getBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(accounting);
     }
@@ -96,7 +98,8 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=4, name="created_by", description="the administrator who created the resource")
+    static final String COLUMN_CREATED_BY = "created_by";
+    @SchemaColumn(order=4, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the administrator who created the resource")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         return getService().getConnector().getBusinessAdministrators().get(createdBy);
     }
@@ -155,8 +158,8 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            getDependentObjectByResourceType()
-            // TODO: getAoServerResource()
+            getDependentObjectByResourceType(),
+            getAoServerResource()
         );
     }
 
@@ -168,6 +171,12 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
         // TODO: return obj;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public AOServerResource getAoServerResource() throws RemoteException {
+        return getService().getConnector().getAoServerResources().get(key);
     }
     // </editor-fold>
 
@@ -303,10 +312,5 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         throw new AssertionError("Unexpected resource type: "+resource_type);
     }
     */
-    /* TODO
-    public AOServerResource getAoServerResource() throws IOException, SQLException {
-        return getService().getConnector().getAoServerResources().get(pkey);
-    }
-     */
     // </editor-fold>
 }

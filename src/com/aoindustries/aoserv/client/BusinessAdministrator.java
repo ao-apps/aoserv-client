@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import com.aoindustries.util.Base64Coder;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -157,7 +158,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="username", unique=true, description="the unique identifier for this admin")
+    @SchemaColumn(order=0, name="username", index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
     public Username getUsername() throws RemoteException {
         Username usernameObject = getService().getConnector().getUsernames().get(key);
         if (usernameObject == null) throw new RemoteException("Username not found: " + key);
@@ -270,7 +271,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         return canSwitchUsers;
     }
 
-    @SchemaColumn(order=21, name="support_code", unique=true, description="used to authenticate for email-based supprt")
+    @SchemaColumn(order=21, name="support_code", index=IndexType.UNIQUE, description="used to authenticate for email-based supprt")
     public String getSupportCode() {
         return supportCode;
     }
@@ -291,13 +292,12 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() {
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
             /* TODO
             createDependencyList(
                 getMasterUser()
             ),
-            getBusinessesByCreatedBy(),
             getPermissions(),
             getCreditCardsByCreatedBy(),
             getCreditCardTransactionsByAuthorizationUsername(),
@@ -305,21 +305,28 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
             getCreditCardTransactionsByVoidUsername(),
             getDisableLogsByDisabledBy(),
             getMonthlyCharges(),
-            getMonthlyChargesByCreatedBy(),
-            getResources(),
-            getCreatedTickets(),
-            getCompletedSignupRequests(),
-            getTicketActions(),
-            getTicketActionsByOldAssignedTo(),
-            getTicketActionsByNewAssignedTo(),
-            getTicketAssignments(),
-            getTransactions()
-             */
+            getMonthlyChargesByCreatedBy(),*/
+            getBusinessesByCreatedBy(),
+            getResources()
+            // TODO: getCreatedTickets(),
+            // TODO: getCompletedSignupRequests(),
+            // TODO: getTicketActions(),
+            // TODO: getTicketActionsByOldAssignedTo(),
+            // TODO: getTicketActionsByNewAssignedTo(),
+            // TODO: getTicketAssignments(),
+            // TODO: getTransactions()
         );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<Business> getBusinessesByCreatedBy() throws RemoteException {
+        return getService().getConnector().getBusinesses().getIndexed(Business.COLUMN_CREATED_BY, this);
+    }
+
+    public Set<Resource> getResources() throws RemoteException {
+        return getService().getConnector().getResources().getIndexed(Resource.COLUMN_CREATED_BY, this);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
@@ -650,13 +657,6 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     }*/
 
     /* TODO
-    public List<Resource> getResources() throws IOException, SQLException {
-        return getService().getConnector().getResources().getIndexedRows(Resource.COLUMN_CREATED_BY, pkey);
-    }
-
-    public List<Business> getBusinessesByCreatedBy() throws IOException, SQLException {
-        return getService().getConnector().getBusinesses().getIndexedRows(Business.COLUMN_CREATED_BY, pkey);
-    }
 
     public List<CreditCard> getCreditCardsByCreatedBy() throws IOException, SQLException {
         return getService().getConnector().getCreditCards().getIndexedRows(CreditCard.COLUMN_CREATED_BY, pkey);

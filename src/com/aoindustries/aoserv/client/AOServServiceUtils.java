@@ -98,10 +98,12 @@ final public class AOServServiceUtils {
 
         final private AOServService<?,?,K,V> service;
         final private List<? extends MethodColumn> columns;
+        final private Map<String,? extends MethodColumn> columnMap;
 
         public AnnotationTable(AOServService<?,?,K,V> service, Class<V> valueClass) {
             this.service = service;
             columns = AOServObject.getMethodColumns(valueClass);
+            columnMap = AOServObject.getMethodColumnMap(valueClass);
         }
 
         public void addTableListener(TableListener<? super MethodColumn, ? super V> listener) {
@@ -135,7 +137,20 @@ final public class AOServServiceUtils {
         }
 
         /**
+         * Gets a column given its unique name.
+         *
+         * @exception  IllegalArgumentException when the column doesn't exist in this table.
+         */
+        public MethodColumn getColumn(String columnName) throws IllegalArgumentException {
+            MethodColumn column = columnMap.get(columnName);
+            if(column==null) throw new IllegalArgumentException("Column not found: "+columnName);
+            return column;
+        }
+
+        /**
          * Gets the rows as a result of <code>getSortedSet</code>.
+         *
+         * @see AOServService#getSortedSet()
          */
         public Iterator<V> getRows() {
             try {

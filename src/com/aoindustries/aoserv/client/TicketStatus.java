@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.util.Locale;
 
 /**
@@ -50,12 +51,12 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="status", unique=true, description="the name of this status")
+    @SchemaColumn(order=0, name="status", index=IndexType.PRIMARY_KEY, description="the name of this status")
     public String getStatus() {
         return key;
     }
 
-    @SchemaColumn(order=1, name="sort_order", unique=true, description="the default sort ordering")
+    @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="the default sort ordering")
     public short getSortOrder() {
         return sortOrder;
     }

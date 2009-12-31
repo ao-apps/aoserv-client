@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -64,7 +65,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated, unique id")
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
         return key;
     }
@@ -81,7 +82,8 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
         return getService().getConnector().getFailoverFileReplications().get(replication);
     }
 
-    @SchemaColumn(order=3, name="mysql_server", description="the MySQL Server that is being replicated")
+    static final String COLUMN_MYSQL_SERVER = "mysql_server";
+    @SchemaColumn(order=3, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the MySQL Server that is being replicated")
     public MySQLServer getMySQLServer() throws RemoteException {
         return getService().getConnector().getMysqlServers().get(mysqlServer);
     }

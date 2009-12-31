@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.i18n.LocalizedToString;
 import com.aoindustries.util.WrappedException;
@@ -15,9 +16,11 @@ import java.rmi.RemoteException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -269,7 +272,8 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     /**
      * Returns an unmodifiable set of the provided objects, not including any null values.
      */
-    static Set<? extends AOServObject> createDependencySet(Set<? extends AOServObject>... objss) {
+    @SuppressWarnings("unchecked")
+    static Set<? extends AOServObject> createDependencySet(Set... objss) {
         int totalSize = 0;
         for(Set<? extends AOServObject> objs : objss) totalSize+=objs.size();
         Set<AOServObject> set = new HashSet<AOServObject>(totalSize*4/3+1);
@@ -324,41 +328,94 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
 
     /**
      * Gets the columns for the provided class, in column index order.
-     * Also ensures that no column name is duplicated.
-     * Also ensures that there is no gap in column index numbers.
+     * All SchemaColumn methods must not take parameters.
+     * Ensures that no column name is duplicated.
+     * Ensures that there is no gap in column index numbers.
+     * Ensures that at most one primary key exists.
+     * Ensures that no unique index exists without a primary key defined.
      */
     static List<MethodColumn> getMethodColumns(Class<? extends AOServObject> clazz) {
         List<MethodColumn> methodColumns = columns.get(clazz);
         if(methodColumns==null) {
+//            Class<?> getKeyReturnType;
+//            try {
+//                getKeyReturnType = clazz.getMethod("getKey").getReturnType();
+//            } catch(NoSuchMethodException err) {
+//                throw new AssertionError("getKey() method not found: "+clazz.getName());
+//            }
+
             ArrayList<MethodColumn> newColumns = new ArrayList<MethodColumn>();
             Set<String> columnNames = new HashSet<String>();
+            Set<String> primaryKeys = new HashSet<String>();
+            Set<String> uniques = new HashSet<String>();
             for(Method method : clazz.getMethods()) {
                 SchemaColumn schemaColumn = method.getAnnotation(SchemaColumn.class);
                 if(schemaColumn!=null) {
                     String cname = schemaColumn.name();
+                    // All SchemaColumn methods must not take parameters.
+                    if(method.getParameterTypes().length>0) throw new AssertionError("Column method should not have any parameters: "+clazz.getName()+"."+method.getName());
                     if(!columnNames.add(cname)) throw new AssertionError("Column name found twice: "+clazz.getName()+"->"+cname);
                     int order = schemaColumn.order();
                     if(order<0) throw new AssertionError("Column order<0: "+clazz.getName()+"->"+order);
                     int newSize = order+1;
                     newColumns.ensureCapacity(newSize);
                     while(newColumns.size()<newSize) newColumns.add(null);
-                    if(newColumns.set(order, new MethodColumn(cname, schemaColumn.unique(), method, schemaColumn))!=null) throw new AssertionError("Column index found twice: "+clazz.getName()+"->"+order);
+                    IndexType indexType = schemaColumn.index();
+                    if(indexType==IndexType.PRIMARY_KEY) {
+                        primaryKeys.add(cname);
+//                        // Ensures the primary key column return values matches the return type of the <code>getKey</code> method.
+//                        Class<?> methodReturnType = method.getReturnType();
+//                        if(getKeyReturnType!=methodReturnType) {
+//                            throw new AssertionError(
+//                                "Mismatched key return types: "
+//                                +clazz.getName()+"."+method.getName()+"()->"+methodReturnType.getName()
+//                                +" and "+clazz.getName()+".getKey()->"+getKeyReturnType.getName()
+//                            );
+//                        }
+                    } else if(indexType==IndexType.UNIQUE) {
+                        uniques.add(cname);
+                    }
+                    if(newColumns.set(order, new MethodColumn(cname, indexType, method, schemaColumn))!=null) throw new AssertionError("Column index found twice: "+clazz.getName()+"->"+order);
                 }
             }
             int size = newColumns.size();
             // Make sure each column index is used in succession
             if(size!=columnNames.size()) {
                 // Find missing column(s)
-                StringBuilder SB = new StringBuilder("The following column indexes do not have a corresponding column method: "+clazz.getName()+"->");
+                StringBuilder message = new StringBuilder("The following column indexes do not have a corresponding column method: "+clazz.getName()+"->");
                 boolean didOne = false;
                 for(int c=0; c<size; c++) {
                     if(newColumns.get(c)==null) {
-                        if(didOne) SB.append(", ");
+                        if(didOne) message.append(", ");
                         else didOne = true;
-                        SB.append(c);
+                        message.append(c);
                     }
                 }
-                throw new AssertionError(SB.toString());
+                throw new AssertionError(message.toString());
+            }
+            // Ensures that at most one primary key exists.
+            if(primaryKeys.size()>1) {
+                StringBuilder message = new StringBuilder("More than one primary key found: ");
+                message.append(clazz.getName()).append("->");
+                boolean didOne = false;
+                for(String cname : primaryKeys) {
+                    if(didOne) message.append(", ");
+                    else didOne = true;
+                    message.append(cname);
+                }
+                throw new AssertionError(message.toString());
+            }
+            // Ensures that no unique index exists without a primary key defined.
+            if(!uniques.isEmpty() && primaryKeys.isEmpty()) {
+                StringBuilder message = new StringBuilder(uniques.size()==1 ? "Unique column exists without primary key: ":"Unique columns exist without primary key: ");
+                message.append(clazz.getName()).append("->");
+                boolean didOne = false;
+                for(String cname : uniques) {
+                    if(didOne) message.append(", ");
+                    else didOne = true;
+                    message.append(cname);
+                }
+                throw new AssertionError(message.toString());
             }
             // Make unmodifiable
             List<MethodColumn> unmod;
@@ -373,6 +430,25 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
             methodColumns = existingColumns==null ? unmod : existingColumns;
         }
         return methodColumns;
+    }
+
+    private static final ConcurrentMap<Class<? extends AOServObject>,Map<String,MethodColumn>> columnMaps = new ConcurrentHashMap<Class<? extends AOServObject>, Map<String,MethodColumn>>();
+
+    /**
+     * Provides map from getMethodColumns.
+     */
+    static Map<String,MethodColumn> getMethodColumnMap(Class<? extends AOServObject> clazz) {
+        Map<String,MethodColumn> map = columnMaps.get(clazz);
+        if(map==null) {
+            List<MethodColumn> list = getMethodColumns(clazz);
+            Map<String,MethodColumn> newMap = new HashMap<String,MethodColumn>(list.size()*4/3+1);
+            for(MethodColumn mc : list) newMap.put(mc.getColumnName(), mc);
+            newMap = Collections.unmodifiableMap(newMap);
+            // Put in cache
+            Map<String,MethodColumn> existingColumnMap = columnMaps.putIfAbsent(clazz, newMap);
+            map = existingColumnMap==null ? newMap : existingColumnMap;
+        }
+        return map;
     }
 
     /**

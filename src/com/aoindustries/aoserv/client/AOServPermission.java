@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import com.aoindustries.util.i18n.LocalizedToString;
 import java.util.Locale;
 
@@ -91,12 +92,12 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", unique=true, description="the unique name of the permission")
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the permission")
     public String getName() {
         return key;
     }
 
-    @SchemaColumn(order=1, name="sort_order", unique=true, description="the sort order for the permission")
+    @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="the sort order for the permission")
     public short getSortOrder() {
         return sortOrder;
     }

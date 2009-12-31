@@ -76,12 +76,6 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
     Map<K,V> getMap() throws RemoteException;
 
     /**
-     * Gets the value for the associated key or <code>null</code> if the data
-     * doesn't exist or is filtered.
-     */
-    V get(K key) throws RemoteException;
-
-    /**
      * Determines if this service is empty.  It is empty when <code>getSet</code>
      * is empty.
      */
@@ -93,4 +87,44 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * @see #size()
      */
     int getSize() throws RemoteException;
+
+    /**
+     * Gets the object having the provided key value.  Like SQL, a <code>null</code> value will not match
+     * any rows.
+     */
+    V get(K key) throws RemoteException;
+
+    /**
+     * Gets the set of objects having any of the provided key values.  Like SQL, a <code>null</code> value will not match
+     * any rows.
+     */
+    // Create when first needed: Set<V> getSet(Set<K> keys) throws RemoteException;
+
+    /**
+     * Gets the object having the provided column value.  Like SQL, a <code>null</code> value will not match
+     * any rows.
+     * The column must have an index type of PRIMARY_KEY or UNIQUE.
+     */
+    V getUnique(String columnName, Object value) throws RemoteException;
+
+    /**
+     * Gets the set of objects having one of the provided column values.  Like SQL, a <code>null</code> value will not match
+     * any rows.
+     * The column must have an index type of PRIMARY_KEY or UNIQUE.
+     */
+    // Create when first needed: <T extends Comparable<T>> Set<V> getUniqueSet(String columnName, Set<T> values) throws RemoteException;
+
+    /**
+     * Gets the set of objects having the provided column value.  Like SQL, a <code>null</code> value will not match
+     * any rows.
+     * The column must have an index type of INDEXED.
+     */
+    Set<V> getIndexed(String columnName, Object value) throws RemoteException;
+
+    /**
+     * Gets the set of objects having one of the provided column values.  Like SQL, a <code>null</code> value will not match
+     * any rows.
+     * The column must have an index type of INDEXED.
+     */
+    // Create when first needed: Set<V> getIndexedSet(String columnName, Set<T> values) throws RemoteException;
 }

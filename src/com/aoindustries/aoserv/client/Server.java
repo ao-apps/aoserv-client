@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -64,12 +65,13 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated, unique ID")
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique ID")
     public int getPkey() {
         return key;
     }
 
-    @SchemaColumn(order=1, name="farm", description="the name of the farm the server is located in")
+    static final String COLUMN_FARM = "farm";
+    @SchemaColumn(order=1, name=COLUMN_FARM, index=IndexType.INDEXED, description="the name of the farm the server is located in")
     public ServerFarm getServerFarm() throws RemoteException {
         ServerFarm sf=getService().getConnector().getServerFarms().get(farm);
         if(sf==null) throw new RemoteException("Unable to find ServerFarm: "+farm);
@@ -89,12 +91,8 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         return osv;
     }
 
-    /**
-     * May be filtered.
-     *
-     * @see #getAccounting()
-     */
-    @SchemaColumn(order=4, name="accounting", description="the business accountable for resources used by the server")
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=4, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business accountable for resources used by the server")
     public Business getBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(accounting);
     }
@@ -129,7 +127,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
             // TODO: createDependencySet(
-                // TODO: getAOServer(),
+                getAOServer()
                 // TODO: getPhysicalServer(),
                 // TODO: getVirtualServer()
             // TODO: ),
@@ -142,11 +140,10 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    public AOServer getAOServer() throws IOException, SQLException {
-        return getService().getConnector().getAoServers().get(pkey);
+    public AOServer getAOServer() throws RemoteException {
+        return getService().getConnector().getAoServers().get(key);
     }
-
+    /* TODO
     public PhysicalServer getPhysicalServer() throws IOException, SQLException {
         return getService().getConnector().getPhysicalServers().get(pkey);
     }

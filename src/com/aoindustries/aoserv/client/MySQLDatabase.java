@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -83,7 +84,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", unique=true, description="the unique resource id")
+    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
     public AOServerResource getAoServerResource() throws RemoteException {
         return getService().getConnector().getAoServerResources().get(key);
     }
@@ -93,7 +94,8 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
         return name;
     }
 
-    @SchemaColumn(order=2, name="mysql_server", description="the pkey of the server that this database is hosted on")
+    static final String COLUMN_MYSQL_SERVER = "mysql_server";
+    @SchemaColumn(order=2, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the pkey of the server that this database is hosted on")
     public MySQLServer getMySQLServer() throws RemoteException {
         return getService().getConnector().getMysqlServers().get(mysqlServer);
     }
@@ -117,7 +119,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getMySQLDBUsers()
+            getMySQLDBUsers()
         );
     }
     // </editor-fold>
@@ -130,10 +132,9 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
-        return getService().getConnector().getMysqlDBUsers().getMySQLDBUsers(this);
-    }*/
+    public Set<MySQLDBUser> getMySQLDBUsers() throws RemoteException {
+        return getService().getConnector().getMysqlDBUsers().getIndexed(MySQLDBUser.COLUMN_MYSQL_DATABASE, this);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -52,7 +53,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="the unique category id")
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="the unique category id")
     public int getPkey() {
         return key;
     }

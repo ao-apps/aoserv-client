@@ -108,7 +108,7 @@ final public class DescribeCommand extends AOServCommand<String> {
             SchemaColumn schemaColumn = methodColumn.getSchemaColumn();
             values[pos++]=methodColumn.getColumnName();
             values[pos++]=getReturnType(methodColumn.getMethod());
-            values[pos++]=methodColumn.isUnique()?"true":"false";
+            values[pos++]=methodColumn.getIndexType();
             values[pos++]=schemaColumn.description();
         }
 
@@ -118,7 +118,7 @@ final public class DescribeCommand extends AOServCommand<String> {
                 new String[] {
                     ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.column"),
                     ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.type"),
-                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.unique"),
+                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.index"),
                     ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.description")
                 },
                 values,

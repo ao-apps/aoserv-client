@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
@@ -82,7 +83,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated pkey")
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated pkey")
     public int getPkey() {
         return key;
     }
@@ -167,9 +168,10 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getAOServerByDaemonNetBind(),
-            // TODO: getAOServerByDaemonConnectNetBind(),
-            // TODO: getAOServerByJilterNetBind(),
+            getAOServerByDaemonNetBind(),
+            getAOServerByDaemonConnectNetBind(),
+            getAOServerByJilterNetBind(),
+            getMySQLServer()
             // TODO: getBrandByAowebStrutsVncBind(),
             // TODO: getNetTcpRedirect(),
             // TODO: getEmailSmartHost(),
@@ -182,7 +184,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             // TODO: getHttpdSharedTomcatByShutdownPort(),
             // TODO: getHttpdWorker(),
             // TODO: getHttpdTomcatStdSiteByShutdownPort(),
-            // TODO: getMySQLServer(),
             // TODO: getPrivateFTPServer(),
             // TODO: getPostgresServer()
         );
@@ -190,19 +191,22 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public AOServer getAOServerByDaemonNetBind() throws RemoteException {
+        return getService().getConnector().getAoServers().getUnique(AOServer.COLUMN_DAEMON_BIND, this);
+    }
+
+    public AOServer getAOServerByDaemonConnectNetBind() throws RemoteException {
+        return getService().getConnector().getAoServers().getUnique(AOServer.COLUMN_DAEMON_CONNECT_BIND, this);
+    }
+
+    public AOServer getAOServerByJilterNetBind() throws RemoteException {
+        return getService().getConnector().getAoServers().getUnique(AOServer.COLUMN_JILTER_BIND, this);
+    }
+
+    public MySQLServer getMySQLServer() throws RemoteException {
+        return getService().getConnector().getMysqlServers().getUnique(MySQLServer.COLUMN_NET_BIND, this);
+    }
     /* TODO
-    public AOServer getAOServerByDaemonNetBind() throws IOException, SQLException {
-        return getService().getConnector().getAoServers().getAOServerByDaemonNetBind(this);
-    }
-
-    public AOServer getAOServerByDaemonConnectNetBind() throws IOException, SQLException {
-        return getService().getConnector().getAoServers().getAOServerByDaemonConnectNetBind(this);
-    }
-
-    public AOServer getAOServerByJilterNetBind() throws IOException, SQLException {
-        return getService().getConnector().getAoServers().getAOServerByJilterNetBind(this);
-    }
-
     public HttpdBind getHttpdBind() throws IOException, SQLException {
         return getService().getConnector().getHttpdBinds().get(pkey);
     }
@@ -257,10 +261,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     public EmailSmtpSmartHost getEmailSmartHost() throws IOException, SQLException {
         return getService().getConnector().getEmailSmtpSmartHosts().getUniqueRow(EmailSmtpSmartHost.COLUMN_NET_BIND, pkey);
-    }
-
-    public MySQLServer getMySQLServer() throws IOException, SQLException {
-        return getService().getConnector().getMysqlServers().getUniqueRow(MySQLServer.COLUMN_NET_BIND, pkey);
     }
      */
     // </editor-fold>

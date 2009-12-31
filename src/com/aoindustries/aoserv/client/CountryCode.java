@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.util.Locale;
 
 /**
@@ -57,7 +58,7 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
     /**
      * Gets the two-character unique code for this country.
      */
-    @SchemaColumn(order=0, name="code", unique=true, description="the two-character code for the country")
+    @SchemaColumn(order=0, name="code", index=IndexType.PRIMARY_KEY, description="the two-character code for the country")
     public String getCode() {
         return key;
     }

@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.util.Locale;
 
 /**
@@ -44,7 +45,7 @@ final public class PackageCategory extends AOServObjectStringKey<PackageCategory
     /**
      * Gets the unique name of this resource type.
      */
-    @SchemaColumn(order=0, name="name", unique=true, description="the category name")
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the category name")
     public String getName() {
         return key;
     }

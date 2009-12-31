@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Set;
 
@@ -107,17 +108,19 @@ final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated primary key")
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
         return key;
     }
 
-    @SchemaColumn(order=1, name="mysql_database", description="the pkey in mysql_databases")
+    static final String COLUMN_MYSQL_DATABASE = "mysql_database";
+    @SchemaColumn(order=1, name=COLUMN_MYSQL_DATABASE, index=IndexType.INDEXED, description="the pkey in mysql_databases")
     public MySQLDatabase getMysqlDatabase() throws RemoteException {
     	return getService().getConnector().getMysqlDatabases().get(mysqlDatabase);
     }
 
-    @SchemaColumn(order=2, name="mysql_user", description="the pkey in mysql_users")
+    static final String COLUMN_MYSQL_USER = "mysql_user";
+    @SchemaColumn(order=2, name=COLUMN_MYSQL_USER, index=IndexType.INDEXED, description="the pkey in mysql_users")
     public MySQLUser getMysqlUser() throws RemoteException {
     	return getService().getConnector().getMysqlUsers().get(mysqlUser);
     }

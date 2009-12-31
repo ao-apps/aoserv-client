@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -35,7 +36,7 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implemen
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", unique=true, description="the unique name of the farm")
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the farm")
     public String getName() {
     	return key;
     }
@@ -45,10 +46,8 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implemen
     	return description;
     }
 
-    /**
-     * May be filtered.
-     */
-    @SchemaColumn(order=2, name="owner", description="the business that owns of the farm")
+    static final String COLUMN_OWNER = "owner";
+    @SchemaColumn(order=2, name=COLUMN_OWNER, index=IndexType.INDEXED, description="the business that owns of the farm")
     public Business getOwner() throws RemoteException {
         return getService().getConnector().getBusinesses().get(owner);
     }
@@ -76,7 +75,7 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implemen
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getServers(),
+            getServers()
             // TODO: getRacks()
         );
     }
@@ -91,12 +90,12 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implemen
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
-    public List<Server> getServers() throws IOException, SQLException {
-        return getService().getConnector().getServers().getIndexedRows(Server.COLUMN_FARM, pkey);
-    }
-
     public List<Rack> getRacks() throws IOException, SQLException {
         return getService().getConnector().getRacks().getIndexedRows(Rack.COLUMN_FARM, pkey);
     }*/
+
+    public Set<Server> getServers() throws RemoteException {
+        return getService().getConnector().getServers().getIndexed(Server.COLUMN_FARM, this);
+    }
     // </editor-fold>
 }

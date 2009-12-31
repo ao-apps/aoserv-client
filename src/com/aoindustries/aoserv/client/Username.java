@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ final public class Username extends AOServObjectStringKey<Username> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="username", unique=true, description="the unique username")
+    @SchemaColumn(order=0, name="username", index=IndexType.PRIMARY_KEY, description="the unique username")
     public String getUsername() {
         return key;
     }
@@ -48,7 +49,8 @@ final public class Username extends AOServObjectStringKey<Username> implements B
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=1, name="accounting", description="the business that this user is part of")
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that this user is part of")
     public Business getBusiness() throws RemoteException {
     	return getService().getConnector().getBusinesses().get(accounting);
     }
@@ -84,8 +86,8 @@ final public class Username extends AOServObjectStringKey<Username> implements B
                 getBusinessAdministrator()
                 // TODO: getLinuxAccount(),
                 // TODO: getPostgresUser()
-            )
-            // TODO: getMySQLUsers()
+            ),
+            getMysqlUsers()
         );
     }
     // </editor-fold>
@@ -99,11 +101,13 @@ final public class Username extends AOServObjectStringKey<Username> implements B
     public LinuxAccount getLinuxAccount() throws IOException, SQLException {
         return getService().getConnector().getLinuxAccounts().get(pkey);
     }
+    */
 
-    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-        return getService().getConnector().getMysqlUsers().getIndexedRows(MySQLUser.COLUMN_USERNAME, pkey);
+    public Set<MySQLUser> getMysqlUsers() throws RemoteException {
+        return getService().getConnector().getMysqlUsers().getIndexed(MySQLUser.COLUMN_USERNAME, this);
     }
 
+    /* TODO
     public PostgresUser getPostgresUser() throws IOException, SQLException {
         return getService().getConnector().getPostgresUsers().get(pkey);
     }

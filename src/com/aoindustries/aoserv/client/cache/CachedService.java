@@ -10,10 +10,14 @@ import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServServiceUtils;
 import com.aoindustries.aoserv.client.MethodColumn;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.table.IndexType;
 import com.aoindustries.table.Table;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -32,8 +36,9 @@ import java.util.TreeSet;
 abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>> implements AOServService<CachedConnector,CachedConnectorFactory,K,V> {
 
     final CachedConnector connector;
+    //final Class<K> keyClass;
     final ServiceName serviceName;
-    final Table<MethodColumn,V> table;
+    final AOServServiceUtils.AnnotationTable<K,V> table;
     final Map<K,V> map;
     final AOServService<?,?,K,V> wrapped;
 
@@ -57,8 +62,21 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
     private final Map<K,V> cachedHash = new HashMap<K,V>();
     private boolean cachedHashValid = false;
 
+    /**
+     * The unique column objects are hashed on the method return value when first needed.
+     */
+    private final Map<String,Map<Object,V>> uniqueHashes = new HashMap<String,Map<Object,V>>();
+    private final Map<String,Boolean> uniqueHashValids = new HashMap<String,Boolean>();
+
+    /**
+     * The indexed column objects are hashed on the method return value when first needed.
+     */
+    private final Map<String,Map<Object,Set<V>>> indexedHashes = new HashMap<String,Map<Object,Set<V>>>();
+    private final Map<String,Boolean> indexHashValids = new HashMap<String,Boolean>();
+
     CachedService(CachedConnector connector, Class<K> keyClass, Class<V> valueClass, AOServService<?,?,K,V> wrapped) {
         this.connector = connector;
+        //this.keyClass = keyClass;
         this.wrapped = wrapped;
         serviceName = AOServServiceUtils.findServiceNameByAnnotation(getClass());
         table = new AOServServiceUtils.AnnotationTable<K,V>(this, valueClass);
@@ -103,7 +121,16 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         return map;
     }
 
+    final public boolean isEmpty() throws RemoteException {
+        return getSet().isEmpty();
+    }
+
+    final public int getSize() throws RemoteException {
+        return getSet().size();
+    }
+
     final public V get(K key) throws RemoteException {
+        if(key==null) return null;
         synchronized(cachedHash) {
             if(!cachedHashValid) {
                 cachedHash.clear();
@@ -117,12 +144,73 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         }
     }
 
-    final public boolean isEmpty() throws RemoteException {
-        return getSet().isEmpty();
+    final public V getUnique(String columnName, Object value) throws RemoteException {
+        MethodColumn methodColumn = table.getColumn(columnName);
+        IndexType indexType = methodColumn.getIndexType();
+        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column not primary key or unique: "+columnName);
+        if(value==null) return null;
+        Method method = methodColumn.getMethod();
+        if(value.getClass()!=method.getReturnType()) throw new IllegalArgumentException("value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName());
+        synchronized(uniqueHashes) {
+            Map<Object,V> uniqueHash = uniqueHashes.get(columnName);
+            if(uniqueHash==null || Boolean.TRUE!=uniqueHashValids.get(columnName)) {
+                Set<V> set = getSet();
+                if(uniqueHash==null) uniqueHashes.put(columnName, uniqueHash = new HashMap<Object,V>(set.size()*4/3+1));
+                else uniqueHash.clear();
+                try {
+                    for(V obj : set) {
+                        Object columnValue = method.invoke(obj);
+                        if(uniqueHash.put(columnValue, obj)!=null) throw new AssertionError("Duplicate value in unique column "+getServiceName()+"."+columnName+": "+columnValue);
+                    }
+                } catch(IllegalAccessException err) {
+                    throw new RemoteException(err.getMessage(), err);
+                } catch(InvocationTargetException err) {
+                    throw new RemoteException(err.getMessage(), err);
+                }
+                uniqueHashValids.put(columnName, Boolean.TRUE);
+            }
+            return uniqueHash.get(value);
+        }
     }
 
-    final public int getSize() throws RemoteException {
-        return getSet().size();
+    final public Set<V> getIndexed(String columnName, Object value) throws RemoteException {
+        MethodColumn methodColumn = table.getColumn(columnName);
+        if(methodColumn.getIndexType()!=IndexType.INDEXED) throw new IllegalArgumentException("Column not indexed: "+columnName);
+        if(value==null) return null;
+        Method method = methodColumn.getMethod();
+        if(value.getClass()!=method.getReturnType()) throw new IllegalArgumentException("value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName());
+        synchronized(indexedHashes) {
+            Map<Object,Set<V>> indexedHash = indexedHashes.get(columnName);
+            if(indexedHash==null || Boolean.TRUE!=indexHashValids.get(columnName)) {
+                if(indexedHash==null) indexedHashes.put(columnName, indexedHash = new HashMap<Object,Set<V>>());
+                else indexedHash.clear();
+                try {
+                    for(V obj : getSet()) {
+                        Object columnValue = method.invoke(obj);
+                        Set<V> results = indexedHash.get(columnValue);
+                        if(results==null) indexedHash.put(columnValue, results = new HashSet<V>());
+                        results.add(obj);
+                    }
+                } catch(IllegalAccessException err) {
+                    throw new RemoteException(err.getMessage(), err);
+                } catch(InvocationTargetException err) {
+                    throw new RemoteException(err.getMessage(), err);
+                }
+                // Make each set unmodifiable
+                for(Map.Entry<Object,Set<V>> entry : indexedHash.entrySet()) {
+                    Set<V> set = entry.getValue();
+                    entry.setValue(
+                        set.size()==1
+                        ? Collections.singleton(set.iterator().next())
+                        : Collections.unmodifiableSet(set)
+                    );
+                }
+                indexHashValids.put(columnName, Boolean.TRUE);
+            }
+            Set<V> results = indexedHash.get(value);
+            if(results==null) return Collections.emptySet();
+            return results;
+        }
     }
 
     /**
@@ -141,6 +229,16 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         synchronized(cachedHash) {
             cachedHashValid = false;
             cachedHash.clear();
+        }
+        synchronized(uniqueHashes) {
+            for(Map.Entry<String,Boolean> entry : uniqueHashValids.entrySet()) {
+                entry.setValue(Boolean.FALSE);
+            }
+        }
+        synchronized(indexedHashes) {
+            for(Map.Entry<String,Boolean> entry : indexHashValids.entrySet()) {
+                entry.setValue(Boolean.FALSE);
+            }
         }
     }
 }

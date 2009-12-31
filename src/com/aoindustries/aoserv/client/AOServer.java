@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -94,7 +95,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="server", unique=true, description="a reference to servers")
+    @SchemaColumn(order=0, name="server", index=IndexType.PRIMARY_KEY, description="a reference to servers")
     public Server getServer() throws RemoteException {
         Server se=getService().getConnector().getServers().get(key);
         if(se==null) throw new RemoteException("Unable to find Server: "+key);
@@ -104,7 +105,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     /**
      * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
      */
-    @SchemaColumn(order=1, name="hostname", unique=true, description="the unique hostname of the server")
+    @SchemaColumn(order=1, name="hostname", index=IndexType.UNIQUE, description="the unique hostname of the server")
     public String getHostname() {
         return hostname;
     }
@@ -114,7 +115,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
      *
      * May be filtered.
      */
-    @SchemaColumn(order=2, name="daemon_bind", description="the network bind info for the AOServ Daemon")
+    static final String COLUMN_DAEMON_BIND = "daemon_bind";
+    @SchemaColumn(order=2, name=COLUMN_DAEMON_BIND, index=IndexType.UNIQUE, description="the network bind info for the AOServ Daemon")
     public NetBind getDaemonBind() throws RemoteException {
     	if(daemonBind==null) return null;
         return getService().getConnector().getNetBinds().get(daemonBind);
@@ -160,12 +162,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return ndi;
     }
 
-    /**
-     * Gets the port information to connect to.
-     *
-     * May be filtered.
-     */
-    @SchemaColumn(order=9, name="daemon_connect_bind", description="the bind to connect to")
+    static final String COLUMN_DAEMON_CONNECT_BIND = "daemon_connect_bind";
+    @SchemaColumn(order=9, name=COLUMN_DAEMON_CONNECT_BIND, index=IndexType.UNIQUE, description="the bind to connect to")
     public NetBind getDaemonConnectBind() throws RemoteException {
         if(daemonConnectBind==null) return null;
         return getService().getConnector().getNetBinds().get(daemonConnectBind);
@@ -178,10 +176,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return tz;
     }
 
-    /**
-     * May be filtered.
-     */
-    @SchemaColumn(order=11, name="jilter_bind", description="the bind that sendmail uses to connect to jilter")
+    static final String COLUMN_JILTER_BIND = "jilter_bind";
+    @SchemaColumn(order=11, name=COLUMN_JILTER_BIND, index=IndexType.UNIQUE, description="the bind that sendmail uses to connect to jilter")
     public NetBind getJilterBind() throws RemoteException {
     	if(jilterBind==null) return null;
         return getService().getConnector().getNetBinds().get(jilterBind);
@@ -271,6 +267,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
+            getAoServerResources()
             // TODO: getNestedAOServers(),
             // TODO: getAOServerDaemonHosts(),
             // TODO: getBackupPartitions(),
@@ -285,12 +282,15 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             // TODO: getFailoverMySQLReplications(),
             // TODO: getHttpdSharedTomcats(),
             // TODO: getPostgresServers(),
-            // TODO: getAoServerResources()
         );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<AOServerResource> getAoServerResources() throws RemoteException {
+        return getService().getConnector().getAoServerResources().getIndexed(AOServerResource.COLUMN_AO_SERVER, this);
+    }
+
     /* TODO
     public List<AOServerDaemonHost> getAOServerDaemonHosts() throws IOException, SQLException {
     	return getService().getConnector().getAoServerDaemonHosts().getAOServerDaemonHosts(this);
@@ -430,10 +430,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
         return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
-    }
-
-    public List<AOServerResource> getAoServerResources() throws IOException, SQLException {
-        return getService().getConnector().getAoServerResources().getIndexedRows(AOServerResource.COLUMN_AO_SERVER, pkey);
     }
      */
     // </editor-fold>

@@ -75,11 +75,6 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
         return map;
     }
 
-    final public V get(K key) throws RemoteException {
-        NoSwingConnectorFactory.checkNotSwing();
-        return AOServServiceUtils.setService(wrapped.get(key), this);
-    }
-
     final public boolean isEmpty() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return wrapped.isEmpty();
@@ -88,5 +83,20 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
     final public int getSize() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return wrapped.getSize();
+    }
+
+    final public V get(K key) throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return AOServServiceUtils.setService(wrapped.get(key), this);
+    }
+
+    final public V getUnique(String columnName, Object value) throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return AOServServiceUtils.setService(wrapped.getUnique(columnName, value), this);
+    }
+
+    final public Set<V> getIndexed(String columnName, Object value) throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return AOServServiceUtils.setServices(wrapped.getIndexed(columnName, value), this);
     }
 }

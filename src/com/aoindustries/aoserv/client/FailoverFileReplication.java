@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.BitRateProvider;
+import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
@@ -72,7 +73,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", unique=true, description="a generated, unique id")
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
         return key;
     }

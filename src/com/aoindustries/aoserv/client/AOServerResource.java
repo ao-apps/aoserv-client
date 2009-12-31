@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     /**
      * Gets the resource that this represents.
      */
-    @SchemaColumn(order=0, name="resource", unique=true, description="a resource id")
+    @SchemaColumn(order=0, name="resource", index=IndexType.PRIMARY_KEY, description="a resource id")
     public Resource getResource() throws RemoteException {
         return getService().getConnector().getResources().get(key);
     }
@@ -50,7 +51,8 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     /**
      * Gets the server that this resource is on.
      */
-    @SchemaColumn(order=1, name="ao_server", description="the ao_server")
+    static final String COLUMN_AO_SERVER = "ao_server";
+    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the ao_server")
     public AOServer getAoServer() throws RemoteException {
         return getService().getConnector().getAoServers().get(aoServer);
     }

@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -96,7 +97,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", unique=true, description="the unique resource id")
+    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
     public AOServerResource getAoServerResource() throws RemoteException {
         return getService().getConnector().getAoServerResources().get(key);
     }
@@ -124,7 +125,8 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         return maxConnections;
     }
 
-    @SchemaColumn(order=4, name="net_bind", unique=true, description="the port the servers binds to")
+    static final String COLUMN_NET_BIND = "net_bind";
+    @SchemaColumn(order=4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
         return getService().getConnector().getNetBinds().get(netBind);
     }
@@ -148,9 +150,9 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getFailoverMySQLReplications(),
-            // TODO: getMySQLDatabases(),
-            // TODO: getMySQLUsers()
+            getFailoverMySQLReplications(),
+            getMySQLDatabases(),
+            getMySQLUsers()
         );
     }
     // </editor-fold>
@@ -163,23 +165,21 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+    public Set<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
+        return getService().getConnector().getFailoverMySQLReplications().getIndexed(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, this);
     }
 
-    public List<MySQLDatabase> getMySQLDatabases() throws IOException, SQLException {
-        return getService().getConnector().getMysqlDatabases().getMySQLDatabases(this);
+    public Set<MySQLDatabase> getMySQLDatabases() throws RemoteException {
+        return getService().getConnector().getMysqlDatabases().getIndexed(MySQLDatabase.COLUMN_MYSQL_SERVER, this);
     }
 
-    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
+    /* TODO public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
         return getService().getConnector().getMysqlDBUsers().getMySQLDBUsers(this);
-    }
+    }*/
 
-    public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
-    	return getService().getConnector().getMysqlUsers().getMySQLUsers(this);
+    public Set<MySQLUser> getMySQLUsers() throws RemoteException {
+    	return getService().getConnector().getMysqlUsers().getIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
     }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

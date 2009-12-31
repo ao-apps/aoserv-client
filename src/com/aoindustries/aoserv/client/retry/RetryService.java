@@ -89,16 +89,6 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         return map;
     }
 
-    final public V get(final K key) throws RemoteException {
-        return connector.retry(
-            new Callable<V>() {
-                public V call() throws RemoteException {
-                    return AOServServiceUtils.setService(getWrapped().get(key), RetryService.this);
-                }
-            }
-        );
-    }
-
     final public boolean isEmpty() throws RemoteException {
         return connector.retry(
             new Callable<Boolean>() {
@@ -114,6 +104,36 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
             new Callable<Integer>() {
                 public Integer call() throws RemoteException {
                     return getWrapped().getSize();
+                }
+            }
+        );
+    }
+
+    final public V get(final K key) throws RemoteException {
+        return connector.retry(
+            new Callable<V>() {
+                public V call() throws RemoteException {
+                    return AOServServiceUtils.setService(getWrapped().get(key), RetryService.this);
+                }
+            }
+        );
+    }
+
+    final public V getUnique(final String columnName, final Object value) throws RemoteException {
+        return connector.retry(
+            new Callable<V>() {
+                public V call() throws RemoteException {
+                    return AOServServiceUtils.setService(getWrapped().getUnique(columnName, value), RetryService.this);
+                }
+            }
+        );
+    }
+
+    final public Set<V> getIndexed(final String columnName, final Object value) throws RemoteException {
+        return connector.retry(
+            new Callable<Set<V>>() {
+                public Set<V> call() throws RemoteException {
+                    return AOServServiceUtils.setServices(getWrapped().getIndexed(columnName, value), RetryService.this);
                 }
             }
         );

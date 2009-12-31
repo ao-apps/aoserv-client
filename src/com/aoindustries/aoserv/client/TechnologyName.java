@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -27,7 +29,7 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", unique=true, description="the name of the package")
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the package")
     public String getName() {
         return key;
     }

@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -33,7 +35,7 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="protocol", unique=true, description="the network protocol")
+    @SchemaColumn(order=0, name="protocol", index=IndexType.PRIMARY_KEY, description="the network protocol")
     public String getProtocol() {
         return key;
     }
