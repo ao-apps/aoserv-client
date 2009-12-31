@@ -213,22 +213,6 @@ public class AOServConnectorTest extends TestCase {
     }*/
 
     /**
-     * Test of getConnection method, of class com.aoindustries.aoserv.client.AOServConnector.
-     */
-    /* TODO
-    public void testGetConnection() throws Exception {
-        System.out.println("Testing getConnection and releaseConnection");
-        for(AOServConnector conn : conns) {
-            String username = conn.getThisBusinessAdministrator().pkey;
-            System.out.println("    "+username);
-            for(int c=0;c<1000;c++) {
-                AOServConnection connection=conn.getConnection(1);
-                conn.releaseConnection(connection);
-            }
-        }
-    }*/
-
-    /**
      * Test the ability to get the set of tables from the connector.  Also makes sure each table is a unique instance.
      */
     public void testGetTables() throws Exception {

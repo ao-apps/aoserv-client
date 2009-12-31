@@ -1,13 +1,17 @@
-package com.aoindustries.aoserv.client;
 /*
  * Copyright 2006-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -19,7 +23,7 @@ import junit.framework.TestSuite;
  */
 public class GetIndexedRowTest extends TestCase {
     
-    private List<AOServConnector> conns;
+    private List<AOServConnector<?,?>> conns;
 
     public GetIndexedRowTest(String testName) {
         super(testName);
@@ -36,9 +40,7 @@ public class GetIndexedRowTest extends TestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(GetIndexedRowTest.class);
-        
-        return suite;
+        return new TestSuite(GetIndexedRowTest.class);
     }
 
     /**
@@ -48,54 +50,46 @@ public class GetIndexedRowTest extends TestCase {
         System.out.println("Testing all indexed rows:");
         System.out.println("+ means supported");
         System.out.println("- means unsupported");
-        for(AOServConnector conn : conns) {
-            String username = conn.getThisBusinessAdministrator().pkey;
-            System.out.println("    "+username);
-            int numTables = SchemaTable.TableID.values().length;
-            for(int c=0;c<numTables;c++) {
-                // Excluded for testing speed
-                if(
-                    c==SchemaTable.TableID.DISTRO_FILES.ordinal()
-                    || c==SchemaTable.TableID.TRANSACTIONS.ordinal()
-                    || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
-                ) continue;
-                AOServTable table=conn.getTable(c);
-                String tableName=table.getTableName();
-                System.out.print("        "+tableName+": ");
-                List<AOServObject> rows=table.getRows();
-                if(rows.isEmpty()) System.out.println("Empty table, cannot test");
+        for(AOServConnector<?,?> conn : conns) {
+            System.out.println("    "+conn.getConnectAs());
+            for(ServiceName serviceName : ServiceName.values) {
+                AOServService<?,?,?,?> service=conn.getServices().get(serviceName);
+                System.out.print("        "+serviceName.name()+": ");
+                Set<? extends AOServObject<?,?>> set = service.getSet();
+                if(set.isEmpty()) System.out.println("Empty table, cannot test");
                 else {
-                    List<SchemaColumn> columns=table.getTableSchema().getSchemaColumns(conn);
-                    Map<Object,List<AOServObject>> expectedLists=new HashMap<Object,List<AOServObject>>();
-                    for(SchemaColumn column : columns) {
-                        boolean supported=true;
-                        String columnName=column.getColumnName();
-                        try {
-                            int colIndex=column.getIndex();
-                            // Build our list of the expected objects by iterating through the entire list
-                            expectedLists.clear();
-                            for(AOServObject row : rows) {
-                                Object value=row.getColumn(colIndex);
-                                // null values are not indexed
-                                if(value!=null) {
-                                    List<AOServObject> list=expectedLists.get(value);
-                                    if(list==null) expectedLists.put(value, list=new ArrayList<AOServObject>());
-                                    list.add(row);
+                    List<? extends MethodColumn> columns = service.getTable().getColumns();
+                    Map<Object,Set<AOServObject<?,?>>> expectedSets=new HashMap<Object,Set<AOServObject<?,?>>>();
+                    int numColumns = columns.size();
+                    for(int col=0; col<numColumns; col++) {
+                        MethodColumn column = columns.get(col);
+                        boolean supported = column.getIndexType()==IndexType.INDEXED;
+                        if(supported) {
+                            String columnName=column.getColumnName();
+                            try {
+                                // Build our set of the expected objects by iterating through the entire list
+                                expectedSets.clear();
+                                for(AOServObject<?,?> row : set) {
+                                    Object value=row.getColumn(col);
+                                    // null values are not indexed
+                                    if(value!=null) {
+                                        Set<AOServObject<?,?>> expectedSet = expectedSets.get(value);
+                                        if(expectedSet==null) expectedSets.put(value, expectedSet=new HashSet<AOServObject<?,?>>());
+                                        expectedSet.add(row);
+                                    }
                                 }
+                                // Compare to the lists using the index routines
+                                for(Object value : expectedSets.keySet()) {
+                                    Set<AOServObject<?,?>> expectedSet=expectedSets.get(value);
+                                    Set<? extends AOServObject<?,?>> indexedSet=service.getIndexed(columnName, value);
+                                    assertEquals(serviceName.name()+"."+columnName+"="+value+": Mismatch in list size: ", expectedSet.size(), indexedSet.size());
+                                    if(!expectedSet.containsAll(indexedSet)) fail(serviceName.name()+"."+columnName+"="+value+": expectedSet does not contain all the rows of indexedSet");
+                                    if(!indexedSet.containsAll(expectedSet)) fail(serviceName.name()+"."+columnName+"="+value+": indexedSet does not contain all the rows of expectedSet");
+                                }
+                            } catch(RuntimeException err) {
+                                System.out.println("RuntimeException serviceName="+serviceName+", columnName="+columnName);
+                                throw err;
                             }
-                            // Compare to the lists using the index routines
-                            for(Object value : expectedLists.keySet()) {
-                                List<AOServObject> expectedList=expectedLists.get(value);
-                                List<AOServObject> indexedRows=table.getIndexedRows(colIndex, value);
-                                assertEquals(tableName+"."+columnName+"="+value+": Mismatch in list size: ", expectedList.size(), indexedRows.size());
-                                if(!expectedList.containsAll(indexedRows)) fail(tableName+"."+columnName+"="+value+": expectedList does not contain all the rows of indexedRows");
-                                if(!indexedRows.containsAll(expectedList)) fail(tableName+"."+columnName+"="+value+": indexedRows does not contain all the rows of expectedList");
-                            }
-                        } catch(UnsupportedOperationException err) {
-                            supported=false;
-                        } catch(RuntimeException err) {
-                            System.out.println("RuntimeException tableName="+tableName+", columnName="+columnName);
-                            throw err;
                         }
                         System.out.print(supported?'+':'-');
                     }

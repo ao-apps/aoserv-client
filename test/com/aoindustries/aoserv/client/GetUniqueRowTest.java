@@ -1,11 +1,10 @@
-package com.aoindustries.aoserv.client;
 /*
  * Copyright 2006-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
 
-import com.aoindustries.table.Column;
 import com.aoindustries.table.IndexType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,10 +61,10 @@ public class GetUniqueRowTest extends TestCase {
                 System.out.println(rows.size()+" rows");
                 System.out.println("            Shuffling rows");
                 Collections.shuffle(rows);
-                List<? extends Column> columns = service.getTable().getColumns();
+                List<? extends MethodColumn> columns = service.getTable().getColumns();
                 int numColumns = columns.size();
                 for(int col = 0; col<numColumns; col++) {
-                    Column column = columns.get(col);
+                    MethodColumn column = columns.get(col);
                     uniqueMap.clear();
                     IndexType indexType = column.getIndexType();
                     if(indexType==IndexType.PRIMARY_KEY || indexType==IndexType.UNIQUE) {
