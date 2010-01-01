@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A <code>Technology</code> associates a <code>TechnologyClass</code>
@@ -49,12 +50,14 @@ final public class Technology extends AOServObjectIntegerKey<Technology> impleme
         return key;
     }
 
-    @SchemaColumn(order=1, name="name", description="the name of the package")
+    static final String COLUMN_NAME = "name";
+    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the package")
     public TechnologyName getTechnologyName() throws RemoteException {
         return getService().getConnector().getTechnologyNames().get(name);
     }
 
-    @SchemaColumn(order=2, name="class", description="the name of the group this package belongs to")
+    static final String COLUMN_CLASS = "class";
+    @SchemaColumn(order=2, name=COLUMN_CLASS, index=IndexType.INDEXED, description="the name of the group this package belongs to")
     public TechnologyClass getTechnologyClass() throws RemoteException {
         return getService().getConnector().getTechnologyClasses().get(technologyClass);
     }
@@ -63,6 +66,16 @@ final public class Technology extends AOServObjectIntegerKey<Technology> impleme
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Technology getBean() {
         return new com.aoindustries.aoserv.client.beans.Technology(key, name, technologyClass);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getTechnologyName(),
+            getTechnologyClass()
+        );
     }
     // </editor-fold>
 }

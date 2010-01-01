@@ -1,12 +1,13 @@
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * Each <code>NetBind</code> is listening on a <code>NetProtocol</code>.  The
@@ -44,6 +45,26 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implem
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.NetProtocol getBean() {
         return new com.aoindustries.aoserv.client.beans.NetProtocol(key);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getNetBinds(),
+            getProtocols()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<NetBind> getNetBinds() throws RemoteException {
+        return getService().getConnector().getNetBinds().getIndexed(NetBind.COLUMN_NET_PROTOCOL, this);
+    }
+
+    public Set<Protocol> getProtocols() throws RemoteException {
+        return getService().getConnector().getProtocols().getIndexed(Protocol.COLUMN_NET_PROTOCOL, this);
     }
     // </editor-fold>
 }

@@ -147,7 +147,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return lastDistroTime;
     }
 
-    @SchemaColumn(order=7, name="failover_server", description="the server that is currently running this server")
+    static final String COLUMN_FAILOVER_SERVER = "failover_server";
+    @SchemaColumn(order=7, name=COLUMN_FAILOVER_SERVER, index=IndexType.INDEXED, description="the server that is currently running this server")
     public AOServer getFailoverServer() throws RemoteException {
         if(failoverServer==null) return null;
         AOServer se=getService().getConnector().getAoServers().get(failoverServer);
@@ -155,7 +156,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return se;
     }
 
-    @SchemaColumn(order=8, name="daemon_device_id", description="the device name the master connects to")
+    static final String COLUMN_DAEMON_DEVICE_ID = "daemon_device_id";
+    @SchemaColumn(order=8, name=COLUMN_DAEMON_DEVICE_ID, index=IndexType.INDEXED, description="the device name the master connects to")
     public NetDeviceID getDaemonDeviceID() throws RemoteException {
         NetDeviceID ndi=getService().getConnector().getNetDeviceIDs().get(daemonDeviceId);
         if(ndi==null) throw new RemoteException("Unable to find NetDeviceID: "+daemonDeviceId);
@@ -169,7 +171,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return getService().getConnector().getNetBinds().get(daemonConnectBind);
     }
 
-    @SchemaColumn(order=10, name="time_zone", description="the time zone setting for the server")
+    static final String COLUMN_TIME_ZONE = "time_zone";
+    @SchemaColumn(order=10, name=COLUMN_TIME_ZONE, index=IndexType.INDEXED, description="the time zone setting for the server")
     public TimeZone getTimeZone() throws RemoteException {
         TimeZone tz=getService().getConnector().getTimeZones().get(timeZone);
         if(tz==null) throw new RemoteException("Unable to find TimeZone: "+timeZone);
@@ -259,7 +262,9 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             getServer(),
             getDaemonBind(),
             getFailoverServer(),
+            getDaemonDeviceID(),
             getDaemonConnectBind(),
+            getTimeZone(),
             getJilterBind()
         );
     }
@@ -267,8 +272,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            getAoServerResources()
-            // TODO: getNestedAOServers(),
+            getAoServerResources(),
+            getNestedAoServers()
             // TODO: getAOServerDaemonHosts(),
             // TODO: getBackupPartitions(),
             // TODO: getLinuxServerAccounts(),
@@ -289,6 +294,13 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public Set<AOServerResource> getAoServerResources() throws RemoteException {
         return getService().getConnector().getAoServerResources().getIndexed(AOServerResource.COLUMN_AO_SERVER, this);
+    }
+
+    /**
+     * Gets the set of servers that are currently failed-over to this server.
+     */
+    public Set<AOServer> getNestedAoServers() throws RemoteException {
+        return getService().getConnector().getAoServers().getIndexed(AOServer.COLUMN_FAILOVER_SERVER, this);
     }
 
     /* TODO
@@ -410,10 +422,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             matches.add(resource.getAoServerResource().getMySQLServer());
         }
         return Collections.unmodifiableList(matches);
-    }
-
-    public List<AOServer> getNestedAOServers() throws IOException, SQLException {
-        return getService().getConnector().getAoServers().getNestedAOServers(this);
     }
 
     public List<PostgresServer> getPostgresServers() throws IOException, SQLException {

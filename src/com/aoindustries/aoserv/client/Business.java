@@ -185,7 +185,8 @@ final public class Business extends AOServObjectStringKey<Business> implements B
         return canSeePrices;
     }
 
-    @SchemaColumn(order=9, name="disable_log", description="indicates the business is disabled")
+    static final String COLUMN_DISABLE_LOG = "disable_log";
+    @SchemaColumn(order=9, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the business is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
         DisableLog obj=getService().getConnector().getDisableLogs().get(disableLog);
@@ -292,6 +293,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
             getParentBusiness(),
+            getDisableLog(),
             // TODO: getPackageDefinition(),
             getCreatedBy()
         );
@@ -310,7 +312,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
             // TODO: getCreditCardProcessors(),
             // TODO: getCreditCardTransactions(),
             // TODO: getCreditCardTransactionsByCreditCardAccounting(),
-            // TODO: getDisableLogs(),
+            getDisableLogs(),
             // TODO: getDNSZones(),
             // TODO: getIPAddresses(),
             // TODO: getEmailDomains(),
@@ -341,6 +343,10 @@ final public class Business extends AOServObjectStringKey<Business> implements B
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public Set<Business> getChildBusinesses() throws RemoteException {
         return getService().getConnector().getBusinesses().getIndexed(COLUMN_PARENT, this);
+    }
+
+    public Set<DisableLog> getDisableLogs() throws RemoteException {
+        return getService().getConnector().getDisableLogs().getIndexed(DisableLog.COLUMN_ACCOUNTING, this);
     }
 
     public Set<Resource> getResources() throws RemoteException {
@@ -1407,10 +1413,6 @@ final public class Business extends AOServObjectStringKey<Business> implements B
 
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
         return getService().getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
-    }
-
-    public List<DisableLog> getDisableLogs() throws IOException, SQLException {
-        return getService().getConnector().getDisableLogs().getIndexedRows(DisableLog.COLUMN_ACCOUNTING, pkey);
     }
 
     public List<PackageDefinition> getPackageDefinitions() throws IOException, SQLException {

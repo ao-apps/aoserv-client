@@ -1,6 +1,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
@@ -63,6 +65,21 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Architecture getBean() {
         return new com.aoindustries.aoserv.client.beans.Architecture(key, bits);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getOperatingSystemVersions()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
+        return getService().getConnector().getOperatingSystemVersions().getIndexed(OperatingSystemVersion.COLUMN_ARCHITECTURE, this);
     }
     // </editor-fold>
 }

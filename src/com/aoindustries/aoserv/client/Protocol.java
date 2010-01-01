@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A <code>Protocol</code> represents one type of application
@@ -114,7 +115,8 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
         return isUserService;
     }
 
-    @SchemaColumn(order=3, name="net_protocol", description="the default network protocol for this protocol")
+    static final String COLUMN_NET_PROTOCOL = "net_protocol";
+    @SchemaColumn(order=3, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the default network protocol for this protocol")
     public NetProtocol getNetProtocol() throws RemoteException {
         NetProtocol np=getService().getConnector().getNetProtocols().get(netProtocol);
         if(np==null) throw new RemoteException("Unable to find NetProtocol: "+netProtocol);
@@ -128,7 +130,28 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            // TODO: getPort(),
+            getNetProtocol()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getNetBinds()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<NetBind> getNetBinds() throws RemoteException {
+        return getService().getConnector().getNetBinds().getIndexed(NetBind.COLUMN_APP_PROTOCOL, this);
+    }
+
     /* TODO
     public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
         return connector.getHttpdJKProtocols().get(pkey);

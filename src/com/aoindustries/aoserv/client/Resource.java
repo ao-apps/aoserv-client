@@ -70,7 +70,8 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         return key;
     }
 
-    @SchemaColumn(order=1, name="resource_type", description="the type of resource")
+    static final String COLUMN_RESOURCE_TYPE = "resource_type";
+    @SchemaColumn(order=1, name=COLUMN_RESOURCE_TYPE, index=IndexType.INDEXED, description="the type of resource")
     public ResourceType getResourceType() throws RemoteException {
         ResourceType r=getService().getConnector().getResourceTypes().get(resourceType);
         if(r==null) throw new RemoteException("Unable to find ResourceType: "+resourceType);
@@ -150,8 +151,10 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
+            getResourceType(),
             getBusiness(),
-            getCreatedBy()
+            getCreatedBy(),
+            getDisableLog()
         );
     }
 
@@ -168,6 +171,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         if(resourceType.equals(ResourceType.Constant.mysql_database.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.mysql_server.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.mysql_user.name())) return null; // Is an ao_server_resource
+        else if(resourceType.equals(ResourceType.Constant.postgresql_server.name())) return null; // Is an ao_server_resource
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
         // TODO: return obj;

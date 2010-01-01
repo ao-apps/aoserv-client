@@ -33,6 +33,8 @@ import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.PostgresServerService;
+import com.aoindustries.aoserv.client.PostgresVersionService;
 import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
@@ -222,17 +224,15 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryPostgresEncodingService postgresEncodings;
     final RetryPostgresReservedWordService postgresReservedWords;
     final RetryPostgresServerUserService postgresServerUsers;
+     */
     final RetryPostgresServerService postgresServers;
-    final RetryPostgresUserService postgresUsers;
+    // TODO: final RetryPostgresUserService postgresUsers;
     final RetryPostgresVersionService postgresVersions;
-    final RetryPrivateFTPServerService privateFTPServers;
-    final RetryProcessorTypeService processorTypes;
-     */
+    // TODO: final RetryPrivateFTPServerService privateFTPServers;
+    // TODO: final RetryProcessorTypeService processorTypes;
     final RetryProtocolService protocols;
-    /* TODO
-    final RetryRackService racks;
-    final RetryResellerService resellers;
-     */
+    // TODO: final RetryRackService racks;
+    // TODO: final RetryResellerService resellers;
     final RetryResourceTypeService resourceTypes;
     final RetryResourceService resources;
     final RetryServerFarmService serverFarms;
@@ -426,12 +426,12 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         postgresEncodings = new RetryPostgresEncodingService(this);
         postgresReservedWords = new RetryPostgresReservedWordService(this);
         postgresServerUsers = new RetryPostgresServerUserService(this);
-        postgresServers = new RetryPostgresServerService(this);
-        postgresUsers = new RetryPostgresUserService(this);
-        postgresVersions = new RetryPostgresVersionService(this);
-        privateFTPServers = new RetryPrivateFTPServerService(this);
-        processorTypes = new RetryProcessorTypeService(this);
          */
+        postgresServers = new RetryPostgresServerService(this);
+        // TODO: postgresUsers = new RetryPostgresUserService(this);
+        postgresVersions = new RetryPostgresVersionService(this);
+        // TODO: privateFTPServers = new RetryPrivateFTPServerService(this);
+        // TODO: processorTypes = new RetryProcessorTypeService(this);
         protocols = new RetryProtocolService(this);
         /* TODO
         racks = new RetryRackService(this);
@@ -931,17 +931,21 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public PostgresReservedWordService<RetryConnector,RetryConnectorFactory> getPostgresReservedWords();
 
     public PostgresServerUserService<RetryConnector,RetryConnectorFactory> getPostgresServerUsers();
-
-    public PostgresServerService<RetryConnector,RetryConnectorFactory> getPostgresServers();
-
-    public PostgresUserService<RetryConnector,RetryConnectorFactory> getPostgresUsers();
-
-    public PostgresVersionService<RetryConnector,RetryConnectorFactory> getPostgresVersions();
-
-    public PrivateFTPServerService<RetryConnector,RetryConnectorFactory> getPrivateFTPServers();
-
-    public ProcessorTypeService<RetryConnector,RetryConnectorFactory> getProcessorTypes();
     */
+    public PostgresServerService<RetryConnector,RetryConnectorFactory> getPostgresServers() {
+        return postgresServers;
+    }
+
+    // TODO: public PostgresUserService<RetryConnector,RetryConnectorFactory> getPostgresUsers();
+
+    public PostgresVersionService<RetryConnector,RetryConnectorFactory> getPostgresVersions() {
+        return postgresVersions;
+    }
+
+    // TODO: public PrivateFTPServerService<RetryConnector,RetryConnectorFactory> getPrivateFTPServers();
+
+    // TODO: public ProcessorTypeService<RetryConnector,RetryConnectorFactory> getProcessorTypes();
+
     public ProtocolService<RetryConnector,RetryConnectorFactory> getProtocols() {
         return protocols;
     }

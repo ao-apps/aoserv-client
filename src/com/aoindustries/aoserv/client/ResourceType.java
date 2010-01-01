@@ -6,7 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>ResourceType</code> is a measurable hardware resource.  A <code>PackageDefinition</code>
@@ -17,7 +19,6 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-// TODO: Make all AOServObject be a BeanFactory
 final public class ResourceType extends AOServObjectStringKey<ResourceType> implements BeanFactory<com.aoindustries.aoserv.client.beans.ResourceType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
@@ -42,6 +43,7 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         mysql_replication,
         mysql_server,
         mysql_user,
+        postgresql_server,
         rack,
         server_database,
         server_enterprise,
@@ -73,6 +75,21 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.ResourceType getBean() {
         return new com.aoindustries.aoserv.client.beans.ResourceType(key);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getResources()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<Resource> getResources() throws RemoteException {
+        return getService().getConnector().getResources().getIndexed(Resource.COLUMN_RESOURCE_TYPE, this);
     }
     // </editor-fold>
 

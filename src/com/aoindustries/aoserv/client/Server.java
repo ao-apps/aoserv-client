@@ -30,7 +30,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String farm;
     final private String description;
-    final private Integer operatingSystemVersion;
+    final Integer operatingSystemVersion;
     final private String accounting;
     final private String name;
     final private boolean monitoringEnabled;
@@ -83,7 +83,8 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         return description;
     }
 
-    @SchemaColumn(order=3, name="operating_system_version", description="the version of operating system running on the server, if known")
+    static final String COLUMN_OPERATING_SYSTEM_VERSION="operating_system_version";
+    @SchemaColumn(order=3, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of operating system running on the server, if known")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         if(operatingSystemVersion==null) return null;
         OperatingSystemVersion osv=getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
@@ -119,6 +120,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
             getServerFarm(),
+            getOperatingSystemVersion(),
             getBusiness()
         );
     }

@@ -5,10 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A <code>PostgresVersion</code> flags which <code>TechnologyVersion</code>s
@@ -17,20 +19,12 @@ import java.util.List;
  * @see  PostgresServer
  * @see  TechnologyVersion
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersion> {
+final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresVersion> {
 
-    static final int COLUMN_VERSION=0;
-    static final String COLUMN_MINOR_VERSION_name = "minor_version";
-    static final String COLUMN_VERSION_name = "version";
-
-    private String minorVersion;
-    private int postgisVersion;
-
-    public static final String TECHNOLOGY_NAME="postgresql";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         VERSION_7_1="7.1",
@@ -46,26 +40,51 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
      * preference.  Index <code>0</code> is the most
      * preferred.
      */
-    public static final String[] getPreferredMinorVersions() {
-        return new String[] {
+    private static final List<String> preferredMinorVersions = Collections.unmodifiableList(
+        Arrays.asList(
             VERSION_8_3,
             VERSION_8_1,
             VERSION_8_0,
             VERSION_7_3,
             VERSION_7_2,
             VERSION_7_1
-        };
+        )
+    );
+    public static final List<String> getPreferredMinorVersions() {
+        return preferredMinorVersions;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String minorVersion;
+    final private Integer postgisVersion;
+
+    public PostgresVersion(
+        PostgresVersionService<?,?> service,
+        int version,
+        String minorVersion,
+        Integer postgisVersion
+    ) {
+        super(service, version);
+        this.minorVersion = minorVersion.intern();
+        this.postgisVersion = postgisVersion;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(PostgresVersion other) throws RemoteException {
+        return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="version", index=IndexType.PRIMARY_KEY, description="a reference to the PostgreSQL details in the <code>technology_versions</code> table")
+    public TechnologyVersion getTechnologyVersion() throws RemoteException {
+        return getService().getConnector().getTechnologyVersions().get(key);
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_VERSION: return Integer.valueOf(pkey);
-            case 1: return minorVersion;
-            case 2: return postgisVersion==-1 ? null : Integer.valueOf(postgisVersion);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
+    @SchemaColumn(order=1, name="minor_version", description="the minor version for this version")
     public String getMinorVersion() {
         return minorVersion;
     }
@@ -73,23 +92,50 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
     /**
      * Gets the PostGIS version of <code>null</code> if not supported by this PostgreSQL version....
      */
-    public TechnologyVersion getPostgisVersion(AOServConnector connector) throws SQLException, IOException {
-        if(postgisVersion==-1) return null;
-        TechnologyVersion tv = connector.getTechnologyVersions().get(postgisVersion);
-        if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+postgisVersion);
+    @SchemaColumn(order=2, name="postgis_version", description="a reference to the PostGIS defails in the <code>technology_versions</code>")
+    public TechnologyVersion getPostgisVersion() throws RemoteException {
+        if(postgisVersion==null) return null;
+        TechnologyVersion tv = getService().getConnector().getTechnologyVersions().get(postgisVersion);
+        if(tv==null) throw new RemoteException("Unable to find TechnologyVersion: "+postgisVersion);
         if(
-            tv.getOperatingSystemVersion(connector).getPkey()
-            != getTechnologyVersion(connector).getOperatingSystemVersion(connector).getPkey()
+            tv.operatingSystemVersion
+            != getTechnologyVersion().operatingSystemVersion
         ) {
-            throw new SQLException("postgresql/postgis version mismatch on PostgresVersion: #"+pkey);
+            throw new RemoteException("postgresql/postgis version mismatch on PostgresVersion: #"+key);
         }
         return tv;
     }
-    
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.POSTGRES_VERSIONS;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.PostgresVersion getBean() {
+        return new com.aoindustries.aoserv.client.beans.PostgresVersion(key, minorVersion, postgisVersion);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getTechnologyVersion(),
+            getPostgisVersion()
+        );
     }
 
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getPostgresServers()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<PostgresServer> getPostgresServers() throws RemoteException {
+        return getService().getConnector().getPostgresServers().getIndexed(PostgresServer.COLUMN_VERSION, this);
+    }
+
+    /* TODO
     public List<PostgresEncoding> getPostgresEncodings(AOServConnector connector) throws IOException, SQLException {
         return connector.getPostgresEncodings().getPostgresEncodings(this);
     }
@@ -97,30 +143,6 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
     public PostgresEncoding getPostgresEncoding(AOServConnector connector, String encoding) throws IOException, SQLException {
         return connector.getPostgresEncodings().getPostgresEncoding(this, encoding);
     }
-
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-	TechnologyVersion obj=connector.getTechnologyVersions().get(pkey);
-	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
-	return obj;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-        minorVersion=result.getString(2);
-        postgisVersion=result.getInt(3);
-        if(result.wasNull()) postgisVersion=-1;
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-        minorVersion=in.readUTF().intern();
-        postgisVersion=in.readCompressedInt();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-	out.writeCompressedInt(pkey);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_109)<=0) out.writeCompressedInt(5432);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_121)>=0) out.writeUTF(minorVersion);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_27)>=0) out.writeCompressedInt(postgisVersion);
-    }
+     */
+    // </editor-fold>
 }

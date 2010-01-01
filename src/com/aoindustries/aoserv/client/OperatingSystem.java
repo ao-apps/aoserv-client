@@ -6,7 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * One type of operating system.
@@ -64,6 +66,21 @@ final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.OperatingSystem getBean() {
         return new com.aoindustries.aoserv.client.beans.OperatingSystem(key, display, isUnix);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getOperatingSystemVersions()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
+        return getService().getConnector().getOperatingSystemVersions().getIndexed(OperatingSystemVersion.COLUMN_OPERATING_SYSTEM, this);
     }
     // </editor-fold>
 

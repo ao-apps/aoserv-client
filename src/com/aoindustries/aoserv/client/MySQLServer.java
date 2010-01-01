@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2006-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -88,11 +88,11 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     @Override
     protected int compareToImpl(MySQLServer other) throws RemoteException {
         if(key==other.key) return 0;
+        int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
+        if(diff!=0) return diff;
         AOServerResource aoResource1 = getAoServerResource();
         AOServerResource aoResource2 = other.getAoServerResource();
-        int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
-        if(diff!=0) return diff;
-        return compareIgnoreCaseConsistentWithEquals(name, other.name);
+        return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
     }
     // </editor-fold>
 
@@ -107,7 +107,8 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     	return name;
     }
 
-    @SchemaColumn(order=2, name="version", description="the pkey of the MySQL version")
+    static final String COLUMN_VERSION = "version";
+    @SchemaColumn(order=2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the MySQL version")
     public TechnologyVersion getVersion() throws RemoteException {
         TechnologyVersion obj=getService().getConnector().getTechnologyVersions().get(version);
         if(obj==null) throw new RemoteException("Unable to find TechnologyVersion: "+version);
@@ -143,6 +144,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
             getAoServerResource(),
+            getVersion(),
             getNetBind()
         );
     }

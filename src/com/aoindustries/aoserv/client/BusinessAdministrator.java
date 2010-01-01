@@ -245,7 +245,8 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     	return state;
     }
 
-    @SchemaColumn(order=17, name="country", description="the country (if different than business)")
+    static final String COLUMN_COUNTRY="country";
+    @SchemaColumn(order=17, name=COLUMN_COUNTRY, index=IndexType.INDEXED, description="the country (if different than business)")
     public CountryCode getCountry() throws RemoteException {
         if(country == null) return null;
         CountryCode countryCode=getService().getConnector().getCountryCodes().get(country);
@@ -258,7 +259,8 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         return zip;
     }
 
-    @SchemaColumn(order=19, name="disable_log", description="indicates that this account is disabled")
+    static final String COLUMN_DISABLE_LOG = "disable_log";
+    @SchemaColumn(order=19, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that this account is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
         DisableLog obj = getService().getConnector().getDisableLogs().get(disableLog);
@@ -287,7 +289,9 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
-            getUsername()
+            getUsername(),
+            getCountry(),
+            getDisableLog()
         );
     }
 
@@ -303,7 +307,9 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
             getCreditCardTransactionsByAuthorizationUsername(),
             getCreditCardTransactionsByCaptureUsername(),
             getCreditCardTransactionsByVoidUsername(),
-            getDisableLogsByDisabledBy(),
+             */
+            getDisableLogs(),
+            /*
             getMonthlyCharges(),
             getMonthlyChargesByCreatedBy(),*/
             getBusinessesByCreatedBy(),
@@ -322,6 +328,10 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public Set<Business> getBusinessesByCreatedBy() throws RemoteException {
         return getService().getConnector().getBusinesses().getIndexed(Business.COLUMN_CREATED_BY, this);
+    }
+
+    public Set<DisableLog> getDisableLogs() throws RemoteException {
+        return getService().getConnector().getDisableLogs().getIndexed(DisableLog.COLUMN_DISABLED_BY, this);
     }
 
     public Set<Resource> getResources() throws RemoteException {
@@ -676,10 +686,6 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     public List<CreditCardTransaction> getCreditCardTransactionsByVoidUsername() throws IOException, SQLException {
         return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_VOID_USERNAME, pkey);
-    }
-
-    public List<DisableLog> getDisableLogsByDisabledBy() throws IOException, SQLException {
-        return getService().getConnector().getDisableLogs().getIndexedRows(DisableLog.COLUMN_DISABLED_BY, pkey);
     }
 
     public List<MonthlyCharge> getMonthlyChargesByCreatedBy() throws IOException, SQLException {

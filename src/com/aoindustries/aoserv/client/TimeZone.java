@@ -1,6 +1,10 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /*
  * Copyright 2006-2009 by AO Industries, Inc.,
@@ -38,14 +42,29 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
     }
     // </editor-fold>
 
-    private volatile transient java.util.TimeZone timeZone;
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getAoServers()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<AOServer> getAoServers() throws RemoteException {
+        return getService().getConnector().getAoServers().getIndexed(AOServer.COLUMN_TIME_ZONE, this);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="java.util.TimeZone compatibility">
+    private static final ConcurrentMap<String,java.util.TimeZone> timeZones = new ConcurrentHashMap<String,java.util.TimeZone>();
 
     /**
      * Gets the Java TimeZone for this TimeZone.
-     * 
-     * Not synchronized because double initialization is acceptable.
      */
     public java.util.TimeZone getTimeZone() {
+        java.util.TimeZone timeZone = timeZones.get(key);
         if(timeZone==null) {
             String[] ids = java.util.TimeZone.getAvailableIDs();
             boolean found = false;
@@ -56,8 +75,11 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
                 }
             }
             if(!found) throw new IllegalArgumentException("TimeZone not found: "+key);
-            timeZone = java.util.TimeZone.getTimeZone(key);
+            java.util.TimeZone newTimeZone = java.util.TimeZone.getTimeZone(key);
+            java.util.TimeZone existing = timeZones.putIfAbsent(key, newTimeZone);
+            timeZone = existing==null ? newTimeZone : existing;
         }
         return timeZone;
     }
+    // </editor-fold>
 }

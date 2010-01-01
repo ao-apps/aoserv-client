@@ -6,10 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Set;
 
 /**
  * When a resource or resources are disabled, the reason and time is logged.
@@ -66,7 +65,8 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
         return time;
     }
 
-    @SchemaColumn(order=2, name="accounting", description="the business whos resources are being disabled")
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business whos resources are being disabled")
     public Business getBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(accounting);
     }
@@ -74,8 +74,9 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=3, name="disabled_by", description="the person who disabled the accounts")
-    public BusinessAdministrator getDisabledBy() throws IOException, SQLException {
+    static final String COLUMN_DISABLED_BY = "disabled_by";
+    @SchemaColumn(order=3, name=COLUMN_DISABLED_BY, index=IndexType.INDEXED, description="the person who disabled the accounts")
+    public BusinessAdministrator getDisabledBy() throws RemoteException {
         return getService().getConnector().getBusinessAdministrators().get(disabledBy);
     }
 
@@ -92,9 +93,36 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getBusiness(),
+            getDisabledBy()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getBusinesses(),
+            getBusinessAdministrators(),
+            getUsernames()
+        );
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<Business> getBusinesses() throws RemoteException {
+        return getService().getConnector().getBusinesses().getIndexed(Business.COLUMN_DISABLE_LOG, this);
+    }
+
+    public Set<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
+        return getService().getConnector().getBusinessAdministrators().getIndexed(BusinessAdministrator.COLUMN_DISABLE_LOG, this);
+    }
+
+    public Set<Username> getUsernames() throws RemoteException {
+        return getService().getConnector().getUsernames().getIndexed(Username.COLUMN_DISABLE_LOG, this);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

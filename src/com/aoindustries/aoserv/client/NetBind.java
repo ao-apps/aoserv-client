@@ -8,11 +8,9 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -113,13 +111,15 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         return obj;
     }*/
 
-    @SchemaColumn(order=1, name="net_protocol", description="the network protocol (<code>net_protocols</code>)")
+    static final String COLUMN_NET_PROTOCOL = "net_protocol";
+    @SchemaColumn(order=1, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the network protocol (<code>net_protocols</code>)")
     public NetProtocol getNetProtocol() throws RemoteException {
         return getService().getConnector().getNetProtocols().get(netProtocol);
     }
 
-    @SchemaColumn(order=2, name="app_protocol", description="the application protocol (<code>protocols</code>)")
-    public Protocol getAppProtocol() throws SQLException, IOException {
+    static final String COLUMN_APP_PROTOCOL = "app_protocol";
+    @SchemaColumn(order=2, name=COLUMN_APP_PROTOCOL, index=IndexType.INDEXED, description="the application protocol (<code>protocols</code>)")
+    public Protocol getAppProtocol() throws RemoteException {
         return getService().getConnector().getProtocols().get(appProtocol);
     }
 
@@ -161,7 +161,10 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
             // TODO: getBusinessServer(),
-            // TODO: getIPAddress()
+            // TODO: getIPAddress(),
+            // TODO: getNetPort(),
+            getNetProtocol(),
+            getAppProtocol()
         );
     }
 
@@ -171,7 +174,8 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             getAOServerByDaemonNetBind(),
             getAOServerByDaemonConnectNetBind(),
             getAOServerByJilterNetBind(),
-            getMySQLServer()
+            getMySQLServer(),
+            getPostgresServer()
             // TODO: getBrandByAowebStrutsVncBind(),
             // TODO: getNetTcpRedirect(),
             // TODO: getEmailSmartHost(),
@@ -185,7 +189,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             // TODO: getHttpdWorker(),
             // TODO: getHttpdTomcatStdSiteByShutdownPort(),
             // TODO: getPrivateFTPServer(),
-            // TODO: getPostgresServer()
         );
     }
     // </editor-fold>
@@ -206,6 +209,11 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     public MySQLServer getMySQLServer() throws RemoteException {
         return getService().getConnector().getMysqlServers().getUnique(MySQLServer.COLUMN_NET_BIND, this);
     }
+
+    public PostgresServer getPostgresServer() throws RemoteException {
+        return getService().getConnector().getPostgresServers().getUnique(PostgresServer.COLUMN_NET_BIND, this);
+    }
+
     /* TODO
     public HttpdBind getHttpdBind() throws IOException, SQLException {
         return getService().getConnector().getHttpdBinds().get(pkey);
@@ -245,10 +253,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     public NetTcpRedirect getNetTcpRedirect() throws IOException, SQLException {
         return getService().getConnector().getNetTcpRedirects().get(pkey);
-    }
-
-    public PostgresServer getPostgresServer() throws IOException, SQLException {
-        return getService().getConnector().getPostgresServers().getPostgresServer(this);
     }
 
     public PrivateFTPServer getPrivateFTPServer() throws IOException, SQLException {

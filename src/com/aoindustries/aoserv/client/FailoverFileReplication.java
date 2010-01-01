@@ -9,9 +9,7 @@ import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.StringUtility;
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Set;
 
@@ -102,7 +100,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     }
 
     @SchemaColumn(order=5, name="retention", description="the number of days backups will be kept")
-    public BackupRetention getRetention() throws SQLException, IOException {
+    public BackupRetention getRetention() throws RemoteException {
         return getService().getConnector().getBackupRetentions().get(retention);
     }
 
@@ -159,7 +157,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
             getServer(),
-            getBackupPartition()
+            getBackupPartition(),
+            getRetention()
         );
     }
 

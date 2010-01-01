@@ -55,7 +55,8 @@ final public class Username extends AOServObjectStringKey<Username> implements B
     	return getService().getConnector().getBusinesses().get(accounting);
     }
 
-    @SchemaColumn(order=2, name="disable_log", description="indicates that the username is disabled")
+    static final String COLUMN_DISABLE_LOG = "disable_log";
+    @SchemaColumn(order=2, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that the username is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
         DisableLog obj=getService().getConnector().getDisableLogs().get(disableLog);

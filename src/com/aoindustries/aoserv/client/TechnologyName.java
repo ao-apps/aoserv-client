@@ -1,6 +1,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
@@ -19,7 +21,8 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
 
-    public static final String MYSQL="MySQL";
+    public static final String MYSQL = "MySQL";
+    public static final String POSTGRESQL = "postgresql";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -41,7 +44,25 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getTechnologyVersions(),
+            getTechnologies()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<TechnologyVersion> getTechnologyVersions() throws RemoteException {
+        return getService().getConnector().getTechnologyVersions().getIndexed(TechnologyVersion.COLUMN_NAME, this);
+    }
+
+    public Set<Technology> getTechnologies() throws RemoteException {
+        return getService().getConnector().getTechnologies().getIndexed(Technology.COLUMN_NAME, this);
+    }
+
     /* TODO
     public List<Technology> getTechnologies() throws RemoteException {
     	return connector.getTechnologies().getTechnologies(this);

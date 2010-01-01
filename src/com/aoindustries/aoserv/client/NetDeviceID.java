@@ -1,6 +1,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
@@ -58,6 +60,21 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.NetDeviceID getBean() {
         return new com.aoindustries.aoserv.client.beans.NetDeviceID(key, isLoopback);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getAoServers()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<AOServer> getAoServers() throws RemoteException {
+        return getService().getConnector().getAoServers().getIndexed(AOServer.COLUMN_DAEMON_DEVICE_ID, this);
     }
     // </editor-fold>
 }

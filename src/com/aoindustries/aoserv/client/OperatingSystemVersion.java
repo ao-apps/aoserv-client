@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * One version of a operating system.
@@ -104,7 +105,8 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
         return key;
     }
 
-    @SchemaColumn(order=1, name="operating_system", description="the name of the OS")
+    static final String COLUMN_OPERATING_SYSTEM = "operating_system";
+    @SchemaColumn(order=1, name=COLUMN_OPERATING_SYSTEM, index=IndexType.INDEXED, description="the name of the OS")
     public OperatingSystem getOperatingSystem() throws RemoteException {
         return getService().getConnector().getOperatingSystems().get(operatingSystem);
     }
@@ -119,7 +121,8 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
         return versionName;
     }
 
-    @SchemaColumn(order=4, name="architecture", description="the name of the architecture")
+    static final String COLUMN_ARCHITECTURE = "architecture";
+    @SchemaColumn(order=4, name=COLUMN_ARCHITECTURE, index=IndexType.INDEXED, description="the name of the architecture")
     public Architecture getArchitecture() throws RemoteException {
         Architecture ar=getService().getConnector().getArchitectures().get(architecture);
         if(ar==null) throw new RemoteException("Unable to find Architecture: "+architecture);
@@ -145,6 +148,34 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.OperatingSystemVersion getBean() {
         return new com.aoindustries.aoserv.client.beans.OperatingSystemVersion(key, operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getOperatingSystem(),
+            getArchitecture()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getServers(),
+            getTechnologyVersions()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<Server> getServers() throws RemoteException {
+        return getService().getConnector().getServers().getIndexed(Server.COLUMN_OPERATING_SYSTEM_VERSION, this);
+    }
+
+    public Set<TechnologyVersion> getTechnologyVersions() throws RemoteException {
+        return getService().getConnector().getTechnologyVersions().getIndexed(TechnologyVersion.COLUMN_OPERATING_SYSTEM_VERSION, this);
     }
     // </editor-fold>
 

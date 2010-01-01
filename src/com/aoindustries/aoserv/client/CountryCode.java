@@ -6,7 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>CountryCode</code> is a simple wrapper for country
@@ -82,6 +84,21 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.CountryCode getBean() {
         return new com.aoindustries.aoserv.client.beans.CountryCode(key, name, chargeComSupported, chargeComName);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getBusinessAdministrators()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
+        return getService().getConnector().getBusinessAdministrators().getIndexed(BusinessAdministrator.COLUMN_COUNTRY, this);
     }
     // </editor-fold>
 

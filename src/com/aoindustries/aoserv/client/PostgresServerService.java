@@ -1,37 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2002-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  PostgresServer
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class PostgresServerTable extends CachedTableIntegerKey<PostgresServer> {
+@ServiceAnnotation(ServiceName.postgres_servers)
+public interface PostgresServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,PostgresServer> {
 
-    PostgresServerTable(AOServConnector connector) {
-	super(connector, PostgresServer.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PostgresServer.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(PostgresServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addPostgresServer(
         String name,
         AOServer aoServer,
@@ -55,10 +37,6 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
         );
     }
 
-    public PostgresServer get(int pkey) throws IOException, SQLException {
-    	return getUniqueRow(PostgresServer.COLUMN_PKEY, pkey);
-    }
-
     PostgresServer getPostgresServer(NetBind nb) throws IOException, SQLException {
 	return (PostgresServer)getUniqueRow(PostgresServer.COLUMN_NET_BIND, nb.pkey);
     }
@@ -76,10 +54,6 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
             if(ps.name.equals(name)) return ps;
 	}
 	return null;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.POSTGRES_SERVERS;
     }
 
     @Override
@@ -160,4 +134,5 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
             aoServer.pkey
         );
     }
+    */
 }

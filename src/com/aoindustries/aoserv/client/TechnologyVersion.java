@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.Set;
 
 /**
  * Each <code>TechnologyName</code> may have multiple versions installed.
@@ -28,7 +29,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     final private String version;
     final private Timestamp updated;
     final private String owner;
-    final private int operatingSystemVersion;
+    final int operatingSystemVersion;
 
     public TechnologyVersion(
         TechnologyVersionService<?,?> service,
@@ -63,7 +64,8 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
         return key;
     }
 
-    @SchemaColumn(order=1, name="name", description="the name of the software package")
+    static final String COLUMN_NAME = "name";
+    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the software package")
     public TechnologyName getTechnologyName() throws RemoteException {
         return getService().getConnector().getTechnologyNames().get(name);
     }
@@ -84,7 +86,8 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
         return getService().getConnector().getMasterUsers().get(owner);
     }*/
 
-    @SchemaColumn(order=4, name="operating_system_version", description="the version of the OS that this packages is installed")
+    static final String COLUMN_OPERATING_SYSTEM_VERSION = "operating_system_version";
+    @SchemaColumn(order=4, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of the OS that this packages is installed")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         return getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
     }
@@ -96,7 +99,36 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getTechnologyName(),
+            // TODO: getOwner(),
+            getOperatingSystemVersion()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            createDependencySet(
+                getPostgresVersion()
+            ),
+            getMySQLServers()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<MySQLServer> getMySQLServers() throws RemoteException {
+        return getService().getConnector().getMysqlServers().getIndexed(MySQLServer.COLUMN_VERSION, this);
+    }
+
+    public PostgresVersion getPostgresVersion() throws RemoteException {
+        return getService().getConnector().getPostgresVersions().get(key);
+    }
+
     /* TODO
     public HttpdTomcatVersion getHttpdTomcatVersion() throws RemoteException, SQLException {
     	return connector.getHttpdTomcatVersions().get(pkey);
