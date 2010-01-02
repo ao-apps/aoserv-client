@@ -223,10 +223,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     PostgresDatabaseService<C,F> getPostgresDatabases() throws RemoteException;
     PostgresEncodingService<C,F> getPostgresEncodings() throws RemoteException;
     PostgresReservedWordService<C,F> getPostgresReservedWords() throws RemoteException;
-    PostgresServerUserService<C,F> getPostgresServerUsers() throws RemoteException;
      */
     PostgresServerService<C,F> getPostgresServers() throws RemoteException;
-    // TODO: PostgresUserService<C,F> getPostgresUsers() throws RemoteException;
+    PostgresUserService<C,F> getPostgresUsers() throws RemoteException;
     PostgresVersionService<C,F> getPostgresVersions() throws RemoteException;
     // TODO: PrivateFTPServerService<C,F> getPrivateFTPServers() throws RemoteException;
     // TODO: ProcessorTypeService<C,F> getProcessorTypes() throws RemoteException;

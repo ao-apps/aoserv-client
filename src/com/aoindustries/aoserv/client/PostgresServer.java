@@ -154,7 +154,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
             // TODO: getPostgresDatabases(),
-            // TODO: getPostgresServerUsers()
+            getPostgresUsers()
         );
     }
     // </editor-fold>
@@ -171,20 +171,10 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
     	return getService().getConnector().getPostgresDatabases().getPostgresDatabases(this);
     }
-
-
-    public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
-	return getService().getConnector().getPostgresServerUsers().getPostgresServerUsers(this);
+    */
+    public Set<PostgresUser> getPostgresUsers() throws RemoteException {
+        return getService().getConnector().getPostgresUsers().getIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
     }
-
-    public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
-	List<PostgresServerUser> psu=getPostgresServerUsers();
-	int len=psu.size();
-	List<PostgresUser> pu=new ArrayList<PostgresUser>(len);
-	for(int c=0;c<len;c++) pu.add(psu.get(c).getPostgresUser());
-	return pu;
-    }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

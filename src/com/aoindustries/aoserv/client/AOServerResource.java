@@ -88,6 +88,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
         else if(resourceType.equals(ResourceType.Constant.mysql_server.name())) obj = getMysqlServer();
         else if(resourceType.equals(ResourceType.Constant.mysql_user.name())) obj = getMysqlUser();
         else if(resourceType.equals(ResourceType.Constant.postgresql_server.name())) obj = getPostgresServer();
+        else if(resourceType.equals(ResourceType.Constant.postgresql_user.name())) obj = getPostgresUser();
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
         return obj;
@@ -126,6 +127,10 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
 
     public PostgresServer getPostgresServer() throws RemoteException {
         return getService().getConnector().getPostgresServers().get(key);
+    }
+
+    public PostgresUser getPostgresUser() throws RemoteException {
+        return getService().getConnector().getPostgresUsers().get(key);
     }
     // </editor-fold>
 }

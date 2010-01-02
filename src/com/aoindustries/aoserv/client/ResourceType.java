@@ -44,6 +44,7 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         mysql_server,
         mysql_user,
         postgresql_server,
+        postgresql_user,
         rack,
         server_database,
         server_enterprise,

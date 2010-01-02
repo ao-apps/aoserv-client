@@ -34,6 +34,7 @@ import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.PostgresServerService;
+import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
 import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
@@ -209,10 +210,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingPostgresDatabaseService postgresDatabases;
     final NoSwingPostgresEncodingService postgresEncodings;
     final NoSwingPostgresReservedWordService postgresReservedWords;
-    final NoSwingPostgresServerUserService postgresServerUsers;
      */
     final NoSwingPostgresServerService postgresServers;
-    // TODO: final NoSwingPostgresUserService postgresUsers;
+    final NoSwingPostgresUserService postgresUsers;
     final NoSwingPostgresVersionService postgresVersions;
     // TODO: final NoSwingPrivateFTPServerService privateFTPServers;
     // TODO: final NoSwingProcessorTypeService processorTypes;
@@ -406,10 +406,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         postgresDatabases = new NoSwingPostgresDatabaseService(this, wrapped.getPostgresDatabases());
         postgresEncodings = new NoSwingPostgresEncodingService(this, wrapped.getPostgresEncodings());
         postgresReservedWords = new NoSwingPostgresReservedWordService(this, wrapped.getPostgresReservedWords());
-        postgresServerUsers = new NoSwingPostgresServerUserService(this, wrapped.getPostgresServerUsers());
          */
         postgresServers = new NoSwingPostgresServerService(this, wrapped.getPostgresServers());
-        // TODO: postgresUsers = new NoSwingPostgresUserService(this, wrapped.getPostgresUsers());
+        postgresUsers = new NoSwingPostgresUserService(this, wrapped.getPostgresUsers());
         postgresVersions = new NoSwingPostgresVersionService(this, wrapped.getPostgresVersions());
         // TODO: privateFTPServers = new NoSwingPrivateFTPServerService(this, wrapped.getPrivateFTPServers());
         // TODO: processorTypes = new NoSwingProcessorTypeService(this, wrapped.getProcessorTypes());
@@ -816,15 +815,16 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public PostgresEncodingService<NoSwingConnector,NoSwingConnectorFactory> getPostgresEncodings() throws RemoteException;
 
     public PostgresReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getPostgresReservedWords() throws RemoteException;
-
-    public PostgresServerUserService<NoSwingConnector,NoSwingConnectorFactory> getPostgresServerUsers() throws RemoteException;
     */
     public PostgresServerService<NoSwingConnector,NoSwingConnectorFactory> getPostgresServers() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return postgresServers;
     }
 
-    // TODO: public PostgresUserService<NoSwingConnector,NoSwingConnectorFactory> getPostgresUsers() throws RemoteException;
+    public PostgresUserService<NoSwingConnector,NoSwingConnectorFactory> getPostgresUsers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return postgresUsers;
+    }
 
     public PostgresVersionService<NoSwingConnector,NoSwingConnectorFactory> getPostgresVersions() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();

@@ -86,9 +86,9 @@ final public class Username extends AOServObjectStringKey<Username> implements B
             createDependencySet(
                 getBusinessAdministrator()
                 // TODO: getLinuxAccount(),
-                // TODO: getPostgresUser()
             ),
-            getMysqlUsers()
+            getMysqlUsers(),
+            getPostgresUsers()
         );
     }
     // </editor-fold>
@@ -108,11 +108,9 @@ final public class Username extends AOServObjectStringKey<Username> implements B
         return getService().getConnector().getMysqlUsers().getIndexed(MySQLUser.COLUMN_USERNAME, this);
     }
 
-    /* TODO
-    public PostgresUser getPostgresUser() throws IOException, SQLException {
-        return getService().getConnector().getPostgresUsers().get(pkey);
+    public Set<PostgresUser> getPostgresUsers() throws RemoteException {
+        return getService().getConnector().getPostgresUsers().getIndexed(PostgresUser.COLUMN_USERNAME, this);
     }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

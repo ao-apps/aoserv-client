@@ -167,11 +167,12 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     }
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
-        AOServObject obj;
+        // TODO: AOServObject obj;
         if(resourceType.equals(ResourceType.Constant.mysql_database.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.mysql_server.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.mysql_user.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.postgresql_server.name())) return null; // Is an ao_server_resource
+        else if(resourceType.equals(ResourceType.Constant.postgresql_user.name())) return null; // Is an ao_server_resource
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
         // TODO: return obj;

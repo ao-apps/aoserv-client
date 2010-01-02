@@ -34,6 +34,7 @@ import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.PostgresServerService;
+import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
 import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
@@ -223,10 +224,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryPostgresDatabaseService postgresDatabases;
     final RetryPostgresEncodingService postgresEncodings;
     final RetryPostgresReservedWordService postgresReservedWords;
-    final RetryPostgresServerUserService postgresServerUsers;
      */
     final RetryPostgresServerService postgresServers;
-    // TODO: final RetryPostgresUserService postgresUsers;
+    final RetryPostgresUserService postgresUsers;
     final RetryPostgresVersionService postgresVersions;
     // TODO: final RetryPrivateFTPServerService privateFTPServers;
     // TODO: final RetryProcessorTypeService processorTypes;
@@ -425,10 +425,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         postgresDatabases = new RetryPostgresDatabaseService(this);
         postgresEncodings = new RetryPostgresEncodingService(this);
         postgresReservedWords = new RetryPostgresReservedWordService(this);
-        postgresServerUsers = new RetryPostgresServerUserService(this);
          */
         postgresServers = new RetryPostgresServerService(this);
-        // TODO: postgresUsers = new RetryPostgresUserService(this);
+        postgresUsers = new RetryPostgresUserService(this);
         postgresVersions = new RetryPostgresVersionService(this);
         // TODO: privateFTPServers = new RetryPrivateFTPServerService(this);
         // TODO: processorTypes = new RetryProcessorTypeService(this);
@@ -929,14 +928,14 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public PostgresEncodingService<RetryConnector,RetryConnectorFactory> getPostgresEncodings();
 
     public PostgresReservedWordService<RetryConnector,RetryConnectorFactory> getPostgresReservedWords();
-
-    public PostgresServerUserService<RetryConnector,RetryConnectorFactory> getPostgresServerUsers();
     */
     public PostgresServerService<RetryConnector,RetryConnectorFactory> getPostgresServers() {
         return postgresServers;
     }
 
-    // TODO: public PostgresUserService<RetryConnector,RetryConnectorFactory> getPostgresUsers();
+    public PostgresUserService<RetryConnector,RetryConnectorFactory> getPostgresUsers() {
+        return postgresUsers;
+    }
 
     public PostgresVersionService<RetryConnector,RetryConnectorFactory> getPostgresVersions() {
         return postgresVersions;

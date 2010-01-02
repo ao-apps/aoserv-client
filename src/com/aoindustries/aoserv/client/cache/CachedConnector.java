@@ -34,6 +34,7 @@ import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.PostgresServerService;
+import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
 import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
@@ -214,10 +215,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedPostgresDatabaseService postgresDatabases;
     final CachedPostgresEncodingService postgresEncodings;
     final CachedPostgresReservedWordService postgresReservedWords;
-    final CachedPostgresServerUserService postgresServerUsers;
      */
     final CachedPostgresServerService postgresServers;
-    // TODO: final CachedPostgresUserService postgresUsers;
+    final CachedPostgresUserService postgresUsers;
     final CachedPostgresVersionService postgresVersions;
     // TODO: final CachedPrivateFTPServerService privateFTPServers;
     // TODO: final CachedProcessorTypeService processorTypes;
@@ -417,10 +417,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         postgresDatabases = new CachedPostgresDatabaseService(this, wrapped.getPostgresDatabases());
         postgresEncodings = new CachedPostgresEncodingService(this, wrapped.getPostgresEncodings());
         postgresReservedWords = new CachedPostgresReservedWordService(this, wrapped.getPostgresReservedWords());
-        postgresServerUsers = new CachedPostgresServerUserService(this, wrapped.getPostgresServerUsers());
          */
         postgresServers = new CachedPostgresServerService(this, wrapped.getPostgresServers());
-        // TODO: postgresUsers = new CachedPostgresUserService(this, wrapped.getPostgresUsers());
+        postgresUsers = new CachedPostgresUserService(this, wrapped.getPostgresUsers());
         postgresVersions = new CachedPostgresVersionService(this, wrapped.getPostgresVersions());
         // TODO: privateFTPServers = new CachedPrivateFTPServerService(this, wrapped.getPrivateFTPServers());
         // TODO: processorTypes = new CachedProcessorTypeService(this, wrapped.getProcessorTypes());
@@ -801,14 +800,14 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings();
 
     public PostgresReservedWordService<CachedConnector,CachedConnectorFactory> getPostgresReservedWords();
-
-    public PostgresServerUserService<CachedConnector,CachedConnectorFactory> getPostgresServerUsers();
     */
     public PostgresServerService<CachedConnector,CachedConnectorFactory> getPostgresServers() {
         return postgresServers;
     }
 
-    // TODO: public PostgresUserService<CachedConnector,CachedConnectorFactory> getPostgresUsers();
+    public PostgresUserService<CachedConnector,CachedConnectorFactory> getPostgresUsers() {
+        return postgresUsers;
+    }
 
     public PostgresVersionService<CachedConnector,CachedConnectorFactory> getPostgresVersions() {
         return postgresVersions;
