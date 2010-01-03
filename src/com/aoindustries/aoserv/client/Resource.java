@@ -171,6 +171,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         if(resourceType.equals(ResourceType.Constant.mysql_database.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.mysql_server.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.mysql_user.name())) return null; // Is an ao_server_resource
+        else if(resourceType.equals(ResourceType.Constant.postgresql_database.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.postgresql_server.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.postgresql_user.name())) return null; // Is an ao_server_resource
         else throw new AssertionError("Unexpected resource type: "+resourceType);

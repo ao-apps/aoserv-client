@@ -153,7 +153,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getPostgresDatabases(),
+            getPostgresDatabases(),
             getPostgresUsers()
         );
     }
@@ -167,11 +167,10 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
-    	return getService().getConnector().getPostgresDatabases().getPostgresDatabases(this);
+    public Set<PostgresDatabase> getPostgresDatabases() throws RemoteException {
+    	return getService().getConnector().getPostgresDatabases().getIndexed(PostgresDatabase.COLUMN_POSTGRES_SERVER, this);
     }
-    */
+
     public Set<PostgresUser> getPostgresUsers() throws RemoteException {
         return getService().getConnector().getPostgresUsers().getIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
     }

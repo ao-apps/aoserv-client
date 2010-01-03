@@ -100,7 +100,8 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
         return encoding;
     }
 
-    @SchemaColumn(order=2, name="postgres_version", description="the version of PostgreSQL")
+    static final String COLUMN_POSTGRES_VERSION = "postgres_version";
+    @SchemaColumn(order=2, name=COLUMN_POSTGRES_VERSION, index=IndexType.INDEXED, description="the version of PostgreSQL")
     public PostgresVersion getPostgresVersion() throws RemoteException {
         return getService().getConnector().getPostgresVersions().get(postgresVersion);
     }
@@ -118,6 +119,19 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
         return createDependencySet(
             getPostgresVersion()
         );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            getPostgresDatabases()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<PostgresDatabase> getPostgresDatabases() throws RemoteException {
+    	return getService().getConnector().getPostgresDatabases().getIndexed(PostgresDatabase.COLUMN_ENCODING, this);
     }
     // </editor-fold>
 }

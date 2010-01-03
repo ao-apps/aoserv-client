@@ -102,17 +102,20 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         return name;
     }
 
-    @SchemaColumn(order=2, name="postgres_server", description="the pkey of the PostgreSQL server")
+    static final String COLUMN_POSTGRES_SERVER = "postgres_server";
+    @SchemaColumn(order=2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
     public PostgresServer getPostgresServer() throws RemoteException {
         return getService().getConnector().getPostgresServers().get(postgresServer);
     }
 
-    @SchemaColumn(order=3, name="datdba", description="the datdba for the database")
+    static final String COLUMN_DATDBA = "datdba";
+    @SchemaColumn(order=3, name=COLUMN_DATDBA, index=IndexType.INDEXED, description="the datdba for the database")
     public PostgresUser getDatDBA() throws RemoteException {
         return getService().getConnector().getPostgresUsers().get(datdba);
     }
 
-    @SchemaColumn(order=4, name="encoding", description="the pkey of the encoding system used for the database")
+    static final String COLUMN_ENCODING = "encoding";
+    @SchemaColumn(order=4, name=COLUMN_ENCODING, index=IndexType.INDEXED, description="the pkey of the encoding system used for the database")
     public PostgresEncoding getPostgresEncoding() throws RemoteException {
     	PostgresEncoding obj=getService().getConnector().getPostgresEncodings().get(encoding);
         if(obj==null) throw new RemoteException("Unable to find PostgresEncoding: "+encoding);
