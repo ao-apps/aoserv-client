@@ -1,38 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  PostgresDatabase
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresDatabase> {
+@ServiceAnnotation(ServiceName.postgres_databases)
+public interface PostgresDatabaseService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,PostgresDatabase> {
 
-    PostgresDatabaseTable(AOServConnector connector) {
-	super(connector, PostgresDatabase.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PostgresDatabase.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(PostgresDatabase.COLUMN_POSTGRES_SERVER_name+'.'+PostgresServer.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(PostgresDatabase.COLUMN_POSTGRES_SERVER_name+'.'+PostgresServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addPostgresDatabase(
         String name,
         PostgresServer postgresServer,
@@ -57,14 +38,10 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
     	return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added);
     }
 
-    public PostgresDatabase get(int pkey) throws IOException, SQLException {
-    	return getUniqueRow(PostgresDatabase.COLUMN_PKEY, pkey);
-    }
-
     PostgresDatabase getPostgresDatabase(String name, PostgresServer postgresServer) throws IOException, SQLException {
         // Use the index first
-	for(PostgresDatabase pd : getPostgresDatabases(postgresServer)) if(pd.name.equals(name)) return pd;
-	return null;
+        for(PostgresDatabase pd : getPostgresDatabases(postgresServer)) if(pd.name.equals(name)) return pd;
+        return null;
     }
 
     List<PostgresDatabase> getPostgresDatabases(Business business) throws IOException, SQLException {
@@ -82,10 +59,6 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 
     List<PostgresDatabase> getPostgresDatabases(PostgresServer postgresServer) throws IOException, SQLException {
         return getIndexedRows(PostgresDatabase.COLUMN_POSTGRES_SERVER, postgresServer.pkey);
-    }
-
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.POSTGRES_DATABASES;
     }
 
     @Override
@@ -210,4 +183,5 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
             aoServer.pkey
         );
     }
+     */
 }

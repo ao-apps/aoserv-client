@@ -33,6 +33,9 @@ import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.PostgresDatabaseService;
+import com.aoindustries.aoserv.client.PostgresEncodingService;
+import com.aoindustries.aoserv.client.PostgresReservedWordService;
 import com.aoindustries.aoserv.client.PostgresServerService;
 import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
@@ -212,10 +215,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedPackageDefinitionService packageDefinitions;
     final CachedPaymentTypeService paymentTypes;
     final CachedPhysicalServerService physicalServers;
+     */
     final CachedPostgresDatabaseService postgresDatabases;
     final CachedPostgresEncodingService postgresEncodings;
     final CachedPostgresReservedWordService postgresReservedWords;
-     */
     final CachedPostgresServerService postgresServers;
     final CachedPostgresUserService postgresUsers;
     final CachedPostgresVersionService postgresVersions;
@@ -414,10 +417,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         packageDefinitions = new CachedPackageDefinitionService(this, wrapped.getPackageDefinitions());
         paymentTypes = new CachedPaymentTypeService(this, wrapped.getPaymentTypes());
         physicalServers = new CachedPhysicalServerService(this, wrapped.getPhysicalServers());
+         */
         postgresDatabases = new CachedPostgresDatabaseService(this, wrapped.getPostgresDatabases());
         postgresEncodings = new CachedPostgresEncodingService(this, wrapped.getPostgresEncodings());
         postgresReservedWords = new CachedPostgresReservedWordService(this, wrapped.getPostgresReservedWords());
-         */
         postgresServers = new CachedPostgresServerService(this, wrapped.getPostgresServers());
         postgresUsers = new CachedPostgresUserService(this, wrapped.getPostgresUsers());
         postgresVersions = new CachedPostgresVersionService(this, wrapped.getPostgresVersions());
@@ -794,13 +797,19 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes();
 
     public PhysicalServerService<CachedConnector,CachedConnectorFactory> getPhysicalServers();
-
-    public PostgresDatabaseService<CachedConnector,CachedConnectorFactory> getPostgresDatabases();
-
-    public PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings();
-
-    public PostgresReservedWordService<CachedConnector,CachedConnectorFactory> getPostgresReservedWords();
     */
+    public PostgresDatabaseService<CachedConnector,CachedConnectorFactory> getPostgresDatabases() {
+        return postgresDatabases;
+    }
+
+    public PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings() {
+        return postgresEncodings;
+    }
+
+    public PostgresReservedWordService<CachedConnector,CachedConnectorFactory> getPostgresReservedWords() {
+        return postgresReservedWords;
+    }
+
     public PostgresServerService<CachedConnector,CachedConnectorFactory> getPostgresServers() {
         return postgresServers;
     }

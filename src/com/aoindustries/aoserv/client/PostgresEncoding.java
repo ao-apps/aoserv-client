@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * Beginning with PostgreSQL 7.1, multiple character encoding formats are
@@ -16,19 +16,12 @@ import java.sql.*;
  *
  * @see  PostgresDatabase
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncoding> {
-    
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_POSTGRES_VERSION=2
-    ;
-    static final String COLUMN_ENCODING_name = "encoding";
-    static final String COLUMN_POSTGRES_VERSION_name = "postgres_version";
-    static final String COLUMN_PKEY_name = "pkey";
+final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncoding> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresEncoding> {
+
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The supported encodings.
@@ -74,48 +67,57 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
      * The PostgreSQL default encoding is SQL_ASCII.
      */
     public static final String DEFAULT_ENCODING=SQL_ASCII;
+    // </editor-fold>
 
-    String encoding;
-    int postgres_version;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String encoding;
+    final int postgresVersion;
 
-    Object getColumnImpl(int i) {
-	switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return encoding;
-            case COLUMN_POSTGRES_VERSION: return Integer.valueOf(postgres_version);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public PostgresEncoding(PostgresEncodingService<?,?> service, int pkey, String encoding, int postgresVersion) {
+        super(service, pkey);
+        this.encoding = encoding.intern();
+        this.postgresVersion = postgresVersion;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(PostgresEncoding other) throws RemoteException {
+        int diff = compareIgnoreCaseConsistentWithEquals(encoding, other.encoding);
+        if(diff!=0) return diff;
+        return postgresVersion==other.postgresVersion ? 0 : getPostgresVersion().compareTo(other.getPostgresVersion());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique key")
+    public int getPkey() {
+        return key;
     }
 
+    @SchemaColumn(order=1, name="encoding", description="the name of the encoding")
     public String getEncoding() {
-	return encoding;
+        return encoding;
     }
 
-    public PostgresVersion getPostgresVersion(AOServConnector connector) throws SQLException, IOException {
-        PostgresVersion pv=connector.getPostgresVersions().get(postgres_version);
-        if(pv==null) throw new SQLException("Unable to find PostgresVersion: "+postgres_version);
-        return pv;
+    @SchemaColumn(order=2, name="postgres_version", description="the version of PostgreSQL")
+    public PostgresVersion getPostgresVersion() throws RemoteException {
+        return getService().getConnector().getPostgresVersions().get(postgresVersion);
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.POSTGRES_ENCODINGS;
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.PostgresEncoding getBean() {
+        return new com.aoindustries.aoserv.client.beans.PostgresEncoding(key, encoding, postgresVersion);
     }
+    // </editor-fold>
 
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-	encoding=result.getString(2);
-        postgres_version=result.getInt(3);
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getPostgresVersion()
+        );
     }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-	encoding=in.readUTF().intern();
-        postgres_version=in.readCompressedInt();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-	out.writeUTF(encoding);
-        out.writeCompressedInt(postgres_version);
-    }
+    // </editor-fold>
 }

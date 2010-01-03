@@ -33,6 +33,9 @@ import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.PostgresDatabaseService;
+import com.aoindustries.aoserv.client.PostgresEncodingService;
+import com.aoindustries.aoserv.client.PostgresReservedWordService;
 import com.aoindustries.aoserv.client.PostgresServerService;
 import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
@@ -221,10 +224,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryPackageDefinitionService packageDefinitions;
     final RetryPaymentTypeService paymentTypes;
     final RetryPhysicalServerService physicalServers;
+     */
     final RetryPostgresDatabaseService postgresDatabases;
     final RetryPostgresEncodingService postgresEncodings;
     final RetryPostgresReservedWordService postgresReservedWords;
-     */
     final RetryPostgresServerService postgresServers;
     final RetryPostgresUserService postgresUsers;
     final RetryPostgresVersionService postgresVersions;
@@ -422,10 +425,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         packageDefinitions = new RetryPackageDefinitionService(this);
         paymentTypes = new RetryPaymentTypeService(this);
         physicalServers = new RetryPhysicalServerService(this);
+         */
         postgresDatabases = new RetryPostgresDatabaseService(this);
         postgresEncodings = new RetryPostgresEncodingService(this);
         postgresReservedWords = new RetryPostgresReservedWordService(this);
-         */
         postgresServers = new RetryPostgresServerService(this);
         postgresUsers = new RetryPostgresUserService(this);
         postgresVersions = new RetryPostgresVersionService(this);
@@ -922,13 +925,19 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public PaymentTypeService<RetryConnector,RetryConnectorFactory> getPaymentTypes();
 
     public PhysicalServerService<RetryConnector,RetryConnectorFactory> getPhysicalServers();
-
-    public PostgresDatabaseService<RetryConnector,RetryConnectorFactory> getPostgresDatabases();
-
-    public PostgresEncodingService<RetryConnector,RetryConnectorFactory> getPostgresEncodings();
-
-    public PostgresReservedWordService<RetryConnector,RetryConnectorFactory> getPostgresReservedWords();
     */
+    public PostgresDatabaseService<RetryConnector,RetryConnectorFactory> getPostgresDatabases() {
+        return postgresDatabases;
+    }
+
+    public PostgresEncodingService<RetryConnector,RetryConnectorFactory> getPostgresEncodings() {
+        return postgresEncodings;
+    }
+
+    public PostgresReservedWordService<RetryConnector,RetryConnectorFactory> getPostgresReservedWords() {
+        return postgresReservedWords;
+    }
+
     public PostgresServerService<RetryConnector,RetryConnectorFactory> getPostgresServers() {
         return postgresServers;
     }

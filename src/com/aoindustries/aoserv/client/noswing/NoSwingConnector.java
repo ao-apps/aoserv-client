@@ -33,6 +33,9 @@ import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.PostgresDatabaseService;
+import com.aoindustries.aoserv.client.PostgresEncodingService;
+import com.aoindustries.aoserv.client.PostgresReservedWordService;
 import com.aoindustries.aoserv.client.PostgresServerService;
 import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
@@ -207,10 +210,10 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingPackageDefinitionService packageDefinitions;
     final NoSwingPaymentTypeService paymentTypes;
     final NoSwingPhysicalServerService physicalServers;
+     */
     final NoSwingPostgresDatabaseService postgresDatabases;
     final NoSwingPostgresEncodingService postgresEncodings;
     final NoSwingPostgresReservedWordService postgresReservedWords;
-     */
     final NoSwingPostgresServerService postgresServers;
     final NoSwingPostgresUserService postgresUsers;
     final NoSwingPostgresVersionService postgresVersions;
@@ -403,10 +406,10 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         packageDefinitions = new NoSwingPackageDefinitionService(this, wrapped.getPackageDefinitions());
         paymentTypes = new NoSwingPaymentTypeService(this, wrapped.getPaymentTypes());
         physicalServers = new NoSwingPhysicalServerService(this, wrapped.getPhysicalServers());
+         */
         postgresDatabases = new NoSwingPostgresDatabaseService(this, wrapped.getPostgresDatabases());
         postgresEncodings = new NoSwingPostgresEncodingService(this, wrapped.getPostgresEncodings());
         postgresReservedWords = new NoSwingPostgresReservedWordService(this, wrapped.getPostgresReservedWords());
-         */
         postgresServers = new NoSwingPostgresServerService(this, wrapped.getPostgresServers());
         postgresUsers = new NoSwingPostgresUserService(this, wrapped.getPostgresUsers());
         postgresVersions = new NoSwingPostgresVersionService(this, wrapped.getPostgresVersions());
@@ -809,13 +812,22 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public PaymentTypeService<NoSwingConnector,NoSwingConnectorFactory> getPaymentTypes() throws RemoteException;
 
     public PhysicalServerService<NoSwingConnector,NoSwingConnectorFactory> getPhysicalServers() throws RemoteException;
-
-    public PostgresDatabaseService<NoSwingConnector,NoSwingConnectorFactory> getPostgresDatabases() throws RemoteException;
-
-    public PostgresEncodingService<NoSwingConnector,NoSwingConnectorFactory> getPostgresEncodings() throws RemoteException;
-
-    public PostgresReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getPostgresReservedWords() throws RemoteException;
     */
+    public PostgresDatabaseService<NoSwingConnector,NoSwingConnectorFactory> getPostgresDatabases() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return postgresDatabases;
+    }
+
+    public PostgresEncodingService<NoSwingConnector,NoSwingConnectorFactory> getPostgresEncodings() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return postgresEncodings;
+    }
+
+    public PostgresReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getPostgresReservedWords() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return postgresReservedWords;
+    }
+
     public PostgresServerService<NoSwingConnector,NoSwingConnectorFactory> getPostgresServers() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return postgresServers;

@@ -1,15 +1,15 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Locale;
+import java.util.Set;
+
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.BufferManager;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
 
 /**
  * A <code>PostgresDatabase</code> corresponds to a unique PostgreSQL table
@@ -20,19 +20,12 @@ import java.util.*;
  * @see  PostgresEncoding
  * @see  PostgresServerUser
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatabase> implements Dumpable, Removable, JdbcProvider {
+final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatabase> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresDatabase> /* TODO: , Dumpable, Removable, JdbcProvider */ {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_POSTGRES_SERVER=2,
-        COLUMN_DATDBA=3
-    ;
-    static final String COLUMN_NAME_name = "name";
-    static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The classname of the JDBC driver used for the <code>PostgresDatabase</code>.
@@ -56,25 +49,132 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
      * which has a maximum length of 31 characters.
      */
     public static final int MAX_DATABASE_NAME_LENGTH=31;
+    // </editor-fold>
 
-    String name;
-    int postgres_server;
-    int datdba;
-    private int encoding;
-    private boolean is_template;
-    private boolean allow_conn;
-    private boolean enable_postgis;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String name;
+    final private int postgresServer;
+    final private int datdba;
+    final private int encoding;
+    final private boolean isTemplate;
+    final private boolean allowConn;
+    final private boolean enablePostgis;
 
-    public boolean allowsConnections() {
-	return allow_conn;
+    public PostgresDatabase(
+        PostgresDatabaseService<?,?> service,
+        int aoServerResource,
+        String name,
+        int postgresServer,
+        int datdba,
+        int encoding,
+        boolean isTemplate,
+        boolean allowConn,
+        boolean enablePostgis
+    ) {
+        super(service, aoServerResource);
+        this.name = name;
+        this.postgresServer = postgresServer;
+        this.datdba = datdba;
+        this.encoding = encoding;
+        this.isTemplate = isTemplate;
+        this.allowConn = allowConn;
+        this.enablePostgis = enablePostgis;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(PostgresDatabase other) throws RemoteException {
+        int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
+        if(diff!=0) return diff;
+        return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareTo(other.getPostgresServer());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
+    public AOServerResource getAoServerResource() throws RemoteException {
+        return getService().getConnector().getAoServerResources().get(key);
     }
 
+    @SchemaColumn(order=1, name="name", description="the name of the database")
+    public String getName() {
+        return name;
+    }
+
+    @SchemaColumn(order=2, name="postgres_server", description="the pkey of the PostgreSQL server")
+    public PostgresServer getPostgresServer() throws RemoteException {
+        return getService().getConnector().getPostgresServers().get(postgresServer);
+    }
+
+    @SchemaColumn(order=3, name="datdba", description="the datdba for the database")
+    public PostgresUser getDatDBA() throws RemoteException {
+        return getService().getConnector().getPostgresUsers().get(datdba);
+    }
+
+    @SchemaColumn(order=4, name="encoding", description="the pkey of the encoding system used for the database")
+    public PostgresEncoding getPostgresEncoding() throws RemoteException {
+    	PostgresEncoding obj=getService().getConnector().getPostgresEncodings().get(encoding);
+        if(obj==null) throw new RemoteException("Unable to find PostgresEncoding: "+encoding);
+        // Make sure the postgres encoding postgresql version matches the server this database is part of
+        if(
+            obj.postgresVersion
+            != getPostgresServer().version
+        ) {
+            throw new RemoteException("encoding/postgres server version mismatch on PostgresDatabase: #"+key);
+        }
+    	return obj;
+    }
+
+    @SchemaColumn(order=5, name="is_template", description="if true, this database is a template")
+    public boolean isTemplate() {
+    	return isTemplate;
+    }
+
+    @SchemaColumn(order=6, name="allow_conn", description="if true, this database is accepting connections")
+    public boolean getAllowsConnections() {
+        return allowConn;
+    }
+
+    @SchemaColumn(order=7, name="enable_postgis", description="indicates PostGIS is enabled on this database")
+    public boolean getEnablePostgis() {
+        return enablePostgis;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.PostgresDatabase getBean() {
+        return new com.aoindustries.aoserv.client.beans.PostgresDatabase(key, name, postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getAoServerResource(),
+            getPostgresServer(),
+            getDatDBA(),
+            getPostgresEncoding()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) {
+        return name;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public void dump(PrintWriter out) throws IOException, SQLException {
         dump((Writer)out);
     }
 
     public void dump(final Writer out) throws IOException, SQLException {
-        table.connector.requestUpdate(
+        getService().getConnector().requestUpdate(
             false,
             new AOServConnector.UpdateRequest() {
 
@@ -113,33 +213,6 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
         );
     }
 
-    /**
-     * Indicates that PostGIS should be enabled for this database.
-     */
-    public boolean getEnablePostgis() {
-        return enable_postgis;
-    }
-
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return pkey;
-            case 1: return name;
-            case COLUMN_POSTGRES_SERVER: return postgres_server;
-            case COLUMN_DATDBA: return datdba;
-            case 4: return encoding;
-            case 5: return is_template;
-            case 6: return allow_conn;
-            case 7: return enable_postgis;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
-    public PostgresServerUser getDatDBA() throws SQLException, IOException {
-        PostgresServerUser obj=table.connector.getPostgresServerUsers().get(datdba);
-        if(obj==null) throw new SQLException("Unable to find PostgresServerUser: "+datdba);
-        return obj;
-    }
-
     public String getJdbcDriver() {
         return JDBC_DRIVER;
     }
@@ -160,82 +233,16 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     }
     
     public String getJdbcDocumentationUrl() throws SQLException, IOException {
-        String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(table.connector).getVersion();
+        String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(getService().getConnector()).getVersion();
         return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
-    }
-
-    public String getName() {
-	return name;
-    }
-
-    public PostgresEncoding getPostgresEncoding() throws SQLException, IOException {
-	PostgresEncoding obj=table.connector.getPostgresEncodings().get(encoding);
-	if(obj==null) throw new SQLException("Unable to find PostgresEncoding: "+encoding);
-        // Make sure the postgres encoding postgresql version matches the server this database is part of
-        if(
-            obj.getPostgresVersion(table.connector).getPkey()
-            != getPostgresServer().getPostgresVersion().getPkey()
-        ) {
-            throw new SQLException("encoding/postgres server version mismatch on PostgresDatabase: #"+pkey);
-        }
-        
-	return obj;
-    }
-
-    public PostgresServer getPostgresServer() throws SQLException, IOException {
-        PostgresServer obj=table.connector.getPostgresServers().get(postgres_server);
-        if(obj==null) throw new SQLException("Unable to find PostgresServer: "+postgres_server);
-        return obj;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.POSTGRES_DATABASES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	name=result.getString(2);
-	postgres_server=result.getInt(3);
-	datdba=result.getInt(4);
-	encoding=result.getInt(5);
-	is_template=result.getBoolean(6);
-	allow_conn=result.getBoolean(7);
-        enable_postgis=result.getBoolean(8);
-    }
-
-    public boolean isTemplate() {
-    	return is_template;
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        name=in.readUTF();
-        postgres_server=in.readCompressedInt();
-        datdba=in.readCompressedInt();
-        encoding=in.readCompressedInt();
-        is_template=in.readBoolean();
-        allow_conn=in.readBoolean();
-        enable_postgis=in.readBoolean();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getPostgresServer(),
-            getDatDBA()
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-        );
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         
         PostgresServer ps=getPostgresServer();
-        if(!allow_conn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
-        if(is_template) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+        if(!allowConn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+        if(isTemplate) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
         if(
             name.equals(AOINDUSTRIES)
             || name.equals(AOSERV)
@@ -246,31 +253,13 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
     }
 
     public void remove() throws IOException, SQLException {
-    	table.connector.requestUpdateIL(
+    	getService().getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_DATABASES,
             pkey
     	);
     }
-
-    @Override
-    String toStringImpl(Locale userLocale) {
-	return name;
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(name);
-	out.writeCompressedInt(postgres_server);
-	out.writeCompressedInt(datdba);
-	out.writeCompressedInt(encoding);
-	out.writeBoolean(is_template);
-	out.writeBoolean(allow_conn);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeShort(0);
-            out.writeShort(7);
-        }
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_27)>=0) out.writeBoolean(enable_postgis);
-    }
+     */
+    // </editor-fold>
 }

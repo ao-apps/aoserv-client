@@ -160,10 +160,10 @@ public enum ServiceName implements LocalizedToString {
     package_definitions,
     payment_types,
     physical_servers,
+     */
     postgres_databases,
     postgres_encodings,
     postgres_reserved_words,
-     */
     postgres_servers,
     postgres_users,
     postgres_versions,

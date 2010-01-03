@@ -220,10 +220,10 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     PackageDefinitionService<C,F> getPackageDefinitions() throws RemoteException;
     PaymentTypeService<C,F> getPaymentTypes() throws RemoteException;
     PhysicalServerService<C,F> getPhysicalServers() throws RemoteException;
+     */
     PostgresDatabaseService<C,F> getPostgresDatabases() throws RemoteException;
     PostgresEncodingService<C,F> getPostgresEncodings() throws RemoteException;
     PostgresReservedWordService<C,F> getPostgresReservedWords() throws RemoteException;
-     */
     PostgresServerService<C,F> getPostgresServers() throws RemoteException;
     PostgresUserService<C,F> getPostgresUsers() throws RemoteException;
     PostgresVersionService<C,F> getPostgresVersions() throws RemoteException;

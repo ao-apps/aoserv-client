@@ -41,7 +41,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String name;
-    final private int version;
+    final int version;
     final private int maxConnections;
     final private int netBind;
     final private int sortMem;
