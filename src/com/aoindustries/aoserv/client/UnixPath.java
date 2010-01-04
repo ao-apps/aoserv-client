@@ -32,6 +32,11 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
 
     private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<String, UnixPath>();
 
+    public static UnixPath valueOf(String path) {
+        UnixPath existing = interned.get(path);
+        return existing!=null ? existing : new UnixPath(path);
+    }
+
     /**
      * Interns this path much in the same fashion as <code>String.intern()</code>.
      *
@@ -50,7 +55,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
 
     final private String path;
 
-    public UnixPath(String path) {
+    private UnixPath(String path) {
         this.path = path;
         validate();
     }
@@ -87,6 +92,14 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
             newErr.initCause(err);
             throw newErr;
         }
+    }
+
+    /**
+     * Automatically uses previously interned values on deserialization.
+     */
+    private Object readResolve() {
+        UnixPath existing = interned.get(path);
+        return existing!=null ? existing : this;
     }
 
     @Override

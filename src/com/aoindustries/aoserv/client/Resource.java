@@ -167,13 +167,25 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     }
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
-        // TODO: AOServObject obj;
+        AOServObject obj;
         if(resourceType.equals(ResourceType.Constant.mysql_database.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.mysql_server.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.mysql_user.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.postgresql_database.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.postgresql_server.name())) return null; // Is an ao_server_resource
         else if(resourceType.equals(ResourceType.Constant.postgresql_user.name())) return null; // Is an ao_server_resource
+        else if(
+            // linux_accounts
+            resourceType.equals(ResourceType.Constant.email_inbox.name())
+            || resourceType.equals(ResourceType.Constant.ftponly_account.name())
+            || resourceType.equals(ResourceType.Constant.shell_account.name())
+            || resourceType.equals(ResourceType.Constant.system_account.name())
+        ) return null; // Is an ao_server_resource
+        else if(
+            // linux_groups
+            resourceType.equals(ResourceType.Constant.shell_group.name())
+            || resourceType.equals(ResourceType.Constant.system_group.name())
+        ) return null; // Is an ao_server_resource
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
         // TODO: return obj;

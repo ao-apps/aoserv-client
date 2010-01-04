@@ -88,6 +88,10 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
+            createDependencySet(
+                getLinuxAccountType(),
+                getLinuxGroupType()
+            ),
             getResources()
         );
     }
@@ -96,6 +100,14 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public Set<Resource> getResources() throws RemoteException {
         return getService().getConnector().getResources().getIndexed(Resource.COLUMN_RESOURCE_TYPE, this);
+    }
+
+    public LinuxAccountType getLinuxAccountType() throws RemoteException {
+        return getService().getConnector().getLinuxAccountTypes().get(key);
+    }
+
+    public LinuxGroupType getLinuxGroupType() throws RemoteException {
+        return getService().getConnector().getLinuxGroupTypes().get(key);
     }
     // </editor-fold>
 

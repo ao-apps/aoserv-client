@@ -39,7 +39,7 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
 
     final private int id;
 
-    public LinuxID(int id) {
+    private LinuxID(int id) {
         this.id=id;
         validate();
     }
@@ -65,6 +65,12 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
             newErr.initCause(err);
             throw newErr;
         }
+    }
+
+    private Object readResolve() {
+        if(id>=0 && id<CONSTANT_IDS) return ids[id];
+        if(id==NOBODY_ID) return NOBODY;
+        return this;
     }
 
     @Override

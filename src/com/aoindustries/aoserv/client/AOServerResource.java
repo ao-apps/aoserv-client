@@ -90,6 +90,18 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
         else if(resourceType.equals(ResourceType.Constant.postgresql_database.name())) obj = getPostgresDatabase();
         else if(resourceType.equals(ResourceType.Constant.postgresql_server.name())) obj = getPostgresServer();
         else if(resourceType.equals(ResourceType.Constant.postgresql_user.name())) obj = getPostgresUser();
+        else if(
+            // linux_accounts
+            resourceType.equals(ResourceType.Constant.email_inbox.name())
+            || resourceType.equals(ResourceType.Constant.ftponly_account.name())
+            || resourceType.equals(ResourceType.Constant.shell_account.name())
+            || resourceType.equals(ResourceType.Constant.system_account.name())
+        ) obj = null; // TODO: getLinuxAccount();
+        else if(
+            // linux_groups
+            resourceType.equals(ResourceType.Constant.shell_group.name())
+            || resourceType.equals(ResourceType.Constant.system_group.name())
+        ) obj = null; // TODO: getLinuxGroup();
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
         return obj;
@@ -97,13 +109,6 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    private Server getServer() throws SQLException, IOException {
-        Server s=getService().getConnector().getServers().get(ao_server);
-        if(s==null) throw new SQLException("Unable to find Server: "+ao_server);
-        return s;
-    }*/
-
     /**
      * Gets the <code>BusinessServer</code> that this depends on.  This resource
      * must be removed before the business' access to the server may be revoked.
