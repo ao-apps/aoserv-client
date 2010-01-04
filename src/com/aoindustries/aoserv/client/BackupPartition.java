@@ -23,7 +23,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int aoServer;
-    final private String path;
+    final private UnixPath path;
     final private boolean enabled;
     final private boolean quotaEnabled;
 
@@ -31,7 +31,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
         BackupPartitionService<?,?> service,
         int pkey,
         int aoServer,
-        String path,
+        UnixPath path,
         boolean enabled,
         boolean quotaEnabled
     ) {
@@ -48,7 +48,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     protected int compareToImpl(BackupPartition other) throws RemoteException {
         int diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
         if(diff!=0) return diff;
-        return compareIgnoreCaseConsistentWithEquals(path, other.path);
+        return path.compareTo(other.path);
     }
     // </editor-fold>
 
@@ -64,7 +64,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     }
 
     @SchemaColumn(order=2, name="path", description="the full path to the root of the backup data")
-    public String getPath() {
+    public UnixPath getPath() {
         return path;
     }
 
@@ -89,7 +89,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BackupPartition getBean() {
-        return new com.aoindustries.aoserv.client.beans.BackupPartition(key, aoServer, path, enabled, quotaEnabled);
+        return new com.aoindustries.aoserv.client.beans.BackupPartition(key, aoServer, path.getBean(), enabled, quotaEnabled);
     }
     // </editor-fold>
 

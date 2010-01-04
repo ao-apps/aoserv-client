@@ -19,7 +19,7 @@ public class FailoverFileReplication {
     private String connectAddress;
     private String connectFrom;
     private boolean enabled;
-    private Integer quotaGid;
+    private LinuxID quotaGid;
 
     public FailoverFileReplication() {
     }
@@ -34,7 +34,7 @@ public class FailoverFileReplication {
         String connectAddress,
         String connectFrom,
         boolean enabled,
-        Integer quotaGid
+        LinuxID quotaGid
     ) {
         this.pkey = pkey;
         this.server = server;
@@ -120,11 +120,11 @@ public class FailoverFileReplication {
         this.enabled = enabled;
     }
 
-    public Integer getQuotaGid() {
+    public LinuxID getQuotaGid() {
         return quotaGid;
     }
 
-    public void setQuotaGid(Integer quotaGid) {
+    public void setQuotaGid(LinuxID quotaGid) {
         this.quotaGid = quotaGid;
     }
 }

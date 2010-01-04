@@ -5,11 +5,10 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Each <code>LinuxGroup</code>'s use is limited by which
@@ -23,64 +22,72 @@ import java.util.Locale;
  * @see  LinuxAccount
  * @see  LinuxGroupAccount
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroupType extends GlobalObjectStringKey<LinuxGroupType> {
+final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> implements BeanFactory<com.aoindustries.aoserv.client.beans.LinuxGroupType> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_DESCRIPTION_name = "description";
-
-    private String description;
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The available group types.
      */
-    public static final String
-        USER="user",
-        EMAIL="email",
-        FTPONLY="ftponly",
-        SYSTEM="system",
-        BACKUP="backup",
-        APPLICATION="application"
-    ;
+    public enum Constant {
+        shell_group(ResourceType.Constant.shell_group),
+        system_group(ResourceType.Constant.system_group);
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_NAME) return pkey;
-	if(i==1) return description;
-	throw new IllegalArgumentException("Invalid index: "+i);
+        private final ResourceType.Constant resourceType;
+
+        private Constant(ResourceType.Constant resourceType) {
+            this.resourceType = resourceType;
+        }
+
+        public ResourceType.Constant getResourceType() {
+            return resourceType;
+        }
     }
+    // </editor-fold>
 
-    public String getDescription() {
-	return description;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public LinuxGroupType(LinuxGroupTypeService<?,?> service, String resourceType) {
+        super(service, resourceType);
     }
+    // </editor-fold>
 
-    public String getName() {
-	return pkey;
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="resource_type", index=IndexType.PRIMARY_KEY, description="the resource type this represents")
+    public ResourceType getResourceType() throws RemoteException {
+        return getService().getConnector().getResourceTypes().get(key);
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.LINUX_GROUP_TYPES;
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.LinuxGroupType getBean() {
+        return new com.aoindustries.aoserv.client.beans.LinuxGroupType (key);
     }
+    // </editor-fold>
 
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	description = result.getString(2);
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getLinuxGroups()
+        );
     }
+    // </editor-fold>
 
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	description=in.readUTF();
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-	return description;
+        return ApplicationResources.accessor.getMessage(userLocale, "LinuxGroupType."+key+".toString");
     }
+    // </editor-fold>
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(description);
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public Set<LinuxGroup> getLinuxGroups() throws RemoteException {
+        // TODO: return getService().getConnector().getTicketCategories().getIndexed(COLUMN_PARENT, this);
     }
+     */
+    // </editor-fold>
 }

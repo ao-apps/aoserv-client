@@ -176,14 +176,13 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     IPAddressService<C,F> getIpAddresses() throws RemoteException;
     */
     LanguageService<C,F> getLanguages() throws RemoteException;
-    /* TODO
-    LinuxAccAddressService<C,F> getLinuxAccAddresses() throws RemoteException;
+    // TODO: LinuxAccAddressService<C,F> getLinuxAccAddresses() throws RemoteException;
     LinuxAccountTypeService<C,F> getLinuxAccountTypes() throws RemoteException;
-    LinuxAccountService<C,F> getLinuxAccounts() throws RemoteException;
-    LinuxGroupAccountService<C,F> getLinuxGroupAccounts() throws RemoteException;
+    // TODO: LinuxAccountService<C,F> getLinuxAccounts() throws RemoteException;
+    // TODO: LinuxGroupAccountService<C,F> getLinuxGroupAccounts() throws RemoteException;
     LinuxGroupTypeService<C,F> getLinuxGroupTypes() throws RemoteException;
+    /* TODO
     LinuxGroupService<C,F> getLinuxGroups() throws RemoteException;
-    LinuxIDService<C,F> getLinuxIDs() throws RemoteException;
     LinuxServerAccountService<C,F> getLinuxServerAccounts() throws RemoteException;
     LinuxServerGroupService<C,F> getLinuxServerGroups() throws RemoteException;
     MajordomoListService<C,F> getMajordomoLists() throws RemoteException;
@@ -238,8 +237,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     ResourceService<C,F> getResources() throws RemoteException;
     ServerFarmService<C,F> getServerFarms() throws RemoteException;
     ServerService<C,F> getServers() throws RemoteException;
-    /* TODO
     ShellService<C,F> getShells() throws RemoteException;
+    /* TODO
     SignupRequestOptionService<C,F> getSignupRequestOptions() throws RemoteException;
     SignupRequestService<C,F> getSignupRequests() throws RemoteException;
     SpamEmailMessageService<C,F> getSpamEmailMessages() throws RemoteException;

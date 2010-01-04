@@ -22,6 +22,8 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccountTypeService;
+import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLReservedWordService;
@@ -45,6 +47,7 @@ import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.aoserv.client.ShellService;
 import com.aoindustries.aoserv.client.TechnologyClassService;
 import com.aoindustries.aoserv.client.TechnologyNameService;
 import com.aoindustries.aoserv.client.TechnologyService;
@@ -168,10 +171,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingLanguageService languages;
     /* TODO
     final NoSwingLinuxAccAddressService linuxAccAddresss;
+     */
     final NoSwingLinuxAccountTypeService linuxAccountTypes;
-    final NoSwingLinuxAccountService linuxAccounts;
-    final NoSwingLinuxGroupAccountService linuxGroupAccounts;
+    // TODO: final NoSwingLinuxAccountService linuxAccounts;
+    // TODO: final NoSwingLinuxGroupAccountService linuxGroupAccounts;
     final NoSwingLinuxGroupTypeService linuxGroupTypes;
+    /* TODO
     final NoSwingLinuxGroupService linuxGroups;
     final NoSwingLinuxIDService linuxIDs;
     final NoSwingLinuxServerAccountService linuxServerAccounts;
@@ -226,8 +231,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingResourceService resources;
     final NoSwingServerFarmService serverFarms;
     final NoSwingServerService servers;
-    /* TODO
     final NoSwingShellService shells;
+    /* TODO
     final NoSwingSignupRequestOptionService signupRequestOptions;
     final NoSwingSignupRequestService signupRequests;
     final NoSwingSpamEmailMessageService spamEmailMessages;
@@ -362,12 +367,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         ipAddresss = new NoSwingIPAddressService(this, wrapped.getIPAddresss());
         */
         languages = new NoSwingLanguageService(this, wrapped.getLanguages());
-        /* TODO
-        linuxAccAddresss = new NoSwingLinuxAccAddressService(this, wrapped.getLinuxAccAddresss());
+        // TODO: linuxAccAddresss = new NoSwingLinuxAccAddressService(this, wrapped.getLinuxAccAddresss());
         linuxAccountTypes = new NoSwingLinuxAccountTypeService(this, wrapped.getLinuxAccountTypes());
-        linuxAccounts = new NoSwingLinuxAccountService(this, wrapped.getLinuxAccounts());
-        linuxGroupAccounts = new NoSwingLinuxGroupAccountService(this, wrapped.getLinuxGroupAccounts());
+        // TODO: linuxAccounts = new NoSwingLinuxAccountService(this, wrapped.getLinuxAccounts());
+        // TODO: linuxGroupAccounts = new NoSwingLinuxGroupAccountService(this, wrapped.getLinuxGroupAccounts());
         linuxGroupTypes = new NoSwingLinuxGroupTypeService(this, wrapped.getLinuxGroupTypes());
+        /* TODO
         linuxGroups = new NoSwingLinuxGroupService(this, wrapped.getLinuxGroups());
         linuxIDs = new NoSwingLinuxIDService(this, wrapped.getLinuxIDs());
         linuxServerAccounts = new NoSwingLinuxServerAccountService(this, wrapped.getLinuxServerAccounts());
@@ -422,8 +427,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         resources = new NoSwingResourceService(this, wrapped.getResources());
         serverFarms = new NoSwingServerFarmService(this, wrapped.getServerFarms());
         servers = new NoSwingServerService(this, wrapped.getServers());
-        /* TODO
         shells = new NoSwingShellService(this, wrapped.getShells());
+        /* TODO
         signupRequestOptions = new NoSwingSignupRequestOptionService(this, wrapped.getSignupRequestOptions());
         signupRequests = new NoSwingSignupRequestService(this, wrapped.getSignupRequests());
         spamEmailMessages = new NoSwingSpamEmailMessageService(this, wrapped.getSpamEmailMessages());
@@ -705,17 +710,23 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         NoSwingConnectorFactory.checkNotSwing();
         return languages;
     }
+
+    // TODO: public LinuxAccAddressService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccAddresses() throws RemoteException;
+
+    public LinuxAccountTypeService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccountTypes() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return linuxAccountTypes;
+    }
+
+    // TODO: public LinuxAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccounts() throws RemoteException;
+
+    // TODO: public LinuxGroupAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupAccounts() throws RemoteException;
+
+    public LinuxGroupTypeService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupTypes() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return linuxGroupTypes;
+    }
     /* TODO
-    public LinuxAccAddressService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccAddresses() throws RemoteException;
-
-    public LinuxAccountTypeService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccountTypes() throws RemoteException;
-
-    public LinuxAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccounts() throws RemoteException;
-
-    public LinuxGroupAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupAccounts() throws RemoteException;
-
-    public LinuxGroupTypeService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupTypes() throws RemoteException;
-
     public LinuxGroupService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroups() throws RemoteException;
 
     public LinuxIDService<NoSwingConnector,NoSwingConnectorFactory> getLinuxIDs() throws RemoteException;
@@ -875,9 +886,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         NoSwingConnectorFactory.checkNotSwing();
         return servers;
     }
-    /* TODO
-    public ShellService<NoSwingConnector,NoSwingConnectorFactory> getShells() throws RemoteException;
 
+    public ShellService<NoSwingConnector,NoSwingConnectorFactory> getShells() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return shells;
+    }
+    /* TODO
     public SignupRequestOptionService<NoSwingConnector,NoSwingConnectorFactory> getSignupRequestOptions() throws RemoteException;
 
     public SignupRequestService<NoSwingConnector,NoSwingConnectorFactory> getSignupRequests() throws RemoteException;

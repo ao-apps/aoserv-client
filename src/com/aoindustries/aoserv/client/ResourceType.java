@@ -32,7 +32,6 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         disk,
         distribution_scan,
         drupal,
-        email,
         failover,
         hardware_disk_7200_120,
         httpd,
@@ -54,7 +53,12 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         server_xeon,
         site,
         sysadmin,
-        user
+        shell_account,
+        email_inbox,
+        ftponly_account,
+        system_account,
+        shell_group,
+        system_group
     }
     // </editor-fold>
 

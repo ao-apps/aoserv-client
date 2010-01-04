@@ -1,19 +1,17 @@
-
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * The <code>LinuxAccountType</code> of a <code>LinuxAccount</code>
@@ -24,184 +22,150 @@ import java.util.Locale;
  * @see  LinuxAccount
  * @see  LinuxServerAccount
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountType> {
+final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountType> implements BeanFactory<com.aoindustries.aoserv.client.beans.LinuxAccountType> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_DESCRIPTION_name = "description";
-
-    private String description;
-    private boolean is_email;
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The different Linux account types.
      */
-    public static final String
-        BACKUP="backup",
-        EMAIL="email",
-        FTPONLY="ftponly",
-        USER="user",
-        MERCENARY="mercenary",
-        SYSTEM="system",
-        APPLICATION="application"
-    ;
+    public enum Constant {
+        shell_account(ResourceType.Constant.shell_account, true, true, true, true, Shell.Constant.NOLOGIN, Shell.Constant.BASH, Shell.Constant.KSH, Shell.Constant.SH, Shell.Constant.TCSH),
+        email_inbox(ResourceType.Constant.email_inbox, true, false, true, false),
+        ftponly_account(ResourceType.Constant.ftponly_account, false, true, true, false),
+        system_account(ResourceType.Constant.system_account, false, false, false, true);
 
-    private static final String[] backupShells={
-        Shell.BASH
-    };
+        private final ResourceType.Constant resourceType;
+        private final boolean emailAllowed;
+        private final boolean ftpAllowed;
+        private final boolean setPasswordAllowed;
+        private final boolean strongPassword;
+        private final Set<Shell.Constant> allowedShells;
 
-    private static final String[] emailShells={
-        Shell.PASSWD
-    };
+        private Constant(ResourceType.Constant resourceType, boolean emailAllowed, boolean ftpAllowed, boolean setPasswordAllowed, boolean strongPassword, Shell.Constant... allowedShells) {
+            this.resourceType = resourceType;
+            this.emailAllowed = emailAllowed;
+            this.ftpAllowed = ftpAllowed;
+            this.setPasswordAllowed = setPasswordAllowed;
+            this.strongPassword = strongPassword;
+            this.allowedShells = Collections.unmodifiableSet(EnumSet.copyOf(Arrays.asList(allowedShells)));
+        }
 
-    private static final String[] ftpShells={
-        Shell.FTPONLY,
-        Shell.FTPPASSWD
-    };
+        public ResourceType.Constant getResourceType() {
+            return resourceType;
+        }
 
-    private static final String[] mercenaryShells={
-        Shell.BASH
-    };
+        public boolean isEmailAllowed() {
+            return emailAllowed;
+        }
 
-    private static final String[] systemShells={
-        Shell.BASH,
-        Shell.FALSE,
-        Shell.NOLOGIN,
-        Shell.SYNC,
-        Shell.HALT,
-        Shell.SHUTDOWN//,
-        //Shell.TRUE
-    };
+        public boolean isFtpAllowed() {
+            return ftpAllowed;
+        }
 
-    private static final String[] applicationShells={
-        Shell.BASH,
-        Shell.FALSE//,
-        //Shell.NULL,
-        //Shell.TRUE
-    };
+        public boolean isSetPasswordAllowed() {
+            return setPasswordAllowed;
+        }
 
-    private static final String[] userShells={
-        //Shell.ASH,
-        Shell.BASH,
-        //Shell.BASH2,
-        //Shell.BSH,
-        //Shell.CSH,
-        Shell.FALSE,
-        Shell.KSH,
-        Shell.SH,
-        Shell.TCSH//,
-        //Shell.TRUE
-    };
+        /**
+         * Indicates that strong passwords should be enforced for this account type.
+         */
+        public boolean isStrongPassword() {
+            return strongPassword;
+        }
 
-    public boolean enforceStrongPassword() {
-	return enforceStrongPassword(pkey);
+        public Set<Shell.Constant> getAllowedShells() {
+            return allowedShells;
+        }
     }
+    // </editor-fold>
 
-    public static boolean enforceStrongPassword(String type) {
-	return !type.equals(EMAIL);
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public LinuxAccountType(LinuxAccountTypeService<?,?> service, String resourceType) {
+        super(service, resourceType);
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="resource_type", index=IndexType.PRIMARY_KEY, description="the resource type this represents")
+    public ResourceType getResourceType() throws RemoteException {
+        return getService().getConnector().getResourceTypes().get(key);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.LinuxAccountType getBean() {
+        return new com.aoindustries.aoserv.client.beans.LinuxAccountType(key);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getLinuxAccounts()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "LinuxAccountType."+key+".toString");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
+        // TODO: return getService().getConnector().getTicketCategories().getIndexed(COLUMN_PARENT, this);
+    }
+     */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
-	String[] paths=getShellList(pkey);
+        String[] paths=getShellList(pkey);
 
-	ShellTable shellTable=connector.getShells();
-	int len=paths.length;
-	List<Shell> shells=new ArrayList<Shell>(len);
-	for(int c=0;c<len;c++) {
+        ShellService shellTable=connector.getShells();
+        int len=paths.length;
+        List<Shell> shells=new ArrayList<Shell>(len);
+        for(int c=0;c<len;c++) {
             Shell shell=shellTable.get(paths[c]);
             if(shell==null) throw new SQLException("Unable to find Shell: "+paths[c]);
             shells.add(shell);
-	}
-	return shells;
-    }
-
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_NAME) return pkey;
-	if(i==1) return description;
-	if(i==2) return is_email?Boolean.TRUE:Boolean.FALSE;
-	throw new IllegalArgumentException("Invalid index: "+i);
-    }
-
-    public String getDescription() {
-	return description;
-    }
-
-    public String getName() {
-	return pkey;
-    }
-
-    private static String[] getShellList(String type) throws SQLException {
-	if(type.equals(BACKUP)) return backupShells;
-	if(type.equals(EMAIL)) return emailShells;
-	if(type.equals(FTPONLY)) return ftpShells;
-	if(type.equals(USER)) return userShells;
-	if(type.equals(MERCENARY)) return mercenaryShells;
-	if(type.equals(SYSTEM)) return systemShells;
-	if(type.equals(APPLICATION)) return applicationShells;
-	throw new SQLException("Unknown type: "+type);
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.LINUX_ACCOUNT_TYPES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	description = result.getString(2);
-	is_email = result.getBoolean(3);
+        }
+        return shells;
     }
 
     public boolean isAllowedShell(Shell shell) throws SQLException {
-	return isAllowedShell(shell.pkey);
+        return isAllowedShell(shell.pkey);
     }
 
     public boolean isAllowedShell(String path) throws SQLException {
-	return isAllowedShell(pkey, path);
+        return isAllowedShell(pkey, path);
     }
 
     public static boolean isAllowedShell(String type, String path) throws SQLException {
-	String[] paths=getShellList(type);
-	int len=paths.length;
-	for(int c=0;c<len;c++) {
+        String[] paths=getShellList(type);
+        int len=paths.length;
+        for(int c=0;c<len;c++) {
             if(paths[c].equals(path)) return true;
-	}
-	return false;
+        }
+        return false;
     }
 
     public boolean isEmail() {
-	return is_email;
+        return is_email;
     }
 
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	description=in.readUTF();
-	is_email=in.readBoolean();
-    }
-
-    @Override
-    String toStringImpl(Locale userLocale) {
-	return description;
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(description);
-	out.writeBoolean(is_email);
-    }
-
-    public static boolean canSetPassword(String type) {
-        return
-            APPLICATION.equals(type)
-            || EMAIL.equals(type)
-            || FTPONLY.equals(type)
-            || USER.equals(type)
-        ;
-    }
-    
     public boolean canSetPassword() {
         return canSetPassword(pkey);
     }
+     */
+    // </editor-fold>
 }

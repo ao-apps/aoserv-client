@@ -1,15 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * All of the possible Linux login shells are provided as
@@ -18,71 +16,69 @@ import java.sql.SQLException;
  * @see  LinuxAccount
  * @see  LinuxAccountType
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class Shell extends GlobalObjectStringKey<Shell> {
+final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanFactory<com.aoindustries.aoserv.client.beans.Shell> {
 
-    static final int COLUMN_PATH=0;
-    static final String COLUMN_PATH_name = "path";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
-    public static final String
-        BASH="/bin/bash",
-        FALSE="/bin/false",
-        KSH="/bin/ksh",
-        SH="/bin/sh",
-        SYNC="/bin/sync",
-        TCSH="/bin/tcsh",
-        HALT="/sbin/halt",
-        NOLOGIN="/sbin/nologin",
-        SHUTDOWN="/sbin/shutdown",
-        FTPONLY="/usr/bin/ftponly",
-        FTPPASSWD="/usr/bin/ftppasswd",
-        PASSWD="/usr/bin/passwd"
-    ;
+    public enum Constant {
+        BASH("/bin/bash"),
+        KSH("/bin/ksh"),
+        SH("/bin/sh"),
+        SYNC("/bin/sync"),
+        TCSH("/bin/tcsh"),
+        HALT("/sbin/halt"),
+        NOLOGIN("/sbin/nologin"),
+        SHUTDOWN("/sbin/shutdown"),
+        FTPPASSWD("/usr/bin/ftppasswd"),
+        PASSWD("/usr/bin/passwd");
 
-    private boolean is_login;
-    private boolean is_system;
+        private final UnixPath unixPath;
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_PATH) return pkey;
-	if(i==1) return is_login?Boolean.TRUE:Boolean.FALSE;
-	if(i==2) return is_system?Boolean.TRUE:Boolean.FALSE;
-	throw new IllegalArgumentException("Invalid index: "+i);
+        private Constant(String path) {
+            this.unixPath = new UnixPath(path).intern();
+        }
+
+        public UnixPath getUnixPath() {
+            return unixPath;
+        }
     }
+    // </editor-fold>
 
-    public String getPath() {
-	return pkey;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public Shell(ShellService<?,?> service, UnixPath path) {
+        super(service, path);
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.SHELLS;
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="path", index=IndexType.PRIMARY_KEY, description="the complete path to the executable")
+    public UnixPath getPath() {
+    	return key;
     }
+    // </editor-fold>
 
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	is_login = result.getBoolean(2);
-	is_system = result.getBoolean(3);
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Shell getBean() {
+        return new com.aoindustries.aoserv.client.beans.Shell(key.getBean());
     }
+    // </editor-fold>
 
-    public boolean isLogin() {
-	return is_login;
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return createDependencySet(
+            // TODO: getLinuxAccounts()
+        );
     }
+    // </editor-fold>
 
-    public boolean isSystem() {
-	return is_system;
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	is_login=in.readBoolean();
-	is_system=in.readBoolean();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeBoolean(is_login);
-	out.writeBoolean(is_system);
-    }
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
+        return getService().getConnector().getTicketCategories().getIndexed(COLUMN_PARENT, this);
+    } */
+    // </editor-fold>
 }

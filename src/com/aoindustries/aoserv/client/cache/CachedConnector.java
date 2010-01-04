@@ -22,6 +22,8 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccountTypeService;
+import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLReservedWordService;
@@ -45,6 +47,7 @@ import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.aoserv.client.ShellService;
 import com.aoindustries.aoserv.client.TechnologyClassService;
 import com.aoindustries.aoserv.client.TechnologyNameService;
 import com.aoindustries.aoserv.client.TechnologyService;
@@ -171,12 +174,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedIPAddressService ipAddresss;
     */
     final CachedLanguageService languages;
-    /* TODO
-    final CachedLinuxAccAddressService linuxAccAddresss;
+    // TODO: final CachedLinuxAccAddressService linuxAccAddresss;
     final CachedLinuxAccountTypeService linuxAccountTypes;
-    final CachedLinuxAccountService linuxAccounts;
-    final CachedLinuxGroupAccountService linuxGroupAccounts;
+    // TODO: final CachedLinuxAccountService linuxAccounts;
+    // TODO: final CachedLinuxGroupAccountService linuxGroupAccounts;
     final CachedLinuxGroupTypeService linuxGroupTypes;
+    /* TODO
     final CachedLinuxGroupService linuxGroups;
     final CachedLinuxIDService linuxIDs;
     final CachedLinuxServerAccountService linuxServerAccounts;
@@ -233,8 +236,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedResourceService resources;
     final CachedServerFarmService serverFarms;
     final CachedServerService servers;
-    /* TODO
     final CachedShellService shells;
+    /* TODO
     final CachedSignupRequestOptionService signupRequestOptions;
     final CachedSignupRequestService signupRequests;
     final CachedSpamEmailMessageService spamEmailMessages;
@@ -375,10 +378,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         languages = new CachedLanguageService(this, wrapped.getLanguages());
         /* TODO
         linuxAccAddresss = new CachedLinuxAccAddressService(this, wrapped.getLinuxAccAddresss());
+         */
         linuxAccountTypes = new CachedLinuxAccountTypeService(this, wrapped.getLinuxAccountTypes());
-        linuxAccounts = new CachedLinuxAccountService(this, wrapped.getLinuxAccounts());
-        linuxGroupAccounts = new CachedLinuxGroupAccountService(this, wrapped.getLinuxGroupAccounts());
+        // TODO: linuxAccounts = new CachedLinuxAccountService(this, wrapped.getLinuxAccounts());
+        // TODO: linuxGroupAccounts = new CachedLinuxGroupAccountService(this, wrapped.getLinuxGroupAccounts());
         linuxGroupTypes = new CachedLinuxGroupTypeService(this, wrapped.getLinuxGroupTypes());
+        /* TODO
         linuxGroups = new CachedLinuxGroupService(this, wrapped.getLinuxGroups());
         linuxIDs = new CachedLinuxIDService(this, wrapped.getLinuxIDs());
         linuxServerAccounts = new CachedLinuxServerAccountService(this, wrapped.getLinuxServerAccounts());
@@ -435,8 +440,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         resources = new CachedResourceService(this, wrapped.getResources());
         serverFarms = new CachedServerFarmService(this, wrapped.getServerFarms());
         servers = new CachedServerService(this, wrapped.getServers());
-        /* TODO
         shells = new CachedShellService(this, wrapped.getShells());
+        /* TODO
         signupRequestOptions = new CachedSignupRequestOptionService(this, wrapped.getSignupRequestOptions());
         signupRequests = new CachedSignupRequestService(this, wrapped.getSignupRequests());
         spamEmailMessages = new CachedSpamEmailMessageService(this, wrapped.getSpamEmailMessages());
@@ -703,15 +708,19 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     /* TODO
     public LinuxAccAddressService<CachedConnector,CachedConnectorFactory> getLinuxAccAddresses();
-
-    public LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes();
-
+    */
+    public LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes() {
+        return linuxAccountTypes;
+    }
+    /* TODO
     public LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts();
 
     public LinuxGroupAccountService<CachedConnector,CachedConnectorFactory> getLinuxGroupAccounts();
-
-    public LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes();
-
+    */
+    public LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes() {
+        return linuxGroupTypes;
+    }
+    /* TODO
     public LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups();
 
     public LinuxIDService<CachedConnector,CachedConnectorFactory> getLinuxIDs();
@@ -849,9 +858,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public ServerService<CachedConnector,CachedConnectorFactory> getServers() {
         return servers;
     }
-    /* TODO
-    public ShellService<CachedConnector,CachedConnectorFactory> getShells();
 
+    public ShellService<CachedConnector,CachedConnectorFactory> getShells() {
+        return shells;
+    }
+    /* TODO
     public SignupRequestOptionService<CachedConnector,CachedConnectorFactory> getSignupRequestOptions();
 
     public SignupRequestService<CachedConnector,CachedConnectorFactory> getSignupRequests();

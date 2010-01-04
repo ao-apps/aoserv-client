@@ -12,7 +12,7 @@ public class BackupPartition {
 
     private int pkey;
     private int aoServer;
-    private String path;
+    private UnixPath path;
     private boolean enabled;
     private boolean quotaEnabled;
 
@@ -22,7 +22,7 @@ public class BackupPartition {
     public BackupPartition(
         int pkey,
         int aoServer,
-        String path,
+        UnixPath path,
         boolean enabled,
         boolean quotaEnabled
     ) {
@@ -49,11 +49,11 @@ public class BackupPartition {
         this.aoServer = aoServer;
     }
 
-    public String getPath() {
+    public UnixPath getPath() {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath(UnixPath path) {
         this.path = path;
     }
 

@@ -33,7 +33,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     final private String connectAddress;
     final private String connectFrom;
     final private boolean enabled;
-    final private Integer quotaGid;
+    final private LinuxID quotaGid;
 
     public FailoverFileReplication(
         FailoverFileReplicationService<?,?> service,
@@ -46,7 +46,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         String connectAddress,
         String connectFrom,
         boolean enabled,
-        Integer quotaGid
+        LinuxID quotaGid
     ) {
         super(service, pkey);
         this.server = server;
@@ -138,17 +138,15 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
      * partition by group ID.  This may only be set (and must be set) when stored on a
      * backup_partition with quota_enabled.
      */
-    /* TODO
     @SchemaColumn(order=9, name="quota_gid", description="the gid used on the backup_partition for quota reports, required if backup_partitions quotas are enabled, not allowed otherwise")
-    public LinuxID getQuotaGID() throws SQLException {
-        if(quotaGid==null) return null;
-        return getService().getConnector().getLinuxIDs().get(quotaGid);
-    }*/
+    public LinuxID getQuotaGID() {
+        return quotaGid;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.FailoverFileReplication getBean() {
-        return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, connectAddress, connectFrom, enabled, quotaGid);
+        return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, connectAddress, connectFrom, enabled, quotaGid.getBean());
     }
     // </editor-fold>
 

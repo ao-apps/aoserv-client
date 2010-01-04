@@ -117,12 +117,15 @@ public enum ServiceName implements LocalizedToString {
     languages,
     /* TODO
     linux_acc_addresses,
+     */
     linux_account_types,
+    /* TODO
     linux_accounts,
     linux_group_accounts,
+     */
     linux_group_types,
+    /* TODO
     linux_groups,
-    linux_ids,
     linux_server_accounts,
     linux_server_groups,
     majordomo_lists,
@@ -184,8 +187,8 @@ public enum ServiceName implements LocalizedToString {
      */
     server_farms,
     servers,
-    /* TODO
     shells,
+    /* TODO
     signup_request_options,
     signup_requests,
     spam_email_messages,

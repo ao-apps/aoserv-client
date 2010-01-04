@@ -22,6 +22,8 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccountTypeService;
+import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
 import com.aoindustries.aoserv.client.MySQLReservedWordService;
@@ -45,6 +47,7 @@ import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.aoserv.client.ShellService;
 import com.aoindustries.aoserv.client.TechnologyClassService;
 import com.aoindustries.aoserv.client.TechnologyNameService;
 import com.aoindustries.aoserv.client.TechnologyService;
@@ -183,23 +186,20 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryLanguageService languages;
     /* TODO
     final RetryLinuxAccAddressService linuxAccAddresss;
-    final RetryLinuxAccountTypeService linuxAccountTypes;
-    final RetryLinuxAccountService linuxAccounts;
-    final RetryLinuxGroupAccountService linuxGroupAccounts;
-    final RetryLinuxGroupTypeService linuxGroupTypes;
-    final RetryLinuxGroupService linuxGroups;
-    final RetryLinuxIDService linuxIDs;
-    final RetryLinuxServerAccountService linuxServerAccounts;
-    final RetryLinuxServerGroupService linuxServerGroups;
-    final RetryMajordomoListService majordomoLists;
-    final RetryMajordomoServerService majordomoServers;
-    final RetryMajordomoVersionService majordomoVersions;
-    final RetryMasterHistoryService masterHistories;
-    final RetryMasterHostService masterHosts;
-    final RetryMasterServerService masterServers;
-    final RetryMasterUserService masterUsers;
-    final RetryMonthlyChargeService monthlyCharges;
      */
+    final RetryLinuxAccountTypeService linuxAccountTypes;
+    // TODO: final RetryLinuxAccountService linuxAccounts;
+    // TODO: final RetryLinuxGroupAccountService linuxGroupAccounts;
+    final RetryLinuxGroupTypeService linuxGroupTypes;
+    // TODO: final RetryLinuxGroupService linuxGroups;
+    // TODO: final RetryMajordomoListService majordomoLists;
+    // TODO: final RetryMajordomoServerService majordomoServers;
+    // TODO: final RetryMajordomoVersionService majordomoVersions;
+    // TODO: final RetryMasterHistoryService masterHistories;
+    // TODO: final RetryMasterHostService masterHosts;
+    // TODO: final RetryMasterServerService masterServers;
+    // TODO: final RetryMasterUserService masterUsers;
+    // TODO: final RetryMonthlyChargeService monthlyCharges;
     final RetryMySQLDatabaseService mysqlDatabases;
     final RetryMySQLDBUserService mysqlDBUsers;
     final RetryMySQLReservedWordService mysqlReservedWords;
@@ -240,8 +240,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryResourceService resources;
     final RetryServerFarmService serverFarms;
     final RetryServerService servers;
-    /* TODO
     final RetryShellService shells;
+    /* TODO
     final RetrySignupRequestOptionService signupRequestOptions;
     final RetrySignupRequestService signupRequests;
     final RetrySpamEmailMessageService spamEmailMessages;
@@ -381,25 +381,20 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         ipAddresss = new RetryIPAddressService(this);
         */
         languages = new RetryLanguageService(this);
-        /* TODO
-        linuxAccAddresss = new RetryLinuxAccAddressService(this);
+        // TODO: linuxAccAddresss = new RetryLinuxAccAddressService(this);
         linuxAccountTypes = new RetryLinuxAccountTypeService(this);
-        linuxAccounts = new RetryLinuxAccountService(this);
-        linuxGroupAccounts = new RetryLinuxGroupAccountService(this);
+        // TODO: linuxAccounts = new RetryLinuxAccountService(this);
+        // TODO: linuxGroupAccounts = new RetryLinuxGroupAccountService(this);
         linuxGroupTypes = new RetryLinuxGroupTypeService(this);
-        linuxGroups = new RetryLinuxGroupService(this);
-        linuxIDs = new RetryLinuxIDService(this);
-        linuxServerAccounts = new RetryLinuxServerAccountService(this);
-        linuxServerGroups = new RetryLinuxServerGroupService(this);
-        majordomoLists = new RetryMajordomoListService(this);
-        majordomoServers = new RetryMajordomoServerService(this);
-        majordomoVersions = new RetryMajordomoVersionService(this);
-        masterHistories = new RetryMasterHistoryService(this);
-        masterHosts = new RetryMasterHostService(this);
-        masterServers = new RetryMasterServerService(this);
-        masterUsers = new RetryMasterUserService(this);
-        monthlyCharges = new RetryMonthlyChargeService(this);
-         */
+        // TODO: linuxGroups = new RetryLinuxGroupService(this);
+        // TODO: majordomoLists = new RetryMajordomoListService(this);
+        // TODO: majordomoServers = new RetryMajordomoServerService(this);
+        // TODO: majordomoVersions = new RetryMajordomoVersionService(this);
+        // TODO: masterHistories = new RetryMasterHistoryService(this);
+        // TODO: masterHosts = new RetryMasterHostService(this);
+        // TODO: masterServers = new RetryMasterServerService(this);
+        // TODO: masterUsers = new RetryMasterUserService(this);
+        // TODO: monthlyCharges = new RetryMonthlyChargeService(this);
         mysqlDatabases = new RetryMySQLDatabaseService(this);
         mysqlDBUsers = new RetryMySQLDBUserService(this);
         mysqlReservedWords = new RetryMySQLReservedWordService(this);
@@ -443,8 +438,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         resources = new RetryResourceService(this);
         serverFarms = new RetryServerFarmService(this);
         servers = new RetryServerService(this);
-        /* TODO
         shells = new RetryShellService(this);
+        /* TODO
         signupRequestOptions = new RetrySignupRequestOptionService(this);
         signupRequests = new RetrySignupRequestService(this);
         spamEmailMessages = new RetrySpamEmailMessageService(this);
@@ -829,41 +824,39 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public LanguageService<RetryConnector,RetryConnectorFactory> getLanguages() {
         return languages;
     }
-    /* TODO
-    public LinuxAccAddressService<RetryConnector,RetryConnectorFactory> getLinuxAccAddresses();
 
-    public LinuxAccountTypeService<RetryConnector,RetryConnectorFactory> getLinuxAccountTypes();
+    // TODO: public LinuxAccAddressService<RetryConnector,RetryConnectorFactory> getLinuxAccAddresses();
 
-    public LinuxAccountService<RetryConnector,RetryConnectorFactory> getLinuxAccounts();
+    public LinuxAccountTypeService<RetryConnector,RetryConnectorFactory> getLinuxAccountTypes() {
+        return linuxAccountTypes;
+    }
 
-    public LinuxGroupAccountService<RetryConnector,RetryConnectorFactory> getLinuxGroupAccounts();
+    // TODO: public LinuxAccountService<RetryConnector,RetryConnectorFactory> getLinuxAccounts();
 
-    public LinuxGroupTypeService<RetryConnector,RetryConnectorFactory> getLinuxGroupTypes();
+    // TODO: public LinuxGroupAccountService<RetryConnector,RetryConnectorFactory> getLinuxGroupAccounts();
 
-    public LinuxGroupService<RetryConnector,RetryConnectorFactory> getLinuxGroups();
+    public LinuxGroupTypeService<RetryConnector,RetryConnectorFactory> getLinuxGroupTypes() {
+        return linuxGroupTypes;
+    }
 
-    public LinuxIDService<RetryConnector,RetryConnectorFactory> getLinuxIDs();
+    // TODO: public LinuxGroupService<RetryConnector,RetryConnectorFactory> getLinuxGroups();
 
-    public LinuxServerAccountService<RetryConnector,RetryConnectorFactory> getLinuxServerAccounts();
+    // TODO: public MajordomoListService<RetryConnector,RetryConnectorFactory> getMajordomoLists();
 
-    public LinuxServerGroupService<RetryConnector,RetryConnectorFactory> getLinuxServerGroups();
+    // TODO: public MajordomoServerService<RetryConnector,RetryConnectorFactory> getMajordomoServers();
 
-    public MajordomoListService<RetryConnector,RetryConnectorFactory> getMajordomoLists();
+    // TODO: public MajordomoVersionService<RetryConnector,RetryConnectorFactory> getMajordomoVersions();
 
-    public MajordomoServerService<RetryConnector,RetryConnectorFactory> getMajordomoServers();
+    // TODO: public MasterHistoryService<RetryConnector,RetryConnectorFactory> getMasterHistory();
 
-    public MajordomoVersionService<RetryConnector,RetryConnectorFactory> getMajordomoVersions();
+    // TODO: public MasterHostService<RetryConnector,RetryConnectorFactory> getMasterHosts();
 
-    public MasterHistoryService<RetryConnector,RetryConnectorFactory> getMasterHistory();
+    // TODO: public MasterServerService<RetryConnector,RetryConnectorFactory> getMasterServers();
 
-    public MasterHostService<RetryConnector,RetryConnectorFactory> getMasterHosts();
+    // TODO: public MasterUserService<RetryConnector,RetryConnectorFactory> getMasterUsers();
 
-    public MasterServerService<RetryConnector,RetryConnectorFactory> getMasterServers();
+    // TODO: public MonthlyChargeService<RetryConnector,RetryConnectorFactory> getMonthlyCharges();
 
-    public MasterUserService<RetryConnector,RetryConnectorFactory> getMasterUsers();
-
-    public MonthlyChargeService<RetryConnector,RetryConnectorFactory> getMonthlyCharges();
-    */
     public MySQLDatabaseService<RetryConnector,RetryConnectorFactory> getMysqlDatabases() {
         return mysqlDatabases;
     }
@@ -977,9 +970,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public ServerService<RetryConnector,RetryConnectorFactory> getServers() {
         return servers;
     }
-    /* TODO
-    public ShellService<RetryConnector,RetryConnectorFactory> getShells();
 
+    public ShellService<RetryConnector,RetryConnectorFactory> getShells() {
+        return shells;
+    }
+    /* TODO
     public SignupRequestOptionService<RetryConnector,RetryConnectorFactory> getSignupRequestOptions();
 
     public SignupRequestService<RetryConnector,RetryConnectorFactory> getSignupRequests();
