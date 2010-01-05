@@ -40,9 +40,9 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(TicketCategory other) {
-        int diff = compare(parent, other.parent);
+        int diff = AOServObjectUtils.compare(parent, other.parent);
         if(diff!=0) return diff;
-        return compareIgnoreCaseConsistentWithEquals(name, other.name);
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
     }
     // </editor-fold>
 
@@ -76,14 +76,14 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getParent()
         );
     }
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             // TODO: getTickets(),
             getChildrenCategories()
             // TODO: getTicketActionsByOldCategory(),

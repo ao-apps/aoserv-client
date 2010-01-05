@@ -56,11 +56,11 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(Resource other) throws RemoteException {
-        int diff = compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
+        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
         if(diff!=0) return diff;
         diff = resourceType.equals(other.resourceType) ? 0 : getResourceType().compareTo(other.getResourceType());
         if(diff!=0) return diff;
-        return compare(key, other.key);
+        return AOServObjectUtils.compare(key, other.key);
     }
     // </editor-fold>
 
@@ -150,7 +150,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
 
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getResourceType(),
             getBusiness(),
             getCreatedBy(),
@@ -160,7 +160,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getDependentObjectByResourceType(),
             getAoServerResource()
         );

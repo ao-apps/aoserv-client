@@ -89,7 +89,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getLinuxGroup(),
             getLinuxAccount()
         );
@@ -97,7 +97,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             // TODO: CvsRepositories
             // TODO: HttpdSites
         );

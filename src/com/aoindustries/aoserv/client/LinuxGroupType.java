@@ -70,14 +70,14 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getResourceType()
         );
     }
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getLinuxGroups()
         );
     }

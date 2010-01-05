@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
@@ -153,7 +154,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getServer(),
             getBackupPartition(),
             getRetention()
@@ -162,7 +163,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             // TODO: getFailoverFileSchedules(),
             // TODO: getFailoverMySQLReplications(),
             // TODO: getFileBackupSettings()

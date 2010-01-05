@@ -1,14 +1,13 @@
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
-import java.util.Set;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * An <code>NetDeviceID</code> is a simple wrapper for the
@@ -66,7 +65,7 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAoServers()
         );
     }

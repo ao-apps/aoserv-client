@@ -60,7 +60,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     protected int compareToImpl(Server other) throws RemoteException {
         int diff = accounting.equals(other.accounting) ? 0 : getBusiness().compareTo(other.getBusiness());
         if(diff!=0) return diff;
-        return compareIgnoreCaseConsistentWithEquals(name, other.name);
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
     }
     // </editor-fold>
 
@@ -118,7 +118,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getServerFarm(),
             getOperatingSystemVersion(),
             getBusiness()
@@ -127,7 +127,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             // TODO: createDependencySet(
                 getAOServer()
                 // TODO: getPhysicalServer(),

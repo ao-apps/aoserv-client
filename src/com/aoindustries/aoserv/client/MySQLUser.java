@@ -397,7 +397,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAoServerResource(),
             getUsername(),
             getMysqlServer()
@@ -406,7 +406,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getMysqlDBUsers()
         );
     }

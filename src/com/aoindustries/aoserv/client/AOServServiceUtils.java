@@ -102,8 +102,8 @@ final public class AOServServiceUtils {
 
         public AnnotationTable(AOServService<?,?,K,V> service, Class<V> valueClass) {
             this.service = service;
-            columns = AOServObject.getMethodColumns(valueClass);
-            columnMap = AOServObject.getMethodColumnMap(valueClass);
+            columns = AOServObjectUtils.getMethodColumns(valueClass);
+            columnMap = AOServObjectUtils.getMethodColumnMap(valueClass);
         }
 
         public void addTableListener(TableListener<? super MethodColumn, ? super V> listener) {

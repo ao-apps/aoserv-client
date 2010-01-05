@@ -46,7 +46,7 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(TicketStatus other) {
-        return compare(sortOrder, other.sortOrder);
+        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 

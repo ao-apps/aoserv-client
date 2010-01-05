@@ -38,7 +38,7 @@ abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T>> 
      */
     @Override
     protected int compareToImpl(T other) throws RemoteException {
-        return compareIgnoreCaseConsistentWithEquals(key, other.key);
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(key, other.key);
     }
 
     /**

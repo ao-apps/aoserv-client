@@ -67,14 +67,14 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implemen
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getOwner()
         );
     }
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getServers()
             // TODO: getRacks()
         );

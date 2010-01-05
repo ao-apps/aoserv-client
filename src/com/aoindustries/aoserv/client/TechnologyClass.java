@@ -72,7 +72,7 @@ final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getTechnologies()
         );
     }

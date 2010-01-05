@@ -87,8 +87,8 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
-            createDependencySet(
+        return AOServObjectUtils.createDependencySet(
+            AOServObjectUtils.createDependencySet(
                 getLinuxAccountType(),
                 getLinuxGroupType()
             ),

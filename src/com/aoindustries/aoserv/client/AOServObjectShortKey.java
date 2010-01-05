@@ -45,7 +45,7 @@ abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T>> ex
      */
     @Override
     protected int compareToImpl(T other) throws RemoteException {
-        return compare(key, other.key);
+        return AOServObjectUtils.compare(key, other.key);
     }
 
     @Override

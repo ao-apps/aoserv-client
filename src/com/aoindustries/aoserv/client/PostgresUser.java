@@ -137,7 +137,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAoServerResource(),
             getUsername(),
             getPostgresServer()
@@ -146,7 +146,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getPostgresDatabases()
         );
     }

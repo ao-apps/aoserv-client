@@ -118,7 +118,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAOServer(),
             getFailoverFileReplication(),
             getMySQLServer()

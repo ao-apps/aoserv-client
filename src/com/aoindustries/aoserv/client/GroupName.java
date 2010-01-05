@@ -71,7 +71,7 @@ final public class GroupName extends AOServObjectStringKey<GroupName> implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getBusiness(),
             getDisableLog()
         );
@@ -79,7 +79,7 @@ final public class GroupName extends AOServObjectStringKey<GroupName> implements
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getLinuxGroups()
         );
     }

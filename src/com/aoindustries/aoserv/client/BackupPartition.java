@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -96,14 +97,14 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAOServer()
         );
     }
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             // TODO: getFailoverFileReplications()
         );
     }

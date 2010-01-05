@@ -90,7 +90,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(AOServer other) {
-        return compareHostnames(hostname, other.hostname);
+        return AOServObjectUtils.compareHostnames(hostname, other.hostname);
     }
     // </editor-fold>
 
@@ -258,7 +258,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getServer(),
             getDaemonBind(),
             getFailoverServer(),
@@ -271,7 +271,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAoServerResources(),
             getNestedAoServers()
             // TODO: getAOServerDaemonHosts(),

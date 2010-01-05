@@ -230,7 +230,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> imple
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getMysqlDatabase(),
             getMysqlUser()
         );

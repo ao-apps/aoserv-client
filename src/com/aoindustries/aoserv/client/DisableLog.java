@@ -50,7 +50,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
         if(diff!=0) return diff;
         diff = accounting.equals(other.accounting) ? 0 : getBusiness().compareTo(other.getBusiness());
         if(diff!=0) return diff;
-        return compare(key, other.key);
+        return AOServObjectUtils.compare(key, other.key);
     }
     // </editor-fold>
 
@@ -95,7 +95,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getBusiness(),
             getDisabledBy()
         );
@@ -103,7 +103,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getBusinesses(),
             getBusinessAdministrators(),
             getGroupNames(),

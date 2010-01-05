@@ -5,6 +5,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -73,7 +75,7 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanF
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getLinuxAccounts()
         );
     }

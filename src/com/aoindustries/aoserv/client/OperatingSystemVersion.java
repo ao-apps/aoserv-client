@@ -95,7 +95,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(OperatingSystemVersion other) {
-        return compare(sortOrder, other.sortOrder);
+        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
@@ -154,7 +154,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getOperatingSystem(),
             getArchitecture()
         );
@@ -162,7 +162,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getServers(),
             getTechnologyVersions()
         );

@@ -45,7 +45,7 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAoServers()
         );
     }

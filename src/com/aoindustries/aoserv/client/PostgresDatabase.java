@@ -85,7 +85,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(PostgresDatabase other) throws RemoteException {
-        int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
+        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
         if(diff!=0) return diff;
         return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareTo(other.getPostgresServer());
     }
@@ -154,7 +154,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAoServerResource(),
             getPostgresServer(),
             getDatDBA(),

@@ -116,7 +116,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getTechnologyVersion(),
             getPostgisVersion()
         );
@@ -124,7 +124,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getPostgresServers(),
             getPostgresEncodings()
         );

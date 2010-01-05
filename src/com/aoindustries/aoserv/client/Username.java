@@ -74,7 +74,7 @@ final public class Username extends AOServObjectStringKey<Username> implements B
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getBusiness(),
             getDisableLog()
         );
@@ -82,8 +82,8 @@ final public class Username extends AOServObjectStringKey<Username> implements B
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
-            createDependencySet(
+        return AOServObjectUtils.createDependencySet(
+            AOServObjectUtils.createDependencySet(
                 getBusinessAdministrator()
             ),
             getLinuxAccounts(),

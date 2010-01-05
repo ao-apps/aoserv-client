@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -156,7 +157,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             // TODO: getBusinessServer(),
             // TODO: getIPAddress(),
             getNetProtocol(),
@@ -166,7 +167,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAOServerByDaemonNetBind(),
             getAOServerByDaemonConnectNetBind(),
             getAOServerByJilterNetBind(),

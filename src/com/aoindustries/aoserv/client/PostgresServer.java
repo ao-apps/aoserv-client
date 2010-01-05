@@ -74,7 +74,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     @Override
     protected int compareToImpl(PostgresServer other) throws RemoteException {
         if(key==other.key) return 0;
-        int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
+        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
         if(diff!=0) return diff;
         AOServerResource aoResource1 = getAoServerResource();
         AOServerResource aoResource2 = other.getAoServerResource();
@@ -143,7 +143,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getAoServerResource(),
             getPostgresVersion(),
             getNetBind()
@@ -152,7 +152,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getPostgresDatabases(),
             getPostgresUsers()
         );

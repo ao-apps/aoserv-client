@@ -83,7 +83,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(PostgresEncoding other) throws RemoteException {
-        int diff = compareIgnoreCaseConsistentWithEquals(encoding, other.encoding);
+        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(encoding, other.encoding);
         if(diff!=0) return diff;
         return postgresVersion==other.postgresVersion ? 0 : getPostgresVersion().compareTo(other.getPostgresVersion());
     }
@@ -116,14 +116,14 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getPostgresVersion()
         );
     }
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getPostgresDatabases()
         );
     }

@@ -87,7 +87,7 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(AOServPermission other) {
-        return compare(sortOrder, other.sortOrder);
+        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 

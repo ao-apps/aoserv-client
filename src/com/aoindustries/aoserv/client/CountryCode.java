@@ -52,7 +52,7 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(CountryCode other) {
-        return compareIgnoreCaseConsistentWithEquals(name, other.name);
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
     }
     // </editor-fold>
 
@@ -90,7 +90,7 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getBusinessAdministrators()
         );
     }

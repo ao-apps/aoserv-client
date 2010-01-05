@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -128,14 +129,14 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getNetProtocol()
         );
     }
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getNetBinds()
         );
     }

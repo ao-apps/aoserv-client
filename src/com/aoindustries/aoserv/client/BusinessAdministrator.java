@@ -288,7 +288,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getUsername(),
             getCountry(),
             getDisableLog()
@@ -297,7 +297,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             /* TODO
             createDependencyList(
                 getMasterUser()

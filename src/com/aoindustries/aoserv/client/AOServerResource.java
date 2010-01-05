@@ -67,7 +67,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getResource(),
             getAoServer()
             // TODO: getBusinessServer()
@@ -76,7 +76,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getDependentObjectByResourceType()
         );
     }

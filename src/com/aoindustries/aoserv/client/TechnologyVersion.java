@@ -52,9 +52,9 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(TechnologyVersion other) {
-        int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
+        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
         if(diff!=0) return diff;
-        return compareIgnoreCaseConsistentWithEquals(version, other.version);
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(version, other.version);
     }
     // </editor-fold>
 
@@ -102,7 +102,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getTechnologyName(),
             // TODO: getOwner(),
             getOperatingSystemVersion()
@@ -111,8 +111,8 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
-            createDependencySet(
+        return AOServObjectUtils.createDependencySet(
+            AOServObjectUtils.createDependencySet(
                 getPostgresVersion()
             ),
             getMySQLServers()

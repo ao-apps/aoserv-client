@@ -51,7 +51,7 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implem
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return createDependencySet(
+        return AOServObjectUtils.createDependencySet(
             getNetBinds(),
             getProtocols()
         );
