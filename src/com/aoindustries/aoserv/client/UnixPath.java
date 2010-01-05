@@ -42,6 +42,11 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
         // Not contain any /../ or /./ path elements
         if(path.indexOf("/../")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDotDot", path.indexOf("/../"));
         if(path.indexOf("/./")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDot", path.indexOf("/./"));
+        // Not end with / unless "/"
+        if(path.length()>1 && path.endsWith("/")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlash");
+        // Not end with /.. or /.
+        if(path.endsWith("/.")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDot");
+        if(path.endsWith("/..")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDotDot");
         // Not contain any // in the path
         if(path.indexOf("//")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDoubleSlash", path.indexOf("//"));
     }
