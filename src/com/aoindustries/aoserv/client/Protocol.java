@@ -61,7 +61,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private int port;
+    final private NetPort port;
     final private String name;
     final private boolean isUserService;
     final private String netProtocol;
@@ -69,7 +69,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     public Protocol(
         ProtocolService<?,?> service,
         String protocol,
-        int port,
+        NetPort port,
         String name,
         boolean isUserService,
         String netProtocol
@@ -84,10 +84,10 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(Protocol other) {
-        int diff = compare(port, other.port);
+    protected int compareToImpl(Protocol other) throws RemoteException {
+        int diff = port.compareTo(other.port);
         if(diff!=0) return diff;
-        return compareIgnoreCaseConsistentWithEquals(netProtocol, other.netProtocol);
+        return netProtocol.equals(other.netProtocol) ? 0 : getNetProtocol().compareTo(other.getNetProtocol());
     }
     // </editor-fold>
 
@@ -97,36 +97,31 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
         return key;
     }
 
-    /* TODO
     @SchemaColumn(order=1, name="port", description="the default port of the protocol")
-    public NetPort getPort(AOServConnector connector) throws RemoteException {
-        NetPort obj=connector.getNetPorts().get(port);
-        if(obj==null) throw new RemoteException("Unable to find NetPort: "+port);
-        return obj;
-    }*/
+    public NetPort getPort() {
+        return port;
+    }
 
-    @SchemaColumn(order=1, name="name", description="the name of the service")
+    @SchemaColumn(order=2, name="name", description="the name of the service")
     public String getName() {
         return name;
     }
 
-    @SchemaColumn(order=2, name="is_user_service", description="indicates that a user may add and remove this service")
+    @SchemaColumn(order=3, name="is_user_service", description="indicates that a user may add and remove this service")
     public boolean isUserService() {
         return isUserService;
     }
 
     static final String COLUMN_NET_PROTOCOL = "net_protocol";
-    @SchemaColumn(order=3, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the default network protocol for this protocol")
+    @SchemaColumn(order=4, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the default network protocol for this protocol")
     public NetProtocol getNetProtocol() throws RemoteException {
-        NetProtocol np=getService().getConnector().getNetProtocols().get(netProtocol);
-        if(np==null) throw new RemoteException("Unable to find NetProtocol: "+netProtocol);
-        return np;
+        return getService().getConnector().getNetProtocols().get(netProtocol);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Protocol getBean() {
-        return new com.aoindustries.aoserv.client.beans.Protocol(key, port, name, isUserService, netProtocol);
+        return new com.aoindustries.aoserv.client.beans.Protocol(key, port.getBean(), name, isUserService, netProtocol);
     }
     // </editor-fold>
 
@@ -134,7 +129,6 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return createDependencySet(
-            // TODO: getPort(),
             getNetProtocol()
         );
     }

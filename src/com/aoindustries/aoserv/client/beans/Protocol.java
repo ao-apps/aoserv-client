@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client.beans;
 public class Protocol {
 
     private String protocol;
-    private int port;
+    private NetPort port;
     private String name;
     private boolean isUserService;
     private String netProtocol;
@@ -19,7 +19,7 @@ public class Protocol {
     public Protocol() {
     }
 
-    public Protocol(String protocol, int port, String name, boolean isUserService, String netProtocol) {
+    public Protocol(String protocol, NetPort port, String name, boolean isUserService, String netProtocol) {
         this.protocol = protocol;
         this.port = port;
         this.name = name;
@@ -35,11 +35,11 @@ public class Protocol {
         this.protocol = protocol;
     }
 
-    public int getPort() {
+    public NetPort getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(NetPort port) {
         this.port = port;
     }
 

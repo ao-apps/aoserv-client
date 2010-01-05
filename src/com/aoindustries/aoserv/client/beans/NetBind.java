@@ -13,7 +13,7 @@ public class NetBind {
     private int pkey;
     private int businessServer;
     private int ipAddress;
-    private int port;
+    private NetPort port;
     private String netProtocol;
     private String appProtocol;
     private boolean openFirewall;
@@ -27,7 +27,7 @@ public class NetBind {
         int pkey,
         int businessServer,
         int ipAddress,
-        int port,
+        NetPort port,
         String netProtocol,
         String appProtocol,
         boolean openFirewall,
@@ -69,11 +69,11 @@ public class NetBind {
         this.ipAddress = ipAddress;
     }
 
-    public int getPort() {
+    public NetPort getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(NetPort port) {
         this.port = port;
     }
 

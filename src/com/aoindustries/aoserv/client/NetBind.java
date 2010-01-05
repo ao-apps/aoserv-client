@@ -36,7 +36,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int businessServer;
     final private int ipAddress;
-    final private int port;
+    final private NetPort port;
     final private String netProtocol;
     final private String appProtocol;
     final private boolean openFirewall;
@@ -48,7 +48,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         int pkey,
         int businessServer,
         int ipAddress,
-        int port,
+        NetPort port,
         String netProtocol,
         String appProtocol,
         boolean openFirewall,
@@ -74,7 +74,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         // TODO: if(diff!=0) return diff;
         // TODO: diff = ip_address==other.ip_address ? 0 : getIPAddress().compareTo(other.getIPAddress());
         // TODO: if(diff!=0) return diff;
-        int diff = compare(port, other.port);
+        int diff = port.compareTo(other.port);
         if(diff!=0) return diff;
         return netProtocol.equals(other.netProtocol) ? 0 : getNetProtocol().compareTo(other.getNetProtocol());
     }
@@ -103,32 +103,29 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         return obj;
     }*/
 
-    /* TODO
-    @SchemaColumn(order=3, name="port", description="the port number that is bound")
-    public NetPort getPort() throws SQLException {
-        NetPort obj=getService().getConnector().getNetPorts().get(port);
-        if(obj==null) throw new SQLException("Unable to find NetPort: "+port);
-        return obj;
-    }*/
+    @SchemaColumn(order=1, name="port", description="the port number that is bound")
+    public NetPort getPort() {
+        return port;
+    }
 
     static final String COLUMN_NET_PROTOCOL = "net_protocol";
-    @SchemaColumn(order=1, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the network protocol (<code>net_protocols</code>)")
+    @SchemaColumn(order=2, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the network protocol (<code>net_protocols</code>)")
     public NetProtocol getNetProtocol() throws RemoteException {
         return getService().getConnector().getNetProtocols().get(netProtocol);
     }
 
     static final String COLUMN_APP_PROTOCOL = "app_protocol";
-    @SchemaColumn(order=2, name=COLUMN_APP_PROTOCOL, index=IndexType.INDEXED, description="the application protocol (<code>protocols</code>)")
+    @SchemaColumn(order=3, name=COLUMN_APP_PROTOCOL, index=IndexType.INDEXED, description="the application protocol (<code>protocols</code>)")
     public Protocol getAppProtocol() throws RemoteException {
         return getService().getConnector().getProtocols().get(appProtocol);
     }
 
-    @SchemaColumn(order=3, name="open_firewall", description="flags if the firewall should be opened for this port")
+    @SchemaColumn(order=4, name="open_firewall", description="flags if the firewall should be opened for this port")
     public boolean isFirewallOpen() {
         return openFirewall;
     }
 
-    @SchemaColumn(order=4, name="monitoring_enabled", description="turns on monitoring of the port")
+    @SchemaColumn(order=5, name="monitoring_enabled", description="turns on monitoring of the port")
     public boolean isMonitoringEnabled() {
         return monitoringEnabled;
     }
@@ -136,7 +133,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     /**
      * Gets the unmodifiable map of parameters for this bind.
      */
-    @SchemaColumn(order=5, name="monitoring_parameters", description="the URL-encoded name=value pairs of monitoring parameters")
+    @SchemaColumn(order=6, name="monitoring_parameters", description="the URL-encoded name=value pairs of monitoring parameters")
     public Map<String,String> getMonitoringParameters() {
         String myParamString = monitoringParameters;
         if(myParamString==null) return Collections.emptyMap();
@@ -152,7 +149,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.NetBind getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetBind(key, businessServer, ipAddress, port, netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
+        return new com.aoindustries.aoserv.client.beans.NetBind(key, businessServer, ipAddress, port.getBean(), netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
     }
     // </editor-fold>
 
@@ -162,7 +159,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         return createDependencySet(
             // TODO: getBusinessServer(),
             // TODO: getIPAddress(),
-            // TODO: getNetPort(),
             getNetProtocol(),
             getAppProtocol()
         );
@@ -270,7 +266,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Parameter Encoding">
-    private static final ConcurrentMap<String,Map<String,String>> getMonitoringParametersCache = new ConcurrentHashMap<String,Map<String,String>>();
+    private static final ConcurrentMap<String,Map<String,String>> getMonitoringParametersCache = new ConcurrentHashMap<String,Map<String,String>>(16, 0.75F, 1);
 
     public static Map<String,String> decodeParameters(String monitoringParameters) {
         if(monitoringParameters==null) return Collections.emptyMap();

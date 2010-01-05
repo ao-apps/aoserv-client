@@ -199,7 +199,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingNetDeviceIDService netDeviceIDs;
     /* TODO
     final NoSwingNetDeviceService netDevices;
-    final NoSwingNetPortService netPorts;
      */
     final NoSwingNetProtocolService netProtocols;
     /* TODO
@@ -395,7 +394,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         netDeviceIDs = new NoSwingNetDeviceIDService(this, wrapped.getNetDeviceIDs());
         /* TODO
         netDevices = new NoSwingNetDeviceService(this, wrapped.getNetDevices());
-        netPorts = new NoSwingNetPortService(this, wrapped.getNetPorts());
          */
         netProtocols = new NoSwingNetProtocolService(this, wrapped.getNetProtocols());
         /* TODO
@@ -787,8 +785,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     }
     /* TODO
     public NetDeviceService<NoSwingConnector,NoSwingConnectorFactory> getNetDevices() throws RemoteException;
-
-    public NetPortService<NoSwingConnector,NoSwingConnectorFactory> getNetPorts() throws RemoteException;
     */
     public NetProtocolService<NoSwingConnector,NoSwingConnectorFactory> getNetProtocols() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();

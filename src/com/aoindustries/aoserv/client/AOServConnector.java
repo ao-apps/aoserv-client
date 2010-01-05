@@ -203,7 +203,6 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     NetDeviceIDService<C,F> getNetDeviceIDs() throws RemoteException;
     /* TODO
     NetDeviceService<C,F> getNetDevices() throws RemoteException;
-    NetPortService<C,F> getNetPorts() throws RemoteException;
     */
     NetProtocolService<C,F> getNetProtocols() throws RemoteException;
     /* TODO

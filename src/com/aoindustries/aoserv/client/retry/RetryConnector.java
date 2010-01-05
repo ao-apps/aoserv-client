@@ -209,7 +209,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryNetDeviceIDService netDeviceIDs;
     /* TODO
     final RetryNetDeviceService netDevices;
-    final RetryNetPortService netPorts;*/
+     */
     final RetryNetProtocolService netProtocols;
     /* TODO
     final RetryNetTcpRedirectService netTcpRedirects;
@@ -404,7 +404,6 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         netDeviceIDs = new RetryNetDeviceIDService(this);
         /* TODO
         netDevices = new RetryNetDeviceService(this);
-        netPorts = new RetryNetPortService(this);
          */
         netProtocols = new RetryNetProtocolService(this);
         /* TODO
@@ -886,8 +885,6 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     }
     /* TODO
     public NetDeviceService<RetryConnector,RetryConnectorFactory> getNetDevices();
-
-    public NetPortService<RetryConnector,RetryConnectorFactory> getNetPorts();
     */
     public NetProtocolService<RetryConnector,RetryConnectorFactory> getNetProtocols() {
         return netProtocols;

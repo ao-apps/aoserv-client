@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,6 +10,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
  * Several resources on a <code>Server</code> require a server-wide
@@ -22,19 +23,17 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
 
     private static final long serialVersionUID = 1L;
 
-    private static final int NOBODY_ID = 65534;
-    private static final LinuxID NOBODY = new LinuxID(NOBODY_ID);
-
-    private static final int CONSTANT_IDS = 100;
-    private static final LinuxID[] ids = new LinuxID[CONSTANT_IDS];
-    static {
-        for(int c=0;c<CONSTANT_IDS;c++) ids[c] = new LinuxID(c);
-    }
+    private static final AtomicReferenceArray<LinuxID> cache = new AtomicReferenceArray<LinuxID>(65536);
 
     public static LinuxID valueOf(int id) {
-        if(id>=0 && id<CONSTANT_IDS) return ids[id];
-        if(id==NOBODY_ID) return NOBODY;
-        return new LinuxID(id);
+        if(id<0) throw new IllegalArgumentException("id<0: "+id);
+        if(id>65535) throw new IllegalArgumentException("id>65535: "+id);
+        while(true) {
+            LinuxID existing = cache.get(id);
+            if(existing!=null) return existing;
+            LinuxID newObj = new LinuxID(id);
+            if(cache.compareAndSet(id, null, newObj)) return newObj;
+        }
     }
 
     final private int id;
@@ -68,9 +67,7 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
     }
 
     private Object readResolve() {
-        if(id>=0 && id<CONSTANT_IDS) return ids[id];
-        if(id==NOBODY_ID) return NOBODY;
-        return this;
+        return valueOf(id);
     }
 
     @Override
@@ -96,12 +93,12 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
         return Integer.toString(id);
     }
 
-    public boolean isSystem() {
-        return id<500 || id==65534 || id==65535;
-    }
-
     public int getId() {
     	return id;
+    }
+
+    public boolean isSystem() {
+        return id<500 || id==65534 || id==65535;
     }
 
     public com.aoindustries.aoserv.client.beans.LinuxID getBean() {

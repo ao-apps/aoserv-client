@@ -30,7 +30,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
 
     private static final long serialVersionUID = 1L;
 
-    private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<String, UnixPath>();
+    private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<String, UnixPath>(16, 0.75F, 1);
 
     public static UnixPath valueOf(String path) {
         UnixPath existing = interned.get(path);

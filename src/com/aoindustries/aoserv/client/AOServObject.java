@@ -47,6 +47,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
 
     private static final Collator collator = Collator.getInstance(Locale.ENGLISH);
     static int compareIgnoreCaseConsistentWithEquals(String S1, String S2) {
+        if(S1==S2) return 0;
         int diff = collator.compare(S1, S2);
         if(diff!=0) return diff;
         return S1.compareTo(S2);
@@ -70,6 +71,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     }
 
     static int compareHostnames(String host1, String host2) {
+        if(host1==host2) return 0;
         while(host1.length()>0 && host2.length()>0) {
             int pos=host1.lastIndexOf('.');
             String section1;
@@ -324,7 +326,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         );
     }
 
-    private static final ConcurrentMap<Class<? extends AOServObject>,List<MethodColumn>> columns = new ConcurrentHashMap<Class<? extends AOServObject>, List<MethodColumn>>();
+    private static final ConcurrentMap<Class<? extends AOServObject>,List<MethodColumn>> columns = new ConcurrentHashMap<Class<? extends AOServObject>, List<MethodColumn>>(ServiceName.values.size()*4/3+1, 0.75F, 1);
 
     /**
      * Gets the columns for the provided class, in column index order.
@@ -432,7 +434,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         return methodColumns;
     }
 
-    private static final ConcurrentMap<Class<? extends AOServObject>,Map<String,MethodColumn>> columnMaps = new ConcurrentHashMap<Class<? extends AOServObject>, Map<String,MethodColumn>>();
+    private static final ConcurrentMap<Class<? extends AOServObject>,Map<String,MethodColumn>> columnMaps = new ConcurrentHashMap<Class<? extends AOServObject>, Map<String,MethodColumn>>(ServiceName.values.size()*4/3+1, 0.75F, 1);
 
     /**
      * Provides map from getMethodColumns.

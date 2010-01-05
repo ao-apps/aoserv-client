@@ -202,7 +202,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedNetDeviceIDService netDeviceIDs;
     /* TODO
     final CachedNetDeviceService netDevices;
-    final CachedNetPortService netPorts;
      */
     final CachedNetProtocolService netProtocols;
     /* TODO
@@ -406,7 +405,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         netDeviceIDs = new CachedNetDeviceIDService(this, wrapped.getNetDeviceIDs());
         /* TODO
         netDevices = new CachedNetDeviceService(this, wrapped.getNetDevices());
-        netPorts = new CachedNetPortService(this, wrapped.getNetPorts());
          */
         netProtocols = new CachedNetProtocolService(this, wrapped.getNetProtocols());
         /* TODO
@@ -774,8 +772,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     /* TODO
     public NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices();
-
-    public NetPortService<CachedConnector,CachedConnectorFactory> getNetPorts();
     */
     public NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols() {
         return netProtocols;
