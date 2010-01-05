@@ -85,8 +85,8 @@ final public class Username extends AOServObjectStringKey<Username> implements B
         return createDependencySet(
             createDependencySet(
                 getBusinessAdministrator()
-                // TODO: getLinuxAccount(),
             ),
+            getLinuxAccounts(),
             getMysqlUsers(),
             getPostgresUsers()
         );
@@ -98,11 +98,9 @@ final public class Username extends AOServObjectStringKey<Username> implements B
     	return getService().getConnector().getBusinessAdministrators().get(key);
     }
 
-    /* TODO
-    public LinuxAccount getLinuxAccount() throws IOException, SQLException {
-        return getService().getConnector().getLinuxAccounts().get(pkey);
+    public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
+        return getService().getConnector().getLinuxAccounts().getIndexed(LinuxAccount.COLUMN_USERNAME, this);
     }
-    */
 
     public Set<MySQLUser> getMysqlUsers() throws RemoteException {
         return getService().getConnector().getMysqlUsers().getIndexed(MySQLUser.COLUMN_USERNAME, this);

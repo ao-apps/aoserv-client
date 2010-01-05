@@ -106,7 +106,7 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getLinuxAccounts()
+            getLinuxAccounts()
         );
     }
     // </editor-fold>
@@ -119,11 +119,9 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
     public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        // TODO: return getService().getConnector().getTicketCategories().getIndexed(COLUMN_PARENT, this);
+        return getService().getConnector().getLinuxAccounts().getIndexed(LinuxAccount.COLUMN_LINUX_ACCOUNT_TYPE, this);
     }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

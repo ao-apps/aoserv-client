@@ -96,7 +96,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
             || resourceType.equals(ResourceType.Constant.ftponly_account.name())
             || resourceType.equals(ResourceType.Constant.shell_account.name())
             || resourceType.equals(ResourceType.Constant.system_account.name())
-        ) obj = null; // TODO: getLinuxAccount();
+        ) obj = getLinuxAccount();
         else if(
             // linux_groups
             resourceType.equals(ResourceType.Constant.shell_group.name())
@@ -119,6 +119,10 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
         return getService().getConnector().getBusinessServers().getBusinessServer(getResource().accounting, ao_server);
     }
     */
+    public LinuxAccount getLinuxAccount() throws RemoteException {
+        return getService().getConnector().getLinuxAccounts().get(key);
+    }
+
     public MySQLDatabase getMysqlDatabase() throws RemoteException {
         return getService().getConnector().getMysqlDatabases().get(key);
     }

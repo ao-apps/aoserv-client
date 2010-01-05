@@ -74,15 +74,14 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanF
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getLinuxAccounts()
+            getLinuxAccounts()
         );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
     public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getService().getConnector().getTicketCategories().getIndexed(COLUMN_PARENT, this);
-    } */
+        return getService().getConnector().getLinuxAccounts().getIndexed(LinuxAccount.COLUMN_SHELL, this);
+    }
     // </editor-fold>
 }

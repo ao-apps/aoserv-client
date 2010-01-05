@@ -110,47 +110,48 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     }
 
     static final String COLUMN_USERNAME = "username";
-    @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the MySQL user")
+    @SchemaColumn(order=2, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the MySQL user")
     public Username getUsername() throws RemoteException {
         return getService().getConnector().getUsernames().get(username);
     }
 
-    @SchemaColumn(order=2, name="uid", description="the uid of the user on the machine")
+    @SchemaColumn(order=3, name="uid", description="the uid of the user on the machine")
     public LinuxID getUid() {
         return uid;
     }
 
-    @SchemaColumn(order=3, name="home", description="the home directory of the user on this machine")
+    @SchemaColumn(order=4, name="home", description="the home directory of the user on this machine")
     public UnixPath getHome() {
         return home;
     }
 
-    @SchemaColumn(order=4, name="name", description="the full name of the user")
+    @SchemaColumn(order=5, name="name", description="the full name of the user")
     public Gecos getName() {
         return name;
     }
 
-    @SchemaColumn(order=5, name="office_location", description="the location of the user")
+    @SchemaColumn(order=6, name="office_location", description="the location of the user")
     public Gecos getOfficeLocation() {
         return officeLocation;
     }
 
-    @SchemaColumn(order=6, name="office_phone", description="the work phone number of the user")
+    @SchemaColumn(order=7, name="office_phone", description="the work phone number of the user")
     public Gecos getOfficePhone() {
         return officePhone;
     }
 
-    @SchemaColumn(order=7, name="home_phone", description="the home phone number of the user")
+    @SchemaColumn(order=8, name="home_phone", description="the home phone number of the user")
     public Gecos getHomePhone() {
         return homePhone;
     }
 
-    @SchemaColumn(order=8, name="shell", description="the users shell preference")
+    static final String COLUMN_SHELL = "shell";
+    @SchemaColumn(order=9, name=COLUMN_SHELL, index=IndexType.INDEXED, description="the users shell preference")
     public Shell getShell() throws RemoteException {
         return getService().getConnector().getShells().get(shell);
     }
 
-    @SchemaColumn(order=9, name="predisable_password", description="stores the password that was used before the account was disabled")
+    @SchemaColumn(order=10, name="predisable_password", description="stores the password that was used before the account was disabled")
     public String getPredisablePassword() {
         return predisablePassword;
     }
