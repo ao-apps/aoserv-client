@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client.cache;
  */
 import com.aoindustries.aoserv.client.AOServObjectUnixPathKey;
 import com.aoindustries.aoserv.client.AOServServiceUnixPathKey;
-import com.aoindustries.aoserv.client.UnixPath;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 
 /**
  * @author  AO Industries, Inc.
