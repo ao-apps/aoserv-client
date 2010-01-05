@@ -110,7 +110,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     }
 
     static final String COLUMN_USERNAME = "username";
-    @SchemaColumn(order=2, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the MySQL user")
+    @SchemaColumn(order=2, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the user")
     public Username getUsername() throws RemoteException {
         return getService().getConnector().getUsernames().get(username);
     }

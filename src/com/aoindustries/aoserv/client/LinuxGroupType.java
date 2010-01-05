@@ -69,9 +69,16 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getResourceType()
+        );
+    }
+
+    @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getLinuxGroups()
+            getLinuxGroups()
         );
     }
     // </editor-fold>
@@ -84,10 +91,8 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
     public Set<LinuxGroup> getLinuxGroups() throws RemoteException {
-        // TODO: return getService().getConnector().getTicketCategories().getIndexed(COLUMN_PARENT, this);
+        return getService().getConnector().getLinuxGroups().getIndexed(LinuxGroup.COLUMN_LINUX_GROUP_TYPE, this);
     }
-     */
     // </editor-fold>
 }

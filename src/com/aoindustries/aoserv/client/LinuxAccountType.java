@@ -104,6 +104,13 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return createDependencySet(
+            getResourceType()
+        );
+    }
+
+    @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
             getLinuxAccounts()
