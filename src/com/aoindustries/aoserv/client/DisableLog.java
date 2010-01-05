@@ -106,6 +106,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
         return createDependencySet(
             getBusinesses(),
             getBusinessAdministrators(),
+            getGroupNames(),
             getUsernames()
         );
     }
@@ -118,6 +119,10 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     public Set<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
         return getService().getConnector().getBusinessAdministrators().getIndexed(BusinessAdministrator.COLUMN_DISABLE_LOG, this);
+    }
+
+    public Set<GroupName> getGroupNames() throws RemoteException {
+        return getService().getConnector().getGroupNames().getIndexed(GroupName.COLUMN_DISABLE_LOG, this);
     }
 
     public Set<Username> getUsernames() throws RemoteException {

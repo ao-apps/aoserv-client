@@ -153,6 +153,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /* TODO
     FileBackupSettingService<C,F> getFileBackupSettings() throws RemoteException;
     FTPGuestUserService<C,F> getFtpGuestUsers() throws RemoteException;
+     */
+    GroupNameService<C,F> getGroupNames() throws RemoteException;
+    /* TODO
     HttpdBindService<C,F> getHttpdBinds() throws RemoteException;
     HttpdJBossSiteService<C,F> getHttpdJBossSites() throws RemoteException;
     HttpdJBossVersionService<C,F> getHttpdJBossVersions() throws RemoteException;
@@ -177,12 +180,12 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     */
     LanguageService<C,F> getLanguages() throws RemoteException;
     // TODO: LinuxAccAddressService<C,F> getLinuxAccAddresses() throws RemoteException;
+    LinuxAccountGroupService<C,F> getLinuxAccountGroups() throws RemoteException;
     LinuxAccountTypeService<C,F> getLinuxAccountTypes() throws RemoteException;
     LinuxAccountService<C,F> getLinuxAccounts() throws RemoteException;
-    // TODO: LinuxGroupAccountService<C,F> getLinuxGroupAccounts() throws RemoteException;
     LinuxGroupTypeService<C,F> getLinuxGroupTypes() throws RemoteException;
-    /* TODO
     LinuxGroupService<C,F> getLinuxGroups() throws RemoteException;
+    /* TODO
     LinuxServerAccountService<C,F> getLinuxServerAccounts() throws RemoteException;
     LinuxServerGroupService<C,F> getLinuxServerGroups() throws RemoteException;
     MajordomoListService<C,F> getMajordomoLists() throws RemoteException;

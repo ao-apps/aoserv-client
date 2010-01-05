@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.retry;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -21,9 +21,12 @@ import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
+import com.aoindustries.aoserv.client.GroupNameService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccountGroupService;
 import com.aoindustries.aoserv.client.LinuxAccountService;
 import com.aoindustries.aoserv.client.LinuxAccountTypeService;
+import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
@@ -162,6 +165,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     /* TODO
     final RetryFileBackupSettingService fileBackupSettings;
     final RetryFTPGuestUserService ftpGuestUsers;
+     */
+    final RetryGroupNameService groupNames;
+    /* TODO
     final RetryHttpdBindService httpdBinds;
     final RetryHttpdJBossSiteService httpdJBossSites;
     final RetryHttpdJBossVersionService httpdJBossVersions;
@@ -188,11 +194,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     /* TODO
     final RetryLinuxAccAddressService linuxAccAddresss;
      */
+    final RetryLinuxAccountGroupService linuxAccountGroups;
     final RetryLinuxAccountTypeService linuxAccountTypes;
     final RetryLinuxAccountService linuxAccounts;
-    // TODO: final RetryLinuxGroupAccountService linuxGroupAccounts;
     final RetryLinuxGroupTypeService linuxGroupTypes;
-    // TODO: final RetryLinuxGroupService linuxGroups;
+    final RetryLinuxGroupService linuxGroups;
     // TODO: final RetryMajordomoListService majordomoLists;
     // TODO: final RetryMajordomoServerService majordomoServers;
     // TODO: final RetryMajordomoVersionService majordomoVersions;
@@ -359,6 +365,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         /* TODO
         fileBackupSettings = new RetryFileBackupSettingService(this);
         ftpGuestUsers = new RetryFTPGuestUserService(this);
+         */
+        groupNames = new RetryGroupNameService(this);
+        /* TODO
         httpdBinds = new RetryHttpdBindService(this);
         httpdJBossSites = new RetryHttpdJBossSiteService(this);
         httpdJBossVersions = new RetryHttpdJBossVersionService(this);
@@ -383,11 +392,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         */
         languages = new RetryLanguageService(this);
         // TODO: linuxAccAddresss = new RetryLinuxAccAddressService(this);
+        linuxAccountGroups = new RetryLinuxAccountGroupService(this);
         linuxAccountTypes = new RetryLinuxAccountTypeService(this);
         linuxAccounts = new RetryLinuxAccountService(this);
-        // TODO: linuxGroupAccounts = new RetryLinuxGroupAccountService(this);
         linuxGroupTypes = new RetryLinuxGroupTypeService(this);
-        // TODO: linuxGroups = new RetryLinuxGroupService(this);
+        linuxGroups = new RetryLinuxGroupService(this);
         // TODO: majordomoLists = new RetryMajordomoListService(this);
         // TODO: majordomoServers = new RetryMajordomoServerService(this);
         // TODO: majordomoVersions = new RetryMajordomoVersionService(this);
@@ -778,7 +787,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public FileBackupSettingService<RetryConnector,RetryConnectorFactory> getFileBackupSettings();
 
     public FTPGuestUserService<RetryConnector,RetryConnectorFactory> getFtpGuestUsers();
-
+     */
+    public GroupNameService<RetryConnector,RetryConnectorFactory> getGroupNames() {
+        return groupNames;
+    }
+    /* TODO
     public HttpdBindService<RetryConnector,RetryConnectorFactory> getHttpdBinds();
 
     public HttpdJBossSiteService<RetryConnector,RetryConnectorFactory> getHttpdJBossSites();
@@ -827,6 +840,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
 
     // TODO: public LinuxAccAddressService<RetryConnector,RetryConnectorFactory> getLinuxAccAddresses();
 
+    public LinuxAccountGroupService<RetryConnector,RetryConnectorFactory> getLinuxAccountGroups() {
+        return linuxAccountGroups;
+    }
+
     public LinuxAccountTypeService<RetryConnector,RetryConnectorFactory> getLinuxAccountTypes() {
         return linuxAccountTypes;
     }
@@ -835,13 +852,13 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return linuxAccounts;
     }
 
-    // TODO: public LinuxGroupAccountService<RetryConnector,RetryConnectorFactory> getLinuxGroupAccounts();
-
     public LinuxGroupTypeService<RetryConnector,RetryConnectorFactory> getLinuxGroupTypes() {
         return linuxGroupTypes;
     }
 
-    // TODO: public LinuxGroupService<RetryConnector,RetryConnectorFactory> getLinuxGroups();
+    public LinuxGroupService<RetryConnector,RetryConnectorFactory> getLinuxGroups() {
+        return linuxGroups;
+    }
 
     // TODO: public MajordomoListService<RetryConnector,RetryConnectorFactory> getMajordomoLists();
 

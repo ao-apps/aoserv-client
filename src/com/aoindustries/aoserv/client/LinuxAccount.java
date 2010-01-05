@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -191,9 +191,9 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         return createDependencySet(
             createDependencySet(
                 // TODO: getFTPGuestUser()
-            )
+            ),
             // TODO: getEmailInbox(),
-            // TODO: getLinuxGroupAccounts()
+            getLinuxAccountGroups()
         );
     }
     // </editor-fold>
@@ -210,9 +210,10 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     public FTPGuestUser getFTPGuestUser() throws IOException, SQLException {
         return getService().getConnector().getFtpGuestUsers().get(pkey);
     }
-    public List<LinuxGroupAccount> getLinuxGroupAccounts() throws IOException, SQLException {
-        return getService().getConnector().getLinuxGroupAccounts().getIndexedRows(LinuxGroupAccount.COLUMN_USERNAME, pkey);
-    }*/
+     */
+    public Set<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
+        return getService().getConnector().getLinuxAccountGroups().getIndexed(LinuxAccountGroup.COLUMN_LINUX_ACCOUNT, this);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

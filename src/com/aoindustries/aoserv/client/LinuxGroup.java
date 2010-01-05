@@ -129,7 +129,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return createDependencySet(
-            // TODO: getLinuxGroupAccounts()
+            getLinuxAccountGroups()
         );
     }
     // </editor-fold>
@@ -142,10 +142,9 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    public List<LinuxGroupAccount> getLinuxGroupAccounts() throws IOException, SQLException {
-        return getService().getConnector().getLinuxGroupAccounts().getIndexedRows(LinuxGroupAccount.COLUMN_USERNAME, pkey);
-    }*/
+    public Set<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
+        return getService().getConnector().getLinuxAccountGroups().getIndexed(LinuxAccountGroup.COLUMN_LINUX_GROUP, this);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

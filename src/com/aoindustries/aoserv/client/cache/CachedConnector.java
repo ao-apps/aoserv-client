@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.cache;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -21,9 +21,12 @@ import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
+import com.aoindustries.aoserv.client.GroupNameService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccountGroupService;
 import com.aoindustries.aoserv.client.LinuxAccountService;
 import com.aoindustries.aoserv.client.LinuxAccountTypeService;
+import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
@@ -151,6 +154,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedFailoverMySQLReplicationService failoverMySQLReplications;
     /* TODO
     final CachedFileBackupSettingService fileBackupSettings;
+     */
+    final CachedGroupNameService groupNames;
+    /*
     final CachedFTPGuestUserService ftpGuestUsers;
     final CachedHttpdBindService httpdBinds;
     final CachedHttpdJBossSiteService httpdJBossSites;
@@ -176,13 +182,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     */
     final CachedLanguageService languages;
     // TODO: final CachedLinuxAccAddressService linuxAccAddresss;
+    final CachedLinuxAccountGroupService linuxAccountGroups;
     final CachedLinuxAccountTypeService linuxAccountTypes;
     final CachedLinuxAccountService linuxAccounts;
-    // TODO: final CachedLinuxGroupAccountService linuxGroupAccounts;
     final CachedLinuxGroupTypeService linuxGroupTypes;
-    /* TODO
     final CachedLinuxGroupService linuxGroups;
-    final CachedLinuxIDService linuxIDs;
+    /* TODO
     final CachedLinuxServerAccountService linuxServerAccounts;
     final CachedLinuxServerGroupService linuxServerGroups;
     final CachedMajordomoListService majordomoLists;
@@ -352,6 +357,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         failoverMySQLReplications = new CachedFailoverMySQLReplicationService(this, wrapped.getFailoverMySQLReplications());
         /* TODO
         fileBackupSettings = new CachedFileBackupSettingService(this, wrapped.getFileBackupSettings());
+         */
+        groupNames = new CachedGroupNameService(this, wrapped.getGroupNames());
+        /* TODO
         ftpGuestUsers = new CachedFTPGuestUserService(this, wrapped.getFTPGuestUsers());
         httpdBinds = new CachedHttpdBindService(this, wrapped.getHttpdBinds());
         httpdJBossSites = new CachedHttpdJBossSiteService(this, wrapped.getHttpdJBossSites());
@@ -379,13 +387,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         /* TODO
         linuxAccAddresss = new CachedLinuxAccAddressService(this, wrapped.getLinuxAccAddresss());
          */
+        linuxAccountGroups = new CachedLinuxAccountGroupService(this, wrapped.getLinuxAccountGroups());
         linuxAccountTypes = new CachedLinuxAccountTypeService(this, wrapped.getLinuxAccountTypes());
         linuxAccounts = new CachedLinuxAccountService(this, wrapped.getLinuxAccounts());
-        // TODO: linuxGroupAccounts = new CachedLinuxGroupAccountService(this, wrapped.getLinuxGroupAccounts());
         linuxGroupTypes = new CachedLinuxGroupTypeService(this, wrapped.getLinuxGroupTypes());
-        /* TODO
         linuxGroups = new CachedLinuxGroupService(this, wrapped.getLinuxGroups());
-        linuxIDs = new CachedLinuxIDService(this, wrapped.getLinuxIDs());
+        /* TODO
         linuxServerAccounts = new CachedLinuxServerAccountService(this, wrapped.getLinuxServerAccounts());
         linuxServerGroups = new CachedLinuxServerGroupService(this, wrapped.getLinuxServerGroups());
         majordomoLists = new CachedMajordomoListService(this, wrapped.getMajordomoLists());
@@ -657,7 +664,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     /* TODO
     public FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings();
-
+    */
+    public GroupNameService<CachedConnector,CachedConnectorFactory> getGroupNames() {
+        return groupNames;
+    }
+    /* TODO
     public FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers();
 
     public HttpdBindService<CachedConnector,CachedConnectorFactory> getHttpdBinds();
@@ -708,6 +719,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     /* TODO
     public LinuxAccAddressService<CachedConnector,CachedConnectorFactory> getLinuxAccAddresses();
     */
+    public LinuxAccountGroupService<CachedConnector,CachedConnectorFactory> getLinuxAccountGroups() {
+        return linuxAccountGroups;
+    }
+
     public LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes() {
         return linuxAccountTypes;
     }
@@ -716,16 +731,14 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return linuxAccounts;
     }
 
-    // TODO: public LinuxGroupAccountService<CachedConnector,CachedConnectorFactory> getLinuxGroupAccounts();
-
     public LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes() {
         return linuxGroupTypes;
     }
+
+    public LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups() {
+        return linuxGroups;
+    }
     /* TODO
-    public LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups();
-
-    public LinuxIDService<CachedConnector,CachedConnectorFactory> getLinuxIDs();
-
     public LinuxServerAccountService<CachedConnector,CachedConnectorFactory> getLinuxServerAccounts();
 
     public LinuxServerGroupService<CachedConnector,CachedConnectorFactory> getLinuxServerGroups();

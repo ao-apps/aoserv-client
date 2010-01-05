@@ -314,6 +314,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
             // TODO: getCreditCardTransactionsByCreditCardAccounting(),
             getDisableLogs(),
             // TODO: getDNSZones(),
+            getGroupNames(),
             // TODO: getIPAddresses(),
             // TODO: getEmailDomains(),
             // TODO: getLinuxGroups(),
@@ -347,6 +348,10 @@ final public class Business extends AOServObjectStringKey<Business> implements B
 
     public Set<DisableLog> getDisableLogs() throws RemoteException {
         return getService().getConnector().getDisableLogs().getIndexed(DisableLog.COLUMN_ACCOUNTING, this);
+    }
+
+    public Set<GroupName> getGroupNames() throws RemoteException {
+        return getService().getConnector().getGroupNames().getIndexed(GroupName.COLUMN_ACCOUNTING, this);
     }
 
     public Set<Resource> getResources() throws RemoteException {

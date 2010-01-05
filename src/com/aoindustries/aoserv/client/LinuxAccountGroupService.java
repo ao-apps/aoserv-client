@@ -1,46 +1,29 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  LinuxGroupAccount
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGroupAccount> {
+@ServiceAnnotation(ServiceName.linux_account_groups)
+public interface LinuxAccountGroupService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,LinuxAccountGroup> {
 
+    /* TODO
     private boolean hashBuilt=false;
-    private final Map<String,LinuxGroupAccount> hash=new HashMap<String,LinuxGroupAccount>();
-
+    private final Map<String,LinuxAccountGroup> hash=new HashMap<String,LinuxAccountGroup>();
+    */
     /**
      * The group name of the primary group is hashed on first use for fast
      * lookups.
      */
+    /* TODO
     private boolean primaryHashBuilt=false;
-    private final Map<String,LinuxGroupAccount> primaryHash=new HashMap<String,LinuxGroupAccount>();
-
-    LinuxGroupAccountTable(AOServConnector connector) {
-	super(connector, LinuxGroupAccount.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(LinuxGroupAccount.COLUMN_GROUP_NAME_name, ASCENDING),
-        new OrderBy(LinuxGroupAccount.COLUMN_USERNAME_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
+    private final Map<String,LinuxAccountGroup> primaryHash=new HashMap<String,LinuxAccountGroup>();
 
     int addLinuxGroupAccount(
         LinuxGroup groupNameObject,
@@ -56,21 +39,17 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
         return pkey;
     }
 
-    public LinuxGroupAccount get(int pkey) throws IOException, SQLException {
-    	return getUniqueRow(LinuxGroupAccount.COLUMN_PKEY, pkey);
-    }
-
-    LinuxGroupAccount getLinuxGroupAccount(
-	String groupName,
-	String username
+    LinuxAccountGroup getLinuxGroupAccount(
+        String groupName,
+        String username
     ) throws IOException, SQLException {
         synchronized(hash) {
             if(!hashBuilt) {
                 hash.clear();
-                List<LinuxGroupAccount> list=getRows();
+                List<LinuxAccountGroup> list=getRows();
                 int len=list.size();
                 for(int c=0;c<len;c++) {
-                    LinuxGroupAccount lga=list.get(c);
+                    LinuxAccountGroup lga=list.get(c);
                     hash.put(lga.group_name+':'+lga.username, lga);
                 }
                 hashBuilt=true;
@@ -81,11 +60,11 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 
     List<LinuxGroup> getLinuxGroups(LinuxAccount linuxAccount) throws IOException, SQLException {
         String username = linuxAccount.pkey;
-        List<LinuxGroupAccount> cached = getRows();
+        List<LinuxAccountGroup> cached = getRows();
         int len = cached.size();
-        List<LinuxGroup> matches=new ArrayList<LinuxGroup>(LinuxGroupAccount.MAX_GROUPS);
+        List<LinuxGroup> matches=new ArrayList<LinuxGroup>(LinuxAccountGroup.MAX_GROUPS);
         for (int c = 0; c < len; c++) {
-            LinuxGroupAccount lga = cached.get(c);
+            LinuxAccountGroup lga = cached.get(c);
             if (lga.username.equals(username)) matches.add(lga.getLinuxGroup());
         }
         return matches;
@@ -96,24 +75,20 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
             if(account==null) throw new IllegalArgumentException("param account is null");
             // Rebuild the hash if needed
             if(!primaryHashBuilt) {
-                List<LinuxGroupAccount> cache=getRows();
+                List<LinuxAccountGroup> cache=getRows();
                 primaryHash.clear();
                 int len=cache.size();
                 for(int c=0;c<len;c++) {
-                    LinuxGroupAccount lga=cache.get(c);
+                    LinuxAccountGroup lga=cache.get(c);
                     if(lga.isPrimary()) primaryHash.put(lga.username, lga);
                 }
                 primaryHashBuilt=true;
             }
-            LinuxGroupAccount lga=primaryHash.get(account.pkey);
+            LinuxAccountGroup lga=primaryHash.get(account.pkey);
             // May be filtered
             if(lga==null) return null;
             return lga.getLinuxGroup();
         }
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.LINUX_GROUP_ACCOUNTS;
     }
 
     @Override
@@ -157,4 +132,5 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
             primaryHashBuilt=false;
         }
     }
+     */
 }

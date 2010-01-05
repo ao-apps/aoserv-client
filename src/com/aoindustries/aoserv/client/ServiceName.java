@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -92,6 +92,9 @@ public enum ServiceName implements LocalizedToString {
     /* TODO
     file_backup_settings,
     ftp_guest_users,
+     */
+    group_names,
+    /* TODO
     httpd_binds,
     httpd_jboss_sites,
     httpd_jboss_versions,
@@ -118,14 +121,12 @@ public enum ServiceName implements LocalizedToString {
     /* TODO
     linux_acc_addresses,
      */
+    linux_account_groups,
     linux_account_types,
     linux_accounts,
-    // TODO: linux_group_accounts,
     linux_group_types,
-    /* TODO
     linux_groups,
-    linux_server_accounts,
-    linux_server_groups,
+    /* TODO
     majordomo_lists,
     majordomo_servers,
     majordomo_versions,
@@ -146,7 +147,6 @@ public enum ServiceName implements LocalizedToString {
     net_binds,
     net_device_ids,
     // TODO: net_devices,
-    // TODO: net_ports,
     net_protocols,
     /* TODO
     net_tcp_redirects,

@@ -101,7 +101,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
             // linux_groups
             resourceType.equals(ResourceType.Constant.shell_group.name())
             || resourceType.equals(ResourceType.Constant.system_group.name())
-        ) obj = null; // TODO: getLinuxGroup();
+        ) obj = getLinuxGroup();
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
         return obj;
@@ -121,6 +121,10 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     */
     public LinuxAccount getLinuxAccount() throws RemoteException {
         return getService().getConnector().getLinuxAccounts().get(key);
+    }
+
+    public LinuxGroup getLinuxGroup() throws RemoteException {
+        return getService().getConnector().getLinuxGroups().get(key);
     }
 
     public MySQLDatabase getMysqlDatabase() throws RemoteException {
