@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccountService;
 import com.aoindustries.aoserv.client.LinuxAccountTypeService;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
@@ -176,7 +177,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedLanguageService languages;
     // TODO: final CachedLinuxAccAddressService linuxAccAddresss;
     final CachedLinuxAccountTypeService linuxAccountTypes;
-    // TODO: final CachedLinuxAccountService linuxAccounts;
+    final CachedLinuxAccountService linuxAccounts;
     // TODO: final CachedLinuxGroupAccountService linuxGroupAccounts;
     final CachedLinuxGroupTypeService linuxGroupTypes;
     /* TODO
@@ -379,7 +380,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         linuxAccAddresss = new CachedLinuxAccAddressService(this, wrapped.getLinuxAccAddresss());
          */
         linuxAccountTypes = new CachedLinuxAccountTypeService(this, wrapped.getLinuxAccountTypes());
-        // TODO: linuxAccounts = new CachedLinuxAccountService(this, wrapped.getLinuxAccounts());
+        linuxAccounts = new CachedLinuxAccountService(this, wrapped.getLinuxAccounts());
         // TODO: linuxGroupAccounts = new CachedLinuxGroupAccountService(this, wrapped.getLinuxGroupAccounts());
         linuxGroupTypes = new CachedLinuxGroupTypeService(this, wrapped.getLinuxGroupTypes());
         /* TODO
@@ -710,11 +711,13 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes() {
         return linuxAccountTypes;
     }
-    /* TODO
-    public LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts();
 
-    public LinuxGroupAccountService<CachedConnector,CachedConnectorFactory> getLinuxGroupAccounts();
-    */
+    public LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts() {
+        return linuxAccounts;
+    }
+
+    // TODO: public LinuxGroupAccountService<CachedConnector,CachedConnectorFactory> getLinuxGroupAccounts();
+
     public LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes() {
         return linuxGroupTypes;
     }

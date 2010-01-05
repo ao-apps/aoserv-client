@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccountService;
 import com.aoindustries.aoserv.client.LinuxAccountTypeService;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
@@ -173,7 +174,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingLinuxAccAddressService linuxAccAddresss;
      */
     final NoSwingLinuxAccountTypeService linuxAccountTypes;
-    // TODO: final NoSwingLinuxAccountService linuxAccounts;
+    final NoSwingLinuxAccountService linuxAccounts;
     // TODO: final NoSwingLinuxGroupAccountService linuxGroupAccounts;
     final NoSwingLinuxGroupTypeService linuxGroupTypes;
     /* TODO
@@ -368,7 +369,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         languages = new NoSwingLanguageService(this, wrapped.getLanguages());
         // TODO: linuxAccAddresss = new NoSwingLinuxAccAddressService(this, wrapped.getLinuxAccAddresss());
         linuxAccountTypes = new NoSwingLinuxAccountTypeService(this, wrapped.getLinuxAccountTypes());
-        // TODO: linuxAccounts = new NoSwingLinuxAccountService(this, wrapped.getLinuxAccounts());
+        linuxAccounts = new NoSwingLinuxAccountService(this, wrapped.getLinuxAccounts());
         // TODO: linuxGroupAccounts = new NoSwingLinuxGroupAccountService(this, wrapped.getLinuxGroupAccounts());
         linuxGroupTypes = new NoSwingLinuxGroupTypeService(this, wrapped.getLinuxGroupTypes());
         /* TODO
@@ -716,7 +717,10 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         return linuxAccountTypes;
     }
 
-    // TODO: public LinuxAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccounts() throws RemoteException;
+    public LinuxAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxAccounts() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return linuxAccounts;
+    }
 
     // TODO: public LinuxGroupAccountService<NoSwingConnector,NoSwingConnectorFactory> getLinuxGroupAccounts() throws RemoteException;
 

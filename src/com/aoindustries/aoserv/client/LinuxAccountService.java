@@ -1,38 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  LinuxAccount
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> {
+@ServiceAnnotation(ServiceName.linux_accounts)
+public interface LinuxAccountService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,LinuxAccount> {
 
-    LinuxAccountTable(AOServConnector connector) {
-        super(connector, LinuxAccount.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(LinuxAccount.COLUMN_USERNAME_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     void addLinuxAccount(
     	final Username usernameObject,
         final String primaryGroup,
@@ -281,7 +262,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
         } while(PasswordChecker.hasResults(Locale.getDefault(), PasswordChecker.checkPassword(Locale.getDefault(), null, password, true, false)));
         return password;
     }
-    
+
     private static void appendCapped(StringBuilder to, StringBuilder from) {
         int len=from.length();
         if(len>0) {
@@ -290,10 +271,6 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             to.append((char)ch);
             for(int c=1;c<len;c++) to.append(from.charAt(c));
         }
-    }
-    
-    public LinuxAccount get(String username) throws IOException, SQLException {
-        return getUniqueRow(LinuxAccount.COLUMN_USERNAME, username);
     }
 
     public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
@@ -320,10 +297,6 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             ) matches.add(linuxAccount);
         }
         return matches;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.LINUX_ACCOUNTS;
     }
 
     @Override
@@ -452,4 +425,5 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             aoServer.pkey
         );
     }
+     */
 }

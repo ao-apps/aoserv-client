@@ -119,10 +119,8 @@ public enum ServiceName implements LocalizedToString {
     linux_acc_addresses,
      */
     linux_account_types,
-    /* TODO
     linux_accounts,
-    linux_group_accounts,
-     */
+    // TODO: linux_group_accounts,
     linux_group_types,
     /* TODO
     linux_groups,

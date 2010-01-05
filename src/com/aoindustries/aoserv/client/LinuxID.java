@@ -23,11 +23,15 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
 
     private static final long serialVersionUID = 1L;
 
+    public static void validate(int id) throws ValidationException {
+        if(id<0) throw new ValidationException(ApplicationResources.accessor, "LinuxID.validate.lessThanZero", id);
+        if(id>65535) throw new ValidationException(ApplicationResources.accessor, "LinuxID.validate.greaterThan64k", id);
+    }
+
     private static final AtomicReferenceArray<LinuxID> cache = new AtomicReferenceArray<LinuxID>(65536);
 
-    public static LinuxID valueOf(int id) {
-        if(id<0) throw new IllegalArgumentException("id<0: "+id);
-        if(id>65535) throw new IllegalArgumentException("id>65535: "+id);
+    public static LinuxID valueOf(int id) throws ValidationException {
+        validate(id);
         while(true) {
             LinuxID existing = cache.get(id);
             if(existing!=null) return existing;
@@ -38,14 +42,13 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
 
     final private int id;
 
-    private LinuxID(int id) {
+    private LinuxID(int id) throws ValidationException {
         this.id=id;
         validate();
     }
 
-    private void validate() {
-        if(id<0) throw new IllegalArgumentException("id<0: "+id);
-        if(id>65535) throw new IllegalArgumentException("id>65535: "+id);
+    private void validate() throws ValidationException {
+        validate(id);
     }
 
     /**
@@ -59,15 +62,21 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
-        } catch(IllegalArgumentException err) {
+        } catch(ValidationException err) {
             InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
             newErr.initCause(err);
             throw newErr;
         }
     }
 
-    private Object readResolve() {
-        return valueOf(id);
+    private Object readResolve() throws InvalidObjectException {
+        try {
+            return valueOf(id);
+        } catch(ValidationException err) {
+            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+            newErr.initCause(err);
+            throw newErr;
+        }
     }
 
     @Override

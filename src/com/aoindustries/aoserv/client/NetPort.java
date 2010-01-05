@@ -10,7 +10,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
 import java.io.Serializable;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
@@ -24,11 +23,15 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
 
     private static final long serialVersionUID = 1L;
 
+    public static void validate(int port) throws ValidationException {
+        if(port<1) throw new ValidationException(ApplicationResources.accessor, "NetPort.validate.lessThanOne", port);
+        if(port>65535) throw new ValidationException(ApplicationResources.accessor, "NetPort.validate.greaterThan64k", port);
+    }
+
     private static final AtomicReferenceArray<NetPort> cache = new AtomicReferenceArray<NetPort>(65536);
 
-    public static NetPort valueOf(int port) {
-        if(port<1) throw new IllegalArgumentException("port<1: "+port);
-        if(port>65535) throw new IllegalArgumentException("port>65535: "+port);
+    public static NetPort valueOf(int port) throws ValidationException {
+        validate(port);
         while(true) {
             NetPort existing = cache.get(port);
             if(existing!=null) return existing;
@@ -39,14 +42,13 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
 
     final private int port;
 
-    private NetPort(int port) {
+    private NetPort(int port) throws ValidationException {
         this.port=port;
         validate();
     }
 
-    private void validate() {
-        if(port<1) throw new IllegalArgumentException("port<1: "+port);
-        if(port>65535) throw new IllegalArgumentException("port>65535: "+port);
+    private void validate() throws ValidationException {
+        validate(port);
     }
 
     /**
@@ -60,15 +62,21 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
-        } catch(IllegalArgumentException err) {
+        } catch(ValidationException err) {
             InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
             newErr.initCause(err);
             throw newErr;
         }
     }
 
-    private Object readResolve() {
-        return valueOf(port);
+    private Object readResolve() throws InvalidObjectException {
+        try {
+            return valueOf(port);
+        } catch(ValidationException err) {
+            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+            newErr.initCause(err);
+            throw newErr;
+        }
     }
 
     @Override

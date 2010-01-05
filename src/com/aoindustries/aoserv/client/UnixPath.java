@@ -30,9 +30,25 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
 
     private static final long serialVersionUID = 1L;
 
+    public static void validate(String path) throws ValidationException {
+        // Be non-null
+        if(path==null) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.isNull");
+        // Be non-empty
+        if(path.length()==0) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.empty");
+        // Start with a /
+        if(path.charAt(0)!='/') throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.startWithNonSlash", path.charAt(0));
+        // Not contain any null characters
+        if(path.indexOf('\0')!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsNullCharacter", path.indexOf('\0'));
+        // Not contain any /../ or /./ path elements
+        if(path.indexOf("/../")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDotDot", path.indexOf("/../"));
+        if(path.indexOf("/./")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDot", path.indexOf("/./"));
+        // Not contain any // in the path
+        if(path.indexOf("//")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDoubleSlash", path.indexOf("//"));
+    }
+
     private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<String, UnixPath>(16, 0.75F, 1);
 
-    public static UnixPath valueOf(String path) {
+    public static UnixPath valueOf(String path) throws ValidationException {
         UnixPath existing = interned.get(path);
         return existing!=null ? existing : new UnixPath(path);
     }
@@ -43,37 +59,30 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
      * @see  String#intern()
      */
     public UnixPath intern() {
-        UnixPath existing = interned.get(path);
-        if(existing==null) {
-            String internedPath = path.intern();
-            UnixPath addMe = path==internedPath ? this : new UnixPath(internedPath);
-            existing = interned.putIfAbsent(internedPath, addMe);
-            if(existing==null) existing = addMe;
+        try {
+            UnixPath existing = interned.get(path);
+            if(existing==null) {
+                String internedPath = path.intern();
+                UnixPath addMe = path==internedPath ? this : new UnixPath(internedPath);
+                existing = interned.putIfAbsent(internedPath, addMe);
+                if(existing==null) existing = addMe;
+            }
+            return existing;
+        } catch(ValidationException err) {
+            // Should not fail validation since original object passed
+            throw new AssertionError(err.getMessage());
         }
-        return existing;
     }
 
     final private String path;
 
-    private UnixPath(String path) {
+    private UnixPath(String path) throws ValidationException {
         this.path = path;
         validate();
     }
 
-    private void validate() {
-        // Be non-null
-        if(path==null) throw new IllegalArgumentException("path==null");
-        // Be non-empty
-        if(path.length()==0) throw new IllegalArgumentException("path.length()==0");
-        // Start with a /
-        if(path.charAt(0)!='/') throw new IllegalArgumentException("path.charAt(0)!='/': "+path.charAt(0));
-        // Not contain any null characters
-        if(path.indexOf('\0')!=-1) throw new IllegalArgumentException("path.indexOf('\\0')!=-1: "+path.indexOf('\0'));
-        // Not contain any /../ or /./ path elements
-        if(path.indexOf("/../")!=-1) throw new IllegalArgumentException("path.indexOf(\"/../\")!=-1: "+path.indexOf("/../"));
-        if(path.indexOf("/./")!=-1) throw new IllegalArgumentException("path.indexOf(\"/./\")!=-1: "+path.indexOf("/./"));
-        // Not contain any // in the path
-        if(path.indexOf("//")!=-1) throw new IllegalArgumentException("path.indexOf(\"//\")!=-1: "+path.indexOf("//"));
+    private void validate() throws ValidationException {
+        validate(path);
     }
 
     /**
@@ -87,7 +96,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
-        } catch(IllegalArgumentException err) {
+        } catch(ValidationException err) {
             InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
             newErr.initCause(err);
             throw newErr;
@@ -97,7 +106,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
     /**
      * Automatically uses previously interned values on deserialization.
      */
-    private Object readResolve() {
+    private Object readResolve() throws InvalidObjectException {
         UnixPath existing = interned.get(path);
         return existing!=null ? existing : this;
     }

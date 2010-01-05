@@ -178,7 +178,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     LanguageService<C,F> getLanguages() throws RemoteException;
     // TODO: LinuxAccAddressService<C,F> getLinuxAccAddresses() throws RemoteException;
     LinuxAccountTypeService<C,F> getLinuxAccountTypes() throws RemoteException;
-    // TODO: LinuxAccountService<C,F> getLinuxAccounts() throws RemoteException;
+    LinuxAccountService<C,F> getLinuxAccounts() throws RemoteException;
     // TODO: LinuxGroupAccountService<C,F> getLinuxGroupAccounts() throws RemoteException;
     LinuxGroupTypeService<C,F> getLinuxGroupTypes() throws RemoteException;
     /* TODO

@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccountService;
 import com.aoindustries.aoserv.client.LinuxAccountTypeService;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
@@ -188,7 +189,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryLinuxAccAddressService linuxAccAddresss;
      */
     final RetryLinuxAccountTypeService linuxAccountTypes;
-    // TODO: final RetryLinuxAccountService linuxAccounts;
+    final RetryLinuxAccountService linuxAccounts;
     // TODO: final RetryLinuxGroupAccountService linuxGroupAccounts;
     final RetryLinuxGroupTypeService linuxGroupTypes;
     // TODO: final RetryLinuxGroupService linuxGroups;
@@ -383,7 +384,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         languages = new RetryLanguageService(this);
         // TODO: linuxAccAddresss = new RetryLinuxAccAddressService(this);
         linuxAccountTypes = new RetryLinuxAccountTypeService(this);
-        // TODO: linuxAccounts = new RetryLinuxAccountService(this);
+        linuxAccounts = new RetryLinuxAccountService(this);
         // TODO: linuxGroupAccounts = new RetryLinuxGroupAccountService(this);
         linuxGroupTypes = new RetryLinuxGroupTypeService(this);
         // TODO: linuxGroups = new RetryLinuxGroupService(this);
@@ -830,7 +831,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return linuxAccountTypes;
     }
 
-    // TODO: public LinuxAccountService<RetryConnector,RetryConnectorFactory> getLinuxAccounts();
+    public LinuxAccountService<RetryConnector,RetryConnectorFactory> getLinuxAccounts() {
+        return linuxAccounts;
+    }
 
     // TODO: public LinuxGroupAccountService<RetryConnector,RetryConnectorFactory> getLinuxGroupAccounts();
 

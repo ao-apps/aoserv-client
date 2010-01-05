@@ -38,7 +38,11 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanF
         private final UnixPath unixPath;
 
         private Constant(String path) {
-            this.unixPath = UnixPath.valueOf(path).intern();
+            try {
+                this.unixPath = UnixPath.valueOf(path).intern();
+            } catch(ValidationException err) {
+                throw new AssertionError(err.getMessage());
+            }
         }
 
         public UnixPath getUnixPath() {
