@@ -60,35 +60,6 @@ public class AOServObjectUtils {
         return s1<s2 ? -1 : s1==s2 ? 0 : 1;
     }
 
-    public static int compareHostnames(String host1, String host2) {
-        if(host1==host2) return 0;
-        while(host1.length()>0 && host2.length()>0) {
-            int pos=host1.lastIndexOf('.');
-            String section1;
-            if(pos==-1) {
-                section1=host1;
-                host1="";
-            } else {
-                section1=host1.substring(pos+1);
-                host1=host1.substring(0, pos);
-            }
-
-            pos=host2.lastIndexOf('.');
-            String section2;
-            if(pos==-1) {
-                section2=host2;
-                host2="";
-            } else {
-                section2=host2.substring(pos+1);
-                host2=host2.substring(0, pos);
-            }
-
-            int diff=compareIgnoreCaseConsistentWithEquals(section1, section2);
-            if(diff!=0) return diff;
-        }
-        return compareIgnoreCaseConsistentWithEquals(host1, host2);
-    }
-
     /**
      * Returns an unmodifiable set of the provided objects, not including any null values.
      */
@@ -154,7 +125,7 @@ public class AOServObjectUtils {
         return AOServServiceUtils.unmodifiableSet(set);
     }
 
-    private static final ConcurrentMap<Class<? extends AOServObject>,List<MethodColumn>> columns = new ConcurrentHashMap<Class<? extends AOServObject>, List<MethodColumn>>(ServiceName.values.size()*4/3+1, 0.75F, 1);
+    private static final ConcurrentMap<Class<? extends AOServObject>,List<MethodColumn>> columns = new ConcurrentHashMap<Class<? extends AOServObject>, List<MethodColumn>>(ServiceName.values.size()*4/3+1);
 
     /**
      * Gets the columns for the provided class, in column index order.
@@ -262,7 +233,7 @@ public class AOServObjectUtils {
         return methodColumns;
     }
 
-    private static final ConcurrentMap<Class<? extends AOServObject>,Map<String,MethodColumn>> columnMaps = new ConcurrentHashMap<Class<? extends AOServObject>, Map<String,MethodColumn>>(ServiceName.values.size()*4/3+1, 0.75F, 1);
+    private static final ConcurrentMap<Class<? extends AOServObject>,Map<String,MethodColumn>> columnMaps = new ConcurrentHashMap<Class<? extends AOServObject>, Map<String,MethodColumn>>(ServiceName.values.size()*4/3+1);
 
     /**
      * Provides map from getMethodColumns.

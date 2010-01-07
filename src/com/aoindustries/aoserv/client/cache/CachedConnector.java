@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.GroupNameService;
+import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.LinuxAccountGroupService;
 import com.aoindustries.aoserv.client.LinuxAccountService;
@@ -168,18 +169,18 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedHttpdSiteAuthenticatedLocationService httpdSiteAuthenticatedLocations;
     final CachedHttpdSiteBindService httpdSiteBinds;
     final CachedHttpdSiteURLService httpdSiteURLs;
+     */
     final CachedHttpdSiteService httpdSites;
-    final CachedHttpdStaticSiteService httpdStaticSites;
-    final CachedHttpdTomcatContextService httpdTomcatContexts;
-    final CachedHttpdTomcatDataSourceService httpdTomcatDataSources;
-    final CachedHttpdTomcatParameterService httpdTomcatParameters;
-    final CachedHttpdTomcatSiteService httpdTomcatSites;
-    final CachedHttpdTomcatSharedSiteService httpdTomcatSharedSites;
-    final CachedHttpdTomcatStdSiteService httpdTomcatStdSites;
-    final CachedHttpdTomcatVersionService httpdTomcatVersions;
-    final CachedHttpdWorkerService httpdWorkers;
-    final CachedIPAddressService ipAddresss;
-    */
+    // TODO: final CachedHttpdStaticSiteService httpdStaticSites;
+    // TODO: final CachedHttpdTomcatContextService httpdTomcatContexts;
+    // TODO: final CachedHttpdTomcatDataSourceService httpdTomcatDataSources;
+    // TODO: final CachedHttpdTomcatParameterService httpdTomcatParameters;
+    // TODO: final CachedHttpdTomcatSiteService httpdTomcatSites;
+    // TODO: final CachedHttpdTomcatSharedSiteService httpdTomcatSharedSites;
+    // TODO: final CachedHttpdTomcatStdSiteService httpdTomcatStdSites;
+    // TODO: final CachedHttpdTomcatVersionService httpdTomcatVersions;
+    // TODO: final CachedHttpdWorkerService httpdWorkers;
+    // TODO: final CachedIPAddressService ipAddresss;
     final CachedLanguageService languages;
     // TODO: final CachedLinuxAccAddressService linuxAccAddresss;
     final CachedLinuxAccountGroupService linuxAccountGroups;
@@ -371,18 +372,18 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         httpdSiteAuthenticatedLocations = new CachedHttpdSiteAuthenticatedLocationService(this, wrapped.getHttpdSiteAuthenticatedLocations());
         httpdSiteBinds = new CachedHttpdSiteBindService(this, wrapped.getHttpdSiteBinds());
         httpdSiteURLs = new CachedHttpdSiteURLService(this, wrapped.getHttpdSiteURLs());
+         */
         httpdSites = new CachedHttpdSiteService(this, wrapped.getHttpdSites());
-        httpdStaticSites = new CachedHttpdStaticSiteService(this, wrapped.getHttpdStaticSites());
-        httpdTomcatContexts = new CachedHttpdTomcatContextService(this, wrapped.getHttpdTomcatContexts());
-        httpdTomcatDataSources = new CachedHttpdTomcatDataSourceService(this, wrapped.getHttpdTomcatDataSources());
-        httpdTomcatParameters = new CachedHttpdTomcatParameterService(this, wrapped.getHttpdTomcatParameters());
-        httpdTomcatSites = new CachedHttpdTomcatSiteService(this, wrapped.getHttpdTomcatSites());
-        httpdTomcatSharedSites = new CachedHttpdTomcatSharedSiteService(this, wrapped.getHttpdTomcatSharedSites());
-        httpdTomcatStdSites = new CachedHttpdTomcatStdSiteService(this, wrapped.getHttpdTomcatStdSites());
-        httpdTomcatVersions = new CachedHttpdTomcatVersionService(this, wrapped.getHttpdTomcatVersions());
-        httpdWorkers = new CachedHttpdWorkerService(this, wrapped.getHttpdWorkers());
-        ipAddresss = new CachedIPAddressService(this, wrapped.getIPAddresss());
-        */
+        // TODO: httpdStaticSites = new CachedHttpdStaticSiteService(this, wrapped.getHttpdStaticSites());
+        // TODO: httpdTomcatContexts = new CachedHttpdTomcatContextService(this, wrapped.getHttpdTomcatContexts());
+        // TODO: httpdTomcatDataSources = new CachedHttpdTomcatDataSourceService(this, wrapped.getHttpdTomcatDataSources());
+        // TODO: httpdTomcatParameters = new CachedHttpdTomcatParameterService(this, wrapped.getHttpdTomcatParameters());
+        // TODO: httpdTomcatSites = new CachedHttpdTomcatSiteService(this, wrapped.getHttpdTomcatSites());
+        // TODO: httpdTomcatSharedSites = new CachedHttpdTomcatSharedSiteService(this, wrapped.getHttpdTomcatSharedSites());
+        // TODO: httpdTomcatStdSites = new CachedHttpdTomcatStdSiteService(this, wrapped.getHttpdTomcatStdSites());
+        // TODO: httpdTomcatVersions = new CachedHttpdTomcatVersionService(this, wrapped.getHttpdTomcatVersions());
+        // TODO: httpdWorkers = new CachedHttpdWorkerService(this, wrapped.getHttpdWorkers());
+        // TODO: ipAddresss = new CachedIPAddressService(this, wrapped.getIPAddresss());
         languages = new CachedLanguageService(this, wrapped.getLanguages());
         /* TODO
         linuxAccAddresss = new CachedLinuxAccAddressService(this, wrapped.getLinuxAccAddresss());
@@ -690,9 +691,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public HttpdSiteBindService<CachedConnector,CachedConnectorFactory> getHttpdSiteBinds();
 
     public HttpdSiteURLService<CachedConnector,CachedConnectorFactory> getHttpdSiteURLs();
-
-    public HttpdSiteService<CachedConnector,CachedConnectorFactory> getHttpdSites();
-
+    */
+    public HttpdSiteService<CachedConnector,CachedConnectorFactory> getHttpdSites() {
+        return httpdSites;
+    }
+    /* TODO
     public HttpdStaticSiteService<CachedConnector,CachedConnectorFactory> getHttpdStaticSites();
 
     public HttpdTomcatContextService<CachedConnector,CachedConnectorFactory> getHttpdTomcatContexts();

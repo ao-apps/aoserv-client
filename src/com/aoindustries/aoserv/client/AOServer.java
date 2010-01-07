@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
@@ -24,7 +25,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String hostname;
+    final private DomainName hostname;
     final private Integer daemonBind;
     final private String daemonKey;
     final private int poolSize;
@@ -46,7 +47,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     public AOServer(
         AOServerService<?,?> service,
         int server,
-        String hostname,
+        DomainName hostname,
         Integer daemonBind,
         String daemonKey,
         int poolSize,
@@ -90,7 +91,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(AOServer other) {
-        return AOServObjectUtils.compareHostnames(hostname, other.hostname);
+        return hostname.compareTo(other.hostname);
     }
     // </editor-fold>
 
@@ -106,7 +107,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
      * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
      */
     @SchemaColumn(order=1, name="hostname", index=IndexType.UNIQUE, description="the unique hostname of the server")
-    public String getHostname() {
+    public DomainName getHostname() {
         return hostname;
     }
 
@@ -251,7 +252,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.AOServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServer(key, hostname, daemonBind, daemonKey, poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, daemonConnectAddress, failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
+        return new com.aoindustries.aoserv.client.beans.AOServer(key, hostname.getBean(), daemonBind, daemonKey, poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, daemonConnectAddress, failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 
@@ -445,7 +446,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     protected String toStringImpl(Locale userLocale) {
-        return hostname;
+        return hostname.toString();
     }
     // </editor-fold>
 
@@ -482,8 +483,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         String serverAdmin,
         boolean useApache,
         IPAddress ipAddress,
-        String primaryHttpHostname,
-        String[] altHttpHostnames,
+        DomainName primaryHttpHostname,
+        DomainName[] altHttpHostnames,
         int jBossVersion
     ) throws IOException, SQLException {
         return getService().getConnector().getHttpdJBossSites().addHttpdJBossSite(
@@ -528,8 +529,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         String serverAdmin,
         boolean useApache,
         IPAddress ipAddress,
-        String primaryHttpHostname,
-        String[] altHttpHostnames,
+        DomainName primaryHttpHostname,
+        DomainName[] altHttpHostnames,
         String sharedTomcatName
     ) throws IOException, SQLException {
         return getService().getConnector().getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
@@ -555,8 +556,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         String serverAdmin,
         boolean useApache,
         IPAddress ipAddress,
-        String primaryHttpHostname,
-        String[] altHttpHostnames,
+        DomainName primaryHttpHostname,
+        DomainName[] altHttpHostnames,
         HttpdTomcatVersion tomcatVersion
     ) throws IOException, SQLException {
         return getService().getConnector().getHttpdTomcatStdSites().addHttpdTomcatStdSite(
@@ -963,7 +964,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         }
 
         final private String device;
-        final private String resourceHostname;
+        final private DomainName resourceHostname;
         final private String resourceDevice;
         final private ConnectionState connectionState;
         final private DiskState localDiskState;
@@ -973,7 +974,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
         DrbdReport(
             String device,
-            String resourceHostname,
+            DomainName resourceHostname,
             String resourceDevice,
             ConnectionState connectionState,
             DiskState localDiskState,
@@ -1019,7 +1020,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             return resourceDevice;
         }
 
-        public String getResourceHostname() {
+        public DomainName getResourceHostname() {
             return resourceHostname;
         }
     }
@@ -1078,7 +1079,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
                 ),
                 lineNum
             );
-            String domUHostname = resource.substring(0, dashPos);
+            DomainName domUHostname = resource.substring(0, dashPos);
             String domUDevice = resource.substring(dashPos+1);
             if(
                 domUDevice.length()!=4

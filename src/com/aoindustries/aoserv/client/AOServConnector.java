@@ -166,18 +166,18 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     HttpdSiteAuthenticatedLocationService<C,F> getHttpdSiteAuthenticatedLocations() throws RemoteException;
     HttpdSiteBindService<C,F> getHttpdSiteBinds() throws RemoteException;
     HttpdSiteURLService<C,F> getHttpdSiteURLs() throws RemoteException;
+     */
     HttpdSiteService<C,F> getHttpdSites() throws RemoteException;
-    HttpdStaticSiteService<C,F> getHttpdStaticSites() throws RemoteException;
-    HttpdTomcatContextService<C,F> getHttpdTomcatContexts() throws RemoteException;
-    HttpdTomcatDataSourceService<C,F> getHttpdTomcatDataSources() throws RemoteException;
-    HttpdTomcatParameterService<C,F> getHttpdTomcatParameters() throws RemoteException;
-    HttpdTomcatSiteService<C,F> getHttpdTomcatSites() throws RemoteException;
-    HttpdTomcatSharedSiteService<C,F> getHttpdTomcatSharedSites() throws RemoteException;
-    HttpdTomcatStdSiteService<C,F> getHttpdTomcatStdSites() throws RemoteException;
-    HttpdTomcatVersionService<C,F> getHttpdTomcatVersions() throws RemoteException;
-    HttpdWorkerService<C,F> getHttpdWorkers() throws RemoteException;
-    IPAddressService<C,F> getIpAddresses() throws RemoteException;
-    */
+    // TODO: HttpdStaticSiteService<C,F> getHttpdStaticSites() throws RemoteException;
+    // TODO: HttpdTomcatContextService<C,F> getHttpdTomcatContexts() throws RemoteException;
+    // TODO: HttpdTomcatDataSourceService<C,F> getHttpdTomcatDataSources() throws RemoteException;
+    // TODO: HttpdTomcatParameterService<C,F> getHttpdTomcatParameters() throws RemoteException;
+    // TODO: HttpdTomcatSiteService<C,F> getHttpdTomcatSites() throws RemoteException;
+    // TODO: HttpdTomcatSharedSiteService<C,F> getHttpdTomcatSharedSites() throws RemoteException;
+    // TODO: HttpdTomcatStdSiteService<C,F> getHttpdTomcatStdSites() throws RemoteException;
+    // TODO: HttpdTomcatVersionService<C,F> getHttpdTomcatVersions() throws RemoteException;
+    // TODO: HttpdWorkerService<C,F> getHttpdWorkers() throws RemoteException;
+    // TODO: IPAddressService<C,F> getIpAddresses() throws RemoteException;
     LanguageService<C,F> getLanguages() throws RemoteException;
     // TODO: LinuxAccAddressService<C,F> getLinuxAccAddresses() throws RemoteException;
     LinuxAccountGroupService<C,F> getLinuxAccountGroups() throws RemoteException;

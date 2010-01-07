@@ -58,7 +58,7 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="java.util.TimeZone compatibility">
-    private static final ConcurrentMap<String,java.util.TimeZone> timeZones = new ConcurrentHashMap<String,java.util.TimeZone>(16, 0.75F, 1);
+    private static final ConcurrentMap<String,java.util.TimeZone> timeZones = new ConcurrentHashMap<String,java.util.TimeZone>();
 
     /**
      * Gets the Java TimeZone for this TimeZone.

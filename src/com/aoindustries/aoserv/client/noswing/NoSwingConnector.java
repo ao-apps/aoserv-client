@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.GroupNameService;
+import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.LinuxAccountGroupService;
 import com.aoindustries.aoserv.client.LinuxAccountService;
@@ -163,7 +164,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingHttpdSiteAuthenticatedLocationService httpdSiteAuthenticatedLocations;
     final NoSwingHttpdSiteBindService httpdSiteBinds;
     final NoSwingHttpdSiteURLService httpdSiteURLs;
+     */
     final NoSwingHttpdSiteService httpdSites;
+    /* TODO
     final NoSwingHttpdStaticSiteService httpdStaticSites;
     final NoSwingHttpdTomcatContextService httpdTomcatContexts;
     final NoSwingHttpdTomcatDataSourceService httpdTomcatDataSources;
@@ -362,7 +365,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         httpdSiteAuthenticatedLocations = new NoSwingHttpdSiteAuthenticatedLocationService(this, wrapped.getHttpdSiteAuthenticatedLocations());
         httpdSiteBinds = new NoSwingHttpdSiteBindService(this, wrapped.getHttpdSiteBinds());
         httpdSiteURLs = new NoSwingHttpdSiteURLService(this, wrapped.getHttpdSiteURLs());
+         */
         httpdSites = new NoSwingHttpdSiteService(this, wrapped.getHttpdSites());
+        /* TODO
         httpdStaticSites = new NoSwingHttpdStaticSiteService(this, wrapped.getHttpdStaticSites());
         httpdTomcatContexts = new NoSwingHttpdTomcatContextService(this, wrapped.getHttpdTomcatContexts());
         httpdTomcatDataSources = new NoSwingHttpdTomcatDataSourceService(this, wrapped.getHttpdTomcatDataSources());
@@ -694,9 +699,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public HttpdSiteBindService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSiteBinds() throws RemoteException;
 
     public HttpdSiteURLService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSiteURLs() throws RemoteException;
-
-    public HttpdSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSites() throws RemoteException;
-
+    */
+    public HttpdSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdSites() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return httpdSites;
+    }
+    /* TODO
     public HttpdStaticSiteService<NoSwingConnector,NoSwingConnectorFactory> getHttpdStaticSites() throws RemoteException;
 
     public HttpdTomcatContextService<NoSwingConnector,NoSwingConnectorFactory> getHttpdTomcatContexts() throws RemoteException;

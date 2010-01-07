@@ -267,7 +267,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Parameter Encoding">
-    private static final ConcurrentMap<String,Map<String,String>> getMonitoringParametersCache = new ConcurrentHashMap<String,Map<String,String>>(16, 0.75F, 1);
+    private static final ConcurrentMap<String,Map<String,String>> getMonitoringParametersCache = new ConcurrentHashMap<String,Map<String,String>>();
 
     public static Map<String,String> decodeParameters(String monitoringParameters) {
         if(monitoringParameters==null) return Collections.emptyMap();

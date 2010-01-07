@@ -19,7 +19,7 @@ public class PostgresVersion {
 
     public PostgresVersion(int version, String minorVersion, Integer postgisVersion) {
         this.version = version;
-        this.minorVersion = minorVersion.intern();
+        this.minorVersion = minorVersion;
         this.postgisVersion = postgisVersion;
     }
 

@@ -13,7 +13,7 @@ import java.util.Date;
 public class AOServer {
 
     private int server;
-    private String hostname;
+    private DomainName hostname;
     private Integer daemonBind;
     private String daemonKey;
     private int poolSize;
@@ -37,7 +37,7 @@ public class AOServer {
 
     public AOServer(
         int server,
-        String hostname,
+        DomainName hostname,
         Integer daemonBind,
         String daemonKey,
         int poolSize,
@@ -85,11 +85,11 @@ public class AOServer {
         this.server = server;
     }
 
-    public String getHostname() {
+    public DomainName getHostname() {
         return hostname;
     }
 
-    public void setHostname(String hostname) {
+    public void setHostname(DomainName hostname) {
         this.hostname = hostname;
     }
 

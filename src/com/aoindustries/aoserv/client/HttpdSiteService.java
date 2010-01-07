@@ -1,68 +1,45 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.io.WriterOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  HttpdSite
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
+@ServiceAnnotation(ServiceName.httpd_sites)
+public interface HttpdSiteService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,HttpdSite> {
 
-    HttpdSiteTable(AOServConnector connector) {
-    	super(connector, HttpdSite.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
-        new OrderBy(HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     public String generateSiteName(String template) throws IOException, SQLException {
     	return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_SITE_NAME, template);
-    }
-
-    public HttpdSite get(int pkey) throws IOException, SQLException {
-    	return getUniqueRow(HttpdSite.COLUMN_PKEY, pkey);
     }
 
     HttpdSite getHttpdSite(String siteName, AOServer ao) throws IOException, SQLException {
         int aoPKey=ao.pkey;
 
         List<HttpdSite> cached=getRows();
-	int size=cached.size();
-	for(int c=0;c<size;c++) {
+        int size=cached.size();
+        for(int c=0;c<size;c++) {
             HttpdSite site=cached.get(c);
             if(
                 site.ao_server==aoPKey
                 && site.site_name.equals(siteName)
             ) return site;
-	}
-	return null;
+        }
+        return null;
     }
 
     List<HttpdSite> getHttpdSites(HttpdServer server) throws IOException, SQLException {
         int serverPKey=server.pkey;
 
         List<HttpdSite> cached=getRows();
-	int size=cached.size();
+    	int size=cached.size();
         List<HttpdSite> matches=new ArrayList<HttpdSite>(size);
-	for(int c=0;c<size;c++) {
+    	for(int c=0;c<size;c++) {
             HttpdSite site=cached.get(c);
             for(HttpdSiteBind bind : site.getHttpdSiteBinds()) {
                 if(bind.getHttpdBind().httpd_server==serverPKey) {
@@ -70,8 +47,8 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
                     break;
                 }
             }
-	}
-	return matches;
+        }
+        return matches;
     }
 
     List<HttpdSite> getHttpdSites(AOServer ao) throws IOException, SQLException {
@@ -80,10 +57,6 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 
     List<HttpdSite> getHttpdSites(Business bu) throws IOException, SQLException {
         return getIndexedRows(HttpdSite.COLUMN_ACCOUNTING, bu.pkey);
-    }
-
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.HTTPD_SITES;
     }
 
     @Override
@@ -136,17 +109,16 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
                 out.flush();
             }
             return true;
-        /*} else if(command.equalsIgnoreCase(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE)) {
-            if(AOSH.checkParamCount(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE, args, 4, err)) {
-                connector.getSimpleAOClient().initializeHttpdSitePasswdFile(
-                    args[1],
-                    args[2],
-                    args[3],
-                    args[4]
-                );
-            }
-            return true;
-         */
+//        } else if(command.equalsIgnoreCase(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE)) {
+//            if(AOSH.checkParamCount(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE, args, 4, err)) {
+//                connector.getSimpleAOClient().initializeHttpdSitePasswdFile(
+//                    args[1],
+//                    args[2],
+//                    args[3],
+//                    args[4]
+//                );
+//            }
+//            return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.IS_SITE_NAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_SITE_NAME_AVAILABLE, args, 1, err)) {
                 out.println(connector.getSimpleAOClient().isSiteNameAvailable(args[1]));
@@ -192,4 +164,5 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
             aoServer.pkey
         );
     }
+     */
 }

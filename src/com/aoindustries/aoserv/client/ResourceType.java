@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -34,9 +34,7 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         drupal,
         failover,
         hardware_disk_7200_120,
-        httpd,
         ip,
-        javavm,
         joomla,
         mysql_database,
         mysql_replication,
@@ -51,14 +49,22 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         server_p4,
         server_scsi,
         server_xeon,
-        site,
         sysadmin,
+        httpd_server,
+        httpd_shared_tomcat,
+        // linux_account types
         shell_account,
         email_inbox,
         ftponly_account,
         system_account,
+        // linux_group types
         shell_group,
-        system_group
+        system_group,
+        // httpd_site types
+        httpd_jboss_site,
+        httpd_static_site,
+        httpd_tomcat_shared_site,
+        httpd_tomcat_std_site
     }
     // </editor-fold>
 

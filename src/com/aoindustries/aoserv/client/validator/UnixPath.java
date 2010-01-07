@@ -35,50 +35,32 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
     public static void validate(String path) throws ValidationException {
         // Be non-null
         if(path==null) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.isNull");
-        // Be non-empty
-        if(path.length()==0) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.empty");
-        // Start with a /
-        if(path.charAt(0)!='/') throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.startWithNonSlash", path.charAt(0));
-        // Not contain any null characters
-        if(path.indexOf('\0')!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsNullCharacter", path.indexOf('\0'));
-        // Not contain any /../ or /./ path elements
-        if(path.indexOf("/../")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDotDot", path.indexOf("/../"));
-        if(path.indexOf("/./")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDot", path.indexOf("/./"));
-        // Not end with / unless "/"
-        if(path.length()>1 && path.endsWith("/")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlash");
-        // Not end with /.. or /.
-        if(path.endsWith("/.")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDot");
-        if(path.endsWith("/..")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDotDot");
-        // Not contain any // in the path
-        if(path.indexOf("//")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDoubleSlash", path.indexOf("//"));
+        // If found in interned, it is valid
+        if(!interned.containsKey(path)) {
+            // Be non-empty
+            if(path.length()==0) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.empty");
+            // Start with a /
+            if(path.charAt(0)!='/') throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.startWithNonSlash", path.charAt(0));
+            // Not contain any null characters
+            if(path.indexOf('\0')!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsNullCharacter", path.indexOf('\0'));
+            // Not contain any /../ or /./ path elements
+            if(path.indexOf("/../")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDotDot", path.indexOf("/../"));
+            if(path.indexOf("/./")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDot", path.indexOf("/./"));
+            // Not end with / unless "/"
+            if(path.length()>1 && path.endsWith("/")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlash");
+            // Not end with /.. or /.
+            if(path.endsWith("/.")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDot");
+            if(path.endsWith("/..")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDotDot");
+            // Not contain any // in the path
+            if(path.indexOf("//")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDoubleSlash", path.indexOf("//"));
+        }
     }
 
-    private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<String, UnixPath>(16, 0.75F, 1);
+    private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<String, UnixPath>();
 
     public static UnixPath valueOf(String path) throws ValidationException {
         UnixPath existing = interned.get(path);
         return existing!=null ? existing : new UnixPath(path);
-    }
-
-    /**
-     * Interns this path much in the same fashion as <code>String.intern()</code>.
-     *
-     * @see  String#intern()
-     */
-    public UnixPath intern() {
-        try {
-            UnixPath existing = interned.get(path);
-            if(existing==null) {
-                String internedPath = path.intern();
-                UnixPath addMe = path==internedPath ? this : new UnixPath(internedPath);
-                existing = interned.putIfAbsent(internedPath, addMe);
-                if(existing==null) existing = addMe;
-            }
-            return existing;
-        } catch(ValidationException err) {
-            // Should not fail validation since original object passed
-            throw new AssertionError(err.getMessage());
-        }
     }
 
     final private String path;
@@ -133,12 +115,33 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
     }
 
     public int compareTo(UnixPath other) {
-        return path==other.path ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
     }
 
     @Override
     public String toString() {
         return path;
+    }
+
+    /**
+     * Interns this path much in the same fashion as <code>String.intern()</code>.
+     *
+     * @see  String#intern()
+     */
+    public UnixPath intern() {
+        try {
+            UnixPath existing = interned.get(path);
+            if(existing==null) {
+                String internedPath = path.intern();
+                UnixPath addMe = path==internedPath ? this : new UnixPath(internedPath);
+                existing = interned.putIfAbsent(internedPath, addMe);
+                if(existing==null) existing = addMe;
+            }
+            return existing;
+        } catch(ValidationException err) {
+            // Should not fail validation since original object passed
+            throw new AssertionError(err.getMessage());
+        }
     }
 
     public String getPath() {

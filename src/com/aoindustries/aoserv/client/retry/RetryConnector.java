@@ -22,6 +22,7 @@ import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.GroupNameService;
+import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.LinuxAccountGroupService;
 import com.aoindustries.aoserv.client.LinuxAccountService;
@@ -178,7 +179,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryHttpdSiteAuthenticatedLocationService httpdSiteAuthenticatedLocations;
     final RetryHttpdSiteBindService httpdSiteBinds;
     final RetryHttpdSiteURLService httpdSiteURLs;
+     */
     final RetryHttpdSiteService httpdSites;
+    /* TODO
     final RetryHttpdStaticSiteService httpdStaticSites;
     final RetryHttpdTomcatContextService httpdTomcatContexts;
     final RetryHttpdTomcatDataSourceService httpdTomcatDataSources;
@@ -378,7 +381,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         httpdSiteAuthenticatedLocations = new RetryHttpdSiteAuthenticatedLocationService(this);
         httpdSiteBinds = new RetryHttpdSiteBindService(this);
         httpdSiteURLs = new RetryHttpdSiteURLService(this);
+         */
         httpdSites = new RetryHttpdSiteService(this);
+        /* TODO
         httpdStaticSites = new RetryHttpdStaticSiteService(this);
         httpdTomcatContexts = new RetryHttpdTomcatContextService(this);
         httpdTomcatDataSources = new RetryHttpdTomcatDataSourceService(this);
@@ -811,9 +816,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public HttpdSiteBindService<RetryConnector,RetryConnectorFactory> getHttpdSiteBinds();
 
     public HttpdSiteURLService<RetryConnector,RetryConnectorFactory> getHttpdSiteURLs();
-
-    public HttpdSiteService<RetryConnector,RetryConnectorFactory> getHttpdSites();
-
+    */
+    public HttpdSiteService<RetryConnector,RetryConnectorFactory> getHttpdSites() {
+        return httpdSites;
+    }
+    /* TODO
     public HttpdStaticSiteService<RetryConnector,RetryConnectorFactory> getHttpdStaticSites();
 
     public HttpdTomcatContextService<RetryConnector,RetryConnectorFactory> getHttpdTomcatContexts();
