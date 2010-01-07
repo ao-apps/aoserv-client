@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -93,7 +95,11 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the PostgreSQL user")
     public Username getUsername() throws RemoteException {
-        return getService().getConnector().getUsernames().get(username);
+        try {
+            return getService().getConnector().getUsernames().get(UserId.valueOf(username));
+        } catch(ValidationException err) {
+            throw new RemoteException(err.getLocalizedMessage(getService().getConnector().getLocale()));
+        }
     }
 
     static final String COLUMN_POSTGRES_SERVER = "postgres_server";

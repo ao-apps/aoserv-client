@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
@@ -79,7 +80,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
     final private boolean autoEnable;
     final private boolean billParent;
     final private int packageDefinition;
-    final private String createdBy;
+    final private UserId createdBy;
     final private Integer emailInBurst;
     final private Float emailInRate;
     final private Integer emailOutBurst;
@@ -103,7 +104,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
         boolean autoEnable,
         boolean billParent,
         int packageDefinition,
-        String createdBy,
+        UserId createdBy,
         Integer emailInBurst,
         Float emailInRate,
         Integer emailOutBurst,
@@ -125,7 +126,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
         this.autoEnable = autoEnable;
         this.billParent = billParent;
         this.packageDefinition = packageDefinition;
-        this.createdBy = StringUtility.intern(createdBy);
+        this.createdBy = createdBy==null ? null : createdBy.intern();
         this.emailInBurst = emailInBurst;
         this.emailInRate = emailInRate;
         this.emailOutBurst = emailOutBurst;
@@ -284,7 +285,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Business getBean() {
-        return new com.aoindustries.aoserv.client.beans.Business(parent, contractVersion, created, canceled, cancelReason, parent, canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, createdBy, emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
+        return new com.aoindustries.aoserv.client.beans.Business(parent, contractVersion, created, canceled, cancelReason, parent, canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, createdBy==null ? null : createdBy.getBean(), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
     // </editor-fold>
 

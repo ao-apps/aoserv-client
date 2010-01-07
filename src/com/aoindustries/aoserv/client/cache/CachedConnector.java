@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
-import com.aoindustries.aoserv.client.MySQLReservedWordService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
@@ -42,7 +41,6 @@ import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.PostgresDatabaseService;
 import com.aoindustries.aoserv.client.PostgresEncodingService;
-import com.aoindustries.aoserv.client.PostgresReservedWordService;
 import com.aoindustries.aoserv.client.PostgresServerService;
 import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
@@ -63,6 +61,7 @@ import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
 import com.aoindustries.aoserv.client.UsernameService;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -80,8 +79,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedConnectorFactory factory;
     final AOServConnector<?,?> wrapped;
     Locale locale;
-    final String connectAs;
-    private final String authenticateAs;
+    final UserId connectAs;
+    private final UserId authenticateAs;
     private final String password;
     /* TODO
     final CachedAOServerDaemonHostService aoserverDaemonHosts;
@@ -202,7 +201,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
      */
     final CachedMySQLDatabaseService mysqlDatabases;
     final CachedMySQLDBUserService mysqlDBUsers;
-    final CachedMySQLReservedWordService mysqlReservedWords;
     final CachedMySQLServerService mysqlServers;
     final CachedMySQLUserService mysqlUsers;
     final CachedNetBindService netBinds;
@@ -227,7 +225,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
      */
     final CachedPostgresDatabaseService postgresDatabases;
     final CachedPostgresEncodingService postgresEncodings;
-    final CachedPostgresReservedWordService postgresReservedWords;
     final CachedPostgresServerService postgresServers;
     final CachedPostgresUserService postgresUsers;
     final CachedPostgresVersionService postgresVersions;
@@ -407,7 +404,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
          */
         mysqlDatabases = new CachedMySQLDatabaseService(this, wrapped.getMysqlDatabases());
         mysqlDBUsers = new CachedMySQLDBUserService(this, wrapped.getMysqlDBUsers());
-        mysqlReservedWords = new CachedMySQLReservedWordService(this, wrapped.getMysqlReservedWords());
         mysqlServers = new CachedMySQLServerService(this, wrapped.getMysqlServers());
         mysqlUsers = new CachedMySQLUserService(this, wrapped.getMysqlUsers());
         netBinds = new CachedNetBindService(this, wrapped.getNetBinds());
@@ -432,7 +428,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
          */
         postgresDatabases = new CachedPostgresDatabaseService(this, wrapped.getPostgresDatabases());
         postgresEncodings = new CachedPostgresEncodingService(this, wrapped.getPostgresEncodings());
-        postgresReservedWords = new CachedPostgresReservedWordService(this, wrapped.getPostgresReservedWords());
         postgresServers = new CachedPostgresServerService(this, wrapped.getPostgresServers());
         postgresUsers = new CachedPostgresUserService(this, wrapped.getPostgresUsers());
         postgresVersions = new CachedPostgresVersionService(this, wrapped.getPostgresVersions());
@@ -500,7 +495,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
 
-    public String getConnectAs() {
+    public UserId getConnectAs() {
         return connectAs;
     }
 
@@ -510,7 +505,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return obj;
     }
 
-    public String getAuthenticateAs() {
+    public UserId getAuthenticateAs() {
         return authenticateAs;
     }
 
@@ -770,10 +765,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return mysqlDBUsers;
     }
 
-    public MySQLReservedWordService<CachedConnector,CachedConnectorFactory> getMysqlReservedWords() {
-        return mysqlReservedWords;
-    }
-
     public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers() {
         return mysqlServers;
     }
@@ -828,10 +819,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
 
     public PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings() {
         return postgresEncodings;
-    }
-
-    public PostgresReservedWordService<CachedConnector,CachedConnectorFactory> getPostgresReservedWords() {
-        return postgresReservedWords;
     }
 
     public PostgresServerService<CachedConnector,CachedConnectorFactory> getPostgresServers() {

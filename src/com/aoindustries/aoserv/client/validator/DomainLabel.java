@@ -32,6 +32,8 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
 
     private static final long serialVersionUID = 1L;
 
+    public static final int MAX_LENGTH = 63;
+
     /**
      * Validates a domain name label.
      */
@@ -39,7 +41,7 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
         if(label==null) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.isNull");
         int len = label.length();
         if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.empty");
-        if(len>63) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.tooLong", len);
+        if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.tooLong", MAX_LENGTH, len);
         boolean foundNonDigit = false;
         for(int pos=0; pos<len; pos++) {
             char ch = label.charAt(pos);

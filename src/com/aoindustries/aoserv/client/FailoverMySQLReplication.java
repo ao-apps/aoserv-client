@@ -26,10 +26,10 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     final private Integer aoServer;
     final private Integer replication;
     final private int mysqlServer;
-    final private int monitoringSecondsBehindLow;
-    final private int monitoringSecondsBehindMedium;
-    final private int monitoringSecondsBehindHigh;
-    final private int monitoringSecondsBehindCritical;
+    final private Integer monitoringSecondsBehindLow;
+    final private Integer monitoringSecondsBehindMedium;
+    final private Integer monitoringSecondsBehindHigh;
+    final private Integer monitoringSecondsBehindCritical;
 
     public FailoverMySQLReplication(
         FailoverMySQLReplicationService<?,?> service,
@@ -37,10 +37,10 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
         Integer aoServer,
         Integer replication,
         int mysqlServer,
-        int monitoringSecondsBehindLow,
-        int monitoringSecondsBehindMedium,
-        int monitoringSecondsBehindHigh,
-        int monitoringSecondsBehindCritical
+        Integer monitoringSecondsBehindLow,
+        Integer monitoringSecondsBehindMedium,
+        Integer monitoringSecondsBehindHigh,
+        Integer monitoringSecondsBehindCritical
     ) {
         super(service, pkey);
         this.aoServer = aoServer;
@@ -89,22 +89,22 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     }
 
     @SchemaColumn(order=4, name="monitoring_seconds_behind_low", description="the seconds behind where will trigger low alert level")
-    public int getMonitoringSecondsBehindLow() {
+    public Integer getMonitoringSecondsBehindLow() {
         return monitoringSecondsBehindLow;
     }
 
     @SchemaColumn(order=5, name="monitoring_seconds_behind_medium", description="the seconds behind where will trigger medium alert level")
-    public int getMonitoringSecondsBehindMedium() {
+    public Integer getMonitoringSecondsBehindMedium() {
         return monitoringSecondsBehindMedium;
     }
 
     @SchemaColumn(order=6, name="monitoring_seconds_behind_high", description="the seconds behind where will trigger high alert level")
-    public int getMonitoringSecondsBehindHigh() {
+    public Integer getMonitoringSecondsBehindHigh() {
         return monitoringSecondsBehindHigh;
     }
 
     @SchemaColumn(order=7, name="monitoring_seconds_behind_critical", description="the seconds behind where will trigger critical alert level")
-    public int getMonitoringSecondsBehindCritical() {
+    public Integer getMonitoringSecondsBehindCritical() {
         return monitoringSecondsBehindCritical;
     }
     // </editor-fold>

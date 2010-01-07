@@ -50,6 +50,10 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
         return connector;
     }
 
+    final public boolean isAoServObjectServiceSettable() {
+        return true;
+    }
+
     final public Set<V> getSet() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return AOServServiceUtils.setServices(wrapped.getSet(), this);

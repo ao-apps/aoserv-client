@@ -15,7 +15,7 @@ public class DisableLog {
     private int pkey;
     private Date time;
     private String accounting;
-    private String disabledBy;
+    private UserId disabledBy;
     private String disableReason;
 
     public DisableLog() {
@@ -25,7 +25,7 @@ public class DisableLog {
         int pkey,
         Date time,
         String accounting,
-        String disabledBy,
+        UserId disabledBy,
         String disableReason
     ) {
         this.pkey = pkey;
@@ -59,11 +59,11 @@ public class DisableLog {
         this.accounting = accounting;
     }
 
-    public String getDisabledBy() {
+    public UserId getDisabledBy() {
         return disabledBy;
     }
 
-    public void setDisabledBy(String disabledBy) {
+    public void setDisabledBy(UserId disabledBy) {
         this.disabledBy = disabledBy;
     }
 

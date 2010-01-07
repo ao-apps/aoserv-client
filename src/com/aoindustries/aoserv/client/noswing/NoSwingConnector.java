@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
-import com.aoindustries.aoserv.client.MySQLReservedWordService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
@@ -42,7 +41,6 @@ import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.PostgresDatabaseService;
 import com.aoindustries.aoserv.client.PostgresEncodingService;
-import com.aoindustries.aoserv.client.PostgresReservedWordService;
 import com.aoindustries.aoserv.client.PostgresServerService;
 import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
@@ -63,6 +61,7 @@ import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
 import com.aoindustries.aoserv.client.UsernameService;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -201,7 +200,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
      */
     final NoSwingMySQLDatabaseService mysqlDatabases;
     final NoSwingMySQLDBUserService mysqlDBUsers;
-    final NoSwingMySQLReservedWordService mysqlReservedWords;
     final NoSwingMySQLServerService mysqlServers;
     final NoSwingMySQLUserService mysqlUsers;
     final NoSwingNetBindService netBinds;
@@ -226,7 +224,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
      */
     final NoSwingPostgresDatabaseService postgresDatabases;
     final NoSwingPostgresEncodingService postgresEncodings;
-    final NoSwingPostgresReservedWordService postgresReservedWords;
     final NoSwingPostgresServerService postgresServers;
     final NoSwingPostgresUserService postgresUsers;
     final NoSwingPostgresVersionService postgresVersions;
@@ -400,7 +397,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
          */
         mysqlDatabases = new NoSwingMySQLDatabaseService(this, wrapped.getMysqlDatabases());
         mysqlDBUsers = new NoSwingMySQLDBUserService(this, wrapped.getMysqlDBUsers());
-        mysqlReservedWords = new NoSwingMySQLReservedWordService(this, wrapped.getMysqlReservedWords());
         mysqlServers = new NoSwingMySQLServerService(this, wrapped.getMysqlServers());
         mysqlUsers = new NoSwingMySQLUserService(this, wrapped.getMysqlUsers());
         netBinds = new NoSwingNetBindService(this, wrapped.getNetBinds());
@@ -425,7 +421,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
          */
         postgresDatabases = new NoSwingPostgresDatabaseService(this, wrapped.getPostgresDatabases());
         postgresEncodings = new NoSwingPostgresEncodingService(this, wrapped.getPostgresEncodings());
-        postgresReservedWords = new NoSwingPostgresReservedWordService(this, wrapped.getPostgresReservedWords());
         postgresServers = new NoSwingPostgresServerService(this, wrapped.getPostgresServers());
         postgresUsers = new NoSwingPostgresUserService(this, wrapped.getPostgresUsers());
         postgresVersions = new NoSwingPostgresVersionService(this, wrapped.getPostgresVersions());
@@ -491,19 +486,19 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         wrapped.setLocale(locale);
     }
 
-    public String getConnectAs() throws RemoteException {
+    public UserId getConnectAs() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return wrapped.getConnectAs();
     }
 
     public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
-        String connectAs = getConnectAs();
+        UserId connectAs = getConnectAs();
         BusinessAdministrator obj = getBusinessAdministrators().get(connectAs);
         if(obj==null) throw new RemoteException("Unable to find BusinessAdministrator: "+connectAs);
         return obj;
     }
 
-    public String getAuthenticateAs() throws RemoteException {
+    public UserId getAuthenticateAs() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return wrapped.getAuthenticateAs();
     }
@@ -787,11 +782,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         return mysqlDBUsers;
     }
 
-    public MySQLReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getMysqlReservedWords() throws RemoteException {
-        NoSwingConnectorFactory.checkNotSwing();
-        return mysqlReservedWords;
-    }
-
     public MySQLServerService<NoSwingConnector,NoSwingConnectorFactory> getMysqlServers() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return mysqlServers;
@@ -856,11 +846,6 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public PostgresEncodingService<NoSwingConnector,NoSwingConnectorFactory> getPostgresEncodings() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return postgresEncodings;
-    }
-
-    public PostgresReservedWordService<NoSwingConnector,NoSwingConnectorFactory> getPostgresReservedWords() throws RemoteException {
-        NoSwingConnectorFactory.checkNotSwing();
-        return postgresReservedWords;
     }
 
     public PostgresServerService<NoSwingConnector,NoSwingConnectorFactory> getPostgresServers() throws RemoteException {

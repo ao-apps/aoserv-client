@@ -5,7 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,21 +20,21 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
 
     static class CacheKey {
 
-        final String connectAs;
-        final String authenticateAs;
+        final UserId connectAs;
+        final UserId authenticateAs;
         final String password;
-        final String daemonServer;
+        final DomainName daemonServer;
 
         CacheKey(
-            String connectAs,
-            String authenticateAs,
+            UserId connectAs,
+            UserId authenticateAs,
             String password,
-            String daemonServer
+            DomainName daemonServer
         ) {
-            this.connectAs = connectAs;
-            this.authenticateAs = authenticateAs;
-            this.password = password;
-            this.daemonServer = daemonServer;
+            this.connectAs = connectAs.intern();
+            this.authenticateAs = authenticateAs.intern();
+            this.password = password.intern();
+            this.daemonServer = daemonServer==null ? null : daemonServer.intern();
         }
 
         @Override
@@ -41,10 +42,10 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
             if(o==null || !(o instanceof CacheKey)) return false;
             CacheKey other = (CacheKey)o;
             return
-                connectAs.equals(other.connectAs)
-                && authenticateAs.equals(other.authenticateAs)
-                && password.equals(other.password)
-                && StringUtility.equals(daemonServer, other.daemonServer)
+                connectAs==connectAs
+                && authenticateAs==other.authenticateAs
+                && password==other.password // interned - OK
+                && daemonServer==other.daemonServer
             ;
         }
 
@@ -62,19 +63,19 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
     private final Map<CacheKey,C> connectors = new HashMap<CacheKey,C>();
 
     public C get(
-        String connectAs,
-        String authenticateAs,
+        UserId connectAs,
+        UserId authenticateAs,
         String password,
-        String daemonServer
+        DomainName daemonServer
     ) {
         return connectors.get(new CacheKey(connectAs, authenticateAs, password, daemonServer));
     }
 
     public void put(
-        String connectAs,
-        String authenticateAs,
+        UserId connectAs,
+        UserId authenticateAs,
         String password,
-        String daemonServer,
+        DomainName daemonServer,
         C connector
     ) {
         connectors.put(new CacheKey(connectAs, authenticateAs, password, daemonServer), connector);

@@ -26,7 +26,7 @@ public class Business {
     private boolean autoEnable;
     private boolean billParent;
     private int packageDefinition;
-    private String createdBy;
+    private UserId createdBy;
     private Integer emailInBurst;
     private Float emailInRate;
     private Integer emailOutBurst;
@@ -52,7 +52,7 @@ public class Business {
         boolean autoEnable,
         boolean billParent,
         int packageDefinition,
-        String createdBy,
+        UserId createdBy,
         Integer emailInBurst,
         Float emailInRate,
         Integer emailOutBurst,
@@ -195,11 +195,11 @@ public class Business {
         this.packageDefinition = packageDefinition;
     }
 
-    public String getCreatedBy() {
+    public UserId getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(UserId createdBy) {
         this.createdBy = createdBy;
     }
 

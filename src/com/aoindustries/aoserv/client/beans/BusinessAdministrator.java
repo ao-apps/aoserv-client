@@ -10,7 +10,7 @@ package com.aoindustries.aoserv.client.beans;
  */
 public class BusinessAdministrator {
 
-    private String username;
+    private UserId username;
     private String password;
     private String name;
     private String title;
@@ -22,7 +22,7 @@ public class BusinessAdministrator {
     private String homePhone;
     private String cellPhone;
     private String fax;
-    private String email;
+    private Email email;
     private String address1;
     private String address2;
     private String city;
@@ -37,7 +37,7 @@ public class BusinessAdministrator {
     }
 
     public BusinessAdministrator(
-        String username,
+        UserId username,
         String password,
         String name,
         String title,
@@ -49,7 +49,7 @@ public class BusinessAdministrator {
         String homePhone,
         String cellPhone,
         String fax,
-        String email,
+        Email email,
         String address1,
         String address2,
         String city,
@@ -84,11 +84,11 @@ public class BusinessAdministrator {
         this.supportCode = supportCode;
     }
 
-    public String getUsername() {
+    public UserId getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(UserId username) {
         this.username = username;
     }
 
@@ -180,11 +180,11 @@ public class BusinessAdministrator {
         this.fax = fax;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(Email email) {
         this.email = email;
     }
 

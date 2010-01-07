@@ -8,6 +8,8 @@ package com.aoindustries.aoserv.client.rmi;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.rmi.RMIClientSocketFactorySSL;
 import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
 import com.aoindustries.security.LoginException;
@@ -63,7 +65,7 @@ final public class RmiClientConnectorFactory implements AOServConnectorFactory {
 
     private final AOServConnectorFactoryCache connectors = new AOServConnectorFactoryCache();
 
-    public AOServConnector<?,?> getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public AOServConnector<?,?> getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             AOServConnector<?,?> connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
             if(connector!=null) {
@@ -82,7 +84,7 @@ final public class RmiClientConnectorFactory implements AOServConnectorFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public AOServConnector<?,?> newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public AOServConnector<?,?> newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         try {
             // Connect to the remote registry and get each of the stubs
             Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);

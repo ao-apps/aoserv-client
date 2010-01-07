@@ -77,7 +77,9 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      *
      * @return  if the service field is currently <code>null</code>, sets the field and
      *          returns this object.  Next, if the service is equal to the provided service
-     *          returns this object.  Otherwise, returns a clone with the service field updated.
+     *          returns this object.  Next, if the current service returns <code>true</code> for
+     *          <code>isAoServObjectServiceSettable</code>, updates and returns this object.
+     *          Otherwise, returns a clone with the service field updated.
      */
     @SuppressWarnings("unchecked")
     final public T setService(AOServService<?,?,K,T> service) {
@@ -85,6 +87,9 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
             this.service = service;
             return (T)this;
         } else if(this.service==service) {
+            return (T)this;
+        } else if(this.service.isAoServObjectServiceSettable()) {
+            this.service = service;
             return (T)this;
         } else {
             T newObj = clone();

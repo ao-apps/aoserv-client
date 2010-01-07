@@ -9,6 +9,9 @@ import com.aoindustries.aoserv.client.cache.CachedConnectorFactory;
 import com.aoindustries.aoserv.client.noswing.NoSwingConnectorFactory;
 import com.aoindustries.aoserv.client.retry.RetryConnectorFactory;
 import com.aoindustries.aoserv.client.rmi.RmiClientConnectorFactory;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.security.LoginException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -154,8 +157,10 @@ final public class AOServClientConfiguration {
     /**
      * Gets the optional default username.
      */
-    static String getUsername() throws IOException {
-        return getProperty("aoserv.client.username");
+    static UserId getUsername() throws IOException, ValidationException {
+        String id = getProperty("aoserv.client.username");
+        if(id==null || id.length()==0) return null;
+        return UserId.valueOf(id);
     }
     
     /**
@@ -168,16 +173,20 @@ final public class AOServClientConfiguration {
     /**
      * Gets the switch user setting.
      */
-    static String getSwitchUser() throws IOException {
-        return getProperty("aoserv.client.switchUser");
+    static UserId getSwitchUser() throws IOException, ValidationException {
+        String id = getProperty("aoserv.client.switchUser");
+        if(id==null || id.length()==0) return null;
+        return UserId.valueOf(id);
     }
 
     /**
      * Gets the hostname of this daemon for daemon-specific locking.  Leave
      * this blank for non-AOServDaemon connections.
      */
-    static String getDaemonServer() throws IOException {
-        return getProperty("aoserv.client.daemon.server");
+    static DomainName getDaemonServer() throws IOException, ValidationException {
+        String domain = getProperty("aoserv.client.daemon.server");
+        if(domain==null || domain.length()==0) return null;
+        return DomainName.valueOf(domain);
     }
 
     private static final Object factoryLock = new Object();
@@ -252,15 +261,16 @@ final public class AOServClientConfiguration {
      */
     public static AOServConnector<?,?> getConnector() throws RemoteException, LoginException {
         try {
-            String username = getUsername();
+            UserId username = getUsername();
             String password = getPassword();
-            String switchUser = getSwitchUser();
-            if(switchUser==null || switchUser.length()==0) switchUser = username;
-            String daemonServer = getDaemonServer();
-            if(daemonServer!=null && daemonServer.length()==0) daemonServer=null;
+            UserId switchUser = getSwitchUser();
+            if(switchUser==null) switchUser = username;
+            DomainName daemonServer = getDaemonServer();
             return getConnector(Locale.getDefault(), username, password, switchUser, daemonServer);
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
+        } catch(ValidationException err) {
+            throw new LoginException(err.getMessage(), err);
         }
     }
 
@@ -274,7 +284,7 @@ final public class AOServClientConfiguration {
      * @param  username  the username to connect as
      * @param  password  the password to connect with
      */
-    public static AOServConnector<?,?> getConnector(String username, String password) throws RemoteException, LoginException {
+    public static AOServConnector<?,?> getConnector(UserId username, String password) throws RemoteException, LoginException {
         return getConnector(Locale.getDefault(), username, password, username, null);
     }
 
@@ -288,7 +298,7 @@ final public class AOServClientConfiguration {
      * @param  username  the username to connect as
      * @param  password  the password to connect with
      */
-    public static AOServConnector<?,?> getConnector(Locale locale, String username, String password, String switchUser, String daemonServer) throws RemoteException, LoginException {
+    public static AOServConnector<?,?> getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer) throws RemoteException, LoginException {
         return getAOServConnectorFactory().getConnector(
             locale,
             switchUser,

@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -29,7 +30,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     final String resourceType;
     final private String accounting;
     final private Timestamp created;
-    final private String createdBy;
+    final private UserId createdBy;
     final private Integer disableLog;
     final private Timestamp lastEnabled;
 
@@ -39,7 +40,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         String resourceType,
         String accounting,
         Timestamp created,
-        String createdBy,
+        UserId createdBy,
         Integer disableLog,
         Timestamp lastEnabled
     ) {
@@ -125,7 +126,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Resource getBean() {
-        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
+        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, accounting, created, createdBy.getBean(), disableLog, lastEnabled);
     }
     // </editor-fold>
 
@@ -185,6 +186,13 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
             // linux_groups
             resourceType.equals(ResourceType.Constant.shell_group.name())
             || resourceType.equals(ResourceType.Constant.system_group.name())
+        ) return null; // Is an ao_server_resource
+        else if(
+            // httpd_sites
+            resourceType.equals(ResourceType.Constant.httpd_jboss_site.name())
+            || resourceType.equals(ResourceType.Constant.httpd_static_site.name())
+            || resourceType.equals(ResourceType.Constant.httpd_tomcat_shared_site.name())
+            || resourceType.equals(ResourceType.Constant.httpd_tomcat_std_site.name())
         ) return null; // Is an ao_server_resource
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);

@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.business_administrators)
-public interface BusinessAdministratorService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceStringKey<C,F,BusinessAdministrator> {
+public interface BusinessAdministratorService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceUserIdKey<C,F,BusinessAdministrator> {
 
     /* TODO
     void addBusinessAdministrator(

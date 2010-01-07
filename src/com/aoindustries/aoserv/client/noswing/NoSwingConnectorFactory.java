@@ -7,6 +7,8 @@ package com.aoindustries.aoserv.client.noswing;
  */
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -36,7 +38,7 @@ final public class NoSwingConnectorFactory implements AOServConnectorFactory<NoS
 
     private final AOServConnectorFactoryCache<NoSwingConnector,NoSwingConnectorFactory> connectors = new AOServConnectorFactoryCache<NoSwingConnector,NoSwingConnectorFactory>();
 
-    public NoSwingConnector getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public NoSwingConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             NoSwingConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
             if(connector!=null) {
@@ -54,7 +56,7 @@ final public class NoSwingConnectorFactory implements AOServConnectorFactory<NoS
         }
     }
 
-    public NoSwingConnector newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public NoSwingConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         checkNotSwing();
         synchronized(connectors) {
             NoSwingConnector connector = new NoSwingConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));

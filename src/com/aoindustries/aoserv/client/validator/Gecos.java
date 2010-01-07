@@ -24,6 +24,8 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
 
     private static final long serialVersionUID = 1L;
 
+    public static final int MAX_LENGTH = 100;
+
     /**
      * Determines if a name can be used as a GECOS field.  A GECOS field
      * is valid if it is between 1 and 100 characters in length and uses only
@@ -37,7 +39,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
         if(value==null) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isNull");
         int len = value.length();
         if(len==0) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isEmpty");
-        if(len>100) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.longerThan100", len);
+        if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.tooLong", MAX_LENGTH, len);
 
         for (int c = 0; c < len; c++) {
             char ch = value.charAt(c);

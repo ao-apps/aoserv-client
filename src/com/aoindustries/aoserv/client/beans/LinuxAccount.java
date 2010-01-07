@@ -12,7 +12,7 @@ public class LinuxAccount {
 
     private int aoServerResource;
     private String linuxAccountType;
-    private String username;
+    private UserId username;
     private LinuxID uid;
     private UnixPath home;
     private Gecos name;
@@ -28,7 +28,7 @@ public class LinuxAccount {
     public LinuxAccount(
         int aoServerResource,
         String linuxAccountType,
-        String username,
+        UserId username,
         LinuxID uid,
         UnixPath home,
         Gecos name,
@@ -67,11 +67,11 @@ public class LinuxAccount {
         this.linuxAccountType = linuxAccountType;
     }
 
-    public String getUsername() {
+    public UserId getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(UserId username) {
         this.username = username;
     }
 

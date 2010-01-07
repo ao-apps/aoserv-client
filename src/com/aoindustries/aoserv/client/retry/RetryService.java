@@ -57,6 +57,10 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         return connector;
     }
 
+    final public boolean isAoServObjectServiceSettable() {
+        return true;
+    }
+
     final public Set<V> getSet() throws RemoteException {
         return connector.retry(
             new Callable<Set<V>>() {

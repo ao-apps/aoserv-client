@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 /**
  * @author  AO Industries, Inc.
  */
-final class CachedBusinessAdministratorService extends CachedServiceStringKey<BusinessAdministrator> implements BusinessAdministratorService<CachedConnector,CachedConnectorFactory> {
+final class CachedBusinessAdministratorService extends CachedServiceUserIdKey<BusinessAdministrator> implements BusinessAdministratorService<CachedConnector,CachedConnectorFactory> {
 
     CachedBusinessAdministratorService(CachedConnector connector, BusinessAdministratorService<?,?> wrapped) {
         super(connector, BusinessAdministrator.class, wrapped);

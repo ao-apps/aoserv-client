@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.UsernameService;
 /**
  * @author  AO Industries, Inc.
  */
-final class RetryUsernameService extends RetryServiceStringKey<Username> implements UsernameService<RetryConnector,RetryConnectorFactory> {
+final class RetryUsernameService extends RetryServiceUserIdKey<Username> implements UsernameService<RetryConnector,RetryConnectorFactory> {
 
     RetryUsernameService(RetryConnector connector) {
         super(connector, Username.class);

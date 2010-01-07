@@ -9,6 +9,8 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.rmi.RMIClientSocketFactorySSL;
 import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
 import com.aoindustries.rmi.RMIServerSocketFactorySSL;
@@ -86,7 +88,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
 
     private final AOServConnectorFactoryCache<C,F> connectors = new AOServConnectorFactoryCache<C,F>();
 
-    public C getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             C connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
             if(connector!=null) {
@@ -107,7 +109,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
     /**
      * Connectors are exported as they are created.
      */
-    public C newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             C connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
             UnicastRemoteObject.exportObject(connector, port, csf, ssf);

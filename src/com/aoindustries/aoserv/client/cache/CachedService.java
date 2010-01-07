@@ -92,6 +92,10 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         return connector;
     }
 
+    final public boolean isAoServObjectServiceSettable() {
+        return false;
+    }
+
     final public Set<V> getSet() throws RemoteException {
         synchronized(cachedSetLock) {
             if(cachedSet==null) cachedSet = AOServServiceUtils.setServices(wrapped.getSet(), this);

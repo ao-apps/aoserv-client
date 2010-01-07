@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
-import com.aoindustries.aoserv.client.MySQLReservedWordService;
 import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
@@ -42,7 +41,6 @@ import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.PostgresDatabaseService;
 import com.aoindustries.aoserv.client.PostgresEncodingService;
-import com.aoindustries.aoserv.client.PostgresReservedWordService;
 import com.aoindustries.aoserv.client.PostgresServerService;
 import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersionService;
@@ -63,6 +61,8 @@ import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
 import com.aoindustries.aoserv.client.UsernameService;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.ConnectException;
 import java.rmi.MarshalException;
@@ -89,10 +89,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
 
     final RetryConnectorFactory factory;
     Locale locale;
-    final String connectAs;
-    private final String authenticateAs;
+    final UserId connectAs;
+    private final UserId authenticateAs;
     private final String password;
-    private final String daemonServer;
+    private final DomainName daemonServer;
     /* TODO
     final RetryAOServerDaemonHostService aoserverDaemonHosts;
      */
@@ -212,7 +212,6 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     // TODO: final RetryMonthlyChargeService monthlyCharges;
     final RetryMySQLDatabaseService mysqlDatabases;
     final RetryMySQLDBUserService mysqlDBUsers;
-    final RetryMySQLReservedWordService mysqlReservedWords;
     final RetryMySQLServerService mysqlServers;
     final RetryMySQLUserService mysqlUsers;
     final RetryNetBindService netBinds;
@@ -237,7 +236,6 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
      */
     final RetryPostgresDatabaseService postgresDatabases;
     final RetryPostgresEncodingService postgresEncodings;
-    final RetryPostgresReservedWordService postgresReservedWords;
     final RetryPostgresServerService postgresServers;
     final RetryPostgresUserService postgresUsers;
     final RetryPostgresVersionService postgresVersions;
@@ -290,7 +288,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final Object connectionLock = new Object();
     private AOServConnector<?,?> wrapped;
 
-    RetryConnector(RetryConnectorFactory factory, Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, LoginException {
+    RetryConnector(RetryConnectorFactory factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
         this.factory = factory;
         this.locale = locale;
         this.connectAs = connectAs;
@@ -412,7 +410,6 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         // TODO: monthlyCharges = new RetryMonthlyChargeService(this);
         mysqlDatabases = new RetryMySQLDatabaseService(this);
         mysqlDBUsers = new RetryMySQLDBUserService(this);
-        mysqlReservedWords = new RetryMySQLReservedWordService(this);
         mysqlServers = new RetryMySQLServerService(this);
         mysqlUsers = new RetryMySQLUserService(this);
         netBinds = new RetryNetBindService(this);
@@ -437,7 +434,6 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
          */
         postgresDatabases = new RetryPostgresDatabaseService(this);
         postgresEncodings = new RetryPostgresEncodingService(this);
-        postgresReservedWords = new RetryPostgresReservedWordService(this);
         postgresServers = new RetryPostgresServerService(this);
         postgresUsers = new RetryPostgresUserService(this);
         postgresVersions = new RetryPostgresVersionService(this);
@@ -626,7 +622,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         }
     }
 
-    public String getConnectAs() {
+    public UserId getConnectAs() {
         return connectAs;
     }
 
@@ -636,7 +632,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return obj;
     }
 
-    public String getAuthenticateAs() {
+    public UserId getAuthenticateAs() {
         return authenticateAs;
     }
 
@@ -891,10 +887,6 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return mysqlDBUsers;
     }
 
-    public MySQLReservedWordService<RetryConnector,RetryConnectorFactory> getMysqlReservedWords() {
-        return mysqlReservedWords;
-    }
-
     public MySQLServerService<RetryConnector,RetryConnectorFactory> getMysqlServers() {
         return mysqlServers;
     }
@@ -949,10 +941,6 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
 
     public PostgresEncodingService<RetryConnector,RetryConnectorFactory> getPostgresEncodings() {
         return postgresEncodings;
-    }
-
-    public PostgresReservedWordService<RetryConnector,RetryConnectorFactory> getPostgresReservedWords() {
-        return postgresReservedWords;
     }
 
     public PostgresServerService<RetryConnector,RetryConnectorFactory> getPostgresServers() {

@@ -7,6 +7,8 @@ package com.aoindustries.aoserv.client.retry;
  */
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -81,7 +83,7 @@ final public class RetryConnectorFactory implements AOServConnectorFactory<Retry
 
     private final AOServConnectorFactoryCache<RetryConnector,RetryConnectorFactory> connectors = new AOServConnectorFactoryCache<RetryConnector,RetryConnectorFactory>();
 
-    public RetryConnector getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws LoginException, RemoteException {
+    public RetryConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             RetryConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
             if(connector!=null) {
@@ -99,7 +101,7 @@ final public class RetryConnectorFactory implements AOServConnectorFactory<Retry
         }
     }
 
-    public RetryConnector newConnector(final Locale locale, final String connectAs, final String authenticateAs, final String password, final String daemonServer) throws LoginException, RemoteException {
+    public RetryConnector newConnector(final Locale locale, final UserId connectAs, final UserId authenticateAs, final String password, final DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             RetryConnector connector = retry(
                 new Callable<RetryConnector>() {

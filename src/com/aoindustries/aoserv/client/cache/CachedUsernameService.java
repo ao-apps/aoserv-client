@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.UsernameService;
 /**
  * @author  AO Industries, Inc.
  */
-final class CachedUsernameService extends CachedServiceStringKey<Username> implements UsernameService<CachedConnector,CachedConnectorFactory> {
+final class CachedUsernameService extends CachedServiceUserIdKey<Username> implements UsernameService<CachedConnector,CachedConnectorFactory> {
 
     CachedUsernameService(CachedConnector connector, UsernameService<?,?> wrapped) {
         super(connector, Username.class, wrapped);

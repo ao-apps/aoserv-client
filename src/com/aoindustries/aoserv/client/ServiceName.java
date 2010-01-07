@@ -141,7 +141,6 @@ public enum ServiceName implements LocalizedToString {
      */
     mysql_databases,
     mysql_db_users,
-    mysql_reserved_words,
     mysql_servers,
     mysql_users,
     net_binds,
@@ -164,7 +163,6 @@ public enum ServiceName implements LocalizedToString {
      */
     postgres_databases,
     postgres_encodings,
-    postgres_reserved_words,
     postgres_servers,
     postgres_users,
     postgres_versions,

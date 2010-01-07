@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -21,19 +22,17 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Username extends AOServObjectStringKey<Username> implements BeanFactory<com.aoindustries.aoserv.client.beans.Username> /* TODO: implements PasswordProtected, Removable, Disablable*/ {
+final public class Username extends AOServObjectUserIdKey<Username> implements BeanFactory<com.aoindustries.aoserv.client.beans.Username> /* TODO: implements PasswordProtected, Removable, Disablable*/ {
 	
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
-
-    public static final int MAX_LENGTH=255;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final String accounting;
     final Integer disableLog;
 
-    public Username(UsernameService<?,?> table, String username, String accounting, Integer disableLog) {
+    public Username(UsernameService<?,?> table, UserId username, String accounting, Integer disableLog) {
         super(table, username);
         this.accounting = accounting.intern();
         this.disableLog = disableLog;
@@ -42,7 +41,7 @@ final public class Username extends AOServObjectStringKey<Username> implements B
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="username", index=IndexType.PRIMARY_KEY, description="the unique username")
-    public String getUsername() {
+    public UserId getUsername() {
         return key;
     }
 
@@ -67,7 +66,7 @@ final public class Username extends AOServObjectStringKey<Username> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Username getBean() {
-        return new com.aoindustries.aoserv.client.beans.Username(key, accounting, disableLog);
+        return new com.aoindustries.aoserv.client.beans.Username(key.getBean(), accounting, disableLog);
     }
     // </editor-fold>
 
@@ -282,72 +281,6 @@ final public class Username extends AOServObjectStringKey<Username> implements B
             || !getMySQLUsers().isEmpty()
             || getPostgresUser()!=null
     	;
-    }
-    */
-    /**
-     * Determines if a name can be used as a username.  A name is valid if
-     * it is between 1 and 255 characters in length and uses only ASCII 0x21
-     * through 0x7f, excluding the following characters:
-     * <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code>
-     *
-     * @return  <code>null</code> if the username is valid or a locale-specific reason why it is not valid
-     */
-    /* TODO
-    public static String checkUsername(String username, Locale locale) {
-	int len = username.length();
-        if(len==0) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.noUsername");
-	if(len > MAX_LENGTH) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.tooLong");
-
-        // The first character must be [a-z]
-	char ch = username.charAt(0);
-	if (ch < 'a' || ch > 'z') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.startAToZ");
-
-        // The rest may have additional characters
-	for (int c = 1; c < len; c++) {
-            ch = username.charAt(c);
-            if(ch==' ') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.noSpace");
-            if(ch<=0x21 || ch>0x7f) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.specialCharacter");
-            if(ch>='A' && ch<='Z') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.noCapital");
-            if(ch==',') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.comma");
-            if(ch==':') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.colon");
-            if(ch=='(') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.leftParen");
-            if(ch==')') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.rightParen");
-            if(ch=='[') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.leftSquare");
-            if(ch==']') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.rightSquare");
-            if(ch=='\'') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.apostrophe");
-            if(ch=='"') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.quote");
-            if(ch=='|') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.verticalBar");
-            if(ch=='&') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.ampersand");
-            if(ch==';') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.semicolon");
-            if(ch=='\\') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.backslash");
-            if(ch=='/') return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.slash");
-	}
-        
-        // More strict at sign control is required for user@domain structure in Cyrus virtdomains.
-        int atPos = username.indexOf('@');
-        if(atPos!=-1) {
-            if(atPos==0) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.startWithAt");
-            if(atPos==(len-1)) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.endWithAt");
-            int atPos2 = username.indexOf('@', atPos+1);
-            if(atPos2!=-1) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.onlyOneAt");
-            if(username.startsWith("cyrus@")) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.startWithCyrusAt");
-            if(username.endsWith("@default")) return ApplicationResources.accessor.getMessage(locale, "Username.checkUsername.endWithAtDefault");
-        }
-
-        return null;
-    }
-    */
-    /**
-     * Determines if a name can be used as a username.  A name is valid if
-     * it is between 1 and 255 characters in length and uses only ASCII 0x21
-     * through 0x7f, excluding the following characters:
-     * <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code>
-     *
-     * @deprecated  Please use <code>checkUsername(String)</code> instead to provide user with specific problems.
-     */
-    /* TODO
-    public static boolean isValidUsername(String username) {
-        return checkUsername(username, Locale.getDefault())==null;
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {

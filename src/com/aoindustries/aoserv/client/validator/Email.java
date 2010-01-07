@@ -30,6 +30,10 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
 
     private static final long serialVersionUID = 1L;
 
+    public static final int MAX_LENGTH = 254;
+
+    public static final int MAX_LOCAL_PART_LENGTH = 64;
+
     /**
      * Validates a complete email address.  Splits on @ and calls <code>validate</code> on local part and domain.
      *
@@ -53,13 +57,13 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
         if(domain==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isNull");
         int len = localPart.length();
         int totalLen = len + domain.getDomain().length();
-        if(totalLen>254) throw new ValidationException(ApplicationResources.accessor, "Email.validate.tooLong", totalLen);
+        if(totalLen>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Email.validate.tooLong", MAX_LENGTH, totalLen);
 
         // If found in interned, it is valid
         ConcurrentMap<String,Email> domainMap = interned.get(domain);
         if(domainMap==null || !domainMap.containsKey(localPart)) {
             if(len==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.empty");
-            if(len>64) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.tooLong", len);
+            if(len>MAX_LOCAL_PART_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.tooLong", MAX_LOCAL_PART_LENGTH, len);
             for(int pos=0; pos<len; pos++) {
                 char ch = localPart.charAt(pos);
                 if(ch=='.') {

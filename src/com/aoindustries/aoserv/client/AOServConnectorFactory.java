@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -23,10 +25,10 @@ public interface AOServConnectorFactory<C extends AOServConnector<C,F>, F extend
     /**
      * Gets an existing <code>AOServConnector</code> or creates a new one if does not yet exist.
      */
-    C getConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, LoginException;
+    C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException;
 
     /**
      * Creates a new <code>AOServConnector</code> for the provided connectAs, authenticateAs, and password.
      */
-    C newConnector(Locale locale, String connectAs, String authenticateAs, String password, String daemonServer) throws RemoteException, LoginException;
+    C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException;
 }

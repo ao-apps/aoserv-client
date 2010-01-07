@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 /**
  * @author  AO Industries, Inc.
  */
-final class NoSwingBusinessAdministratorService extends NoSwingServiceStringKey<BusinessAdministrator> implements BusinessAdministratorService<NoSwingConnector,NoSwingConnectorFactory> {
+final class NoSwingBusinessAdministratorService extends NoSwingServiceUserIdKey<BusinessAdministrator> implements BusinessAdministratorService<NoSwingConnector,NoSwingConnectorFactory> {
 
     NoSwingBusinessAdministratorService(NoSwingConnector connector, BusinessAdministratorService<?,?> wrapped) {
         super(connector, BusinessAdministrator.class, wrapped);

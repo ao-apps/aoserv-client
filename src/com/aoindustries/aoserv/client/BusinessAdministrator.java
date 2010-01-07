@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.Email;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.Base64Coder;
 import com.aoindustries.util.StringUtility;
@@ -26,7 +28,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator extends AOServObjectStringKey<BusinessAdministrator> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessAdministrator> /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
+final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessAdministrator> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessAdministrator> /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -96,7 +98,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     final private String homePhone;
     final private String cellPhone;
     final private String fax;
-    final private String email;
+    final private Email email;
     final private String address1;
     final private String address2;
     final private String city;
@@ -109,7 +111,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     public BusinessAdministrator(
         BusinessAdministratorService<?,?> service,
-        String username,
+        UserId username,
         String password,
         String name,
         String title,
@@ -121,7 +123,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
         String homePhone,
         String cellPhone,
         String fax,
-        String email,
+        Email email,
         String address1,
         String address2,
         String city,
@@ -221,7 +223,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
     }
 
     @SchemaColumn(order=12, name="email", description="the email address")
-    public String getEmail() {
+    public Email getEmail() {
     	return email;
     }
 
@@ -281,7 +283,7 @@ final public class BusinessAdministrator extends AOServObjectStringKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(key, password, name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, email, address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
+        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(key.getBean(), password, name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, email.getBean(), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
     // </editor-fold>
 

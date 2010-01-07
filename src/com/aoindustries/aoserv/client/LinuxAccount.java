@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.LinuxID;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -50,7 +51,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String linuxAccountType;
-    final private String username;
+    final private UserId username;
     final private LinuxID uid;
     final private UnixPath home;
     final private Gecos name;
@@ -64,7 +65,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         LinuxAccountService<?,?> service,
         int aoServerResource,
         String linuxAccountType,
-        String username,
+        UserId username,
         LinuxID uid,
         UnixPath home,
         Gecos name,
@@ -165,7 +166,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         return new com.aoindustries.aoserv.client.beans.LinuxAccount(
             key,
             linuxAccountType,
-            username,
+            username.getBean(),
             uid.getBean(),
             home.getBean(),
             name==null ? null : name.getBean(),
@@ -378,27 +379,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     public void setShell(Shell shell) throws IOException, SQLException {
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
     }
-    */
-    /**
-     * Determines if a name can be used as a username.  The username restrictions are
-     * inherited from <code>Username</code>, with the addition of not allowing
-     * <code>postmaster</code> and <code>mailer-daemon</code>.  This is to prevent a
-     * user from interfering with the delivery of system messages in qmail.
-     *
-     * @see  Username#isValidUsername
-     */
-    /* TODO
-    public static boolean isValidUsername(String username) {
-        return
-            Username.checkUsername(username, Locale.getDefault())==null
-            && !"bin".equals(username)
-            && !"etc".equals(username)
-            && !"lib".equals(username)
-            && !"postmaster".equals(username)
-            && !"mailer-daemon".equals(username)
-        ;
-    }
-    
+
     public boolean canSetPassword() throws IOException, SQLException {
         return disable_log==-1 && getType().canSetPassword();
     }

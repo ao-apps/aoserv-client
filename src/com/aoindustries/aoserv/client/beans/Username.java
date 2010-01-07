@@ -10,24 +10,24 @@ package com.aoindustries.aoserv.client.beans;
  */
 public class Username {
 
-    private String username;
+    private UserId username;
     private String accounting;
     private Integer disableLog;
 
     public Username() {
     }
 
-    public Username(String username, String accounting, Integer disableLog) {
+    public Username(UserId username, String accounting, Integer disableLog) {
         this.username = username;
         this.accounting = accounting;
         this.disableLog = disableLog;
     }
 
-    public String getUsername() {
+    public UserId getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(UserId username) {
         this.username = username;
     }
 

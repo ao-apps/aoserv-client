@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.command.AOServPermissionException;
 import com.aoindustries.aoserv.client.command.CommandName;
 import com.aoindustries.aoserv.client.command.Param;
 import com.aoindustries.aoserv.client.command.ValidationException;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.sql.SQLUtility;
@@ -379,7 +380,7 @@ final public class AOSH extends ShellInterpreter {
         TerminalWriter out = new TerminalWriter(new OutputStreamWriter(System.out));
         TerminalWriter err = new TerminalWriter(new OutputStreamWriter(System.err));
         try {
-            String username = getConfigUsername(in, err);
+            UserId username = getConfigUsername(in, err);
             String password = getConfigPassword(in, err);
             AOServConnector<?,?> connector = AOServClientConfiguration.getConnector(username, password);
             AOSH aosh = new AOSH(connector, in, out, err, args);
@@ -402,13 +403,26 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    public static String getConfigUsername(Reader in, TerminalWriter err) throws IOException {
-        String username=AOServClientConfiguration.getUsername();
-        if(username==null || username.length()==0) {
+    public static UserId getConfigUsername(Reader in, TerminalWriter err) throws IOException {
+        UserId username;
+        try {
+            username=AOServClientConfiguration.getUsername();
+        } catch(com.aoindustries.aoserv.client.validator.ValidationException exc) {
+            IOException ioErr = new IOException(exc.getMessage());
+            ioErr.initCause(exc);
+            throw ioErr;
+        }
+        while(username==null) {
             // Prompt for the username
             err.print(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.prompt.username"));
             err.flush();
-            username = readLine(in);
+            String id = readLine(in);
+            try {
+                username = UserId.valueOf(id);
+            } catch(com.aoindustries.aoserv.client.validator.ValidationException exc) {
+                err.print(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.prompt.username.invalid", exc.getLocalizedMessage(Locale.getDefault())));
+                err.flush();
+            }
         }
         return username;
     }
@@ -876,7 +890,7 @@ final public class AOSH extends ShellInterpreter {
                 new AOSH(
                     connector.getFactory().getConnector(
                         connector.getLocale(),
-                        args[1],
+                        UserId.valueOf(args[1]),
                         connector.getAuthenticateAs(),
                         connector.getPassword(),
                         null
@@ -886,6 +900,10 @@ final public class AOSH extends ShellInterpreter {
                     err,
                     newArgs
                 ).run();
+            } catch(com.aoindustries.aoserv.client.validator.ValidationException exc) {
+                err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.ValidationException", BuiltIn.su, exc.getMessage()));
+                if(STACK_TRACES) exc.printStackTrace(err);
+                err.flush();
             } catch(LoginException exc) {
                 err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.LoginException", BuiltIn.su, exc.getMessage()));
                 if(STACK_TRACES) exc.printStackTrace(err);

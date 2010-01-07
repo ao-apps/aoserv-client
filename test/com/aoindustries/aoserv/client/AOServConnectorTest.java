@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.security.LoginException;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -29,11 +31,11 @@ public class AOServConnectorTest extends TestCase {
      * filter modes.  Regular user (testuser), unrestritected master (aoweb_app), and a single server
      * (test_svr).
      */
-    static List<AOServConnector<?,?>> getTestConnectors() throws IOException, RemoteException, LoginException {
+    static List<AOServConnector<?,?>> getTestConnectors() throws IOException, RemoteException, LoginException, ValidationException {
         List<AOServConnector<?,?>> conns = new ArrayList<AOServConnector<?,?>>();
-        conns.add(AOServClientConfiguration.getConnector("aoweb_app", "changeme"));
-        conns.add(AOServClientConfiguration.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD));
-        conns.add(AOServClientConfiguration.getConnector("test_svr", "Ogrol3Veve5"));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("aoweb_app"), "changeme"));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf(REGULAR_USER_USERNAME), REGULAR_USER_PASSWORD));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("test_svr"), "Ogrol3Veve5"));
         return conns;
     }
 

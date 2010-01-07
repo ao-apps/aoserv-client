@@ -5,6 +5,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
@@ -209,7 +211,11 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the MySQL user")
     public Username getUsername() throws RemoteException {
-        return getService().getConnector().getUsernames().get(username);
+        try {
+            return getService().getConnector().getUsernames().get(UserId.valueOf(username));
+        } catch(ValidationException err) {
+            throw new RemoteException(err.getLocalizedMessage(getService().getConnector().getLocale()));
+        }
     }
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";

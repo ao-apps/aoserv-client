@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.UsernameService;
 /**
  * @author  AO Industries, Inc.
  */
-final class NoSwingUsernameService extends NoSwingServiceStringKey<Username> implements UsernameService<NoSwingConnector,NoSwingConnectorFactory> {
+final class NoSwingUsernameService extends NoSwingServiceUserIdKey<Username> implements UsernameService<NoSwingConnector,NoSwingConnectorFactory> {
 
     NoSwingUsernameService(NoSwingConnector connector, UsernameService<?,?> wrapped) {
         super(connector, Username.class, wrapped);

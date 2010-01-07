@@ -45,6 +45,6 @@ abstract public class AOServObjectUnixPathKey<T extends AOServObjectUnixPathKey<
      */
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-        return key.getPath();
+        return key.toString();
     }
 }

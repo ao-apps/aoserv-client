@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -48,7 +49,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /**
      * Gets the username they are behaving as.
      */
-    String getConnectAs() throws RemoteException;
+    // TODO: Make be a UserId
+    UserId getConnectAs() throws RemoteException;
 
     /**
      * Gets the <code>BusinessAdministrator</code> who is logged in using
@@ -64,7 +66,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /**
      * Gets the username they logged-in as.
      */
-    String getAuthenticateAs() throws RemoteException;
+    UserId getAuthenticateAs() throws RemoteException;
 
     /**
      * Gets the password used to login.
@@ -199,7 +201,6 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
      */
     MySQLDatabaseService<C,F> getMysqlDatabases() throws RemoteException;
     MySQLDBUserService<C,F> getMysqlDBUsers() throws RemoteException;
-    MySQLReservedWordService<C,F> getMysqlReservedWords() throws RemoteException;
     MySQLServerService<C,F> getMysqlServers() throws RemoteException;
     MySQLUserService<C,F> getMysqlUsers() throws RemoteException;
     NetBindService<C,F> getNetBinds() throws RemoteException;
@@ -224,7 +225,6 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
      */
     PostgresDatabaseService<C,F> getPostgresDatabases() throws RemoteException;
     PostgresEncodingService<C,F> getPostgresEncodings() throws RemoteException;
-    PostgresReservedWordService<C,F> getPostgresReservedWords() throws RemoteException;
     PostgresServerService<C,F> getPostgresServers() throws RemoteException;
     PostgresUserService<C,F> getPostgresUsers() throws RemoteException;
     PostgresVersionService<C,F> getPostgresVersions() throws RemoteException;

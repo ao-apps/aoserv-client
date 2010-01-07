@@ -102,6 +102,13 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
             resourceType.equals(ResourceType.Constant.shell_group.name())
             || resourceType.equals(ResourceType.Constant.system_group.name())
         ) obj = getLinuxGroup();
+        else if(
+            // httpd_sites
+            resourceType.equals(ResourceType.Constant.httpd_jboss_site.name())
+            || resourceType.equals(ResourceType.Constant.httpd_static_site.name())
+            || resourceType.equals(ResourceType.Constant.httpd_tomcat_shared_site.name())
+            || resourceType.equals(ResourceType.Constant.httpd_tomcat_std_site.name())
+        ) obj = getHttpdSite();
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
         return obj;
@@ -119,6 +126,10 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
         return getService().getConnector().getBusinessServers().getBusinessServer(getResource().accounting, ao_server);
     }
     */
+    public HttpdSite getHttpdSite() throws RemoteException {
+        return getService().getConnector().getHttpdSites().get(key);
+    }
+
     public LinuxAccount getLinuxAccount() throws RemoteException {
         return getService().getConnector().getLinuxAccounts().get(key);
     }

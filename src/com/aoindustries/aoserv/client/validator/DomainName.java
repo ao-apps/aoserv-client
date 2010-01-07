@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentMap;
  * <ul>
  *   <li>Be non-null</li>
  *   <li>Be non-empty</li>
+ *   <li>May not be "default" (case-insensitive)</li>
  *   <li>
  *     Confirm to definition in {@link http://en.wikipedia.org/wiki/Hostname#Internet_hostnames}
  *     and {@link http://en.wikipedia.org/wiki/DNS_label#Parts_of_a_domain_name}
@@ -33,6 +34,8 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
 
     private static final long serialVersionUID = 1L;
 
+    public static final int MAX_LENGTH = 253;
+
     /**
      * Validates a domain name, but doesn't allow an ending period.
      *
@@ -42,7 +45,8 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
         if(domain==null) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.isNull");
         int len = domain.length();
         if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.empty");
-        if(len>253) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.tooLong", len);
+        if("default".equalsIgnoreCase(domain)) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.isDefault");
+        if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.tooLong", MAX_LENGTH, len);
         int labelStart = 0;
         for(int pos=0; pos<len; pos++) {
             if(domain.charAt(pos)=='.') {

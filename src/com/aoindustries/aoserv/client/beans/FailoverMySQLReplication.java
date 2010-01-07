@@ -14,10 +14,10 @@ public class FailoverMySQLReplication {
     private Integer aoServer;
     private Integer replication;
     private int mysqlServer;
-    private int monitoringSecondsBehindLow;
-    private int monitoringSecondsBehindMedium;
-    private int monitoringSecondsBehindHigh;
-    private int monitoringSecondsBehindCritical;
+    private Integer monitoringSecondsBehindLow;
+    private Integer monitoringSecondsBehindMedium;
+    private Integer monitoringSecondsBehindHigh;
+    private Integer monitoringSecondsBehindCritical;
 
     public FailoverMySQLReplication() {
     }
@@ -27,10 +27,10 @@ public class FailoverMySQLReplication {
         Integer aoServer,
         Integer replication,
         int mysqlServer,
-        int monitoringSecondsNehindLow,
-        int monitoringSecondsBehindMedium,
-        int monitoringSecondsBehindHigh,
-        int monitoringSecondsBehindCritical
+        Integer monitoringSecondsNehindLow,
+        Integer monitoringSecondsBehindMedium,
+        Integer monitoringSecondsBehindHigh,
+        Integer monitoringSecondsBehindCritical
     ) {
         this.pkey = pkey;
         this.aoServer = aoServer;
@@ -74,35 +74,35 @@ public class FailoverMySQLReplication {
         this.mysqlServer = mysqlServer;
     }
 
-    public int getMonitoringSecondsBehindLow() {
+    public Integer getMonitoringSecondsBehindLow() {
         return monitoringSecondsBehindLow;
     }
 
-    public void setMonitoringSecondsBehindLow(int monitoringSecondsBehindLow) {
+    public void setMonitoringSecondsBehindLow(Integer monitoringSecondsBehindLow) {
         this.monitoringSecondsBehindLow = monitoringSecondsBehindLow;
     }
 
-    public int getMonitoringSecondsBehindMedium() {
+    public Integer getMonitoringSecondsBehindMedium() {
         return monitoringSecondsBehindMedium;
     }
 
-    public void setMonitoringSecondsBehindMedium(int monitoringSecondsBehindMedium) {
+    public void setMonitoringSecondsBehindMedium(Integer monitoringSecondsBehindMedium) {
         this.monitoringSecondsBehindMedium = monitoringSecondsBehindMedium;
     }
 
-    public int getMonitoringSecondsBehindHigh() {
+    public Integer getMonitoringSecondsBehindHigh() {
         return monitoringSecondsBehindHigh;
     }
 
-    public void setMonitoringSecondsBehindHigh(int monitoringSecondsBehindHigh) {
+    public void setMonitoringSecondsBehindHigh(Integer monitoringSecondsBehindHigh) {
         this.monitoringSecondsBehindHigh = monitoringSecondsBehindHigh;
     }
 
-    public int getMonitoringSecondsBehindCritical() {
+    public Integer getMonitoringSecondsBehindCritical() {
         return monitoringSecondsBehindCritical;
     }
 
-    public void setMonitoringSecondsBehindCritical(int monitoringSecondsBehindCritical) {
+    public void setMonitoringSecondsBehindCritical(Integer monitoringSecondsBehindCritical) {
         this.monitoringSecondsBehindCritical = monitoringSecondsBehindCritical;
     }
 }

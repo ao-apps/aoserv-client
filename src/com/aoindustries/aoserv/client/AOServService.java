@@ -35,6 +35,12 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
     C getConnector() throws RemoteException;
 
     /**
+     * Checks if this service returns objects that may safely have their service reset without copying.
+     * This implies that this service performs no caching of the objects.
+     */
+    boolean isAoServObjectServiceSettable();
+
+    /**
      * Gets the set of all accessible objects.  These objects may or
      * may not be sorted.  Unless otherwise necessary, the set view of the data
      * should be preferred due to being the fastetst.  This set represents an

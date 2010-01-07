@@ -16,14 +16,14 @@ public class Resource {
     private String resourceType;
     private String accounting;
     private Date created;
-    private String createdBy;
+    private UserId createdBy;
     private Integer disableLog;
     private Date lastEnabled;
 
     public Resource() {
     }
 
-    public Resource(int pkey, String resourceType, String accounting, Date created, String createdBy, Integer disableLog, Date lastEnabled) {
+    public Resource(int pkey, String resourceType, String accounting, Date created, UserId createdBy, Integer disableLog, Date lastEnabled) {
         this.pkey = pkey;
         this.resourceType = resourceType;
         this.accounting = accounting;
@@ -65,11 +65,11 @@ public class Resource {
         this.created = created;
     }
 
-    public String getCreatedBy() {
+    public UserId getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(UserId createdBy) {
         this.createdBy = createdBy;
     }
 

@@ -110,7 +110,8 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
         return listFirst;
     }
 
-    @SchemaColumn(order=3, name="linux_account_group", description="the user the site \"runs as\"")
+    static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    @SchemaColumn(order=3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the user the site \"runs as\"")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getService().getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
