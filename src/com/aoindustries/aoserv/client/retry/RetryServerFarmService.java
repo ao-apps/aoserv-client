@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.ServerFarmService;
 /**
  * @author  AO Industries, Inc.
  */
-final class RetryServerFarmService extends RetryServiceStringKey<ServerFarm> implements ServerFarmService<RetryConnector,RetryConnectorFactory> {
+final class RetryServerFarmService extends RetryServiceDomainLabelKey<ServerFarm> implements ServerFarmService<RetryConnector,RetryConnectorFactory> {
 
     RetryServerFarmService(RetryConnector connector) {
         super(connector, ServerFarm.class);

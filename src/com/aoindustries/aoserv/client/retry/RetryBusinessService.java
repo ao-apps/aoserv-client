@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.BusinessService;
 /**
  * @author  AO Industries, Inc.
  */
-final class RetryBusinessService extends RetryServiceStringKey<Business> implements BusinessService<RetryConnector,RetryConnectorFactory> {
+final class RetryBusinessService extends RetryServiceAccountingCodeKey<Business> implements BusinessService<RetryConnector,RetryConnectorFactory> {
 
     RetryBusinessService(RetryConnector connector) {
         super(connector, Business.class);

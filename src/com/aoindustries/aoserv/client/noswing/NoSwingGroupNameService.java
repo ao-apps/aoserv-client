@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.GroupNameService;
 /**
  * @author  AO Industries, Inc.
  */
-final class NoSwingGroupNameService extends NoSwingServiceStringKey<GroupName> implements GroupNameService<NoSwingConnector,NoSwingConnectorFactory> {
+final class NoSwingGroupNameService extends NoSwingServiceGroupIdKey<GroupName> implements GroupNameService<NoSwingConnector,NoSwingConnectorFactory> {
 
     NoSwingGroupNameService(NoSwingConnector connector, GroupNameService<?,?> wrapped) {
         super(connector, GroupName.class, wrapped);

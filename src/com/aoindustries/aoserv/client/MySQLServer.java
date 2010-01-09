@@ -1,13 +1,15 @@
 /*
- * Copyright 2006-2009 by AO Industries, Inc.,
+ * Copyright 2006-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -56,250 +58,260 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         };
     }
 
-    /**
-     * The maximum length of the name.
-     * TODO: Move to validator.
-     */
-    public static final int MAX_SERVER_NAME_LENGTH=31;
-
     public enum ReservedWord {
-         ACTION,
-         ADD,
-         AFTER,
-         AGGREGATE,
-         ALL,
-         ALTER,
-         AND,
-         AS,
-         ASC,
-         AUTO_INCREMENT,
-         AVG,
-         AVG_ROW_LENGTH,
-         BETWEEN,
-         BIGINT,
-         BINARY,
-         BIT,
-         BLOB,
-         BOOL,
-         BOTH,
-         BY,
-         CASCADE,
-         CASE,
-         CHANGE,
-         CHAR,
-         CHARACTER,
-         CHECK,
-         CHECKSUM,
-         COLUMN,
-         COLUMNS,
-         COMMENT,
-         CONSTRAINT,
-         CREATE,
-         CROSS,
-         CURRENT_DATE,
-         CURRENT_TIME,
-         CURRENT_TIMESTAMP,
-         DATA,
-         DATABASE,
-         DATABASES,
-         DATE,
-         DATETIME,
-         DAY,
-         DAY_HOUR,
-         DAY_MINUTE,
-         DAY_SECOND,
-         DAYOFMONTH,
-         DAYOFWEEK,
-         DAYOFYEAR,
-         DEC,
-         DECIMAL,
-         DEFAULT,
-         DELAY_KEY_WRITE,
-         DELAYED,
-         DELETE,
-         DESC,
-         DESCRIBE,
-         DISTINCT,
-         DISTINCTROW,
-         DOUBLE,
-         DROP,
-         ELSE,
-         ENCLOSED,
-         END,
-         ENUM,
-         ESCAPE,
-         ESCAPED,
-         EXISTS,
-         EXPLAIN,
-         FIELDS,
-         FILE,
-         FIRST,
-         FLOAT,
-         FLOAT4,
-         FLOAT8,
-         FLUSH,
-         FOR,
-         FOREIGN,
-         FROM,
-         FULL,
-         FUNCTION,
-         GLOBAL,
-         GRANT,
-         GRANTS,
-         GROUP,
-         HAVING,
-         HEAP,
-         HIGH_PRIORITY,
-         HOSTS,
-         HOUR,
-         HOUR_MINUTE,
-         HOUR_SECOND,
-         IDENTIFIED,
-         IF,
-         IGNORE,
-         IN,
-         INDEX,
-         INFILE,
-         INNER,
-         INSERT,
-         INSERT_ID,
-         INT,
-         INT1,
-         INT2,
-         INT3,
-         INT4,
-         INT8,
-         INTEGER,
-         INTERVAL,
-         INTO,
-         IS,
-         ISAM,
-         JOIN,
-         KEY,
-         KEYS,
-         KILL,
-         LAST_INSERT_ID,
-         LEADING,
-         LEFT,
-         LENGTH,
-         LIKE,
-         LIMIT,
-         LINES,
-         LOAD,
-         LOCAL,
-         LOCK,
-         LOGS,
-         LONG,
-         LONGBLOB,
-         LONGTEXT,
-         LOW_PRIORITY,
-         MATCH,
-         MAX,
-         MAX_ROWS,
-         MEDIUMBLOB,
-         MEDIUMINT,
-         MEDIUMTEXT,
-         MIDDLEINT,
-         MIN_ROWS,
-         MINUTE,
-         MINUTE_SECOND,
-         MODIFY,
-         MONTH,
-         MONTHNAME,
-         MYISAM,
-         NATURAL,
-         NO,
-         NOT,
-         NULL,
-         NUMERIC,
-         ON,
-         OPTIMIZE,
-         OPTION,
-         OPTIONALLY,
-         OR,
-         ORDER,
-         OUTER,
-         OUTFILE,
-         PACK_KEYS,
-         PARTIAL,
-         PASSWORD,
-         PRECISION,
-         PRIMARY,
-         PRIVILEGES,
-         PROCEDURE,
-         PROCESS,
-         PROCESSLIST,
-         READ,
-         REAL,
-         REFERENCES,
-         REGEXP,
-         RELOAD,
-         RENAME,
-         REPLACE,
-         RESTRICT,
-         RETURNS,
-         REVOKE,
-         RLIKE,
-         ROW,
-         ROWS,
-         SECOND,
-         SELECT,
-         SET,
-         SHOW,
-         SHUTDOWN,
-         SMALLINT,
-         SONAME,
-         SQL_BIG_RESULT,
-         SQL_BIG_SELECTS,
-         SQL_BIG_TABLES,
-         SQL_LOG_OFF,
-         SQL_LOG_UPDATE,
-         SQL_LOW_PRIORITY_UPDATES,
-         SQL_SELECT_LIMIT,
-         SQL_SMALL_RESULT,
-         SQL_WARNINGS,
-         STARTING,
-         STATUS,
-         STRAIGHT_JOIN,
-         STRING,
-         TABLE,
-         TABLES,
-         TEMPORARY,
-         TERMINATED,
-         TEXT,
-         THEN,
-         TIME,
-         TIMESTAMP,
-         TINYBLOB,
-         TINYINT,
-         TINYTEXT,
-         TO,
-         TRAILING,
-         TYPE,
-         UNIQUE,
-         UNLOCK,
-         UNSIGNED,
-         UPDATE,
-         USAGE,
-         USE,
-         USING,
-         VALUES,
-         VARBINARY,
-         VARCHAR,
-         VARIABLES,
-         VARYING,
-         WHEN,
-         WHERE,
-         WITH,
-         WRITE,
-         YEAR,
-         YEAR_MONTH,
-         ZEROFILL
+        ACTION,
+        ADD,
+        AFTER,
+        AGGREGATE,
+        ALL,
+        ALTER,
+        AND,
+        AS,
+        ASC,
+        AUTO_INCREMENT,
+        AVG,
+        AVG_ROW_LENGTH,
+        BETWEEN,
+        BIGINT,
+        BINARY,
+        BIT,
+        BLOB,
+        BOOL,
+        BOTH,
+        BY,
+        CASCADE,
+        CASE,
+        CHANGE,
+        CHAR,
+        CHARACTER,
+        CHECK,
+        CHECKSUM,
+        COLUMN,
+        COLUMNS,
+        COMMENT,
+        CONSTRAINT,
+        CREATE,
+        CROSS,
+        CURRENT_DATE,
+        CURRENT_TIME,
+        CURRENT_TIMESTAMP,
+        DATA,
+        DATABASE,
+        DATABASES,
+        DATE,
+        DATETIME,
+        DAY,
+        DAY_HOUR,
+        DAY_MINUTE,
+        DAY_SECOND,
+        DAYOFMONTH,
+        DAYOFWEEK,
+        DAYOFYEAR,
+        DEC,
+        DECIMAL,
+        DEFAULT,
+        DELAY_KEY_WRITE,
+        DELAYED,
+        DELETE,
+        DESC,
+        DESCRIBE,
+        DISTINCT,
+        DISTINCTROW,
+        DOUBLE,
+        DROP,
+        ELSE,
+        ENCLOSED,
+        END,
+        ENUM,
+        ESCAPE,
+        ESCAPED,
+        EXISTS,
+        EXPLAIN,
+        FIELDS,
+        FILE,
+        FIRST,
+        FLOAT,
+        FLOAT4,
+        FLOAT8,
+        FLUSH,
+        FOR,
+        FOREIGN,
+        FROM,
+        FULL,
+        FUNCTION,
+        GLOBAL,
+        GRANT,
+        GRANTS,
+        GROUP,
+        HAVING,
+        HEAP,
+        HIGH_PRIORITY,
+        HOSTS,
+        HOUR,
+        HOUR_MINUTE,
+        HOUR_SECOND,
+        IDENTIFIED,
+        IF,
+        IGNORE,
+        IN,
+        INDEX,
+        INFILE,
+        INNER,
+        INSERT,
+        INSERT_ID,
+        INT,
+        INT1,
+        INT2,
+        INT3,
+        INT4,
+        INT8,
+        INTEGER,
+        INTERVAL,
+        INTO,
+        IS,
+        ISAM,
+        JOIN,
+        KEY,
+        KEYS,
+        KILL,
+        LAST_INSERT_ID,
+        LEADING,
+        LEFT,
+        LENGTH,
+        LIKE,
+        LIMIT,
+        LINES,
+        LOAD,
+        LOCAL,
+        LOCK,
+        LOGS,
+        LONG,
+        LONGBLOB,
+        LONGTEXT,
+        LOW_PRIORITY,
+        MATCH,
+        MAX,
+        MAX_ROWS,
+        MEDIUMBLOB,
+        MEDIUMINT,
+        MEDIUMTEXT,
+        MIDDLEINT,
+        MIN_ROWS,
+        MINUTE,
+        MINUTE_SECOND,
+        MODIFY,
+        MONTH,
+        MONTHNAME,
+        MYISAM,
+        NATURAL,
+        NO,
+        NOT,
+        NULL,
+        NUMERIC,
+        ON,
+        OPTIMIZE,
+        OPTION,
+        OPTIONALLY,
+        OR,
+        ORDER,
+        OUTER,
+        OUTFILE,
+        PACK_KEYS,
+        PARTIAL,
+        PASSWORD,
+        PRECISION,
+        PRIMARY,
+        PRIVILEGES,
+        PROCEDURE,
+        PROCESS,
+        PROCESSLIST,
+        READ,
+        REAL,
+        REFERENCES,
+        REGEXP,
+        RELOAD,
+        RENAME,
+        REPLACE,
+        RESTRICT,
+        RETURNS,
+        REVOKE,
+        RLIKE,
+        ROW,
+        ROWS,
+        SECOND,
+        SELECT,
+        SET,
+        SHOW,
+        SHUTDOWN,
+        SMALLINT,
+        SONAME,
+        SQL_BIG_RESULT,
+        SQL_BIG_SELECTS,
+        SQL_BIG_TABLES,
+        SQL_LOG_OFF,
+        SQL_LOG_UPDATE,
+        SQL_LOW_PRIORITY_UPDATES,
+        SQL_SELECT_LIMIT,
+        SQL_SMALL_RESULT,
+        SQL_WARNINGS,
+        STARTING,
+        STATUS,
+        STRAIGHT_JOIN,
+        STRING,
+        TABLE,
+        TABLES,
+        TEMPORARY,
+        TERMINATED,
+        TEXT,
+        THEN,
+        TIME,
+        TIMESTAMP,
+        TINYBLOB,
+        TINYINT,
+        TINYTEXT,
+        TO,
+        TRAILING,
+        TYPE,
+        UNIQUE,
+        UNLOCK,
+        UNSIGNED,
+        UPDATE,
+        USAGE,
+        USE,
+        USING,
+        VALUES,
+        VARBINARY,
+        VARCHAR,
+        VARIABLES,
+        VARYING,
+        WHEN,
+        WHERE,
+        WITH,
+        WRITE,
+        YEAR,
+        YEAR_MONTH,
+        ZEROFILL;
+
+        private static volatile Set<String> reservedWords = null;
+
+        /**
+         * Case-insensitive check for if the provided string is a reserved word.
+         */
+        public static boolean isReservedWord(String value) {
+            Set<String> words = reservedWords;
+            if(words==null) {
+                ReservedWord[] values = values();
+                words = new HashSet<String>(values.length*4/3+1);
+                for(ReservedWord word : values) words.add(word.name().toLowerCase(Locale.ENGLISH));
+                reservedWords = words;
+            }
+            return words.contains(value.toLowerCase(Locale.ENGLISH));
+        }
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String name;
+    final private MySQLServerName name;
     final private int version;
     final private int maxConnections;
     final private int netBind;
@@ -307,7 +319,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     public MySQLServer(
         MySQLServerService<?,?> service,
         int aoServerResource,
-        String name,
+        MySQLServerName name,
         int version,
         int maxConnections,
         int netBind
@@ -324,7 +336,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     @Override
     protected int compareToImpl(MySQLServer other) throws RemoteException {
         if(key==other.key) return 0;
-        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+        int diff = name.compareTo(other.name);
         if(diff!=0) return diff;
         AOServerResource aoResource1 = getAoServerResource();
         AOServerResource aoResource2 = other.getAoServerResource();
@@ -339,7 +351,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     }
 
     @SchemaColumn(order=1, name="name", description="the name of the database")
-    public String getName() {
+    public MySQLServerName getName() {
     	return name;
     }
 
@@ -371,7 +383,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MySQLServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLServer(key, name, version, maxConnections, netBind);
+        return new com.aoindustries.aoserv.client.beans.MySQLServer(key, name.getBean(), version, maxConnections, netBind);
     }
     // </editor-fold>
 
@@ -398,7 +410,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-        return name+" on "+getAoServerResource().getAoServer().getHostname();
+        return ApplicationResources.accessor.getMessage(userLocale, "MySQLServer.toString", name, getAoServerResource().getAoServer().getHostname());
     }
     // </editor-fold>
 
@@ -431,26 +443,6 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
             this,
             bu
     	);
-    }
-
-    public static void checkServerName(String name) throws IllegalArgumentException {
-        // Must be a-z or 0-9 first, then a-z or 0-9 or . or _
-        int len = name.length();
-        if (len == 0 || len > MAX_SERVER_NAME_LENGTH) throw new IllegalArgumentException("MySQL server name should not exceed "+MAX_SERVER_NAME_LENGTH+" characters.");
-
-        // The first character must be [a-z] or [0-9]
-        char ch = name.charAt(0);
-        if ((ch < 'a' || ch > 'z') && (ch<'0' || ch>'9')) throw new IllegalArgumentException("MySQL server names must start with [a-z] or [0-9]");
-        // The rest may have additional characters
-        for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if (
-                (ch<'a' || ch>'z')
-                && (ch<'0' || ch>'9')
-                && ch!='.'
-                && ch!='_'
-            ) throw new IllegalArgumentException("MySQL server names may only contain [a-z], [0-9], period (.), and underscore (_)");
-    	}
     }
 
     public String getDataDirectory() {

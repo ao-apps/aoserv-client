@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
@@ -53,14 +54,14 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String linuxGroupType;
-    final private String groupName;
+    final private GroupId groupName;
     final private LinuxID gid;
 
     public LinuxGroup(
         LinuxGroupService<?,?> service,
         int aoServerResource,
         String linuxGroupType,
-        String groupName,
+        GroupId groupName,
         LinuxID gid
     ) {
         super(service, aoServerResource);
@@ -111,7 +112,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
         return new com.aoindustries.aoserv.client.beans.LinuxGroup(
             key,
             linuxGroupType,
-            groupName,
+            groupName.getBean(),
             gid.getBean()
         );
     }
@@ -160,44 +161,6 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
         return getService().getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
-    }
-    */
-    /**
-     * Determines if a name can be used as a group name.  A name is valid if
-     * it is between 1 and 255 characters in length and uses only ASCII 0x21
-     * through 0x7f, excluding the following characters:
-     * <code>space , : ( ) [ ] ' " | & ; A-Z</code>
-     */
-    /* TODO
-    public static boolean isValidGroupname(String name) {
-        int len = name.length();
-        if (len == 0 || len > MAX_LENGTH)
-                return false;
-        // The first character must be [a-z]
-        char ch = name.charAt(0);
-        if (ch < 'a' || ch > 'z')
-                return false;
-        // The rest may have additional characters
-        for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if(
-                ch<0x21
-                || ch>0x7f
-                || (ch>='A' && ch<='Z')
-                || ch==','
-                || ch==':'
-                || ch=='('
-                || ch==')'
-                || ch=='['
-                || ch==']'
-                || ch=='\''
-                || ch=='"'
-                || ch=='|'
-                || ch=='&'
-                || ch==';'
-            ) return false;
-        }
-        return true;
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {

@@ -14,7 +14,7 @@ public class Resource {
 
     private int pkey;
     private String resourceType;
-    private String accounting;
+    private AccountingCode accounting;
     private Date created;
     private UserId createdBy;
     private Integer disableLog;
@@ -23,7 +23,7 @@ public class Resource {
     public Resource() {
     }
 
-    public Resource(int pkey, String resourceType, String accounting, Date created, UserId createdBy, Integer disableLog, Date lastEnabled) {
+    public Resource(int pkey, String resourceType, AccountingCode accounting, Date created, UserId createdBy, Integer disableLog, Date lastEnabled) {
         this.pkey = pkey;
         this.resourceType = resourceType;
         this.accounting = accounting;
@@ -49,11 +49,11 @@ public class Resource {
         this.resourceType = resourceType;
     }
 
-    public String getAccounting() {
+    public AccountingCode getAccounting() {
         return accounting;
     }
 
-    public void setAccounting(String accounting) {
+    public void setAccounting(AccountingCode accounting) {
         this.accounting = accounting;
     }
 

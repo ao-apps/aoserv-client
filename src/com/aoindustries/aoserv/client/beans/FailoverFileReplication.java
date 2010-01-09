@@ -16,8 +16,8 @@ public class FailoverFileReplication {
     private int maxBitRate;
     private boolean useCompression;
     private short retention;
-    private String connectAddress;
-    private String connectFrom;
+    private InetAddress connectAddress;
+    private InetAddress connectFrom;
     private boolean enabled;
     private LinuxID quotaGid;
 
@@ -31,8 +31,8 @@ public class FailoverFileReplication {
         int maxBitRate,
         boolean useCompression,
         short retention,
-        String connectAddress,
-        String connectFrom,
+        InetAddress connectAddress,
+        InetAddress connectFrom,
         boolean enabled,
         LinuxID quotaGid
     ) {
@@ -96,19 +96,19 @@ public class FailoverFileReplication {
         this.retention = retention;
     }
 
-    public String getConnectAddress() {
+    public InetAddress getConnectAddress() {
         return connectAddress;
     }
 
-    public void setConnectAddress(String connectAddress) {
+    public void setConnectAddress(InetAddress connectAddress) {
         this.connectAddress = connectAddress;
     }
 
-    public String getConnectFrom() {
+    public InetAddress getConnectFrom() {
         return connectFrom;
     }
 
-    public void setConnectFrom(String connectFrom) {
+    public void setConnectFrom(InetAddress connectFrom) {
         this.connectFrom = connectFrom;
     }
 

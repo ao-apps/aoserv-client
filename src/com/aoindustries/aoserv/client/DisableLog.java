@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
@@ -24,7 +25,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private Timestamp time;
-    final private String accounting;
+    final private AccountingCode accounting;
     final private UserId disabledBy;
     final private String disableReason;
 
@@ -32,7 +33,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
         DisableLogService<?,?> service,
         int pkey,
         Timestamp time,
-        String accounting,
+        AccountingCode accounting,
         UserId disabledBy,
         String disableReason
     ) {
@@ -89,7 +90,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.DisableLog getBean() {
-        return new com.aoindustries.aoserv.client.beans.DisableLog(key, time, accounting, disabledBy.getBean(), disableReason);
+        return new com.aoindustries.aoserv.client.beans.DisableLog(key, time, accounting.getBean(), disabledBy.getBean(), disableReason);
     }
     // </editor-fold>
 

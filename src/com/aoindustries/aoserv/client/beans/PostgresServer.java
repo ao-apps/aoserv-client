@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client.beans;
 public class PostgresServer {
 
     private int aoServerResource;
-    private String name;
+    private PostgresServerName name;
     private int version;
     private int maxConnections;
     private int netBind;
@@ -24,7 +24,7 @@ public class PostgresServer {
 
     public PostgresServer(
         int aoServerResource,
-        String name,
+        PostgresServerName name,
         int version,
         int maxConnections,
         int netBind,
@@ -50,11 +50,11 @@ public class PostgresServer {
         this.aoServerResource = aoServerResource;
     }
 
-    public String getName() {
+    public PostgresServerName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(PostgresServerName name) {
         this.name = name;
     }
 

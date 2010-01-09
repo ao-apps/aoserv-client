@@ -10,32 +10,32 @@ package com.aoindustries.aoserv.client.beans;
  */
 public class GroupName {
 
-    private String groupName;
-    private String accounting;
+    private GroupId groupName;
+    private AccountingCode accounting;
     private Integer disableLog;
 
     public GroupName() {
     }
 
-    public GroupName(String groupName, String accounting, Integer disableLog) {
+    public GroupName(GroupId groupName, AccountingCode accounting, Integer disableLog) {
         this.groupName = groupName;
         this.accounting = accounting;
         this.disableLog = disableLog;
     }
 
-    public String getGroupName() {
+    public GroupId getGroupName() {
         return groupName;
     }
 
-    public void setGroupName(String groupName) {
+    public void setGroupName(GroupId groupName) {
         this.groupName = groupName;
     }
 
-    public String getAccounting() {
+    public AccountingCode getAccounting() {
         return accounting;
     }
 
-    public void setAccounting(String accounting) {
+    public void setAccounting(AccountingCode accounting) {
         this.accounting = accounting;
     }
 

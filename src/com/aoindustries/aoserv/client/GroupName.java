@@ -5,6 +5,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -18,19 +20,17 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupName extends AOServObjectStringKey<GroupName> implements BeanFactory<com.aoindustries.aoserv.client.beans.GroupName> {
+final public class GroupName extends AOServObjectGroupIdKey<GroupName> implements BeanFactory<com.aoindustries.aoserv.client.beans.GroupName> {
 	
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
-
-    public static final int MAX_LENGTH=255;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final String accounting;
+    final AccountingCode accounting;
     final Integer disableLog;
 
-    public GroupName(GroupNameService<?,?> table, String groupName, String accounting, Integer disableLog) {
+    public GroupName(GroupNameService<?,?> table, GroupId groupName, AccountingCode accounting, Integer disableLog) {
         super(table, groupName);
         this.accounting = accounting.intern();
         this.disableLog = disableLog;
@@ -39,7 +39,7 @@ final public class GroupName extends AOServObjectStringKey<GroupName> implements
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="group_name", index=IndexType.PRIMARY_KEY, description="the unique group name")
-    public String getGroupName() {
+    public GroupId getGroupName() {
         return key;
     }
 
@@ -64,7 +64,7 @@ final public class GroupName extends AOServObjectStringKey<GroupName> implements
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.GroupName getBean() {
-        return new com.aoindustries.aoserv.client.beans.GroupName(key, accounting, disableLog);
+        return new com.aoindustries.aoserv.client.beans.GroupName(key.getBean(), accounting.getBean(), disableLog);
     }
     // </editor-fold>
 

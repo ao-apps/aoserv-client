@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -16,7 +18,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implements BeanFactory<com.aoindustries.aoserv.client.beans.ServerFarm> {
+final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> implements BeanFactory<com.aoindustries.aoserv.client.beans.ServerFarm> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -24,10 +26,10 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implemen
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private String description;
-    final private String owner;
+    final private AccountingCode owner;
     final private boolean useRestrictedSmtpPort;
 
-    public ServerFarm(ServerFarmService<?,?> service, String name, String description, String owner, boolean useRestrictedSmtpPort) {
+    public ServerFarm(ServerFarmService<?,?> service, DomainLabel name, String description, AccountingCode owner, boolean useRestrictedSmtpPort) {
         super(service, name);
         this.description = description;
         this.owner = owner.intern();
@@ -37,7 +39,7 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implemen
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the farm")
-    public String getName() {
+    public DomainLabel getName() {
     	return key;
     }
 
@@ -60,7 +62,7 @@ final public class ServerFarm extends AOServObjectStringKey<ServerFarm> implemen
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.ServerFarm getBean() {
-        return new com.aoindustries.aoserv.client.beans.ServerFarm(key, description, owner, useRestrictedSmtpPort);
+        return new com.aoindustries.aoserv.client.beans.ServerFarm(key.getBean(), description, owner.getBean(), useRestrictedSmtpPort);
     }
     // </editor-fold>
 

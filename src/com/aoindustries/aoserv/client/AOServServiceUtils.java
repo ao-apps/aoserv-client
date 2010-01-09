@@ -53,14 +53,14 @@ final public class AOServServiceUtils {
     /**
      * Sets the service on the provided object, possibly cloning it in the process.
      */
-    public static <K extends Comparable<K>,V extends AOServObject<K,V>> V setService(V obj, AOServService<?,?,K,V> service) {
+    public static <K extends Comparable<K>,V extends AOServObject<K,V>> V setService(V obj, AOServService<?,?,K,V> service) throws RemoteException {
         return obj==null ? null : obj.setService(service);
     }
 
     /**
      * Sets the service on an entire collection, and returns an unmodifiable set.
      */
-    public static <K extends Comparable<K>,V extends AOServObject<K,V>> Set<V> setServices(Set<V> objs, AOServService<?,?,K,V> service) {
+    public static <K extends Comparable<K>,V extends AOServObject<K,V>> Set<V> setServices(Set<V> objs, AOServService<?,?,K,V> service) throws RemoteException {
         int size = objs.size();
         if(size==0) return Collections.emptySet();
         if(size==1) return Collections.singleton(setService(objs.iterator().next(), service));
@@ -72,7 +72,7 @@ final public class AOServServiceUtils {
     /**
      * Sets the service on an entire collection, and returns an unmodifiable sorted set.
      */
-    public static <K extends Comparable<K>,V extends AOServObject<K,V>> SortedSet<V> setServices(SortedSet<V> objs, AOServService<?,?,K,V> service) {
+    public static <K extends Comparable<K>,V extends AOServObject<K,V>> SortedSet<V> setServices(SortedSet<V> objs, AOServService<?,?,K,V> service) throws RemoteException {
         SortedSet<V> sortedSet = new TreeSet<V>();
         for(V obj : objs) sortedSet.add(setService(obj, service));
         return Collections.unmodifiableSortedSet(sortedSet);

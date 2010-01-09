@@ -10,26 +10,26 @@ package com.aoindustries.aoserv.client.beans;
  */
 public class ServerFarm {
 
-    private String name;
+    private DomainLabel name;
     private String description;
-    private String owner;
+    private AccountingCode owner;
     private boolean useRestrictedSmtpPort;
 
     public ServerFarm() {
     }
 
-    public ServerFarm(String name, String description, String owner, boolean useRestrictedSmtpPort) {
+    public ServerFarm(DomainLabel name, String description, AccountingCode owner, boolean useRestrictedSmtpPort) {
         this.name = name;
         this.description = description;
         this.owner = owner;
         this.useRestrictedSmtpPort = useRestrictedSmtpPort;
     }
 
-    public String getName() {
+    public DomainLabel getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(DomainLabel name) {
         this.name = name;
     }
 
@@ -41,11 +41,11 @@ public class ServerFarm {
         this.description = description;
     }
 
-    public String getOwner() {
+    public AccountingCode getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(AccountingCode owner) {
         this.owner = owner;
     }
 

@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.GroupNameService;
 /**
  * @author  AO Industries, Inc.
  */
-final class CachedGroupNameService extends CachedServiceStringKey<GroupName> implements GroupNameService<CachedConnector,CachedConnectorFactory> {
+final class CachedGroupNameService extends CachedServiceGroupIdKey<GroupName> implements GroupNameService<CachedConnector,CachedConnectorFactory> {
 
     CachedGroupNameService(CachedConnector connector, GroupNameService<?,?> wrapped) {
         super(connector, GroupName.class, wrapped);

@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -28,20 +30,20 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String farm;
+    final private DomainLabel farm;
     final private String description;
     final Integer operatingSystemVersion;
-    final private String accounting;
+    final private AccountingCode accounting;
     final private String name;
     final private boolean monitoringEnabled;
 
     public Server(
         ServerService<?,?> service,
         int pkey,
-        String farm,
+        DomainLabel farm,
         String description,
         Integer operatingSystemVersion,
-        String accounting,
+        AccountingCode accounting,
         String name,
         boolean monitoringEnabled
     ) {
@@ -73,9 +75,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     static final String COLUMN_FARM = "farm";
     @SchemaColumn(order=1, name=COLUMN_FARM, index=IndexType.INDEXED, description="the name of the farm the server is located in")
     public ServerFarm getServerFarm() throws RemoteException {
-        ServerFarm sf=getService().getConnector().getServerFarms().get(farm);
-        if(sf==null) throw new RemoteException("Unable to find ServerFarm: "+farm);
-        return sf;
+        return getService().getConnector().getServerFarms().get(farm);
     }
 
     @SchemaColumn(order=2, name="description", description="a description of the servers purpose")
@@ -111,7 +111,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Server getBean() {
-        return new com.aoindustries.aoserv.client.beans.Server(key, farm, description, operatingSystemVersion, accounting, name, monitoringEnabled);
+        return new com.aoindustries.aoserv.client.beans.Server(key, farm.getBean(), description, operatingSystemVersion, accounting.getBean(), name, monitoringEnabled);
     }
     // </editor-fold>
 
@@ -244,7 +244,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     String toStringImpl(Locale userLocale) throws RemoteException {
         // TODO: AOServer aoServer = getAOServer();
         // TODO: if(aoServer!=null) return aoServer.toStringImpl(userLocale);
-        return accounting+'/'+name;
+        return accounting.toString()+'/'+name;
     }
     // </editor-fold>
 
@@ -294,13 +294,16 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         );
     }
     */
+
     /**
      * Gets the accounting code, will not be filtered.
      *
      * @see #getBusiness()
      */
-    public String getAccounting() {
+    /* TODO
+    public AccountingCode getAccounting() {
         return accounting;
     }
+     */
     // </editor-fold>
 }

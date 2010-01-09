@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.group_names)
-public interface GroupNameService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceStringKey<C,F,GroupName> {
+public interface GroupNameService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceGroupIdKey<C,F,GroupName> {
 }

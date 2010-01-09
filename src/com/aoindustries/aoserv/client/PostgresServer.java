@@ -5,9 +5,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -33,135 +35,145 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
      */
     public static final String DATA_BASE_DIR="/var/lib/pgsql";
 
-    /**
-     * The maximum length of the name.
-     */
-    // TODO: Move to validator
-    public static final int MAX_SERVER_NAME_LENGTH=31;
-
     public enum ReservedWord {
-         ABORT,
-         ALL,
-         ANALYSE,
-         ANALYZE,
-         AND,
-         ANY,
-         AS,
-         ASC,
-         BETWEEN,
-         BINARY,
-         BIT,
-         BOTH,
-         CASE,
-         CAST,
-         CHAR,
-         CHARACTER,
-         CHECK,
-         CLUSTER,
-         COALESCE,
-         COLLATE,
-         COLUMN,
-         CONSTRAINT,
-         COPY,
-         CROSS,
-         CURRENT_DATE,
-         CURRENT_TIME,
-         CURRENT_TIMESTAMP,
-         CURRENT_USER,
-         DEC,
-         DECIMAL,
-         DEFAULT,
-         DEFERRABLE,
-         DESC,
-         DISTINCT,
-         DO,
-         ELSE,
-         END,
-         EXCEPT,
-         EXISTS,
-         EXPLAIN,
-         EXTEND,
-         EXTRACT,
-         FALSE,
-         FLOAT,
-         FOR,
-         FOREIGN,
-         FROM,
-         FULL,
-         GLOBAL,
-         GROUP,
-         HAVING,
-         ILIKE,
-         IN,
-         INITIALLY,
-         INNER,
-         INOUT,
-         INTERSECT,
-         INTO,
-         IS,
-         ISNULL,
-         JOIN,
-         LEADING,
-         LEFT,
-         LIKE,
-         LIMIT,
-         LISTEN,
-         LOAD,
-         LOCAL,
-         LOCK,
-         MOVE,
-         NATURAL,
-         NCHAR,
-         NEW,
-         NOT,
-         NOTNULL,
-         NULL,
-         NULLIF,
-         NUMERIC,
-         OFF,
-         OFFSET,
-         OLD,
-         ON,
-         ONLY,
-         OR,
-         ORDER,
-         OUT,
-         OUTER,
-         OVERLAPS,
-         POSITION,
-         PRECISION,
-         PRIMARY,
-         PUBLIC,
-         REFERENCES,
-         RESET,
-         RIGHT,
-         SELECT,
-         SESSION_USER,
-         SETOF,
-         SHOW,
-         SOME,
-         SUBSTRING,
-         TABLE,
-         THEN,
-         TO,
-         TRAILING,
-         TRANSACTION,
-         TRIM,
-         TRUE,
-         UNION,
-         UNIQUE,
-         USER,
-         USING,
-         VACUUM,
-         VARCHAR,
-         VERBOSE,
-         WHEN,
-         WHERE
+        ABORT,
+        ALL,
+        ANALYSE,
+        ANALYZE,
+        AND,
+        ANY,
+        AS,
+        ASC,
+        BETWEEN,
+        BINARY,
+        BIT,
+        BOTH,
+        CASE,
+        CAST,
+        CHAR,
+        CHARACTER,
+        CHECK,
+        CLUSTER,
+        COALESCE,
+        COLLATE,
+        COLUMN,
+        CONSTRAINT,
+        COPY,
+        CROSS,
+        CURRENT_DATE,
+        CURRENT_TIME,
+        CURRENT_TIMESTAMP,
+        CURRENT_USER,
+        DEC,
+        DECIMAL,
+        DEFAULT,
+        DEFERRABLE,
+        DESC,
+        DISTINCT,
+        DO,
+        ELSE,
+        END,
+        EXCEPT,
+        EXISTS,
+        EXPLAIN,
+        EXTEND,
+        EXTRACT,
+        FALSE,
+        FLOAT,
+        FOR,
+        FOREIGN,
+        FROM,
+        FULL,
+        GLOBAL,
+        GROUP,
+        HAVING,
+        ILIKE,
+        IN,
+        INITIALLY,
+        INNER,
+        INOUT,
+        INTERSECT,
+        INTO,
+        IS,
+        ISNULL,
+        JOIN,
+        LEADING,
+        LEFT,
+        LIKE,
+        LIMIT,
+        LISTEN,
+        LOAD,
+        LOCAL,
+        LOCK,
+        MOVE,
+        NATURAL,
+        NCHAR,
+        NEW,
+        NOT,
+        NOTNULL,
+        NULL,
+        NULLIF,
+        NUMERIC,
+        OFF,
+        OFFSET,
+        OLD,
+        ON,
+        ONLY,
+        OR,
+        ORDER,
+        OUT,
+        OUTER,
+        OVERLAPS,
+        POSITION,
+        PRECISION,
+        PRIMARY,
+        PUBLIC,
+        REFERENCES,
+        RESET,
+        RIGHT,
+        SELECT,
+        SESSION_USER,
+        SETOF,
+        SHOW,
+        SOME,
+        SUBSTRING,
+        TABLE,
+        THEN,
+        TO,
+        TRAILING,
+        TRANSACTION,
+        TRIM,
+        TRUE,
+        UNION,
+        UNIQUE,
+        USER,
+        USING,
+        VACUUM,
+        VARCHAR,
+        VERBOSE,
+        WHEN,
+        WHERE;
+
+        private static volatile Set<String> reservedWords = null;
+
+        /**
+         * Case-insensitive check for if the provided string is a reserved word.
+         */
+        public static boolean isReservedWord(String value) {
+            Set<String> words = reservedWords;
+            if(words==null) {
+                ReservedWord[] values = values();
+                words = new HashSet<String>(values.length*4/3+1);
+                for(ReservedWord word : values) words.add(word.name().toLowerCase(Locale.ENGLISH));
+                reservedWords = words;
+            }
+            return words.contains(value.toLowerCase(Locale.ENGLISH));
+        }
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String name;
+    final private PostgresServerName name;
     final int version;
     final private int maxConnections;
     final private int netBind;
@@ -172,7 +184,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     public PostgresServer(
         PostgresServerService<?,?> service,
         int aoServerResource,
-        String name,
+        PostgresServerName name,
         int version,
         int maxConnections,
         int netBind,
@@ -195,7 +207,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     @Override
     protected int compareToImpl(PostgresServer other) throws RemoteException {
         if(key==other.key) return 0;
-        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+        int diff = name.compareTo(other.name);
         if(diff!=0) return diff;
         AOServerResource aoResource1 = getAoServerResource();
         AOServerResource aoResource2 = other.getAoServerResource();
@@ -210,7 +222,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     }
 
     @SchemaColumn(order=1, name="name", description="the name of the database")
-    public String getName() {
+    public PostgresServerName getName() {
         return name;
     }
 
@@ -257,7 +269,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.PostgresServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresServer(key, name, version, maxConnections, netBind, sortMem, sharedBuffers, fsync);
+        return new com.aoindustries.aoserv.client.beans.PostgresServer(key, name.getBean(), version, maxConnections, netBind, sortMem, sharedBuffers, fsync);
     }
     // </editor-fold>
 
@@ -283,7 +295,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-        return name+" on "+getAoServerResource().getAoServer().getHostname();
+        return ApplicationResources.accessor.getMessage(userLocale, "PostgresServer.toString", name, getAoServerResource().getAoServer().getHostname());
     }
     // </editor-fold>
 
@@ -312,26 +324,6 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
             encoding,
             enablePostgis
 	);
-    }
-
-    public static void checkServerName(String name) throws IllegalArgumentException {
-	// Must be a-z or 0-9 first, then a-z or 0-9 or . or _
-	int len = name.length();
-	if (len == 0 || len > MAX_SERVER_NAME_LENGTH) throw new IllegalArgumentException("PostgreSQL server name should not exceed "+MAX_SERVER_NAME_LENGTH+" characters.");
-
-        // The first character must be [a-z] or [0-9]
-	char ch = name.charAt(0);
-	if ((ch < 'a' || ch > 'z') && (ch<'0' || ch>'9')) throw new IllegalArgumentException("PostgreSQL server names must start with [a-z] or [0-9]");
-        // The rest may have additional characters
-	for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if (
-                (ch<'a' || ch>'z')
-                && (ch<'0' || ch>'9')
-                && ch!='.'
-                && ch!='_'
-            ) throw new IllegalArgumentException("PostgreSQL server names may only contain [a-z], [0-9], period (.), and underscore (_)");
-	}
     }
 
     public String getDataDirectory() {

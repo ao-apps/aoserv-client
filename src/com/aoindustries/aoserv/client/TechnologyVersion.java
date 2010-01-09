@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -28,7 +29,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     final private String name;
     final private String version;
     final private Timestamp updated;
-    final private String owner;
+    final private UserId owner;
     final int operatingSystemVersion;
 
     public TechnologyVersion(
@@ -37,14 +38,14 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
         String name,
         String version,
         Timestamp updated,
-        String owner,
+        UserId owner,
         int operatingSystemVersion
     ) {
         super(service, pkey);
         this.name = name.intern();
         this.version = version;
         this.updated = updated;
-        this.owner = owner.intern();
+        this.owner = owner==null ? null : owner.intern();
         this.operatingSystemVersion = operatingSystemVersion;
     }
     // </editor-fold>
@@ -95,7 +96,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TechnologyVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.TechnologyVersion(key, name, version, updated, owner, operatingSystemVersion);
+        return new com.aoindustries.aoserv.client.beans.TechnologyVersion(key, name, version, updated, owner==null ? null : owner.getBean(), operatingSystemVersion);
     }
     // </editor-fold>
 

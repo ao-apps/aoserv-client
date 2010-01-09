@@ -14,7 +14,7 @@ public class DisableLog {
 
     private int pkey;
     private Date time;
-    private String accounting;
+    private AccountingCode accounting;
     private UserId disabledBy;
     private String disableReason;
 
@@ -24,7 +24,7 @@ public class DisableLog {
     public DisableLog(
         int pkey,
         Date time,
-        String accounting,
+        AccountingCode accounting,
         UserId disabledBy,
         String disableReason
     ) {
@@ -51,11 +51,11 @@ public class DisableLog {
         this.time = time;
     }
 
-    public String getAccounting() {
+    public AccountingCode getAccounting() {
         return accounting;
     }
 
-    public void setAccounting(String accounting) {
+    public void setAccounting(AccountingCode accounting) {
         this.accounting = accounting;
     }
 

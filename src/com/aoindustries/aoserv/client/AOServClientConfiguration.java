@@ -270,7 +270,7 @@ final public class AOServClientConfiguration {
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         } catch(ValidationException err) {
-            throw new LoginException(err.getMessage(), err);
+            throw new LoginException(err.getLocalizedMessage(Locale.getDefault()), err);
         }
     }
 

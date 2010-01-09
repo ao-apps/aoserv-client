@@ -12,12 +12,12 @@ import java.util.Date;
  */
 public class Business {
 
-    private String accounting;
+    private AccountingCode accounting;
     private String contractVersion;
     private Date created;
     private Date canceled;
     private String cancelReason;
-    private String parent;
+    private AccountingCode parent;
     private boolean canAddBackupServer;
     private boolean canAddBusinesses;
     private boolean canSeePrices;
@@ -38,12 +38,12 @@ public class Business {
     }
 
     public Business(
-        String accounting,
+        AccountingCode accounting,
         String contractVersion,
         Date created,
         Date canceled,
         String cancelReason,
-        String parent,
+        AccountingCode parent,
         boolean canAddBackupServer,
         boolean canAddBusinesses,
         boolean canSeePrices,
@@ -83,11 +83,11 @@ public class Business {
         this.emailRelayRate = emailRelayRate;
     }
 
-    public String getAccounting() {
+    public AccountingCode getAccounting() {
         return accounting;
     }
 
-    public void setAccounting(String accounting) {
+    public void setAccounting(AccountingCode accounting) {
         this.accounting = accounting;
     }
 
@@ -123,11 +123,11 @@ public class Business {
         this.cancelReason = cancelReason;
     }
 
-    public String getParent() {
+    public AccountingCode getParent() {
         return parent;
     }
 
-    public void setParent(String parent) {
+    public void setParent(AccountingCode parent) {
         this.parent = parent;
     }
 

@@ -11,13 +11,13 @@ package com.aoindustries.aoserv.client.beans;
 public class MySQLDatabase {
 
     private int aoServerResource;
-    private String name;
+    private MySQLDatabaseName name;
     private int mysqlServer;
 
     public MySQLDatabase() {
     }
 
-    public MySQLDatabase(int aoServerResource, String name, int mysqlServer) {
+    public MySQLDatabase(int aoServerResource, MySQLDatabaseName name, int mysqlServer) {
         this.aoServerResource = aoServerResource;
         this.name = name;
         this.mysqlServer = mysqlServer;
@@ -31,11 +31,11 @@ public class MySQLDatabase {
         this.aoServerResource = aoServerResource;
     }
 
-    public String getName() {
+    public MySQLDatabaseName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(MySQLDatabaseName name) {
         this.name = name;
     }
 

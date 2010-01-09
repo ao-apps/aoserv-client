@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client.beans;
 public class MySQLServer {
 
     private int aoServerResource;
-    private String name;
+    private MySQLServerName name;
     private int version;
     private int maxConnections;
     private int netBind;
@@ -19,7 +19,7 @@ public class MySQLServer {
     public MySQLServer() {
     }
 
-    public MySQLServer(int aoServerResource, String name, int version, int maxConnections, int netBind) {
+    public MySQLServer(int aoServerResource, MySQLServerName name, int version, int maxConnections, int netBind) {
         this.aoServerResource = aoServerResource;
         this.name = name;
         this.version = version;
@@ -35,11 +35,11 @@ public class MySQLServer {
         this.aoServerResource = aoServerResource;
     }
 
-    public String getName() {
+    public MySQLServerName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(MySQLServerName name) {
         this.name = name;
     }
 

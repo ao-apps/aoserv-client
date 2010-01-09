@@ -12,7 +12,7 @@ public class LinuxGroup {
 
     private int aoServerResource;
     private String linuxGroupType;
-    private String groupName;
+    private GroupId groupName;
     private LinuxID gid;
 
     public LinuxGroup() {
@@ -21,7 +21,7 @@ public class LinuxGroup {
     public LinuxGroup(
         int aoServerResource,
         String linuxGroupType,
-        String groupName,
+        GroupId groupName,
         LinuxID gid
     ) {
         this.aoServerResource = aoServerResource;
@@ -46,11 +46,11 @@ public class LinuxGroup {
         this.linuxGroupType = linuxGroupType;
     }
 
-    public String getGroupName() {
+    public GroupId getGroupName() {
         return groupName;
     }
 
-    public void setGroupName(String groupName) {
+    public void setGroupName(GroupId groupName) {
         this.groupName = groupName;
     }
 

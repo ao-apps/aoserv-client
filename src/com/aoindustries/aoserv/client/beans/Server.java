@@ -11,10 +11,10 @@ package com.aoindustries.aoserv.client.beans;
 public class Server {
 
     private int pkey;
-    private String farm;
+    private DomainLabel farm;
     private String description;
     private Integer operatingSystemVersion;
-    private String accounting;
+    private AccountingCode accounting;
     private String name;
     private boolean monitoringEnabled;
 
@@ -23,10 +23,10 @@ public class Server {
 
     public Server(
         int pkey,
-        String farm,
+        DomainLabel farm,
         String description,
         Integer operatingSystemVersion,
-        String accounting,
+        AccountingCode accounting,
         String name,
         boolean monitoringEnabled
     ) {
@@ -47,11 +47,11 @@ public class Server {
         this.pkey = pkey;
     }
 
-    public String getFarm() {
+    public DomainLabel getFarm() {
         return farm;
     }
 
-    public void setFarm(String farm) {
+    public void setFarm(DomainLabel farm) {
         this.farm = farm;
     }
 
@@ -71,11 +71,11 @@ public class Server {
         this.operatingSystemVersion = operatingSystemVersion;
     }
 
-    public String getAccounting() {
+    public AccountingCode getAccounting() {
         return accounting;
     }
 
-    public void setAccounting(String accounting) {
+    public void setAccounting(AccountingCode accounting) {
         this.accounting = accounting;
     }
 

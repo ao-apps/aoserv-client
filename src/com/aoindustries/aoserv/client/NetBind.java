@@ -11,6 +11,7 @@ import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -294,6 +295,24 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             }
         }
     }
+
+    /**
+     * Encodes the parameters.  Will not return null.
+     */
+    public static String encodeParameters(Map<String,String> monitoringParameters) {
+        try {
+            StringBuilder SB = new StringBuilder();
+            for(Map.Entry<String,String> entry : monitoringParameters.entrySet()) {
+                String name = entry.getKey();
+                String value = entry.getValue();
+                if(SB.length()>0) SB.append('&');
+                SB.append(URLEncoder.encode(name, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
+            }
+            return SB.toString();
+        } catch(UnsupportedEncodingException err) {
+            throw new WrappedException(err);
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
@@ -421,25 +440,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         if(pfs!=null) return "Private FTP server in "+pfs.getLinuxServerAccount().getHome();
 
         return null;
-    }
-    */
-    /**
-     * Encodes the parameters.  Will not return null.
-     */
-    /* TODO
-    public static String encodeParameters(Map<String,String> monitoringParameters) {
-        try {
-            StringBuilder SB = new StringBuilder();
-            for(Map.Entry<String,String> entry : monitoringParameters.entrySet()) {
-                String name = entry.getKey();
-                String value = entry.getValue();
-                if(SB.length()>0) SB.append('&');
-                SB.append(URLEncoder.encode(name, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
-            }
-            return SB.toString();
-        } catch(UnsupportedEncodingException err) {
-            throw new WrappedException(err);
-        }
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {

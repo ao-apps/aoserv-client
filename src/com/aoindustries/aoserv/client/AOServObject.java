@@ -82,7 +82,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      *          Otherwise, returns a clone with the service field updated.
      */
     @SuppressWarnings("unchecked")
-    final public T setService(AOServService<?,?,K,T> service) {
+    final public T setService(AOServService<?,?,K,T> service) throws RemoteException {
         if(this.service==null) {
             this.service = service;
             return (T)this;

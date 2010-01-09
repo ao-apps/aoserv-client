@@ -25,7 +25,7 @@ public class AOServer {
     private String timeZone;
     private Integer jilterBind;
     private boolean restrictOutboundEmail;
-    private String daemonConnectAddress;
+    private InetAddress daemonConnectAddress;
     private int failoverBatchSize;
     private Float monitoringLoadLow;
     private Float monitoringLoadMedium;
@@ -49,7 +49,7 @@ public class AOServer {
         String timeZone,
         Integer jilterBind,
         boolean restrictOutboundEmail,
-        String daemonConnectAddress,
+        InetAddress daemonConnectAddress,
         int failoverBatchSize,
         Float monitoringLoadLow,
         Float monitoringLoadMedium,
@@ -181,11 +181,11 @@ public class AOServer {
         this.restrictOutboundEmail = restrictOutboundEmail;
     }
 
-    public String getDaemonConnectAddress() {
+    public InetAddress getDaemonConnectAddress() {
         return daemonConnectAddress;
     }
 
-    public void setDaemonConnectAddress(String daemonConnectAddress) {
+    public void setDaemonConnectAddress(InetAddress daemonConnectAddress) {
         this.daemonConnectAddress = daemonConnectAddress;
     }
 

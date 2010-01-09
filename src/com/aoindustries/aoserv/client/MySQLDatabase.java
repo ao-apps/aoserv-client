@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
 import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -43,11 +44,6 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     ;
 
     /**
-     * The longest name allowed for a MySQL database.
-     */
-    public static final int MAX_DATABASE_NAME_LENGTH=64;
-
-    /**
      * The root database for a mysql installation.
      */
     public static final String MYSQL="mysql";
@@ -59,13 +55,13 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String name;
+    final private MySQLDatabaseName name;
     final private int mysqlServer;
 
     public MySQLDatabase(
         MySQLDatabaseService<?,?> service,
         int aoServerResource,
-        String name,
+        MySQLDatabaseName name,
         int mysqlServer
     ) {
         super(service, aoServerResource);
@@ -77,7 +73,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(MySQLDatabase other) throws RemoteException {
-        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+        int diff = name.compareTo(other.name);
         if(diff!=0) return diff;
         return mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
     }
@@ -90,7 +86,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     }
 
     @SchemaColumn(order=1, name="name", description="the name of the database")
-    public String getName() {
+    public MySQLDatabaseName getName() {
         return name;
     }
 
@@ -103,7 +99,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MySQLDatabase getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, name, mysqlServer);
+        return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, name.getBean(), mysqlServer);
     }
     // </editor-fold>
 
@@ -127,7 +123,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return name;
+        return name.toString();
     }
     // </editor-fold>
 

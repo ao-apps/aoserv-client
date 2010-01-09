@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
@@ -29,10 +30,10 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final String accounting;
+    final AccountingCode accounting;
     final Integer disableLog;
 
-    public Username(UsernameService<?,?> table, UserId username, String accounting, Integer disableLog) {
+    public Username(UsernameService<?,?> table, UserId username, AccountingCode accounting, Integer disableLog) {
         super(table, username);
         this.accounting = accounting.intern();
         this.disableLog = disableLog;
@@ -66,7 +67,7 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Username getBean() {
-        return new com.aoindustries.aoserv.client.beans.Username(key.getBean(), accounting, disableLog);
+        return new com.aoindustries.aoserv.client.beans.Username(key.getBean(), accounting.getBean(), disableLog);
     }
     // </editor-fold>
 

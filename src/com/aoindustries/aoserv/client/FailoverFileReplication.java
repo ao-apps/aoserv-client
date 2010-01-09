@@ -5,11 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
-import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -31,8 +31,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     final private int maxBitRate;
     final private boolean useCompression;
     final private short retention;
-    final private String connectAddress;
-    final private String connectFrom;
+    final private InetAddress connectAddress;
+    final private InetAddress connectFrom;
     final private boolean enabled;
     final private LinuxID quotaGid;
 
@@ -44,8 +44,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         int maxBitRate,
         boolean useCompression,
         short retention,
-        String connectAddress,
-        String connectFrom,
+        InetAddress connectAddress,
+        InetAddress connectFrom,
         boolean enabled,
         LinuxID quotaGid
     ) {
@@ -55,8 +55,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         this.maxBitRate = maxBitRate;
         this.useCompression = useCompression;
         this.retention = retention;
-        this.connectAddress = StringUtility.intern(connectAddress);
-        this.connectFrom = StringUtility.intern(connectFrom);
+        this.connectAddress = connectAddress==null ? null : connectAddress.intern();
+        this.connectFrom = connectFrom==null ? null : connectFrom.intern();
         this.enabled = enabled;
         this.quotaGid = quotaGid;
     }
@@ -110,7 +110,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
      * a replication to be specifically sent through a gigabit connection or alternate route.
      */
     @SchemaColumn(order=6, name="connect_address", description="an address that overrides regular AOServ connections for failovers")
-    public String getConnectAddress() {
+    public InetAddress getConnectAddress() {
         return connectAddress;
     }
 
@@ -119,7 +119,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
      * allows a replication to be specifically sent through a gigabit connection or alternate route.
      */
     @SchemaColumn(order=7, name="connect_from", description="an address that overrides regular AOServ connection source addresses for failovers")
-    public String getConnectFrom() {
+    public InetAddress getConnectFrom() {
         return connectFrom;
     }
 
@@ -147,7 +147,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.FailoverFileReplication getBean() {
-        return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, connectAddress, connectFrom, enabled, quotaGid.getBean());
+        return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, connectAddress==null ? null : connectAddress.getBean(), connectFrom==null ? null : connectFrom.getBean(), enabled, quotaGid.getBean());
     }
     // </editor-fold>
 

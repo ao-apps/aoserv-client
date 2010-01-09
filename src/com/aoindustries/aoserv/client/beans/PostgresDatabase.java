@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client.beans;
 public class PostgresDatabase {
 
     private int aoServerResource;
-    private String name;
+    private PostgresDatabaseName name;
     private int postgresServer;
     private int datdba;
     private int encoding;
@@ -24,7 +24,7 @@ public class PostgresDatabase {
 
     public PostgresDatabase(
         int aoServerResource,
-        String name,
+        PostgresDatabaseName name,
         int postgresServer,
         int datdba,
         int encoding,
@@ -50,11 +50,11 @@ public class PostgresDatabase {
         this.aoServerResource = aoServerResource;
     }
 
-    public String getName() {
+    public PostgresDatabaseName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(PostgresDatabaseName name) {
         this.name = name;
     }
 

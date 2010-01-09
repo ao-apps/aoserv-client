@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
@@ -28,7 +29,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final String resourceType;
-    final private String accounting;
+    final private AccountingCode accounting;
     final private Timestamp created;
     final private UserId createdBy;
     final private Integer disableLog;
@@ -38,7 +39,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         ResourceService<?,?> service,
         int pkey,
         String resourceType,
-        String accounting,
+        AccountingCode accounting,
         Timestamp created,
         UserId createdBy,
         Integer disableLog,
@@ -57,7 +58,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(Resource other) throws RemoteException {
-        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
+        int diff = accounting.equals(other.accounting) ? 0 : getBusiness().compareTo(other.getBusiness());
         if(diff!=0) return diff;
         diff = resourceType.equals(other.resourceType) ? 0 : getResourceType().compareTo(other.getResourceType());
         if(diff!=0) return diff;
@@ -126,7 +127,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Resource getBean() {
-        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, accounting, created, createdBy.getBean(), disableLog, lastEnabled);
+        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, accounting.getBean(), created, createdBy.getBean(), disableLog, lastEnabled);
     }
     // </editor-fold>
 

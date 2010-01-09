@@ -5,8 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -21,11 +20,6 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The maximum length of a PostgreSQL username.
-     */
-    public static final int MAX_USERNAME_LENGTH=31;
 
     /**
      * The username of the PostgreSQL special users.
@@ -47,7 +41,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String username;
+    final private PostgresUserId username;
     final private int postgresServer;
     final private boolean createdb;
     final private boolean trace;
@@ -58,7 +52,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     public PostgresUser(
         PostgresUserService<?,?> service,
         int aoServerResource,
-        String username,
+        PostgresUserId username,
         int postgresServer,
         boolean createdb,
         boolean trace,
@@ -95,11 +89,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the PostgreSQL user")
     public Username getUsername() throws RemoteException {
-        try {
-            return getService().getConnector().getUsernames().get(UserId.valueOf(username));
-        } catch(ValidationException err) {
-            throw new RemoteException(err.getLocalizedMessage(getService().getConnector().getLocale()));
-        }
+        return getService().getConnector().getUsernames().get(username.getUserId());
     }
 
     static final String COLUMN_POSTGRES_SERVER = "postgres_server";
@@ -136,7 +126,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.PostgresUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresUser(key, username, postgresServer, createdb, trace, superPriv, catupd, predisablePassword);
+        return new com.aoindustries.aoserv.client.beans.PostgresUser(key, username.getBean(), postgresServer, createdb, trace, superPriv, catupd, predisablePassword);
     }
     // </editor-fold>
 
@@ -161,7 +151,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-        return username+" on "+getPostgresServer().toStringImpl(userLocale);
+        return ApplicationResources.accessor.getMessage(userLocale, "PostgresUser.toString", username, getPostgresServer().toStringImpl(userLocale));
     }
     // </editor-fold>
 
@@ -176,7 +166,6 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     public int arePasswordsSet() throws IOException, SQLException {
         return getService().getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
-
 
     public boolean canDisable() throws IOException, SQLException {
         return disable_log==-1;
@@ -195,15 +184,15 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
         return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
-    */
-    /*public String checkPasswordDescribe(String password) {
+
+    public String checkPasswordDescribe(String password) {
         return checkPasswordDescribe(pkey, password);
     }
 
     public static String checkPasswordDescribe(String username, String password) {
         return PasswordChecker.checkPasswordDescribe(username, password, true, false);
-    }*/
-    /* TODO
+    }
+
     public void disable(DisableLog dl) throws IOException, SQLException {
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
     }
@@ -287,35 +276,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
             }
         );
     }
-    */
-    /**
-     * Determines if a name can be used as a username.  A name is valid if
-     * it is between 1 and 31 characters in length and uses only [a-z], [0-9], _, or -
-     */
-    /* TODO
-    public static boolean isValidUsername(String name) {
-        if(
-            name.equals("sameuser")
-            || name.equals("samegroup")
-            || name.equals("all")
-        ) return false;
-        int len = name.length();
-        if (len == 0 || len > MAX_USERNAME_LENGTH) return false;
-        // The first character must be [a-z]
-        char ch = name.charAt(0);
-        if (ch < 'a' || ch > 'z') return false;
-        // The rest may have additional characters
-        for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if(
-                (ch<'a' || ch>'z')
-                && (ch<'0' || ch>'9')
-                && ch!='_'
-            ) return false;
-        }
-        return true;
-    }
-    
+
     public boolean canSetPassword() {
         return disable_log==-1 && !POSTGRES.equals(pkey);
     }

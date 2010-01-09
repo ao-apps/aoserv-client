@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client.beans;
 public class PostgresUser {
 
     private int aoServerResource;
-    private String username;
+    private PostgresUserId username;
     private int postgresServer;
     private boolean createdb;
     private boolean trace;
@@ -24,7 +24,7 @@ public class PostgresUser {
 
     public PostgresUser(
         int aoServerResource,
-        String username,
+        PostgresUserId username,
         int postgresServer,
         boolean createdb,
         boolean trace,
@@ -50,11 +50,11 @@ public class PostgresUser {
         this.aoServerResource = aoServerResource;
     }
 
-    public String getUsername() {
+    public PostgresUserId getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(PostgresUserId username) {
         this.username = username;
     }
 

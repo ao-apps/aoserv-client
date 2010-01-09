@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.ServerFarmService;
 /**
  * @author  AO Industries, Inc.
  */
-final class NoSwingServerFarmService extends NoSwingServiceStringKey<ServerFarm> implements ServerFarmService<NoSwingConnector,NoSwingConnectorFactory> {
+final class NoSwingServerFarmService extends NoSwingServiceDomainLabelKey<ServerFarm> implements ServerFarmService<NoSwingConnector,NoSwingConnectorFactory> {
 
     NoSwingServerFarmService(NoSwingConnector connector, ServerFarmService<?,?> wrapped) {
         super(connector, ServerFarm.class, wrapped);

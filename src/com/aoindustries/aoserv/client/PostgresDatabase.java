@@ -1,15 +1,15 @@
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
-import java.util.Locale;
-import java.util.Set;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>PostgresDatabase</code> corresponds to a unique PostgreSQL table
@@ -42,17 +42,10 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         TEMPLATE0="template0",
         TEMPLATE1="template1"
     ;
-
-    /**
-     * The name of a database is limited by the internal data type of
-     * the <code>pg_database</code> table.  The type is <code>name</code>
-     * which has a maximum length of 31 characters.
-     */
-    public static final int MAX_DATABASE_NAME_LENGTH=31;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String name;
+    final private PostgresDatabaseName name;
     final private int postgresServer;
     final private int datdba;
     final private int encoding;
@@ -63,7 +56,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     public PostgresDatabase(
         PostgresDatabaseService<?,?> service,
         int aoServerResource,
-        String name,
+        PostgresDatabaseName name,
         int postgresServer,
         int datdba,
         int encoding,
@@ -85,7 +78,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(PostgresDatabase other) throws RemoteException {
-        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+        int diff = name.compareTo(other.name);
         if(diff!=0) return diff;
         return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareTo(other.getPostgresServer());
     }
@@ -98,7 +91,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     }
 
     @SchemaColumn(order=1, name="name", description="the name of the database")
-    public String getName() {
+    public PostgresDatabaseName getName() {
         return name;
     }
 
@@ -147,7 +140,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.PostgresDatabase getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresDatabase(key, name, postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
+        return new com.aoindustries.aoserv.client.beans.PostgresDatabase(key, name.getBean(), postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
     }
     // </editor-fold>
 
@@ -166,7 +159,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return name;
+        return name.toString();
     }
     // </editor-fold>
 

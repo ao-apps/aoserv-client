@@ -6,8 +6,8 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Locale;
@@ -37,7 +37,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     final private String timeZone;
     final private Integer jilterBind;
     final private boolean restrictOutboundEmail;
-    final private String daemonConnectAddress;
+    final private InetAddress daemonConnectAddress;
     final private int failoverBatchSize;
     final private Float monitoringLoadLow;
     final private Float monitoringLoadMedium;
@@ -59,7 +59,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         String timeZone,
         Integer jilterBind,
         boolean restrictOutboundEmail,
-        String daemonConnectAddress,
+        InetAddress daemonConnectAddress,
         int failoverBatchSize,
         Float monitoringLoadLow,
         Float monitoringLoadMedium,
@@ -79,7 +79,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         this.timeZone = timeZone.intern();
         this.jilterBind = jilterBind;
         this.restrictOutboundEmail = restrictOutboundEmail;
-        this.daemonConnectAddress = StringUtility.intern(daemonConnectAddress);
+        this.daemonConnectAddress = daemonConnectAddress==null ? null : daemonConnectAddress.intern();
         this.failoverBatchSize = failoverBatchSize;
         this.monitoringLoadLow = monitoringLoadLow;
         this.monitoringLoadMedium = monitoringLoadMedium;
@@ -200,7 +200,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
      * @see  #getDaemonBind
      */
     @SchemaColumn(order=13, name="daemon_connect_address", description="provides a specific address to use for connecting to AOServDaemon")
-    public String getDaemonConnectAddress() {
+    public InetAddress getDaemonConnectAddress() {
         return daemonConnectAddress;
     }
 
@@ -252,7 +252,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.AOServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServer(key, hostname.getBean(), daemonBind, daemonKey, poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, daemonConnectAddress, failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
+        return new com.aoindustries.aoserv.client.beans.AOServer(key, hostname.getBean(), daemonBind, daemonKey, poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, daemonConnectAddress==null ? null : daemonConnectAddress.getBean(), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 

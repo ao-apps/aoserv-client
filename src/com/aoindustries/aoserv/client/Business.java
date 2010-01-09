@@ -5,9 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Business extends AOServObjectStringKey<Business> implements BeanFactory<com.aoindustries.aoserv.client.beans.Business> /* TODO: implements Disablable*/ {
+final public class Business extends AOServObjectAccountingCodeKey<Business> implements BeanFactory<com.aoindustries.aoserv.client.beans.Business> /* TODO: implements Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -71,7 +71,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
     final private Timestamp created;
     final private Timestamp canceled;
     final private String cancelReason;
-    final private String parent;
+    final private AccountingCode parent;
     final private boolean canAddBackupServer;
     final private boolean canAddBusinesses;
     final private boolean canSeePrices;
@@ -90,12 +90,12 @@ final public class Business extends AOServObjectStringKey<Business> implements B
 
     public Business(
         BusinessService<?,?> service,
-        String accounting,
+        AccountingCode accounting,
         String contractVersion,
         Timestamp created,
         Timestamp canceled,
         String cancelReason,
-        String parent,
+        AccountingCode parent,
         boolean canAddBackupServer,
         boolean canAddBusinesses,
         boolean canSeePrices,
@@ -117,7 +117,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
         this.created = created;
         this.canceled = canceled;
         this.cancelReason = cancelReason;
-        this.parent = StringUtility.intern(parent);
+        this.parent = parent==null ? null : parent.intern();
         this.canAddBackupServer = canAddBackupServer;
         this.canAddBusinesses = canAddBusinesses;
         this.canSeePrices = canSeePrices;
@@ -138,7 +138,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
     
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="accounting", index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
-    public String getAccounting() {
+    public AccountingCode getAccounting() {
         return key;
     }
 
@@ -285,7 +285,7 @@ final public class Business extends AOServObjectStringKey<Business> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Business getBean() {
-        return new com.aoindustries.aoserv.client.beans.Business(parent, contractVersion, created, canceled, cancelReason, parent, canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, createdBy==null ? null : createdBy.getBean(), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
+        return new com.aoindustries.aoserv.client.beans.Business(key.getBean(), contractVersion, created, canceled, cancelReason, parent==null ? null : parent.getBean(), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, createdBy==null ? null : createdBy.getBean(), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
     // </editor-fold>
 
@@ -943,27 +943,6 @@ final public class Business extends AOServObjectStringKey<Business> implements B
             }
         }
         return false;
-    }
-
-    public static boolean isValidAccounting(String accounting) {
-	int len=accounting.length();
-	if(len<2 || len>32) return false;
-	char ch=accounting.charAt(0);
-	if(ch<'A' || ch>'Z') return false;
-	ch=accounting.charAt(len-1);
-	if(
-            (ch<'A' || ch>'Z')
-            && (ch<'0' || ch>'9')
-	) return false;
-	for(int c=1;c<(len-1);c++) {
-            ch=accounting.charAt(c);
-            if(
-                (ch<'A' || ch>'Z')
-                && (ch<'0' || ch>'9')
-                && ch!='_'
-            ) return false;
-	}
-	return true;
     }
 
     public void move(AOServer from, AOServer to, TerminalWriter out) throws IOException, SQLException {

@@ -16,7 +16,7 @@ public class TechnologyVersion {
     private String name;
     private String version;
     private Date updated;
-    private String owner;
+    private UserId owner;
     private int operatingSystemVersion;
 
     public TechnologyVersion() {
@@ -27,7 +27,7 @@ public class TechnologyVersion {
         String name,
         String version,
         Date updated,
-        String owner,
+        UserId owner,
         int operatingSystemVersion
     ) {
         this.pkey = pkey;
@@ -70,11 +70,11 @@ public class TechnologyVersion {
         this.updated = updated;
     }
 
-    public String getOwner() {
+    public UserId getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(UserId owner) {
         this.owner = owner;
     }
 

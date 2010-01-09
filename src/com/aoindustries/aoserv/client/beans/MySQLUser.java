@@ -11,9 +11,9 @@ package com.aoindustries.aoserv.client.beans;
 public class MySQLUser {
 
     private int aoServerResource;
-    private String username;
+    private MySQLUserId username;
     private int mysqlServer;
-    private String host;
+    private InetAddress host;
     private boolean selectPriv;
     private boolean insertPriv;
     private boolean updatePriv;
@@ -53,9 +53,9 @@ public class MySQLUser {
 
     public MySQLUser(
         int aoServerResource,
-        String username,
+        MySQLUserId username,
         int mysqlServer,
-        String host,
+        InetAddress host,
         boolean selectPriv,
         boolean insertPriv,
         boolean updatePriv,
@@ -137,11 +137,11 @@ public class MySQLUser {
         this.aoServerResource = aoServerResource;
     }
 
-    public String getUsername() {
+    public MySQLUserId getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(MySQLUserId username) {
         this.username = username;
     }
 
@@ -153,11 +153,11 @@ public class MySQLUser {
         this.mysqlServer = mysqlServer;
     }
 
-    public String getHost() {
+    public InetAddress getHost() {
         return host;
     }
 
-    public void setHost(String host) {
+    public void setHost(InetAddress host) {
         this.host = host;
     }
 

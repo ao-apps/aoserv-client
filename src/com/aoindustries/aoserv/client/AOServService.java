@@ -38,7 +38,7 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * Checks if this service returns objects that may safely have their service reset without copying.
      * This implies that this service performs no caching of the objects.
      */
-    boolean isAoServObjectServiceSettable();
+    boolean isAoServObjectServiceSettable() throws RemoteException;
 
     /**
      * Gets the set of all accessible objects.  These objects may or

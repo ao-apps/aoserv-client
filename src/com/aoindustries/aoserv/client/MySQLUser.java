@@ -5,10 +5,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -46,20 +47,14 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
         DEFAULT_MAX_USER_CONNECTIONS=UNLIMITED_USER_CONNECTIONS
     ;
 
-    public static final int MAX_HOST_LENGTH=60;
-
     /**
      * Convenience constants for the most commonly used host values.
      */
+    /* TODO
     public static final String
         ANY_HOST="%",
         ANY_LOCAL_HOST=null
-    ;
-
-    /**
-     * The maximum length of a MySQL username.
-     */
-    public static final int MAX_USERNAME_LENGTH=16;
+    ;*/
 
     /**
      * The username of the MySQL super user.
@@ -76,9 +71,9 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String username;
+    final private MySQLUserId username;
     final private int mysqlServer;
-    final private String host;
+    final private InetAddress host;
     final private boolean selectPriv;
     final private boolean insertPriv;
     final private boolean updatePriv;
@@ -116,9 +111,9 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     public MySQLUser(
         MySQLUserService<?,?> service,
         int aoServerResource,
-        String username,
+        MySQLUserId username,
         int mysqlServer,
-        String host,
+        InetAddress host,
         boolean selectPriv,
         boolean insertPriv,
         boolean updatePriv,
@@ -156,7 +151,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
         super(service, aoServerResource);
         this.username = username.intern();
         this.mysqlServer = mysqlServer;
-        this.host = StringUtility.intern(host);
+        this.host = host==null ? null : host.intern();
         this.selectPriv = selectPriv;
         this.insertPriv = insertPriv;
         this.updatePriv = updatePriv;
@@ -211,11 +206,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the MySQL user")
     public Username getUsername() throws RemoteException {
-        try {
-            return getService().getConnector().getUsernames().get(UserId.valueOf(username));
-        } catch(ValidationException err) {
-            throw new RemoteException(err.getLocalizedMessage(getService().getConnector().getLocale()));
-        }
+        return getService().getConnector().getUsernames().get(username.getUserId());
     }
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";
@@ -225,7 +216,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     }
 
     @SchemaColumn(order=3, name="host", description="the host this user is allowed to connect from, if this is not null, all access is restricted to these hosts, otherwise the entries in mysql_db_users and mysql_hosts are used.")
-    public String getHost() {
+    public InetAddress getHost() {
     	return host;
     }
 
@@ -396,7 +387,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MySQLUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLUser(key, username, mysqlServer, host, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, reloadPriv, shutdownPriv, processPriv, filePriv, grantPriv, referencesPriv, indexPriv, alterPriv, showDbPriv, superPriv, createTmpTablePriv, lockTablesPriv, executePriv, replSlavePriv, replClientPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, createUserPriv, eventPriv, triggerPriv, predisablePassword, maxQuestions, maxUpdates, maxConnections, maxUserConnections);
+        return new com.aoindustries.aoserv.client.beans.MySQLUser(key, username.getBean(), mysqlServer, host==null ? null : host.getBean(), selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, reloadPriv, shutdownPriv, processPriv, filePriv, grantPriv, referencesPriv, indexPriv, alterPriv, showDbPriv, superPriv, createTmpTablePriv, lockTablesPriv, executePriv, replSlavePriv, replClientPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, createUserPriv, eventPriv, triggerPriv, predisablePassword, maxQuestions, maxUpdates, maxConnections, maxUserConnections);
     }
     // </editor-fold>
 
@@ -421,7 +412,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-        return username+" on "+getMysqlServer().toStringImpl(userLocale);
+        return ApplicationResources.accessor.getMessage(userLocale, "MySQLUser.toString", username, getMysqlServer().toStringImpl(userLocale));
     }
     // </editor-fold>
 
@@ -541,31 +532,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
             }
         );
     }
-    */
 
-    /**
-     * Determines if a name can be used as a username.  A name is valid if
-     * it is between 1 and 16 characters in length and uses only [a-z], [0-9], or _
-     */
-    /* TODO
-    public static boolean isValidUsername(String name) {
-        int len = name.length();
-        if (len == 0 || len > MAX_USERNAME_LENGTH) return false;
-        // The first character must be [a-z]
-        char ch = name.charAt(0);
-        if (ch < 'a' || ch > 'z') return false;
-        // The rest may have additional characters
-        for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if(
-                (ch<'a' || ch>'z')
-                && (ch<'0' || ch>'9')
-                && ch!='_'
-            ) return false;
-        }
-        return true;
-    }
-    
     public boolean canSetPassword() {
         return disable_log==-1 && !username.equals(ROOT);
     }

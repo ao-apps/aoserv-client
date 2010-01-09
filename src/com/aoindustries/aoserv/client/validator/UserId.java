@@ -5,7 +5,6 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.AOServObjectUtils;
 import com.aoindustries.aoserv.client.BeanFactory;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -54,29 +53,32 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
         if(ch < 'a' || ch > 'z') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.startAToZ");
 
         // The rest may have additional characters
+        boolean hasAt = false;
         for (int c = 1; c < len; c++) {
             ch = id.charAt(c);
             if(ch==' ') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.noSpace");
             if(ch<=0x21 || ch>0x7f) throw new ValidationException(ApplicationResources.accessor, "UserId.validate.specialCharacter");
             if(ch>='A' && ch<='Z') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.noCapital");
-            if(ch==',') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.comma");
-            if(ch==':') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.colon");
-            if(ch=='(') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.leftParen");
-            if(ch==')') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.rightParen");
-            if(ch=='[') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.leftSquare");
-            if(ch==']') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.rightSquare");
-            if(ch=='\'') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.apostrophe");
-            if(ch=='"') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.quote");
-            if(ch=='|') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.verticalBar");
-            if(ch=='&') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.ampersand");
-            if(ch==';') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.semicolon");
-            if(ch=='\\') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.backslash");
-            if(ch=='/') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.slash");
+            switch(ch) {
+                case ',' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.comma");
+                case ':' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.colon");
+                case '(' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.leftParen");
+                case ')' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.rightParen");
+                case '[' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.leftSquare");
+                case ']' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.rightSquare");
+                case '\'' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.apostrophe");
+                case '"' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.quote");
+                case '|' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.verticalBar");
+                case '&' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.ampersand");
+                case ';' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.semicolon");
+                case '\\' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.backslash");
+                case '/' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.slash");
+                case '@' : hasAt = true; break;
+            }
     	}
 
         // More strict at sign control is required for user@domain structure in Cyrus virtdomains.
-        int atPos = id.indexOf('@');
-        if(atPos!=-1) {
+        if(hasAt) {
             // Must also be a valid email address
             Email.validate(id);
             if(id.startsWith("cyrus@")) throw new ValidationException(ApplicationResources.accessor, "UserId.validate.startWithCyrusAt");
@@ -142,7 +144,7 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
     }
 
     public int compareTo(UserId other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(id, other.id);
+        return id.compareTo(other.id);
     }
 
     @Override

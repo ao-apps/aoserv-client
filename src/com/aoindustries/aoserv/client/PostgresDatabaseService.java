@@ -150,31 +150,6 @@ public interface PostgresDatabaseService<C extends AOServConnector<C,F>, F exten
         );
     }
 
-    public boolean isValidDatabaseName(String name) throws IOException, SQLException {
-	return isValidDatabaseName(name, connector.getPostgresReservedWords().getRows());
-    }
-
-    public static boolean isValidDatabaseName(String name, List<?> reservedWords) {
-	// Must be a-z first, then a-z or 0-9 or _
-	int len = name.length();
-	if (len == 0 || len > PostgresDatabase.MAX_DATABASE_NAME_LENGTH) return false;
-	// The first character must be [a-z]
-	char ch = name.charAt(0);
-	if (ch < 'a' || ch > 'z') return false;
-	// The rest may have additional characters
-	for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if ((ch < 'a' || ch > 'z') && (ch < '0' || ch > '9') && ch != '_') return false;
-	}
-
-	// Also must not be a reserved word
-	int size=reservedWords.size();
-	for(int c=0;c<size;c++) {
-            if(name.equalsIgnoreCase(reservedWords.get(c).toString())) return false;
-	}
-	return true;
-    }
-
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(
             true,

@@ -11,13 +11,13 @@ package com.aoindustries.aoserv.client.beans;
 public class Username {
 
     private UserId username;
-    private String accounting;
+    private AccountingCode accounting;
     private Integer disableLog;
 
     public Username() {
     }
 
-    public Username(UserId username, String accounting, Integer disableLog) {
+    public Username(UserId username, AccountingCode accounting, Integer disableLog) {
         this.username = username;
         this.accounting = accounting;
         this.disableLog = disableLog;
@@ -31,11 +31,11 @@ public class Username {
         this.username = username;
     }
 
-    public String getAccounting() {
+    public AccountingCode getAccounting() {
         return accounting;
     }
 
-    public void setAccounting(String accounting) {
+    public void setAccounting(AccountingCode accounting) {
         this.accounting = accounting;
     }
 

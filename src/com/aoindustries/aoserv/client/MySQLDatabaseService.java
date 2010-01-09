@@ -125,43 +125,6 @@ public interface MySQLDatabaseService<C extends AOServConnector<C,F>, F extends 
     boolean isMySQLDatabaseNameAvailable(String name, MySQLServer mysqlServer) throws IOException, SQLException {
         return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_MYSQL_DATABASE_NAME_AVAILABLE, name, mysqlServer.pkey);
     }
-    */
-    /**
-     * Checks the validity of the name.
-     * @return  <code>null</code> if the name is valid, or a localized message on why it is not valid
-     */
-    /* TODO
-    public String isValidDatabaseName(Locale userLocale, String name) throws IOException, SQLException {
-        return isValidDatabaseName(userLocale, name, connector.getMysqlReservedWords().getRows());
-    }
-    */
-    /**
-     * Checks the validity of the name.
-     * @return  <code>null</code> if the name is valid, or a localized message on why it is not valid
-     */
-    /* TODO
-    public static String isValidDatabaseName(Locale userLocale, String name, List<?> reservedWords) {
-        // Must be a-z first, then a-z or 0-9 or _
-        int len = name.length();
-        if(len==0) return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseService.isValidDatabaseName.empty");
-        if(len>MySQLDatabase.MAX_DATABASE_NAME_LENGTH) return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseService.isValidDatabaseName.tooLong", len, MySQLDatabase.MAX_DATABASE_NAME_LENGTH);
-        // The first character must be [a-z]
-        char ch = name.charAt(0);
-        if (ch < 'a' || ch > 'z') return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseService.isValidDatabaseName.firstChar");
-        // The rest may have additional characters
-        for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if ((ch < 'a' || ch > 'z') && (ch < '0' || ch > '9') && ch != '_') return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseService.isValidDatabaseName.invalidChar", ch);
-        }
-
-        // Also must not be a reserved word
-        int size=reservedWords.size();
-        for(int c=0;c<size;c++) {
-            String reservedWord = reservedWords.get(c).toString();
-            if(name.equalsIgnoreCase(reservedWord)) return ApplicationResources.accessor.getMessage(userLocale, "MySQLDatabaseService.isValidDatabaseName.reservedWord", reservedWord);
-        }
-    	return null;
-    }
 
     void waitForRebuild(AOServer aoServer) throws IOException, SQLException {
         connector.requestUpdate(

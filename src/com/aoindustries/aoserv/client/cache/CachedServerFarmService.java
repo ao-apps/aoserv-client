@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.ServerFarmService;
 /**
  * @author  AO Industries, Inc.
  */
-final class CachedServerFarmService extends CachedServiceStringKey<ServerFarm> implements ServerFarmService<CachedConnector,CachedConnectorFactory> {
+final class CachedServerFarmService extends CachedServiceDomainLabelKey<ServerFarm> implements ServerFarmService<CachedConnector,CachedConnectorFactory> {
 
     CachedServerFarmService(CachedConnector connector, ServerFarmService<?,?> wrapped) {
         super(connector, ServerFarm.class, wrapped);

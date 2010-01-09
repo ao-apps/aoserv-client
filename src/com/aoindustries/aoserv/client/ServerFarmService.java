@@ -12,5 +12,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.server_farms)
-public interface ServerFarmService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceStringKey<C,F,ServerFarm> {
+public interface ServerFarmService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceDomainLabelKey<C,F,ServerFarm> {
 }

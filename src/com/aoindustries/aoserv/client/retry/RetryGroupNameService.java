@@ -11,7 +11,7 @@ import com.aoindustries.aoserv.client.GroupNameService;
 /**
  * @author  AO Industries, Inc.
  */
-final class RetryGroupNameService extends RetryServiceStringKey<GroupName> implements GroupNameService<RetryConnector,RetryConnectorFactory> {
+final class RetryGroupNameService extends RetryServiceGroupIdKey<GroupName> implements GroupNameService<RetryConnector,RetryConnectorFactory> {
 
     RetryGroupNameService(RetryConnector connector) {
         super(connector, GroupName.class);
