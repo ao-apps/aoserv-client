@@ -77,7 +77,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         return key;
     }
 
-    @SchemaColumn(order=1, name="server", description="the pkey of the server that the files are coming from")
+    static final String COLUMN_SERVER = "server";
+    @SchemaColumn(order=1, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server that the files are coming from")
     public Server getServer() throws RemoteException {
         return getService().getConnector().getServers().get(server);
     }
@@ -165,7 +166,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             // TODO: getFailoverFileSchedules(),
-            // TODO: getFailoverMySQLReplications(),
+            getFailoverMySQLReplications()
             // TODO: getFileBackupSettings()
         );
     }
@@ -179,13 +180,12 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public Set<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
+        return getService().getConnector().getFailoverMySQLReplications().getIndexed(FailoverMySQLReplication.COLUMN_REPLICATION, this);
+    }
     /* TODO
     public List<FailoverFileSchedule> getFailoverFileSchedules() throws IOException, SQLException {
         return getService().getConnector().getFailoverFileSchedules().getFailoverFileSchedules(this);
-    }
-
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
     }
 
     public List<FileBackupSetting> getFileBackupSettings() throws IOException, SQLException {

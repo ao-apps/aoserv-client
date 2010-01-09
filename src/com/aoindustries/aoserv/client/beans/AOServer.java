@@ -15,7 +15,7 @@ public class AOServer {
     private int server;
     private DomainName hostname;
     private Integer daemonBind;
-    private String daemonKey;
+    private HashedPassword daemonKey;
     private int poolSize;
     private int distroHour;
     private Date lastDistroTime;
@@ -39,7 +39,7 @@ public class AOServer {
         int server,
         DomainName hostname,
         Integer daemonBind,
-        String daemonKey,
+        HashedPassword daemonKey,
         int poolSize,
         int distroHour,
         Date lastDistroTime,
@@ -101,11 +101,11 @@ public class AOServer {
         this.daemonBind = daemonBind;
     }
 
-    public String getDaemonKey() {
+    public HashedPassword getDaemonKey() {
         return daemonKey;
     }
 
-    public void setDaemonKey(String daemonKey) {
+    public void setDaemonKey(HashedPassword daemonKey) {
         this.daemonKey = daemonKey;
     }
 

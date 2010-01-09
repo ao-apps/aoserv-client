@@ -7,14 +7,9 @@ package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.BeanFactory;
 import com.aoindustries.math.LongLong;
-import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.persistent.PersistentCollections;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 

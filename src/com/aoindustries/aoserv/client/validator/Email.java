@@ -33,6 +33,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
     public static final int MAX_LENGTH = 254;
 
     public static final int MAX_LOCAL_PART_LENGTH = 64;
+    public static Email valueOf;
 
     /**
      * Validates a complete email address.  Splits on @ and calls <code>validate</code> on local part and domain.

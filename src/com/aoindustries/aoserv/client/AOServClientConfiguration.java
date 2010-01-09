@@ -10,6 +10,9 @@ import com.aoindustries.aoserv.client.noswing.NoSwingConnectorFactory;
 import com.aoindustries.aoserv.client.retry.RetryConnectorFactory;
 import com.aoindustries.aoserv.client.rmi.RmiClientConnectorFactory;
 import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.Hostname;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.security.LoginException;
@@ -59,15 +62,17 @@ final public class AOServClientConfiguration {
     /**
      * Gets the optional SSL truststore path.
      */
-    static String getTrustStorePath() throws IOException {
-        return getProperty("aoserv.client.truststore.path");
+    public static String getTrustStorePath() throws IOException {
+        String s = getProperty("aoserv.client.truststore.path");
+        return s==null || s.length()==0 ? null : s;
     }
 
     /**
      * Gets the optional SSL truststore password.
      */
-    static String getTrustStorePassword() throws IOException {
-        return getProperty("aoserv.client.truststore.password");
+    public static String getTrustStorePassword() throws IOException {
+        String s = getProperty("aoserv.client.truststore.password");
+        return s==null || s.length()==0 ? null : s;
     }
 
     /**
@@ -80,27 +85,27 @@ final public class AOServClientConfiguration {
     /**
      * Gets the server hostname.
      */
-    static String getRmiHostname() throws IOException {
-        return getProperty("aoserv.client.rmi.hostname");
+    static Hostname getRmiHostname() throws IOException, ValidationException {
+        return Hostname.valueOf(getProperty("aoserv.client.rmi.hostname"));
     }
 
     /**
      * Gets the local IP to connect from or <code>null</code> if not configured.
      */
-    static String getRmiLocalIp() throws IOException {
+    static InetAddress getRmiLocalIp() throws IOException, ValidationException {
         String S = getProperty("aoserv.client.rmi.local_ip");
         if(
             S==null
             || (S=S.trim()).length()==0
         ) return null;
-        return S;
+        return InetAddress.valueOf(S);
     }
     
     /**
      * Gets the server port.
      */
-    static int getRmiPort() throws IOException {
-        return Integer.parseInt(getProperty("aoserv.client.rmi.port"));
+    static NetPort getRmiPort() throws IOException, ValidationException {
+        return NetPort.valueOf(Integer.parseInt(getProperty("aoserv.client.rmi.port")));
     }
 
     /**
@@ -204,15 +209,20 @@ final public class AOServClientConfiguration {
                     AOServConnectorFactory<?,?> newFactory;
                     if(protocol.equalsIgnoreCase(Protocol.RMI)) {
                         String trustStorePath = getTrustStorePath();
-                        if(trustStorePath!=null && trustStorePath.length()>0) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+                        if(trustStorePath!=null) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
                         String trustStorePassword = getTrustStorePassword();
-                        if(trustStorePassword!=null && trustStorePassword.length()>0) System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
-                        newFactory = new RmiClientConnectorFactory(
-                            getRmiHostname(),
-                            getRmiPort(),
-                            getRmiLocalIp(),
-                            getRmiUseSsl()
-                        );
+                        if(trustStorePassword!=null) System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
+                        try {
+                            InetAddress localIp = getRmiLocalIp();
+                            newFactory = new RmiClientConnectorFactory(
+                                getRmiHostname().toString(),
+                                getRmiPort().getPort(),
+                                localIp==null ? null : localIp.getAddress(),
+                                getRmiUseSsl()
+                            );
+                        } catch(ValidationException err) {
+                            throw new RemoteException(err.getLocalizedMessage(Locale.getDefault()), err);
+                        }
                     } else if(protocol.equalsIgnoreCase(Protocol.SOAP)) {
                         // Load through reflection to avoid dependency relationship
                         final String classname = "com.aoindustries.aoserv.client.ws.WsConnectorFactory";

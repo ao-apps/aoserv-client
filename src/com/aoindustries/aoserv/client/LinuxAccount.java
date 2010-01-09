@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -30,22 +31,39 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     /**
      * Some commonly used system and application account usernames.
      */
-    public static final String
-        APACHE="apache",
-        AWSTATS="awstats",
-        BIN="bin",
-        CYRUS="cyrus",
-        EMAILMON="emailmon",
-        FTP="ftp",
-        FTPMON="ftpmon",
-        INTERBASE="interbase",
-        MAIL="mail",
-        NOBODY="nobody",
-        OPERATOR="operator",
-        POSTGRES="postgres",
-        ROOT="root"
+    public static final UserId
+        APACHE,
+        AWSTATS,
+        BIN,
+        CYRUS,
+        EMAILMON,
+        FTP,
+        FTPMON,
+        MAIL,
+        NOBODY,
+        OPERATOR,
+        POSTGRES,
+        ROOT
     ;
-    
+    static {
+        try {
+            APACHE=UserId.valueOf("apache").intern();
+            AWSTATS=UserId.valueOf("awstats").intern();
+            BIN=UserId.valueOf("bin").intern();
+            CYRUS=UserId.valueOf("cyrus").intern();
+            EMAILMON=UserId.valueOf("emailmon").intern();
+            FTP=UserId.valueOf("ftp").intern();
+            FTPMON=UserId.valueOf("ftpmon").intern();
+            MAIL=UserId.valueOf("mail").intern();
+            NOBODY=UserId.valueOf("nobody").intern();
+            OPERATOR=UserId.valueOf("operator").intern();
+            POSTGRES=UserId.valueOf("postgres").intern();
+            ROOT=UserId.valueOf("root").intern();
+        } catch(ValidationException err) {
+            throw new AssertionError(err.getMessage());
+        }
+    }
+
     public static final String NO_PASSWORD_CONFIG_VALUE="!!";
     // </editor-fold>
 

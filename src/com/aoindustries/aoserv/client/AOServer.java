@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
@@ -27,7 +28,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private DomainName hostname;
     final private Integer daemonBind;
-    final private String daemonKey;
+    final private HashedPassword daemonKey;
     final private int poolSize;
     final private int distroHour;
     final private Timestamp lastDistroTime;
@@ -49,7 +50,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         int server,
         DomainName hostname,
         Integer daemonBind,
-        String daemonKey,
+        HashedPassword daemonKey,
         int poolSize,
         int distroHour,
         Timestamp lastDistroTime,
@@ -106,7 +107,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     /**
      * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
      */
-    @SchemaColumn(order=1, name="hostname", index=IndexType.UNIQUE, description="the unique hostname of the server")
+    public static final String COLUMN_HOSTNAME = "hostname";
+    @SchemaColumn(order=1, name=COLUMN_HOSTNAME, index=IndexType.UNIQUE, description="the unique hostname of the server")
     public DomainName getHostname() {
         return hostname;
     }
@@ -129,7 +131,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         description="the hashed key used to connect to this server, this info MUST be filtered\n"
                   + "because it grants complete control over the server."
     )
-    public String getDaemonKey() {
+    public HashedPassword getDaemonKey() {
         return daemonKey;
     }
 
@@ -252,7 +254,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.AOServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServer(key, hostname.getBean(), daemonBind, daemonKey, poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, daemonConnectAddress==null ? null : daemonConnectAddress.getBean(), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
+        return new com.aoindustries.aoserv.client.beans.AOServer(key, hostname.getBean(), daemonBind, daemonKey.getBean(), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, daemonConnectAddress==null ? null : daemonConnectAddress.getBean(), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 
@@ -274,9 +276,9 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getAoServerResources(),
+            getBackupPartitions(),
             getNestedAoServers()
             // TODO: getAOServerDaemonHosts(),
-            // TODO: getBackupPartitions(),
             // TODO: getLinuxServerAccounts(),
             // TODO: getEmailDomains(),
             // TODO: getLinuxServerGroups(),
@@ -298,19 +300,72 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     }
 
     /**
+     * Gets all of the resources on this server of any of the provided types.
+     */
+    /*
+    public Set<AOServerResource> getAoServerResources(Set<ResourceType> resourceTypes) throws RemoteException {
+        Set<AOServerResource> aors = new HashSet<AOServerResource>();
+        for(AOServerResource aor : getService().getConnector().getAoServerResources().getIndexed(AOServerResource.COLUMN_AO_SERVER, this)) {
+            if(resourceTypes.contains(aor.getResource().getResourceType())) aors.add(aor);
+        }
+        return Collections.unmodifiableSet(aors);
+    }*/
+
+    public Set<BackupPartition> getBackupPartitions() throws RemoteException {
+        return getService().getConnector().getBackupPartitions().getIndexed(BackupPartition.COLUMN_AO_SERVER, this);
+    }
+
+    /**
      * Gets the set of servers that are currently failed-over to this server.
      */
     public Set<AOServer> getNestedAoServers() throws RemoteException {
         return getService().getConnector().getAoServers().getIndexed(AOServer.COLUMN_FAILOVER_SERVER, this);
     }
 
+    /*
+    public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
+        Set<LinuxAccountType> lats = getService().getConnector().getLinuxAccountTypes().getSet();
+        Set<ResourceType> rts = new HashSet<ResourceType>(lats.size()*4/3+1);
+        for(LinuxAccountType lat : lats) rts.add(lat.getResourceType());
+        Set<LinuxAccount> las = new HashSet<LinuxAccount>();
+        for(AOServerResource aor : getAoServerResources(rts)) {
+            LinuxAccount la = aor.getLinuxAccount();
+            if(la==null) throw new AssertionError("la==null");
+            if(!las.add(la)) throw new AssertionError("Duplicate LinuxAccount: "+la);
+        }
+        return Collections.unmodifiableSet(las);
+    }
+    */
+    /*
+    public SortedSet<LinuxAccount> getSortedLinuxAccounts() throws RemoteException {
+        Set<LinuxAccountType> lats = getService().getConnector().getLinuxAccountTypes().getSet();
+        Set<ResourceType> rts = new HashSet<ResourceType>(lats.size()*4/3+1);
+        for(LinuxAccountType lat : lats) rts.add(lat.getResourceType());
+        SortedSet<LinuxAccount> las = new TreeSet<LinuxAccount>();
+        for(AOServerResource aor : getAoServerResources(rts)) {
+            LinuxAccount la = aor.getLinuxAccount();
+            if(la==null) throw new AssertionError("la==null");
+            if(!las.add(la)) throw new AssertionError("Duplicate LinuxAccount: "+la);
+        }
+        return Collections.unmodifiableSortedSet(las);
+    }
+    */
+    /*
+    public LinuxAccount getLinuxAccount(LinuxID uid) throws RemoteException {
+        for(LinuxAccount la : getLinuxAccounts()) if(la.getUid().equals(uid)) return la;
+        return null;
+    }
+    */
+    /*
+    public LinuxAccount getLinuxAccount(UserId username) throws RemoteException {
+        for(LinuxAccount la : getLinuxAccounts()) if(la.getUsername().getUsername().equals(username)) return la;
+        return null;
+    }
+     */
+
     /* TODO
     public List<AOServerDaemonHost> getAOServerDaemonHosts() throws IOException, SQLException {
     	return getService().getConnector().getAoServerDaemonHosts().getAOServerDaemonHosts(this);
-    }
-
-    public List<BackupPartition> getBackupPartitions() throws IOException, SQLException {
-        return getService().getConnector().getBackupPartitions().getBackupPartitions(this);
     }
 
     public List<BlackholeEmailAddress> getBlackholeEmailAddresses() throws IOException, SQLException {

@@ -432,6 +432,21 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     }
     // </editor-fold>
 
+    /**
+     * Gets the minor version number in X.X[-max] format.  This corresponds to the installation
+     * directory under /usr/mysql/X.X[-max] or /opt/mysql-X.X[-max]
+     */
+    public String getMinorVersion() throws RemoteException {
+        String techVersion=getVersion().getVersion();
+        int pos=techVersion.indexOf('.');
+        if(pos==-1) return techVersion;
+        int pos2=techVersion.indexOf('.', pos+1);
+        if(pos2==-1) return techVersion;
+        String S = techVersion.substring(0, pos2);
+        if(techVersion.endsWith("-max")) return S+"-max";
+        return S;
+    }
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public int addMySQLDatabase(
@@ -449,22 +464,8 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         return DATA_BASE_DIR+'/'+name;
     }
     */
-    /**
-     * Gets the minor version number in X.X[-max] format.  This corresponds to the installation
-     * directory under /usr/mysql/X.X[-max] or /opt/mysql-X.X[-max]
-     */
-    /* TODO
-    public String getMinorVersion() throws SQLException, IOException {
-        String techVersion=getVersion().getVersion();
-        int pos=techVersion.indexOf('.');
-        if(pos==-1) return techVersion;
-        int pos2=techVersion.indexOf('.', pos+1);
-        if(pos2==-1) return techVersion;
-        String S = techVersion.substring(0, pos2);
-        if(techVersion.endsWith("-max")) return S+"-max";
-        return S;
-    }
 
+    /* TODO
     public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
     	return getService().getConnector().getMysqlDatabases().getMySQLDatabase(name, this);
     }

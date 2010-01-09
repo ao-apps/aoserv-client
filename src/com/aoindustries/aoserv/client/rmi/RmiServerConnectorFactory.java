@@ -10,6 +10,9 @@ import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.Hostname;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.rmi.RMIClientSocketFactorySSL;
 import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
@@ -34,23 +37,23 @@ import java.util.Locale;
  */
 final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> implements AOServConnectorFactory<C,F> {
 
-    private final int port;
+    private final NetPort port;
     private final RMIClientSocketFactory csf;
     private final RMIServerSocketFactory ssf;
     private final AOServConnectorFactory<C,F> wrapped;
 
     public RmiServerConnectorFactory(
-        String publicAddress,
-        String listenAddress,
-        int port,
+        Hostname publicAddress,
+        InetAddress listenAddress,
+        NetPort port,
         boolean useSsl,
         AOServConnectorFactory<C,F> wrapped
     ) throws RemoteException {
         // Setup the RMI system properties
-        if(publicAddress!=null && publicAddress.length()>0) {
-            System.setProperty("java.rmi.server.hostname", publicAddress);
-        } else if(listenAddress!=null && listenAddress.length()>0) {
-            System.setProperty("java.rmi.server.hostname", listenAddress);
+        if(publicAddress!=null) {
+            System.setProperty("java.rmi.server.hostname", publicAddress.toString());
+        } else if(listenAddress!=null) {
+            System.setProperty("java.rmi.server.hostname", listenAddress.getAddress());
         } else {
             System.clearProperty("java.rmi.server.hostname");
         }
@@ -61,26 +64,26 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
 
         if(useSsl) {
             // SSL
-            if(listenAddress!=null && listenAddress.length()>0) {
+            if(listenAddress!=null) {
                 csf = new RMIClientSocketFactorySSL();
-                ssf = new RMIServerSocketFactorySSL(listenAddress);
+                ssf = new RMIServerSocketFactorySSL(listenAddress.getAddress());
             } else {
                 csf = new RMIClientSocketFactorySSL();
                 ssf = new RMIServerSocketFactorySSL();
             }
         } else {
             // Non-SSL
-            if(listenAddress!=null && listenAddress.length()>0) {
+            if(listenAddress!=null) {
                 csf = new RMIClientSocketFactoryTCP();
-                ssf = new RMIServerSocketFactoryTCP(listenAddress);
+                ssf = new RMIServerSocketFactoryTCP(listenAddress.getAddress());
             } else {
                 csf = new RMIClientSocketFactoryTCP();
                 ssf = new RMIServerSocketFactoryTCP();
             }
         }
 
-        Registry registry = RegistryManager.createRegistry(port, csf, ssf);
-        Remote stub = UnicastRemoteObject.exportObject(this, port, csf, ssf);
+        Registry registry = RegistryManager.createRegistry(port.getPort(), csf, ssf);
+        Remote stub = UnicastRemoteObject.exportObject(this, port.getPort(), csf, ssf);
         registry.rebind(AOServConnectorFactory.class.getName()+"_Stub", stub);
         this.port = port;
         this.wrapped = wrapped;
@@ -112,9 +115,9 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
     public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             C connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
-            UnicastRemoteObject.exportObject(connector, port, csf, ssf);
+            UnicastRemoteObject.exportObject(connector, port.getPort(), csf, ssf);
             for(AOServService<C,F,?,?> service : connector.getServices().values()) {
-                UnicastRemoteObject.exportObject(service, port, csf, ssf);
+                UnicastRemoteObject.exportObject(service, port.getPort(), csf, ssf);
             }
             connectors.put(
                 connectAs,

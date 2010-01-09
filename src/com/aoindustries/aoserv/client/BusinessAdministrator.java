@@ -6,15 +6,11 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.validator.Email;
+import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.Base64Coder;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
-import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -32,62 +28,10 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Value representing no password.
-     */
-    public static final String NO_PASSWORD = "*";
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Password Encryption">
-    /**
-     * Encrypts a password.  If the password is <code>null</code>, returns <code>NO_PASSWORD</code>.
-     * If the salt is <code>null</code>, a random salt will be generated.
-     *
-     * @deprecated  Please use hash instead
-     * @see #hash(String)
-     */
-    public static String crypt(String password, String salt) {
-        if(password==null || password.length()==0) return BusinessAdministrator.NO_PASSWORD;
-        return salt==null || salt.length()==0?com.aoindustries.util.UnixCrypt.crypt(password):com.aoindustries.util.UnixCrypt.crypt(password, salt);
-    }
-
-    /**
-     * Performs a one-way hash of the plaintext value using SHA-1.
-     *
-     * @exception  WrappedException  if any problem occurs.
-     */
-    public static String hash(String plaintext) throws WrappedException {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            md.update(plaintext.getBytes("UTF-8"));
-            return new String(Base64Coder.encode(md.digest()));
-        } catch(NoSuchAlgorithmException err) {
-            throw new WrappedException(err);
-        } catch(UnsupportedEncodingException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    public static boolean passwordMatches(String plaintext, String ciphertext) {
-        if(!NO_PASSWORD.equals(ciphertext)) {
-            // Try hash first
-            String hashed = hash(plaintext);
-            if(hashed.equals(ciphertext)) return true;
-            // Try old crypt next
-            if(ciphertext.length()>=2) {
-                String salt=ciphertext.substring(0,2);
-                String crypted=com.aoindustries.util.UnixCrypt.crypt(plaintext, salt);
-                return crypted.equals(ciphertext);
-            }
-        }
-    	return false;
-    }
-    // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String password;
+    final private HashedPassword password;
     final private String name;
     final private String title;
     final private Date birthday;
@@ -112,7 +56,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     public BusinessAdministrator(
         BusinessAdministratorService<?,?> service,
         UserId username,
-        String password,
+        HashedPassword password,
         String name,
         String title,
         Date birthday,
@@ -168,7 +112,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
 
     @SchemaColumn(order=1, name="password", description="the encrypted password for this admin")
-    public String getPassword() {
+    public HashedPassword getPassword() {
     	return password;
     }
 
@@ -283,7 +227,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(key.getBean(), password, name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, email.getBean(), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
+        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(key.getBean(), password.getBean(), name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, email.getBean(), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
     // </editor-fold>
 
@@ -486,10 +430,6 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
             && user.isActive()
             && user.isWebAdmin()
 	;
-    }
-
-    public boolean passwordMatches(String plaintext) {
-        return passwordMatches(plaintext, password);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {

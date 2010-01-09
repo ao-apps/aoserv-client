@@ -59,7 +59,8 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
         return key;
     }
 
-    @SchemaColumn(order=1, name="ao_server", description="the pkey of the server that stores the backup data")
+    static final String COLUMN_AO_SERVER = "ao_server";
+    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the pkey of the server that stores the backup data")
     public AOServer getAOServer() throws RemoteException {
         return getService().getConnector().getAoServers().get(aoServer);
     }

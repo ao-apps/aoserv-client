@@ -128,14 +128,14 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: createDependencySet(
+            AOServObjectUtils.createDependencySet(
                 getAOServer()
                 // TODO: getPhysicalServer(),
                 // TODO: getVirtualServer()
-            // TODO: ),
+            ),
             // TODO: getBusinessServers(),
             // TODO: getNetDevices(),
-            // TODO: getFailoverFileReplications(),
+            getFailoverFileReplications()
             // TODO: getMasterServers()
         );
     }
@@ -145,6 +145,14 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     public AOServer getAOServer() throws RemoteException {
         return getService().getConnector().getAoServers().get(key);
     }
+
+    /**
+     * Gets the list of all replications coming from this server.
+     */
+    public Set<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
+        return getService().getConnector().getFailoverFileReplications().getIndexed(FailoverFileReplication.COLUMN_SERVER, this);
+    }
+
     /* TODO
     public PhysicalServer getPhysicalServer() throws IOException, SQLException {
         return getService().getConnector().getPhysicalServers().get(pkey);
@@ -157,16 +165,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     public List<Business> getBusinesses() throws IOException, SQLException {
         return getService().getConnector().getBusinessServers().getBusinesses(this);
     }
-     */
-    /**
-     * Gets the list of all replications coming from this server.
-     */
-    /* TODO
-    public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
-        return getService().getConnector().getFailoverFileReplications().getFailoverFileReplications(this);
-    }*/
 
-    /* TODO
     public NetBind getNetBind(
         IPAddress ipAddress,
         NetPort port,
@@ -174,8 +173,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     ) throws IOException, SQLException {
         return getService().getConnector().getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
     }
-    */
-    /* TODO
+
     public List<NetBind> getNetBinds() throws IOException, SQLException {
         List<NetBind> nbs = getService().getConnector().getNetBinds().getRows();
         List<NetBind> matches = new ArrayList<NetBind>(nbs.size());

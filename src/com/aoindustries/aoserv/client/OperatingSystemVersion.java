@@ -23,42 +23,16 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     private static final long serialVersionUID = 1L;
 
     public static final String
-        //VERSION_1_4="1.4",
-        //VERSION_7_2="7.2",
-        //VERSION_9_2="9.2",
         VERSION_5="5",
-        VERSION_2006_0="2006.0",
         VERSION_ES_4="ES 4"
     ;
     
-    /**
-     * @deprecated  Mandrake 10.1 no longer used.
-     */
-    @Deprecated
-    public static final String VERSION_10_1="10.1";
-
-    /**
-     * @deprecated  What is this used for?
-     */
-    @Deprecated
-    public static final String DEFAULT_OPERATING_SYSTEM_VERSION=VERSION_2006_0;
-
     public static final int
         CENTOS_5DOM0_X86_64 = 63,
         CENTOS_5DOM0_I686 = 64,
         CENTOS_5_I686_AND_X86_64 = 67,
-        //GENTOO_1_4_I686=5,
-        //MANDRAKE_9_2_I586=12,
-        //REDHAT_7_2_I686=27
-        MANDRIVA_2006_0_I586=45,
-        REDHAT_ES_4_X86_64=47
+        REDHAT_ES_4_X86_64 = 47
     ;
-
-    /**
-     * @deprecated  Mandrake 10.1 no longer used.
-     */
-    @Deprecated
-    public static final int MANDRAKE_10_1_I586=14;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">

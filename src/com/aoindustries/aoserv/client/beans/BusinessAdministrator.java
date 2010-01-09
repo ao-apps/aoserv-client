@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client.beans;
 public class BusinessAdministrator {
 
     private UserId username;
-    private String password;
+    private HashedPassword password;
     private String name;
     private String title;
     private java.util.Date birthday;
@@ -38,7 +38,7 @@ public class BusinessAdministrator {
 
     public BusinessAdministrator(
         UserId username,
-        String password,
+        HashedPassword password,
         String name,
         String title,
         java.util.Date birthday,
@@ -92,11 +92,11 @@ public class BusinessAdministrator {
         this.username = username;
     }
 
-    public String getPassword() {
+    public HashedPassword getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(HashedPassword password) {
         this.password = password;
     }
 

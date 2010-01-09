@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.LinuxID;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -28,22 +29,43 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     /**
      * Some commonly used system and application groups.
      */
-    public static final String
-        ADM="adm",
-        APACHE="apache",
-        AWSTATS="awstats",
-        BIN="bin",
-        DAEMON="daemon",
-        FTP="ftp",
-        MAIL="mail",
-        MAILONLY="mailonly",
-        NAMED="named",
-        NOGROUP="nogroup",
-        POSTGRES="postgres",
-        ROOT="root",
-        SYS="sys",
-        TTY="tty"
+    public static final GroupId
+        ADM,
+        APACHE,
+        AWSTATS,
+        BIN,
+        DAEMON,
+        FTP,
+        MAIL,
+        MAILONLY,
+        NAMED,
+        NOGROUP,
+        POSTGRES,
+        ROOT,
+        SYS,
+        TTY
     ;
+
+    static {
+        try {
+            ADM = GroupId.valueOf("adm").intern();
+            APACHE = GroupId.valueOf("apache").intern();
+            AWSTATS = GroupId.valueOf("awstats").intern();
+            BIN = GroupId.valueOf("bin").intern();
+            DAEMON = GroupId.valueOf("").intern();
+            FTP = GroupId.valueOf("ftp").intern();
+            MAIL = GroupId.valueOf("mail").intern();
+            MAILONLY = GroupId.valueOf("mailonly").intern();
+            NAMED = GroupId.valueOf("named").intern();
+            NOGROUP = GroupId.valueOf("nogroup").intern();
+            POSTGRES = GroupId.valueOf("postgres").intern();
+            ROOT = GroupId.valueOf("root").intern();
+            SYS = GroupId.valueOf("sys").intern();
+            TTY = GroupId.valueOf("tty").intern();
+        } catch(ValidationException err) {
+            throw new AssertionError(err.getMessage());
+        }
+    }
 
     /**
      * @deprecated  Group httpd no longer used.
