@@ -17,7 +17,6 @@ import com.aoindustries.table.Table;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -111,11 +110,13 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         synchronized(cachedSortedSetLock) {
             if(cachedSortedSet==null) {
                 IndexedSet<V> set = getSet();
-                if(set instanceof IndexedSortedSet) return (IndexedSortedSet<V>)set;
-                int size = set.size();
-                if(size==0) cachedSortedSet = IndexedSortedSet.emptyIndexedSortedSet();
-                else if(size==1) cachedSortedSet = new IndexedSortedSet<V>(set.iterator().next());
-                else cachedSortedSet = new IndexedSortedSet<V>(new TreeSet<V>(set));
+                if(set instanceof IndexedSortedSet) cachedSortedSet = (IndexedSortedSet<V>)set;
+                else {
+                    int size = set.size();
+                    if(size==0) cachedSortedSet = IndexedSortedSet.emptyIndexedSortedSet();
+                    else if(size==1) cachedSortedSet = new IndexedSortedSet<V>(set.iterator().next());
+                    else cachedSortedSet = new IndexedSortedSet<V>(new TreeSet<V>(set));
+                }
             }
             return cachedSortedSet;
         }
@@ -158,11 +159,10 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
 
     final public V filterUnique(String columnName, Object value) throws RemoteException {
         MethodColumn methodColumn = table.getColumn(columnName);
-        IndexType indexType = methodColumn.getIndexType();
-        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column not primary key or unique: "+columnName);
+        assert methodColumn.getIndexType()==IndexType.PRIMARY_KEY || methodColumn.getIndexType()==IndexType.UNIQUE : "Column not primary key or unique: "+columnName;
         if(value==null) return null;
         Method method = methodColumn.getMethod();
-        if(!AOServServiceUtils.classesMatch(value.getClass(), method.getReturnType())) throw new IllegalArgumentException("value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName());
+        assert AOServServiceUtils.classesMatch(value.getClass(), method.getReturnType()) : "value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName();
         synchronized(uniqueHashes) {
             Map<Object,V> uniqueHash = uniqueHashes.get(columnName);
             if(uniqueHash==null || Boolean.TRUE!=uniqueHashValids.get(columnName)) {
@@ -193,10 +193,10 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
 
     final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
         MethodColumn methodColumn = table.getColumn(columnName);
-        if(methodColumn.getIndexType()!=IndexType.INDEXED) throw new IllegalArgumentException("Column not indexed: "+columnName);
+        assert methodColumn.getIndexType()==IndexType.INDEXED : "Column not indexed: "+columnName;
         if(value==null) return null;
         Method method = methodColumn.getMethod();
-        if(!AOServServiceUtils.classesMatch(value.getClass(), method.getReturnType())) throw new IllegalArgumentException("value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName());
+        assert AOServServiceUtils.classesMatch(value.getClass(), method.getReturnType()) : "value class and return type mismatch: "+value.getClass().getName()+"!="+method.getReturnType().getName();
         synchronized(indexedHashes) {
             Map<Object,IndexedSet<V>> indexedHash = indexedHashes.get(columnName);
             if(indexedHash==null || Boolean.TRUE!=indexHashValids.get(columnName)) {
@@ -227,13 +227,7 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
                 }
                 // Make each set indexed
                 for(Map.Entry<Object,Set<V>> entry : setByValue.entrySet()) {
-                    Set<V> set = entry.getValue();
-                    indexedHash.put(
-                        entry.getKey(),
-                        set.size()==1
-                        ? new IndexedSet<V>(set.iterator().next())
-                        : new IndexedSet<V>(set)
-                    );
+                    indexedHash.put(entry.getKey(), IndexedSet.wrap(entry.getValue()));
                 }
                 indexHashValids.put(columnName, Boolean.TRUE);
             }

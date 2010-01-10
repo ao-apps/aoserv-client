@@ -30,6 +30,17 @@ public class IndexedSet<E> implements Set<E>, Indexed<E>, Serializable {
         return (IndexedSet<T>) EMPTY_INDEXED_SET;
     }
 
+    /**
+     * Chooses the best constructor.
+     */
+    public static <T> IndexedSet<T> wrap(Set<T> wrapped) {
+        int size = wrapped.size();
+        if(size==0) return emptyIndexedSet();
+        if(wrapped instanceof IndexedSet) return (IndexedSet<T>)wrapped;
+        if(size==1) return new IndexedSet<T>(wrapped.iterator().next());
+        return new IndexedSet<T>(wrapped);
+    }
+
     protected final Set<E> wrapped;
 
     public IndexedSet() {
@@ -45,10 +56,7 @@ public class IndexedSet<E> implements Set<E>, Indexed<E>, Serializable {
      */
     public IndexedSet(Set<E> wrapped) {
         if(wrapped==null) throw new IllegalArgumentException("wrapped==null");
-        if(wrapped instanceof IndexedSortedSet) throw new AssertionError("Attempting to wrap IndexedSortedSet");
-        if(wrapped instanceof IndexedSet) throw new AssertionError("Attempting to wrap IndexedSet");
-        if(wrapped.isEmpty()) this.wrapped = Collections.emptySet();
-        else this.wrapped = wrapped;
+        this.wrapped = wrapped;
     }
 
     public int size() {

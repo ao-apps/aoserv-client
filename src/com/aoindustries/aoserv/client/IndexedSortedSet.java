@@ -25,6 +25,17 @@ public class IndexedSortedSet<E> extends IndexedSet<E> implements SortedSet<E> {
         return (IndexedSortedSet<T>) EMPTY_INDEXED_SORTED_SET;
     }
 
+    /**
+     * Chooses the best constructor.
+     */
+    public static <T> IndexedSortedSet<T> wrap(SortedSet<T> wrapped) {
+        int size = wrapped.size();
+        if(size==0) return emptyIndexedSortedSet();
+        if(wrapped instanceof IndexedSortedSet) return (IndexedSortedSet<T>)wrapped;
+        if(size==1) return new IndexedSortedSet<T>(wrapped.first());
+        return new IndexedSortedSet<T>(wrapped);
+    }
+
     @SuppressWarnings("unchecked")
     public IndexedSortedSet() {
         super(Collections.EMPTY_SORTED_SET);
@@ -39,7 +50,7 @@ public class IndexedSortedSet<E> extends IndexedSet<E> implements SortedSet<E> {
      */
     @SuppressWarnings("unchecked")
     public IndexedSortedSet(SortedSet<E> wrapped) {
-        super(wrapped!=null && wrapped.isEmpty() ? Collections.EMPTY_SORTED_SET : wrapped);
+        super(wrapped);
     }
 
     public Comparator<? super E> comparator() {
