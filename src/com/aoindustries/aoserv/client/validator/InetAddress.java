@@ -170,10 +170,10 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
             rightColonPos = address.lastIndexOf(':', dot1Pos-1);
             // Must be all [0-9] between dots and beginning/colon
             ipLow =
-                parseOctet(address, rightColonPos+1, dot1Pos)<<24
-                | parseOctet(address, dot1Pos+1, dot2Pos)<<16
-                | parseOctet(address, dot2Pos+1, dot3Pos)<<8
-                | parseOctet(address, dot3Pos+1, len)
+                (long)parseOctet(address, rightColonPos+1, dot1Pos)<<24
+                | (long)parseOctet(address, dot1Pos+1, dot2Pos)<<16
+                | (long)parseOctet(address, dot2Pos+1, dot3Pos)<<8
+                | (long)parseOctet(address, dot3Pos+1, len)
             ;
             if(rightColonPos==-1) {
                 // IPv4

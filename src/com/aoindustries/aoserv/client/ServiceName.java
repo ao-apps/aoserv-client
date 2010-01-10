@@ -89,8 +89,8 @@ public enum ServiceName implements LocalizedToString {
     failover_file_schedule,
      */
     failover_mysql_replications,
-    file_backup_settings,
     /* TODO
+    file_backup_settings,
     ftp_guest_users,
      */
     group_names,

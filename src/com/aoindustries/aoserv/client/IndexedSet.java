@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @see  AOServService
  */
-public class IndexedSet<E> implements Set<E>, Indexed<E>, Serializable {
+final public class IndexedSet<E> implements Set<E>, Indexed<E>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,7 +41,7 @@ public class IndexedSet<E> implements Set<E>, Indexed<E>, Serializable {
         return new IndexedSet<T>(wrapped);
     }
 
-    protected final Set<E> wrapped;
+    private final Set<E> wrapped;
 
     public IndexedSet() {
         this.wrapped = Collections.emptySet();

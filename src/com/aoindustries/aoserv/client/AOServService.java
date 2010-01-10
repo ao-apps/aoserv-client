@@ -51,15 +51,6 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
     IndexedSet<V> getSet() throws RemoteException;
 
     /**
-     * Gets the sorted set of all accessible objects, using their natural ordering.
-     * This set represents an unmodifiable snapshot of all objects in the service
-     * and will not change even when the underlying data has changed.
-     *
-     * @return  a <code>SortedSet</code> containing all of the objects
-     */
-    IndexedSortedSet<V> getSortedSet() throws RemoteException;
-
-    /**
      * Gets the ServiceName for this service by finding the interface that
      * has the SchemaAnnotation annotation.
      */
@@ -68,8 +59,8 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
     /**
      * Gets a table view of this data.  This uses a fair amount of reflection
      * and will not perform as well as other views of the data.  Unlike the
-     * <code>getSet</code> and <code>getSortedSet</code> methods, this does not
-     * completely act as a snapshot of the underlying data.
+     * <code>getSet</code> method, this does not completely act as a snapshot of
+     * the underlying data.
      */
     Table<MethodColumn,V> getTable() throws RemoteException;
 

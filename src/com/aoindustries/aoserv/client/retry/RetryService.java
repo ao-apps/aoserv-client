@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServServiceUtils;
 import com.aoindustries.aoserv.client.IndexedSet;
-import com.aoindustries.aoserv.client.IndexedSortedSet;
 import com.aoindustries.aoserv.client.MethodColumn;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.table.Table;
@@ -67,16 +66,6 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
             new Callable<IndexedSet<V>>() {
                 public IndexedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().getSet(), RetryService.this);
-                }
-            }
-        );
-    }
-
-    final public IndexedSortedSet<V> getSortedSet() throws RemoteException {
-        return connector.retry(
-            new Callable<IndexedSortedSet<V>>() {
-                public IndexedSortedSet<V> call() throws RemoteException {
-                    return AOServServiceUtils.setServices(getWrapped().getSortedSet(), RetryService.this);
                 }
             }
         );

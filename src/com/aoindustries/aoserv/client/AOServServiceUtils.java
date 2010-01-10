@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -81,32 +80,6 @@ final public class AOServServiceUtils {
         Set<V> set = new HashSet<V>(size*4/3+1);
         for(V oldObj : objs) set.add(setService(oldObj, service));
         return new IndexedSet<V>(set);
-    }
-
-    /**
-     * Sets the service on an entire collection, and returns an unmodifiable sorted set.
-     */
-    public static <K extends Comparable<K>,V extends AOServObject<K,V>> IndexedSortedSet<V> setServices(IndexedSortedSet<V> objs, AOServService<?,?,K,V> service) throws RemoteException {
-        int size = objs.size();
-        if(size==0) return IndexedSortedSet.emptyIndexedSortedSet();
-        if(size==1) {
-            V oldObj = objs.first();
-            V newObj = setService(oldObj, service);
-            return newObj==oldObj ? objs : new IndexedSortedSet<V>(newObj);
-        }
-        // Only create a new set when the first new object is created
-        boolean needsNewSet = false;
-        for(V oldObj : objs) {
-            V newObj = setService(oldObj, service);
-            if(newObj!=oldObj) {
-                needsNewSet = true;
-                break;
-            }
-        }
-        if(!needsNewSet) return objs;
-        SortedSet<V> sortedSet = new TreeSet<V>();
-        for(V oldObj : objs) sortedSet.add(setService(oldObj, service));
-        return new IndexedSortedSet<V>(sortedSet);
     }
 
     /**
@@ -179,13 +152,13 @@ final public class AOServServiceUtils {
         }
 
         /**
-         * Gets the rows as a result of <code>getSortedSet</code>.
+         * Gets the sorted rows as a result of <code>getSet</code>.
          *
-         * @see AOServService#getSortedSet()
+         * @see AOServService#getSet()
          */
         public Iterator<V> getRows() {
             try {
-                return service.getSortedSet().iterator();
+                return new TreeSet<V>(service.getSet()).iterator();
             } catch(RemoteException err) {
                 throw new WrappedException(err);
             }

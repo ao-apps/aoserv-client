@@ -52,7 +52,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
             APACHE = GroupId.valueOf("apache").intern();
             AWSTATS = GroupId.valueOf("awstats").intern();
             BIN = GroupId.valueOf("bin").intern();
-            DAEMON = GroupId.valueOf("").intern();
+            DAEMON = GroupId.valueOf("daemon").intern();
             FTP = GroupId.valueOf("ftp").intern();
             MAIL = GroupId.valueOf("mail").intern();
             MAILONLY = GroupId.valueOf("mailonly").intern();

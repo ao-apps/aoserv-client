@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServServiceUtils;
 import com.aoindustries.aoserv.client.IndexedSet;
-import com.aoindustries.aoserv.client.IndexedSortedSet;
 import com.aoindustries.aoserv.client.MethodColumn;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.table.Table;
@@ -58,11 +57,6 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
     final public IndexedSet<V> getSet() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return AOServServiceUtils.setServices(wrapped.getSet(), this);
-    }
-
-    final public IndexedSortedSet<V> getSortedSet() throws RemoteException {
-        NoSwingConnectorFactory.checkNotSwing();
-        return AOServServiceUtils.setServices(wrapped.getSortedSet(), this);
     }
 
     final public ServiceName getServiceName() throws RemoteException {
