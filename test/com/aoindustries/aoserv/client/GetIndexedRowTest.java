@@ -54,7 +54,7 @@ public class GetIndexedRowTest extends TestCase {
             for(ServiceName serviceName : ServiceName.values) {
                 AOServService<?,?,?,?> service=conn.getServices().get(serviceName);
                 System.out.print("        "+serviceName.name()+": ");
-                Set<? extends AOServObject<?,?>> set = service.getSet();
+                IndexedSet<? extends AOServObject<?,?>> set = service.getSet();
                 if(set.isEmpty()) System.out.println("Empty table, cannot test");
                 else {
                     List<? extends MethodColumn> columns = service.getTable().getColumns();
@@ -80,7 +80,7 @@ public class GetIndexedRowTest extends TestCase {
                                 // Compare to the lists using the index routines
                                 for(Object value : expectedSets.keySet()) {
                                     Set<AOServObject<?,?>> expectedSet=expectedSets.get(value);
-                                    Set<? extends AOServObject<?,?>> indexedSet=service.getIndexed(columnName, value);
+                                    Set<? extends AOServObject<?,?>> indexedSet=service.filterIndexed(columnName, value);
                                     assertEquals(serviceName.name()+"."+columnName+"="+value+": Mismatch in list size: ", expectedSet.size(), indexedSet.size());
                                     if(!expectedSet.containsAll(indexedSet)) fail(serviceName.name()+"."+columnName+"="+value+": expectedSet does not contain all the rows of indexedSet");
                                     if(!indexedSet.containsAll(expectedSet)) fail(serviceName.name()+"."+columnName+"="+value+": indexedSet does not contain all the rows of expectedSet");

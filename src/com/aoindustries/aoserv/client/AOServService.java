@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,7 +10,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * An <code>AOServService</code> provides access to one
@@ -22,7 +21,7 @@ import java.util.SortedSet;
  *
  * @see  AOServObject
  */
-public interface AOServService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>, K extends Comparable<K>,V extends AOServObject<K,V>> extends Remote {
+public interface AOServService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>, K extends Comparable<K>,V extends AOServObject<K,V>> extends Indexed<V>, Remote {
 
     /**
      * The toString should be the service name.
@@ -49,7 +48,7 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      *
      * @return  a <code>Set</code> containing all of the objects
      */
-    Set<V> getSet() throws RemoteException;
+    IndexedSet<V> getSet() throws RemoteException;
 
     /**
      * Gets the sorted set of all accessible objects, using their natural ordering.
@@ -58,7 +57,7 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      *
      * @return  a <code>SortedSet</code> containing all of the objects
      */
-    SortedSet<V> getSortedSet() throws RemoteException;
+    IndexedSortedSet<V> getSortedSet() throws RemoteException;
 
     /**
      * Gets the ServiceName for this service by finding the interface that
@@ -109,26 +108,26 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * any rows.
      * The column must have an index type of PRIMARY_KEY or UNIQUE.
      */
-    V getUnique(String columnName, Object value) throws RemoteException;
+    V filterUnique(String columnName, Object value) throws RemoteException;
 
     /**
      * Gets the set of objects having one of the provided column values.  Like SQL, a <code>null</code> value will not match
      * any rows.
      * The column must have an index type of PRIMARY_KEY or UNIQUE.
      */
-    // Create when first needed: <T extends Comparable<T>> Set<V> getUniqueSet(String columnName, Set<T> values) throws RemoteException;
+    IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException;
 
     /**
      * Gets the set of objects having the provided column value.  Like SQL, a <code>null</code> value will not match
      * any rows.
      * The column must have an index type of INDEXED.
      */
-    Set<V> getIndexed(String columnName, Object value) throws RemoteException;
+    IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException;
 
     /**
      * Gets the set of objects having one of the provided column values.  Like SQL, a <code>null</code> value will not match
      * any rows.
      * The column must have an index type of INDEXED.
      */
-    // Create when first needed: Set<V> getIndexedSet(String columnName, Set<T> values) throws RemoteException;
+    //IndexedSet<E> getIndexedSet(String columnName, Set<?> values) throws RemoteException;
 }

@@ -91,8 +91,8 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<LinuxGroup> getLinuxGroups() throws RemoteException {
-        return getService().getConnector().getLinuxGroups().getIndexed(LinuxGroup.COLUMN_LINUX_GROUP_TYPE, this);
+    public IndexedSet<LinuxGroup> getLinuxGroups() throws RemoteException {
+        return getService().getConnector().getLinuxGroups().filterIndexed(LinuxGroup.COLUMN_LINUX_GROUP_TYPE, this);
     }
     // </editor-fold>
 }

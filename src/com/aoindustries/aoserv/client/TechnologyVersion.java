@@ -122,8 +122,8 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<MySQLServer> getMySQLServers() throws RemoteException {
-        return getService().getConnector().getMysqlServers().getIndexed(MySQLServer.COLUMN_VERSION, this);
+    public IndexedSet<MySQLServer> getMySQLServers() throws RemoteException {
+        return getService().getConnector().getMysqlServers().filterIndexed(MySQLServer.COLUMN_VERSION, this);
     }
 
     public PostgresVersion getPostgresVersion() throws RemoteException {

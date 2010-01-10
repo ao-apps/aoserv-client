@@ -132,12 +132,12 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<PostgresServer> getPostgresServers() throws RemoteException {
-        return getService().getConnector().getPostgresServers().getIndexed(PostgresServer.COLUMN_VERSION, this);
+    public IndexedSet<PostgresServer> getPostgresServers() throws RemoteException {
+        return getService().getConnector().getPostgresServers().filterIndexed(PostgresServer.COLUMN_VERSION, this);
     }
 
-    public Set<PostgresEncoding> getPostgresEncodings() throws RemoteException {
-        return getService().getConnector().getPostgresEncodings().getIndexed(PostgresEncoding.COLUMN_POSTGRES_VERSION, this);
+    public IndexedSet<PostgresEncoding> getPostgresEncodings() throws RemoteException {
+        return getService().getConnector().getPostgresEncodings().filterIndexed(PostgresEncoding.COLUMN_POSTGRES_VERSION, this);
     }
     /* TODO
     public PostgresEncoding getPostgresEncoding(AOServConnector connector, String encoding) throws IOException, SQLException {

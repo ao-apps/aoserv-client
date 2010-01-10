@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -107,7 +108,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     /**
      * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
      */
-    public static final String COLUMN_HOSTNAME = "hostname";
+    static final String COLUMN_HOSTNAME = "hostname";
     @SchemaColumn(order=1, name=COLUMN_HOSTNAME, index=IndexType.UNIQUE, description="the unique hostname of the server")
     public DomainName getHostname() {
         return hostname;
@@ -295,73 +296,31 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<AOServerResource> getAoServerResources() throws RemoteException {
-        return getService().getConnector().getAoServerResources().getIndexed(AOServerResource.COLUMN_AO_SERVER, this);
+    public IndexedSet<AOServerResource> getAoServerResources() throws RemoteException {
+        return getService().getConnector().getAoServerResources().filterIndexed(AOServerResource.COLUMN_AO_SERVER, this);
     }
 
-    /**
-     * Gets all of the resources on this server of any of the provided types.
-     */
-    /*
-    public Set<AOServerResource> getAoServerResources(Set<ResourceType> resourceTypes) throws RemoteException {
-        Set<AOServerResource> aors = new HashSet<AOServerResource>();
-        for(AOServerResource aor : getService().getConnector().getAoServerResources().getIndexed(AOServerResource.COLUMN_AO_SERVER, this)) {
-            if(resourceTypes.contains(aor.getResource().getResourceType())) aors.add(aor);
-        }
-        return Collections.unmodifiableSet(aors);
-    }*/
-
-    public Set<BackupPartition> getBackupPartitions() throws RemoteException {
-        return getService().getConnector().getBackupPartitions().getIndexed(BackupPartition.COLUMN_AO_SERVER, this);
+    public IndexedSet<BackupPartition> getBackupPartitions() throws RemoteException {
+        return getService().getConnector().getBackupPartitions().filterIndexed(BackupPartition.COLUMN_AO_SERVER, this);
     }
 
     /**
      * Gets the set of servers that are currently failed-over to this server.
      */
-    public Set<AOServer> getNestedAoServers() throws RemoteException {
-        return getService().getConnector().getAoServers().getIndexed(AOServer.COLUMN_FAILOVER_SERVER, this);
+    public IndexedSet<AOServer> getNestedAoServers() throws RemoteException {
+        return getService().getConnector().getAoServers().filterIndexed(AOServer.COLUMN_FAILOVER_SERVER, this);
     }
 
-    /*
-    public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        Set<LinuxAccountType> lats = getService().getConnector().getLinuxAccountTypes().getSet();
-        Set<ResourceType> rts = new HashSet<ResourceType>(lats.size()*4/3+1);
-        for(LinuxAccountType lat : lats) rts.add(lat.getResourceType());
-        Set<LinuxAccount> las = new HashSet<LinuxAccount>();
-        for(AOServerResource aor : getAoServerResources(rts)) {
-            LinuxAccount la = aor.getLinuxAccount();
-            if(la==null) throw new AssertionError("la==null");
-            if(!las.add(la)) throw new AssertionError("Duplicate LinuxAccount: "+la);
-        }
-        return Collections.unmodifiableSet(las);
-    }
-    */
-    /*
-    public SortedSet<LinuxAccount> getSortedLinuxAccounts() throws RemoteException {
-        Set<LinuxAccountType> lats = getService().getConnector().getLinuxAccountTypes().getSet();
-        Set<ResourceType> rts = new HashSet<ResourceType>(lats.size()*4/3+1);
-        for(LinuxAccountType lat : lats) rts.add(lat.getResourceType());
-        SortedSet<LinuxAccount> las = new TreeSet<LinuxAccount>();
-        for(AOServerResource aor : getAoServerResources(rts)) {
-            LinuxAccount la = aor.getLinuxAccount();
-            if(la==null) throw new AssertionError("la==null");
-            if(!las.add(la)) throw new AssertionError("Duplicate LinuxAccount: "+la);
-        }
-        return Collections.unmodifiableSortedSet(las);
-    }
-    */
-    /*
-    public LinuxAccount getLinuxAccount(LinuxID uid) throws RemoteException {
-        for(LinuxAccount la : getLinuxAccounts()) if(la.getUid().equals(uid)) return la;
-        return null;
-    }
-    */
-    /*
-    public LinuxAccount getLinuxAccount(UserId username) throws RemoteException {
-        for(LinuxAccount la : getLinuxAccounts()) if(la.getUsername().getUsername().equals(username)) return la;
-        return null;
-    }
+    /**
+     * Gets all of the linux accounts on this server.
      */
+    public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
+        return getService().getConnector().getLinuxAccounts().filterUniqueSet(LinuxAccount.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
+    }
+
+    public LinuxAccount getLinuxAccount(UserId username) throws RemoteException {
+        return getLinuxAccounts().filterUnique(LinuxAccount.COLUMN_USERNAME, getService().getConnector().getUsernames().get(username));
+    }
 
     /* TODO
     public List<AOServerDaemonHost> getAOServerDaemonHosts() throws IOException, SQLException {

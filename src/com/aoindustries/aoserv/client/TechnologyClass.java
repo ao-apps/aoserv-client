@@ -1,14 +1,13 @@
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
-import java.util.Set;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A <code>TechnologyClass</code> is one type of software package
@@ -79,8 +78,8 @@ final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<Technology> getTechnologies() throws RemoteException {
-        return getService().getConnector().getTechnologies().getIndexed(Technology.COLUMN_CLASS, this);
+    public IndexedSet<Technology> getTechnologies() throws RemoteException {
+        return getService().getConnector().getTechnologies().filterIndexed(Technology.COLUMN_CLASS, this);
     }
     // </editor-fold>
 }

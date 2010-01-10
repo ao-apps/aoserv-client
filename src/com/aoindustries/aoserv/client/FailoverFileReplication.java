@@ -180,8 +180,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
-        return getService().getConnector().getFailoverMySQLReplications().getIndexed(FailoverMySQLReplication.COLUMN_REPLICATION, this);
+    public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
+        return getService().getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_REPLICATION, this);
     }
     /* TODO
     public List<FailoverFileSchedule> getFailoverFileSchedules() throws IOException, SQLException {

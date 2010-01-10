@@ -128,8 +128,8 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<MySQLDBUser> getMySQLDBUsers() throws RemoteException {
-        return getService().getConnector().getMysqlDBUsers().getIndexed(MySQLDBUser.COLUMN_MYSQL_DATABASE, this);
+    public IndexedSet<MySQLDBUser> getMySQLDBUsers() throws RemoteException {
+        return getService().getConnector().getMysqlDBUsers().filterIndexed(MySQLDBUser.COLUMN_MYSQL_DATABASE, this);
     }
     // </editor-fold>
 

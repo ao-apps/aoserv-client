@@ -98,16 +98,16 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
     	return getService().getConnector().getBusinessAdministrators().get(key);
     }
 
-    public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().getIndexed(LinuxAccount.COLUMN_USERNAME, this);
+    public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
+        return getService().getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_USERNAME, this);
     }
 
-    public Set<MySQLUser> getMysqlUsers() throws RemoteException {
-        return getService().getConnector().getMysqlUsers().getIndexed(MySQLUser.COLUMN_USERNAME, this);
+    public IndexedSet<MySQLUser> getMysqlUsers() throws RemoteException {
+        return getService().getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_USERNAME, this);
     }
 
-    public Set<PostgresUser> getPostgresUsers() throws RemoteException {
-        return getService().getConnector().getPostgresUsers().getIndexed(PostgresUser.COLUMN_USERNAME, this);
+    public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
+        return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_USERNAME, this);
     }
     // </editor-fold>
 

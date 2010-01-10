@@ -156,8 +156,8 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<PostgresDatabase> getPostgresDatabases() throws RemoteException {
-        return getService().getConnector().getPostgresDatabases().getIndexed(PostgresDatabase.COLUMN_DATDBA, this);
+    public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
+        return getService().getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_DATDBA, this);
     }
     // </editor-fold>
 

@@ -72,8 +72,8 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<AOServer> getAoServers() throws RemoteException {
-        return getService().getConnector().getAoServers().getIndexed(AOServer.COLUMN_DAEMON_DEVICE_ID, this);
+    public IndexedSet<AOServer> getAoServers() throws RemoteException {
+        return getService().getConnector().getAoServers().filterIndexed(AOServer.COLUMN_DAEMON_DEVICE_ID, this);
     }
     // </editor-fold>
 }

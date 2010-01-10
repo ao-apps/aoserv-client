@@ -272,16 +272,16 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<Business> getBusinessesByCreatedBy() throws RemoteException {
-        return getService().getConnector().getBusinesses().getIndexed(Business.COLUMN_CREATED_BY, this);
+    public IndexedSet<Business> getBusinessesByCreatedBy() throws RemoteException {
+        return getService().getConnector().getBusinesses().filterIndexed(Business.COLUMN_CREATED_BY, this);
     }
 
-    public Set<DisableLog> getDisableLogs() throws RemoteException {
-        return getService().getConnector().getDisableLogs().getIndexed(DisableLog.COLUMN_DISABLED_BY, this);
+    public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
+        return getService().getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_DISABLED_BY, this);
     }
 
-    public Set<Resource> getResources() throws RemoteException {
-        return getService().getConnector().getResources().getIndexed(Resource.COLUMN_CREATED_BY, this);
+    public IndexedSet<Resource> getResources() throws RemoteException {
+        return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_CREATED_BY, this);
     }
     // </editor-fold>
 

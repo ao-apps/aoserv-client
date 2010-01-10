@@ -193,23 +193,23 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public AOServer getAOServerByDaemonNetBind() throws RemoteException {
-        return getService().getConnector().getAoServers().getUnique(AOServer.COLUMN_DAEMON_BIND, this);
+        return getService().getConnector().getAoServers().filterUnique(AOServer.COLUMN_DAEMON_BIND, this);
     }
 
     public AOServer getAOServerByDaemonConnectNetBind() throws RemoteException {
-        return getService().getConnector().getAoServers().getUnique(AOServer.COLUMN_DAEMON_CONNECT_BIND, this);
+        return getService().getConnector().getAoServers().filterUnique(AOServer.COLUMN_DAEMON_CONNECT_BIND, this);
     }
 
     public AOServer getAOServerByJilterNetBind() throws RemoteException {
-        return getService().getConnector().getAoServers().getUnique(AOServer.COLUMN_JILTER_BIND, this);
+        return getService().getConnector().getAoServers().filterUnique(AOServer.COLUMN_JILTER_BIND, this);
     }
 
     public MySQLServer getMySQLServer() throws RemoteException {
-        return getService().getConnector().getMysqlServers().getUnique(MySQLServer.COLUMN_NET_BIND, this);
+        return getService().getConnector().getMysqlServers().filterUnique(MySQLServer.COLUMN_NET_BIND, this);
     }
 
     public PostgresServer getPostgresServer() throws RemoteException {
-        return getService().getConnector().getPostgresServers().getUnique(PostgresServer.COLUMN_NET_BIND, this);
+        return getService().getConnector().getPostgresServers().filterUnique(PostgresServer.COLUMN_NET_BIND, this);
     }
 
     /* TODO

@@ -1,14 +1,13 @@
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
-import java.util.Set;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A <code>TechnologyName</code> represents one piece of software installed in
@@ -55,12 +54,12 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<TechnologyVersion> getTechnologyVersions() throws RemoteException {
-        return getService().getConnector().getTechnologyVersions().getIndexed(TechnologyVersion.COLUMN_NAME, this);
+    public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
+        return getService().getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_NAME, this);
     }
 
-    public Set<Technology> getTechnologies() throws RemoteException {
-        return getService().getConnector().getTechnologies().getIndexed(Technology.COLUMN_NAME, this);
+    public IndexedSet<Technology> getTechnologies() throws RemoteException {
+        return getService().getConnector().getTechnologies().filterIndexed(Technology.COLUMN_NAME, this);
     }
 
     /* TODO

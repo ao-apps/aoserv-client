@@ -77,8 +77,8 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
-        return getService().getConnector().getOperatingSystemVersions().getIndexed(OperatingSystemVersion.COLUMN_ARCHITECTURE, this);
+    public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
+        return getService().getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_ARCHITECTURE, this);
     }
     // </editor-fold>
 }

@@ -86,8 +86,8 @@ final public class GroupName extends AOServObjectGroupIdKey<GroupName> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<LinuxGroup> getLinuxGroups() throws RemoteException {
-        return getService().getConnector().getLinuxGroups().getIndexed(LinuxGroup.COLUMN_GROUP_NAME, this);
+    public IndexedSet<LinuxGroup> getLinuxGroups() throws RemoteException {
+        return getService().getConnector().getLinuxGroups().filterIndexed(LinuxGroup.COLUMN_GROUP_NAME, this);
     }
     // </editor-fold>
 }

@@ -8,13 +8,14 @@ package com.aoindustries.aoserv.client.retry;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServServiceUtils;
+import com.aoindustries.aoserv.client.IndexedSet;
+import com.aoindustries.aoserv.client.IndexedSortedSet;
 import com.aoindustries.aoserv.client.MethodColumn;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.table.Table;
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.Callable;
 
 /**
@@ -61,20 +62,20 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         return true;
     }
 
-    final public Set<V> getSet() throws RemoteException {
+    final public IndexedSet<V> getSet() throws RemoteException {
         return connector.retry(
-            new Callable<Set<V>>() {
-                public Set<V> call() throws RemoteException {
+            new Callable<IndexedSet<V>>() {
+                public IndexedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().getSet(), RetryService.this);
                 }
             }
         );
     }
 
-    final public SortedSet<V> getSortedSet() throws RemoteException {
+    final public IndexedSortedSet<V> getSortedSet() throws RemoteException {
         return connector.retry(
-            new Callable<SortedSet<V>>() {
-                public SortedSet<V> call() throws RemoteException {
+            new Callable<IndexedSortedSet<V>>() {
+                public IndexedSortedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().getSortedSet(), RetryService.this);
                 }
             }
@@ -123,21 +124,31 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         );
     }
 
-    final public V getUnique(final String columnName, final Object value) throws RemoteException {
+    final public V filterUnique(final String columnName, final Object value) throws RemoteException {
         return connector.retry(
             new Callable<V>() {
                 public V call() throws RemoteException {
-                    return AOServServiceUtils.setService(getWrapped().getUnique(columnName, value), RetryService.this);
+                    return AOServServiceUtils.setService(getWrapped().filterUnique(columnName, value), RetryService.this);
                 }
             }
         );
     }
 
-    final public Set<V> getIndexed(final String columnName, final Object value) throws RemoteException {
+    final public IndexedSet<V> filterUniqueSet(final String columnName, final Set<?> values) throws RemoteException {
         return connector.retry(
-            new Callable<Set<V>>() {
-                public Set<V> call() throws RemoteException {
-                    return AOServServiceUtils.setServices(getWrapped().getIndexed(columnName, value), RetryService.this);
+            new Callable<IndexedSet<V>>() {
+                public IndexedSet<V> call() throws RemoteException {
+                    return AOServServiceUtils.setServices(getWrapped().filterUniqueSet(columnName, values), RetryService.this);
+                }
+            }
+        );
+    }
+
+    final public IndexedSet<V> filterIndexed(final String columnName, final Object value) throws RemoteException {
+        return connector.retry(
+            new Callable<IndexedSet<V>>() {
+                public IndexedSet<V> call() throws RemoteException {
+                    return AOServServiceUtils.setServices(getWrapped().filterIndexed(columnName, value), RetryService.this);
                 }
             }
         );

@@ -213,6 +213,20 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
             throw new WrappedException(err);
         }
     }
+
+    /**
+     * Gets value of the column with the provided name, by using the SchemaColumn annotation.
+     */
+    final public Object getColumn(String name) {
+        try {
+            return AOServObjectUtils.getMethodColumnMap(getClass()).get(name).getMethod().invoke(this);
+        } catch(IllegalAccessException err) {
+            throw new WrappedException(err);
+        } catch(InvocationTargetException err) {
+            throw new WrappedException(err);
+        }
+    }
+
     /* TODO
     final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
         int len=sortExpressions.length;

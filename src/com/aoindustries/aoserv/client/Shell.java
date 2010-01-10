@@ -82,8 +82,8 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanF
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().getIndexed(LinuxAccount.COLUMN_SHELL, this);
+    public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
+        return getService().getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_SHELL, this);
     }
     // </editor-fold>
 }

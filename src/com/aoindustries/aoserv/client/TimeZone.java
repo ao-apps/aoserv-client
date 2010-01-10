@@ -52,8 +52,8 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<AOServer> getAoServers() throws RemoteException {
-        return getService().getConnector().getAoServers().getIndexed(AOServer.COLUMN_TIME_ZONE, this);
+    public IndexedSet<AOServer> getAoServers() throws RemoteException {
+        return getService().getConnector().getAoServers().filterIndexed(AOServer.COLUMN_TIME_ZONE, this);
     }
     // </editor-fold>
 

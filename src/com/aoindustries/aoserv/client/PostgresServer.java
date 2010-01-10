@@ -300,12 +300,12 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<PostgresDatabase> getPostgresDatabases() throws RemoteException {
-    	return getService().getConnector().getPostgresDatabases().getIndexed(PostgresDatabase.COLUMN_POSTGRES_SERVER, this);
+    public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
+    	return getService().getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_POSTGRES_SERVER, this);
     }
 
-    public Set<PostgresUser> getPostgresUsers() throws RemoteException {
-        return getService().getConnector().getPostgresUsers().getIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
+    public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
+        return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
     }
     // </editor-fold>
 

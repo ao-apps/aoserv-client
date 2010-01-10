@@ -8,6 +8,8 @@ package com.aoindustries.aoserv.client.noswing;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServServiceUtils;
+import com.aoindustries.aoserv.client.IndexedSet;
+import com.aoindustries.aoserv.client.IndexedSortedSet;
 import com.aoindustries.aoserv.client.MethodColumn;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.table.Table;
@@ -15,7 +17,6 @@ import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * @see  NoSwingConnectorFactory
@@ -54,12 +55,12 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
         return true;
     }
 
-    final public Set<V> getSet() throws RemoteException {
+    final public IndexedSet<V> getSet() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return AOServServiceUtils.setServices(wrapped.getSet(), this);
     }
 
-    final public SortedSet<V> getSortedSet() throws RemoteException {
+    final public IndexedSortedSet<V> getSortedSet() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return AOServServiceUtils.setServices(wrapped.getSortedSet(), this);
     }
@@ -94,13 +95,18 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
         return AOServServiceUtils.setService(wrapped.get(key), this);
     }
 
-    final public V getUnique(String columnName, Object value) throws RemoteException {
+    final public V filterUnique(String columnName, Object value) throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
-        return AOServServiceUtils.setService(wrapped.getUnique(columnName, value), this);
+        return AOServServiceUtils.setService(wrapped.filterUnique(columnName, value), this);
     }
 
-    final public Set<V> getIndexed(String columnName, Object value) throws RemoteException {
+    final public IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
-        return AOServServiceUtils.setServices(wrapped.getIndexed(columnName, value), this);
+        return AOServServiceUtils.setServices(wrapped.filterUniqueSet(columnName, values), this);
+    }
+
+    final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return AOServServiceUtils.setServices(wrapped.filterIndexed(columnName, value), this);
     }
 }

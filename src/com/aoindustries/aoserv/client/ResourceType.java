@@ -104,8 +104,8 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<Resource> getResources() throws RemoteException {
-        return getService().getConnector().getResources().getIndexed(Resource.COLUMN_RESOURCE_TYPE, this);
+    public IndexedSet<Resource> getResources() throws RemoteException {
+        return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_RESOURCE_TYPE, this);
     }
 
     public LinuxAccountType getLinuxAccountType() throws RemoteException {

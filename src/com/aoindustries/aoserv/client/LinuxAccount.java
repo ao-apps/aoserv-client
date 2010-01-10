@@ -120,7 +120,8 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
+    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
+    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
     public AOServerResource getAoServerResource() throws RemoteException {
         return getService().getConnector().getAoServerResources().get(key);
     }
@@ -233,8 +234,8 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         return getService().getConnector().getFtpGuestUsers().get(pkey);
     }
      */
-    public Set<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().getIndexed(LinuxAccountGroup.COLUMN_LINUX_ACCOUNT, this);
+    public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
+        return getService().getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_ACCOUNT, this);
     }
     // </editor-fold>
 

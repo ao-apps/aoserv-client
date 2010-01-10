@@ -60,22 +60,53 @@ final public class AOServServiceUtils {
     /**
      * Sets the service on an entire collection, and returns an unmodifiable set.
      */
-    public static <K extends Comparable<K>,V extends AOServObject<K,V>> Set<V> setServices(Set<V> objs, AOServService<?,?,K,V> service) throws RemoteException {
+    public static <K extends Comparable<K>,V extends AOServObject<K,V>> IndexedSet<V> setServices(IndexedSet<V> objs, AOServService<?,?,K,V> service) throws RemoteException {
         int size = objs.size();
-        if(size==0) return Collections.emptySet();
-        if(size==1) return Collections.singleton(setService(objs.iterator().next(), service));
+        if(size==0) return IndexedSet.emptyIndexedSet();
+        if(size==1) {
+            V oldObj = objs.iterator().next();
+            V newObj = setService(oldObj, service);
+            return newObj==oldObj ? objs : new IndexedSet<V>(newObj);
+        }
+        // Only create a new set when the first new object is created
+        boolean needsNewSet = false;
+        for(V oldObj : objs) {
+            V newObj = setService(oldObj, service);
+            if(newObj!=oldObj) {
+                needsNewSet = true;
+                break;
+            }
+        }
+        if(!needsNewSet) return objs;
         Set<V> set = new HashSet<V>(size*4/3+1);
-        for(V obj : objs) set.add(setService(obj, service));
-        return Collections.unmodifiableSet(set);
+        for(V oldObj : objs) set.add(setService(oldObj, service));
+        return new IndexedSet<V>(set);
     }
 
     /**
      * Sets the service on an entire collection, and returns an unmodifiable sorted set.
      */
-    public static <K extends Comparable<K>,V extends AOServObject<K,V>> SortedSet<V> setServices(SortedSet<V> objs, AOServService<?,?,K,V> service) throws RemoteException {
+    public static <K extends Comparable<K>,V extends AOServObject<K,V>> IndexedSortedSet<V> setServices(IndexedSortedSet<V> objs, AOServService<?,?,K,V> service) throws RemoteException {
+        int size = objs.size();
+        if(size==0) return IndexedSortedSet.emptyIndexedSortedSet();
+        if(size==1) {
+            V oldObj = objs.first();
+            V newObj = setService(oldObj, service);
+            return newObj==oldObj ? objs : new IndexedSortedSet<V>(newObj);
+        }
+        // Only create a new set when the first new object is created
+        boolean needsNewSet = false;
+        for(V oldObj : objs) {
+            V newObj = setService(oldObj, service);
+            if(newObj!=oldObj) {
+                needsNewSet = true;
+                break;
+            }
+        }
+        if(!needsNewSet) return objs;
         SortedSet<V> sortedSet = new TreeSet<V>();
-        for(V obj : objs) sortedSet.add(setService(obj, service));
-        return Collections.unmodifiableSortedSet(sortedSet);
+        for(V oldObj : objs) sortedSet.add(setService(oldObj, service));
+        return new IndexedSortedSet<V>(sortedSet);
     }
 
     /**

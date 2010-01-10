@@ -119,8 +119,8 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<HttpdSite> getHttpdSites() throws RemoteException {
-        return getService().getConnector().getHttpdSites().getIndexed(HttpdSite.COLUMN_LINUX_ACCOUNT_GROUP, this);
+    public IndexedSet<HttpdSite> getHttpdSites() throws RemoteException {
+        return getService().getConnector().getHttpdSites().filterIndexed(HttpdSite.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
     // </editor-fold>
 

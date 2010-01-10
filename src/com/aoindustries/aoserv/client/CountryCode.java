@@ -97,8 +97,8 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().getIndexed(BusinessAdministrator.COLUMN_COUNTRY, this);
+    public IndexedSet<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
+        return getService().getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_COUNTRY, this);
     }
     // </editor-fold>
 

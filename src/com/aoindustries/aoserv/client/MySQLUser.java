@@ -7,8 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -417,8 +415,8 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<MySQLDBUser> getMysqlDBUsers() throws RemoteException {
-        return getService().getConnector().getMysqlDBUsers().getIndexed(MySQLDBUser.COLUMN_MYSQL_USER, this);
+    public IndexedSet<MySQLDBUser> getMysqlDBUsers() throws RemoteException {
+        return getService().getConnector().getMysqlDBUsers().filterIndexed(MySQLDBUser.COLUMN_MYSQL_USER, this);
     }
     // </editor-fold>
 

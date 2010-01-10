@@ -343,32 +343,32 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<Business> getChildBusinesses() throws RemoteException {
-        return getService().getConnector().getBusinesses().getIndexed(COLUMN_PARENT, this);
+    public IndexedSet<Business> getChildBusinesses() throws RemoteException {
+        return getService().getConnector().getBusinesses().filterIndexed(COLUMN_PARENT, this);
     }
 
-    public Set<DisableLog> getDisableLogs() throws RemoteException {
-        return getService().getConnector().getDisableLogs().getIndexed(DisableLog.COLUMN_ACCOUNTING, this);
+    public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
+        return getService().getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_ACCOUNTING, this);
     }
 
-    public Set<GroupName> getGroupNames() throws RemoteException {
-        return getService().getConnector().getGroupNames().getIndexed(GroupName.COLUMN_ACCOUNTING, this);
+    public IndexedSet<GroupName> getGroupNames() throws RemoteException {
+        return getService().getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_ACCOUNTING, this);
     }
 
-    public Set<Resource> getResources() throws RemoteException {
-        return getService().getConnector().getResources().getIndexed(Resource.COLUMN_ACCOUNTING, this);
+    public IndexedSet<Resource> getResources() throws RemoteException {
+        return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_ACCOUNTING, this);
     }
 
-    public Set<Server> getServers() throws RemoteException {
-        return getService().getConnector().getServers().getIndexed(Server.COLUMN_ACCOUNTING, this);
+    public IndexedSet<Server> getServers() throws RemoteException {
+        return getService().getConnector().getServers().filterIndexed(Server.COLUMN_ACCOUNTING, this);
     }
 
-    public Set<ServerFarm> getServerFarms() throws RemoteException {
-        return getService().getConnector().getServerFarms().getIndexed(ServerFarm.COLUMN_OWNER, this);
+    public IndexedSet<ServerFarm> getServerFarms() throws RemoteException {
+        return getService().getConnector().getServerFarms().filterIndexed(ServerFarm.COLUMN_OWNER, this);
     }
 
-    public Set<Username> getUsernames() throws RemoteException {
-        return getService().getConnector().getUsernames().getIndexed(Username.COLUMN_ACCOUNTING, this);
+    public IndexedSet<Username> getUsernames() throws RemoteException {
+        return getService().getConnector().getUsernames().filterIndexed(Username.COLUMN_ACCOUNTING, this);
     }
     // </editor-fold>
 

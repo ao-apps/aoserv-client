@@ -415,20 +415,20 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
-        return getService().getConnector().getFailoverMySQLReplications().getIndexed(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, this);
+    public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
+        return getService().getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, this);
     }
 
-    public Set<MySQLDatabase> getMySQLDatabases() throws RemoteException {
-        return getService().getConnector().getMysqlDatabases().getIndexed(MySQLDatabase.COLUMN_MYSQL_SERVER, this);
+    public IndexedSet<MySQLDatabase> getMySQLDatabases() throws RemoteException {
+        return getService().getConnector().getMysqlDatabases().filterIndexed(MySQLDatabase.COLUMN_MYSQL_SERVER, this);
     }
 
     /* TODO public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
         return getService().getConnector().getMysqlDBUsers().getMySQLDBUsers(this);
     }*/
 
-    public Set<MySQLUser> getMySQLUsers() throws RemoteException {
-    	return getService().getConnector().getMysqlUsers().getIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
+    public IndexedSet<MySQLUser> getMySQLUsers() throws RemoteException {
+    	return getService().getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
     }
     // </editor-fold>
 

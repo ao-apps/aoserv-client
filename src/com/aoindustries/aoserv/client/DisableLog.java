@@ -115,20 +115,20 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<Business> getBusinesses() throws RemoteException {
-        return getService().getConnector().getBusinesses().getIndexed(Business.COLUMN_DISABLE_LOG, this);
+    public IndexedSet<Business> getBusinesses() throws RemoteException {
+        return getService().getConnector().getBusinesses().filterIndexed(Business.COLUMN_DISABLE_LOG, this);
     }
 
-    public Set<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().getIndexed(BusinessAdministrator.COLUMN_DISABLE_LOG, this);
+    public IndexedSet<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
+        return getService().getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_DISABLE_LOG, this);
     }
 
-    public Set<GroupName> getGroupNames() throws RemoteException {
-        return getService().getConnector().getGroupNames().getIndexed(GroupName.COLUMN_DISABLE_LOG, this);
+    public IndexedSet<GroupName> getGroupNames() throws RemoteException {
+        return getService().getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_DISABLE_LOG, this);
     }
 
-    public Set<Username> getUsernames() throws RemoteException {
-        return getService().getConnector().getUsernames().getIndexed(Username.COLUMN_DISABLE_LOG, this);
+    public IndexedSet<Username> getUsernames() throws RemoteException {
+        return getService().getConnector().getUsernames().filterIndexed(Username.COLUMN_DISABLE_LOG, this);
     }
     // </editor-fold>
 

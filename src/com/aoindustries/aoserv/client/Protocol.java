@@ -143,8 +143,8 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<NetBind> getNetBinds() throws RemoteException {
-        return getService().getConnector().getNetBinds().getIndexed(NetBind.COLUMN_APP_PROTOCOL, this);
+    public IndexedSet<NetBind> getNetBinds() throws RemoteException {
+        return getService().getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_APP_PROTOCOL, this);
     }
 
     /* TODO

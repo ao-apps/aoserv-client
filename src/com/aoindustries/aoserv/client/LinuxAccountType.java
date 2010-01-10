@@ -126,8 +126,8 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().getIndexed(LinuxAccount.COLUMN_LINUX_ACCOUNT_TYPE, this);
+    public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
+        return getService().getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_LINUX_ACCOUNT_TYPE, this);
     }
     // </editor-fold>
 

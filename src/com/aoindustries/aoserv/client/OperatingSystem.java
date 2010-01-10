@@ -79,8 +79,8 @@ final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
-        return getService().getConnector().getOperatingSystemVersions().getIndexed(OperatingSystemVersion.COLUMN_OPERATING_SYSTEM, this);
+    public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
+        return getService().getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_OPERATING_SYSTEM, this);
     }
     // </editor-fold>
 

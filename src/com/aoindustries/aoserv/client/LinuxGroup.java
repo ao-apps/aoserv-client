@@ -166,8 +166,8 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().getIndexed(LinuxAccountGroup.COLUMN_LINUX_GROUP, this);
+    public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
+        return getService().getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_GROUP, this);
     }
     // </editor-fold>
 

@@ -96,8 +96,8 @@ final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> imp
         return getService().getConnector().getRacks().getIndexedRows(Rack.COLUMN_FARM, pkey);
     }*/
 
-    public Set<Server> getServers() throws RemoteException {
-        return getService().getConnector().getServers().getIndexed(Server.COLUMN_FARM, this);
+    public IndexedSet<Server> getServers() throws RemoteException {
+        return getService().getConnector().getServers().filterIndexed(Server.COLUMN_FARM, this);
     }
     // </editor-fold>
 }

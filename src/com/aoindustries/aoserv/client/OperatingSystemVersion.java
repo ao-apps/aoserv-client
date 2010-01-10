@@ -144,12 +144,12 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<Server> getServers() throws RemoteException {
-        return getService().getConnector().getServers().getIndexed(Server.COLUMN_OPERATING_SYSTEM_VERSION, this);
+    public IndexedSet<Server> getServers() throws RemoteException {
+        return getService().getConnector().getServers().filterIndexed(Server.COLUMN_OPERATING_SYSTEM_VERSION, this);
     }
 
-    public Set<TechnologyVersion> getTechnologyVersions() throws RemoteException {
-        return getService().getConnector().getTechnologyVersions().getIndexed(TechnologyVersion.COLUMN_OPERATING_SYSTEM_VERSION, this);
+    public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
+        return getService().getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OPERATING_SYSTEM_VERSION, this);
     }
     // </editor-fold>
 

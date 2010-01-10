@@ -149,8 +149,8 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     /**
      * Gets the list of all replications coming from this server.
      */
-    public Set<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
-        return getService().getConnector().getFailoverFileReplications().getIndexed(FailoverFileReplication.COLUMN_SERVER, this);
+    public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
+        return getService().getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_SERVER, this);
     }
 
     /* TODO

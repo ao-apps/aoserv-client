@@ -130,8 +130,8 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<PostgresDatabase> getPostgresDatabases() throws RemoteException {
-    	return getService().getConnector().getPostgresDatabases().getIndexed(PostgresDatabase.COLUMN_ENCODING, this);
+    public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
+    	return getService().getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_ENCODING, this);
     }
     // </editor-fold>
 }

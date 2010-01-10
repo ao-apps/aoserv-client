@@ -113,8 +113,8 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<TicketCategory> getChildrenCategories() throws RemoteException {
-        return getService().getConnector().getTicketCategories().getIndexed(COLUMN_PARENT, this);
+    public IndexedSet<TicketCategory> getChildrenCategories() throws RemoteException {
+        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
     /* TODO
     public List<TicketBrandCategory> getTicketBrandCategorys() throws IOException, SQLException {

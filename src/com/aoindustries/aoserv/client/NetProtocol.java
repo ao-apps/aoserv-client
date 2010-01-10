@@ -59,12 +59,12 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public Set<NetBind> getNetBinds() throws RemoteException {
-        return getService().getConnector().getNetBinds().getIndexed(NetBind.COLUMN_NET_PROTOCOL, this);
+    public IndexedSet<NetBind> getNetBinds() throws RemoteException {
+        return getService().getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_NET_PROTOCOL, this);
     }
 
-    public Set<Protocol> getProtocols() throws RemoteException {
-        return getService().getConnector().getProtocols().getIndexed(Protocol.COLUMN_NET_PROTOCOL, this);
+    public IndexedSet<Protocol> getProtocols() throws RemoteException {
+        return getService().getConnector().getProtocols().filterIndexed(Protocol.COLUMN_NET_PROTOCOL, this);
     }
     // </editor-fold>
 }
