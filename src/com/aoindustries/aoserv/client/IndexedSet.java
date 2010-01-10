@@ -5,11 +5,17 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -19,21 +25,21 @@ import java.util.Set;
  *
  * @see  AOServService
  */
-final public class IndexedSet<E> implements Set<E>, Indexed<E>, Serializable {
+final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed<E>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     public static final IndexedSet EMPTY_INDEXED_SET = new IndexedSet();
 
     @SuppressWarnings("unchecked")
-    public static final <T> IndexedSet<T> emptyIndexedSet() {
+    public static final <T extends AOServObject> IndexedSet<T> emptyIndexedSet() {
         return (IndexedSet<T>) EMPTY_INDEXED_SET;
     }
 
     /**
      * Chooses the best constructor.
      */
-    public static <T> IndexedSet<T> wrap(Set<T> wrapped) {
+    public static <T extends AOServObject> IndexedSet<T> wrap(Set<T> wrapped) {
         int size = wrapped.size();
         if(size==0) return emptyIndexedSet();
         if(wrapped instanceof IndexedSet) return (IndexedSet<T>)wrapped;
@@ -42,6 +48,16 @@ final public class IndexedSet<E> implements Set<E>, Indexed<E>, Serializable {
     }
 
     private final Set<E> wrapped;
+
+    /**
+     * The unique column objects are hashed on the method return value when first needed.
+     */
+    private transient Map<String,Map<Object,E>> uniqueHashes;
+
+    /**
+     * The indexed column objects are hashed on the method return value when first needed.
+     */
+    private transient Map<String,Map<Object,IndexedSet<E>>> indexedHashes;
 
     public IndexedSet() {
         this.wrapped = Collections.emptySet();
@@ -148,15 +164,112 @@ final public class IndexedSet<E> implements Set<E>, Indexed<E>, Serializable {
         return wrapped.isEmpty() ? EMPTY_INDEXED_SET : this;
     }
 
+    private Map<Object,E> getUniqueHash(String columnName, Class<?> valueClass) throws RemoteException {
+        assert Thread.holdsLock(wrapped);
+        if(uniqueHashes==null) uniqueHashes = new HashMap<String,Map<Object,E>>();
+        Map<Object,E> uniqueHash = uniqueHashes.get(columnName);
+        if(uniqueHash==null) {
+            uniqueHash = new HashMap<Object,E>(wrapped.size()*4/3+1);
+            try {
+                Method method = null;
+                Class<?> lastClass = null;
+                for(E obj : wrapped) {
+                    if(obj!=null) {
+                        Class<? extends AOServObject> objClass = obj.getClass();
+                        if(objClass!=lastClass) {
+                            MethodColumn methodColumn = AOServObjectUtils.getMethodColumnMap(objClass).get(columnName);
+                            IndexType indexType = methodColumn.getIndexType();
+                            if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE && indexType!=IndexType.INDEXED) throw new IllegalArgumentException("Column neither primary key, unique, or indexed: "+columnName);
+                            method = methodColumn.getMethod();
+                            assert valueClass==null || AOServServiceUtils.classesMatch(valueClass, method.getReturnType()) : "value class and return type mismatch: "+valueClass.getName()+"!="+method.getReturnType().getName();
+                            lastClass = objClass;
+                        }
+                        Object columnValue = method.invoke(obj);
+                        if(columnValue!=null && uniqueHash.put(columnValue, obj)!=null) throw new AssertionError("Duplicate value in unique column "+obj.getService().getServiceName()+"."+columnName+": "+columnValue);
+                    }
+                }
+            } catch(IllegalAccessException err) {
+                throw new RemoteException(err.getMessage(), err);
+            } catch(InvocationTargetException err) {
+                throw new RemoteException(err.getMessage(), err);
+            }
+            uniqueHashes.put(columnName, uniqueHash);
+        }
+        return uniqueHash;
+    }
+
     public E filterUnique(String columnName, Object value) throws RemoteException {
-        throw new UnsupportedOperationException("TODO: Not supported yet.");
+        if(value==null) return null;
+        synchronized(wrapped) {
+            return getUniqueHash(columnName, value.getClass()).get(value);
+        }
     }
 
     public IndexedSet<E> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
-        throw new UnsupportedOperationException("TODO: Not supported yet.");
+        if(values==null || values.isEmpty()) return null;
+        synchronized(wrapped) {
+            Set<E> results = new HashSet<E>();
+            Map<Object,E> uniqueHash = getUniqueHash(columnName, null);
+            if(values.size()<uniqueHash.size()) {
+                for(Object value : values) {
+                    if(value!=null) {
+                        E obj = uniqueHash.get(value);
+                        if(obj!=null && !results.add(obj)) throw new AssertionError("Duplicate value in unique column "+obj.getService().getServiceName()+"."+columnName+": "+value);
+                    }
+                }
+            } else {
+                for(Map.Entry<Object,E> entry : uniqueHash.entrySet()) {
+                    Object value = entry.getKey();
+                    if(values.contains(value)) {
+                        E obj = entry.getValue();
+                        if(!results.add(obj)) throw new AssertionError("Duplicate value in unique column "+obj.getService().getServiceName()+"."+columnName+": "+value);
+                    }
+                }
+            }
+            return wrap(results);
+        }
     }
 
     public IndexedSet<E> filterIndexed(String columnName, Object value) throws RemoteException {
-        throw new UnsupportedOperationException("TODO: Not supported yet.");
+        if(value==null) return null;
+        synchronized(wrapped) {
+            if(indexedHashes==null) indexedHashes = new HashMap<String,Map<Object,IndexedSet<E>>>();
+            Map<Object,IndexedSet<E>> indexedHash = indexedHashes.get(columnName);
+            if(indexedHash==null) {
+                Map<Object,Set<E>> setByValue = new HashMap<Object,Set<E>>(wrapped.size()*4/3+1); // Error on the side of avoiding rehash
+                try {
+                    Method method = null;
+                    Class<?> lastClass = null;
+                    for(E obj : wrapped) {
+                        if(obj!=null) {
+                            Class<? extends AOServObject> objClass = obj.getClass();
+                            if(objClass!=lastClass) {
+                                MethodColumn methodColumn = AOServObjectUtils.getMethodColumnMap(objClass).get(columnName);
+                                if(methodColumn.getIndexType()!=IndexType.INDEXED) throw new IllegalArgumentException("Column not indexed: "+columnName);
+                                method = methodColumn.getMethod();
+                                lastClass = objClass;
+                            }
+                            Object columnValue = method.invoke(obj);
+                            if(columnValue!=null) {
+                                Set<E> results = setByValue.get(columnValue);
+                                if(results==null) setByValue.put(columnValue, results = new HashSet<E>());
+                                results.add(obj);
+                            }
+                        }
+                    }
+                } catch(IllegalAccessException err) {
+                    throw new RemoteException(err.getMessage(), err);
+                } catch(InvocationTargetException err) {
+                    throw new RemoteException(err.getMessage(), err);
+                }
+                // Make each set indexed
+                indexedHash = new HashMap<Object,IndexedSet<E>>(setByValue.size()*4/3+1);
+                for(Map.Entry<Object,Set<E>> entry : setByValue.entrySet()) indexedHash.put(entry.getKey(), wrap(entry.getValue()));
+                indexedHashes.put(columnName, indexedHash);
+            }
+            IndexedSet<E> results = indexedHash.get(value);
+            if(results==null) return emptyIndexedSet();
+            return results;
+        }
     }
 }
