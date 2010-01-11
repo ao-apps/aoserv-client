@@ -145,15 +145,13 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     EmailSpamAssassinIntegrationModeService<C,F> getEmailSpamAssassinIntegrationModes() throws RemoteException;
     EncryptionKeyService<C,F> getEncryptionKeys() throws RemoteException;
     ExpenseCategoryService<C,F> getExpenseCategories() throws RemoteException;
+     */
     FailoverFileLogService<C,F> getFailoverFileLogs() throws RemoteException;
-     */
     FailoverFileReplicationService<C,F> getFailoverFileReplications() throws RemoteException;
-    /* TODO
     FailoverFileScheduleService<C,F> getFailoverFileSchedules() throws RemoteException;
-     */
     FailoverMySQLReplicationService<C,F> getFailoverMySQLReplications() throws RemoteException;
-    /* TODO
     FileBackupSettingService<C,F> getFileBackupSettings() throws RemoteException;
+    /* TODO
     FTPGuestUserService<C,F> getFtpGuestUsers() throws RemoteException;
      */
     GroupNameService<C,F> getGroupNames() throws RemoteException;

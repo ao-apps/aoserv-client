@@ -5,12 +5,15 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -76,7 +79,7 @@ public class GetUniqueRowTest extends TestCase {
                                 if(uniqueMap.containsKey(uniqueValue)) fail("Column is flagged as unique but has a duplicate value.  Table="+serviceName+", Column="+column.getColumnName()+", Value="+uniqueValue);
                                 uniqueMap.put(uniqueValue, row);
                                 // Check that the object returned from the get unique row call matches the row that provides the unique value
-                                AOServObject fromUniqueCall=service.getUnique(column.getColumnName(), uniqueValue);
+                                AOServObject fromUniqueCall=service.filterUnique(column.getColumnName(), uniqueValue);
                                 assertEquals("Table="+serviceName+", Column="+column.getColumnName(), row, fromUniqueCall);
                             } else {
                                 // Make sure is nullable
@@ -84,6 +87,20 @@ public class GetUniqueRowTest extends TestCase {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    public void testGetLinuxAccounts() throws RemoteException {
+        System.out.println("Testing AOServer.getLinuxAccounts:");
+        for(AOServConnector<?,?> conn : conns) {
+            System.out.println("    "+conn.getConnectAs());
+            for(AOServer ao : conn.getAoServers().getSet()) {
+                System.out.println("        "+ao);
+                for(LinuxAccount la : new TreeSet<LinuxAccount>(ao.getLinuxAccounts())) {
+                    UserId userId = la.getUsername().getUsername();
+                    System.out.println("            "+userId+"->"+ao.getLinuxAccount(userId));
                 }
             }
         }

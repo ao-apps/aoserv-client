@@ -19,8 +19,11 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
+import com.aoindustries.aoserv.client.FailoverFileScheduleService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
+import com.aoindustries.aoserv.client.FileBackupSettingService;
 import com.aoindustries.aoserv.client.GroupNameService;
 import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.LanguageService;
@@ -156,15 +159,13 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryEmailSpamAssassinIntegrationModeService emailSpamAssassinIntegrationModes;
     final RetryEncryptionKeyService encryptionKeys;
     final RetryExpenseCategoryService expenseCategories;
+     */
     final RetryFailoverFileLogService failoverFileLogs;
-     */
     final RetryFailoverFileReplicationService failoverFileReplications;
-    /* TODO
     final RetryFailoverFileScheduleService failoverFileSchedules;
-     */
     final RetryFailoverMySQLReplicationService failoverMySQLReplications;
-    /* TODO
     final RetryFileBackupSettingService fileBackupSettings;
+    /* TODO
     final RetryFTPGuestUserService ftpGuestUsers;
      */
     final RetryGroupNameService groupNames;
@@ -358,13 +359,13 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         emailSpamAssassinIntegrationModes = new RetryEmailSpamAssassinIntegrationModeService(this);
         encryptionKeys = new RetryEncryptionKeyService(this);
         expenseCategories = new RetryExpenseCategoryService(this);
-        failoverFileLogs = new RetryFailoverFileLogService(this);
          */
+        failoverFileLogs = new RetryFailoverFileLogService(this);
         failoverFileReplications = new RetryFailoverFileReplicationService(this);
-        // TODO: failoverFileSchedules = new RetryFailoverFileScheduleService(this);
+        failoverFileSchedules = new RetryFailoverFileScheduleService(this);
         failoverMySQLReplications = new RetryFailoverMySQLReplicationService(this);
-        /* TODO
         fileBackupSettings = new RetryFileBackupSettingService(this);
+        /* TODO
         ftpGuestUsers = new RetryFTPGuestUserService(this);
          */
         groupNames = new RetryGroupNameService(this);
@@ -772,21 +773,27 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public EncryptionKeyService<RetryConnector,RetryConnectorFactory> getEncryptionKeys();
 
     public ExpenseCategoryService<RetryConnector,RetryConnectorFactory> getExpenseCategories();
-
-    public FailoverFileLogService<RetryConnector,RetryConnectorFactory> getFailoverFileLogs();
     */
+    public FailoverFileLogService<RetryConnector,RetryConnectorFactory> getFailoverFileLogs() {
+        return failoverFileLogs;
+    }
+
     public FailoverFileReplicationService<RetryConnector,RetryConnectorFactory> getFailoverFileReplications() {
         return failoverFileReplications;
     }
-    /* TODO
-    public FailoverFileScheduleService<RetryConnector,RetryConnectorFactory> getFailoverFileSchedules();
-    */
+
+    public FailoverFileScheduleService<RetryConnector,RetryConnectorFactory> getFailoverFileSchedules() {
+        return failoverFileSchedules;
+    }
+
     public FailoverMySQLReplicationService<RetryConnector,RetryConnectorFactory> getFailoverMySQLReplications() {
         return failoverMySQLReplications;
     }
-    /* TODO
-    public FileBackupSettingService<RetryConnector,RetryConnectorFactory> getFileBackupSettings();
 
+    public FileBackupSettingService<RetryConnector,RetryConnectorFactory> getFileBackupSettings() {
+        return fileBackupSettings;
+    }
+    /* TODO
     public FTPGuestUserService<RetryConnector,RetryConnectorFactory> getFtpGuestUsers();
      */
     public GroupNameService<RetryConnector,RetryConnectorFactory> getGroupNames() {

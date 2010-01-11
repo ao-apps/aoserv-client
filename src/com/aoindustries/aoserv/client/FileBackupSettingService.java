@@ -1,41 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2003-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  FileBackupSettingTable
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBackupSetting> {
+@ServiceAnnotation(ServiceName.file_backup_settings)
+public interface FileBackupSettingService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,FileBackupSetting> {
 
-    FileBackupSettingTable(AOServConnector connector) {
-	super(connector, FileBackupSetting.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(FileBackupSetting.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(FileBackupSetting.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(FileBackupSetting.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
-        new OrderBy(FileBackupSetting.COLUMN_REPLICATION_name+'.'+FailoverFileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING),
-        new OrderBy(FileBackupSetting.COLUMN_PATH_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addFileBackupSetting(FailoverFileReplication replication, String path, boolean backupEnabled) throws IOException, SQLException {
         return connector.requestIntQueryIL(
             true,
@@ -47,22 +25,14 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
         );
     }
 
-    public FileBackupSetting get(int pkey) throws IOException, SQLException {
-        return getUniqueRow(FileBackupSetting.COLUMN_PKEY, pkey);
-    }
-
     FileBackupSetting getFileBackupSetting(FailoverFileReplication ffr, String path) throws IOException, SQLException {
         // Use index first
-	for(FileBackupSetting fbs : getFileBackupSettings(ffr)) if(fbs.path.equals(path)) return fbs;
-	return null;
+        for(FileBackupSetting fbs : getFileBackupSettings(ffr)) if(fbs.path.equals(path)) return fbs;
+        return null;
     }
 
     List<FileBackupSetting> getFileBackupSettings(FailoverFileReplication ffr) throws IOException, SQLException {
         return getIndexedRows(FileBackupSetting.COLUMN_REPLICATION, ffr.pkey);
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.FILE_BACKUP_SETTINGS;
     }
 
     @Override
@@ -136,4 +106,5 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
             }
         );
     }
+     */
 }

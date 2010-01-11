@@ -19,8 +19,11 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
+import com.aoindustries.aoserv.client.FailoverFileScheduleService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
+import com.aoindustries.aoserv.client.FileBackupSettingService;
 import com.aoindustries.aoserv.client.GroupNameService;
 import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.LanguageService;
@@ -140,17 +143,13 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingEmailSpamAssassinIntegrationModeService emailSpamAssassinIntegrationModes;
     final NoSwingEncryptionKeyService encryptionKeys;
     final NoSwingExpenseCategoryService expenseCategories;
+     */
     final NoSwingFailoverFileLogService failoverFileLogs;
-     */
     final NoSwingFailoverFileReplicationService failoverFileReplications;
-    /* TODO
     final NoSwingFailoverFileScheduleService failoverFileSchedules;
-     */
     final NoSwingFailoverMySQLReplicationService failoverMySQLReplications;
-    /* TODO
     final NoSwingFileBackupSettingService fileBackupSettings;
-    final NoSwingFTPGuestUserService ftpGuestUsers;
-     */
+    // TODO: final NoSwingFTPGuestUserService ftpGuestUsers;
     final NoSwingGroupNameService groupNames;
     /* TODO
     final NoSwingHttpdBindService httpdBinds;
@@ -339,15 +338,13 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         emailSpamAssassinIntegrationModes = new NoSwingEmailSpamAssassinIntegrationModeService(this, wrapped.getEmailSpamAssassinIntegrationModes());
         encryptionKeys = new NoSwingEncryptionKeyService(this, wrapped.getEncryptionKeys());
         expenseCategories = new NoSwingExpenseCategoryService(this, wrapped.getExpenseCategorys());
+         */
         failoverFileLogs = new NoSwingFailoverFileLogService(this, wrapped.getFailoverFileLogs());
-         */
         failoverFileReplications = new NoSwingFailoverFileReplicationService(this, wrapped.getFailoverFileReplications());
-        /* TODO
         failoverFileSchedules = new NoSwingFailoverFileScheduleService(this, wrapped.getFailoverFileSchedules());
-         */
         failoverMySQLReplications = new NoSwingFailoverMySQLReplicationService(this, wrapped.getFailoverMySQLReplications());
-        /* TODO
         fileBackupSettings = new NoSwingFileBackupSettingService(this, wrapped.getFileBackupSettings());
+        /* TODO
         ftpGuestUsers = new NoSwingFTPGuestUserService(this, wrapped.getFTPGuestUsers());
          */
         groupNames = new NoSwingGroupNameService(this, wrapped.getGroupNames());
@@ -651,23 +648,32 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public EncryptionKeyService<NoSwingConnector,NoSwingConnectorFactory> getEncryptionKeys() throws RemoteException;
 
     public ExpenseCategoryService<NoSwingConnector,NoSwingConnectorFactory> getExpenseCategories() throws RemoteException;
-
-    public FailoverFileLogService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileLogs() throws RemoteException;
     */
+    public FailoverFileLogService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileLogs() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return failoverFileLogs;
+    }
+
     public FailoverFileReplicationService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileReplications() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return failoverFileReplications;
     }
-    /* TODO
-    public FailoverFileScheduleService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileSchedules() throws RemoteException;
-    */
+
+    public FailoverFileScheduleService<NoSwingConnector,NoSwingConnectorFactory> getFailoverFileSchedules() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return failoverFileSchedules;
+    }
+
     public FailoverMySQLReplicationService<NoSwingConnector,NoSwingConnectorFactory> getFailoverMySQLReplications() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return failoverMySQLReplications;
     }
-    /* TODO
-    public FileBackupSettingService<NoSwingConnector,NoSwingConnectorFactory> getFileBackupSettings() throws RemoteException;
 
+    public FileBackupSettingService<NoSwingConnector,NoSwingConnectorFactory> getFileBackupSettings() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return fileBackupSettings;
+    }
+    /* TODO
     public FTPGuestUserService<NoSwingConnector,NoSwingConnectorFactory> getFtpGuestUsers() throws RemoteException;
      */
     public GroupNameService<NoSwingConnector,NoSwingConnectorFactory> getGroupNames() throws RemoteException {

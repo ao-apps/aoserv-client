@@ -167,7 +167,6 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         return AOServObjectUtils.createDependencySet(
             // TODO: getFailoverFileSchedules(),
             getFailoverMySQLReplications()
-            // TODO: getFileBackupSettings()
         );
     }
     // </editor-fold>
@@ -183,15 +182,14 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
         return getService().getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_REPLICATION, this);
     }
-    /* TODO
-    public List<FailoverFileSchedule> getFailoverFileSchedules() throws IOException, SQLException {
-        return getService().getConnector().getFailoverFileSchedules().getFailoverFileSchedules(this);
+
+    public IndexedSet<FailoverFileSchedule> getFailoverFileSchedules() throws RemoteException {
+        return getService().getConnector().getFailoverFileSchedules().filterIndexed(FailoverFileSchedule.COLUMN_REPLICATION, this);
     }
 
-    public List<FileBackupSetting> getFileBackupSettings() throws IOException, SQLException {
-        return getService().getConnector().getFileBackupSettings().getFileBackupSettings(this);
+    public IndexedSet<FileBackupSetting> getFileBackupSettings() throws RemoteException {
+        return getService().getConnector().getFileBackupSettings().filterIndexed(FileBackupSetting.COLUMN_REPLICATION, this);
     }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
@@ -208,16 +206,10 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         return BufferManager.BUFFER_SIZE;
     }
 
-    /**
-     * Gets the most recent (by start time) log entries for failover file replications, up to the
-     * maximum number of rows.  May return less than this number of rows.  The results
-     * are sorted by start_time descending (most recent at index zero).
-     */
-    /*
-    public List<FailoverFileLog> getFailoverFileLogs(int maxRows) throws IOException, SQLException {
-        return getService().getConnector().getFailoverFileLogs().getFailoverFileLogs(this, maxRows);
+    public IndexedSet<FailoverFileLog> getFailoverFileLogs() throws RemoteException {
+        return getService().getConnector().getFailoverFileLogs().filterIndexed(FailoverFileLog.COLUMN_REPLICATION, this);
     }
-
+    /* TODO
     public int addFileBackupSetting(String path, boolean backupEnabled) throws IOException, SQLException {
         return getService().getConnector().getFileBackupSettings().addFileBackupSetting(this, path, backupEnabled);
     }

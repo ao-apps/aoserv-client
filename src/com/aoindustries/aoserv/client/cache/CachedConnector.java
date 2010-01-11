@@ -19,8 +19,11 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
+import com.aoindustries.aoserv.client.FailoverFileScheduleService;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
+import com.aoindustries.aoserv.client.FileBackupSettingService;
 import com.aoindustries.aoserv.client.GroupNameService;
 import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.LanguageService;
@@ -145,16 +148,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedEmailSpamAssassinIntegrationModeService emailSpamAssassinIntegrationModes;
     final CachedEncryptionKeyService encryptionKeys;
     final CachedExpenseCategoryService expenseCategories;
+     */
     final CachedFailoverFileLogService failoverFileLogs;
-     */
     final CachedFailoverFileReplicationService failoverFileReplications;
-    /* TODO
     final CachedFailoverFileScheduleService failoverFileSchedules;
-     */
     final CachedFailoverMySQLReplicationService failoverMySQLReplications;
-    /* TODO
     final CachedFileBackupSettingService fileBackupSettings;
-     */
     final CachedGroupNameService groupNames;
     /*
     final CachedFTPGuestUserService ftpGuestUsers;
@@ -346,16 +345,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         emailSpamAssassinIntegrationModes = new CachedEmailSpamAssassinIntegrationModeService(this, wrapped.getEmailSpamAssassinIntegrationModes());
         encryptionKeys = new CachedEncryptionKeyService(this, wrapped.getEncryptionKeys());
         expenseCategories = new CachedExpenseCategoryService(this, wrapped.getExpenseCategorys());
+         */
         failoverFileLogs = new CachedFailoverFileLogService(this, wrapped.getFailoverFileLogs());
-         */
         failoverFileReplications = new CachedFailoverFileReplicationService(this, wrapped.getFailoverFileReplications());
-        /* TODO
         failoverFileSchedules = new CachedFailoverFileScheduleService(this, wrapped.getFailoverFileSchedules());
-         */
         failoverMySQLReplications = new CachedFailoverMySQLReplicationService(this, wrapped.getFailoverMySQLReplications());
-        /* TODO
         fileBackupSettings = new CachedFileBackupSettingService(this, wrapped.getFileBackupSettings());
-         */
         groupNames = new CachedGroupNameService(this, wrapped.getGroupNames());
         /* TODO
         ftpGuestUsers = new CachedFTPGuestUserService(this, wrapped.getFTPGuestUsers());
@@ -646,21 +641,27 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public EncryptionKeyService<CachedConnector,CachedConnectorFactory> getEncryptionKeys();
 
     public ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories();
-
-    public FailoverFileLogService<CachedConnector,CachedConnectorFactory> getFailoverFileLogs();
     */
+    public FailoverFileLogService<CachedConnector,CachedConnectorFactory> getFailoverFileLogs() {
+        return failoverFileLogs;
+    }
+
     public FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> getFailoverFileReplications() {
         return failoverFileReplications;
     }
-    /* TODO
-    public FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> getFailoverFileSchedules();
-    */
+
+    public FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> getFailoverFileSchedules() {
+        return failoverFileSchedules;
+    }
+
     public FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> getFailoverMySQLReplications() {
         return failoverMySQLReplications;
     }
-    /* TODO
-    public FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings();
-    */
+
+    public FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings() {
+        return fileBackupSettings;
+    }
+
     public GroupNameService<CachedConnector,CachedConnectorFactory> getGroupNames() {
         return groupNames;
     }

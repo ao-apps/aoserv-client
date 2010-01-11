@@ -82,15 +82,13 @@ public enum ServiceName implements LocalizedToString {
     email_sa_integration_modes,
     encryption_keys,
     expense_categories,
+     */
     failover_file_log,
-     */
     failover_file_replications,
-    /* TODO
     failover_file_schedule,
-     */
     failover_mysql_replications,
-    /* TODO
     file_backup_settings,
+    /* TODO
     ftp_guest_users,
      */
     group_names,

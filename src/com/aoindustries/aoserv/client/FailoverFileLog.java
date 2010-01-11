@@ -5,160 +5,109 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.List;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
 
 /**
  * The entire contents of servers are periodically replicated to another server.  In the
  * event of hardware failure, this other server may be booted to take place of the
  * failed machine.  All transfers to the failover server are logged.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog> implements SingleTableObject<Integer,FailoverFileLog> {
+final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLog> implements BeanFactory<com.aoindustries.aoserv.client.beans.FailoverFileLog> {
 
-    static final String COLUMN_REPLICATION_name = "replication";
-    static final String COLUMN_END_TIME_name = "end_time";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    protected AOServTable<Integer,FailoverFileLog> table;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int replication;
+    final private Timestamp startTime;
+    final private Timestamp endTime;
+    final private int scanned;
+    final private int updated;
+    final private long bytes;
+    final private boolean isSuccessful;
 
-    private int pkey;
-    private int replication;
-    private long startTime;
-    private long endTime;
-    private int scanned;
-    private int updated;
-    private long bytes;
-    private boolean is_successful;
+    public FailoverFileLog(
+        FailoverFileLogService<?,?> service,
+        int pkey,
+        int replication,
+        Timestamp startTime,
+        Timestamp endTime,
+        int scanned,
+        int updated,
+        long bytes,
+        boolean isSuccessful
+    ) {
+        super(service, pkey);
+        this.replication = replication;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.scanned = scanned;
+        this.updated = updated;
+        this.bytes = bytes;
+        this.isSuccessful = isSuccessful;
+    }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    boolean equalsImpl(Object O) {
-	return
-            O instanceof FailoverFileLog
-            && ((FailoverFileLog)O).pkey==pkey
-	;
+    protected int compareToImpl(FailoverFileLog other) throws RemoteException {
+        int diff = -endTime.compareTo(other.endTime);
+        if(diff!=0) return diff;
+        return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique id")
+    public int getPkey() {
+        return key;
     }
 
-    public long getBytes() {
-	return bytes;
+    static final String COLUMN_REPLICATION = "replication";
+    @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the replication that was performed")
+    public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
+        return getService().getConnector().getFailoverFileReplications().get(replication);
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case 0: return Integer.valueOf(pkey);
-            case 1: return Integer.valueOf(replication);
-            case 2: return new java.sql.Date(startTime);
-            case 3: return new java.sql.Date(endTime);
-            case 4: return Integer.valueOf(scanned);
-            case 5: return Integer.valueOf(updated);
-            case 6: return Long.valueOf(bytes);
-            case 7: return is_successful?Boolean.TRUE:Boolean.FALSE;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
-    public long getStartTime() {
+    @SchemaColumn(order=2, name="start_time", description="the time the replication started")
+    public Timestamp getStartTime() {
         return startTime;
     }
 
-    public long getEndTime() {
-	return endTime;
+    @SchemaColumn(order=3, name="end_time", description="the time the replication finished")
+    public Timestamp getEndTime() {
+        return endTime;
     }
 
-    public int getPkey() {
-	return pkey;
-    }
-
-    public Integer getKey() {
-	return pkey;
-    }
-
+    @SchemaColumn(order=4, name="scanned", description="the number of files scanned")
     public int getScanned() {
-	return scanned;
+    	return scanned;
     }
 
-    public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
-        FailoverFileReplication ffr=table.connector.getFailoverFileReplications().get(replication);
-        if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
-        return ffr;
-    }
-
-    /**
-     * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
-     *
-     * @return  the <code>AOServTable</code>.
-     */
-    final public AOServTable<Integer,FailoverFileLog> getTable() {
-	return table;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.FAILOVER_FILE_LOG;
-    }
-
+    @SchemaColumn(order=5, name="updated", description="the number of files updated")
     public int getUpdated() {
-	return updated;
+        return updated;
     }
 
-    @Override
-    int hashCodeImpl() {
-	return pkey;
+    @SchemaColumn(order=6, name="bytes", description="the number of bytes transferred")
+    public long getBytes() {
+        return bytes;
     }
 
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	replication=result.getInt(2);
-	startTime=result.getTimestamp(3).getTime();
-	endTime=result.getTimestamp(4).getTime();
-	scanned=result.getInt(5);
-	updated=result.getInt(6);
-	bytes=result.getLong(7);
-        is_successful=result.getBoolean(8);
-    }
-
+    @SchemaColumn(order=7, name="is_successful", description="keeps track of which passes completed successfully")
     public boolean isSuccessful() {
-        return is_successful;
+        return isSuccessful;
     }
+    // </editor-fold>
 
-    public void read(CompressedDataInputStream in) throws IOException {
-    	pkey=in.readCompressedInt();
-    	replication=in.readCompressedInt();
-        startTime=in.readLong();
-        endTime=in.readLong();
-        scanned=in.readCompressedInt();
-        updated=in.readCompressedInt();
-        bytes=in.readLong();
-        is_successful=in.readBoolean();
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.FailoverFileLog getBean() {
+        return new com.aoindustries.aoserv.client.beans.FailoverFileLog(key, replication, startTime, endTime, scanned, updated, bytes, isSuccessful);
     }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-        );
-    }
-
-    public void setTable(AOServTable<Integer,FailoverFileLog> table) {
-        if(this.table!=null) throw new IllegalStateException("table already set");
-        this.table=table;
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-        out.writeCompressedInt(replication);
-        out.writeLong(startTime);
-	out.writeLong(endTime);
-	out.writeCompressedInt(scanned);
-	out.writeCompressedInt(updated);
-	out.writeLong(bytes);
-        out.writeBoolean(is_successful);
-    }
+    // </editor-fold>
 }
