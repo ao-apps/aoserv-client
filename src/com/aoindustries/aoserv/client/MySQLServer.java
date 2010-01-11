@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
 import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.table.IndexType;
 import java.io.Serializable;
@@ -345,7 +346,8 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
+    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
+    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
     public AOServerResource getAoServerResource() throws RemoteException {
         return getService().getConnector().getAoServerResources().get(key);
     }
@@ -401,8 +403,8 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getFailoverMySQLReplications(),
-            getMySQLDatabases(),
-            getMySQLUsers()
+            getMysqlDatabases(),
+            getMysqlUsers()
         );
     }
     // </editor-fold>
@@ -419,15 +421,19 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         return getService().getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, this);
     }
 
-    public IndexedSet<MySQLDatabase> getMySQLDatabases() throws RemoteException {
+    public IndexedSet<MySQLDatabase> getMysqlDatabases() throws RemoteException {
         return getService().getConnector().getMysqlDatabases().filterIndexed(MySQLDatabase.COLUMN_MYSQL_SERVER, this);
+    }
+
+    public MySQLDatabase getMysqlDatabase(MySQLDatabaseName name) throws RemoteException {
+        return getMysqlDatabases().filterUnique(MySQLDatabase.COLUMN_NAME, name);
     }
 
     /* TODO public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
         return getService().getConnector().getMysqlDBUsers().getMySQLDBUsers(this);
     }*/
 
-    public IndexedSet<MySQLUser> getMySQLUsers() throws RemoteException {
+    public IndexedSet<MySQLUser> getMysqlUsers() throws RemoteException {
     	return getService().getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
     }
     // </editor-fold>
@@ -466,10 +472,6 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     */
 
     /* TODO
-    public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
-    	return getService().getConnector().getMysqlDatabases().getMySQLDatabase(name, this);
-    }
-
     public MySQLUser getMySQLUser(String username) throws IOException, SQLException {
     	return getService().getConnector().getMysqlUsers().getMySQLUser(username, this);
     }

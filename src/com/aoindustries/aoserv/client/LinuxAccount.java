@@ -138,7 +138,8 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         return getService().getConnector().getUsernames().get(username);
     }
 
-    @SchemaColumn(order=3, name="uid", description="the uid of the user on the machine")
+    static final String COLUMN_UID = "uid";
+    @SchemaColumn(order=3, name=COLUMN_UID, index=IndexType.INDEXED, description="the uid of the user on the machine")
     public LinuxID getUid() {
         return uid;
     }

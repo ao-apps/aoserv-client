@@ -6,8 +6,10 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
@@ -290,7 +292,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             // TODO: getHttpdSites(),
             // TODO: getFailoverMySQLReplications(),
             // TODO: getHttpdSharedTomcats(),
-            // TODO: getPostgresServers(),
         );
     }
     // </editor-fold>
@@ -320,6 +321,26 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     public LinuxAccount getLinuxAccount(UserId username) throws RemoteException {
         return getLinuxAccounts().filterUnique(LinuxAccount.COLUMN_USERNAME, getService().getConnector().getUsernames().get(username));
+    }
+
+    public IndexedSet<LinuxAccount> getLinuxAccounts(LinuxID uid) throws RemoteException {
+        return getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_UID, uid);
+    }
+
+    public IndexedSet<LinuxGroup> getLinuxGroups() throws RemoteException {
+        return getService().getConnector().getLinuxGroups().filterUniqueSet(LinuxGroup.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
+    }
+
+    public LinuxGroup getLinuxGroup(GroupId groupName) throws RemoteException {
+        return getLinuxGroups().filterUnique(LinuxGroup.COLUMN_GROUP_NAME, getService().getConnector().getGroupNames().get(groupName));
+    }
+
+    public IndexedSet<MySQLServer> getMysqlServers() throws RemoteException {
+        return getService().getConnector().getMysqlServers().filterUniqueSet(MySQLServer.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
+    }
+
+    public IndexedSet<PostgresServer> getPostgresServers() throws RemoteException {
+        return getService().getConnector().getPostgresServers().filterUniqueSet(PostgresServer.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
     }
 
     /* TODO
@@ -410,14 +431,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return la;
     }
 
-    public List<LinuxGroup> getLinuxGroups() throws SQLException, IOException {
-        List<LinuxServerGroup> lsg=getLinuxServerGroups();
-        int len=lsg.size();
-        List<LinuxGroup> lg=new ArrayList<LinuxGroup>(len);
-        for(int c=0;c<len;c++) lg.add(lsg.get(c).getLinuxGroup());
-        return lg;
-    }
-
     public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
     	return getService().getConnector().getLinuxServerAccounts().getLinuxServerAccounts(this);
     }
@@ -428,19 +441,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
         return getService().getConnector().getMajordomoServers().getMajordomoServers(this);
-    }
-
-    public List<MySQLServer> getMySQLServers() throws IOException, SQLException {
-        List<Resource> resources = getService().getConnector().getResources().getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, ResourceType.MYSQL_SERVER);
-        List<MySQLServer> matches = new ArrayList<MySQLServer>(resources.size());
-        for(Resource resource : resources) {
-            matches.add(resource.getAoServerResource().getMySQLServer());
-        }
-        return Collections.unmodifiableList(matches);
-    }
-
-    public List<PostgresServer> getPostgresServers() throws IOException, SQLException {
-        return getService().getConnector().getPostgresServers().getPostgresServers(this);
     }
 
     public List<PrivateFTPServer> getPrivateFTPServers() throws IOException, SQLException {

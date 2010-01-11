@@ -6,6 +6,8 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
+import com.aoindustries.aoserv.client.validator.MySQLTableName;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -46,12 +48,21 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     /**
      * The root database for a mysql installation.
      */
-    public static final String MYSQL="mysql";
+    public static final MySQLDatabaseName MYSQL;
 
     /**
      * A special database that is never removed.
      */
-    public static final String INFORMATION_SCHEMA="information_schema";
+    public static final MySQLDatabaseName INFORMATION_SCHEMA;
+
+    static {
+        try {
+            MYSQL = MySQLDatabaseName.valueOf("mysql").intern();
+            INFORMATION_SCHEMA = MySQLDatabaseName.valueOf("information_schema").intern();
+        } catch(ValidationException err) {
+            throw new AssertionError(err.getMessage());
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -85,7 +96,8 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
         return getService().getConnector().getAoServerResources().get(key);
     }
 
-    @SchemaColumn(order=1, name="name", description="the name of the database")
+    static final String COLUMN_NAME = "name";
+    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
     public MySQLDatabaseName getName() {
         return name;
     }
@@ -513,13 +525,13 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
             Error
         }
 
-        private final String table;
+        private final MySQLTableName table;
         private final long duration;
         private final MsgType msgType;
         private final String msgText;
 
         public CheckTableResult(
-            String table,
+            MySQLTableName table,
             long duration,
             MsgType msgType,
             String msgText
@@ -530,7 +542,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
             this.msgText = msgText;
         }
 
-        public String getTable() {
+        public MySQLTableName getTable() {
             return table;
         }
 
@@ -610,31 +622,5 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
         );
     }
 */
-    /**
-     * Determines if a name is safe for use as a table/column name, the name identifier
-     * should be enclosed with backticks (`).
-     */
-/* TODO
-    public static boolean isSafeName(String name) {
-        // Must be a-z first, then a-z or 0-9 or _ or -
-        int len = name.length();
-        if (len == 0) return false;
-        // The first character must be [a-z] or [A-Z] or _
-        char ch = name.charAt(0);
-        if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && ch != '_') return false;
-        // The rest may have additional characters
-        for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && (ch < '0' || ch > '9') && ch != '_' && ch != '-') return false;
-        }
-
-        // Also must not be a reserved word
-        //int size=reservedWords.size();
-        //for(int c=0;c<size;c++) {
-        //    if(name.equalsIgnoreCase(reservedWords.get(c).toString())) return false;
-    	//}
-    	return true;
-    }
-    */
     // </editor-fold>
 }

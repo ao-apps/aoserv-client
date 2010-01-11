@@ -106,7 +106,8 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
+    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
+    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
     public AOServerResource getAoServerResource() throws RemoteException {
         return getService().getConnector().getAoServerResources().get(key);
     }
@@ -154,6 +155,12 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getLinuxAccountGroups()
+            // TODO: getCvsRepositories(),
+            // TODO: getEmailLists(),
+            // TODO: getHttpdServers(),
+            // TODO: getHttpdSites(),
+            // TODO: getHttpdSharedTomcats(),
+            // TODO: getMajordomoServers()
         );
     }
     // </editor-fold>
@@ -208,6 +215,78 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
             SchemaTable.TableID.LINUX_GROUPS,
             pkey
         );
+    }
+    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+        List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+
+        AOServer ao=getAOServer();
+
+        for(CvsRepository cr : ao.getCvsRepositories()) {
+            if(cr.linux_server_group==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
+        }
+
+        for(EmailList el : getService().getConnector().getEmailLists().getRows()) {
+            if(el.linux_server_group==pkey) reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
+        }
+
+        for(HttpdServer hs : ao.getHttpdServers()) {
+            if(hs.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdServer>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hs));
+        }
+
+        for(HttpdSharedTomcat hst : ao.getHttpdSharedTomcats()) {
+            if(hst.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+        }
+
+        // httpd_sites
+        for(HttpdSite site : ao.getHttpdSites()) {
+            if(site.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
+        }
+
+        for(MajordomoServer ms : ao.getMajordomoServers()) {
+            if(ms.linux_server_group==pkey) {
+                EmailDomain ed=ms.getDomain();
+                reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
+            }
+        }
+
+        //for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
+        //    if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
+        //}
+
+        return reasons;
+    }
+
+    public void remove() throws IOException, SQLException {
+        getService().getConnector().requestUpdateIL(
+            true,
+            AOServProtocol.CommandID.REMOVE,
+            SchemaTable.TableID.LINUX_SERVER_GROUPS,
+            pkey
+        );
+    }
+
+    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
+        return getService().getConnector().getCvsRepositories().getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<EmailList> getEmailLists() throws IOException, SQLException {
+        return getService().getConnector().getEmailLists().getIndexedRows(EmailList.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
+        return getService().getConnector().getHttpdServers().getIndexedRows(HttpdServer.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
+        return getService().getConnector().getHttpdSites().getIndexedRows(HttpdSite.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
+        return getService().getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_LINUX_SERVER_GROUP, pkey);
+    }
+
+    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
+        return getService().getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
     */
     // </editor-fold>

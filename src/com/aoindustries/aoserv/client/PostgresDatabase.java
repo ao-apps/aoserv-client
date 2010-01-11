@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -28,20 +29,26 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     private static final long serialVersionUID = 1L;
 
     /**
-     * The classname of the JDBC driver used for the <code>PostgresDatabase</code>.
-     */
-    public static final String JDBC_DRIVER="org.postgresql.Driver";
-
-    /**
      * Special databases.
      */
-    public static final String
-        AOINDUSTRIES="aoindustries",
-        AOSERV="aoserv",
-        AOWEB="aoweb",
-        TEMPLATE0="template0",
-        TEMPLATE1="template1"
+    public static final PostgresDatabaseName
+        AOINDUSTRIES,
+        AOSERV,
+        AOWEB,
+        TEMPLATE0,
+        TEMPLATE1
     ;
+    static {
+        try {
+            AOINDUSTRIES = PostgresDatabaseName.valueOf("aoindustries").intern();
+            AOSERV = PostgresDatabaseName.valueOf("aoserv").intern();
+            AOWEB = PostgresDatabaseName.valueOf("aoindustries").intern();
+            TEMPLATE0 = PostgresDatabaseName.valueOf("template0").intern();
+            TEMPLATE1 = PostgresDatabaseName.valueOf("template1").intern();
+        } catch(ValidationException err) {
+            throw new AssertionError(err.getMessage());
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -163,6 +170,38 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="JdbcProvider">
+    /**
+     * The classname of the JDBC driver used for the <code>PostgresDatabase</code>.
+     */
+    public static final String JDBC_DRIVER="org.postgresql.Driver";
+
+    public String getJdbcDriver() {
+        return JDBC_DRIVER;
+    }
+
+    /* TODO
+    public String getJdbcUrl(boolean ipOnly) throws RemoteException {
+        AOServer ao=getPostgresServer().getAoServerResource().getAoServer();
+        return
+            "jdbc:postgresql://"
+            + (ipOnly
+               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().getAddress()
+               :ao.getHostname().getDomain()
+            )
+            + ':'
+            + getPostgresServer().getNetBind().getPort()
+            + '/'
+            + getName()
+        ;
+    }
+    */
+    public String getJdbcDocumentationUrl() throws RemoteException {
+        String version=getPostgresServer().getPostgresVersion().getTechnologyVersion().getVersion();
+        return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public void dump(PrintWriter out) throws IOException, SQLException {
@@ -207,30 +246,6 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
                 }
             }
         );
-    }
-
-    public String getJdbcDriver() {
-        return JDBC_DRIVER;
-    }
-
-    public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
-	AOServer ao=getPostgresServer().getAOServer();
-        return
-            "jdbc:postgresql://"
-            + (ipOnly
-               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
-               :ao.getHostname()
-            )
-            + ':'
-            + getPostgresServer().getNetBind().getPort().getPort()
-            + '/'
-            + getName()
-        ;
-    }
-    
-    public String getJdbcDocumentationUrl() throws SQLException, IOException {
-        String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(getService().getConnector()).getVersion();
-        return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {

@@ -6,8 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
 
 /**
  * Flags an <code>AOServObject</code>s as being able to dump its contents into
@@ -15,13 +13,12 @@ import java.sql.SQLException;
  *
  * @see  AOServObject
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public interface Dumpable {
+
     /**
-     * Dumps the contents of this object into a <code>Writer</code>
+     * Dumps the contents of this object into an <code>Appendable</code>
      */
-    void dump(PrintWriter out) throws IOException, SQLException;
+    void dump(Appendable out) throws IOException;
 }
