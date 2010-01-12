@@ -20,6 +20,7 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
+import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
@@ -121,8 +122,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedCreditCardProcessorService creditCardProcessors;
     final CachedCreditCardTransactionService creditCardTransactions;
     final CachedCreditCardService creditCards;
-    final CachedCvsRepositoryService cvsRepositories;
      */
+    final CachedCvsRepositoryService cvsRepositories;
     final CachedDisableLogService disableLogs;
     /*
     final CachedDistroFileTypeService distroFileTypes;
@@ -312,8 +313,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
         creditCardTransactions = new CachedCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
         creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
-        cvsRepositories = new CachedCvsRepositoryService(this, wrapped.getCvsRepositorys());
          */
+        cvsRepositories = new CachedCvsRepositoryService(this, wrapped.getCvsRepositories());
         disableLogs = new CachedDisableLogService(this, wrapped.getDisableLogs());
         /*
         distroFileTypes = new CachedDistroFileTypeService(this, wrapped.getDistroFileTypes());
@@ -579,9 +580,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions();
 
     public CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards();
-
-    public CvsRepositoryService<CachedConnector,CachedConnectorFactory> getCvsRepositories();
      */
+    public CvsRepositoryService<CachedConnector,CachedConnectorFactory> getCvsRepositories() {
+        return cvsRepositories;
+    }
+
     public DisableLogService<CachedConnector,CachedConnectorFactory> getDisableLogs() {
         return disableLogs;
     }

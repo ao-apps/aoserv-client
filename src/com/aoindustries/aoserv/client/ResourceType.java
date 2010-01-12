@@ -68,7 +68,8 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         HTTPD_JBOSS_SITE="httpd_jboss_site",
         HTTPD_STATIC_SITE="httpd_static_site",
         HTTPD_TOMCAT_SHARED_SITE="httpd_tomcat_shared_site",
-        HTTPD_TOMCAT_STD_SITE="httpd_tomcat_std_site"
+        HTTPD_TOMCAT_STD_SITE="httpd_tomcat_std_site",
+        CVS_REPOSITORY = "cvs_repository"
     ;
     // </editor-fold>
 
@@ -99,11 +100,25 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             AOServObjectUtils.createDependencySet(
-                getLinuxAccountType(),
-                getLinuxGroupType()
+                getDependentObjectByResourceType()
             ),
             getResources()
         );
+    }
+
+    private AOServObject getDependentObjectByResourceType() throws RemoteException {
+        AOServObject obj;
+        if(
+            key.equals(ResourceType.EMAIL_INBOX)
+            || key.equals(ResourceType.FTPONLY_ACCOUNT)
+            || key.equals(ResourceType.SHELL_ACCOUNT)
+            || key.equals(ResourceType.SYSTEM_ACCOUNT)
+        ) return getLinuxAccountType();
+        if(
+            key.equals(ResourceType.SHELL_GROUP)
+            || key.equals(ResourceType.SYSTEM_GROUP)
+        ) return getLinuxGroupType();
+        return null;
     }
     // </editor-fold>
 

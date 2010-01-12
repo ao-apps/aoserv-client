@@ -20,6 +20,7 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
+import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
@@ -133,8 +134,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryCreditCardProcessorService creditCardProcessors;
     final RetryCreditCardTransactionService creditCardTransactions;
     final RetryCreditCardService creditCards;
-    final RetryCvsRepositoryService cvsRepositories;
      */
+    final RetryCvsRepositoryService cvsRepositories;
     final RetryDisableLogService disableLogs;
     /*
     final RetryDistroFileTypeService distroFileTypes;
@@ -327,8 +328,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         creditCardProcessors = new RetryCreditCardProcessorService(this);
         creditCardTransactions = new RetryCreditCardTransactionService(this);
         creditCards = new RetryCreditCardService(this);
-        cvsRepositories = new RetryCvsRepositoryService(this);
          */
+        cvsRepositories = new RetryCvsRepositoryService(this);
         disableLogs = new RetryDisableLogService(this);
         /*
         distroFileTypes = new RetryDistroFileTypeService(this);
@@ -713,9 +714,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public CreditCardTransactionService<RetryConnector,RetryConnectorFactory> getCreditCardTransactions();
 
     public CreditCardService<RetryConnector,RetryConnectorFactory> getCreditCards();
-
-    public CvsRepositoryService<RetryConnector,RetryConnectorFactory> getCvsRepositories();
      */
+    public CvsRepositoryService<RetryConnector,RetryConnectorFactory> getCvsRepositories() {
+        return cvsRepositories;
+    }
+
     public DisableLogService<RetryConnector,RetryConnectorFactory> getDisableLogs() {
         return disableLogs;
     }

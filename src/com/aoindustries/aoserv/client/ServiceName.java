@@ -48,8 +48,8 @@ public enum ServiceName implements LocalizedToString {
     credit_card_processors,
     credit_card_transactions,
     credit_cards,
-    cvs_repositories,
      */
+    cvs_repositories,
     disable_log,
     /* TODO
     distro_file_types,

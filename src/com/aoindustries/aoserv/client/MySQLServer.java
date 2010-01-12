@@ -10,7 +10,10 @@ import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -35,10 +38,10 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
      * The supported versions of MySQL.
      */
     public static final String
-        VERSION_5_1_PREFIX="5.1.",
-        VERSION_5_0_PREFIX="5.0.",
-        VERSION_4_1_PREFIX="4.1.",
-        VERSION_4_0_PREFIX="4.0."
+        VERSION_5_1_PREFIX = "5.1.",
+        VERSION_5_0_PREFIX = "5.0.",
+        VERSION_4_1_PREFIX = "4.1.",
+        VERSION_4_0_PREFIX = "4.0."
     ;
 
     /**
@@ -51,14 +54,14 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
      * preference.  Index <code>0</code> is the most
      * preferred.
      */
-    public static final String[] getPreferredVersionPrefixes() {
-        return new String[] {
+    public static final List<String> PREFERRED_VERSION_PREFIXES = Collections.unmodifiableList(
+        Arrays.asList(
             VERSION_5_1_PREFIX,
             VERSION_5_0_PREFIX,
             VERSION_4_1_PREFIX,
             VERSION_4_0_PREFIX
-        };
-    }
+        )
+    );
 
     public enum ReservedWord {
         ACTION,

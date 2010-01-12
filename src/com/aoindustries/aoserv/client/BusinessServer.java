@@ -64,10 +64,13 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
         return key;
     }
 
+    /**
+     * May be filtered.
+     */
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     static final String COLUMN_SERVER = "server";
@@ -115,7 +118,8 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-    	return getBusiness().toString(userLocale)+"->"+getServer().toStringImpl(userLocale);
+        Business bu = getBusiness();
+    	return (bu==null ? accounting : bu.toString(userLocale))+"->"+getServer().toStringImpl(userLocale);
     }
     // </editor-fold>
 

@@ -63,6 +63,22 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     public String getName() {
         return name;
     }
+
+    static final String COLUMN_SLASH_PATH = "slash_path";
+    private String slashPath = null;
+    @SchemaColumn(order=3, name=COLUMN_SLASH_PATH, index=IndexType.UNIQUE, description="the full path to the category, separated by slashes (/)")
+    synchronized public String getSlashPath() throws RemoteException {
+        if(slashPath==null) slashPath = parent==null ? name : (getParent().getSlashPath()+'/'+name);
+        return slashPath;
+    }
+
+    public static final String COLUMN_DOT_PATH = "dot_path";
+    private String dotPath = null;
+    @SchemaColumn(order=4, name=COLUMN_DOT_PATH, index=IndexType.UNIQUE, description="the full path to the category, separated by periods (.)")
+    synchronized public String getDotPath() throws RemoteException {
+        if(dotPath==null) dotPath = parent==null ? name : (getParent().getDotPath()+'.'+name);
+        return dotPath;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
@@ -92,18 +108,6 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
-    private String slashPath = null;
-    synchronized public String getSlashPath() throws RemoteException {
-        if(slashPath==null) slashPath = parent==null ? name : (getParent().getSlashPath()+'/'+name);
-        return slashPath;
-    }
-
-    private String dotPath = null;
-    synchronized public String getDotPath() throws RemoteException {
-        if(dotPath==null) dotPath = parent==null ? name : (getParent().getDotPath()+'.'+name);
-        return dotPath;
-    }
-
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
         return ApplicationResources.accessor.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");

@@ -88,9 +88,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         return key;
     }
 
-    /**
-     * May be filtered.
-     */
     static final String COLUMN_BUSINESS_SERVER = "business_server";
     @SchemaColumn(order=1, name=COLUMN_BUSINESS_SERVER, index=IndexType.INDEXED, description="the business and server this bind is on")
     public BusinessServer getBusinessServer() throws RemoteException {

@@ -49,7 +49,7 @@ final public class GroupName extends AOServObjectGroupIdKey<GroupName> implement
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that this group is part of")
     public Business getBusiness() throws RemoteException {
-    	return getService().getConnector().getBusinesses().get(accounting);
+    	return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     static final String COLUMN_DISABLE_LOG = "disable_log";

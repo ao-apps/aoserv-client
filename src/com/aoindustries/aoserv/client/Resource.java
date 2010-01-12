@@ -10,8 +10,11 @@ import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -85,7 +88,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that owns this resource")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     /**
@@ -102,7 +105,12 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     static final String COLUMN_CREATED_BY = "created_by";
     @SchemaColumn(order=4, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the administrator who created the resource")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(createdBy);
+        try {
+            return getService().getConnector().getBusinessAdministrators().get(createdBy);
+        } catch(NoSuchElementException err) {
+            // Filtered
+            return null;
+        }
     }
 
     @SchemaColumn(order=5, name="disable_log", description="indicates the resource is disabled")
@@ -159,47 +167,46 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // getDependentObjectByResourceType(),
-            getAoServerResource(),
-            getServerResource()
+            getDependentObjectByResourceType()
         );
     }
 
-//    private static final Set<String> aoServerResourceTypes = new HashSet<String>(
-//        Arrays.asList(
-//            ResourceType.MYSQL_DATABASE,
-//            ResourceType.MYSQL_SERVER,
-//            ResourceType.MYSQL_USER,
-//            ResourceType.POSTGRESQL_DATABASE,
-//            ResourceType.POSTGRESQL_SERVER,
-//            ResourceType.POSTGRESQL_USER,
-//            ResourceType.EMAIL_INBOX,
-//            ResourceType.FTPONLY_ACCOUNT,
-//            ResourceType.SHELL_ACCOUNT,
-//            ResourceType.SYSTEM_ACCOUNT,
-//            ResourceType.SHELL_GROUP,
-//            ResourceType.SYSTEM_GROUP,
-//            ResourceType.HTTPD_JBOSS_SITE,
-//            ResourceType.HTTPD_STATIC_SITE,
-//            ResourceType.HTTPD_TOMCAT_SHARED_SITE,
-//            ResourceType.HTTPD_TOMCAT_STD_SITE
-//        )
-//    );
-//
-//    private static final Set<String> serverResourceTypes = new HashSet<String>(
-//        Arrays.asList(
-//            ResourceType.IP_ADDRESS
-//        )
-//    );
-//
-//    private AOServObject getDependentObjectByResourceType() throws RemoteException {
-//        AOServObject obj;
-//        if(aoServerResourceTypes.contains(resourceType)) return null; // Is an ao_server_resource
-//        if(serverResourceTypes.contains(resourceType)) return null; // Is a server_resource
-//        /* TODO: else*/ throw new AssertionError("Unexpected resource type: "+resourceType);
-//        // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
-//        // TODO: return obj;
-//    }
+    private static final Set<String> aoServerResourceTypes = new HashSet<String>(
+        Arrays.asList(
+            ResourceType.MYSQL_DATABASE,
+            ResourceType.MYSQL_SERVER,
+            ResourceType.MYSQL_USER,
+            ResourceType.POSTGRESQL_DATABASE,
+            ResourceType.POSTGRESQL_SERVER,
+            ResourceType.POSTGRESQL_USER,
+            ResourceType.EMAIL_INBOX,
+            ResourceType.FTPONLY_ACCOUNT,
+            ResourceType.SHELL_ACCOUNT,
+            ResourceType.SYSTEM_ACCOUNT,
+            ResourceType.SHELL_GROUP,
+            ResourceType.SYSTEM_GROUP,
+            ResourceType.HTTPD_JBOSS_SITE,
+            ResourceType.HTTPD_STATIC_SITE,
+            ResourceType.HTTPD_TOMCAT_SHARED_SITE,
+            ResourceType.HTTPD_TOMCAT_STD_SITE,
+            ResourceType.CVS_REPOSITORY
+        )
+    );
+
+    private static final Set<String> serverResourceTypes = new HashSet<String>(
+        Arrays.asList(
+            ResourceType.IP_ADDRESS
+        )
+    );
+
+    private AOServObject getDependentObjectByResourceType() throws RemoteException {
+        AOServObject obj;
+        if(aoServerResourceTypes.contains(resourceType)) return getAoServerResource();
+        if(serverResourceTypes.contains(resourceType)) return getServerResource();
+        /* TODO: else*/ throw new AssertionError("Unexpected resource type: "+resourceType);
+        // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
+        // TODO: return obj;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">

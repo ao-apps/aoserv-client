@@ -20,6 +20,7 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
+import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLogService;
 import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
@@ -116,8 +117,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingCreditCardProcessorService creditCardProcessors;
     final NoSwingCreditCardTransactionService creditCardTransactions;
     final NoSwingCreditCardService creditCards;
-    final NoSwingCvsRepositoryService cvsRepositories;
      */
+    final NoSwingCvsRepositoryService cvsRepositories;
     final NoSwingDisableLogService disableLogs;
     /*
     final NoSwingDistroFileTypeService distroFileTypes;
@@ -305,8 +306,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         creditCardProcessors = new NoSwingCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
         creditCardTransactions = new NoSwingCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
         creditCards = new NoSwingCreditCardService(this, wrapped.getCreditCards());
-        cvsRepositories = new NoSwingCvsRepositoryService(this, wrapped.getCvsRepositorys());
          */
+        cvsRepositories = new NoSwingCvsRepositoryService(this, wrapped.getCvsRepositories());
         disableLogs = new NoSwingDisableLogService(this, wrapped.getDisableLogs());
         /*
         distroFileTypes = new NoSwingDistroFileTypeService(this, wrapped.getDistroFileTypes());
@@ -586,9 +587,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public CreditCardTransactionService<NoSwingConnector,NoSwingConnectorFactory> getCreditCardTransactions() throws RemoteException;
 
     public CreditCardService<NoSwingConnector,NoSwingConnectorFactory> getCreditCards() throws RemoteException;
-
-    public CvsRepositoryService<NoSwingConnector,NoSwingConnectorFactory> getCvsRepositories() throws RemoteException;
      */
+    public CvsRepositoryService<NoSwingConnector,NoSwingConnectorFactory> getCvsRepositories() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return cvsRepositories;
+    }
+
     public DisableLogService<NoSwingConnector,NoSwingConnectorFactory> getDisableLogs() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return disableLogs;

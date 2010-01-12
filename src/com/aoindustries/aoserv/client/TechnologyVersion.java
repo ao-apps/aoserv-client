@@ -127,7 +127,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     }
 
     public PostgresVersion getPostgresVersion() throws RemoteException {
-        return getService().getConnector().getPostgresVersions().get(key);
+        return getService().getConnector().getPostgresVersions().filterUnique(MySQLServer.COLUMN_VERSION, this);
     }
 
     /* TODO

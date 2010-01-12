@@ -46,9 +46,6 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
         return key;
     }
 
-    /**
-     * May be filtered.
-     */
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that this user is part of")
     public Business getBusiness() throws RemoteException {
@@ -93,7 +90,7 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
-    	return getService().getConnector().getBusinessAdministrators().get(key);
+    	return getService().getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, this);
     }
 
     public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {

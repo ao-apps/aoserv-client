@@ -90,10 +90,13 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         return getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
     }
 
+    /**
+     * May be filtered.
+     */
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=4, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business accountable for resources used by the server")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     @SchemaColumn(order=5, name="name", description="the per-package unique name of the server (no special formatting required)")

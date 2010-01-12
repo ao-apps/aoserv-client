@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -137,7 +138,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="accounting", index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
     public AccountingCode getAccounting() {
         return key;
     }
@@ -162,13 +164,14 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return cancelReason;
     }
 
+    /**
+     * May be filtered.
+     */
     static final String COLUMN_PARENT = "parent";
     @SchemaColumn(order=5, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the parent business to this one")
     public Business getParentBusiness() throws RemoteException {
         if(parent==null) return null;
-        // The parent business might not be found, even when the value is set.  This is normal due
-        // to filtering.
-        return getService().get(parent);
+        return getService().filterUnique(COLUMN_ACCOUNTING, parent);
     }
 
     @SchemaColumn(order=6, name="can_add_backup_server", description="the business may add servers to the backup system")
@@ -221,7 +224,12 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     @SchemaColumn(order=13, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the user who added this business")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
-        return getService().getConnector().getBusinessAdministrators().get(createdBy);
+        try {
+            return getService().getConnector().getBusinessAdministrators().get(createdBy);
+        } catch(NoSuchElementException err) {
+            // Filtered
+            return null;
+        }
     }
 
     /**

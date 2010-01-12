@@ -117,8 +117,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     /**
      * Gets the port information to bind to.
-     *
-     * May be filtered.
      */
     static final String COLUMN_DAEMON_BIND = "daemon_bind";
     @SchemaColumn(order=2, name=COLUMN_DAEMON_BIND, index=IndexType.UNIQUE, description="the network bind info for the AOServ Daemon")
@@ -127,12 +125,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return getService().getConnector().getNetBinds().get(daemonBind);
     }
 
-    @SchemaColumn(
-        order=3,
-        name="daemon_key",
-        description="the hashed key used to connect to this server, this info MUST be filtered\n"
-                  + "because it grants complete control over the server."
-    )
+    @SchemaColumn(order=3, name="daemon_key", description="the hashed key used to connect to this server")
     public HashedPassword getDaemonKey() {
         return daemonKey;
     }

@@ -1,40 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2002-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.sort.AutoSort;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  CvsRepository
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepository> {
+@ServiceAnnotation(ServiceName.cvs_repositories)
+public interface CvsRepositoryService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,CvsRepository> {
 
-    CvsRepositoryTable(AOServConnector connector) {
-	super(connector, CvsRepository.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(CvsRepository.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+LinuxServerAccount.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
-        new OrderBy(CvsRepository.COLUMN_PATH_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addCvsRepository(
         AOServer ao,
         String path,
@@ -52,59 +31,6 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
             lsg.pkey,
             mode
     	);
-    }
-
-    public CvsRepository get(int pkey) throws IOException, SQLException {
-    	return getUniqueRow(CvsRepository.COLUMN_PKEY, pkey);
-    }
-
-    /**
-     * Gets one <code>CvsRepository</code> from the database.
-     */
-    CvsRepository getCvsRepository(AOServer aoServer, String path) throws IOException, SQLException {
-        int aoPKey=aoServer.pkey;
-
-        List<CvsRepository> cached=getRows();
-        int size=cached.size();
-        for(int c=0;c<size;c++) {
-            CvsRepository cr=cached.get(c);
-            if(cr.path.equals(path) && cr.getLinuxServerAccount().ao_server==aoPKey) return cr;
-        }
-	return null;
-    }
-
-    List<CvsRepository> getCvsRepositories(AOServer aoServer) throws IOException, SQLException {
-        int aoPKey=aoServer.pkey;
-
-        List<CvsRepository> cached=getRows();
-	int size=cached.size();
-        List<CvsRepository> matches=new ArrayList<CvsRepository>(size);
-        for(int c=0;c<size;c++) {
-            CvsRepository cr=cached.get(c);
-            if(cr.getLinuxServerAccount().ao_server==aoPKey) matches.add(cr);
-        }
-	return matches;
-    }
-
-    List<CvsRepository> getCvsRepositories(Business bu) throws IOException, SQLException {
-        String accounting=bu.pkey;
-
-        List<CvsRepository> cached=getRows();
-    	int size=cached.size();
-        List<CvsRepository> matches=new ArrayList<CvsRepository>(size);
-        for(int c=0;c<size;c++) {
-            CvsRepository cr=cached.get(c);
-            if(cr.getLinuxServerAccount().getLinuxAccount().getUsername().accounting.equals(accounting)) matches.add(cr);
-        }
-    	return matches;
-    }
-
-    List<CvsRepository> getCvsRepositories(LinuxServerAccount lsa) throws IOException, SQLException {
-        return getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.CVS_REPOSITORIES;
     }
 
     public List<String> getValidPrefixes() throws IOException, SQLException {
@@ -190,4 +116,5 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
         }
 	return false;
     }
+    */
 }

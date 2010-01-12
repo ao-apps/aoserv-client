@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -79,7 +80,12 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     static final String COLUMN_DISABLED_BY = "disabled_by";
     @SchemaColumn(order=3, name=COLUMN_DISABLED_BY, index=IndexType.INDEXED, description="the person who disabled the accounts")
     public BusinessAdministrator getDisabledBy() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(disabledBy);
+        try {
+            return getService().getConnector().getBusinessAdministrators().get(disabledBy);
+        } catch(NoSuchElementException err) {
+            // Filtered
+            return null;
+        }
     }
 
     @SchemaColumn(order=4, name="disable_reason", description="the optional reason the accounts were disabled")

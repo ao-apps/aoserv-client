@@ -115,6 +115,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
             || resourceType.equals(ResourceType.HTTPD_TOMCAT_SHARED_SITE)
             || resourceType.equals(ResourceType.HTTPD_TOMCAT_STD_SITE)
         ) obj = getHttpdSite();
+        else if(resourceType.equals(ResourceType.CVS_REPOSITORY)) obj = getCvsRepositories();
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
         return obj;
@@ -122,6 +123,10 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public CvsRepository getCvsRepositories() throws RemoteException {
+        return getService().getConnector().getCvsRepositories().get(key);
+    }
+
     public HttpdSite getHttpdSite() throws RemoteException {
         return getService().getConnector().getHttpdSites().get(key);
     }

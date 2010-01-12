@@ -98,7 +98,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: CvsRepositories
+            getCvsRepositories(),
             getHttpdSites()
         );
     }
@@ -119,6 +119,10 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<CvsRepository> getCvsRepositories() throws RemoteException {
+        return getService().getConnector().getCvsRepositories().filterIndexed(CvsRepository.COLUMN_LINUX_ACCOUNT_GROUP, this);
+    }
+
     public IndexedSet<HttpdSite> getHttpdSites() throws RemoteException {
         return getService().getConnector().getHttpdSites().filterIndexed(HttpdSite.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }

@@ -48,10 +48,13 @@ final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> imp
     	return description;
     }
 
+    /**
+     * May be filtered.
+     */
     static final String COLUMN_OWNER = "owner";
     @SchemaColumn(order=2, name=COLUMN_OWNER, index=IndexType.INDEXED, description="the business that owns of the farm")
     public Business getOwner() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(owner);
+        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, owner);
     }
 
     @SchemaColumn(order=3, name="use_restricted_smtp_port", description="outgoing servers should use restricted source ports (affects firewall rules)")

@@ -104,7 +104,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="username", index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
+    static final String COLUMN_USERNAME = "username";
+    @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
     public Username getUsername() throws RemoteException {
         Username usernameObject = getService().getConnector().getUsernames().get(key);
         if (usernameObject == null) throw new RemoteException("Username not found: " + key);

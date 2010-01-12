@@ -83,9 +83,6 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         return getService().getConnector().getServers().get(server);
     }
 
-    /**
-     * May be filtered.
-     */
     @SchemaColumn(order=2, name="backup_partition", description="the pkey of the backup partition that the files are going to")
     public BackupPartition getBackupPartition() throws RemoteException {
         return getService().getConnector().getBackupPartitions().get(backupPartition);
