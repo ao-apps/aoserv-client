@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -57,7 +58,14 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     /**
      * The username of the MySQL super user.
      */
-    public static final String ROOT="root";
+    public static final MySQLUserId ROOT;
+    static {
+        try {
+            ROOT = MySQLUserId.valueOf("root").intern();
+        } catch(ValidationException err) {
+            throw new AssertionError(err.getMessage());
+        }
+    }
 
     /**
      * A password may be set to null, which means that the account will
