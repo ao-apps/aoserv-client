@@ -66,7 +66,8 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            getAoServers()
+            getAoServers(),
+            getNetDevices()
         );
     }
     // </editor-fold>
@@ -74,6 +75,10 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<AOServer> getAoServers() throws RemoteException {
         return getService().getConnector().getAoServers().filterIndexed(AOServer.COLUMN_DAEMON_DEVICE_ID, this);
+    }
+
+    public IndexedSet<NetDevice> getNetDevices() throws RemoteException {
+    	return getService().getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_DEVICE_ID, this);
     }
     // </editor-fold>
 }

@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentMap;
  *     Confirm to definition in {@link http://en.wikipedia.org/wiki/Hostname#Internet_hostnames}
  *     and {@link http://en.wikipedia.org/wiki/DNS_label#Parts_of_a_domain_name}
  *   </li>
+ *   <li>Not end with a period (.)</li>
  * </ul>
  *
  * 

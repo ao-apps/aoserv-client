@@ -118,7 +118,6 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     @SchemaColumn(order=4, name=COLUMN_ENCODING, index=IndexType.INDEXED, description="the pkey of the encoding system used for the database")
     public PostgresEncoding getPostgresEncoding() throws RemoteException {
     	PostgresEncoding obj=getService().getConnector().getPostgresEncodings().get(encoding);
-        if(obj==null) throw new RemoteException("Unable to find PostgresEncoding: "+encoding);
         // Make sure the postgres encoding postgresql version matches the server this database is part of
         if(
             obj.postgresVersion

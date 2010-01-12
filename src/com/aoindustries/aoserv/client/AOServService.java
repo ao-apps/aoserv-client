@@ -9,6 +9,7 @@ import com.aoindustries.table.Table;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -84,9 +85,11 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
 
     /**
      * Gets the object having the provided key value.  Like SQL, a <code>null</code> value will not match
-     * any rows.
+     * any rows.  Will throw <code>NoSuchElementException</code> if the value doesn't exist.
+     *
+     * @throws  NoSuchElementException if the element doesn't exist (including because value is null)
      */
-    V get(K key) throws RemoteException;
+    V get(K key) throws RemoteException, NoSuchElementException;
 
     /**
      * Gets the set of objects having any of the provided key values.  Like SQL, a <code>null</code> value will not match
@@ -120,5 +123,5 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * any rows.
      * The column must have an index type of INDEXED.
      */
-    //IndexedSet<E> getIndexedSet(String columnName, Set<?> values) throws RemoteException;
+    IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException;
 }

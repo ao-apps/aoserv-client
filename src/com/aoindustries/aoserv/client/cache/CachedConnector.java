@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServerDaemonHostService;
 import com.aoindustries.aoserv.client.AOServerResourceService;
 import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
@@ -16,6 +17,7 @@ import com.aoindustries.aoserv.client.BackupPartitionService;
 import com.aoindustries.aoserv.client.BackupRetentionService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
+import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
@@ -26,6 +28,7 @@ import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.FileBackupSettingService;
 import com.aoindustries.aoserv.client.GroupNameService;
 import com.aoindustries.aoserv.client.HttpdSiteService;
+import com.aoindustries.aoserv.client.IPAddressService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.LinuxAccountGroupService;
 import com.aoindustries.aoserv.client.LinuxAccountService;
@@ -38,6 +41,7 @@ import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
+import com.aoindustries.aoserv.client.NetDeviceService;
 import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
@@ -51,6 +55,7 @@ import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
+import com.aoindustries.aoserv.client.ServerResourceService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.ShellService;
@@ -85,9 +90,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final UserId connectAs;
     private final UserId authenticateAs;
     private final String password;
-    /* TODO
     final CachedAOServerDaemonHostService aoserverDaemonHosts;
-     */
     final CachedAOServerResourceService aoserverResources;
     final CachedAOServerService aoservers;
     final CachedAOServPermissionService aoservPermissions;
@@ -112,10 +115,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedBusinessProfileService businessProfiles;
      */
     final CachedBusinessService businesses;
-    /* TODO
     final CachedBusinessServerService businessServers;
-    final CachedClientJvmProfileService clientJvmProfiles;
-     */
     final CachedCountryCodeService countryCodes;
     /*
     final CachedCreditCardProcessorService creditCardProcessors;
@@ -178,7 +178,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: final CachedHttpdTomcatStdSiteService httpdTomcatStdSites;
     // TODO: final CachedHttpdTomcatVersionService httpdTomcatVersions;
     // TODO: final CachedHttpdWorkerService httpdWorkers;
-    // TODO: final CachedIPAddressService ipAddresss;
+    final CachedIPAddressService ipAddresses;
     final CachedLanguageService languages;
     // TODO: final CachedLinuxAccAddressService linuxAccAddresss;
     final CachedLinuxAccountGroupService linuxAccountGroups;
@@ -204,9 +204,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedMySQLUserService mysqlUsers;
     final CachedNetBindService netBinds;
     final CachedNetDeviceIDService netDeviceIDs;
-    /* TODO
     final CachedNetDeviceService netDevices;
-     */
     final CachedNetProtocolService netProtocols;
     /* TODO
     final CachedNetTcpRedirectService netTcpRedirects;
@@ -237,6 +235,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedResourceTypeService resourceTypes;
     final CachedResourceService resources;
     final CachedServerFarmService serverFarms;
+    final CachedServerResourceService serverResources;
     final CachedServerService servers;
     final CachedShellService shells;
     /* TODO
@@ -282,9 +281,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         connectAs = wrapped.getConnectAs();
         authenticateAs = wrapped.getAuthenticateAs();
         password = wrapped.getPassword();
-        /* TODO
-        aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAOServerDaemonHosts());
-         */
+        aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAoServerDaemonHosts());
         aoserverResources = new CachedAOServerResourceService(this, wrapped.getAoServerResources());
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAoservPermissions());
@@ -309,10 +306,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         businessProfiles = new CachedBusinessProfileService(this, wrapped.getBusinessProfiles());
          */
         businesses = new CachedBusinessService(this, wrapped.getBusinesses());
-        /* TODO
         businessServers = new CachedBusinessServerService(this, wrapped.getBusinessServers());
-        clientJvmProfiles = new CachedClientJvmProfileService(this, wrapped.getClientJvmProfiles());
-         */
         countryCodes = new CachedCountryCodeService(this, wrapped.getCountryCodes());
         /* TODO
         creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
@@ -375,7 +369,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         // TODO: httpdTomcatStdSites = new CachedHttpdTomcatStdSiteService(this, wrapped.getHttpdTomcatStdSites());
         // TODO: httpdTomcatVersions = new CachedHttpdTomcatVersionService(this, wrapped.getHttpdTomcatVersions());
         // TODO: httpdWorkers = new CachedHttpdWorkerService(this, wrapped.getHttpdWorkers());
-        // TODO: ipAddresss = new CachedIPAddressService(this, wrapped.getIPAddresss());
+        ipAddresses = new CachedIPAddressService(this, wrapped.getIpAddresses());
         languages = new CachedLanguageService(this, wrapped.getLanguages());
         /* TODO
         linuxAccAddresss = new CachedLinuxAccAddressService(this, wrapped.getLinuxAccAddresss());
@@ -403,9 +397,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         mysqlUsers = new CachedMySQLUserService(this, wrapped.getMysqlUsers());
         netBinds = new CachedNetBindService(this, wrapped.getNetBinds());
         netDeviceIDs = new CachedNetDeviceIDService(this, wrapped.getNetDeviceIDs());
-        /* TODO
         netDevices = new CachedNetDeviceService(this, wrapped.getNetDevices());
-         */
         netProtocols = new CachedNetProtocolService(this, wrapped.getNetProtocols());
         /* TODO
         netTcpRedirects = new CachedNetTcpRedirectService(this, wrapped.getNetTcpRedirects());
@@ -436,6 +428,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         resourceTypes = new CachedResourceTypeService(this, wrapped.getResourceTypes());
         resources = new CachedResourceService(this, wrapped.getResources());
         serverFarms = new CachedServerFarmService(this, wrapped.getServerFarms());
+        serverResources = new CachedServerResourceService(this, wrapped.getServerResources());
         servers = new CachedServerService(this, wrapped.getServers());
         shells = new CachedShellService(this, wrapped.getShells());
         /* TODO
@@ -495,9 +488,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
 
     public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
-        BusinessAdministrator obj = getBusinessAdministrators().get(connectAs);
-        if(obj==null) throw new RemoteException("Unable to find BusinessAdministrator: "+connectAs);
-        return obj;
+        return getBusinessAdministrators().get(connectAs);
     }
 
     public UserId getAuthenticateAs() {
@@ -518,10 +509,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return ts;
     }
 
-    /*
-     * TODO
-    public AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts();
-    */
+    public AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts() {
+        return aoserverDaemonHosts;
+    }
+
     public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources() {
         return aoserverResources;
     }
@@ -574,11 +565,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return businesses;
     }
 
-    /* TODO
-    public BusinessServerService<CachedConnector,CachedConnectorFactory> getBusinessServers();
+    public BusinessServerService<CachedConnector,CachedConnectorFactory> getBusinessServers() {
+        return businessServers;
+    }
 
-    public ClientJvmProfileService<CachedConnector,CachedConnectorFactory> getClientJvmProfiles();
-    */
     public CountryCodeService<CachedConnector,CachedConnectorFactory> getCountryCodes() {
         return countryCodes;
     }
@@ -709,9 +699,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions();
 
     public HttpdWorkerService<CachedConnector,CachedConnectorFactory> getHttpdWorkers();
-
-    public IPAddressService<CachedConnector,CachedConnectorFactory> getIpAddresses();
     */
+    public IPAddressService<CachedConnector,CachedConnectorFactory> getIpAddresses() {
+        return ipAddresses;
+    }
+
     public LanguageService<CachedConnector,CachedConnectorFactory> getLanguages() {
         return languages;
     }
@@ -781,9 +773,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs() {
         return netDeviceIDs;
     }
-    /* TODO
-    public NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices();
-    */
+
+    public NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices() {
+        return netDevices;
+    }
+
     public NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols() {
         return netProtocols;
     }
@@ -856,6 +850,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
 
     public ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms() {
         return serverFarms;
+    }
+
+    public ServerResourceService<CachedConnector,CachedConnectorFactory> getServerResources() {
+        return serverResources;
     }
 
     public ServerService<CachedConnector,CachedConnectorFactory> getServers() {

@@ -1,19 +1,15 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>BusinessServer</code> grants a <code>Business</code> permission to
@@ -21,141 +17,124 @@ import java.util.Locale;
  *
  * @see  Business
  * @see  Server
- * @see  ServerResource
+ * @see  AOServerResource
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer> implements Removable {
+final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessServer> /*, Removable*/ {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=1,
-        COLUMN_SERVER=2
-    ;
-    static final String COLUMN_ACCOUNTING_name = "accounting";
-    static final String COLUMN_SERVER_name = "server";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    String accounting;
-    int server;
-    boolean is_default;
-    private boolean
-        can_control_apache,
-        can_control_cron,
-        can_control_mysql,
-        can_control_postgresql,
-        can_control_xfs,
-        can_control_xvfb,
-        can_vnc_console
-    ;
-    
-    public boolean canControlApache() {
-        return can_control_apache;
-    }
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private AccountingCode accounting;
+    final private int server;
+    final private boolean isDefault;
+    final private boolean canVncConsole;
 
-    public boolean canControlCron() {
-        return can_control_cron;
+    public BusinessServer(
+        BusinessServerService<?,?> service,
+        int pkey,
+        AccountingCode accounting,
+        int server,
+        boolean isDefault,
+        boolean canVncConsole
+    ) {
+        super(service, pkey);
+        this.accounting = accounting.intern();
+        this.server = server;
+        this.isDefault = isDefault;
+        this.canVncConsole = canVncConsole;
     }
+    // </editor-fold>
 
-    public boolean canControlMySQL() {
-        return can_control_mysql;
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(BusinessServer other) throws RemoteException {
+        int diff = accounting.compareTo(other.accounting);
+        if(diff!=0) return diff;
+        return server==other.server ? 0 : getServer().compareTo(other.getServer());
     }
-    
-    public boolean canControlPostgreSQL() {
-        return can_control_postgresql;
-    }
-    
-    public boolean canControlXfs() {
-        return can_control_xfs;
-    }
-    
-    public boolean canControlXvfb() {
-        return can_control_xvfb;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated primary key")
+    public int getPkey() {
+        return key;
     }
 
-    public boolean canVncConsole() {
-        return can_vnc_console;
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business")
+    public Business getBusiness() throws RemoteException {
+        return getService().getConnector().getBusinesses().get(accounting);
     }
 
-    public Business getBusiness() throws IOException, SQLException {
-        Business obj=table.connector.getBusinesses().get(accounting);
-        if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
-        return obj;
+    static final String COLUMN_SERVER = "server";
+    @SchemaColumn(order=2, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the server")
+    public Server getServer() throws RemoteException {
+        return getService().getConnector().getServers().get(server);
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return pkey;
-            case COLUMN_ACCOUNTING: return accounting;
-            case COLUMN_SERVER: return server;
-            case 3: return is_default;
-            case 4: return can_control_apache;
-            case 5: return can_control_cron;
-            case 6: return can_control_mysql;
-            case 7: return can_control_postgresql;
-            case 8: return can_control_xfs;
-            case 9: return can_control_xvfb;
-            case 10: return can_vnc_console;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
-    public Server getServer() throws IOException, SQLException {
-        Server obj=table.connector.getServers().get(server);
-        if(obj==null) throw new SQLException("Unable to find Server: "+server);
-        return obj;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BUSINESS_SERVERS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        accounting=result.getString(2);
-        server=result.getInt(3);
-        is_default=result.getBoolean(4);
-        can_control_apache=result.getBoolean(5);
-        can_control_cron=result.getBoolean(6);
-        can_control_mysql=result.getBoolean(7);
-        can_control_postgresql=result.getBoolean(8);
-        can_control_xfs=result.getBoolean(9);
-        can_control_xvfb=result.getBoolean(10);
-        can_vnc_console = result.getBoolean(11);
-    }
-
+    @SchemaColumn(order=3, name="is_default", description="if <code>true</code>, this is the default server.")
     public boolean isDefault() {
-        return is_default;
+        return isDefault;
     }
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        accounting=in.readUTF().intern();
-        server=in.readCompressedInt();
-        is_default=in.readBoolean();
-        can_control_apache=in.readBoolean();
-        can_control_cron=in.readBoolean();
-        can_control_mysql=in.readBoolean();
-        can_control_postgresql=in.readBoolean();
-        can_control_xfs=in.readBoolean();
-        can_control_xvfb=in.readBoolean();
-        can_vnc_console = in.readBoolean();
+    @SchemaColumn(order=4, name="can_vnc_console", description="grants VNC console access")
+    public boolean getCanVncConsole() {
+        return canVncConsole;
     }
+    // </editor-fold>
 
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.BusinessServer getBean() {
+        return new com.aoindustries.aoserv.client.beans.BusinessServer(key, accounting.getBean(), server, isDefault, canVncConsole);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
             getBusiness(),
             getServer()
         );
     }
 
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getAOServerResources(),
-            getNetBinds()
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getAoServerResources(),
+            getNetBinds(),
+            getServerResources()
         );
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+    	return getBusiness().toString(userLocale)+"->"+getServer().toStringImpl(userLocale);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<AOServerResource> getAoServerResources() throws RemoteException {
+        return getService().getConnector().getAoServerResources().filterIndexed(AOServerResource.COLUMN_BUSINESS_SERVER, this);
+    }
+
+    public IndexedSet<NetBind> getNetBinds() throws RemoteException {
+        return getService().getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_BUSINESS_SERVER, this);
+    }
+
+    public IndexedSet<ServerResource> getServerResources() throws RemoteException {
+        return getService().getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_BUSINESS_SERVER, this);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /* TODO
     public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
@@ -163,7 +142,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 
         // Do not remove the default unless it is the only one left
         if(
-            is_default
+            isDefault
             && bu.getBusinessServers().size()>1
         ) reasons.add(new CannotRemoveReason<Business>("Not allowed to remove access to the default server while access to other servers remains", bu));
 
@@ -171,7 +150,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         AOServer ao=se.getAOServer();
 
         // No children should be able to access the server
-        List<Business> bus=table.connector.getBusinesses().getRows();
+        List<Business> bus=getService().getConnector().getBusinesses().getRows();
         for(int c=0;c<bus.size();c++) {
             if(bu.isBusinessOrParentOf(bus.get(c))) {
                 Business bu2=bus.get(c);
@@ -269,42 +248,12 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public void remove() throws IOException, SQLException {
-    	table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
+    	getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
     }
 
     public void setAsDefault() throws IOException, SQLException {
-    	table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
+    	getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
     }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeUTF(accounting);
-        out.writeCompressedInt(server);
-        out.writeBoolean(is_default);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup
-        out.writeBoolean(can_control_apache);
-        out.writeBoolean(can_control_cron);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_control_interbase
-        out.writeBoolean(can_control_mysql);
-        out.writeBoolean(can_control_postgresql);
-        out.writeBoolean(can_control_xfs);
-        out.writeBoolean(can_control_xvfb);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeBoolean(can_vnc_console);
-    }
-
-    public List<AOServerResource> getAOServerResources() throws IOException, SQLException {
-        // Use index first
-        List<Resource> resources = table.connector.getResources().getIndexedRows(Resource.COLUMN_ACCOUNTING, accounting);
-        // Filter by server
-        List<AOServerResource> aoResources = new ArrayList<AOServerResource>(resources.size());
-        for(Resource resource : resources) {
-            AOServerResource aoResource = resource.getAoServerResource();
-            if(aoResource!=null && aoResource.ao_server==server) aoResources.add(aoResource);
-        }
-        return Collections.unmodifiableList(aoResources);
-    }
-
-    public List<NetBind> getNetBinds() throws IOException, SQLException {
-        return table.connector.getNetBinds().getIndexedRows(NetBind.COLUMN_BUSINESS_SERVER, pkey);
-    }
+    */
+    // </editor-fold>
 }

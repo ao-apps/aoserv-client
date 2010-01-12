@@ -25,30 +25,32 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanF
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
 
-    public enum Constant {
-        BASH("/bin/bash"),
-        KSH("/bin/ksh"),
-        SH("/bin/sh"),
-        SYNC("/bin/sync"),
-        TCSH("/bin/tcsh"),
-        HALT("/sbin/halt"),
-        NOLOGIN("/sbin/nologin"),
-        SHUTDOWN("/sbin/shutdown"),
-        FTPPASSWD("/usr/bin/ftppasswd"),
-        PASSWD("/usr/bin/passwd");
-
-        private final UnixPath unixPath;
-
-        private Constant(String path) {
-            try {
-                this.unixPath = UnixPath.valueOf(path).intern();
-            } catch(ValidationException err) {
-                throw new AssertionError(err.getMessage());
-            }
-        }
-
-        public UnixPath getUnixPath() {
-            return unixPath;
+    public static final UnixPath
+        BASH,
+        KSH,
+        SH,
+        SYNC,
+        TCSH,
+        HALT,
+        NOLOGIN,
+        SHUTDOWN,
+        FTPPASSWD,
+        PASSWD
+    ;
+    static {
+        try {
+            BASH = UnixPath.valueOf("/bin/bash").intern();
+            KSH = UnixPath.valueOf("/bin/ksh").intern();
+            SH = UnixPath.valueOf("/bin/sh").intern();
+            SYNC = UnixPath.valueOf("/bin/sync").intern();
+            TCSH = UnixPath.valueOf("/bin/tcsh").intern();
+            HALT = UnixPath.valueOf("/sbin/halt").intern();
+            NOLOGIN = UnixPath.valueOf("/sbin/nologin").intern();
+            SHUTDOWN = UnixPath.valueOf("/sbin/shutdown").intern();
+            FTPPASSWD = UnixPath.valueOf("/usr/bin/ftppasswd").intern();
+            PASSWD = UnixPath.valueOf("/usr/bin/passwd").intern();
+        } catch(ValidationException err) {
+            throw new AssertionError(err.getMessage());
         }
     }
     // </editor-fold>

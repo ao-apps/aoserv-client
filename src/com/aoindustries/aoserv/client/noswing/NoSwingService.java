@@ -15,6 +15,7 @@ import com.aoindustries.table.Table;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -84,7 +85,7 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
         return wrapped.getSize();
     }
 
-    final public V get(K key) throws RemoteException {
+    final public V get(K key) throws RemoteException, NoSuchElementException {
         NoSwingConnectorFactory.checkNotSwing();
         return AOServServiceUtils.setService(wrapped.get(key), this);
     }
@@ -102,5 +103,10 @@ abstract class NoSwingService<K extends Comparable<K>,V extends AOServObject<K,V
     final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return AOServServiceUtils.setServices(wrapped.filterIndexed(columnName, value), this);
+    }
+
+    final public IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return AOServServiceUtils.setServices(wrapped.filterIndexedSet(columnName, values), this);
     }
 }

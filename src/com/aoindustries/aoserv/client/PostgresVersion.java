@@ -96,7 +96,6 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     public TechnologyVersion getPostgisVersion() throws RemoteException {
         if(postgisVersion==null) return null;
         TechnologyVersion tv = getService().getConnector().getTechnologyVersions().get(postgisVersion);
-        if(tv==null) throw new RemoteException("Unable to find TechnologyVersion: "+postgisVersion);
         if(
             tv.operatingSystemVersion
             != getTechnologyVersion().operatingSystemVersion

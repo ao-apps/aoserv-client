@@ -38,7 +38,6 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
         HTTPS="HTTPS",
         HYPERSONIC="hypersonic",
         IMAP2="IMAP2",
-        INTERSERVER="InterServer",
         JMX="JMX",
         JNP="JNP",
         MYSQL="MySQL",

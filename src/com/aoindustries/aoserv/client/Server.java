@@ -87,9 +87,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     @SchemaColumn(order=3, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of operating system running on the server, if known")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         if(operatingSystemVersion==null) return null;
-        OperatingSystemVersion osv=getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
-        if(osv==null) new RemoteException("Unable to find OperatingSystemVersion: "+operatingSystemVersion);
-        return osv;
+        return getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
@@ -129,21 +127,26 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             AOServObjectUtils.createDependencySet(
-                getAOServer()
+                getAoServer()
                 // TODO: getPhysicalServer(),
                 // TODO: getVirtualServer()
             ),
-            // TODO: getBusinessServers(),
-            // TODO: getNetDevices(),
-            getFailoverFileReplications()
+            getBusinessServers(),
+            getFailoverFileReplications(),
+            getNetDevices(),
+            getServerResources()
             // TODO: getMasterServers()
         );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    public AOServer getAOServer() throws RemoteException {
+    public AOServer getAoServer() throws RemoteException {
         return getService().getConnector().getAoServers().get(key);
+    }
+
+    public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
+        return getService().getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_SERVER, this);
     }
 
     /**
@@ -151,6 +154,22 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
      */
     public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
         return getService().getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_SERVER, this);
+    }
+
+    public IndexedSet<NetDevice> getNetDevices() throws RemoteException {
+    	return getService().getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_SERVER, this);
+    }
+
+    public IndexedSet<ServerResource> getServerResources() throws RemoteException {
+        return getService().getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_SERVER, this);
+    }
+
+    public IndexedSet<NetBind> getNetBinds() throws RemoteException {
+        return getService().getConnector().getNetBinds().filterIndexedSet(NetBind.COLUMN_BUSINESS_SERVER, getBusinessServers());
+    }
+
+    public Indexed<NetBind> getNetBinds(Protocol protocol) throws RemoteException {
+        return getNetBinds().filterIndexed(NetBind.COLUMN_APP_PROTOCOL, protocol);
     }
 
     /* TODO
@@ -174,15 +193,6 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         return getService().getConnector().getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
     }
 
-    public List<NetBind> getNetBinds() throws IOException, SQLException {
-        List<NetBind> nbs = getService().getConnector().getNetBinds().getRows();
-        List<NetBind> matches = new ArrayList<NetBind>(nbs.size());
-        for(NetBind nb : nbs) {
-            if(nb.getBusinessServer().server==pkey) matches.add(nb);
-        }
-        return Collections.unmodifiableList(nbs);
-    }
-
     public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
         // Use the index first
         List<NetBind> cached = getService().getConnector().getNetBinds().getIndexedRows(NetBind.COLUMN_IP_ADDRESS, ipAddress.pkey);
@@ -194,23 +204,8 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         return Collections.unmodifiableList(matches);
     }
 
-    public List<NetBind> getNetBinds(Protocol protocol) throws IOException, SQLException {
-        // Use the index first
-        List<NetBind> cached = getService().getConnector().getNetBinds().getIndexedRows(NetBind.COLUMN_APP_PROTOCOL, protocol.pkey);
-        int size=cached.size();
-        List<NetBind> matches=new ArrayList<NetBind>(size);
-        for(NetBind nb : cached) {
-            if(nb.getBusinessServer().server==pkey) matches.add(nb);
-        }
-        return Collections.unmodifiableList(matches);
-    }
-
     public NetDevice getNetDevice(String deviceID) throws IOException, SQLException {
     	return getService().getConnector().getNetDevices().getNetDevice(this, deviceID);
-    }
-
-    public List<NetDevice> getNetDevices() throws IOException, SQLException {
-    	return getService().getConnector().getNetDevices().getNetDevices(this);
     }
 
     public List<IPAddress> getIPAddresses() throws IOException, SQLException {
@@ -226,10 +221,6 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
             ) return ip;
         }
         return null;
-    }
-
-    public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
-        return getService().getConnector().getBusinessServers().getIndexedRows(BusinessServer.COLUMN_SERVER, pkey);
     }
 
     public List<MasterServer> getMasterServers() throws IOException, SQLException {

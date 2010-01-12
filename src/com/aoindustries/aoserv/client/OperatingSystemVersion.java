@@ -98,9 +98,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     static final String COLUMN_ARCHITECTURE = "architecture";
     @SchemaColumn(order=4, name=COLUMN_ARCHITECTURE, index=IndexType.INDEXED, description="the name of the architecture")
     public Architecture getArchitecture() throws RemoteException {
-        Architecture ar=getService().getConnector().getArchitectures().get(architecture);
-        if(ar==null) throw new RemoteException("Unable to find Architecture: "+architecture);
-        return ar;
+        return getService().getConnector().getArchitectures().get(architecture);
     }
 
     @SchemaColumn(order=5, name="display", index=IndexType.UNIQUE, description="the full display name for this version")

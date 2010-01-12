@@ -1,126 +1,228 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.rmi.RemoteException;
+import java.util.Locale;
+import java.util.Set;
 
 /**
- * Each <code>IPAddress</code> represents a unique IPv4 address.  Two of the IP
- * addresses exist on every server, <code>WILDCARD_IP</code> and <code>LOOPBACK_IP</code>.
- * Every other IP address is assigned to a specific <code>Server</code>.  IP
- * addresses may be assigned to a specific <code>Business</code> and may have
- * a monthly rate associated with them.
+ * Each <code>IPAddress</code> represents a unique IPv6 or IPv4 address.
+ * Every IP address is assigned to a specific <code>NetDevice</code>.
  *
  * @see  Server
  * @see  Business
  * @see  NetBind
+ * @see  NetDevice
  * @see  PrivateFTPServer
  *
  * @author  AO Industries, Inc.
  */
-final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
+final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implements BeanFactory<com.aoindustries.aoserv.client.beans.IPAddress> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_NET_DEVICE=2,
-        COLUMN_ACCOUNTING=5
-    ;
-    static final String COLUMN_IP_ADDRESS_name = "ip_address";
-    static final String COLUMN_NET_DEVICE_name = "net_device";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    public static final String
-        LOOPBACK_IP="127.0.0.1",
-        WILDCARD_IP="0.0.0.0"
-    ;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private InetAddress ipAddress;
+    final private Integer netDevice;
+    final private boolean isAlias;
+    final private DomainName hostname;
+    final private boolean available;
+    final private boolean isOverflow;
+    final private boolean isDhcp;
+    final private boolean pingMonitorEnabled;
+    final private InetAddress externalIpAddress;
+    final private short netmask;
 
-    private static final ConcurrentMap<String,Integer> intForIPAddressCache = new ConcurrentHashMap<String,Integer>();
+    public IPAddress(
+        IPAddressService<?,?> service,
+        int serverResource,
+        InetAddress ipAddress,
+        Integer netDevice,
+        boolean isAlias,
+        DomainName hostname,
+        boolean available,
+        boolean isOverflow,
+        boolean isDhcp,
+        boolean pingMonitorEnabled,
+        InetAddress externalIpAddress,
+        short netmask
+    ) {
+        super(service, serverResource);
+        this.ipAddress = ipAddress.intern();
+        this.netDevice = netDevice;
+        this.isAlias = isAlias;
+        this.hostname = hostname;
+        this.available = available;
+        this.isOverflow = isOverflow;
+        this.isDhcp = isDhcp;
+        this.pingMonitorEnabled = pingMonitorEnabled;
+        this.externalIpAddress = externalIpAddress==null ? null : externalIpAddress.intern();
+        this.netmask = netmask;
+    }
+    // </editor-fold>
 
-    public static Integer getIntForIPAddress(String ipAddress) {
-        Integer result = intForIPAddressCache.get(ipAddress);
-        if(result==null) {
-            // There must be four octets with . between
-            String[] octets=StringUtility.splitString(ipAddress, '.');
-            if(octets.length!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(IPAddress other) throws RemoteException {
+        if(key==other.key) return 0;
+        int diff = ipAddress.compareTo(other.ipAddress);
+        if(diff!=0) return diff;
+        return StringUtility.equals(netDevice, other.netDevice) ? 0 : AOServObjectUtils.compare(getNetDevice(), other.getNetDevice());
+    }
+    // </editor-fold>
 
-            // Each octet should be from 1 to 3 digits, all numbers
-            // and should have a value between 0 and 255 inclusive
-            for(int c=0;c<4;c++) {
-                String tet=octets[c];
-                int tetLen=tet.length();
-                if(tetLen<1 || tetLen>3) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
-                for(int d=0;d<tetLen;d++) {
-                    char ch=tet.charAt(d);
-                    if(ch<'0' || ch>'9') throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
-                }
-                int val=Integer.parseInt(tet);
-                if(val<0 || val>255) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
-            }
-            result =
-                (Integer.parseInt(octets[0])<<24)
-                | (Integer.parseInt(octets[1])<<16)
-                | (Integer.parseInt(octets[2])<<8)
-                | (Integer.parseInt(octets[3])&255)
-            ;
-            Integer existing = intForIPAddressCache.putIfAbsent(ipAddress, result);
-            if(existing!=null) result = existing;
-        }
-        return result;
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
+    public ServerResource getServerResource() throws RemoteException {
+        return getService().getConnector().getServerResources().get(key);
     }
 
-    public static String getIPAddressForInt(int i) {
-        return
-            new StringBuilder(15)
-            .append((i>>>24)&255)
-            .append('.')
-            .append((i>>>16)&255)
-            .append('.')
-            .append((i>>>8)&255)
-            .append('.')
-            .append(i&255)
-            .toString()
-        ;
+    @SchemaColumn(order=1, name="ip_address", description="the IP address")
+    public InetAddress getIpAddress() {
+        return ipAddress;
     }
 
-    public static boolean isValidIPAddress(String ip) {
-        // There must be four octets with . between
-        String[] octets=StringUtility.splitString(ip, '.');
-        if(octets.length!=4) return false;
-
-        // Each octet should be from 1 to 3 digits, all numbers
-        // and should have a value between 0 and 255 inclusive
-        for(int c=0;c<4;c++) {
-            String tet=octets[c];
-            int tetLen=tet.length();
-            if(tetLen<1 || tetLen>3) return false;
-            for(int d=0;d<tetLen;d++) {
-                char ch=tet.charAt(d);
-                if(ch<'0' || ch>'9') return false;
-            }
-            int val=Integer.parseInt(tet);
-            if(val<0 || val>255) return false;
-        }
-        return true;
+    static final String COLUMN_NET_DEVICE = "net_device";
+    @SchemaColumn(order=2, name=COLUMN_NET_DEVICE, index=IndexType.INDEXED, description="the network_device that this IP address is routed through, is null when unassigned")
+    public NetDevice getNetDevice() throws RemoteException {
+        if(netDevice==null) return null;
+        return getService().getConnector().getNetDevices().get(netDevice);
     }
 
-    public static boolean isPrivate(String ip_address) {
-        return
-            ip_address.startsWith("10.")
-            || ip_address.startsWith("172.16.")
-            || ip_address.startsWith("192.168.")
-            || ip_address.startsWith("127.")
-        ;
+    @SchemaColumn(order=3, name="is_alias", description="indicates that the IP address is using IP aliasing on the network device")
+    public boolean isAlias() {
+        return isAlias;
     }
+
+    @SchemaColumn(order=4, name="hostname", description="the reverse mapping for the hostname")
+    public DomainName getHostname() {
+        return hostname;
+    }
+
+    @SchemaColumn(order=5, name="available", description="a flag if the IP address is available")
+    public boolean isAvailable() {
+        return available;
+    }
+
+    @SchemaColumn(order=6, name="is_overflow", description="indicates that the IP address is shared by different accounts")
+    public boolean isOverflow() {
+        return isOverflow;
+    }
+
+    @SchemaColumn(order=7, name="is_dhcp", description="the IP address is obtained via DHCP")
+    public boolean isDhcp() {
+        return isDhcp;
+    }
+
+    @SchemaColumn(order=8, name="ping_monitor_enabled", description="indicates that ping (ICMP ECHO) is monitored")
+    public boolean isPingMonitorEnabled() {
+        return pingMonitorEnabled;
+    }
+
+    @SchemaColumn(order=9, name="external_ip_address", description="the external IP address, if different than ip_address")
+    public InetAddress getExternalIpAddress() {
+        return externalIpAddress;
+    }
+
+    @SchemaColumn(order=10, name="netmask", description="the netmask of the local network")
+    public int getNetMask() {
+        return netmask;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.IPAddress getBean() {
+        return new com.aoindustries.aoserv.client.beans.IPAddress(
+            key,
+            ipAddress.getBean(),
+            netDevice,
+            isAlias,
+            hostname.getBean(),
+            available,
+            isOverflow,
+            isDhcp,
+            pingMonitorEnabled,
+            externalIpAddress==null ? null : externalIpAddress.getBean(),
+            netmask
+        );
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getServerResource(),
+            getNetDevice()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getDhcpDNSRecords(),
+            getNetBinds()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+        return getIpAddress().getAddress();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<NetBind> getNetBinds() throws RemoteException {
+        return getService().getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_IP_ADDRESS, this);
+    }
+
+    /* TODO
+    public IndexedSet<DNSRecord> getDhcpDNSRecords() throws IOException, SQLException {
+        return getService().getConnector().getDnsRecords().getIndexedRows(DNSRecord.COLUMN_DHCP_ADDRESS, pkey);
+    }*/
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+//    public boolean isUsed() throws IOException, SQLException {
+//        return !getNetBinds().isEmpty();
+//    }
+//
+//    /**
+//     * Sets the hostname for this <code>IPAddress</code>.
+//     */
+//    public void setHostname(String hostname) throws IOException, SQLException {
+//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
+//    }
+//
+//    /**
+//     * Sets the <code>Business</code>.  The business may only be set if the IP Address is not used
+//     * by other resources.
+//     * The created time
+//     * is reset when the address is allocated to a different <code>Business</code>,
+//     * which allows the automated accounting to start the billing on the correct
+//     * day of the month.
+//     */
+//    public void setBusiness(Business bu) throws IOException, SQLException {
+//        if(isUsed()) throw new SQLException("Unable to set Business, IPAddress in use: #"+pkey);
+//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_BUSINESS, pkey, bu.pkey);
+//    }
+//
+//    public void setDHCPAddress(String ipAddress) throws IOException, SQLException {
+//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
+//    }
+
 
     //private static final ConcurrentMap<String,String> getReverseDnsQueryCache = new ConcurrentHashMap<String,String>();
 
@@ -148,213 +250,5 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         }
         return arpa;
     }*/
-
-    String ip_address;
-    int net_device;
-    boolean is_alias;
-    private String hostname;
-    String accounting;
-    private long created;
-    private boolean available;
-    private boolean isOverflow;
-    private boolean isDHCP;
-    private boolean pingMonitorEnabled;
-    private String externalIpAddress;
-    private String netmask;
-
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return ip_address;
-            case COLUMN_NET_DEVICE: return net_device==-1?null:Integer.valueOf(net_device);
-            case 3: return is_alias?Boolean.TRUE:Boolean.FALSE;
-            case 4: return hostname;
-            case COLUMN_ACCOUNTING: return accounting;
-            case 6: return new java.sql.Date(created);
-            case 7: return available?Boolean.TRUE:Boolean.FALSE;
-            case 8: return isOverflow?Boolean.TRUE:Boolean.FALSE;
-            case 9: return isDHCP?Boolean.TRUE:Boolean.FALSE;
-            case 10: return pingMonitorEnabled ? Boolean.TRUE : Boolean.FALSE;
-            case 11: return externalIpAddress;
-            case 12: return netmask;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
-    /**
-     * Determines when this <code>IPAddress</code> was created.  The created time
-     * is reset when the address is allocated to a different <code>Business</code>,
-     * which allows the automated accounting to start the billing on the correct
-     * day of the month.
-     */
-    public long getCreated() {
-        return created;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    public String getIPAddress() {
-        return ip_address;
-    }
-
-    public List<NetBind> getNetBinds() throws IOException, SQLException {
-        return table.connector.getNetBinds().getNetBinds(this);
-    }
-
-    public NetDevice getNetDevice() throws SQLException, IOException {
-        if(net_device==-1) return null;
-	NetDevice nd = table.connector.getNetDevices().get(net_device);
-	if (nd == null) throw new SQLException("Unable to find NetDevice: " + net_device);
-	return nd;
-    }
-
-    /**
-     * May be filtered.
-     */
-    public Business getBusiness() throws IOException, SQLException {
-        // May be null when filtered
-        return table.connector.getBusinesses().get(accounting);
-    }
-
-    public boolean isOverflow() {
-        return isOverflow;
-    }
-    
-    public boolean isDHCP() {
-        return isDHCP;
-    }
-
-    public boolean isPingMonitorEnabled() {
-        return pingMonitorEnabled;
-    }
-
-    /**
-     * Gets the external IP address, if different than ip_address.
-     */
-    public String getExternalIpAddress() {
-        return externalIpAddress;
-    }
-
-    public String getNetMask() {
-        return netmask;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.IP_ADDRESSES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        ip_address = result.getString(2);
-        net_device = result.getInt(3);
-        if(result.wasNull()) net_device=-1;
-        is_alias = result.getBoolean(4);
-        hostname = result.getString(5);
-        accounting = result.getString(6);
-        created = result.getTimestamp(7).getTime();
-        available = result.getBoolean(8);
-        isOverflow = result.getBoolean(9);
-        isDHCP = result.getBoolean(10);
-        pingMonitorEnabled = result.getBoolean(11);
-        externalIpAddress = result.getString(12);
-        netmask = result.getString(13);
-    }
-
-    public boolean isAlias() {
-        return is_alias;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public boolean isUsed() throws IOException, SQLException {
-        return !getNetBinds().isEmpty();
-    }
-
-    public boolean isPrivate() {
-        return isPrivate(ip_address);
-    }
-
-    public boolean isWildcard() {
-        return WILDCARD_IP.equals(ip_address);
-    }
-
-    public void moveTo(Server server) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.MOVE_IP_ADDRESS, ip_address, server.pkey);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        ip_address=in.readUTF().intern();
-        net_device=in.readCompressedInt();
-        is_alias=in.readBoolean();
-        hostname=in.readUTF();
-        accounting=in.readUTF().intern();
-        created=in.readLong();
-        available=in.readBoolean();
-        isOverflow=in.readBoolean();
-        isDHCP=in.readBoolean();
-        pingMonitorEnabled = in.readBoolean();
-        externalIpAddress = in.readNullUTF();
-    	netmask = in.readUTF().intern();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getNetDevice(),
-            getBusiness()
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getDhcpDNSRecords(),
-            getNetBinds()
-        );
-    }
-
-    /**
-     * Sets the hostname for this <code>IPAddress</code>.
-     */
-    public void setHostname(String hostname) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
-    }
-
-    /**
-     * Sets the <code>Business</code>.  The business may only be set if the IP Address is not used
-     * by other resources.
-     */
-    public void setBusiness(Business bu) throws IOException, SQLException {
-        if(isUsed()) throw new SQLException("Unable to set Business, IPAddress in use: #"+pkey);
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_BUSINESS, pkey, bu.pkey);
-    }
-
-    public void setDHCPAddress(String ipAddress) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeUTF(ip_address);
-        out.writeCompressedInt(net_device);
-        out.writeBoolean(is_alias);
-        out.writeUTF(hostname);
-        out.writeUTF(accounting);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(0);
-        out.writeLong(created);
-        out.writeBoolean(available);
-        out.writeBoolean(isOverflow);
-        out.writeBoolean(isDHCP);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(externalIpAddress);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_38)>=0) out.writeUTF(netmask);
-    }
-
-    public List<DNSRecord> getDhcpDNSRecords() throws IOException, SQLException {
-        return table.connector.getDnsRecords().getIndexedRows(DNSRecord.COLUMN_DHCP_ADDRESS, pkey);
-    }
+    // </editor-fold>
 }

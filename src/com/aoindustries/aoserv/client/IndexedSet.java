@@ -199,14 +199,14 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
     }
 
     public E filterUnique(String columnName, Object value) throws RemoteException {
-        if(value==null) return null;
+        if(value==null || wrapped.isEmpty()) return null;
         synchronized(wrapped) {
             return getUniqueHash(columnName, value.getClass()).get(value);
         }
     }
 
     public IndexedSet<E> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
-        if(values==null || values.isEmpty()) return null;
+        if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet();
         synchronized(wrapped) {
             Set<E> results = new HashSet<E>();
             Map<Object,E> uniqueHash = getUniqueHash(columnName, null);
@@ -214,7 +214,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
                 for(Object value : values) {
                     if(value!=null) {
                         E obj = uniqueHash.get(value);
-                        if(obj!=null && !results.add(obj)) throw new AssertionError("Duplicate value in unique column "+obj.getService().getServiceName()+"."+columnName+": "+value);
+                        if(obj!=null && !results.add(obj)) throw new AssertionError("Already in set: "+obj);
                     }
                 }
             } else {
@@ -222,7 +222,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
                     Object value = entry.getKey();
                     if(values.contains(value)) {
                         E obj = entry.getValue();
-                        if(!results.add(obj)) throw new AssertionError("Duplicate value in unique column "+obj.getService().getServiceName()+"."+columnName+": "+value);
+                        if(!results.add(obj)) throw new AssertionError("Already in set: "+obj);
                     }
                 }
             }
@@ -230,46 +230,76 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         }
     }
 
-    public IndexedSet<E> filterIndexed(String columnName, Object value) throws RemoteException {
-        if(value==null) return null;
-        synchronized(wrapped) {
-            if(indexedHashes==null) indexedHashes = new HashMap<String,Map<Object,IndexedSet<E>>>();
-            Map<Object,IndexedSet<E>> indexedHash = indexedHashes.get(columnName);
-            if(indexedHash==null) {
-                Map<Object,Set<E>> setByValue = new HashMap<Object,Set<E>>(wrapped.size()*4/3+1); // Error on the side of avoiding rehash
-                try {
-                    Method method = null;
-                    Class<?> lastClass = null;
-                    for(E obj : wrapped) {
-                        if(obj!=null) {
-                            Class<? extends AOServObject> objClass = obj.getClass();
-                            if(objClass!=lastClass) {
-                                MethodColumn methodColumn = AOServObjectUtils.getMethodColumnMap(objClass).get(columnName);
-                                if(methodColumn.getIndexType()!=IndexType.INDEXED) throw new IllegalArgumentException("Column not indexed: "+columnName);
-                                method = methodColumn.getMethod();
-                                lastClass = objClass;
-                            }
-                            Object columnValue = method.invoke(obj);
-                            if(columnValue!=null) {
-                                Set<E> results = setByValue.get(columnValue);
-                                if(results==null) setByValue.put(columnValue, results = new HashSet<E>());
-                                results.add(obj);
-                            }
+    private Map<Object,IndexedSet<E>> getIndexHash(String columnName, Class<?> valueClass) throws RemoteException {
+        assert Thread.holdsLock(wrapped);
+        if(indexedHashes==null) indexedHashes = new HashMap<String,Map<Object,IndexedSet<E>>>();
+        Map<Object,IndexedSet<E>> indexedHash = indexedHashes.get(columnName);
+        if(indexedHash==null) {
+            Map<Object,Set<E>> setByValue = new HashMap<Object,Set<E>>(wrapped.size()*4/3+1); // Error on the side of avoiding rehash
+            try {
+                Method method = null;
+                Class<?> lastClass = null;
+                for(E obj : wrapped) {
+                    if(obj!=null) {
+                        Class<? extends AOServObject> objClass = obj.getClass();
+                        if(objClass!=lastClass) {
+                            MethodColumn methodColumn = AOServObjectUtils.getMethodColumnMap(objClass).get(columnName);
+                            if(methodColumn.getIndexType()!=IndexType.INDEXED) throw new IllegalArgumentException("Column not indexed: "+columnName);
+                            method = methodColumn.getMethod();
+                            assert valueClass==null || AOServServiceUtils.classesMatch(valueClass, method.getReturnType()) : "value class and return type mismatch: "+valueClass.getName()+"!="+method.getReturnType().getName();
+                            lastClass = objClass;
+                        }
+                        Object columnValue = method.invoke(obj);
+                        if(columnValue!=null) {
+                            Set<E> results = setByValue.get(columnValue);
+                            if(results==null) setByValue.put(columnValue, results = new HashSet<E>());
+                            results.add(obj);
                         }
                     }
-                } catch(IllegalAccessException err) {
-                    throw new RemoteException(err.getMessage(), err);
-                } catch(InvocationTargetException err) {
-                    throw new RemoteException(err.getMessage(), err);
                 }
-                // Make each set indexed
-                indexedHash = new HashMap<Object,IndexedSet<E>>(setByValue.size()*4/3+1);
-                for(Map.Entry<Object,Set<E>> entry : setByValue.entrySet()) indexedHash.put(entry.getKey(), wrap(entry.getValue()));
-                indexedHashes.put(columnName, indexedHash);
+            } catch(IllegalAccessException err) {
+                throw new RemoteException(err.getMessage(), err);
+            } catch(InvocationTargetException err) {
+                throw new RemoteException(err.getMessage(), err);
             }
-            IndexedSet<E> results = indexedHash.get(value);
+            // Make each set indexed
+            indexedHash = new HashMap<Object,IndexedSet<E>>(setByValue.size()*4/3+1);
+            for(Map.Entry<Object,Set<E>> entry : setByValue.entrySet()) indexedHash.put(entry.getKey(), wrap(entry.getValue()));
+            indexedHashes.put(columnName, indexedHash);
+        }
+        return indexedHash;
+    }
+
+    public IndexedSet<E> filterIndexed(String columnName, Object value) throws RemoteException {
+        if(value==null || wrapped.isEmpty()) return emptyIndexedSet();
+        synchronized(wrapped) {
+            IndexedSet<E> results = getIndexHash(columnName, value.getClass()).get(value);
             if(results==null) return emptyIndexedSet();
             return results;
+        }
+    }
+
+    public IndexedSet<E> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
+        if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet();
+        synchronized(wrapped) {
+            Set<E> results = new HashSet<E>();
+            Map<Object,IndexedSet<E>> indexHash = getIndexHash(columnName, null);
+            if(values.size()<indexHash.size()) {
+                for(Object value : values) {
+                    if(value!=null) {
+                        IndexedSet<E> objs = indexHash.get(value);
+                        if(objs!=null) for(E obj : objs) if(!results.add(obj)) throw new AssertionError("Already in set: "+obj);
+                    }
+                }
+            } else {
+                for(Map.Entry<Object,IndexedSet<E>> entry : indexHash.entrySet()) {
+                    Object value = entry.getKey();
+                    if(values.contains(value)) {
+                        for(E obj : entry.getValue()) if(!results.add(obj)) throw new AssertionError("Already in set: "+obj);
+                    }
+                }
+            }
+            return wrap(results);
         }
     }
 }

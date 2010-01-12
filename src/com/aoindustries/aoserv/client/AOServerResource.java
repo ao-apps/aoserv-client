@@ -25,10 +25,12 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final int aoServer;
+    final int businessServer;
 
-    public AOServerResource(AOServerResourceService<?,?> service, int resource, int aoServer) {
+    public AOServerResource(AOServerResourceService<?,?> service, int resource, int aoServer, int businessServer) {
         super(service, resource);
         this.aoServer = aoServer;
+        this.businessServer = businessServer;
     }
     // </editor-fold>
 
@@ -43,24 +45,28 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     /**
      * Gets the resource that this represents.
      */
-    @SchemaColumn(order=0, name="resource", index=IndexType.PRIMARY_KEY, description="a resource id")
+    static final String COLUMN_RESOURCE = "resource";
+    @SchemaColumn(order=0, name=COLUMN_RESOURCE, index=IndexType.PRIMARY_KEY, description="the resource id")
     public Resource getResource() throws RemoteException {
         return getService().getConnector().getResources().get(key);
     }
 
-    /**
-     * Gets the server that this resource is on.
-     */
     static final String COLUMN_AO_SERVER = "ao_server";
-    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the ao_server")
+    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the server that this resource is on")
     public AOServer getAoServer() throws RemoteException {
         return getService().getConnector().getAoServers().get(aoServer);
+    }
+
+    static final String COLUMN_BUSINESS_SERVER = "business_server";
+    @SchemaColumn(order=2, name=COLUMN_BUSINESS_SERVER, index=IndexType.INDEXED, description="the business server that this resource depends on")
+    public BusinessServer getBusinessServer() throws RemoteException {
+        return getService().getConnector().getBusinessServers().get(businessServer);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.AOServerResource getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServerResource(key, aoServer);
+        return new com.aoindustries.aoserv.client.beans.AOServerResource(key, aoServer, businessServer);
     }
     // </editor-fold>
 
@@ -69,8 +75,8 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getResource(),
-            getAoServer()
-            // TODO: getBusinessServer()
+            getAoServer(),
+            getBusinessServer()
         );
     }
 
@@ -84,30 +90,30 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
         String resourceType = getResource().resourceType;
         AOServObject obj;
-        if(resourceType.equals(ResourceType.Constant.mysql_database.name())) obj = getMysqlDatabase();
-        else if(resourceType.equals(ResourceType.Constant.mysql_server.name())) obj = getMysqlServer();
-        else if(resourceType.equals(ResourceType.Constant.mysql_user.name())) obj = getMysqlUser();
-        else if(resourceType.equals(ResourceType.Constant.postgresql_database.name())) obj = getPostgresDatabase();
-        else if(resourceType.equals(ResourceType.Constant.postgresql_server.name())) obj = getPostgresServer();
-        else if(resourceType.equals(ResourceType.Constant.postgresql_user.name())) obj = getPostgresUser();
+        if(resourceType.equals(ResourceType.MYSQL_DATABASE)) obj = getMysqlDatabase();
+        else if(resourceType.equals(ResourceType.MYSQL_SERVER)) obj = getMysqlServer();
+        else if(resourceType.equals(ResourceType.MYSQL_USER)) obj = getMysqlUser();
+        else if(resourceType.equals(ResourceType.POSTGRESQL_DATABASE)) obj = getPostgresDatabase();
+        else if(resourceType.equals(ResourceType.POSTGRESQL_SERVER)) obj = getPostgresServer();
+        else if(resourceType.equals(ResourceType.POSTGRESQL_USER)) obj = getPostgresUser();
         else if(
             // linux_accounts
-            resourceType.equals(ResourceType.Constant.email_inbox.name())
-            || resourceType.equals(ResourceType.Constant.ftponly_account.name())
-            || resourceType.equals(ResourceType.Constant.shell_account.name())
-            || resourceType.equals(ResourceType.Constant.system_account.name())
+            resourceType.equals(ResourceType.EMAIL_INBOX)
+            || resourceType.equals(ResourceType.FTPONLY_ACCOUNT)
+            || resourceType.equals(ResourceType.SHELL_ACCOUNT)
+            || resourceType.equals(ResourceType.SYSTEM_ACCOUNT)
         ) obj = getLinuxAccount();
         else if(
             // linux_groups
-            resourceType.equals(ResourceType.Constant.shell_group.name())
-            || resourceType.equals(ResourceType.Constant.system_group.name())
+            resourceType.equals(ResourceType.SHELL_GROUP)
+            || resourceType.equals(ResourceType.SYSTEM_GROUP)
         ) obj = getLinuxGroup();
         else if(
             // httpd_sites
-            resourceType.equals(ResourceType.Constant.httpd_jboss_site.name())
-            || resourceType.equals(ResourceType.Constant.httpd_static_site.name())
-            || resourceType.equals(ResourceType.Constant.httpd_tomcat_shared_site.name())
-            || resourceType.equals(ResourceType.Constant.httpd_tomcat_std_site.name())
+            resourceType.equals(ResourceType.HTTPD_JBOSS_SITE)
+            || resourceType.equals(ResourceType.HTTPD_STATIC_SITE)
+            || resourceType.equals(ResourceType.HTTPD_TOMCAT_SHARED_SITE)
+            || resourceType.equals(ResourceType.HTTPD_TOMCAT_STD_SITE)
         ) obj = getHttpdSite();
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
@@ -116,16 +122,6 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /**
-     * Gets the <code>BusinessServer</code> that this depends on.  This resource
-     * must be removed before the business' access to the server may be revoked.
-     * This may be filtered.
-     */
-    /* TODO
-    public BusinessServer getBusinessServer() throws IOException, SQLException {
-        return getService().getConnector().getBusinessServers().getBusinessServer(getResource().accounting, ao_server);
-    }
-    */
     public HttpdSite getHttpdSite() throws RemoteException {
         return getService().getConnector().getHttpdSites().get(key);
     }

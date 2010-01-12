@@ -5,13 +5,11 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import com.aoindustries.aoserv.client.validator.Hostname;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A limited number of hosts may connect to a <code>AOServer</code>'s daemon,
@@ -21,72 +19,74 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDaemonHost> {
+final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDaemonHost> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServerDaemonHost> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=1
-    ;
-    static final String COLUMN_AO_SERVER_name = "ao_server";
-    static final String COLUMN_HOST_name = "host";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    int aoServer;
-    private String host;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int aoServer;
+    final private Hostname host;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_AO_SERVER: return Integer.valueOf(aoServer);
-            case 2: return host;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public AOServerDaemonHost(
+        AOServerDaemonHostService<?,?> service,
+        int pkey,
+        int aoServer,
+        Hostname host
+    ) {
+        super(service, pkey);
+        this.aoServer = aoServer;
+        this.host = host.intern();
     }
+    // </editor-fold>
 
-    public String getHost() {
-	return host;
-    }
-
-    public AOServer getAOServer() throws SQLException, IOException {
-        AOServer ao=table.connector.getAoServers().get(aoServer);
-        if(ao==null) throw new SQLException("Unable to find AOServer: "+aoServer);
-        return ao;
-    }
-
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.AO_SERVER_DAEMON_HOSTS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        aoServer=result.getInt(2);
-        host=result.getString(3);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        aoServer=in.readCompressedInt();
-        host=in.readUTF().intern();
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    String toStringImpl(Locale userLocale) throws IOException, SQLException {
-    	return host+"->"+getAOServer().toStringImpl(userLocale);
+    protected int compareToImpl(AOServerDaemonHost other) throws RemoteException {
+        int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
+        if(diff!=0) return diff;
+        return host.compareTo(other.host);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
+    public int getPkey() {
+        return key;
     }
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(aoServer);
-        out.writeUTF(host);
+    static final String COLUMN_AO_SERVER = "ao_server";
+    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the pkey of the ao_server")
+    public AOServer getAoServer() throws RemoteException {
+        return getService().getConnector().getAoServers().get(aoServer);
     }
 
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getAOServer()
+    @SchemaColumn(order=2, name="host", description="the hostname or IP address that is allowed to connect")
+    public Hostname getHost() {
+        return host;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.AOServerDaemonHost getBean() {
+        return new com.aoindustries.aoserv.client.beans.AOServerDaemonHost(key, aoServer, host.getBean());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getAoServer()
         );
     }
+    // </editor-fold>
 
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-        );
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+    	return host+"->"+getAoServer().toStringImpl(userLocale);
     }
+    // </editor-fold>
 }

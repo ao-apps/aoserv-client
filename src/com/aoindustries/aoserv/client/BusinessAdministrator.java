@@ -209,9 +209,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     @SchemaColumn(order=19, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that this account is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
-        DisableLog obj = getService().getConnector().getDisableLogs().get(disableLog);
-        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disableLog);
-        return obj;
+        return getService().getConnector().getDisableLogs().get(disableLog);
     }
 
     @SchemaColumn(order=20, name="can_switch_users", description="allows this person to switch users to any subaccounts")

@@ -1,43 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.TerminalWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  IPAddress
  *
  * @author  AO Industries, Inc.
  */
-final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
+@ServiceAnnotation(ServiceName.ip_addresses)
+public interface IPAddressService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,IPAddress> {
 
-    IPAddressTable(AOServConnector connector) {
-        super(connector, IPAddress.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-        new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
-    public IPAddress get(int pkey) throws IOException, SQLException {
-        return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
-    }
-
+    /* TODO
     IPAddress getIPAddress(NetDevice device, String ipAddress) throws IOException, SQLException {
         int pkey=device.getPkey();
 
@@ -86,10 +62,6 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
             }
         }
         return matches;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.IP_ADDRESSES;
     }
 
     @Override
@@ -160,4 +132,5 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
         }
         return false;
     }
+     */
 }

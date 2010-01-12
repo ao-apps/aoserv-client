@@ -64,6 +64,9 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         }
     }
 
+    /**
+     * The value used in <code>/etc/shadow</code> when no password is set.
+     */
     public static final String NO_PASSWORD_CONFIG_VALUE="!!";
     // </editor-fold>
 
@@ -405,9 +408,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     }
 
     public void setPrimaryLinuxGroup(LinuxGroup group) throws SQLException, IOException {
-        LinuxGroupAccount lga=getService().getConnector().getLinuxGroupAccounts().getLinuxGroupAccount(group.getName(), pkey);
-        if(lga==null) throw new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName());
-        lga.setAsPrimary();
+        getService().getConnector().getLinuxGroupAccounts().getLinuxGroupAccount(group.getName(), pkey).setAsPrimary();
     }
     */
     // </editor-fold>

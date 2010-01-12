@@ -37,7 +37,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int businessServer;
-    final private int ipAddress;
+    final private Integer ipAddress;
     final private NetPort port;
     final private String netProtocol;
     final private String appProtocol;
@@ -49,7 +49,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         NetBindService<?,?> service,
         int pkey,
         int businessServer,
-        int ipAddress,
+        Integer ipAddress,
         NetPort port,
         String netProtocol,
         String appProtocol,
@@ -72,11 +72,11 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(NetBind other) throws RemoteException {
-        // TODO: int diff = business_server==other.business_server ? 0 : getBusinessServer().compareTo(other.getBusinessServer());
-        // TODO: if(diff!=0) return diff;
-        // TODO: diff = ip_address==other.ip_address ? 0 : getIPAddress().compareTo(other.getIPAddress());
-        // TODO: if(diff!=0) return diff;
-        int diff = port.compareTo(other.port);
+        int diff = businessServer==other.businessServer ? 0 : getBusinessServer().compareTo(other.getBusinessServer());
+        if(diff!=0) return diff;
+        diff = StringUtility.equals(ipAddress, other.ipAddress) ? 0 : AOServObjectUtils.compare(getIpAddress(), other.getIpAddress());
+        if(diff!=0) return diff;
+        diff = port.compareTo(other.port);
         if(diff!=0) return diff;
         return netProtocol.equals(other.netProtocol) ? 0 : getNetProtocol().compareTo(other.getNetProtocol());
     }
@@ -91,43 +91,46 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     /**
      * May be filtered.
      */
-    /* TODO
-    @SchemaColumn(order=1, name="business_server", description="the business and server this bind is on")
-    public BusinessServer getBusinessServer() throws IOException, SQLException {
-        return getService().getConnector().getBusinessServers().get(business_server);
-    }*/
+    static final String COLUMN_BUSINESS_SERVER = "business_server";
+    @SchemaColumn(order=1, name=COLUMN_BUSINESS_SERVER, index=IndexType.INDEXED, description="the business and server this bind is on")
+    public BusinessServer getBusinessServer() throws RemoteException {
+        return getService().getConnector().getBusinessServers().get(businessServer);
+    }
 
-    /* TODO
-    @SchemaColumn(order=2, name="ip_address", description="the pkey of the IP address that is bound to")
-    public IPAddress getIPAddress() throws SQLException, IOException {
-        IPAddress obj=getService().getConnector().getIpAddresses().get(ip_address);
-        if(obj==null) throw new SQLException("Unable to find IPAddress: "+ip_address);
-        return obj;
-    }*/
+    /**
+     * Gets the IP address this bind is on or <code>null</code> if should listen to all available
+     * addresses on the server.
+     */
+    static final String COLUMN_IP_ADDRESS = "ip_address";
+    @SchemaColumn(order=2, name=COLUMN_IP_ADDRESS, index=IndexType.INDEXED, description="the pkey of the IP address that is bound to")
+    public IPAddress getIpAddress() throws RemoteException {
+        if(ipAddress==null) return null;
+        return getService().getConnector().getIpAddresses().get(ipAddress);
+    }
 
-    @SchemaColumn(order=1, name="port", description="the port number that is bound")
+    @SchemaColumn(order=3, name="port", description="the port number that is bound")
     public NetPort getPort() {
         return port;
     }
 
     static final String COLUMN_NET_PROTOCOL = "net_protocol";
-    @SchemaColumn(order=2, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the network protocol (<code>net_protocols</code>)")
+    @SchemaColumn(order=4, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the network protocol (<code>net_protocols</code>)")
     public NetProtocol getNetProtocol() throws RemoteException {
         return getService().getConnector().getNetProtocols().get(netProtocol);
     }
 
     static final String COLUMN_APP_PROTOCOL = "app_protocol";
-    @SchemaColumn(order=3, name=COLUMN_APP_PROTOCOL, index=IndexType.INDEXED, description="the application protocol (<code>protocols</code>)")
+    @SchemaColumn(order=5, name=COLUMN_APP_PROTOCOL, index=IndexType.INDEXED, description="the application protocol (<code>protocols</code>)")
     public Protocol getAppProtocol() throws RemoteException {
         return getService().getConnector().getProtocols().get(appProtocol);
     }
 
-    @SchemaColumn(order=4, name="open_firewall", description="flags if the firewall should be opened for this port")
+    @SchemaColumn(order=6, name="open_firewall", description="flags if the firewall should be opened for this port")
     public boolean isFirewallOpen() {
         return openFirewall;
     }
 
-    @SchemaColumn(order=5, name="monitoring_enabled", description="turns on monitoring of the port")
+    @SchemaColumn(order=7, name="monitoring_enabled", description="turns on monitoring of the port")
     public boolean isMonitoringEnabled() {
         return monitoringEnabled;
     }
@@ -135,7 +138,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     /**
      * Gets the unmodifiable map of parameters for this bind.
      */
-    @SchemaColumn(order=6, name="monitoring_parameters", description="the URL-encoded name=value pairs of monitoring parameters")
+    @SchemaColumn(order=8, name="monitoring_parameters", description="the URL-encoded name=value pairs of monitoring parameters")
     public Map<String,String> getMonitoringParameters() {
         String myParamString = monitoringParameters;
         if(myParamString==null) return Collections.emptyMap();
@@ -159,8 +162,8 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: getBusinessServer(),
-            // TODO: getIPAddress(),
+            getBusinessServer(),
+            getIpAddress(),
             getNetProtocol(),
             getAppProtocol()
         );

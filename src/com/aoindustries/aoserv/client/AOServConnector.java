@@ -81,15 +81,11 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
      */
     Map<ServiceName,AOServService<C,F,?,?>> getServices() throws RemoteException;
 
-    /*
-     * TODO
     AOServerDaemonHostService<C,F> getAoServerDaemonHosts() throws RemoteException;
-    */
     AOServerResourceService<C,F> getAoServerResources() throws RemoteException;
     AOServerService<C,F> getAoServers() throws RemoteException;
     AOServPermissionService<C,F> getAoservPermissions() throws RemoteException;
     /* TODO
-    AOServProtocolService<C,F> getAoservProtocols() throws RemoteException;
     AOSHCommandService<C,F> getAoshCommands() throws RemoteException;
      */
     ArchitectureService<C,F> getArchitectures() throws RemoteException;
@@ -109,10 +105,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     BusinessProfileService<C,F> getBusinessProfiles() throws RemoteException;
      */
     BusinessService<C,F> getBusinesses() throws RemoteException;
-    /*
     BusinessServerService<C,F> getBusinessServers() throws RemoteException;
-    ClientJvmProfileService<C,F> getClientJvmProfiles() throws RemoteException;
-    */
     CountryCodeService<C,F> getCountryCodes() throws RemoteException;
     /*
     CreditCardProcessorService<C,F> getCreditCardProcessors() throws RemoteException;
@@ -177,7 +170,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     // TODO: HttpdTomcatStdSiteService<C,F> getHttpdTomcatStdSites() throws RemoteException;
     // TODO: HttpdTomcatVersionService<C,F> getHttpdTomcatVersions() throws RemoteException;
     // TODO: HttpdWorkerService<C,F> getHttpdWorkers() throws RemoteException;
-    // TODO: IPAddressService<C,F> getIpAddresses() throws RemoteException;
+    IPAddressService<C,F> getIpAddresses() throws RemoteException;
     LanguageService<C,F> getLanguages() throws RemoteException;
     // TODO: LinuxAccAddressService<C,F> getLinuxAccAddresses() throws RemoteException;
     LinuxAccountGroupService<C,F> getLinuxAccountGroups() throws RemoteException;
@@ -203,9 +196,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     MySQLUserService<C,F> getMysqlUsers() throws RemoteException;
     NetBindService<C,F> getNetBinds() throws RemoteException;
     NetDeviceIDService<C,F> getNetDeviceIDs() throws RemoteException;
-    /* TODO
     NetDeviceService<C,F> getNetDevices() throws RemoteException;
-    */
     NetProtocolService<C,F> getNetProtocols() throws RemoteException;
     /* TODO
     NetTcpRedirectService<C,F> getNetTcpRedirects() throws RemoteException;
@@ -236,6 +227,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     ResourceTypeService<C,F> getResourceTypes() throws RemoteException;
     ResourceService<C,F> getResources() throws RemoteException;
     ServerFarmService<C,F> getServerFarms() throws RemoteException;
+    ServerResourceService<C,F> getServerResources() throws RemoteException;
     ServerService<C,F> getServers() throws RemoteException;
     ShellService<C,F> getShells() throws RemoteException;
     /* TODO

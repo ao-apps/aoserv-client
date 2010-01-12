@@ -126,9 +126,9 @@ public interface LinuxGroupService<C extends AOServConnector<C,F>, F extends AOS
         // Find the primary group for the account
         LinuxAccount linuxAccount=account.getLinuxAccount();
         LinuxGroup linuxGroup=connector.getLinuxGroupAccounts().getPrimaryGroup(linuxAccount);
-        if(linuxGroup==null) throw new SQLException("Unable to find primary LinuxGroup for username="+linuxAccount.pkey);
+        if(linuxGroup==null) throw new NoSuchElementException("Unable to find primary LinuxGroup for username="+linuxAccount.pkey);
         LinuxServerGroup lsg=getLinuxServerGroup(account.getAOServer(), linuxGroup.pkey);
-        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup.pkey+" on "+account.ao_server);
+        if(lsg==null) throw new NoSuchElementException("Unable to find LinuxServerGroup: "+linuxGroup.pkey+" on "+account.ao_server);
         return lsg;
     }
 

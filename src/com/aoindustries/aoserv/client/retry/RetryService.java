@@ -14,6 +14,7 @@ import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.table.Table;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -103,10 +104,10 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
         );
     }
 
-    final public V get(final K key) throws RemoteException {
+    final public V get(final K key) throws RemoteException, NoSuchElementException {
         return connector.retry(
             new Callable<V>() {
-                public V call() throws RemoteException {
+                public V call() throws RemoteException, NoSuchElementException {
                     return AOServServiceUtils.setService(getWrapped().get(key), RetryService.this);
                 }
             }
@@ -138,6 +139,16 @@ abstract class RetryService<K extends Comparable<K>,V extends AOServObject<K,V>>
             new Callable<IndexedSet<V>>() {
                 public IndexedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().filterIndexed(columnName, value), RetryService.this);
+                }
+            }
+        );
+    }
+
+    final public IndexedSet<V> filterIndexedSet(final String columnName, final Set<?> values) throws RemoteException {
+        return connector.retry(
+            new Callable<IndexedSet<V>>() {
+                public IndexedSet<V> call() throws RemoteException {
+                    return AOServServiceUtils.setServices(getWrapped().filterIndexedSet(columnName, values), RetryService.this);
                 }
             }
         );

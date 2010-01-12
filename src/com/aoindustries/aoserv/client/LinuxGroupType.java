@@ -29,23 +29,23 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The available group types.
-     */
-    public enum Constant {
-        shell_group(ResourceType.Constant.shell_group),
-        system_group(ResourceType.Constant.system_group);
-
-        private final ResourceType.Constant resourceType;
-
-        private Constant(ResourceType.Constant resourceType) {
-            this.resourceType = resourceType;
-        }
-
-        public ResourceType.Constant getResourceType() {
-            return resourceType;
-        }
-    }
+//    /**
+//     * The available group types.
+//     */
+//    public static final String
+//        SHELL_GROUP = ResourceType.SHELL_GROUP,
+//        system_group(ResourceType.Constant.system_group);
+//
+//        private final ResourceType.Constant resourceType;
+//
+//        private Constant(ResourceType.Constant resourceType) {
+//            this.resourceType = resourceType;
+//        }
+//
+//        public ResourceType.Constant getResourceType() {
+//            return resourceType;
+//        }
+//    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">

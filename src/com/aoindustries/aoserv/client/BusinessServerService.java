@@ -1,42 +1,21 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  BusinessServerTable
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessServerTable extends CachedTableIntegerKey<BusinessServer> {
+@ServiceAnnotation(ServiceName.business_servers)
+public interface BusinessServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,BusinessServer> {
 
-    BusinessServerTable(AOServConnector connector) {
-    	super(connector, BusinessServer.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(BusinessServer.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addBusinessServer(Business business, Server server) throws IOException, SQLException {
     	return connector.requestIntQueryIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey, server.pkey);
-    }
-
-    public BusinessServer get(int pkey) throws IOException, SQLException {
-        return getUniqueRow(BusinessServer.COLUMN_PKEY, pkey);
     }
 
     List<BusinessServer> getBusinessServers(Server server) throws IOException, SQLException {
@@ -74,10 +53,6 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
         return null;
     }
 
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.BUSINESS_SERVERS;
-    }
-
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
@@ -109,4 +84,5 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
             return true;
 	} else return false;
     }
+     */
 }

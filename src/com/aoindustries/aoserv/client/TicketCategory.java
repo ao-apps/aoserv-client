@@ -56,9 +56,7 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     @SchemaColumn(order=1, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the category id of its parent or null if this is a top-level category")
     public TicketCategory getParent() throws RemoteException {
         if(parent==null) return null;
-        TicketCategory tc = getService().getConnector().getTicketCategories().get(parent);
-        if(tc==null) throw new RemoteException("Unable to find TicketCategory: "+parent);
-        return tc;
+        return getService().getConnector().getTicketCategories().get(parent);
     }
 
     @SchemaColumn(order=2, name="name", description="the name of this category, unique per parent")

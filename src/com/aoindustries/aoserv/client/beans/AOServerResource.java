@@ -12,13 +12,15 @@ public class AOServerResource {
 
     private int resource;
     private int aoServer;
+    private int businessServer;
 
     public AOServerResource() {
     }
 
-    public AOServerResource(int resource, int aoServer) {
+    public AOServerResource(int resource, int aoServer, int businessServer) {
         this.resource = resource;
         this.aoServer = aoServer;
+        this.businessServer = businessServer;
     }
 
     public int getResource() {
@@ -35,5 +37,13 @@ public class AOServerResource {
 
     public void setAoServer(int aoServer) {
         this.aoServer = aoServer;
+    }
+
+    public int getBusinessServer() {
+        return businessServer;
+    }
+
+    public void setBusinessServer(int businessServer) {
+        this.businessServer = businessServer;
     }
 }

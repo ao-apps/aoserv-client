@@ -56,9 +56,7 @@ final public class GroupName extends AOServObjectGroupIdKey<GroupName> implement
     @SchemaColumn(order=2, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that the group name is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
-        DisableLog obj=getService().getConnector().getDisableLogs().get(disableLog);
-        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disableLog);
-        return obj;
+        return getService().getConnector().getDisableLogs().get(disableLog);
     }
     // </editor-fold>
 

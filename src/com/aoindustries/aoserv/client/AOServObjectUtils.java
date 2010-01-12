@@ -47,17 +47,19 @@ public class AOServObjectUtils {
         return i1<i2 ? -1 : i1==i2 ? 0 : 1;
     }
 
-    /**
-     * Sorts nulls before non-nulls.
-     */
-    public static int compare(Integer i1, Integer i2) {
-        // nulls before non-nulls
-        if(i1==null) return i2==null ? 0 : -1;
-        return i2==null ? 1 : i1<i2 ? -1 : i1==i2 ? 0 : 1;
-    }
-
     public static int compare(short s1, short s2) {
         return s1<s2 ? -1 : s1==s2 ? 0 : 1;
+    }
+
+    /**
+     * Compares two objects allowing for nulls, sorts non-null before null.
+     */
+    public static <T extends Comparable<T>> int compare(T obj1, T obj2) {
+        if(obj1!=null) {
+            return obj2!=null ? obj1.compareTo(obj2) : -1;
+        } else {
+            return obj2!=null ? 1 : 0;
+        }
     }
 
     /**

@@ -16,6 +16,7 @@ import com.aoindustries.table.Table;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -99,8 +100,9 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         return getSet().size();
     }
 
-    final public V get(K key) throws RemoteException {
+    final public V get(K key) throws RemoteException, NoSuchElementException {
         if(key==null) return null;
+        V result;
         synchronized(cachedHash) {
             if(!cachedHashValid) {
                 cachedHash.clear();
@@ -110,8 +112,10 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
                 }
                 cachedHashValid = true;
             }
-            return cachedHash.get(key);
+            result = cachedHash.get(key);
         }
+        if(result==null) throw new NoSuchElementException("service="+getServiceName().name()+", key="+key);
+        return result;
     }
 
     final public V filterUnique(String columnName, Object value) throws RemoteException {
@@ -125,15 +129,20 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
      * The filtered set is based on the intersection of the values set and uniqueHash.keySet
      */
     final public IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
-        if(values==null || values.isEmpty()) return null;
+        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet();
         IndexType indexType = table.getColumn(columnName).getIndexType();
         if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+columnName);
         return getSet().filterUniqueSet(columnName, values);
     }
 
     final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
-        if(value==null) return null;
+        if(value==null) return IndexedSet.emptyIndexedSet();
         return getSet().filterIndexed(columnName, value);
+    }
+
+    final public IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
+        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet();
+        return getSet().filterIndexedSet(columnName, values);
     }
 
     /**

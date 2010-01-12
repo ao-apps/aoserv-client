@@ -40,7 +40,7 @@ public interface Indexed<E extends AOServObject> {
      * Gets the set of objects having one of the provided column values.  Like SQL, a <code>null</code> value will not match
      * any rows.
      */
-    //IndexedSet<E> getIndexedSet(String columnName, Set<?> values) throws RemoteException;
+    IndexedSet<E> filterIndexedSet(String columnName, Set<?> values) throws RemoteException;
 
     /**
      * Gets the set of distinct column values for the provided column name.

@@ -24,48 +24,52 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
 
-    public enum Constant {
+    public static final String
+        /*
         aoserv_daemon,
         aoserv_master,
         bandwidth,
         consulting,
         disk,
-        distribution_scan,
+         */
+        DISTRIBUTION_SCAN="distribution_scan",
+        /*
         drupal,
         failover,
         hardware_disk_7200_120,
-        ip,
-        joomla,
-        mysql_database,
-        mysql_replication,
-        mysql_server,
-        mysql_user,
-        postgresql_database,
-        postgresql_server,
-        postgresql_user,
-        rack,
-        server_database,
-        server_enterprise,
-        server_p4,
-        server_scsi,
-        server_xeon,
-        sysadmin,
-        httpd_server,
-        httpd_shared_tomcat,
+         */
+        IP_ADDRESS="ip_address",
+        // joomla,
+        MYSQL_DATABASE="mysql_database",
+        //MYSQL_REPLICATION="mysql_replication",
+        MYSQL_SERVER="mysql_server",
+        MYSQL_USER="mysql_user",
+        POSTGRESQL_DATABASE="postgresql_database",
+        POSTGRESQL_SERVER="postgresql_server",
+        POSTGRESQL_USER="postgresql_user",
+        //rack,
+        //server_database,
+        //server_enterprise,
+        //server_p4,
+        //server_scsi,
+        //server_xeon,
+        //sysadmin,
+        //httpd_server,
+        //httpd_shared_tomcat,
         // linux_account types
-        shell_account,
-        email_inbox,
-        ftponly_account,
-        system_account,
+        SHELL_ACCOUNT="shell_account",
+        EMAIL_INBOX="email_inbox",
+        FTPONLY_ACCOUNT="ftponly_account",
+        SYSTEM_ACCOUNT="system_account",
         // linux_group types
-        shell_group,
-        system_group,
+        SHELL_GROUP="shell_group",
+        SYSTEM_GROUP="system_group",
         // httpd_site types
-        httpd_jboss_site,
-        httpd_static_site,
-        httpd_tomcat_shared_site,
-        httpd_tomcat_std_site
-    }
+        HTTPD_JBOSS_SITE="httpd_jboss_site",
+        HTTPD_STATIC_SITE="httpd_static_site",
+        HTTPD_TOMCAT_SHARED_SITE="httpd_tomcat_shared_site",
+        HTTPD_TOMCAT_STD_SITE="httpd_tomcat_std_site"
+    ;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">

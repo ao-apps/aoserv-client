@@ -95,10 +95,7 @@ public interface BusinessService<C extends AOServConnector<C,F>, F extends AOSer
     }
 
     public Business getRootBusiness() throws IOException, SQLException {
-        String accounting=getRootAccounting();
-        Business bu=get(accounting);
-        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
-        return bu;
+        return get(getRootAccounting());
     }
     */
     /**

@@ -18,14 +18,11 @@ import java.util.Locale;
  * @author  AO Industries, Inc.
  */
 public enum ServiceName implements LocalizedToString {
-    /*TODO
     ao_server_daemon_hosts,
-     */
     ao_server_resources,
     ao_servers,
     aoserv_permissions,
     /*
-    aoserv_protocols,
     aosh_commands,
      */
     architectures,
@@ -45,17 +42,13 @@ public enum ServiceName implements LocalizedToString {
     business_profiles,
      */
     businesses,
-    /* TODO
     business_servers,
-    client_jvm_profile,
-     */
     country_codes,
     /* TODO
     credit_card_processors,
     credit_card_transactions,
     credit_cards,
     cvs_repositories,
-    daemon_profile,
      */
     disable_log,
     /* TODO
@@ -114,7 +107,7 @@ public enum ServiceName implements LocalizedToString {
     // TODO: httpd_tomcat_std_sites,
     // TODO: httpd_tomcat_versions,
     // TODO: httpd_workers,
-    // TODO: ip_addresses,
+    ip_addresses,
     languages,
     /* TODO
     linux_acc_addresses,
@@ -128,11 +121,7 @@ public enum ServiceName implements LocalizedToString {
     majordomo_lists,
     majordomo_servers,
     majordomo_versions,
-    master_history,
     master_hosts,
-    master_processes,
-    master_server_profile,
-    master_server_stats,
     master_servers,
     master_users,
     monthly_charges,
@@ -143,7 +132,7 @@ public enum ServiceName implements LocalizedToString {
     mysql_users,
     net_binds,
     net_device_ids,
-    // TODO: net_devices,
+    net_devices,
     net_protocols,
     /* TODO
     net_tcp_redirects,
@@ -180,6 +169,7 @@ public enum ServiceName implements LocalizedToString {
     schema_types,
      */
     server_farms,
+    server_resources,
     servers,
     shells,
     /* TODO
@@ -209,13 +199,12 @@ public enum ServiceName implements LocalizedToString {
     /* TODO
     transaction_types,
     transactions,
-    us_states,
      */
     usernames,
     /* TODO
     virtual_disks,
     virtual_servers,
-    whois_history,
+    whois_history
      */
     ;
 

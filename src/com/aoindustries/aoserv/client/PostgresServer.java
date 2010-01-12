@@ -231,7 +231,6 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     @SchemaColumn(order=2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the PostgreSQL version")
     public PostgresVersion getPostgresVersion() throws RemoteException {
         PostgresVersion obj=getService().getConnector().getPostgresVersions().get(version);
-        if(obj==null) throw new RemoteException("Unable to find PostgresVersion: "+version);
         AOServerResource aoServerResource = getAoServerResource();
         if(aoServerResource!=null) {
             if(!StringUtility.equals(obj.getTechnologyVersion().operatingSystemVersion, aoServerResource.getAoServer().getServer().operatingSystemVersion)) {

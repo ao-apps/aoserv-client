@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -361,7 +362,6 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     @SchemaColumn(order=2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the MySQL version")
     public TechnologyVersion getVersion() throws RemoteException {
         TechnologyVersion obj=getService().getConnector().getTechnologyVersions().get(version);
-        if(obj==null) throw new RemoteException("Unable to find TechnologyVersion: "+version);
         if(
             obj.getOperatingSystemVersion().getPkey()
             != getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey()
@@ -426,7 +426,9 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     }
 
     public MySQLDatabase getMysqlDatabase(MySQLDatabaseName name) throws RemoteException {
-        return getMysqlDatabases().filterUnique(MySQLDatabase.COLUMN_NAME, name);
+        MySQLDatabase md = getMysqlDatabases().filterUnique(MySQLDatabase.COLUMN_NAME, name);
+        if(md==null) throw new NoSuchElementException("this="+this+", name="+name);
+        return md;
     }
 
     /* TODO public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {

@@ -190,9 +190,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     @SchemaColumn(order=9, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the business is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
-        DisableLog obj=getService().getConnector().getDisableLogs().get(disableLog);
-        if(obj==null) throw new RemoteException("Unable to find DisableLog: "+disableLog);
-        return obj;
+        return getService().getConnector().getDisableLogs().get(disableLog);
     }
 
     @SchemaColumn(order=10, name="do_not_disable_reason", description="a reason why we should not disable the account")
@@ -213,9 +211,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /* TODO
     @SchemaColumn(order=13, name="package_definition", description="the definition of the package")
     public PackageDefinition getPackageDefinition() {
-        PackageDefinition pd = getService().getConnector().getPackageDefinitions().get(package_definition);
-        if(pd == null) throw new RemoteException("Unable to find PackageDefinition: "+package_definition);
-        return pd;
+        return getService().getConnector().getPackageDefinitions().get(package_definition);
     } */
 
     /**
@@ -308,7 +304,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             // TODO: ),
             getChildBusinesses(),
             // TODO: getBusinessProfiles(),
-            // TODO: getBusinessServers(),
+            getBusinessServers(),
             // TODO: getCreditCards(),
             // TODO: getCreditCardProcessors(),
             // TODO: getCreditCardTransactions(),
@@ -345,6 +341,10 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<Business> getChildBusinesses() throws RemoteException {
         return getService().getConnector().getBusinesses().filterIndexed(COLUMN_PARENT, this);
+    }
+
+    public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
+        return getService().getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
@@ -763,7 +763,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         Business bu=this;
         while(bu.bill_parent) {
             bu=bu.getParentBusiness();
-            if(bu==null) throw new SQLException("Unable to find the accounting business for '"+pkey+'\'');
+            if(bu==null) throw new AssertionError("Unable to find the accounting business for '"+pkey+'\'');
         }
         return bu;
     }*/
@@ -787,10 +787,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public BusinessServer getBusinessServer(Server server) throws IOException, SQLException {
         return service.connector.getBusinessServers().getBusinessServer(pkey, server.pkey);
-    }
-
-    public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
-        return service.connector.getBusinessServers().getIndexedRows(BusinessServer.COLUMN_ACCOUNTING, pkey);
     }
 
     public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
@@ -943,259 +939,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             }
         }
         return false;
-    }
-
-    public void move(AOServer from, AOServer to, TerminalWriter out) throws IOException, SQLException {
-        if(from.equals(to)) throw new SQLException("Cannot move from AOServer "+from.getHostname()+" to AOServer "+to.getHostname()+": same AOServer");
-
-        BusinessServer fromBusinessServer=getBusinessServer(from.getServer());
-        if(fromBusinessServer==null) throw new SQLException("Unable to find BusinessServer for Business="+pkey+" and Server="+from.getHostname());
-
-        // Grant the Business access to the other server if it does not already have access
-        if(out!=null) {
-            out.boldOn();
-            out.println("Adding Business Privileges");
-            out.attributesOff();
-            out.flush();
-        }
-        BusinessServer toBusinessServer=getBusinessServer(to.getServer());
-        if(toBusinessServer==null) {
-            if(out!=null) {
-                out.print("    ");
-                out.println(to.getHostname());
-                out.flush();
-            }
-            addBusinessServer(to.getServer());
-        }
-
-        // Add the LinuxServerGroups
-        if(out!=null) {
-            out.boldOn();
-            out.println("Adding Linux Groups");
-            out.attributesOff();
-            out.flush();
-        }
-        List<LinuxServerGroup> fromLinuxServerGroups=new ArrayList<LinuxServerGroup>();
-        List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<LinuxServerGroup>();
-        {
-            for(LinuxServerGroup lsg : getService().getConnector().getLinuxServerGroups().getRows()) {
-                if(pkey.equals(lsg.getLinuxGroup().accounting)) {
-                    AOServer ao=lsg.getAOServer();
-                    if(ao.equals(from)) fromLinuxServerGroups.add(lsg);
-                    else if(ao.equals(to)) toLinuxServerGroups.add(lsg);
-                }
-            }
-        }
-        for(int c=0;c<fromLinuxServerGroups.size();c++) {
-            LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
-            if(!toLinuxServerGroups.contains(lsg)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsg.name);
-                    out.print(" to ");
-                    out.println(to.getHostname());
-                    out.flush();
-                }
-                lsg.getLinuxGroup().addLinuxServerGroup(to);
-            }
-        }
-
-        // Add the LinuxServerAccounts
-        if(out!=null) {
-            out.boldOn();
-            out.println("Adding Linux Accounts");
-            out.attributesOff();
-            out.flush();
-        }
-        List<LinuxServerAccount> fromLinuxServerAccounts=new ArrayList<LinuxServerAccount>();
-        List<LinuxServerAccount> toLinuxServerAccounts=new SortedArrayList<LinuxServerAccount>();
-        {
-            List<LinuxServerAccount> lsas=getService().getConnector().getLinuxServerAccounts().getRows();
-            for(int c=0;c<lsas.size();c++) {
-                LinuxServerAccount lsa=lsas.get(c);
-                if(pkey.equals(lsa.getLinuxAccount().getUsername().accounting)) {
-                    AOServer ao=lsa.getAOServer();
-                    if(ao.equals(from)) fromLinuxServerAccounts.add(lsa);
-                    else if(ao.equals(to)) toLinuxServerAccounts.add(lsa);
-                }
-            }
-        }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(!toLinuxServerAccounts.contains(lsa)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" to ");
-                    out.println(to.getHostname());
-                    out.flush();
-                }
-                lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
-            }
-        }
-
-        // Wait for Linux Account rebuild
-        if(out!=null) {
-            out.boldOn();
-            out.println("Waiting for Linux Account rebuild");
-            out.attributesOff();
-            out.print("    ");
-            out.println(to.getHostname());
-            out.flush();
-        }
-        to.waitForLinuxAccountRebuild();
-
-        // Copy the home directory contents
-        if(out!=null) {
-            out.boldOn();
-            out.println("Copying Home Directories");
-            out.attributesOff();
-            out.flush();
-        }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(!toLinuxServerAccounts.contains(lsa)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" to ");
-                    out.print(to.getHostname());
-                    out.print(": ");
-                    out.flush();
-                }
-                long byteCount=lsa.copyHomeDirectory(to);
-                if(out!=null) {
-                    out.print(byteCount);
-                    out.println(byteCount==1?" byte":" bytes");
-                    out.flush();
-                }
-            }
-        }
-
-        // Copy the cron tables
-        if(out!=null) {
-            out.boldOn();
-            out.println("Copying Cron Tables");
-            out.attributesOff();
-            out.flush();
-        }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(!toLinuxServerAccounts.contains(lsa)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" to ");
-                    out.print(to.getHostname());
-                    out.print(": ");
-                    out.flush();
-                }
-                String cronTable=lsa.getCronTable();
-                lsa.getLinuxAccount().getLinuxServerAccount(to).setCronTable(cronTable);
-                if(out!=null) {
-                    out.print(cronTable.length());
-                    out.println(cronTable.length()==1?" byte":" bytes");
-                    out.flush();
-                }
-            }
-        }
-
-        // Copy the passwords
-        if(out!=null) {
-            out.boldOn();
-            out.println("Copying Passwords");
-            out.attributesOff();
-            out.flush();
-        }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(!toLinuxServerAccounts.contains(lsa)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" to ");
-                    out.println(to.getHostname());
-                    out.flush();
-                }
-
-                lsa.copyPassword(lsa.getLinuxAccount().getLinuxServerAccount(to));
-            }
-        }
-
-        // Move IP Addresses
-        if(out!=null) {
-            out.boldOn();
-            out.println("Moving IP Addresses");
-            out.attributesOff();
-            out.flush();
-        }
-        List<IPAddress> ips=getService().getConnector().getIpAddresses().getRows();
-        for(int c=0;c<ips.size();c++) {
-            IPAddress ip=ips.get(c);
-            if(
-                ip.isAlias()
-                && !ip.isWildcard()
-                && !ip.getNetDevice().getNetDeviceID().isLoopback()
-                && ip.accounting.equals(pkey)
-            ) {
-                out.print("    ");
-                out.println(ip);
-                ip.moveTo(to.getServer());
-            }
-        }
-
-        // TODO: Continue development here
-
-
-
-        // Remove the LinuxServerAccounts
-        if(out!=null) {
-            out.boldOn();
-            out.println("Removing Linux Accounts");
-            out.attributesOff();
-            out.flush();
-        }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(out!=null) {
-                out.print("    ");
-                out.print(lsa.username);
-                out.print(" on ");
-                out.println(from.getHostname());
-                out.flush();
-            }
-            lsa.remove();
-        }
-
-        // Remove the LinuxServerGroups
-        if(out!=null) {
-            out.boldOn();
-            out.println("Removing Linux Groups");
-            out.attributesOff();
-            out.flush();
-        }
-        for(int c=0;c<fromLinuxServerGroups.size();c++) {
-            LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
-            if(out!=null) {
-                out.print("    ");
-                out.print(lsg.name);
-                out.print(" on ");
-                out.println(from.getHostname());
-                out.flush();
-            }
-            lsg.remove();
-        }
-
-        // Remove access to the old server
-        if(out!=null) {
-            out.boldOn();
-            out.println("Removing Business Privileges");
-            out.attributesOff();
-            out.print("    ");
-            out.println(from.getHostname());
-            out.flush();
-        }
-        fromBusinessServer.remove();
     }
 
     public void setAccounting(String accounting) throws SQLException, IOException {

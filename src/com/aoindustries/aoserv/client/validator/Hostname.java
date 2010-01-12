@@ -66,12 +66,12 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
         ;
     }
 
-    public static Hostname valueOf(DomainName domainName) throws ValidationException {
+    public static Hostname valueOf(DomainName domainName) {
         Hostname existing = internedByDomainName.get(domainName);
         return existing!=null ? existing : new Hostname(domainName);
     }
 
-    public static Hostname valueOf(InetAddress ip) throws ValidationException {
+    public static Hostname valueOf(InetAddress ip) {
         Hostname existing = internedByInetAddress.get(ip);
         return existing!=null ? existing : new Hostname(ip);
     }

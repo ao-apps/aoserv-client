@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServerDaemonHostService;
 import com.aoindustries.aoserv.client.AOServerResourceService;
 import com.aoindustries.aoserv.client.AOServerService;
 import com.aoindustries.aoserv.client.ArchitectureService;
@@ -16,6 +17,7 @@ import com.aoindustries.aoserv.client.BackupPartitionService;
 import com.aoindustries.aoserv.client.BackupRetentionService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
+import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CountryCodeService;
 import com.aoindustries.aoserv.client.DisableLogService;
@@ -26,6 +28,7 @@ import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.FileBackupSettingService;
 import com.aoindustries.aoserv.client.GroupNameService;
 import com.aoindustries.aoserv.client.HttpdSiteService;
+import com.aoindustries.aoserv.client.IPAddressService;
 import com.aoindustries.aoserv.client.LanguageService;
 import com.aoindustries.aoserv.client.LinuxAccountGroupService;
 import com.aoindustries.aoserv.client.LinuxAccountService;
@@ -38,6 +41,7 @@ import com.aoindustries.aoserv.client.MySQLServerService;
 import com.aoindustries.aoserv.client.MySQLUserService;
 import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
+import com.aoindustries.aoserv.client.NetDeviceService;
 import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
@@ -51,6 +55,7 @@ import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceTypeService;
 import com.aoindustries.aoserv.client.ServerFarmService;
+import com.aoindustries.aoserv.client.ServerResourceService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.aoserv.client.ShellService;
@@ -73,6 +78,7 @@ import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -96,9 +102,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     private final UserId authenticateAs;
     private final String password;
     private final DomainName daemonServer;
-    /* TODO
     final RetryAOServerDaemonHostService aoserverDaemonHosts;
-     */
     final RetryAOServerResourceService aoserverResources;
     final RetryAOServerService aoservers;
     final RetryAOServPermissionService aoservPermissions;
@@ -123,10 +127,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryBusinessProfileService businessProfiles;
      */
     final RetryBusinessService businesses;
-    /* TODO
     final RetryBusinessServerService businessServers;
-    final RetryClientJvmProfileService clientJvmProfiles;
-     */
     final RetryCountryCodeService countryCodes;
     /* TODO
     final RetryCreditCardProcessorService creditCardProcessors;
@@ -192,8 +193,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryHttpdTomcatStdSiteService httpdTomcatStdSites;
     final RetryHttpdTomcatVersionService httpdTomcatVersions;
     final RetryHttpdWorkerService httpdWorkers;
-    final RetryIPAddressService ipAddresss;
     */
+    final RetryIPAddressService ipAddresses;
     final RetryLanguageService languages;
     /* TODO
     final RetryLinuxAccAddressService linuxAccAddresss;
@@ -217,9 +218,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryMySQLUserService mysqlUsers;
     final RetryNetBindService netBinds;
     final RetryNetDeviceIDService netDeviceIDs;
-    /* TODO
     final RetryNetDeviceService netDevices;
-     */
     final RetryNetProtocolService netProtocols;
     /* TODO
     final RetryNetTcpRedirectService netTcpRedirects;
@@ -248,6 +247,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryResourceTypeService resourceTypes;
     final RetryResourceService resources;
     final RetryServerFarmService serverFarms;
+    final RetryServerResourceService serverResources;
     final RetryServerService servers;
     final RetryShellService shells;
     /* TODO
@@ -296,9 +296,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         this.authenticateAs = authenticateAs;
         this.password = password;
         this.daemonServer = daemonServer;
-        /* TODO
         aoserverDaemonHosts = new RetryAOServerDaemonHostService(this);
-         */
         aoserverResources = new RetryAOServerResourceService(this);
         aoservers = new RetryAOServerService(this);
         aoservPermissions = new RetryAOServPermissionService(this);
@@ -323,10 +321,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         businessProfiles = new RetryBusinessProfileService(this);
          */
         businesses = new RetryBusinessService(this);
-        /* TODO
         businessServers = new RetryBusinessServerService(this);
-        clientJvmProfiles = new RetryClientJvmProfileService(this);
-         */
         countryCodes = new RetryCountryCodeService(this);
         /* TODO
         creditCardProcessors = new RetryCreditCardProcessorService(this);
@@ -392,8 +387,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         httpdTomcatStdSites = new RetryHttpdTomcatStdSiteService(this);
         httpdTomcatVersions = new RetryHttpdTomcatVersionService(this);
         httpdWorkers = new RetryHttpdWorkerService(this);
-        ipAddresss = new RetryIPAddressService(this);
         */
+        ipAddresses = new RetryIPAddressService(this);
         languages = new RetryLanguageService(this);
         // TODO: linuxAccAddresss = new RetryLinuxAccAddressService(this);
         linuxAccountGroups = new RetryLinuxAccountGroupService(this);
@@ -415,9 +410,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         mysqlUsers = new RetryMySQLUserService(this);
         netBinds = new RetryNetBindService(this);
         netDeviceIDs = new RetryNetDeviceIDService(this);
-        /* TODO
         netDevices = new RetryNetDeviceService(this);
-         */
         netProtocols = new RetryNetProtocolService(this);
         /* TODO
         netTcpRedirects = new RetryNetTcpRedirectService(this);
@@ -448,6 +441,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         resourceTypes = new RetryResourceTypeService(this);
         resources = new RetryResourceService(this);
         serverFarms = new RetryServerFarmService(this);
+        serverResources = new RetryServerResourceService(this);
         servers = new RetryServerService(this);
         shells = new RetryShellService(this);
         /* TODO
@@ -552,7 +546,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         }
     }
 
-    <T> T retry(Callable<T> callable) throws RemoteException {
+    <T> T retry(Callable<T> callable) throws RemoteException, NoSuchElementException {
         int attempt = 1;
         while(!Thread.interrupted()) {
             if(factory.timeout>0) {
@@ -567,6 +561,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
                     if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) {
                         Throwable cause = err.getCause();
                         if(cause instanceof RemoteException) throw (RemoteException)cause;
+                        if(cause instanceof NoSuchElementException) throw (NoSuchElementException)cause;
                         throw new RemoteException(err.getMessage(), err);
                     }
                 } catch(TimeoutException err) {
@@ -628,9 +623,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     }
 
     public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
-        BusinessAdministrator obj = getBusinessAdministrators().get(connectAs);
-        if(obj==null) throw new RemoteException("Unable to find BusinessAdministrator: "+connectAs);
-        return obj;
+        return getBusinessAdministrators().get(connectAs);
     }
 
     public UserId getAuthenticateAs() {
@@ -651,10 +644,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return ts;
     }
 
-    /*
-     * TODO
-    public AOServerDaemonHostService<RetryConnector,RetryConnectorFactory> getAoServerDaemonHosts();
-    */
+    public AOServerDaemonHostService<RetryConnector,RetryConnectorFactory> getAoServerDaemonHosts() {
+        return aoserverDaemonHosts;
+    }
+
     public AOServerResourceService<RetryConnector,RetryConnectorFactory> getAoServerResources() {
         return aoserverResources;
     }
@@ -707,11 +700,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return businesses;
     }
 
-    /* TODO
-    public BusinessServerService<RetryConnector,RetryConnectorFactory> getBusinessServers();
+    public BusinessServerService<RetryConnector,RetryConnectorFactory> getBusinessServers() {
+        return businessServers;
+    }
 
-    public ClientJvmProfileService<RetryConnector,RetryConnectorFactory> getClientJvmProfiles();
-    */
     public CountryCodeService<RetryConnector,RetryConnectorFactory> getCountryCodes() {
         return countryCodes;
     }
@@ -841,9 +833,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public HttpdTomcatVersionService<RetryConnector,RetryConnectorFactory> getHttpdTomcatVersions();
 
     public HttpdWorkerService<RetryConnector,RetryConnectorFactory> getHttpdWorkers();
-
-    public IPAddressService<RetryConnector,RetryConnectorFactory> getIpAddresses();
     */
+    public IPAddressService<RetryConnector,RetryConnectorFactory> getIpAddresses() {
+        return ipAddresses;
+    }
+
     public LanguageService<RetryConnector,RetryConnectorFactory> getLanguages() {
         return languages;
     }
@@ -909,9 +903,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public NetDeviceIDService<RetryConnector,RetryConnectorFactory> getNetDeviceIDs() {
         return netDeviceIDs;
     }
-    /* TODO
-    public NetDeviceService<RetryConnector,RetryConnectorFactory> getNetDevices();
-    */
+
+    public NetDeviceService<RetryConnector,RetryConnectorFactory> getNetDevices() {
+        return netDevices;
+    }
+
     public NetProtocolService<RetryConnector,RetryConnectorFactory> getNetProtocols() {
         return netProtocols;
     }
@@ -984,6 +980,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
 
     public ServerFarmService<RetryConnector,RetryConnectorFactory> getServerFarms() {
         return serverFarms;
+    }
+
+    public ServerResourceService<RetryConnector,RetryConnectorFactory> getServerResources() {
+        return serverResources;
     }
 
     public ServerService<RetryConnector,RetryConnectorFactory> getServers() {
