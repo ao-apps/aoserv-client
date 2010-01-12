@@ -89,7 +89,6 @@ public class MySQLTest extends TestCase {
         System.out.println("Testing adding MySQLUser to each MySQLServer");
         System.out.print("    Resolving TEST Business: ");
         bu=conn.getBusinesses().get("TEST");
-        assertNotNull("Unable to find Business: TEST", bu);
         System.out.println("Done");
 
         System.out.print("    Generating random username: ");
