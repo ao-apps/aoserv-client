@@ -124,12 +124,14 @@ abstract public class AOServCommand<R> implements Serializable {
 
     /**
      * Executes the command and retrieves the result.  If the command return
-     * value is void, returns <code>Void.TYPE</code>.  This will first ensure that the current
+     * value is void, returns <code>null</code>.  This will first ensure that the current
      * user has the appropriate permissions and will throw AOServPermissionException if doesn't
      * have the correct permissions.  This will first call <code>validate</code>
      * and throw an exception if the validation fails.
      */
     final public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws AOServPermissionException, ValidationException, RemoteException {
+        // TODO: Make sure current user is enabled
+
         // TODO: Check permissions
 
         // Validate
@@ -143,4 +145,11 @@ abstract public class AOServCommand<R> implements Serializable {
      * Called after security checks and validation succeeds.
      */
     abstract protected R doExecute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException;
+
+    /**
+     * Determines if this command may be retried in the event of an error.  Defaults to <code>true</code>.
+     */
+    public boolean isRetryable() {
+        return true;
+    }
 }
