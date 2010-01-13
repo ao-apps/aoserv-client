@@ -5,11 +5,14 @@ package com.aoindustries.aoserv.client.command;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.ServiceName;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Each command has a unique name.  These IDs may change over time, but
@@ -22,7 +25,11 @@ public enum CommandName {
     // Global Commands
     describe(DescribeCommand.class, null),
     // TODO: select(SelectCommand.class, null),
-    show(ShowCommand.class, null)
+    show(ShowCommand.class, null),
+    // failover_file_logs
+    add_failover_file_log(AddFailoverFileLog.class, ServiceName.failover_file_log, AOServPermission.Permission.add_failover_file_log),
+    // failover_file_replications
+    request_replication_daemon_access(RequestReplicationDaemonAccess.class, ServiceName.failover_file_replications, AOServPermission.Permission.request_replication_daemon_access),
     // TODO: add_backup_server(TODO.class, TODO),
     // TODO: add_business(TODO.class, TODO),
     // TODO: add_business_administrator(TODO.class, TODO),
@@ -325,10 +332,14 @@ public enum CommandName {
 
     private final Class<? extends AOServCommand> commandClass;
     private final ServiceName serviceName;
+    private final Set<AOServPermission.Permission> permissions;
 
-    private CommandName(Class<? extends AOServCommand> commandClass, ServiceName serviceName) {
+    private CommandName(Class<? extends AOServCommand> commandClass, ServiceName serviceName, AOServPermission.Permission... permissions) {
         this.commandClass = commandClass;
         this.serviceName = serviceName;
+        if(permissions.length==0) this.permissions = Collections.emptySet();
+        else if(permissions.length==1) this.permissions = Collections.singleton(permissions[0]);
+        else this.permissions = Collections.unmodifiableSet(EnumSet.of(permissions[0], permissions));
     }
 
     public Class<? extends AOServCommand> getCommandClass() {
@@ -348,5 +359,14 @@ public enum CommandName {
      */
     public String getShortDesc(Locale userLocale) {
         return ApplicationResources.accessor.getMessage(userLocale, "CommandName."+name()+".shortDesc");
+    }
+
+    /**
+     * Gets the unmodifiable set of permissions that are required to be allowed
+     * to execute this command.  An empty set indicates no specific permissions are
+     * required.
+     */
+    public Set<AOServPermission.Permission> getPermissions() {
+        return permissions;
     }
 }

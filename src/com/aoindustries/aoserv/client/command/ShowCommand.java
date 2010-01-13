@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client.command;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.ServiceName;
 import com.aoindustries.sql.SQLUtility;
@@ -16,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author  AO Industries, Inc.
@@ -25,18 +23,14 @@ final public class ShowCommand extends AOServCommand<String> {
 
     private static final long serialVersionUID = 1L;
 
-    private final String object;
-
     public static final String PARAM_OBJECT = "object";
 
+    private final String object;
+
     public ShowCommand(
-        @Param(name=PARAM_OBJECT, nullible=false, syntax="<b>tables</b>") String object
+        @Param(name=PARAM_OBJECT, nullable=false, syntax="<b>tables</b>") String object
     ) {
         this.object = object;
-    }
-
-    public Set<AOServPermission.Permission> getPermissions() throws RemoteException {
-        return Collections.emptySet();
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
@@ -60,7 +54,8 @@ final public class ShowCommand extends AOServCommand<String> {
         return Collections.emptyMap();
     }
 
-    protected String doExecute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    @Override
+    public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         Locale locale = connector.getLocale();
 
         // Build the Object[] of values

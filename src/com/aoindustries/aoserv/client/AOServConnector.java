@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.AOServCommand;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -72,6 +73,11 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
      * Gets the password used to login.
      */
     String getPassword() throws RemoteException;
+
+    /**
+     * Executes an aosh command and returns its result.
+     */
+    <R> R executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException;
 
     /**
      * Gets an unmodifiable map of all of the services in the system.
@@ -272,22 +278,6 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /* TODO
     public void clearCaches() {
         for(AOServTable table : tables) table.clearCache();
-    }*/
-
-    /**
-     * Executes an aosh command and captures its output into a <code>String</code>.
-     *
-     * @param  args  the command and arguments to be processed
-     *
-     * @return  the results of the command wrapped into a <code>String</code>
-     *
-     * @exception  IOException  if unable to access the server
-     * @exception  SQLException  if unable to access the database or data integrity
-     *                           checks fail
-     */
-    /* TODO
-    public String executeCommand(String[] args) throws IOException, SQLException {
-        return AOSH.executeCommand(this, args);
     }
 
     private static final Random random = new SecureRandom();

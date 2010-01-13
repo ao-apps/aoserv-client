@@ -5,12 +5,15 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.AddFailoverFileLog;
+import com.aoindustries.aoserv.client.command.RequestReplicationDaemonAccess;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.Locale;
 import java.util.Set;
 
@@ -187,26 +190,34 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     public IndexedSet<FileBackupSetting> getFileBackupSettings() throws RemoteException {
         return getService().getConnector().getFileBackupSettings().filterIndexed(FileBackupSetting.COLUMN_REPLICATION, this);
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /*
-    public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws IOException, SQLException {
-    	return getService().getConnector().getFailoverFileLogs().addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
-    }
-
-    public void setBitRate(int bitRate) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
-    }
-    */
-    public int getBlockSize() {
-        return BufferManager.BUFFER_SIZE;
-    }
 
     public IndexedSet<FailoverFileLog> getFailoverFileLogs() throws RemoteException {
         return getService().getConnector().getFailoverFileLogs().filterIndexed(FailoverFileLog.COLUMN_REPLICATION, this);
     }
-    /* TODO
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="BitRateProvider">
+    public int getBlockSize() {
+        return BufferManager.BUFFER_SIZE;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public int addFailoverFileLog(Timestamp startTime, Timestamp endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws RemoteException {
+        return new AddFailoverFileLog(key, startTime, endTime, scanned, updated, bytes, isSuccessful).execute(getService().getConnector());
+    }
+
+    public AOServer.DaemonAccess requestReplicationDaemonAccess() throws RemoteException {
+        return new RequestReplicationDaemonAccess(key).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /*
+    public void setBitRate(int bitRate) throws IOException, SQLException {
+        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
+    }
+
     public int addFileBackupSetting(String path, boolean backupEnabled) throws IOException, SQLException {
         return getService().getConnector().getFileBackupSettings().addFileBackupSetting(this, path, backupEnabled);
     }
@@ -221,36 +232,6 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
 
     public void setFileBackupSettings(List<String> paths, List<Boolean> backupEnableds) throws IOException, SQLException {
         getService().getConnector().getFileBackupSettings().setFileBackupSettings(this, paths, backupEnableds);
-    }
-
-    public AOServer.DaemonAccess requestReplicationDaemonAccess() throws IOException, SQLException {
-        return getService().getConnector().requestResult(
-            true,
-            new AOServConnector.ResultRequest<AOServer.DaemonAccess>() {
-                private AOServer.DaemonAccess daemonAccess;
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS.ordinal());
-                    out.writeCompressedInt(pkey);
-                }
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) {
-                        daemonAccess = new AOServer.DaemonAccess(
-                            in.readUTF(),
-                            in.readUTF(),
-                            in.readCompressedInt(),
-                            in.readLong()
-                        );
-                    } else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-                public AOServer.DaemonAccess afterRelease() {
-                    return daemonAccess;
-                }
-            }
-        );
     }
      */
     // </editor-fold>

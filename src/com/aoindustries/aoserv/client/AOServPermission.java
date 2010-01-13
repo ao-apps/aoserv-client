@@ -39,6 +39,10 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
         add_credit_card,
         delete_credit_card,
         edit_credit_card,
+        // failover_file_logs
+        add_failover_file_log,
+        // failover_file_replications
+        request_replication_daemon_access,
         // linux_server_accounts
         set_linux_server_account_password,
         // mysql_databases

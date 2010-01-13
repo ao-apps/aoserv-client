@@ -32,22 +32,14 @@ final public class DescribeCommand extends AOServCommand<String> {
 
     private static final String eol = System.getProperty("line.separator");
 
-    private final String table_name;
-
     public static final String PARAM_TABLE_NAME = "table_name";
 
-    public DescribeCommand(ServiceName table_name) {
-        this(table_name.name());
-    }
+    private final String table_name;
 
     public DescribeCommand(
-        @Param(name=PARAM_TABLE_NAME, nullible=false, syntax="<i>"+PARAM_TABLE_NAME+"</i>") String table_name
+        @Param(name=PARAM_TABLE_NAME, nullable=false, syntax="<i>"+PARAM_TABLE_NAME+"</i>") String table_name
     ) {
         this.table_name = table_name;
-    }
-
-    public Set<AOServPermission.Permission> getPermissions() throws RemoteException {
-        return Collections.emptySet();
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
@@ -78,7 +70,8 @@ final public class DescribeCommand extends AOServCommand<String> {
         return generic.indexOf('<')!=-1 ? generic : method.getReturnType().getName();
     }
 
-    protected String doExecute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    @Override
+    public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         // Find the table given its name
         AOServService<?,?,?,?> service = connector.getServices().get(ServiceName.valueOf(table_name));
         Locale locale = connector.getLocale();

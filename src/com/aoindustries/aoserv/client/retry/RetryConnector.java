@@ -71,6 +71,7 @@ import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
 import com.aoindustries.aoserv.client.UsernameService;
+import com.aoindustries.aoserv.client.command.AOServCommand;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
@@ -549,6 +550,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     }
 
     <T> T retry(Callable<T> callable) throws RemoteException, NoSuchElementException {
+        return call(callable, true);
+    }
+
+    <T> T call(Callable<T> callable, boolean allowRetry) throws RemoteException, NoSuchElementException {
         int attempt = 1;
         while(!Thread.interrupted()) {
             if(factory.timeout>0) {
@@ -557,10 +562,10 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
                     return future.get(factory.timeout, factory.unit);
                 } catch(RuntimeException err) {
                     disconnectIfNeeded(err);
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
                 } catch(ExecutionException err) {
                     disconnectIfNeeded(err);
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) {
+                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) {
                         Throwable cause = err.getCause();
                         if(cause instanceof RemoteException) throw (RemoteException)cause;
                         if(cause instanceof NoSuchElementException) throw (NoSuchElementException)cause;
@@ -569,25 +574,26 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
                 } catch(TimeoutException err) {
                     future.cancel(true);
                     disconnectIfNeeded(err);
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
                 } catch(Exception err) {
                     disconnectIfNeeded(err);
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
                 }
             } else {
                 try {
                     return callable.call();
                 } catch(RuntimeException err) {
                     disconnectIfNeeded(err);
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
                 } catch(RemoteException err) {
                     disconnectIfNeeded(err);
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
                 } catch(Exception err) {
                     disconnectIfNeeded(err);
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
                 }
             }
+            if(!allowRetry) throw new AssertionError("allowRetry==false");
             try {
                 Thread.sleep(RetryUtils.retryAttemptDelays[attempt-1]);
             } catch(InterruptedException err) {
@@ -610,8 +616,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         if(!this.locale.equals(locale)) {
             this.locale = locale;
             retry(
-                new Callable<Object>() {
-                    public Object call() throws RemoteException {
+                new Callable<Void>() {
+                    public Void call() throws RemoteException {
                         getWrapped().setLocale(locale);
                         return null;
                     }
@@ -634,6 +640,17 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
 
     public String getPassword() {
         return password;
+    }
+
+    public <R> R executeCommand(final AOServCommand<R> command, final boolean isInteractive) throws RemoteException {
+        return call(
+            new Callable<R>() {
+                public R call() throws RemoteException {
+                    return getWrapped().executeCommand(command, isInteractive);
+                }
+            },
+            command.isRetryable()
+        );
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<RetryConnector,RetryConnectorFactory,?,?>>>();

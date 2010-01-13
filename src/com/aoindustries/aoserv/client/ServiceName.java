@@ -235,5 +235,4 @@ public enum ServiceName implements LocalizedToString {
     public String getDescription(Locale userLocale) {
         return ApplicationResources.accessor.getMessage(userLocale, "ServiceName."+name()+".description");
     }
-
 }

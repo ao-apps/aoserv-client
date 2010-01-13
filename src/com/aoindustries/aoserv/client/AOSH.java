@@ -284,7 +284,7 @@ final public class AOSH extends ShellInterpreter {
                                     Class<?> parameterType = parameterTypes[c];
                                     if(parameterType==String.class) {
                                         // If allows null, convert empty string to null
-                                        if(arg.length()==0 && paramAnnotation.nullible()) parameters[c] = null;
+                                        if(arg.length()==0 && paramAnnotation.nullable()) parameters[c] = null;
                                         else parameters[c] = arg;
                                     } else {
                                         throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
@@ -292,6 +292,14 @@ final public class AOSH extends ShellInterpreter {
                                 }
                                 try {
                                     AOServCommand<?> aoservCommand = constructor.newInstance(parameters);
+                                    // TODO: Make sure current user is enabled
+
+                                    // TODO: Check permissions
+
+                                    // Validate
+                                    Map<String,List<String>> errors = aoservCommand.validate(connector.getLocale(), connector.getThisBusinessAdministrator());
+                                    if(!errors.isEmpty()) throw new ValidationException(aoservCommand, errors);
+
                                     Object resultObj = aoservCommand.execute(connector, isInteractive());
                                     if(resultObj!=null) {
                                         String s = resultObj.toString();

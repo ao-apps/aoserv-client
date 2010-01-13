@@ -71,6 +71,7 @@ import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
 import com.aoindustries.aoserv.client.UsernameService;
+import com.aoindustries.aoserv.client.command.AOServCommand;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
@@ -495,6 +496,11 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     public String getPassword() throws RemoteException {
         NoSwingConnectorFactory.checkNotSwing();
         return wrapped.getPassword();
+    }
+
+    public <R> R executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return wrapped.executeCommand(command, isInteractive);
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<NoSwingConnector,NoSwingConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<NoSwingConnector,NoSwingConnectorFactory,?,?>>>();

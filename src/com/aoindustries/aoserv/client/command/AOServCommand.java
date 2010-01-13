@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client.command;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -17,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <p>
@@ -108,13 +106,6 @@ abstract public class AOServCommand<R> implements Serializable {
     }
 
     /**
-     * Gets the unmodifiable set of permissions that are required to be allowed
-     * to execute this command.  An empty set indicates no specific permissions are
-     * required.
-     */
-    abstract public Set<AOServPermission.Permission> getPermissions() throws RemoteException;
-
-    /**
      * Validates this command, returning a set of error messages on a per-parameter
      * basis.  Messages that are not associated with a specific parameters will have
      * a <code>null</code> key.  If there is no validation problems, returns an
@@ -123,33 +114,25 @@ abstract public class AOServCommand<R> implements Serializable {
     abstract public Map<String,List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException;
 
     /**
-     * Executes the command and retrieves the result.  If the command return
-     * value is void, returns <code>null</code>.  This will first ensure that the current
-     * user has the appropriate permissions and will throw AOServPermissionException if doesn't
-     * have the correct permissions.  This will first call <code>validate</code>
-     * and throw an exception if the validation fails.
-     */
-    final public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws AOServPermissionException, ValidationException, RemoteException {
-        // TODO: Make sure current user is enabled
-
-        // TODO: Check permissions
-
-        // Validate
-        Map<String,List<String>> errors = validate(connector.getLocale(), connector.getThisBusinessAdministrator());
-        if(!errors.isEmpty()) throw new ValidationException(this, errors);
-
-        return doExecute(connector, isInteractive);
-    }
-
-    /**
-     * Called after security checks and validation succeeds.
-     */
-    abstract protected R doExecute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException;
-
-    /**
      * Determines if this command may be retried in the event of an error.  Defaults to <code>true</code>.
      */
     public boolean isRetryable() {
         return true;
+    }
+
+    /**
+     * Executes this command in non-interactive mode.
+     */
+    final public R execute(AOServConnector<?,?> connector) throws RemoteException {
+        return execute(connector, false);
+    }
+
+    /**
+     * Executes the command and retrieves the result.  If the command return
+     * value is void, returns <code>null</code>.  This default implementation
+     * serializes the command to the server for execution.
+     */
+    public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+        return connector.executeCommand(this, isInteractive);
     }
 }

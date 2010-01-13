@@ -71,6 +71,7 @@ import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZoneService;
 import com.aoindustries.aoserv.client.UsernameService;
+import com.aoindustries.aoserv.client.command.AOServCommand;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
@@ -499,6 +500,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
 
     public String getPassword() {
         return password;
+    }
+
+    public <R> R executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException {
+        return wrapped.executeCommand(command, isInteractive);
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>>>();

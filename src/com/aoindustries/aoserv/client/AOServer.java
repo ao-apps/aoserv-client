@@ -8,10 +8,13 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
+import com.aoindustries.aoserv.client.validator.Hostname;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.LinuxID;
+import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Locale;
@@ -477,6 +480,45 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Daemon Access">
+    public static class DaemonAccess implements Serializable, BeanFactory<com.aoindustries.aoserv.client.beans.DaemonAccess> {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String protocol;
+        private final Hostname host;
+        private final NetPort port;
+        private final long key;
+
+        public DaemonAccess(String protocol, Hostname host, NetPort port, long key) {
+            this.protocol = protocol;
+            this.host = host;
+            this.port = port;
+            this.key = key;
+        }
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public Hostname getHost() {
+            return host;
+        }
+
+        public NetPort getPort() {
+            return port;
+        }
+
+        public long getKey() {
+            return key;
+        }
+
+        public com.aoindustries.aoserv.client.beans.DaemonAccess getBean() {
+            return new com.aoindustries.aoserv.client.beans.DaemonAccess(protocol, host.getBean(), port.getBean(), key);
+        }
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public int addCvsRepository(
@@ -795,37 +837,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     public void restartXvfb() throws IOException, SQLException {
         getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_XVFB, pkey);
-    }
-
-    public static class DaemonAccess {
-
-        private final String protocol;
-        private final String host;
-        private final int port;
-        private final long key;
-
-        public DaemonAccess(String protocol, String host, int port, long key) {
-            this.protocol = protocol;
-            this.host = host;
-            this.port = port;
-            this.key = key;
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public String getHost() {
-            return host;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public long getKey() {
-            return key;
-        }
     }
 
     public void setLastDistroTime(long distroTime) throws IOException, SQLException {
