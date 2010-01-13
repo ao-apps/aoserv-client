@@ -23,7 +23,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatabase> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresDatabase> /* TODO: , Dumpable, Removable, JdbcProvider */ {
+final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatabase> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresDatabase> /* TODO: , Dumpable, Removable*/, JdbcProvider {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -97,7 +97,8 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         return getService().getConnector().getAoServerResources().get(key);
     }
 
-    @SchemaColumn(order=1, name="name", description="the name of the database")
+    static final String COLUMN_NAME = "name";
+    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
     public PostgresDatabaseName getName() {
         return name;
     }
@@ -179,13 +180,12 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         return JDBC_DRIVER;
     }
 
-    /* TODO
     public String getJdbcUrl(boolean ipOnly) throws RemoteException {
         AOServer ao=getPostgresServer().getAoServerResource().getAoServer();
         return
             "jdbc:postgresql://"
             + (ipOnly
-               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().getAddress()
+               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID()).getPrimaryIPAddress().getIpAddress().getAddress()
                :ao.getHostname().getDomain()
             )
             + ':'
@@ -194,7 +194,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
             + getName()
         ;
     }
-    */
+
     public String getJdbcDocumentationUrl() throws RemoteException {
         String version=getPostgresServer().getPostgresVersion().getTechnologyVersion().getVersion();
         return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";

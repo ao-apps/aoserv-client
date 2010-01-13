@@ -15,6 +15,7 @@ import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -94,11 +95,11 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         return getService().getConnector().getBusinessServers().get(businessServer);
     }
 
+    static final String COLUMN_IP_ADDRESS = "ip_address";
     /**
      * Gets the IP address this bind is on or <code>null</code> if should listen to all available
      * addresses on the server.
      */
-    static final String COLUMN_IP_ADDRESS = "ip_address";
     @SchemaColumn(order=2, name=COLUMN_IP_ADDRESS, index=IndexType.INDEXED, description="the pkey of the IP address that is bound to")
     public IPAddress getIpAddress() throws RemoteException {
         if(ipAddress==null) return null;
@@ -173,9 +174,9 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             getAOServerByDaemonConnectNetBind(),
             getAOServerByJilterNetBind(),
             getMySQLServer(),
+            getNetTcpRedirect(),
             getPostgresServer()
             // TODO: getBrandByAowebStrutsVncBind(),
-            // TODO: getNetTcpRedirect(),
             // TODO: getEmailSmartHost(),
             // TODO: getHttpdBind(),
             // TODO: getHttpdJBossSiteByJNPPort(),
@@ -188,6 +189,17 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             // TODO: getHttpdTomcatStdSiteByShutdownPort(),
             // TODO: getPrivateFTPServer(),
         );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+        IPAddress ip = getIpAddress();
+        if(ip==null) return "*:"+getPort()+'/'+getNetProtocol();
+        String address = ip.getIpAddress().getAddress();
+        if(address.indexOf(':')==-1) return address+':'+getPort()+'/'+getNetProtocol();
+        else return '['+address+"]:"+getPort()+'/'+getNetProtocol();
     }
     // </editor-fold>
 
@@ -206,6 +218,10 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     public MySQLServer getMySQLServer() throws RemoteException {
         return getService().getConnector().getMysqlServers().filterUnique(MySQLServer.COLUMN_NET_BIND, this);
+    }
+
+    public NetTcpRedirect getNetTcpRedirect() throws RemoteException {
+        return getService().getConnector().getNetTcpRedirects().filterUnique(NetTcpRedirect.COLUMN_NET_BIND, this);
     }
 
     public PostgresServer getPostgresServer() throws RemoteException {
@@ -247,10 +263,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
         return getService().getConnector().getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
-    }
-
-    public NetTcpRedirect getNetTcpRedirect() throws IOException, SQLException {
-        return getService().getConnector().getNetTcpRedirects().get(pkey);
     }
 
     public PrivateFTPServer getPrivateFTPServer() throws IOException, SQLException {

@@ -99,7 +99,8 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
         return getService().getConnector().getNetDevices().get(netDevice);
     }
 
-    @SchemaColumn(order=3, name="is_alias", description="indicates that the IP address is using IP aliasing on the network device")
+    static final String COLUMN_IS_ALIAS = "is_alias";
+    @SchemaColumn(order=3, name=COLUMN_IS_ALIAS, index=IndexType.INDEXED, description="indicates that the IP address is using IP aliasing on the network device")
     public boolean isAlias() {
         return isAlias;
     }
@@ -135,7 +136,7 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     }
 
     @SchemaColumn(order=10, name="netmask", description="the netmask of the local network")
-    public int getNetMask() {
+    public short getNetMask() {
         return netmask;
     }
     // </editor-fold>

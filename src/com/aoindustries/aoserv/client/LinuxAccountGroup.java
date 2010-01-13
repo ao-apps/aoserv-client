@@ -74,7 +74,8 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
         return getService().getConnector().getLinuxGroups().get(linuxGroup);
     }
 
-    @SchemaColumn(order=3, name="is_primary", description="flag showing that this group is the user's primary group")
+    static final String COLUMN_IS_PRIMARY = "is_primary";
+    @SchemaColumn(order=3, name=COLUMN_IS_PRIMARY, index=IndexType.INDEXED, description="flag showing that this group is the user's primary group")
     public boolean isPrimary() {
         return isPrimary;
     }

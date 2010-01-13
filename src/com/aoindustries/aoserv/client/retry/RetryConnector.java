@@ -44,6 +44,7 @@ import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetDeviceService;
 import com.aoindustries.aoserv.client.NetProtocolService;
+import com.aoindustries.aoserv.client.NetTcpRedirectService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
@@ -221,8 +222,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     final RetryNetDeviceIDService netDeviceIDs;
     final RetryNetDeviceService netDevices;
     final RetryNetProtocolService netProtocols;
-    /* TODO
     final RetryNetTcpRedirectService netTcpRedirects;
+    /* TODO
     final RetryNoticeLogService noticeLogs;
     final RetryNoticeTypeService noticeTypes;
     */
@@ -413,8 +414,8 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         netDeviceIDs = new RetryNetDeviceIDService(this);
         netDevices = new RetryNetDeviceService(this);
         netProtocols = new RetryNetProtocolService(this);
-        /* TODO
         netTcpRedirects = new RetryNetTcpRedirectService(this);
+        /* TODO
         noticeLogs = new RetryNoticeLogService(this);
         noticeTypes = new RetryNoticeTypeService(this);
         */
@@ -914,9 +915,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     public NetProtocolService<RetryConnector,RetryConnectorFactory> getNetProtocols() {
         return netProtocols;
     }
-    /* TODO
-    public NetTcpRedirectService<RetryConnector,RetryConnectorFactory> getNetTcpRedirects();
 
+    public NetTcpRedirectService<RetryConnector,RetryConnectorFactory> getNetTcpRedirects() {
+        return netTcpRedirects;
+    }
+    /* TODO
     public NoticeLogService<RetryConnector,RetryConnectorFactory> getNoticeLogs();
 
     public NoticeTypeService<RetryConnector,RetryConnectorFactory> getNoticeTypes();

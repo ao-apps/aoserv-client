@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -24,19 +25,28 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     /**
      * The username of the PostgreSQL special users.
      */
-    public static final String
-        POSTGRES="postgres",
-        AOADMIN="aoadmin",
-        AOSERV_APP="aoserv_app",
-        AOWEB_APP="aoweb_app"
+    public static final PostgresUserId
+        POSTGRES,
+        AOADMIN,
+        AOSERV_APP,
+        AOWEB_APP
     ;
+    static {
+        try {
+            POSTGRES = PostgresUserId.valueOf("postgres").intern();
+            AOADMIN = PostgresUserId.valueOf("aoadmin").intern();
+            AOSERV_APP = PostgresUserId.valueOf("aoserv_app").intern();
+            AOWEB_APP = PostgresUserId.valueOf("aoweb_app").intern();
+        } catch(ValidationException err) {
+            throw new AssertionError(err.getMessage());
+        }
+    }
 
     /**
      * A password may be set to null, which means that the account will
-     * be disabled.
+     * be disabled.  When this is the case, an empty string is stored in the
+     * password field of the database.
      */
-    public static final String NO_PASSWORD=null;
-
     public static final String NO_PASSWORD_DB_VALUE="";
     // </editor-fold>
 

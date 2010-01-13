@@ -198,8 +198,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     NetDeviceIDService<C,F> getNetDeviceIDs() throws RemoteException;
     NetDeviceService<C,F> getNetDevices() throws RemoteException;
     NetProtocolService<C,F> getNetProtocols() throws RemoteException;
-    /* TODO
     NetTcpRedirectService<C,F> getNetTcpRedirects() throws RemoteException;
+    /* TODO
     NoticeLogService<C,F> getNoticeLogs() throws RemoteException;
     NoticeTypeService<C,F> getNoticeTypes() throws RemoteException;
     */

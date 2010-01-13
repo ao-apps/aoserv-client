@@ -44,6 +44,7 @@ import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetDeviceService;
 import com.aoindustries.aoserv.client.NetProtocolService;
+import com.aoindustries.aoserv.client.NetTcpRedirectService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
@@ -207,8 +208,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final CachedNetDeviceIDService netDeviceIDs;
     final CachedNetDeviceService netDevices;
     final CachedNetProtocolService netProtocols;
-    /* TODO
     final CachedNetTcpRedirectService netTcpRedirects;
+    /* TODO
     final CachedNoticeLogService noticeLogs;
     final CachedNoticeTypeService noticeTypes;
     */
@@ -400,8 +401,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         netDeviceIDs = new CachedNetDeviceIDService(this, wrapped.getNetDeviceIDs());
         netDevices = new CachedNetDeviceService(this, wrapped.getNetDevices());
         netProtocols = new CachedNetProtocolService(this, wrapped.getNetProtocols());
-        /* TODO
         netTcpRedirects = new CachedNetTcpRedirectService(this, wrapped.getNetTcpRedirects());
+        /* TODO
         noticeLogs = new CachedNoticeLogService(this, wrapped.getNoticeLogs());
         noticeTypes = new CachedNoticeTypeService(this, wrapped.getNoticeTypes());
         */
@@ -784,9 +785,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     public NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols() {
         return netProtocols;
     }
-    /* TODO
-    public NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects();
 
+    public NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects() {
+        return netTcpRedirects;
+    }
+    /* TODO
     public NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
 
     public NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes();

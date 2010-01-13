@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -159,8 +160,23 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         return getService().getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_SERVER, this);
     }
 
+    public IndexedSet<IPAddress> getIPAddresses() throws RemoteException {
+        return getService().getConnector().getIpAddresses().filterIndexedSet(IPAddress.COLUMN_NET_DEVICE, getNetDevices());
+    }
+
     public IndexedSet<NetDevice> getNetDevices() throws RemoteException {
     	return getService().getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_SERVER, this);
+    }
+
+    /**
+     * Gets the net device with the provided ID.
+     *
+     * @throws java.util.NoSuchElementException if not found
+     */
+    public NetDevice getNetDevice(NetDeviceID deviceID) throws RemoteException, NoSuchElementException {
+        NetDevice nd = getNetDevices().filterUnique(NetDevice.COLUMN_DEVICE_ID, deviceID);
+        if(nd==null) throw new NoSuchElementException("Unable to find NetDevice "+deviceID+" on "+this);
+        return nd;
     }
 
     public IndexedSet<ServerResource> getServerResources() throws RemoteException {
@@ -171,7 +187,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         return getService().getConnector().getNetBinds().filterIndexedSet(NetBind.COLUMN_BUSINESS_SERVER, getBusinessServers());
     }
 
-    public Indexed<NetBind> getNetBinds(Protocol protocol) throws RemoteException {
+    public IndexedSet<NetBind> getNetBinds(Protocol protocol) throws RemoteException {
         return getNetBinds().filterIndexed(NetBind.COLUMN_APP_PROTOCOL, protocol);
     }
 
@@ -205,14 +221,6 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
             if(nb.getBusinessServer().server==pkey) matches.add(nb);
         }
         return Collections.unmodifiableList(matches);
-    }
-
-    public NetDevice getNetDevice(String deviceID) throws IOException, SQLException {
-    	return getService().getConnector().getNetDevices().getNetDevice(this, deviceID);
-    }
-
-    public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-        return getService().getConnector().getIpAddresses().getIPAddresses(this);
     }
 
     public IPAddress getAvailableIPAddress() throws SQLException, IOException {

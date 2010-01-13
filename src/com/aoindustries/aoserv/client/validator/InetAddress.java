@@ -506,4 +506,18 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
     public boolean isOrchid() {
         return (ip.getHigh()&0xfffffff000000000L)==0x2001001000000000L;
     }
+
+    public boolean isIPv4() {
+        if(ip.getHigh()!=0) return false;
+        long lo = ip.getLow();
+        return
+            lo!=0
+            && lo!=1
+            && (lo&0xffffffff00000000L)==0x0000000000000000L
+        ;
+    }
+
+    public boolean isIPv6() {
+        return !isIPv4();
+    }
 }

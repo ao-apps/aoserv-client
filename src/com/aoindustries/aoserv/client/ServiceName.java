@@ -134,8 +134,8 @@ public enum ServiceName implements LocalizedToString {
     net_device_ids,
     net_devices,
     net_protocols,
-    /* TODO
     net_tcp_redirects,
+    /* TODO
     notice_log,
     notice_types,
      */

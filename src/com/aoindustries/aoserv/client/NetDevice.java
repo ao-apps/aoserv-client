@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.validator.MacAddress;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -201,18 +202,12 @@ final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implement
     public IndexedSet<IPAddress> getIpAddresses() throws RemoteException {
         return getService().getConnector().getIpAddresses().filterIndexed(IPAddress.COLUMN_NET_DEVICE, this);
     }
-    /* TODO
-    public IPAddress getPrimaryIPAddress() throws SQLException, IOException {
-	List<IPAddress> ips=getIPAddresses();
-        List<IPAddress> matches=new ArrayList<IPAddress>();
-	for(int c=0;c<ips.size();c++) {
-            IPAddress ip=ips.get(c);
-            if(!ip.isAlias()) matches.add(ip);
-	}
-        if(matches.isEmpty()) throw new NoSuchElementException("Unable to find primary IPAddress for NetDevice: "+deviceId+" on "+server);
-        if(matches.size()>1) throw new SQLException("Found more than one primary IPAddress for NetDevice: "+deviceId+" on "+server);
-        return matches.get(0);
-    }*/
+
+    public IPAddress getPrimaryIPAddress() throws RemoteException, NoSuchElementException {
+        IPAddress primaryIp = getIpAddresses().filterUnique(IPAddress.COLUMN_IS_ALIAS, false);
+        if(primaryIp==null) throw new NoSuchElementException("Unable to find primary IP address for NetDevice: "+this);
+        return primaryIp;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

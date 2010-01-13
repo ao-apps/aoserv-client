@@ -44,6 +44,7 @@ import com.aoindustries.aoserv.client.NetBindService;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetDeviceService;
 import com.aoindustries.aoserv.client.NetProtocolService;
+import com.aoindustries.aoserv.client.NetTcpRedirectService;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategoryService;
@@ -206,8 +207,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     final NoSwingNetDeviceIDService netDeviceIDs;
     final NoSwingNetDeviceService netDevices;
     final NoSwingNetProtocolService netProtocols;
-    /* TODO
     final NoSwingNetTcpRedirectService netTcpRedirects;
+    /* TODO
     final NoSwingNoticeLogService noticeLogs;
     final NoSwingNoticeTypeService noticeTypes;
     */
@@ -395,8 +396,8 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         netDeviceIDs = new NoSwingNetDeviceIDService(this, wrapped.getNetDeviceIDs());
         netDevices = new NoSwingNetDeviceService(this, wrapped.getNetDevices());
         netProtocols = new NoSwingNetProtocolService(this, wrapped.getNetProtocols());
-        /* TODO
         netTcpRedirects = new NoSwingNetTcpRedirectService(this, wrapped.getNetTcpRedirects());
+        /* TODO
         noticeLogs = new NoSwingNoticeLogService(this, wrapped.getNoticeLogs());
         noticeTypes = new NoSwingNoticeTypeService(this, wrapped.getNoticeTypes());
         */
@@ -815,9 +816,12 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         NoSwingConnectorFactory.checkNotSwing();
         return netProtocols;
     }
-    /* TODO
-    public NetTcpRedirectService<NoSwingConnector,NoSwingConnectorFactory> getNetTcpRedirects() throws RemoteException;
 
+    public NetTcpRedirectService<NoSwingConnector,NoSwingConnectorFactory> getNetTcpRedirects() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return netTcpRedirects;
+    }
+    /* TODO
     public NoticeLogService<NoSwingConnector,NoSwingConnectorFactory> getNoticeLogs() throws RemoteException;
 
     public NoticeTypeService<NoSwingConnector,NoSwingConnectorFactory> getNoticeTypes() throws RemoteException;

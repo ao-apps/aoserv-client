@@ -290,6 +290,10 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return getService().getConnector().getBackupPartitions().filterIndexed(BackupPartition.COLUMN_AO_SERVER, this);
     }
 
+    public IndexedSet<CvsRepository> getCvsRepositories() throws RemoteException {
+        return getService().getConnector().getCvsRepositories().filterUniqueSet(CvsRepository.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
+    }
+
     /**
      * Gets the set of servers that are currently failed-over to this server.
      */
@@ -308,13 +312,23 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return getService().getConnector().getLinuxAccounts().filterUniqueSet(LinuxAccount.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
     }
 
-    public LinuxAccount getLinuxAccount(UserId username) throws RemoteException {
+    /**
+     * Gets the linux account with the given name.
+     *
+     * @throws NoSuchElementException if account not found.
+     */
+    public LinuxAccount getLinuxAccount(UserId username) throws RemoteException, NoSuchElementException {
         LinuxAccount la = getLinuxAccounts().filterUnique(LinuxAccount.COLUMN_USERNAME, getService().getConnector().getUsernames().get(username));
         if(la==null) throw new NoSuchElementException("this="+this+", username="+username);
         return la;
     }
 
-    public IndexedSet<LinuxAccount> getLinuxAccounts(LinuxID uid) throws RemoteException {
+    /**
+     * Gets the linux accounts with the given UID.
+     *
+     * @throws NoSuchElementException if no accounts found.
+     */
+    public IndexedSet<LinuxAccount> getLinuxAccounts(LinuxID uid) throws RemoteException, NoSuchElementException {
         IndexedSet<LinuxAccount> las = getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_UID, uid);
         if(las.isEmpty()) throw new NoSuchElementException("this="+this+", uid="+uid);
         return las;
@@ -324,7 +338,12 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return getService().getConnector().getLinuxGroups().filterUniqueSet(LinuxGroup.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
     }
 
-    public LinuxGroup getLinuxGroup(GroupId groupName) throws RemoteException {
+    /**
+     * Gets the linux group with the given name.
+     *
+     * @throws NoSuchElementException if group not found.
+     */
+    public LinuxGroup getLinuxGroup(GroupId groupName) throws RemoteException, NoSuchElementException {
         LinuxGroup lg = getLinuxGroups().filterUnique(LinuxGroup.COLUMN_GROUP_NAME, getService().getConnector().getGroupNames().get(groupName));
         if(lg==null) throw new NoSuchElementException("this="+this+", groupName="+groupName);
         return lg;
@@ -341,13 +360,17 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     public IndexedSet<AOServerDaemonHost> getAoServerDaemonHosts() throws RemoteException {
     	return getService().getConnector().getAoServerDaemonHosts().filterIndexed(AOServerDaemonHost.COLUMN_AO_SERVER, this);
     }
+
+    public IPAddress getPrimaryIPAddress() throws RemoteException {
+        NetDeviceID deviceId = getDaemonDeviceID();
+        NetDevice nd=getServer().getNetDevice(deviceId);
+        if(nd==null) throw new NoSuchElementException("Unable to find NetDevice: "+deviceId+" on "+this);
+        return nd.getPrimaryIPAddress();
+    }
+
     /* TODO
     public List<BlackholeEmailAddress> getBlackholeEmailAddresses() throws IOException {
     	return getService().getConnector().getBlackholeEmailAddresses().getBlackholeEmailAddresses(this);
-    }
-
-    public List<CvsRepository> getCvsRepositories() throws IOException {
-        return getService().getConnector().getCvsRepositories().getCvsRepositories(this);
     }
 
     public IPAddress getDaemonIPAddress() throws IOException {
@@ -697,8 +720,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         }
         return null;
     }
-    */
-    /* TODO
+
     public MySQLServer getPreferredMySQLServer() throws IOException {
         // Look for the most-preferred version that has an instance on the server
         List<MySQLServer> pss=getMySQLServers();
@@ -715,9 +737,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
         // Default to first available server if no preferred ones round
         return pss.isEmpty()?null:pss.get(0);
-    }*/
+    }
 
-    /* TODO
     public PostgresServer getPostgresServer(String name) throws IOException {
         return getService().getConnector().getPostgresServers().getPostgresServer(name, this);
     }
@@ -740,20 +761,10 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return pss.isEmpty()?null:pss.get(0);
     }
 
-    public IPAddress getPrimaryIPAddress() throws IOException {
-        NetDeviceID ndi=getDaemonDeviceID();
-        String name=ndi.getName();
-        NetDevice nd=getServer().getNetDevice(name);
-        if(nd==null) throw new AssertionError("Unable to find NetDevice: "+name+" on "+pkey);
-        return nd.getPrimaryIPAddress();
-    }
-    */
-    /* TODO
     public PrivateFTPServer getPrivateFTPServer(String path) {
     	return getService().getConnector().privateFTPServers.getPrivateFTPServer(this, path);
-    }*/
+    }
 
-    /* TODO
     public boolean isEmailDomainAvailable(String domain) throws SQLException, IOException {
         return getService().getConnector().getEmailDomains().isEmailDomainAvailable(this, domain);
     }

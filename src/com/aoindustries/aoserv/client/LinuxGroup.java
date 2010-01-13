@@ -176,6 +176,10 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
         return getService().getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_GROUP, this);
     }
+
+    public IndexedSet<LinuxAccountGroup> getAlternateLinuxAccountGroups() throws RemoteException {
+        return getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_IS_PRIMARY, false);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

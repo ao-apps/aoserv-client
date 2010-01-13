@@ -5,12 +5,14 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -304,6 +306,17 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     	return getService().getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_POSTGRES_SERVER, this);
     }
 
+    /**
+     * Gets the database with the provided name.
+     *
+     * @throws java.util.NoSuchElementException if not found
+     */
+    public PostgresDatabase getPostgresDatabase(PostgresDatabaseName name) throws RemoteException, NoSuchElementException {
+        PostgresDatabase pd = getPostgresDatabases().filterUnique(PostgresDatabase.COLUMN_NAME, name);
+        if(pd==null) throw new NoSuchElementException("Unable to find PostgresDatabase: "+name+" on "+this);
+        return pd;
+    }
+
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
         return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
     }
@@ -328,10 +341,6 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
 
     public String getDataDirectory() {
         return DATA_BASE_DIR+'/'+name;
-    }
-
-    public PostgresDatabase getPostgresDatabase(String name) throws IOException, SQLException {
-    	return getService().getConnector().getPostgresDatabases().getPostgresDatabase(name, this);
     }
 
     public PostgresServerUser getPostgresServerUser(String username) throws IOException, SQLException {
