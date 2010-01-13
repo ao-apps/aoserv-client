@@ -7,71 +7,135 @@ package com.aoindustries.aoserv.client.cache;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
+import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.AOServPermissionService;
 import com.aoindustries.aoserv.client.AOServService;
+import com.aoindustries.aoserv.client.AOServer;
+import com.aoindustries.aoserv.client.AOServerDaemonHost;
 import com.aoindustries.aoserv.client.AOServerDaemonHostService;
+import com.aoindustries.aoserv.client.AOServerResource;
 import com.aoindustries.aoserv.client.AOServerResourceService;
 import com.aoindustries.aoserv.client.AOServerService;
+import com.aoindustries.aoserv.client.Architecture;
 import com.aoindustries.aoserv.client.ArchitectureService;
+import com.aoindustries.aoserv.client.BackupPartition;
 import com.aoindustries.aoserv.client.BackupPartitionService;
+import com.aoindustries.aoserv.client.BackupRetention;
 import com.aoindustries.aoserv.client.BackupRetentionService;
+import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
+import com.aoindustries.aoserv.client.BusinessServer;
 import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
+import com.aoindustries.aoserv.client.CountryCode;
 import com.aoindustries.aoserv.client.CountryCodeService;
+import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
+import com.aoindustries.aoserv.client.DisableLog;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.FailoverFileLog;
 import com.aoindustries.aoserv.client.FailoverFileLogService;
+import com.aoindustries.aoserv.client.FailoverFileReplication;
 import com.aoindustries.aoserv.client.FailoverFileReplicationService;
+import com.aoindustries.aoserv.client.FailoverFileSchedule;
 import com.aoindustries.aoserv.client.FailoverFileScheduleService;
+import com.aoindustries.aoserv.client.FailoverMySQLReplication;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
+import com.aoindustries.aoserv.client.FileBackupSetting;
 import com.aoindustries.aoserv.client.FileBackupSettingService;
+import com.aoindustries.aoserv.client.GroupName;
 import com.aoindustries.aoserv.client.GroupNameService;
+import com.aoindustries.aoserv.client.HttpdSite;
 import com.aoindustries.aoserv.client.HttpdSiteService;
+import com.aoindustries.aoserv.client.IPAddress;
 import com.aoindustries.aoserv.client.IPAddressService;
+import com.aoindustries.aoserv.client.Language;
 import com.aoindustries.aoserv.client.LanguageService;
+import com.aoindustries.aoserv.client.LinuxAccount;
+import com.aoindustries.aoserv.client.LinuxAccountGroup;
 import com.aoindustries.aoserv.client.LinuxAccountGroupService;
 import com.aoindustries.aoserv.client.LinuxAccountService;
+import com.aoindustries.aoserv.client.LinuxAccountType;
 import com.aoindustries.aoserv.client.LinuxAccountTypeService;
+import com.aoindustries.aoserv.client.LinuxGroup;
 import com.aoindustries.aoserv.client.LinuxGroupService;
+import com.aoindustries.aoserv.client.LinuxGroupType;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
+import com.aoindustries.aoserv.client.MySQLDBUser;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
+import com.aoindustries.aoserv.client.MySQLDatabase;
 import com.aoindustries.aoserv.client.MySQLDatabaseService;
+import com.aoindustries.aoserv.client.MySQLServer;
 import com.aoindustries.aoserv.client.MySQLServerService;
+import com.aoindustries.aoserv.client.MySQLUser;
 import com.aoindustries.aoserv.client.MySQLUserService;
+import com.aoindustries.aoserv.client.NetBind;
 import com.aoindustries.aoserv.client.NetBindService;
+import com.aoindustries.aoserv.client.NetDevice;
+import com.aoindustries.aoserv.client.NetDeviceID;
 import com.aoindustries.aoserv.client.NetDeviceIDService;
 import com.aoindustries.aoserv.client.NetDeviceService;
+import com.aoindustries.aoserv.client.NetProtocol;
 import com.aoindustries.aoserv.client.NetProtocolService;
+import com.aoindustries.aoserv.client.NetTcpRedirect;
 import com.aoindustries.aoserv.client.NetTcpRedirectService;
+import com.aoindustries.aoserv.client.OperatingSystem;
 import com.aoindustries.aoserv.client.OperatingSystemService;
+import com.aoindustries.aoserv.client.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
+import com.aoindustries.aoserv.client.PackageCategory;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.PostgresDatabase;
 import com.aoindustries.aoserv.client.PostgresDatabaseService;
+import com.aoindustries.aoserv.client.PostgresEncoding;
 import com.aoindustries.aoserv.client.PostgresEncodingService;
+import com.aoindustries.aoserv.client.PostgresServer;
 import com.aoindustries.aoserv.client.PostgresServerService;
+import com.aoindustries.aoserv.client.PostgresUser;
 import com.aoindustries.aoserv.client.PostgresUserService;
+import com.aoindustries.aoserv.client.PostgresVersion;
 import com.aoindustries.aoserv.client.PostgresVersionService;
+import com.aoindustries.aoserv.client.Protocol;
 import com.aoindustries.aoserv.client.ProtocolService;
+import com.aoindustries.aoserv.client.Resource;
 import com.aoindustries.aoserv.client.ResourceService;
+import com.aoindustries.aoserv.client.ResourceType;
 import com.aoindustries.aoserv.client.ResourceTypeService;
+import com.aoindustries.aoserv.client.Server;
+import com.aoindustries.aoserv.client.ServerFarm;
 import com.aoindustries.aoserv.client.ServerFarmService;
+import com.aoindustries.aoserv.client.ServerResource;
 import com.aoindustries.aoserv.client.ServerResourceService;
 import com.aoindustries.aoserv.client.ServerService;
 import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.ShellService;
+import com.aoindustries.aoserv.client.Technology;
+import com.aoindustries.aoserv.client.TechnologyClass;
 import com.aoindustries.aoserv.client.TechnologyClassService;
+import com.aoindustries.aoserv.client.TechnologyName;
 import com.aoindustries.aoserv.client.TechnologyNameService;
 import com.aoindustries.aoserv.client.TechnologyService;
+import com.aoindustries.aoserv.client.TechnologyVersion;
 import com.aoindustries.aoserv.client.TechnologyVersionService;
+import com.aoindustries.aoserv.client.TicketCategory;
 import com.aoindustries.aoserv.client.TicketCategoryService;
+import com.aoindustries.aoserv.client.TicketPriority;
 import com.aoindustries.aoserv.client.TicketPriorityService;
+import com.aoindustries.aoserv.client.TicketStatus;
 import com.aoindustries.aoserv.client.TicketStatusService;
+import com.aoindustries.aoserv.client.TicketType;
 import com.aoindustries.aoserv.client.TicketTypeService;
+import com.aoindustries.aoserv.client.TimeZone;
 import com.aoindustries.aoserv.client.TimeZoneService;
+import com.aoindustries.aoserv.client.Username;
 import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.DomainLabel;
+import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
@@ -93,189 +157,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final UserId connectAs;
     private final UserId authenticateAs;
     private final String password;
-    final CachedAOServerDaemonHostService aoserverDaemonHosts;
-    final CachedAOServerResourceService aoserverResources;
-    final CachedAOServerService aoservers;
-    final CachedAOServPermissionService aoservPermissions;
-    /* TODO
-    final CachedAOServProtocolService aoservProtocols;
-    final CachedAOSHCommandService aoshCommands;
-     */
-    final CachedArchitectureService architectures;
-    final CachedBackupPartitionService backupPartitions;
-    final CachedBackupRetentionService backupRetentions;
-    /* TODO
-    final CachedBankAccountService bankAccounts;
-    final CachedBankTransactionTypeService bankTransactionTypes;
-    final CachedBankTransactionService bankTransactions;
-    final CachedBankService banks;
-    final CachedBlackholeEmailAddressService blackholeEmailAddresss;
-    final CachedBrandService brands;
-     */
-    final CachedBusinessAdministratorService businessAdministrators;
-    /* TODO
-    final CachedBusinessAdministratorPermissionService businessAdministratorPermissions;
-    final CachedBusinessProfileService businessProfiles;
-     */
-    final CachedBusinessService businesses;
-    final CachedBusinessServerService businessServers;
-    final CachedCountryCodeService countryCodes;
-    /*
-    final CachedCreditCardProcessorService creditCardProcessors;
-    final CachedCreditCardTransactionService creditCardTransactions;
-    final CachedCreditCardService creditCards;
-     */
-    final CachedCvsRepositoryService cvsRepositories;
-    final CachedDisableLogService disableLogs;
-    /*
-    final CachedDistroFileTypeService distroFileTypes;
-    final CachedDistroFileService distroFiles;
-    final CachedDNSForbiddenZoneService dnsForbiddenZones;
-    final CachedDNSRecordService dnsRecords;
-    final CachedDNSTLDService dnsTLDs;
-    final CachedDNSTypeService dnsTypes;
-    final CachedDNSZoneService dnsZones;
-    final CachedEmailAddressService emailAddresss;
-    final CachedEmailAttachmentBlockService emailAttachmentBlocks;
-    final CachedEmailAttachmentTypeService emailAttachmentTypes;
-    final CachedEmailDomainService emailDomains;
-    final CachedEmailForwardingService emailForwardings;
-    final CachedEmailListAddressService emailListAddresss;
-    final CachedEmailListService emailLists;
-    final CachedEmailPipeAddressService emailPipeAddresss;
-    final CachedEmailPipeService emailPipes;
-    final CachedEmailSmtpRelayTypeService emailSmtpRelayTypes;
-    final CachedEmailSmtpRelayService emailSmtpRelays;
-    final CachedEmailSmtpSmartHostDomainService emailSmtpSmartHostDomains;
-    final CachedEmailSmtpSmartHostService emailSmtpSmartHosts;
-    final CachedEmailSpamAssassinIntegrationModeService emailSpamAssassinIntegrationModes;
-    final CachedEncryptionKeyService encryptionKeys;
-    final CachedExpenseCategoryService expenseCategories;
-     */
-    final CachedFailoverFileLogService failoverFileLogs;
-    final CachedFailoverFileReplicationService failoverFileReplications;
-    final CachedFailoverFileScheduleService failoverFileSchedules;
-    final CachedFailoverMySQLReplicationService failoverMySQLReplications;
-    final CachedFileBackupSettingService fileBackupSettings;
-    final CachedGroupNameService groupNames;
-    /*
-    final CachedFTPGuestUserService ftpGuestUsers;
-    final CachedHttpdBindService httpdBinds;
-    final CachedHttpdJBossSiteService httpdJBossSites;
-    final CachedHttpdJBossVersionService httpdJBossVersions;
-    final CachedHttpdJKCodeService httpdJKCodes;
-    final CachedHttpdJKProtocolService httpdJKProtocols;
-    final CachedHttpdServerService httpdServers;
-    final CachedHttpdSharedTomcatService httpdSharedTomcats;
-    final CachedHttpdSiteAuthenticatedLocationService httpdSiteAuthenticatedLocations;
-    final CachedHttpdSiteBindService httpdSiteBinds;
-    final CachedHttpdSiteURLService httpdSiteURLs;
-     */
-    final CachedHttpdSiteService httpdSites;
-    // TODO: final CachedHttpdStaticSiteService httpdStaticSites;
-    // TODO: final CachedHttpdTomcatContextService httpdTomcatContexts;
-    // TODO: final CachedHttpdTomcatDataSourceService httpdTomcatDataSources;
-    // TODO: final CachedHttpdTomcatParameterService httpdTomcatParameters;
-    // TODO: final CachedHttpdTomcatSiteService httpdTomcatSites;
-    // TODO: final CachedHttpdTomcatSharedSiteService httpdTomcatSharedSites;
-    // TODO: final CachedHttpdTomcatStdSiteService httpdTomcatStdSites;
-    // TODO: final CachedHttpdTomcatVersionService httpdTomcatVersions;
-    // TODO: final CachedHttpdWorkerService httpdWorkers;
-    final CachedIPAddressService ipAddresses;
-    final CachedLanguageService languages;
-    // TODO: final CachedLinuxAccAddressService linuxAccAddresss;
-    final CachedLinuxAccountGroupService linuxAccountGroups;
-    final CachedLinuxAccountTypeService linuxAccountTypes;
-    final CachedLinuxAccountService linuxAccounts;
-    final CachedLinuxGroupTypeService linuxGroupTypes;
-    final CachedLinuxGroupService linuxGroups;
-    /* TODO
-    final CachedLinuxServerAccountService linuxServerAccounts;
-    final CachedLinuxServerGroupService linuxServerGroups;
-    final CachedMajordomoListService majordomoLists;
-    final CachedMajordomoServerService majordomoServers;
-    final CachedMajordomoVersionService majordomoVersions;
-    final CachedMasterHistoryService masterHistories;
-    final CachedMasterHostService masterHosts;
-    final CachedMasterServerService masterServers;
-    final CachedMasterUserService masterUsers;
-    final CachedMonthlyChargeService monthlyCharges;
-     */
-    final CachedMySQLDatabaseService mysqlDatabases;
-    final CachedMySQLDBUserService mysqlDBUsers;
-    final CachedMySQLServerService mysqlServers;
-    final CachedMySQLUserService mysqlUsers;
-    final CachedNetBindService netBinds;
-    final CachedNetDeviceIDService netDeviceIDs;
-    final CachedNetDeviceService netDevices;
-    final CachedNetProtocolService netProtocols;
-    final CachedNetTcpRedirectService netTcpRedirects;
-    /* TODO
-    final CachedNoticeLogService noticeLogs;
-    final CachedNoticeTypeService noticeTypes;
-    */
-    final CachedOperatingSystemVersionService operatingSystemVersions;
-    final CachedOperatingSystemService operatingSystems;
-    final CachedPackageCategoryService packageCategories;
-    /* TODO
-    final CachedPackageDefinitionLimitService packageDefinitionLimits;
-    final CachedPackageDefinitionService packageDefinitions;
-    final CachedPaymentTypeService paymentTypes;
-    final CachedPhysicalServerService physicalServers;
-     */
-    final CachedPostgresDatabaseService postgresDatabases;
-    final CachedPostgresEncodingService postgresEncodings;
-    final CachedPostgresServerService postgresServers;
-    final CachedPostgresUserService postgresUsers;
-    final CachedPostgresVersionService postgresVersions;
-    // TODO: final CachedPrivateFTPServerService privateFTPServers;
-    // TODO: final CachedProcessorTypeService processorTypes;
-    final CachedProtocolService protocols;
-    /* TODO
-    final CachedRackService racks;
-    final CachedResellerService resellers;
-     */
-    final CachedResourceTypeService resourceTypes;
-    final CachedResourceService resources;
-    final CachedServerFarmService serverFarms;
-    final CachedServerResourceService serverResources;
-    final CachedServerService servers;
-    final CachedShellService shells;
-    /* TODO
-    final CachedSignupRequestOptionService signupRequestOptions;
-    final CachedSignupRequestService signupRequests;
-    final CachedSpamEmailMessageService spamEmailMessages;
-    final CachedSystemEmailAliasService systemEmailAliass;
-     */
-    final CachedTechnologyService technologies;
-    final CachedTechnologyClassService technologyClasses;
-    final CachedTechnologyNameService technologyNames;
-    final CachedTechnologyVersionService technologyVersions;
-    /* TODO
-    final CachedTicketActionTypeService ticketActionTypes;
-    final CachedTicketActionService ticketActions;
-    final CachedTicketAssignmentService ticketAssignments;
-    final CachedTicketBrandCategoryService ticketBrandCategories;
-    */
-    final CachedTicketCategoryService ticketCategories;
-    final CachedTicketPriorityService ticketPriorities;
-    final CachedTicketStatusService ticketStatuses;
-    final CachedTicketTypeService ticketTypes;
-    /* TODO
-    final CachedTicketService tickets;
-    */
-    final CachedTimeZoneService timeZones;
-    /* TODO
-    final CachedTransactionTypeService transactionTypes;
-    final CachedTransactionService transactions;
-    final CachedUSStateService usStates;
-     */
-    final CachedUsernameService usernames;
-    /* TODO
-    final CachedVirtualDiskService virtualDisks;
-    final CachedVirtualServerService virtualServers;
-    final CachedWhoisHistoryService whoisHistories;
-     */
 
     CachedConnector(CachedConnectorFactory factory, AOServConnector<?,?> wrapped) throws RemoteException, LoginException {
         this.factory = factory;
@@ -383,8 +264,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         linuxGroupTypes = new CachedLinuxGroupTypeService(this, wrapped.getLinuxGroupTypes());
         linuxGroups = new CachedLinuxGroupService(this, wrapped.getLinuxGroups());
         /* TODO
-        linuxServerAccounts = new CachedLinuxServerAccountService(this, wrapped.getLinuxServerAccounts());
-        linuxServerGroups = new CachedLinuxServerGroupService(this, wrapped.getLinuxServerGroups());
         majordomoLists = new CachedMajordomoListService(this, wrapped.getMajordomoLists());
         majordomoServers = new CachedMajordomoServerService(this, wrapped.getMajordomoServers());
         majordomoVersions = new CachedMajordomoVersionService(this, wrapped.getMajordomoVersions());
@@ -516,433 +395,1023 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return ts;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="AOServerDaemonHostService">
+    static class CachedAOServerDaemonHostService extends CachedService<Integer,AOServerDaemonHost> implements AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> {
+        CachedAOServerDaemonHostService(CachedConnector connector, AOServerDaemonHostService<?,?> wrapped) {
+            super(connector, Integer.class, AOServerDaemonHost.class, wrapped);
+        }
+    }
+    final CachedAOServerDaemonHostService aoserverDaemonHosts;
     public AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts() {
         return aoserverDaemonHosts;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="AOServerResourceService">
+    static class CachedAOServerResourceService extends CachedService<Integer,AOServerResource> implements AOServerResourceService<CachedConnector,CachedConnectorFactory> {
+        CachedAOServerResourceService(CachedConnector connector, AOServerResourceService<?,?> wrapped) {
+            super(connector, Integer.class, AOServerResource.class, wrapped);
+        }
+    }
+    final CachedAOServerResourceService aoserverResources;
     public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources() {
         return aoserverResources;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="AOServerService">
+    static class CachedAOServerService extends CachedService<Integer,AOServer> implements AOServerService<CachedConnector,CachedConnectorFactory> {
+        CachedAOServerService(CachedConnector connector, AOServerService<?,?> wrapped) {
+            super(connector, Integer.class, AOServer.class, wrapped);
+        }
+    }
+    final CachedAOServerService aoservers;
     public AOServerService<CachedConnector,CachedConnectorFactory> getAoServers() {
         return aoservers;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="AOServPermissionService">
+    static class CachedAOServPermissionService extends CachedService<String,AOServPermission> implements AOServPermissionService<CachedConnector,CachedConnectorFactory> {
+        CachedAOServPermissionService(CachedConnector connector, AOServPermissionService<?,?> wrapped) {
+            super(connector, String.class, AOServPermission.class, wrapped);
+        }
+    }
+    final CachedAOServPermissionService aoservPermissions;
     public AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions() {
         return aoservPermissions;
     }
-    /* TODO
-    public AOServProtocolService<CachedConnector,CachedConnectorFactory> getAoservProtocols();
-
-    public AOSHCommandService<CachedConnector,CachedConnectorFactory> getAoshCommands();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ArchitectureService">
+    static class CachedArchitectureService extends CachedService<String,Architecture> implements ArchitectureService<CachedConnector,CachedConnectorFactory> {
+        CachedArchitectureService(CachedConnector connector, ArchitectureService<?,?> wrapped) {
+            super(connector, String.class, Architecture.class, wrapped);
+        }
+    }
+    final CachedArchitectureService architectures;
     public ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures() {
         return architectures;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BackupPartitionService">
+    static class CachedBackupPartitionService extends CachedService<Integer,BackupPartition> implements BackupPartitionService<CachedConnector,CachedConnectorFactory> {
+        CachedBackupPartitionService(CachedConnector connector, BackupPartitionService<?,?> wrapped) {
+            super(connector, Integer.class, BackupPartition.class, wrapped);
+        }
+    }
+    final CachedBackupPartitionService backupPartitions;
     public BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions() {
         return backupPartitions;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BackupRetentionService">
+    static class CachedBackupRetentionService extends CachedService<Short,BackupRetention> implements BackupRetentionService<CachedConnector,CachedConnectorFactory> {
+        CachedBackupRetentionService(CachedConnector connector, BackupRetentionService<?,?> wrapped) {
+            super(connector, Short.class, BackupRetention.class, wrapped);
+        }
+    }
+    final CachedBackupRetentionService backupRetentions;
     public BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions() {
         return backupRetentions;
     }
-    /* TODO
-    public BankAccountService<CachedConnector,CachedConnectorFactory> getBankAccounts();
-
-    public BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes();
-
-    public BankTransactionService<CachedConnector,CachedConnectorFactory> getBankTransactions();
-
-    public BankService<CachedConnector,CachedConnectorFactory> getBanks();
-
-    public BlackholeEmailAddressService<CachedConnector,CachedConnectorFactory> getBlackholeEmailAddresses();
-
-    public BrandService<CachedConnector,CachedConnectorFactory> getBrands();
-     */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BankAccountService">
+    // TODO: final CachedBankAccountService bankAccounts;
+    // TODO: public BankAccountService<CachedConnector,CachedConnectorFactory> getBankAccounts();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BankTransactionTypeService">
+    // TODO: final CachedBankTransactionTypeService bankTransactionTypes;
+    // TODO: public BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BankTransactionService">
+    // TODO: final CachedBankTransactionService bankTransactions;
+    // TODO: public BankTransactionService<CachedConnector,CachedConnectorFactory> getBankTransactions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BankService">
+    // TODO: final CachedBankService banks;
+    // TODO: public BankService<CachedConnector,CachedConnectorFactory> getBanks();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BlackholeEmailAddressService">
+    // TODO: final CachedBlackholeEmailAddressService blackholeEmailAddresss;
+    // TODO: public BlackholeEmailAddressService<CachedConnector,CachedConnectorFactory> getBlackholeEmailAddresses();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BrandService">
+    // TODO: final CachedBrandService brands;
+    // TODO: public BrandService<CachedConnector,CachedConnectorFactory> getBrands();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorService">
+    static class CachedBusinessAdministratorService extends CachedService<UserId,BusinessAdministrator> implements BusinessAdministratorService<CachedConnector,CachedConnectorFactory> {
+        CachedBusinessAdministratorService(CachedConnector connector, BusinessAdministratorService<?,?> wrapped) {
+            super(connector, UserId.class, BusinessAdministrator.class, wrapped);
+        }
+    }
+    final CachedBusinessAdministratorService businessAdministrators;
     public BusinessAdministratorService<CachedConnector,CachedConnectorFactory> getBusinessAdministrators() {
         return businessAdministrators;
     }
-    /*
-    public BusinessAdministratorPermissionService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorPermissions();
-
-    public BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles();
-     */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorPermissionService">
+    // TODO: final CachedBusinessAdministratorPermissionService businessAdministratorPermissions;
+    // TODO: public BusinessAdministratorPermissionService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorPermissions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BusinessProfileService">
+    // TODO: final CachedBusinessProfileService businessProfiles;
+    // TODO: public BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BusinessService">
+    static class CachedBusinessService extends CachedService<AccountingCode,Business> implements BusinessService<CachedConnector,CachedConnectorFactory> {
+        CachedBusinessService(CachedConnector connector, BusinessService<?,?> wrapped) {
+            super(connector, AccountingCode.class, Business.class, wrapped);
+        }
+    }
+    final CachedBusinessService businesses;
     public BusinessService<CachedConnector,CachedConnectorFactory> getBusinesses() {
         return businesses;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BusinessServerService">
+    static class CachedBusinessServerService extends CachedService<Integer,BusinessServer> implements BusinessServerService<CachedConnector,CachedConnectorFactory> {
+        CachedBusinessServerService(CachedConnector connector, BusinessServerService<?,?> wrapped) {
+            super(connector, Integer.class, BusinessServer.class, wrapped);
+        }
+    }
+    final CachedBusinessServerService businessServers;
     public BusinessServerService<CachedConnector,CachedConnectorFactory> getBusinessServers() {
         return businessServers;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="CountryCodeService">
+    static class CachedCountryCodeService extends CachedService<String,CountryCode> implements CountryCodeService<CachedConnector,CachedConnectorFactory> {
+        CachedCountryCodeService(CachedConnector connector, CountryCodeService<?,?> wrapped) {
+            super(connector, String.class, CountryCode.class, wrapped);
+        }
+    }
+    final CachedCountryCodeService countryCodes;
     public CountryCodeService<CachedConnector,CachedConnectorFactory> getCountryCodes() {
         return countryCodes;
     }
-    /* TODO
-
-    public CreditCardProcessorService<CachedConnector,CachedConnectorFactory> getCreditCardProcessors();
-
-    public CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions();
-
-    public CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards();
-     */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="CreditCardProcessorService">
+    // TODO: final CachedCreditCardProcessorService creditCardProcessors;
+    // TODO: public CreditCardProcessorService<CachedConnector,CachedConnectorFactory> getCreditCardProcessors();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="CreditCardTransactionService">
+    // TODO: final CachedCreditCardTransactionService creditCardTransactions;
+    // TODO: public CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="CreditCardService">
+    // TODO: final CachedCreditCardService creditCards;
+    // TODO: public CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="CvsRepositoryService">
+    static class CachedCvsRepositoryService extends CachedService<Integer,CvsRepository> implements CvsRepositoryService<CachedConnector,CachedConnectorFactory> {
+        CachedCvsRepositoryService(CachedConnector connector, CvsRepositoryService<?,?> wrapped) {
+            super(connector, Integer.class, CvsRepository.class, wrapped);
+        }
+    }
+    final CachedCvsRepositoryService cvsRepositories;
     public CvsRepositoryService<CachedConnector,CachedConnectorFactory> getCvsRepositories() {
         return cvsRepositories;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="DisableLogService">
+    static class CachedDisableLogService extends CachedService<Integer,DisableLog> implements DisableLogService<CachedConnector,CachedConnectorFactory> {
+        CachedDisableLogService(CachedConnector connector, DisableLogService<?,?> wrapped) {
+            super(connector, Integer.class, DisableLog.class, wrapped);
+        }
+    }
+    final CachedDisableLogService disableLogs;
     public DisableLogService<CachedConnector,CachedConnectorFactory> getDisableLogs() {
         return disableLogs;
     }
-    /*
-    public DistroFileTypeService<CachedConnector,CachedConnectorFactory> getDistroFileTypes();
-
-    public DistroFileService<CachedConnector,CachedConnectorFactory> getDistroFiles();
-
-    public DNSForbiddenZoneService<CachedConnector,CachedConnectorFactory> getDnsForbiddenZones();
-
-    public DNSRecordService<CachedConnector,CachedConnectorFactory> getDnsRecords();
-
-    public DNSTLDService<CachedConnector,CachedConnectorFactory> getDnsTLDs();
-
-    public DNSTypeService<CachedConnector,CachedConnectorFactory> getDnsTypes();
-
-    public DNSZoneService<CachedConnector,CachedConnectorFactory> getDnsZones();
-
-    public EmailAddressService<CachedConnector,CachedConnectorFactory> getEmailAddresses();
-
-    public EmailAttachmentBlockService<CachedConnector,CachedConnectorFactory> getEmailAttachmentBlocks();
-
-    public EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> getEmailAttachmentTypes();
-
-    public EmailDomainService<CachedConnector,CachedConnectorFactory> getEmailDomains();
-
-    public EmailForwardingService<CachedConnector,CachedConnectorFactory> getEmailForwardings();
-
-    public EmailListAddressService<CachedConnector,CachedConnectorFactory> getEmailListAddresses();
-
-    public EmailListService<CachedConnector,CachedConnectorFactory> getEmailLists();
-
-    public EmailPipeAddressService<CachedConnector,CachedConnectorFactory> getEmailPipeAddresses();
-
-    public EmailPipeService<CachedConnector,CachedConnectorFactory> getEmailPipes();
-
-    public EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelayTypes();
-
-    public EmailSmtpRelayService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelays();
-
-    public EmailSmtpSmartHostDomainService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHostDomains();
-
-    public EmailSmtpSmartHostService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHosts();
-
-    public EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> getEmailSpamAssassinIntegrationModes();
-
-    public EncryptionKeyService<CachedConnector,CachedConnectorFactory> getEncryptionKeys();
-
-    public ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="DistroFileTypeService">
+    // TODO: final CachedDistroFileTypeService distroFileTypes;
+    // TODO: public DistroFileTypeService<CachedConnector,CachedConnectorFactory> getDistroFileTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="DistroFileService">
+    // TODO: final CachedDistroFileService distroFiles;
+    // TODO: public DistroFileService<CachedConnector,CachedConnectorFactory> getDistroFiles();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="DNSForbiddenZoneService">
+    // TODO: final CachedDNSForbiddenZoneService dnsForbiddenZones;
+    // TODO: public DNSForbiddenZoneService<CachedConnector,CachedConnectorFactory> getDnsForbiddenZones();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="DNSRecordService">
+    // TODO: final CachedDNSRecordService dnsRecords;
+    // TODO: public DNSRecordService<CachedConnector,CachedConnectorFactory> getDnsRecords();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="DNSTLDService">
+    // TODO: final CachedDNSTLDService dnsTLDs;
+    // TODO: public DNSTLDService<CachedConnector,CachedConnectorFactory> getDnsTLDs();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="DNSTypeService">
+    // TODO: final CachedDNSTypeService dnsTypes;
+    // TODO: public DNSTypeService<CachedConnector,CachedConnectorFactory> getDnsTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="DNSZoneService">
+    // TODO: final CachedDNSZoneService dnsZones;
+    // TODO: public DNSZoneService<CachedConnector,CachedConnectorFactory> getDnsZones();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailAddressService">
+    // TODO: final CachedEmailAddressService emailAddresss;
+    // TODO: public EmailAddressService<CachedConnector,CachedConnectorFactory> getEmailAddresses();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailAttachmentBlockService">
+    // TODO: final CachedEmailAttachmentBlockService emailAttachmentBlocks;
+    // TODO: public EmailAttachmentBlockService<CachedConnector,CachedConnectorFactory> getEmailAttachmentBlocks();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailAttachmentTypeService">
+    // TODO: final CachedEmailAttachmentTypeService emailAttachmentTypes;
+    // TODO: public EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> getEmailAttachmentTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailDomainService">
+    // TODO: final CachedEmailDomainService emailDomains;
+    // TODO: public EmailDomainService<CachedConnector,CachedConnectorFactory> getEmailDomains();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailForwardingService">
+    // TODO: final CachedEmailForwardingService emailForwardings;
+    // TODO: public EmailForwardingService<CachedConnector,CachedConnectorFactory> getEmailForwardings();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailListAddressService">
+    // TODO: final CachedEmailListAddressService emailListAddresss;
+    // TODO: public EmailListAddressService<CachedConnector,CachedConnectorFactory> getEmailListAddresses();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailListService">
+    // TODO: final CachedEmailListService emailLists;
+    // TODO: public EmailListService<CachedConnector,CachedConnectorFactory> getEmailLists();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailPipeAddressService">
+    // TODO: final CachedEmailPipeAddressService emailPipeAddresss;
+    // TODO: public EmailPipeAddressService<CachedConnector,CachedConnectorFactory> getEmailPipeAddresses();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailPipeService">
+    // TODO: final CachedEmailPipeService emailPipes;
+    // TODO: public EmailPipeService<CachedConnector,CachedConnectorFactory> getEmailPipes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayTypeService">
+    // TODO: final CachedEmailSmtpRelayTypeService emailSmtpRelayTypes;
+    // TODO: public EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelayTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayService">
+    // TODO: final CachedEmailSmtpRelayService emailSmtpRelays;
+    // TODO: public EmailSmtpRelayService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelays();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailSmtpSmartHostDomainService">
+    // TODO: final CachedEmailSmtpSmartHostDomainService emailSmtpSmartHostDomains;
+    // TODO: public EmailSmtpSmartHostDomainService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHostDomains();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailSmtpSmartHostService">
+    // TODO: final CachedEmailSmtpSmartHostService emailSmtpSmartHosts;
+    // TODO: public EmailSmtpSmartHostService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHosts();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailSpamAssassinIntegrationModeService">
+    // TODO: final CachedEmailSpamAssassinIntegrationModeService emailSpamAssassinIntegrationModes;
+    // TODO: public EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> getEmailSpamAssassinIntegrationModes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EncryptionKeyService">
+    // TODO: final CachedEncryptionKeyService encryptionKeys;
+    // TODO: public EncryptionKeyService<CachedConnector,CachedConnectorFactory> getEncryptionKeys();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ExpenseCategoryService">
+    // TODO: final CachedExpenseCategoryService expenseCategories;
+    // TODO: public ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="FailoverFileLogService">
+    static class CachedFailoverFileLogService extends CachedService<Integer,FailoverFileLog> implements FailoverFileLogService<CachedConnector,CachedConnectorFactory> {
+        CachedFailoverFileLogService(CachedConnector connector, FailoverFileLogService<?,?> wrapped) {
+            super(connector, Integer.class, FailoverFileLog.class, wrapped);
+        }
+    }
+    final CachedFailoverFileLogService failoverFileLogs;
     public FailoverFileLogService<CachedConnector,CachedConnectorFactory> getFailoverFileLogs() {
         return failoverFileLogs;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="FailoverFileReplicationService">
+    static class CachedFailoverFileReplicationService extends CachedService<Integer,FailoverFileReplication> implements FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> {
+        CachedFailoverFileReplicationService(CachedConnector connector, FailoverFileReplicationService<?,?> wrapped) {
+            super(connector, Integer.class, FailoverFileReplication.class, wrapped);
+        }
+    }
+    final CachedFailoverFileReplicationService failoverFileReplications;
     public FailoverFileReplicationService<CachedConnector,CachedConnectorFactory> getFailoverFileReplications() {
         return failoverFileReplications;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="FailoverFileScheduleService">
+    static class CachedFailoverFileScheduleService extends CachedService<Integer,FailoverFileSchedule> implements FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> {
+        CachedFailoverFileScheduleService(CachedConnector connector, FailoverFileScheduleService<?,?> wrapped) {
+            super(connector, Integer.class, FailoverFileSchedule.class, wrapped);
+        }
+    }
+    final CachedFailoverFileScheduleService failoverFileSchedules;
     public FailoverFileScheduleService<CachedConnector,CachedConnectorFactory> getFailoverFileSchedules() {
         return failoverFileSchedules;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="FailoverMySQLReplicationService">
+    static class CachedFailoverMySQLReplicationService extends CachedService<Integer,FailoverMySQLReplication> implements FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> {
+        CachedFailoverMySQLReplicationService(CachedConnector connector, FailoverMySQLReplicationService<?,?> wrapped) {
+            super(connector, Integer.class, FailoverMySQLReplication.class, wrapped);
+        }
+    }
+    final CachedFailoverMySQLReplicationService failoverMySQLReplications;
     public FailoverMySQLReplicationService<CachedConnector,CachedConnectorFactory> getFailoverMySQLReplications() {
         return failoverMySQLReplications;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="FileBackupSettingService">
+    static class CachedFileBackupSettingService extends CachedService<Integer,FileBackupSetting> implements FileBackupSettingService<CachedConnector,CachedConnectorFactory> {
+        CachedFileBackupSettingService(CachedConnector connector, FileBackupSettingService<?,?> wrapped) {
+            super(connector, Integer.class, FileBackupSetting.class, wrapped);
+        }
+    }
+    final CachedFileBackupSettingService fileBackupSettings;
     public FileBackupSettingService<CachedConnector,CachedConnectorFactory> getFileBackupSettings() {
         return fileBackupSettings;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="FTPGuestUserService">
+    // TODO: final CachedFTPGuestUserService ftpGuestUsers;
+    // TODO: public FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="GroupNameService">
+    static class CachedGroupNameService extends CachedService<GroupId,GroupName> implements GroupNameService<CachedConnector,CachedConnectorFactory> {
+        CachedGroupNameService(CachedConnector connector, GroupNameService<?,?> wrapped) {
+            super(connector, GroupId.class, GroupName.class, wrapped);
+        }
+    }
+    final CachedGroupNameService groupNames;
     public GroupNameService<CachedConnector,CachedConnectorFactory> getGroupNames() {
         return groupNames;
     }
-    /* TODO
-    public FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers();
-
-    public HttpdBindService<CachedConnector,CachedConnectorFactory> getHttpdBinds();
-
-    public HttpdJBossSiteService<CachedConnector,CachedConnectorFactory> getHttpdJBossSites();
-
-    public HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions();
-
-    public HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes();
-
-    public HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols();
-
-    public HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers();
-
-    public HttpdSharedTomcatService<CachedConnector,CachedConnectorFactory> getHttpdSharedTomcats();
-
-    public HttpdSiteAuthenticatedLocationService<CachedConnector,CachedConnectorFactory> getHttpdSiteAuthenticatedLocations();
-
-    public HttpdSiteBindService<CachedConnector,CachedConnectorFactory> getHttpdSiteBinds();
-
-    public HttpdSiteURLService<CachedConnector,CachedConnectorFactory> getHttpdSiteURLs();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdBindService">
+    // TODO: final CachedHttpdBindService httpdBinds;
+    // TODO: public HttpdBindService<CachedConnector,CachedConnectorFactory> getHttpdBinds();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdJBossSiteService">
+    // TODO: final CachedHttpdJBossSiteService httpdJBossSites;
+    // TODO: public HttpdJBossSiteService<CachedConnector,CachedConnectorFactory> getHttpdJBossSites();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdJBossVersionService">
+    // TODO: final CachedHttpdJBossVersionService httpdJBossVersions;
+    // TODO: public HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdJKCodeService">
+    // TODO: final CachedHttpdJKCodeService httpdJKCodes;
+    // TODO: public HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdJKProtocolService">
+    // TODO: final CachedHttpdJKProtocolService httpdJKProtocols;
+    // TODO: public HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdServerService">
+    // TODO: final CachedHttpdServerService httpdServers;
+    // TODO: public HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdSharedTomcatService">
+    // TODO: final CachedHttpdSharedTomcatService httpdSharedTomcats;
+    // TODO: public HttpdSharedTomcatService<CachedConnector,CachedConnectorFactory> getHttpdSharedTomcats();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdSiteAuthenticatedLocationService">
+    // TODO: final CachedHttpdSiteAuthenticatedLocationService httpdSiteAuthenticatedLocations;
+    // TODO: public HttpdSiteAuthenticatedLocationService<CachedConnector,CachedConnectorFactory> getHttpdSiteAuthenticatedLocations();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdSiteBindService">
+    // TODO: final CachedHttpdSiteBindService httpdSiteBinds;
+    // TODO: public HttpdSiteBindService<CachedConnector,CachedConnectorFactory> getHttpdSiteBinds();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdSiteURLService">
+    // TODO: final CachedHttpdSiteURLService httpdSiteURLs;
+    // TODO: public HttpdSiteURLService<CachedConnector,CachedConnectorFactory> getHttpdSiteURLs();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdSiteService">
+    static class CachedHttpdSiteService extends CachedService<Integer,HttpdSite> implements HttpdSiteService<CachedConnector,CachedConnectorFactory> {
+        CachedHttpdSiteService(CachedConnector connector, HttpdSiteService<?,?> wrapped) {
+            super(connector, Integer.class, HttpdSite.class, wrapped);
+        }
+    }
+    final CachedHttpdSiteService httpdSites;
     public HttpdSiteService<CachedConnector,CachedConnectorFactory> getHttpdSites() {
         return httpdSites;
     }
-    /* TODO
-    public HttpdStaticSiteService<CachedConnector,CachedConnectorFactory> getHttpdStaticSites();
-
-    public HttpdTomcatContextService<CachedConnector,CachedConnectorFactory> getHttpdTomcatContexts();
-
-    public HttpdTomcatDataSourceService<CachedConnector,CachedConnectorFactory> getHttpdTomcatDataSources();
-
-    public HttpdTomcatParameterService<CachedConnector,CachedConnectorFactory> getHttpdTomcatParameters();
-
-    public HttpdTomcatSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSites();
-
-    public HttpdTomcatSharedSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSharedSites();
-
-    public HttpdTomcatStdSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatStdSites();
-
-    public HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions();
-
-    public HttpdWorkerService<CachedConnector,CachedConnectorFactory> getHttpdWorkers();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdStaticSiteService">
+    // TODO: final CachedHttpdStaticSiteService httpdStaticSites;
+    // TODO: public HttpdStaticSiteService<CachedConnector,CachedConnectorFactory> getHttpdStaticSites();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdTomcatContextService">
+    // TODO: final CachedHttpdTomcatContextService httpdTomcatContexts;
+    // TODO: public HttpdTomcatContextService<CachedConnector,CachedConnectorFactory> getHttpdTomcatContexts();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdTomcatDataSourceService">
+    // TODO: final CachedHttpdTomcatDataSourceService httpdTomcatDataSources;
+    // TODO: public HttpdTomcatDataSourceService<CachedConnector,CachedConnectorFactory> getHttpdTomcatDataSources();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdTomcatParameterService">
+    // TODO: final CachedHttpdTomcatParameterService httpdTomcatParameters;
+    // TODO: public HttpdTomcatParameterService<CachedConnector,CachedConnectorFactory> getHttpdTomcatParameters();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdTomcatSiteService">
+    // TODO: final CachedHttpdTomcatSiteService httpdTomcatSites;
+    // TODO: public HttpdTomcatSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSites();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdTomcatSharedSiteService">
+    // TODO: final CachedHttpdTomcatSharedSiteService httpdTomcatSharedSites;
+    // TODO: public HttpdTomcatSharedSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatSharedSites();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdTomcatStdSiteService">
+    // TODO: final CachedHttpdTomcatStdSiteService httpdTomcatStdSites;
+    // TODO: public HttpdTomcatStdSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatStdSites();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdTomcatVersionService">
+    // TODO: final CachedHttpdTomcatVersionService httpdTomcatVersions;
+    // TODO: public HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="HttpdWorkerService">
+    // TODO: final CachedHttpdWorkerService httpdWorkers;
+    // TODO: public HttpdWorkerService<CachedConnector,CachedConnectorFactory> getHttpdWorkers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="IPAddressService">
+    static class CachedIPAddressService extends CachedService<Integer,IPAddress> implements IPAddressService<CachedConnector,CachedConnectorFactory> {
+        CachedIPAddressService(CachedConnector connector, IPAddressService<?,?> wrapped) {
+            super(connector, Integer.class, IPAddress.class, wrapped);
+        }
+    }
+    final CachedIPAddressService ipAddresses;
     public IPAddressService<CachedConnector,CachedConnectorFactory> getIpAddresses() {
         return ipAddresses;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="LanguageService">
+    static class CachedLanguageService extends CachedService<String,Language> implements LanguageService<CachedConnector,CachedConnectorFactory> {
+        CachedLanguageService(CachedConnector connector, LanguageService<?,?> wrapped) {
+            super(connector, String.class, Language.class, wrapped);
+        }
+    }
+    final CachedLanguageService languages;
     public LanguageService<CachedConnector,CachedConnectorFactory> getLanguages() {
         return languages;
     }
-    /* TODO
-    public LinuxAccAddressService<CachedConnector,CachedConnectorFactory> getLinuxAccAddresses();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="LinuxAccAddressService">
+    // TODO: final CachedLinuxAccAddressService linuxAccAddresss;
+    // TODO: public LinuxAccAddressService<CachedConnector,CachedConnectorFactory> getLinuxAccAddresses();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="LinuxAccountGroupService">
+    static class CachedLinuxAccountGroupService extends CachedService<Integer,LinuxAccountGroup> implements LinuxAccountGroupService<CachedConnector,CachedConnectorFactory> {
+        CachedLinuxAccountGroupService(CachedConnector connector, LinuxAccountGroupService<?,?> wrapped) {
+            super(connector, Integer.class, LinuxAccountGroup.class, wrapped);
+        }
+    }
+    final CachedLinuxAccountGroupService linuxAccountGroups;
     public LinuxAccountGroupService<CachedConnector,CachedConnectorFactory> getLinuxAccountGroups() {
         return linuxAccountGroups;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="LinuxAccountTypeService">
+    static class CachedLinuxAccountTypeService extends CachedService<String,LinuxAccountType> implements LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedLinuxAccountTypeService(CachedConnector connector, LinuxAccountTypeService<?,?> wrapped) {
+            super(connector, String.class, LinuxAccountType.class, wrapped);
+        }
+    }
+    final CachedLinuxAccountTypeService linuxAccountTypes;
     public LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes() {
         return linuxAccountTypes;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="LinuxAccountService">
+    static class CachedLinuxAccountService extends CachedService<Integer,LinuxAccount> implements LinuxAccountService<CachedConnector,CachedConnectorFactory> {
+        CachedLinuxAccountService(CachedConnector connector, LinuxAccountService<?,?> wrapped) {
+            super(connector, Integer.class, LinuxAccount.class, wrapped);
+        }
+    }
+    final CachedLinuxAccountService linuxAccounts;
     public LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts() {
         return linuxAccounts;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="LinuxGroupTypeService">
+    static class CachedLinuxGroupTypeService extends CachedService<String,LinuxGroupType> implements LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedLinuxGroupTypeService(CachedConnector connector, LinuxGroupTypeService<?,?> wrapped) {
+            super(connector, String.class, LinuxGroupType.class, wrapped);
+        }
+    }
+    final CachedLinuxGroupTypeService linuxGroupTypes;
     public LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes() {
         return linuxGroupTypes;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="LinuxGroupService">
+    static class CachedLinuxGroupService extends CachedService<Integer,LinuxGroup> implements LinuxGroupService<CachedConnector,CachedConnectorFactory> {
+        CachedLinuxGroupService(CachedConnector connector, LinuxGroupService<?,?> wrapped) {
+            super(connector, Integer.class, LinuxGroup.class, wrapped);
+        }
+    }
+    final CachedLinuxGroupService linuxGroups;
     public LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups() {
         return linuxGroups;
     }
-    /* TODO
-    public LinuxServerAccountService<CachedConnector,CachedConnectorFactory> getLinuxServerAccounts();
-
-    public LinuxServerGroupService<CachedConnector,CachedConnectorFactory> getLinuxServerGroups();
-
-    public MajordomoListService<CachedConnector,CachedConnectorFactory> getMajordomoLists();
-
-    public MajordomoServerService<CachedConnector,CachedConnectorFactory> getMajordomoServers();
-
-    public MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions();
-
-    public MasterHistoryService<CachedConnector,CachedConnectorFactory> getMasterHistory();
-
-    public MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts();
-
-    public MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers();
-
-    public MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers();
-
-    public MonthlyChargeService<CachedConnector,CachedConnectorFactory> getMonthlyCharges();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MajordomoListService">
+    // TODO: final CachedMajordomoListService majordomoLists;
+    // TODO: public MajordomoListService<CachedConnector,CachedConnectorFactory> getMajordomoLists();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MajordomoServerService">
+    // TODO: final CachedMajordomoServerService majordomoServers;
+    // TODO: public MajordomoServerService<CachedConnector,CachedConnectorFactory> getMajordomoServers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MajordomoVersionService">
+    // TODO: final CachedMajordomoVersionService majordomoVersions;
+    // TODO: public MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MasterHistoryService">
+    // TODO: final CachedMasterHistoryService masterHistories;
+    // TODO: public MasterHistoryService<CachedConnector,CachedConnectorFactory> getMasterHistory();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MasterHostService">
+    // TODO: final CachedMasterHostService masterHosts;
+    // TODO: public MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MasterServerService">
+    // TODO: final CachedMasterServerService masterServers;
+    // TODO: public MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MasterUserService">
+    // TODO: final CachedMasterUserService masterUsers;
+    // TODO: public MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MonthlyChargeService">
+    // TODO: final CachedMonthlyChargeService monthlyCharges;
+    // TODO: public MonthlyChargeService<CachedConnector,CachedConnectorFactory> getMonthlyCharges();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MySQLDatabaseService">
+    static class CachedMySQLDatabaseService extends CachedService<Integer,MySQLDatabase> implements MySQLDatabaseService<CachedConnector,CachedConnectorFactory> {
+        CachedMySQLDatabaseService(CachedConnector connector, MySQLDatabaseService<?,?> wrapped) {
+            super(connector, Integer.class, MySQLDatabase.class, wrapped);
+        }
+    }
+    final CachedMySQLDatabaseService mysqlDatabases;
     public MySQLDatabaseService<CachedConnector,CachedConnectorFactory> getMysqlDatabases() {
         return mysqlDatabases;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MySQLDBUserService">
+    static class CachedMySQLDBUserService extends CachedService<Integer,MySQLDBUser> implements MySQLDBUserService<CachedConnector,CachedConnectorFactory> {
+        CachedMySQLDBUserService(CachedConnector connector, MySQLDBUserService<?,?> wrapped) {
+            super(connector, Integer.class, MySQLDBUser.class, wrapped);
+        }
+    }
+    final CachedMySQLDBUserService mysqlDBUsers;
     public MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers() {
         return mysqlDBUsers;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MySQLServerService">
+    static class CachedMySQLServerService extends CachedService<Integer,MySQLServer> implements MySQLServerService<CachedConnector,CachedConnectorFactory> {
+        CachedMySQLServerService(CachedConnector connector, MySQLServerService<?,?> wrapped) {
+            super(connector, Integer.class, MySQLServer.class, wrapped);
+        }
+    }
+    final CachedMySQLServerService mysqlServers;
     public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers() {
         return mysqlServers;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="MySQLUserService">
+    static class CachedMySQLUserService extends CachedService<Integer,MySQLUser> implements MySQLUserService<CachedConnector,CachedConnectorFactory> {
+        CachedMySQLUserService(CachedConnector connector, MySQLUserService<?,?> wrapped) {
+            super(connector, Integer.class, MySQLUser.class, wrapped);
+        }
+    }
+    final CachedMySQLUserService mysqlUsers;
     public MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers() {
         return mysqlUsers;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="NetBindService">
+    static class CachedNetBindService extends CachedService<Integer,NetBind> implements NetBindService<CachedConnector,CachedConnectorFactory> {
+        CachedNetBindService(CachedConnector connector, NetBindService<?,?> wrapped) {
+            super(connector, Integer.class, NetBind.class, wrapped);
+        }
+    }
+    final CachedNetBindService netBinds;
     public NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds() {
         return netBinds;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="NetDeviceIDService">
+    static class CachedNetDeviceIDService extends CachedService<String,NetDeviceID> implements NetDeviceIDService<CachedConnector,CachedConnectorFactory> {
+        CachedNetDeviceIDService(CachedConnector connector, NetDeviceIDService<?,?> wrapped) {
+            super(connector, String.class, NetDeviceID.class, wrapped);
+        }
+    }
+    final CachedNetDeviceIDService netDeviceIDs;
     public NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs() {
         return netDeviceIDs;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="NetDeviceService">
+    static class CachedNetDeviceService extends CachedService<Integer,NetDevice> implements NetDeviceService<CachedConnector,CachedConnectorFactory> {
+        CachedNetDeviceService(CachedConnector connector, NetDeviceService<?,?> wrapped) {
+            super(connector, Integer.class, NetDevice.class, wrapped);
+        }
+    }
+    final CachedNetDeviceService netDevices;
     public NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices() {
         return netDevices;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="NetProtocolService">
+    static class CachedNetProtocolService extends CachedService<String,NetProtocol> implements NetProtocolService<CachedConnector,CachedConnectorFactory> {
+        CachedNetProtocolService(CachedConnector connector, NetProtocolService<?,?> wrapped) {
+            super(connector, String.class, NetProtocol.class, wrapped);
+        }
+    }
+    final CachedNetProtocolService netProtocols;
     public NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols() {
         return netProtocols;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="NetTcpRedirectService">
+    static class CachedNetTcpRedirectService extends CachedService<Integer,NetTcpRedirect> implements NetTcpRedirectService<CachedConnector,CachedConnectorFactory> {
+        CachedNetTcpRedirectService(CachedConnector connector, NetTcpRedirectService<?,?> wrapped) {
+            super(connector, Integer.class, NetTcpRedirect.class, wrapped);
+        }
+    }
+    final CachedNetTcpRedirectService netTcpRedirects;
     public NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects() {
         return netTcpRedirects;
     }
-    /* TODO
-    public NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
-
-    public NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="NoticeLogService">
+    // TODO: final CachedNoticeLogService noticeLogs;
+    // TODO: public NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="NoticeTypeService">
+    // TODO: final CachedNoticeTypeService noticeTypes;
+    // TODO: public NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="OperatingSystemVersionService">
+    static class CachedOperatingSystemVersionService extends CachedService<Integer,OperatingSystemVersion> implements OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> {
+        CachedOperatingSystemVersionService(CachedConnector connector, OperatingSystemVersionService<?,?> wrapped) {
+            super(connector, Integer.class, OperatingSystemVersion.class, wrapped);
+        }
+    }
+    final CachedOperatingSystemVersionService operatingSystemVersions;
     public OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> getOperatingSystemVersions() {
         return operatingSystemVersions;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="OperatingSystemService">
+    static class CachedOperatingSystemService extends CachedService<String,OperatingSystem> implements OperatingSystemService<CachedConnector,CachedConnectorFactory> {
+        CachedOperatingSystemService(CachedConnector connector, OperatingSystemService<?,?> wrapped) {
+            super(connector, String.class, OperatingSystem.class, wrapped);
+        }
+    }
+    final CachedOperatingSystemService operatingSystems;
     public OperatingSystemService<CachedConnector,CachedConnectorFactory> getOperatingSystems() {
         return operatingSystems;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PackageCategoryService">
+    static class CachedPackageCategoryService extends CachedService<String,PackageCategory> implements PackageCategoryService<CachedConnector,CachedConnectorFactory> {
+        CachedPackageCategoryService(CachedConnector connector, PackageCategoryService<?,?> wrapped) {
+            super(connector, String.class, PackageCategory.class, wrapped);
+        }
+    }
+    final CachedPackageCategoryService packageCategories;
     public PackageCategoryService<CachedConnector,CachedConnectorFactory> getPackageCategories() {
         return packageCategories;
     }
-    /*
-    public PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> getPackageDefinitionLimits();
-
-    public PackageDefinitionService<CachedConnector,CachedConnectorFactory> getPackageDefinitions();
-
-    public PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes();
-
-    public PhysicalServerService<CachedConnector,CachedConnectorFactory> getPhysicalServers();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PackageDefinitionLimitService">
+    // TODO: final CachedPackageDefinitionLimitService packageDefinitionLimits;
+    // TODO: public PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> getPackageDefinitionLimits();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PackageDefinitionService">
+    // TODO: final CachedPackageDefinitionService packageDefinitions;
+    // TODO: public PackageDefinitionService<CachedConnector,CachedConnectorFactory> getPackageDefinitions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PaymentTypeService">
+    // TODO: final CachedPaymentTypeService paymentTypes;
+    // TODO: public PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PhysicalServerService">
+    // TODO: final CachedPhysicalServerService physicalServers;
+    // TODO: public PhysicalServerService<CachedConnector,CachedConnectorFactory> getPhysicalServers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PostgresDatabaseService">
+    static class CachedPostgresDatabaseService extends CachedService<Integer,PostgresDatabase> implements PostgresDatabaseService<CachedConnector,CachedConnectorFactory> {
+        CachedPostgresDatabaseService(CachedConnector connector, PostgresDatabaseService<?,?> wrapped) {
+            super(connector, Integer.class, PostgresDatabase.class, wrapped);
+        }
+    }
+    final CachedPostgresDatabaseService postgresDatabases;
     public PostgresDatabaseService<CachedConnector,CachedConnectorFactory> getPostgresDatabases() {
         return postgresDatabases;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PostgresEncodingService">
+    static class CachedPostgresEncodingService extends CachedService<Integer,PostgresEncoding> implements PostgresEncodingService<CachedConnector,CachedConnectorFactory> {
+        CachedPostgresEncodingService(CachedConnector connector, PostgresEncodingService<?,?> wrapped) {
+            super(connector, Integer.class, PostgresEncoding.class, wrapped);
+        }
+    }
+    final CachedPostgresEncodingService postgresEncodings;
     public PostgresEncodingService<CachedConnector,CachedConnectorFactory> getPostgresEncodings() {
         return postgresEncodings;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PostgresServerService">
+    static class CachedPostgresServerService extends CachedService<Integer,PostgresServer> implements PostgresServerService<CachedConnector,CachedConnectorFactory> {
+        CachedPostgresServerService(CachedConnector connector, PostgresServerService<?,?> wrapped) {
+            super(connector, Integer.class, PostgresServer.class, wrapped);
+        }
+    }
+    final CachedPostgresServerService postgresServers;
     public PostgresServerService<CachedConnector,CachedConnectorFactory> getPostgresServers() {
         return postgresServers;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PostgresUserService">
+    static class CachedPostgresUserService extends CachedService<Integer,PostgresUser> implements PostgresUserService<CachedConnector,CachedConnectorFactory> {
+        CachedPostgresUserService(CachedConnector connector, PostgresUserService<?,?> wrapped) {
+            super(connector, Integer.class, PostgresUser.class, wrapped);
+        }
+    }
+    final CachedPostgresUserService postgresUsers;
     public PostgresUserService<CachedConnector,CachedConnectorFactory> getPostgresUsers() {
         return postgresUsers;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PostgresVersionService">
+    static class CachedPostgresVersionService extends CachedService<Integer,PostgresVersion> implements PostgresVersionService<CachedConnector,CachedConnectorFactory> {
+        CachedPostgresVersionService(CachedConnector connector, PostgresVersionService<?,?> wrapped) {
+            super(connector, Integer.class, PostgresVersion.class, wrapped);
+        }
+    }
+    final CachedPostgresVersionService postgresVersions;
     public PostgresVersionService<CachedConnector,CachedConnectorFactory> getPostgresVersions() {
         return postgresVersions;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PrivateFTPServerService">
+    // TODO: final CachedPrivateFTPServerService privateFTPServers;
     // TODO: public PrivateFTPServerService<CachedConnector,CachedConnectorFactory> getPrivateFTPServers();
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ProcessorTypeService">
+    // TODO: final CachedProcessorTypeService processorTypes;
     // TODO: public ProcessorTypeService<CachedConnector,CachedConnectorFactory> getProcessorTypes();
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ProtocolService">
+    static class CachedProtocolService extends CachedService<String,Protocol> implements ProtocolService<CachedConnector,CachedConnectorFactory> {
+        CachedProtocolService(CachedConnector connector, ProtocolService<?,?> wrapped) {
+            super(connector, String.class, Protocol.class, wrapped);
+        }
+    }
+    final CachedProtocolService protocols;
     public ProtocolService<CachedConnector,CachedConnectorFactory> getProtocols() {
         return protocols;
     }
-    /* TODO
-    public RackService<CachedConnector,CachedConnectorFactory> getRacks();
-
-    public ResellerService<CachedConnector,CachedConnectorFactory> getResellers();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="RackService">
+    // TODO: final CachedRackService racks;
+    // TODO: public RackService<CachedConnector,CachedConnectorFactory> getRacks();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ResellerService">
+    // TODO: final CachedResellerService resellers;
+    // TODO: public ResellerService<CachedConnector,CachedConnectorFactory> getResellers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ResourceTypeService">
+    static class CachedResourceTypeService extends CachedService<String,ResourceType> implements ResourceTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedResourceTypeService(CachedConnector connector, ResourceTypeService<?,?> wrapped) {
+            super(connector, String.class, ResourceType.class, wrapped);
+        }
+    }
+    final CachedResourceTypeService resourceTypes;
     public ResourceTypeService<CachedConnector,CachedConnectorFactory> getResourceTypes() {
         return resourceTypes;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ResourceService">
+    static class CachedResourceService extends CachedService<Integer,Resource> implements ResourceService<CachedConnector,CachedConnectorFactory> {
+        CachedResourceService(CachedConnector connector, ResourceService<?,?> wrapped) {
+            super(connector, Integer.class, Resource.class, wrapped);
+        }
+    }
+    final CachedResourceService resources;
     public ResourceService<CachedConnector,CachedConnectorFactory> getResources() {
         return resources;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ServerFarmService">
+    static class CachedServerFarmService extends CachedService<DomainLabel,ServerFarm> implements ServerFarmService<CachedConnector,CachedConnectorFactory> {
+        CachedServerFarmService(CachedConnector connector, ServerFarmService<?,?> wrapped) {
+            super(connector, DomainLabel.class, ServerFarm.class, wrapped);
+        }
+    }
+    final CachedServerFarmService serverFarms;
     public ServerFarmService<CachedConnector,CachedConnectorFactory> getServerFarms() {
         return serverFarms;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ServerResourceService">
+    static class CachedServerResourceService extends CachedService<Integer,ServerResource> implements ServerResourceService<CachedConnector,CachedConnectorFactory> {
+        CachedServerResourceService(CachedConnector connector, ServerResourceService<?,?> wrapped) {
+            super(connector, Integer.class, ServerResource.class, wrapped);
+        }
+    }
+    final CachedServerResourceService serverResources;
     public ServerResourceService<CachedConnector,CachedConnectorFactory> getServerResources() {
         return serverResources;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ServerService">
+    static class CachedServerService extends CachedService<Integer,Server> implements ServerService<CachedConnector,CachedConnectorFactory> {
+        CachedServerService(CachedConnector connector, ServerService<?,?> wrapped) {
+            super(connector, Integer.class, Server.class, wrapped);
+        }
+    }
+    final CachedServerService servers;
     public ServerService<CachedConnector,CachedConnectorFactory> getServers() {
         return servers;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ShellService">
+    static class CachedShellService extends CachedService<UnixPath,Shell> implements ShellService<CachedConnector,CachedConnectorFactory> {
+        CachedShellService(CachedConnector connector, ShellService<?,?> wrapped) {
+            super(connector, UnixPath.class, Shell.class, wrapped);
+        }
+    }
+    final CachedShellService shells;
     public ShellService<CachedConnector,CachedConnectorFactory> getShells() {
         return shells;
     }
-    /* TODO
-    public SignupRequestOptionService<CachedConnector,CachedConnectorFactory> getSignupRequestOptions();
-
-    public SignupRequestService<CachedConnector,CachedConnectorFactory> getSignupRequests();
-
-    public SpamEmailMessageService<CachedConnector,CachedConnectorFactory> getSpamEmailMessages();
-
-    public SystemEmailAliasService<CachedConnector,CachedConnectorFactory> getSystemEmailAliases();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="SignupRequestOptionService">
+    // TODO: final CachedSignupRequestOptionService signupRequestOptions;
+    // TODO: public SignupRequestOptionService<CachedConnector,CachedConnectorFactory> getSignupRequestOptions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="SignupRequestService">
+    // TODO: final CachedSignupRequestService signupRequests;
+    // TODO: public SignupRequestService<CachedConnector,CachedConnectorFactory> getSignupRequests();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="SpamEmailMessageService">
+    // TODO: final CachedSpamEmailMessageService spamEmailMessages;
+    // TODO: public SpamEmailMessageService<CachedConnector,CachedConnectorFactory> getSpamEmailMessages();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="SystemEmailAliasService">
+    // TODO: final CachedSystemEmailAliasService systemEmailAliass;
+    // TODO: public SystemEmailAliasService<CachedConnector,CachedConnectorFactory> getSystemEmailAliases();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TechnologyService">
+    final class CachedTechnologyService extends CachedService<Integer,Technology> implements TechnologyService<CachedConnector,CachedConnectorFactory> {
+        CachedTechnologyService(CachedConnector connector, TechnologyService<?,?> wrapped) {
+            super(connector, Integer.class, Technology.class, wrapped);
+        }
+    }
+    final CachedTechnologyService technologies;
     public TechnologyService<CachedConnector,CachedConnectorFactory> getTechnologies() {
         return technologies;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TechnologyClassService">
+    static class CachedTechnologyClassService extends CachedService<String,TechnologyClass> implements TechnologyClassService<CachedConnector,CachedConnectorFactory> {
+        CachedTechnologyClassService(CachedConnector connector, TechnologyClassService<?,?> wrapped) {
+            super(connector, String.class, TechnologyClass.class, wrapped);
+        }
+    }
+    final CachedTechnologyClassService technologyClasses;
     public TechnologyClassService<CachedConnector,CachedConnectorFactory> getTechnologyClasses() {
         return technologyClasses;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TechnologyNameService">
+    static class CachedTechnologyNameService extends CachedService<String,TechnologyName> implements TechnologyNameService<CachedConnector,CachedConnectorFactory> {
+        CachedTechnologyNameService(CachedConnector connector, TechnologyNameService<?,?> wrapped) {
+            super(connector, String.class, TechnologyName.class, wrapped);
+        }
+    }
+    final CachedTechnologyNameService technologyNames;
     public TechnologyNameService<CachedConnector,CachedConnectorFactory> getTechnologyNames() {
         return technologyNames;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TechnologyVersionService">
+    static class CachedTechnologyVersionService extends CachedService<Integer,TechnologyVersion> implements TechnologyVersionService<CachedConnector,CachedConnectorFactory> {
+        CachedTechnologyVersionService(CachedConnector connector, TechnologyVersionService<?,?> wrapped) {
+            super(connector, Integer.class, TechnologyVersion.class, wrapped);
+        }
+    }
+    final CachedTechnologyVersionService technologyVersions;
     public TechnologyVersionService<CachedConnector,CachedConnectorFactory> getTechnologyVersions() {
         return technologyVersions;
     }
-    /* TODO
-    public TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes();
-
-    public TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions();
-
-    public TicketAssignmentService<CachedConnector,CachedConnectorFactory> getTicketAssignments();
-
-    public TicketBrandCategoryService<CachedConnector,CachedConnectorFactory> getTicketBrandCategories();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketActionTypeService">
+    // TODO: final CachedTicketActionTypeService ticketActionTypes;
+    // TODO: public TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketActionService">
+    // TODO: final CachedTicketActionService ticketActions;
+    // TODO: public TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketAssignmentService">
+    // TODO: final CachedTicketAssignmentService ticketAssignments;
+    // TODO: public TicketAssignmentService<CachedConnector,CachedConnectorFactory> getTicketAssignments();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketBrandCategoryService">
+    // TODO: final CachedTicketBrandCategoryService ticketBrandCategories;
+    // TODO: public TicketBrandCategoryService<CachedConnector,CachedConnectorFactory> getTicketBrandCategories();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketCategoryService">
+    static class CachedTicketCategoryService extends CachedService<Integer,TicketCategory> implements TicketCategoryService<CachedConnector,CachedConnectorFactory> {
+        CachedTicketCategoryService(CachedConnector connector, TicketCategoryService<?,?> wrapped) {
+            super(connector, Integer.class, TicketCategory.class, wrapped);
+        }
+    }
+    final CachedTicketCategoryService ticketCategories;
     public TicketCategoryService<CachedConnector,CachedConnectorFactory> getTicketCategories() {
         return ticketCategories;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketPriorityService">
+    static class CachedTicketPriorityService extends CachedService<String,TicketPriority> implements TicketPriorityService<CachedConnector,CachedConnectorFactory> {
+        CachedTicketPriorityService(CachedConnector connector, TicketPriorityService<?,?> wrapped) {
+            super(connector, String.class, TicketPriority.class, wrapped);
+        }
+    }
+    final CachedTicketPriorityService ticketPriorities;
     public TicketPriorityService<CachedConnector,CachedConnectorFactory> getTicketPriorities() {
         return ticketPriorities;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketStatusService">
+    static class CachedTicketStatusService extends CachedService<String,TicketStatus> implements TicketStatusService<CachedConnector,CachedConnectorFactory> {
+        CachedTicketStatusService(CachedConnector connector, TicketStatusService<?,?> wrapped) {
+            super(connector, String.class, TicketStatus.class, wrapped);
+        }
+    }
+    final CachedTicketStatusService ticketStatuses;
     public TicketStatusService<CachedConnector,CachedConnectorFactory> getTicketStatuses() {
         return ticketStatuses;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketTypeService">
+    static class CachedTicketTypeService extends CachedService<String,TicketType> implements TicketTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedTicketTypeService(CachedConnector connector, TicketTypeService<?,?> wrapped) {
+            super(connector, String.class, TicketType.class, wrapped);
+        }
+    }
+    final CachedTicketTypeService ticketTypes;
     public TicketTypeService<CachedConnector,CachedConnectorFactory> getTicketTypes() {
         return ticketTypes;
     }
-    /* TODO
-    public TicketService<CachedConnector,CachedConnectorFactory> getTickets();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TicketService">
+    // TODO: final CachedTicketService tickets;
+    // TODO: public TicketService<CachedConnector,CachedConnectorFactory> getTickets();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TimeZoneService">
+    static class CachedTimeZoneService extends CachedService<String,TimeZone> implements TimeZoneService<CachedConnector,CachedConnectorFactory> {
+        CachedTimeZoneService(CachedConnector connector, TimeZoneService<?,?> wrapped) {
+            super(connector, String.class, TimeZone.class, wrapped);
+        }
+    }
+    final CachedTimeZoneService timeZones;
     public TimeZoneService<CachedConnector,CachedConnectorFactory> getTimeZones() {
         return timeZones;
     }
-    /* TODO
-    public TransactionTypeService<CachedConnector,CachedConnectorFactory> getTransactionTypes();
-
-    public TransactionService<CachedConnector,CachedConnectorFactory> getTransactions();
-
-    public USStateService<CachedConnector,CachedConnectorFactory> getUsStates();
-    */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TransactionTypeService">
+    // TODO: final CachedTransactionTypeService transactionTypes;
+    // TODO: public TransactionTypeService<CachedConnector,CachedConnectorFactory> getTransactionTypes();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="TransactionService">
+    // TODO: final CachedTransactionService transactions;
+    // TODO: public TransactionService<CachedConnector,CachedConnectorFactory> getTransactions();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="UsernameService">
+    static class CachedUsernameService extends CachedService<UserId,Username> implements UsernameService<CachedConnector,CachedConnectorFactory> {
+        CachedUsernameService(CachedConnector connector, UsernameService<?,?> wrapped) {
+            super(connector, UserId.class, Username.class, wrapped);
+        }
+    }
+    final CachedUsernameService usernames;
     public UsernameService<CachedConnector,CachedConnectorFactory> getUsernames() {
         return usernames;
     }
-    /* TODO
-    public VirtualDiskService<CachedConnector,CachedConnectorFactory> getVirtualDisks();
-
-    public VirtualServerService<CachedConnector,CachedConnectorFactory> getVirtualServers();
-
-    public WhoisHistoryService<CachedConnector,CachedConnectorFactory> getWhoisHistory();
- */
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="VirtualDiskService">
+    // TODO: final CachedVirtualDiskService virtualDisks;
+    // TODO: public VirtualDiskService<CachedConnector,CachedConnectorFactory> getVirtualDisks();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="VirtualServerService">
+    // TODO: final CachedVirtualServerService virtualServers;
+    // TODO: public VirtualServerService<CachedConnector,CachedConnectorFactory> getVirtualServers();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="WhoisHistoryService">
+    // TODO: final CachedWhoisHistoryService whoisHistories;
+    // TODO: public WhoisHistoryService<CachedConnector,CachedConnectorFactory> getWhoisHistory();
+    // </editor-fold>
 }
