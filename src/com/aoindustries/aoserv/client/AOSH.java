@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <code>AOSH</code> is a command interpreter and scripting language
@@ -629,9 +630,9 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    private static void printBuiltInHelp(Locale locale, TerminalWriter out, boolean showSyntax) throws IOException {
+    private void printBuiltInHelp(TerminalWriter out, boolean showSyntax) throws IOException {
         out.boldOn();
-        out.print(ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.builtInCommands"));
+        out.print(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.help.header.builtInCommands"));
         out.attributesOff();
         out.println();
         for(BuiltIn builtIn : BuiltIn.values) {
@@ -641,7 +642,7 @@ final public class AOSH extends ShellInterpreter {
             int space=Math.max(1, longestCommand+3-command.length());
             for(int d=0;d<space;d++) out.print(d>0 && d<(space-1)?'.':' ');
             // Print the description without the HTML tags
-            printNoHTML(out, showSyntax ? builtIn.getSyntax() : builtIn.getShortDesc(locale));
+            printNoHTML(out, showSyntax ? builtIn.getSyntax() : builtIn.getShortDesc(connector.getLocale()));
             out.println();
         }
     }
@@ -666,7 +667,7 @@ final public class AOSH extends ShellInterpreter {
         return syntax.toString();
     }
 
-    private static void printHelpList(Locale userLocale, TerminalWriter out, String title, ServiceName service, boolean showSyntax, boolean println) throws IOException {
+    private void printHelpList(TerminalWriter out, String title, ServiceName service, boolean showSyntax, boolean println) throws IOException {
         List<CommandName> commands = new ArrayList<CommandName>();
         for(CommandName command : CommandName.values) {
             if(command.getServiceName()==service) commands.add(command);
@@ -687,33 +688,35 @@ final public class AOSH extends ShellInterpreter {
                 if(showSyntax) {
                     printNoHTML(out, getSyntax(commandName));
                 } else {
-                    printNoHTML(out, commandName.getShortDesc(userLocale));
+                    printNoHTML(out, commandName.getShortDesc(connector.getLocale()));
                 }
                 out.println();
             }
         }
     }
 
-    private static void printAllHelp(Locale locale, TerminalWriter out, boolean showSyntax) throws IOException {
+    private void printAllHelp(TerminalWriter out, boolean showSyntax) throws IOException {
+        Locale locale = connector.getLocale();
         // Print the built-in commands first
-        printBuiltInHelp(locale, out, showSyntax);
+        printBuiltInHelp(out, showSyntax);
         // Print the global commands
-        printHelpList(locale, out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.globalCommands"), null, showSyntax, true);
+        printHelpList(out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.globalCommands"), null, showSyntax, true);
 
         // Print table commands
         for(ServiceName service : ServiceName.values) {
-            printHelpList(locale, out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.command", service.toString(locale)), service, showSyntax, true);
+            printHelpList(out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.command", service.toString(locale)), service, showSyntax, true);
         }
         out.flush();
     }
 
-    private static void printCommandHelp(Locale locale, TerminalWriter out, String command, String shortDesc, String syntax, boolean syntaxOnly) throws IOException {
+    private void printCommandHelp(TerminalWriter out, String command, String shortDesc, String syntax, boolean syntaxOnly, Set<AOServPermission.Permission> permissions) throws IOException {
+        Locale locale = connector.getLocale();
         if(!syntaxOnly) {
             out.boldOn();
             out.print(ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.name"));
             out.attributesOff();
             out.println();
-            out.print(ApplicationResources.accessor.getMessage(locale, "AOSH.help.command.description", command, getNoHTML(shortDesc)));
+            out.println(ApplicationResources.accessor.getMessage(locale, "AOSH.help.command.description", command, getNoHTML(shortDesc)));
             out.println();
         }
         out.boldOn();
@@ -721,54 +724,67 @@ final public class AOSH extends ShellInterpreter {
         out.attributesOff();
         out.println();
         if(syntax.length()==0) {
-            out.print(ApplicationResources.accessor.getMessage(locale, "AOSH.help.command.syntax.noParams", command));
+            out.println(ApplicationResources.accessor.getMessage(locale, "AOSH.help.command.syntax.noParams", command));
         } else {
-            out.print(ApplicationResources.accessor.getMessage(locale, "AOSH.help.command.syntax.params", command, getNoHTML(syntax)));
+            out.println(ApplicationResources.accessor.getMessage(locale, "AOSH.help.command.syntax.params", command, getNoHTML(syntax)));
         }
-        out.println();
+        if(permissions!=null) {
+            out.println();
+            out.boldOn();
+            out.print(ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.permissions"));
+            out.attributesOff();
+            out.println();
+            if(permissions.isEmpty()) out.println(ApplicationResources.accessor.getMessage(locale, "AOSH.help.command.permissions.none", command));
+            else {
+                for(AOServPermission.Permission permission : permissions) {
+                    out.println(ApplicationResources.accessor.getMessage(locale, "AOSH.help.command.permissions.granted", permission.toString(locale)));
+                    // TODO: Add bold, red indicator if doesn't have the permission
+                }
+            }
+        }
     }
 
-    private static void printCommandHelp(Locale locale, TerminalWriter out, CommandName commandName, boolean syntaxOnly) throws IOException {
-        printCommandHelp(locale, out, commandName.name(), commandName.getShortDesc(locale), getSyntax(commandName), syntaxOnly);
+    private void printCommandHelp(TerminalWriter out, CommandName commandName, boolean syntaxOnly) throws IOException {
+        printCommandHelp(out, commandName.name(), commandName.getShortDesc(connector.getLocale()), getSyntax(commandName), syntaxOnly, commandName.getPermissions());
     }
 
-    private static void printCommandHelp(Locale locale, TerminalWriter out, BuiltIn builtIn, boolean syntaxOnly) throws IOException {
-        printCommandHelp(locale, out, builtIn.name(), builtIn.getShortDesc(locale), builtIn.getSyntax(), syntaxOnly);
+    private void printCommandHelp(TerminalWriter out, BuiltIn builtIn, boolean syntaxOnly) throws IOException {
+        printCommandHelp(out, builtIn.name(), builtIn.getShortDesc(connector.getLocale()), builtIn.getSyntax(), syntaxOnly, null);
     }
 
     private void help(String[] args) throws IOException {
         Locale locale = connector.getLocale();
         int argCount=args.length;
         if(argCount==1) {
-            printAllHelp(locale, out, false);
+            printAllHelp(out, false);
             out.flush();
         } else if(argCount==2) {
             if("syntax".equals(args[1])) {
-                printAllHelp(locale, out, true);
+                printAllHelp(out, true);
                 out.flush();
             } else if("builtin".equals(args[1])) {
-                printBuiltInHelp(locale, out, false);
+                printBuiltInHelp(out, false);
                 out.flush();
             } else if("global".equals(args[1])) {
-                printHelpList(locale, out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.globalCommands"), null, false, false);
+                printHelpList(out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.globalCommands"), null, false, false);
                 out.flush();
             } else {
                 try {
                     ServiceName service = ServiceName.valueOf(args[1]);
-                    printHelpList(locale, out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.command", service.toString(locale)), service, false, false);
+                    printHelpList(out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.command", service.toString(locale)), service, false, false);
                     out.flush();
                 } catch(IllegalArgumentException exc) {
                     try {
                         BuiltIn builtIn = BuiltIn.valueOf(args[1]);
-                        printCommandHelp(locale, out, builtIn, false);
+                        printCommandHelp(out, builtIn, false);
                         out.flush();
                     } catch(IllegalArgumentException exc2) {
                         try {
                             CommandName commandName = CommandName.valueOf(args[1]);
-                            printCommandHelp(locale, out, commandName, false);
+                            printCommandHelp(out, commandName, false);
                             out.flush();
                         } catch(IllegalArgumentException exc3) {
-                            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidParameterValue", BuiltIn.help, "object", args[1]));
+                            err.println(ApplicationResources.accessor.getMessage(locale, "AOSH.invalidParameterValue", BuiltIn.help, "object", args[1]));
                             if(STACK_TRACES) exc3.printStackTrace(err);
                             err.flush();
                         }
@@ -778,47 +794,47 @@ final public class AOSH extends ShellInterpreter {
         } else if(argCount==3) {
             if("builtin".equals(args[1])) {
                 if("syntax".equals(args[2])) {
-                    printBuiltInHelp(locale, out, true);
+                    printBuiltInHelp(out, true);
                     out.flush();
                 } else {
-                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidParameterValue", BuiltIn.help, "syntax", args[2]));
+                    err.println(ApplicationResources.accessor.getMessage(locale, "AOSH.invalidParameterValue", BuiltIn.help, "syntax", args[2]));
                     err.flush();
                 }
             } else if("global".equals(args[1])) {
                 if("syntax".equals(args[2])) {
-                    printHelpList(locale, out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.globalCommands"), null, true, false);
+                    printHelpList(out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.globalCommands"), null, true, false);
                     out.flush();
                 } else {
-                    err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidParameterValue", BuiltIn.help, "syntax", args[2]));
+                    err.println(ApplicationResources.accessor.getMessage(locale, "AOSH.invalidParameterValue", BuiltIn.help, "syntax", args[2]));
                     err.flush();
                 }
             } else {
                 try {
                     ServiceName service = ServiceName.valueOf(args[1]);
                     if("syntax".equals(args[2])) {
-                        printHelpList(locale, out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.command", service.toString(locale)), service, true, false);
+                        printHelpList(out, ApplicationResources.accessor.getMessage(locale, "AOSH.help.header.command", service.toString(locale)), service, true, false);
                         out.flush();
                     } else {
-                        err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidParameterValue", BuiltIn.help, "syntax", args[2]));
+                        err.println(ApplicationResources.accessor.getMessage(locale, "AOSH.invalidParameterValue", BuiltIn.help, "syntax", args[2]));
                         err.flush();
                     }
                 } catch(IllegalArgumentException exc) {
                     try {
                         BuiltIn builtIn = BuiltIn.valueOf(args[1]);
-                        printCommandHelp(locale, out, builtIn, true);
+                        printCommandHelp(out, builtIn, true);
                         out.flush();
                     } catch(IllegalArgumentException exc2) {
                         try {
                             CommandName commandName = CommandName.valueOf(args[1]);
                             if("syntax".equals(args[2])) {
-                                printCommandHelp(locale, out, commandName, true);
+                                printCommandHelp(out, commandName, true);
                                 out.flush();
                             } else {
-                                err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidParameterValue", BuiltIn.help, "syntax", args[2]));
+                                err.println(ApplicationResources.accessor.getMessage(locale, "AOSH.invalidParameterValue", BuiltIn.help, "syntax", args[2]));
                                 err.flush();
                             }
                         } catch(IllegalArgumentException exc3) {
-                            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.invalidParameterValue", BuiltIn.help, "object", args[1]));
+                            err.println(ApplicationResources.accessor.getMessage(locale, "AOSH.invalidParameterValue", BuiltIn.help, "object", args[1]));
                             if(STACK_TRACES) exc3.printStackTrace(err);
                             err.flush();
                         }
@@ -826,7 +842,7 @@ final public class AOSH extends ShellInterpreter {
                 }
             }
         } else {
-            err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.tooManyParameters", BuiltIn.help));
+            err.println(ApplicationResources.accessor.getMessage(locale, "AOSH.tooManyParameters", BuiltIn.help));
             err.flush();
         }
     }
@@ -909,11 +925,11 @@ final public class AOSH extends ShellInterpreter {
                     newArgs
                 ).run();
             } catch(com.aoindustries.aoserv.client.validator.ValidationException exc) {
-                err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.ValidationException", BuiltIn.su, exc.getMessage()));
+                err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.ValidationException", BuiltIn.su, exc.getMessage()));
                 if(STACK_TRACES) exc.printStackTrace(err);
                 err.flush();
             } catch(LoginException exc) {
-                err.println(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOSH.LoginException", BuiltIn.su, exc.getMessage()));
+                err.println(ApplicationResources.accessor.getMessage(connector.getLocale(), "AOSH.LoginException", BuiltIn.su, exc.getMessage()));
                 if(STACK_TRACES) exc.printStackTrace(err);
                 err.flush();
             }
