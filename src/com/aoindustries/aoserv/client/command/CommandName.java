@@ -27,9 +27,13 @@ public enum CommandName {
     // TODO: select(SelectCommand.class, null),
     show(ShowCommand.class, null),
     // failover_file_logs
-    add_failover_file_log(AddFailoverFileLog.class, ServiceName.failover_file_log, AOServPermission.Permission.add_failover_file_log),
+    add_failover_file_log(AddFailoverFileLogCommand.class, ServiceName.failover_file_log, AOServPermission.Permission.add_failover_file_log),
     // failover_file_replications
-    request_replication_daemon_access(RequestReplicationDaemonAccess.class, ServiceName.failover_file_replications, AOServPermission.Permission.request_replication_daemon_access),
+    request_replication_daemon_access(RequestReplicationDaemonAccessCommand.class, ServiceName.failover_file_replications, AOServPermission.Permission.request_replication_daemon_access),
+    // ticket_actions
+    // TODO: add_ticket_annotation(AddTicketAnnotationCommand.class, ServiceName.ticket_actions, AOServPermission.Permission.add_ticket),
+    // tickets
+    add_ticket(AddTicketCommand.class, ServiceName.tickets, AOServPermission.Permission.add_ticket),
     // TODO: add_backup_server(TODO.class, TODO),
     // TODO: add_business(TODO.class, TODO),
     // TODO: add_business_administrator(TODO.class, TODO),
@@ -74,7 +78,6 @@ public enum CommandName {
     // TODO: add_postgres_server_user(TODO.class, TODO),
     // TODO: add_postgres_user(TODO.class, TODO),
     // TODO: add_spam_email_message(TODO.class, TODO),
-    // TODO: add_ticket(TODO.class, TODO),
     // TODO: add_ticket_work(TODO.class, TODO),
     // TODO: add_transaction(TODO.class, TODO),
     // TODO: add_username(TODO.class, TODO),

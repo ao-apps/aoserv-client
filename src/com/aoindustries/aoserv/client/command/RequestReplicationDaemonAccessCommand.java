@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class RequestReplicationDaemonAccess extends AOServCommand<AOServer.DaemonAccess> {
+final public class RequestReplicationDaemonAccessCommand extends AOServCommand<AOServer.DaemonAccess> {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,8 +24,8 @@ final public class RequestReplicationDaemonAccess extends AOServCommand<AOServer
 
     final private int replication;
 
-    public RequestReplicationDaemonAccess(
-        @Param(name=PARAM_REPLICATION, nullable=false, syntax="<i>"+PARAM_REPLICATION+"</i>") int replication
+    public RequestReplicationDaemonAccessCommand(
+        @Param(name=PARAM_REPLICATION) int replication
     ) {
         this.replication = replication;
     }

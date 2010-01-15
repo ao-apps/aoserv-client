@@ -6,7 +6,6 @@ package com.aoindustries.aoserv.client.command;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.MethodColumn;
@@ -21,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author  AO Industries, Inc.
@@ -37,7 +35,7 @@ final public class DescribeCommand extends AOServCommand<String> {
     private final String table_name;
 
     public DescribeCommand(
-        @Param(name=PARAM_TABLE_NAME, nullable=false, syntax="<i>"+PARAM_TABLE_NAME+"</i>") String table_name
+        @Param(name=PARAM_TABLE_NAME) String table_name
     ) {
         this.table_name = table_name;
     }

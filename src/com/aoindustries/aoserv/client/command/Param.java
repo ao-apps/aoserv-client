@@ -21,6 +21,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Param {
     String name();
-    boolean nullable();
-    String syntax();
+    boolean nullable() default false;
+    String syntax() default "[[AUTO_SYNTAX]]";
 }

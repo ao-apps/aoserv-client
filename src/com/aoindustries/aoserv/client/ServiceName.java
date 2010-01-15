@@ -34,8 +34,8 @@ public enum ServiceName implements LocalizedToString {
     bank_transactions,
     banks,
     blackhole_email_addresses,
-    brands,
      */
+    brands,
     business_administrators,
     /* TODO
     business_administrator_permissions,
@@ -158,8 +158,8 @@ public enum ServiceName implements LocalizedToString {
     protocols,
     /* TODO
     racks,
-    resellers,
      */
+    resellers,
     resource_types,
     resources,
     /* TODO
@@ -182,19 +182,15 @@ public enum ServiceName implements LocalizedToString {
     technology_classes,
     technology_names,
     technology_versions,
-    /* TODO
-    ticket_action_types,
-    ticket_actions,
+    // TODO: ticket_action_types,
+    // TODO: ticket_actions,
     ticket_assignments,
-    ticket_brand_categories,
-     */
+    // TODO: ticket_brand_categories,
     ticket_categories,
     ticket_priorities,
     ticket_stati,
     ticket_types,
-    /* TODO
     tickets,
-     */
     time_zones,
     /* TODO
     transaction_types,

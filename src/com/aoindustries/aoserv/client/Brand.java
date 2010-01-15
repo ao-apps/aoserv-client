@@ -1,19 +1,20 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.command.AddTicketCommand;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.Email;
+import com.aoindustries.aoserv.client.validator.Hostname;
+import com.aoindustries.table.IndexType;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A brand has separate website, packages, nameservers, and support.
@@ -23,477 +24,355 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Brand extends CachedObjectStringKey<Brand> {
+final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements BeanFactory<com.aoindustries.aoserv.client.beans.Brand> {
 
-    static final int
-        COLUMN_ACCOUNTING = 0,
-        COLUMN_SMTP_LINUX_SERVER_ACCOUNT = 5,
-        COLUMN_IMAP_LINUX_SERVER_ACCOUNT = 8,
-        COLUMN_SUPPORT_EMAIL_ADDRESS = 11,
-        COLUMN_SIGNUP_EMAIL_ADDRESS = 13,
-        COLUMN_TICKET_ENCRYPTION_FROM = 15,
-        COLUMN_TICKET_ENCRYPTION_RECIPIENT = 16,
-        COLUMN_SIGNUP_ENCRYPTION_FROM = 17,
-        COLUMN_SIGNUP_ENCRYPTION_RECIPIENT = 18,
-        COLUMN_AOWEB_STRUTS_VNC_BIND = 36
-    ;
-    static final String COLUMN_ACCOUNTING_name = "accounting";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    private String nameserver1;
-    private String nameserver2;
-    private String nameserver3;
-    private String nameserver4;
-    private int smtp_linux_server_account;
-    private String smtp_host;
-    private String smtp_password;
-    private int imap_linux_server_account;
-    private String imap_host;
-    private String imap_password;
-    private int support_email_address;
-    private String support_email_display;
-    private int signup_email_address;
-    private String signup_email_display;
-    private int ticket_encryption_from;
-    private int ticket_encryption_recipient;
-    private int signup_encryption_from;
-    private int signup_encryption_recipient;
-    private String support_toll_free;
-    private String support_day_phone;
-    private String support_emergency_phone1;
-    private String support_emergency_phone2;
-    private String support_fax;
-    private String support_mailing_address1;
-    private String support_mailing_address2;
-    private String support_mailing_address3;
-    private String support_mailing_address4;
-    private boolean english_enabled;
-    private boolean japanese_enabled;
-    private String aoweb_struts_http_url_base;
-    private String aoweb_struts_https_url_base;
-    private String aoweb_struts_google_verify_content;
-    private boolean aoweb_struts_noindex;
-    private String aoweb_struts_google_analytics_new_tracking_code;
-    private String aoweb_struts_signup_admin_address;
-    private int aoweb_struts_vnc_bind;
-    private String aoweb_struts_keystore_type;
-    private String aoweb_struts_keystore_password;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private DomainName nameserver1;
+    final private DomainName nameserver2;
+    final private DomainName nameserver3;
+    final private DomainName nameserver4;
+    final private int smtpEmailInbox;
+    final private Hostname smtpHost;
+    final private String smtpPassword;
+    final private int imapEmailInbox;
+    final private Hostname imapHost;
+    final private String imapPassword;
+    final private int supportEmailAddress;
+    final private String supportEmailDisplay;
+    final private int signupEmailAddress;
+    final private String signupEmailDisplay;
+    final private int ticketEncryptionFrom;
+    final private int ticketEncryptionRecipient;
+    final private int signupEncryptionFrom;
+    final private int signupEncryptionRecipient;
+    final private String supportTollFree;
+    final private String supportDayPhone;
+    final private String supportEmergencyPhone1;
+    final private String supportEmergencyPhone2;
+    final private String supportFax;
+    final private String supportMailingAddress1;
+    final private String supportMailingAddress2;
+    final private String supportMailingAddress3;
+    final private String supportMailingAddress4;
+    final private boolean englishEnabled;
+    final private boolean japaneseEnabled;
+    final private String aowebStrutsHttpUrlBase;
+    final private String aowebStrutsHttpsUrlBase;
+    final private String aowebStrutsGoogleVerifyContent;
+    final private boolean aowebStrutsNoindex;
+    final private String aowebStrutsGoogleAnalyticsNewTrackingCode;
+    final private Email aowebStrutsSignupAdminAddress;
+    final private int aowebStrutsVncBind;
+    final private String aowebStrutsKeystoreType;
+    final private String aowebStrutsKeystorePassword;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_ACCOUNTING : return pkey;
-            case 1: return nameserver1;
-            case 2: return nameserver2;
-            case 3: return nameserver3;
-            case 4: return nameserver4;
-            case COLUMN_SMTP_LINUX_SERVER_ACCOUNT: return smtp_linux_server_account;
-            case 6: return smtp_host;
-            case 7: return smtp_password;
-            case COLUMN_IMAP_LINUX_SERVER_ACCOUNT: return imap_linux_server_account;
-            case 9: return imap_host;
-            case 10: return imap_password;
-            case COLUMN_SUPPORT_EMAIL_ADDRESS: return support_email_address;
-            case 12: return support_email_display;
-            case COLUMN_SIGNUP_EMAIL_ADDRESS: return signup_email_address;
-            case 14: return signup_email_display;
-            case COLUMN_TICKET_ENCRYPTION_FROM: return ticket_encryption_from;
-            case COLUMN_TICKET_ENCRYPTION_RECIPIENT: return ticket_encryption_recipient;
-            case COLUMN_SIGNUP_ENCRYPTION_FROM: return signup_encryption_from;
-            case COLUMN_SIGNUP_ENCRYPTION_RECIPIENT: return signup_encryption_recipient;
-            case 19: return support_toll_free;
-            case 20: return support_day_phone;
-            case 21: return support_emergency_phone1;
-            case 22: return support_emergency_phone2;
-            case 23: return support_fax;
-            case 24: return support_mailing_address1;
-            case 25: return support_mailing_address2;
-            case 26: return support_mailing_address3;
-            case 27: return support_mailing_address4;
-            case 28: return english_enabled;
-            case 29: return japanese_enabled;
-            case 30: return aoweb_struts_http_url_base;
-            case 31: return aoweb_struts_https_url_base;
-            case 32: return aoweb_struts_google_verify_content;
-            case 33: return aoweb_struts_noindex;
-            case 34: return aoweb_struts_google_analytics_new_tracking_code;
-            case 35: return aoweb_struts_signup_admin_address;
-            case COLUMN_AOWEB_STRUTS_VNC_BIND: return aoweb_struts_vnc_bind;
-            case 37: return aoweb_struts_keystore_type;
-            case 38: return aoweb_struts_keystore_password;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public Brand(
+        BrandService<?,?> service,
+        AccountingCode accounting,
+        DomainName nameserver1,
+        DomainName nameserver2,
+        DomainName nameserver3,
+        DomainName nameserver4,
+        int smtpEmailInbox,
+        Hostname smtpHost,
+        String smtpPassword,
+        int imapEmailInbox,
+        Hostname imapHost,
+        String imapPassword,
+        int supportEmailAddress,
+        String supportEmailDisplay,
+        int signupEmailAddress,
+        String signupEmailDisplay,
+        int ticketEncryptionFrom,
+        int ticketEncryptionRecipient,
+        int signupEncryptionFrom,
+        int signupEncryptionRecipient,
+        String supportTollFree,
+        String supportDayPhone,
+        String supportEmergencyPhone1,
+        String supportEmergencyPhone2,
+        String supportFax,
+        String supportMailingAddress1,
+        String supportMailingAddress2,
+        String supportMailingAddress3,
+        String supportMailingAddress4,
+        boolean englishEnabled,
+        boolean japaneseEnabled,
+        String aowebStrutsHttpUrlBase,
+        String aowebStrutsHttpsUrlBase,
+        String aowebStrutsGoogleVerifyContent,
+        boolean aowebStrutsNoindex,
+        String aowebStrutsGoogleAnalyticsNewTrackingCode,
+        Email aowebStrutsSignupAdminAddress,
+        int aowebStrutsVncBind,
+        String aowebStrutsKeystoreType,
+        String aowebStrutsKeystorePassword
+    ) {
+        super(service, accounting);
+        this.nameserver1 = nameserver1.intern();
+        this.nameserver2 = nameserver2.intern();
+        this.nameserver3 = nameserver3==null ? null : nameserver3.intern();
+        this.nameserver4 = nameserver4==null ? null : nameserver4.intern();
+        this.smtpEmailInbox = smtpEmailInbox;
+        this.smtpHost = smtpHost==null ? null : smtpHost.intern();
+        this.smtpPassword = smtpPassword;
+        this.imapEmailInbox = imapEmailInbox;
+        this.imapHost = imapHost==null ? null : imapHost.intern();
+        this.imapPassword = imapPassword;
+        this.supportEmailAddress = supportEmailAddress;
+        this.supportEmailDisplay = supportEmailDisplay;
+        this.signupEmailAddress = signupEmailAddress;
+        this.signupEmailDisplay = signupEmailDisplay;
+        this.ticketEncryptionFrom = ticketEncryptionFrom;
+        this.ticketEncryptionRecipient = ticketEncryptionRecipient;
+        this.signupEncryptionFrom = signupEncryptionFrom;
+        this.signupEncryptionRecipient = signupEncryptionRecipient;
+        this.supportTollFree = supportTollFree;
+        this.supportDayPhone = supportDayPhone;
+        this.supportEmergencyPhone1 = supportEmergencyPhone1;
+        this.supportEmergencyPhone2 = supportEmergencyPhone2;
+        this.supportFax = supportFax;
+        this.supportMailingAddress1 = supportMailingAddress1;
+        this.supportMailingAddress2 = supportMailingAddress2;
+        this.supportMailingAddress3 = supportMailingAddress3;
+        this.supportMailingAddress4 = supportMailingAddress4;
+        this.englishEnabled = englishEnabled;
+        this.japaneseEnabled = japaneseEnabled;
+        this.aowebStrutsHttpUrlBase = aowebStrutsHttpUrlBase;
+        this.aowebStrutsHttpsUrlBase = aowebStrutsHttpsUrlBase;
+        this.aowebStrutsGoogleVerifyContent = aowebStrutsGoogleVerifyContent;
+        this.aowebStrutsNoindex = aowebStrutsNoindex;
+        this.aowebStrutsGoogleAnalyticsNewTrackingCode = aowebStrutsGoogleAnalyticsNewTrackingCode;
+        this.aowebStrutsSignupAdminAddress = aowebStrutsSignupAdminAddress.intern();
+        this.aowebStrutsVncBind = aowebStrutsVncBind;
+        this.aowebStrutsKeystoreType = aowebStrutsKeystoreType.intern();
+        this.aowebStrutsKeystorePassword = aowebStrutsKeystorePassword;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the business that is a brand")
+    public Business getBusiness() throws RemoteException {
+        return getService().getConnector().getBusinesses().get(key);
     }
 
-    public Business getBusiness() throws IOException, SQLException {
-        Business bu = table.connector.getBusinesses().get(pkey);
-        if(bu==null) throw new SQLException("Unable to find Business: "+pkey);
-        return bu;
-    }
-
-    public String getNameserver1() {
+    @SchemaColumn(order=1, name="nameserver1", description="the primary nameserver")
+    public DomainName getNameserver1() {
         return nameserver1;
     }
 
-    public String getNameserver2() {
+    @SchemaColumn(order=2, name="nameserver2", description="the secondary nameserver")
+    public DomainName getNameserver2() {
         return nameserver2;
     }
 
-    public String getNameserver3() {
+    @SchemaColumn(order=3, name="nameserver3", description="the tertiary nameserver (optional)")
+    public DomainName getNameserver3() {
         return nameserver3;
     }
 
-    public String getNameserver4() {
+    @SchemaColumn(order=4, name="nameserver4", description="the quaternary nameserver (optional)")
+    public DomainName getNameserver4() {
         return nameserver4;
     }
 
-    public LinuxServerAccount getSmtpLinuxServerAccount() throws IOException, SQLException {
-        LinuxServerAccount lsa = table.connector.getLinuxServerAccounts().get(smtp_linux_server_account);
-        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+smtp_linux_server_account);
-        return lsa;
+    /* TODO
+    @SchemaColumn(order=5, name="smtp_email_inbox", index=IndexType.PRIMARY_KEY, description="the inbox used for outgoing email")
+    public EmailInbox getSmtpEmailInbox() throws RemoteException {
+        return getService().getConnector().getEmailInboxes().get(smtpEmailInbox);
     }
+     */
 
     /**
      * Gets the host that should be used for SMTP.  Will use the hostname
      * of the SmtpLinuxServerAccount's AOServer if smtp_host is null.
      */
-    public String getSmtpHost() throws IOException, SQLException {
-        return smtp_host!=null ? smtp_host : getSmtpLinuxServerAccount().getAOServer().getHostname();
+    /* TODO
+    @SchemaColumn(order=6, name="smtp_host", description="the host used for outgoing email")
+    public String getSmtpHost() throws RemoteException {
+        return smtpHost!=null ? smtpHost : getEmailInbox().getAOServer().getHostname();
     }
-
+     */
+    @SchemaColumn(order=5, name="smtp_password", description="the password used for outgoing email")
     public String getSmtpPassword() {
-        return smtp_password;
+        return smtpPassword;
     }
 
-    public LinuxServerAccount getImapLinuxServerAccount() throws SQLException, IOException {
-        LinuxServerAccount lsa = table.connector.getLinuxServerAccounts().get(imap_linux_server_account);
-        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+imap_linux_server_account);
-        return lsa;
+    /* TODO
+    @SchemaColumn(order=7, name="imap_email_inbox", index=IndexType.PRIMARY_KEY, description="the inbox used for incoming email")
+    public EmailInbox getImapEmailInbox() throws RemoteException {
+        return getService().getConnector().getEmailInboxes().get(imapEmailInbox);
     }
+    */
 
     /**
      * Gets the host that should be used for IMAP.  Will use the hostname
      * of the ImapLinuxServerAccount's AOServer if imap_host is null.
      */
+    /* TODO
+    @SchemaColumn(order=7, name="imap_host", description="the host used for incoming email")
     public String getImapHost() throws IOException, SQLException {
-        return imap_host!=null ? imap_host : getImapLinuxServerAccount().getAOServer().getHostname();
+        return imapHost!=null ? imapHost : getImapLinuxServerAccount().getAOServer().getHostname();
     }
-
+     */
+    @SchemaColumn(order=6, name="imap_password", description="the password used for incoming email")
     public String getImapPassword() {
-        return imap_password;
+        return imapPassword;
     }
 
-    public EmailAddress getSupportEmailAddress() throws IOException, SQLException {
-        EmailAddress ea = table.connector.getEmailAddresses().get(support_email_address);
-        if(ea==null) throw new SQLException("Unable to find EmailAddress: "+support_email_address);
-        return ea;
-    }
+    /* TODO
+    @SchemaColumn(order=11, name="support_email_address", index=IndexType.PRIMARY_KEY, description="the support address")
+    public EmailAddress getSupportEmailAddress() throws RemoteException {
+        return getService().getConnector().getEmailAddresses().get(supportEmailAddress);
+    }*/
 
+    @SchemaColumn(order=7, name="support_email_display", index=IndexType.PRIMARY_KEY, description="the support address display")
     public String getSupportEmailDisplay() {
-        return support_email_display;
+        return supportEmailDisplay;
     }
 
-    public EmailAddress getSignupEmailAddress() throws IOException, SQLException {
-        EmailAddress ea = table.connector.getEmailAddresses().get(signup_email_address);
-        if(ea==null) throw new SQLException("Unable to find EmailAddress: "+signup_email_address);
-        return ea;
-    }
+    /* TODO
+    @SchemaColumn(order=13, name="signup_email_address", index=IndexType.PRIMARY_KEY, description="the signup address")
+    public EmailAddress getSignupEmailAddress() throws RemoteException {
+        return getService().getConnector().getEmailAddresses().get(signupEmailAddress);
+    }*/
 
+    @SchemaColumn(order=8, name="signup_email_display", index=IndexType.PRIMARY_KEY, description="the signup address display")
     public String getSignupEmailDisplay() {
-        return signup_email_display;
+        return signupEmailDisplay;
     }
 
-    /**
-     * May be filtered.
-     */
+    /* TODO
+    @SchemaColumn(order=15, name="ticket_encryption_from", description="the key used to encrypt ticket data")
     public EncryptionKey getTicketEncryptionFrom() throws IOException, SQLException {
-        return table.connector.getEncryptionKeys().get(ticket_encryption_from);
+        return getService().getConnector().getEncryptionKeys().get(ticketEncryptionFrom);
     }
 
-    /**
-     * May be filtered.
-     */
+    @SchemaColumn(order=16, name="ticket_encryption_recipient", description="the key used to decrypt ticket data")
     public EncryptionKey getTicketEncryptionRecipient() throws IOException, SQLException {
-        return table.connector.getEncryptionKeys().get(ticket_encryption_recipient);
+        return getService().getConnector().getEncryptionKeys().get(ticketEncryptionRecipient);
     }
 
-    /**
-     * May be filtered.
-     */
+    @SchemaColumn(order=17, name="signup_encryption_from", description="the key used to encrypt signup data")
     public EncryptionKey getSignupEncryptionFrom() throws IOException, SQLException {
-        return table.connector.getEncryptionKeys().get(signup_encryption_from);
+        return getService().getConnector().getEncryptionKeys().get(signupEncryptionFrom);
     }
 
-    /**
-     * May be filtered.
-     */
+    @SchemaColumn(order=18, name="signup_encryption_recipient", description="the key used to decrypt signup data")
     public EncryptionKey getSignupEncryptionRecipient() throws IOException, SQLException {
-        return table.connector.getEncryptionKeys().get(signup_encryption_recipient);
+        return getService().getConnector().getEncryptionKeys().get(signupEncryptionRecipient);
     }
+     */
 
+    @SchemaColumn(order=19, name="support_toll_free", description="the support toll-free number")
     public String getSupportTollFree() {
-        return support_toll_free;
+        return supportTollFree;
     }
 
+    @SchemaColumn(order=20, name="support_day_phone", description="the support day phone number")
     public String getSupportDayPhone() {
-        return support_day_phone;
+        return supportDayPhone;
     }
 
+    @SchemaColumn(order=21, name="support_emergency_phone1", description="the support 24-hour phone number")
     public String getSupportEmergencyPhone1() {
-        return support_emergency_phone1;
+        return supportEmergencyPhone1;
     }
 
+    @SchemaColumn(order=22, name="support_emergency_phone2", description="the secondary support 24-hour phone number")
     public String getSupportEmergencyPhone2() {
-        return support_emergency_phone2;
+        return supportEmergencyPhone2;
     }
 
+    @SchemaColumn(order=23, name="support_fax", description="")
     public String getSupportFax() {
-        return support_fax;
+        return supportFax;
     }
-    
+
+    @SchemaColumn(order=24, name="support_mailing_address1", description="the support mailing address line 1")
     public String getSupportMailingAddress1() {
-        return support_mailing_address1;
+        return supportMailingAddress1;
     }
 
+    @SchemaColumn(order=25, name="support_mailing_address2", description="the support mailing address line 2")
     public String getSupportMailingAddress2() {
-        return support_mailing_address2;
+        return supportMailingAddress2;
     }
 
+    @SchemaColumn(order=26, name="support_mailing_address3", description="the support mailing address line 3")
     public String getSupportMailingAddress3() {
-        return support_mailing_address3;
+        return supportMailingAddress3;
     }
 
+    @SchemaColumn(order=27, name="support_mailing_address4", description="the support mailing address line 4")
     public String getSupportMailingAddress4() {
-        return support_mailing_address4;
+        return supportMailingAddress4;
     }
 
+    @SchemaColumn(order=28, name="english_enabled", description="enables the English language in all support tools")
     public boolean getEnglishEnabled() {
-        return english_enabled;
+        return englishEnabled;
     }
 
+    @SchemaColumn(order=29, name="japanese_enabled", description="enables the Japanese language in all support tools")
     public boolean getJapaneseEnabled() {
-        return japanese_enabled;
+        return japaneseEnabled;
     }
 
+    @SchemaColumn(order=30, name="aoweb_struts_http_url_base", description="the base URL for the non-SSL aoweb-struts installation")
     public String getAowebStrutsHttpUrlBase() {
-        return aoweb_struts_http_url_base;
+        return aowebStrutsHttpUrlBase;
     }
 
-    public URL getAowebStrutsHttpURL() throws MalformedURLException {
-        return new URL(aoweb_struts_http_url_base);
-    }
-
+    @SchemaColumn(order=31, name="aoweb_struts_https_url_base", description="the base URL for the SSL aoweb-struts installation")
     public String getAowebStrutsHttpsUrlBase() {
-        return aoweb_struts_https_url_base;
+        return aowebStrutsHttpsUrlBase;
     }
 
-    public URL getAowebStrutsHttpsURL() throws MalformedURLException {
-        return new URL(aoweb_struts_https_url_base);
-    }
-
+    @SchemaColumn(order=32, name="aoweb_struts_google_verify_content", description="the Google Webmaster Tools verification code")
     public String getAowebStrutsGoogleVerifyContent() {
-        return aoweb_struts_google_verify_content;
+        return aowebStrutsGoogleVerifyContent;
     }
 
+    @SchemaColumn(order=33, name="aoweb_struts_noindex", description="indicates this site will have ROBOTS NOINDEX meta tags on aoweb-struts common code")
     public boolean getAowebStrutsNoindex() {
-        return aoweb_struts_noindex;
+        return aowebStrutsNoindex;
     }
 
+    @SchemaColumn(order=34, name="aoweb_struts_google_analytics_new_tracking_code", description="the Google Analytics tracking code")
     public String getAowebStrutsGoogleAnalyticsNewTrackingCode() {
-        return aoweb_struts_google_analytics_new_tracking_code;
+        return aowebStrutsGoogleAnalyticsNewTrackingCode;
     }
 
-    public String getAowebStrutsSignupAdminAddress() {
-        return aoweb_struts_signup_admin_address;
+    @SchemaColumn(order=35, name="aoweb_struts_signup_admin_address", description="the email address that will receive copies of all signups")
+    public Email getAowebStrutsSignupAdminAddress() {
+        return aowebStrutsSignupAdminAddress;
     }
 
-    public NetBind getAowebStrutsVncBind() throws IOException, SQLException {
-        NetBind nb = table.connector.getNetBinds().get(aoweb_struts_vnc_bind);
-        if(nb==null) throw new SQLException("Unable to find NetBind: "+aoweb_struts_vnc_bind);
-        return nb;
+    static final String COLUMN_AOWEB_STRUTS_VNC_BIND = "aoweb_struts_vnc_bind";
+    @SchemaColumn(order=36, name=COLUMN_AOWEB_STRUTS_VNC_BIND, index=IndexType.PRIMARY_KEY, description="the port that listens for VNC connections")
+    public NetBind getAowebStrutsVncBind() throws RemoteException {
+        return getService().getConnector().getNetBinds().get(aowebStrutsVncBind);
     }
 
+    @SchemaColumn(order=37, name="aoweb_struts_keystore_type", description="the keystore type for native Java SSL")
     public String getAowebStrutsKeystoreType() {
-        return aoweb_struts_keystore_type;
+        return aowebStrutsKeystoreType;
     }
 
+    @SchemaColumn(order=38, name="aoweb_struts_keystore_password", description="the keystore password for native Java SSL")
     public String getAowebStrutsKeystorePassword() {
-        return aoweb_struts_keystore_password;
+        return aowebStrutsKeystorePassword;
     }
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.BRANDS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey = result.getString(pos++);
-        nameserver1 = result.getString(pos++);
-        nameserver2 = result.getString(pos++);
-        nameserver3 = result.getString(pos++);
-        nameserver4 = result.getString(pos++);
-        smtp_linux_server_account = result.getInt(pos++);
-        smtp_host = result.getString(pos++);
-        smtp_password = result.getString(pos++);
-        imap_linux_server_account = result.getInt(pos++);
-        imap_host = result.getString(pos++);
-        imap_password = result.getString(pos++);
-        support_email_address = result.getInt(pos++);
-        support_email_display = result.getString(pos++);
-        signup_email_address = result.getInt(pos++);
-        signup_email_display = result.getString(pos++);
-        ticket_encryption_from = result.getInt(pos++);
-        ticket_encryption_recipient = result.getInt(pos++);
-        signup_encryption_from = result.getInt(pos++);
-        signup_encryption_recipient = result.getInt(pos++);
-        support_toll_free = result.getString(pos++);
-        support_day_phone = result.getString(pos++);
-        support_emergency_phone1 = result.getString(pos++);
-        support_emergency_phone2 = result.getString(pos++);
-        support_fax = result.getString(pos++);
-        support_mailing_address1 = result.getString(pos++);
-        support_mailing_address2 = result.getString(pos++);
-        support_mailing_address3 = result.getString(pos++);
-        support_mailing_address4 = result.getString(pos++);
-        english_enabled = result.getBoolean(pos++);
-        japanese_enabled = result.getBoolean(pos++);
-        aoweb_struts_http_url_base = result.getString(pos++);
-        aoweb_struts_https_url_base = result.getString(pos++);
-        aoweb_struts_google_verify_content = result.getString(pos++);
-        aoweb_struts_noindex = result.getBoolean(pos++);
-        aoweb_struts_google_analytics_new_tracking_code = result.getString(pos++);
-        aoweb_struts_signup_admin_address = result.getString(pos++);
-        aoweb_struts_vnc_bind = result.getInt(pos++);
-        aoweb_struts_keystore_type = result.getString(pos++);
-        aoweb_struts_keystore_password = result.getString(pos++);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        nameserver1 = in.readUTF();
-        nameserver2 = in.readUTF();
-        nameserver3 = in.readNullUTF();
-        nameserver4 = in.readNullUTF();
-        smtp_linux_server_account = in.readCompressedInt();
-        smtp_host = in.readNullUTF();
-        smtp_password = in.readUTF();
-        imap_linux_server_account = in.readCompressedInt();
-        imap_host = in.readNullUTF();
-        imap_password = in.readUTF();
-        support_email_address = in.readCompressedInt();
-        support_email_display = in.readUTF();
-        signup_email_address = in.readCompressedInt();
-        signup_email_display = in.readUTF();
-        ticket_encryption_from = in.readCompressedInt();
-        ticket_encryption_recipient = in.readCompressedInt();
-        signup_encryption_from = in.readCompressedInt();
-        signup_encryption_recipient = in.readCompressedInt();
-        support_toll_free = in.readNullUTF();
-        support_day_phone = in.readNullUTF();
-        support_emergency_phone1 = in.readNullUTF();
-        support_emergency_phone2 = in.readNullUTF();
-        support_fax = in.readNullUTF();
-        support_mailing_address1 = in.readNullUTF();
-        support_mailing_address2 = in.readNullUTF();
-        support_mailing_address3 = in.readNullUTF();
-        support_mailing_address4 = in.readNullUTF();
-        english_enabled = in.readBoolean();
-        japanese_enabled = in.readBoolean();
-        aoweb_struts_http_url_base = in.readUTF();
-        aoweb_struts_https_url_base = in.readUTF();
-        aoweb_struts_google_verify_content = in.readNullUTF();
-        aoweb_struts_noindex = in.readBoolean();
-        aoweb_struts_google_analytics_new_tracking_code = in.readNullUTF();
-        aoweb_struts_signup_admin_address = in.readUTF();
-        aoweb_struts_vnc_bind = in.readCompressedInt();
-        aoweb_struts_keystore_type = in.readUTF();
-        aoweb_struts_keystore_password = in.readUTF();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeUTF(nameserver1);
-        out.writeUTF(nameserver2);
-        out.writeNullUTF(nameserver3);
-        out.writeNullUTF(nameserver4);
-        out.writeCompressedInt(smtp_linux_server_account);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(smtp_host);
-        out.writeUTF(smtp_password);
-        out.writeCompressedInt(imap_linux_server_account);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(imap_host);
-        out.writeUTF(imap_password);
-        out.writeCompressedInt(support_email_address);
-        out.writeUTF(support_email_display);
-        out.writeCompressedInt(signup_email_address);
-        out.writeUTF(signup_email_display);
-        out.writeCompressedInt(ticket_encryption_from);
-        out.writeCompressedInt(ticket_encryption_recipient);
-        out.writeCompressedInt(signup_encryption_from);
-        out.writeCompressedInt(signup_encryption_recipient);
-        out.writeNullUTF(support_toll_free);
-        out.writeNullUTF(support_day_phone);
-        out.writeNullUTF(support_emergency_phone1);
-        out.writeNullUTF(support_emergency_phone2);
-        out.writeNullUTF(support_fax);
-        out.writeNullUTF(support_mailing_address1);
-        out.writeNullUTF(support_mailing_address2);
-        out.writeNullUTF(support_mailing_address3);
-        out.writeNullUTF(support_mailing_address4);
-        out.writeBoolean(english_enabled);
-        out.writeBoolean(japanese_enabled);
-        out.writeUTF(aoweb_struts_http_url_base);
-        out.writeUTF(aoweb_struts_https_url_base);
-        out.writeNullUTF(aoweb_struts_google_verify_content);
-        out.writeBoolean(aoweb_struts_noindex);
-        out.writeNullUTF(aoweb_struts_google_analytics_new_tracking_code);
-        out.writeUTF(aoweb_struts_signup_admin_address);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_52)>=0) out.writeCompressedInt(aoweb_struts_vnc_bind);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_53)>=0) {
-            out.writeUTF(aoweb_struts_keystore_type);
-            out.writeUTF(aoweb_struts_keystore_password);
-        }
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getBusiness(),
-            getSmtpLinuxServerAccount(),
-            getImapLinuxServerAccount(),
-            getSupportEmailAddress(),
-            getSignupEmailAddress(),
-            getTicketEncryptionFrom(),
-            getTicketEncryptionRecipient(),
-            getSignupEncryptionFrom(),
-            getSignupEncryptionRecipient(),
-            getAowebStrutsVncBind()
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            createDependencyList(
-                getReseller()
-            ),
-            getTickets(),
-            getSignupRequests(),
-            getTicketBrandCategories()
-        );
-    }
-
-    /**
-     * Gets the Reseller for this Brand or <code>null</code> if not a reseller.
-     */
-    public Reseller getReseller() throws IOException, SQLException {
-        return table.connector.getResellers().getReseller(this);
-    }
-
-    public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
-        return table.connector.getTicketBrandCategories().getTicketBrandCategories(this);
-    }
-
-    /**
-     * Gets the immediate parent of this brand or <code>null</code> if none available.
-     */
-    public Brand getParentBrand() throws IOException, SQLException {
+    static final String COLUMN_PARENT = "parent";
+    @SchemaColumn(order=39, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the immediate parent of this brand or <code>null</code> if none available")
+    public Brand getParentBrand() throws RemoteException {
         Business bu = getBusiness();
         if(bu==null) return null;
         Business parent = bu.getParentBusiness();
@@ -503,24 +382,150 @@ final public class Brand extends CachedObjectStringKey<Brand> {
         }
         return null;
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Brand getBean() {
+        return new com.aoindustries.aoserv.client.beans.Brand(
+            key.getBean(),
+            nameserver1.getBean(),
+            nameserver2.getBean(),
+            nameserver3==null ? null : nameserver3.getBean(),
+            nameserver4==null ? null : nameserver4.getBean(),
+            smtpEmailInbox,
+            smtpHost==null ? null : smtpHost.getBean(),
+            smtpPassword,
+            imapEmailInbox,
+            imapHost==null ? null : imapHost.getBean(),
+            imapPassword,
+            supportEmailAddress,
+            supportEmailDisplay,
+            signupEmailAddress,
+            signupEmailDisplay,
+            ticketEncryptionFrom,
+            ticketEncryptionRecipient,
+            signupEncryptionFrom,
+            signupEncryptionRecipient,
+            supportTollFree,
+            supportDayPhone,
+            supportEmergencyPhone1,
+            supportEmergencyPhone2,
+            supportFax,
+            supportMailingAddress1,
+            supportMailingAddress2,
+            supportMailingAddress3,
+            supportMailingAddress4,
+            englishEnabled,
+            japaneseEnabled,
+            aowebStrutsHttpUrlBase,
+            aowebStrutsHttpsUrlBase,
+            aowebStrutsGoogleVerifyContent,
+            aowebStrutsNoindex,
+            aowebStrutsGoogleAnalyticsNewTrackingCode,
+            aowebStrutsSignupAdminAddress.getBean(),
+            aowebStrutsVncBind,
+            aowebStrutsKeystoreType,
+            aowebStrutsKeystorePassword
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getBusiness(),
+            // TODO: getSmtpEmailInbox(),
+            // TODO: getImapEmailInbox(),
+            // TODO: getSupportEmailAddress(),
+            // TODO: getSignupEmailAddress(),
+            // TODO: getTicketEncryptionFrom(),
+            // TODO: getTicketEncryptionRecipient(),
+            // TODO: getSignupEncryptionFrom(),
+            // TODO: getSignupEncryptionRecipient(),
+            getAowebStrutsVncBind()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            AOServObjectUtils.createDependencySet(
+                getReseller()
+            ),
+            getTickets()
+            // TODO: getSignupRequests(),
+            // TODO: getTicketBrandCategories()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /**
+     * Gets the Reseller for this Brand or <code>null</code> if not a reseller.
+     */
+    public Reseller getReseller() throws RemoteException {
+        return getService().getConnector().getResellers().filterUnique(Reseller.COLUMN_ACCOUNTING, this);
+    }
+
+    /* TODO
+    public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
+        return getService().getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
+    }*/
 
     /**
      * The children of the brand are any brands that have their closest parent
      * business (that is a brand) equal to this one.
      */
-    public List<Brand> getChildBrands() throws IOException, SQLException {
-        List<Brand> children = new ArrayList<Brand>();
-        for(Brand brand : table.connector.getBrands().getRows()) {
-            if(!brand.equals(this) && this.equals(brand.getParentBrand())) children.add(brand);
-        }
-        return children;
+    public IndexedSet<Brand> getChildBrands() throws RemoteException {
+        return getService().filterIndexed(COLUMN_PARENT, this);
     }
 
-    public List<Ticket> getTickets() throws IOException, SQLException {
-        return table.connector.getTickets().getIndexedRows(Ticket.COLUMN_BRAND, pkey);
+    public IndexedSet<Ticket> getTickets() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_BRAND, this);
     }
 
+    /* TODO
     public List<SignupRequest> getSignupRequests() throws IOException, SQLException {
-        return table.connector.getSignupRequests().getIndexedRows(SignupRequest.COLUMN_BRAND, pkey);
+        return getService().getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_BRAND, pkey);
+    }
+     */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public int addTicket(
+        Business business,
+        Language language,
+        TicketCategory category,
+        TicketType ticketType,
+        Email fromAddress,
+        String summary,
+        String details,
+        TicketPriority clientPriority,
+        Set<Email> contactEmails,
+        Set<String> contactPhoneNumbers
+    ) throws RemoteException {
+        return new AddTicketCommand(
+            key,
+            business==null ? null : business.getAccounting(),
+            language.getKey(),
+            category==null ? null : category.getKey(),
+            ticketType.getKey(),
+            fromAddress,
+            summary,
+            details,
+            clientPriority.getKey(),
+            contactEmails,
+            contactPhoneNumbers
+        ).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
+    public URL getAowebStrutsHttpURL() throws MalformedURLException {
+        return new URL(aowebStrutsHttpUrlBase);
+    }
+
+    public URL getAowebStrutsHttpsURL() throws MalformedURLException {
+        return new URL(aowebStrutsHttpsUrlBase);
     }
 }

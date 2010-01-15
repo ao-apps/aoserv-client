@@ -662,7 +662,12 @@ final public class AOSH extends ShellInterpreter {
                 }
             }
             if(c>0) syntax.append(' ');
-            syntax.append(paramAnnotation.syntax());
+            String paramSyntax = paramAnnotation.syntax();
+            if("[[AUTO_SYNTAX]]".equals(paramSyntax)) {
+                if(paramAnnotation.nullable()) paramSyntax = "{\"\"|<i>" + paramAnnotation.name() + "</i>}";
+                else paramSyntax = "<i>" + paramAnnotation.name() + "</i>";
+            }
+            syntax.append(paramSyntax);
         }
         return syntax.toString();
     }

@@ -5,13 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.logging.QueuedHandler;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -40,7 +44,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
      * Only one TicketLoggingHandler will be created per unique summaryPrefix,
      * AOServConnector, and category.
      */
-    public static Handler getHandler(String summaryPrefix, AOServConnector connector, TicketCategory category) throws IOException, SQLException {
+    public static Handler getHandler(String summaryPrefix, AOServConnector<?,?> connector, TicketCategory category) throws IOException, SQLException {
         synchronized(handlers) {
             for(TicketLoggingHandler handler : handlers) {
                 if(
@@ -56,14 +60,14 @@ final public class TicketLoggingHandler extends QueuedHandler {
     }
 
     private final String summaryPrefix;
-    private final AOServConnector connector;
+    private final AOServConnector<?,?> connector;
     private final TicketCategory category;
     private final Business business;
     private final Brand brand;
     private final Language language;
     private final TicketType ticketType;
 
-    private TicketLoggingHandler(String summaryPrefix, final AOServConnector connector, TicketCategory category) throws IOException, SQLException {
+    private TicketLoggingHandler(String summaryPrefix, final AOServConnector<?,?> connector, TicketCategory category) throws IOException, SQLException {
         super(
             "Console logger for "+connector.toString(),
             "Ticket logger for "+connector.toString()
@@ -74,11 +78,9 @@ final public class TicketLoggingHandler extends QueuedHandler {
         // Look-up things in advance to reduce possible round-trips during logging
         business = connector.getThisBusinessAdministrator().getUsername().getBusiness();
         brand = business.getBrand();
-        if(brand==null) throw new SQLException("Unable to find Brand for connector: "+connector);
+        if(brand==null) throw new NoSuchElementException("Unable to find Brand for connector: "+connector);
         language = connector.getLanguages().get(Language.EN);
-        if(language==null) throw new SQLException("Unable to find Language: "+Language.EN);
         ticketType = connector.getTicketTypes().get(TicketType.LOGS);
-        if(ticketType==null) throw new SQLException("Unable to find TicketType: "+TicketType.LOGS);
     }
 
     protected boolean useCustomLogging(LogRecord record) {
@@ -96,7 +98,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
             String summary = tempSB.toString();
             // Look for an existing ticket to append
             Ticket existingTicket = null;
-            for(Ticket ticket : connector.getTickets()) {
+            for(Ticket ticket : connector.getTickets().getSet()) {
                 String status = ticket.getStatus().getStatus();
                 if(
                     (
@@ -128,19 +130,19 @@ final public class TicketLoggingHandler extends QueuedHandler {
                 else if(intLevel<=Level.WARNING.intValue()) priorityName = TicketPriority.HIGH;    // INFO < level <=WARNING
                 else priorityName = TicketPriority.URGENT;                                         // WARNING < level
                 TicketPriority priority = connector.getTicketPriorities().get(priorityName);
-                if(priority==null) throw new SQLException("Unable to find TicketPriority: "+priorityName);
-                connector.getTickets().addTicket(
-                    brand,
+                Set<Email> contactEmails = Collections.emptySet();
+                Set<String> contactPhoneNumbers = Collections.emptySet();
+                brand.addTicket(
                     business,
                     language,
                     category,
                     ticketType,
-                    null,
+                    (Email)null,
                     summary,
                     fullReport,
                     priority,
-                    "",
-                    ""
+                    contactEmails,
+                    contactPhoneNumbers
                 );
             }
         } catch(Exception err) {

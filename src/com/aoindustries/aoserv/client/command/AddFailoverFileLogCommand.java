@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class AddFailoverFileLog extends AOServCommand<Integer> {
+final public class AddFailoverFileLogCommand extends AOServCommand<Integer> {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,14 +38,14 @@ final public class AddFailoverFileLog extends AOServCommand<Integer> {
     final private long bytes;
     final private boolean isSuccessful;
 
-    public AddFailoverFileLog(
-        @Param(name=PARAM_REPLICATION, nullable=false, syntax="<i>"+PARAM_REPLICATION+"</i>") int replication,
-        @Param(name=PARAM_START_TIME, nullable=false, syntax="<i>"+PARAM_START_TIME+"</i>") Timestamp startTime,
-        @Param(name=PARAM_END_TIME, nullable=false, syntax="<i>"+PARAM_END_TIME+"</i>") Timestamp endTime,
-        @Param(name=PARAM_SCANNED, nullable=false, syntax="<i>"+PARAM_SCANNED+"</i>") int scanned,
-        @Param(name=PARAM_UPDATED, nullable=false, syntax="<i>"+PARAM_UPDATED+"</i>") int updated,
-        @Param(name=PARAM_BYTES, nullable=false, syntax="<i>"+PARAM_BYTES+"</i>") long bytes,
-        @Param(name=PARAM_IS_SUCCESSFUL, nullable=false, syntax="<i>"+PARAM_IS_SUCCESSFUL+"</i>") boolean isSuccessful
+    public AddFailoverFileLogCommand(
+        @Param(name=PARAM_REPLICATION) int replication,
+        @Param(name=PARAM_START_TIME) Timestamp startTime,
+        @Param(name=PARAM_END_TIME) Timestamp endTime,
+        @Param(name=PARAM_SCANNED) int scanned,
+        @Param(name=PARAM_UPDATED) int updated,
+        @Param(name=PARAM_BYTES) long bytes,
+        @Param(name=PARAM_IS_SUCCESSFUL) boolean isSuccessful
     ) {
         this.replication = replication;
         this.startTime = startTime;

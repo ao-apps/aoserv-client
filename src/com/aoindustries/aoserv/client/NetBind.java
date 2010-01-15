@@ -173,10 +173,10 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             getAOServerByDaemonNetBind(),
             getAOServerByDaemonConnectNetBind(),
             getAOServerByJilterNetBind(),
+            getBrandByAowebStrutsVncBind(),
             getMySQLServer(),
             getNetTcpRedirect(),
             getPostgresServer()
-            // TODO: getBrandByAowebStrutsVncBind(),
             // TODO: getEmailSmartHost(),
             // TODO: getHttpdBind(),
             // TODO: getHttpdJBossSiteByJNPPort(),
@@ -214,6 +214,10 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     public AOServer getAOServerByJilterNetBind() throws RemoteException {
         return getService().getConnector().getAoServers().filterUnique(AOServer.COLUMN_JILTER_BIND, this);
+    }
+
+    public Brand getBrandByAowebStrutsVncBind() throws RemoteException {
+        return getService().getConnector().getBrands().filterUnique(Brand.COLUMN_AOWEB_STRUTS_VNC_BIND, this);
     }
 
     public MySQLServer getMySQLServer() throws RemoteException {
@@ -267,10 +271,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     public PrivateFTPServer getPrivateFTPServer() throws IOException, SQLException {
         return getService().getConnector().getPrivateFTPServers().get(pkey);
-    }
-
-    public Brand getBrandByAowebStrutsVncBind() throws IOException, SQLException {
-        return getService().getConnector().getBrands().getUniqueRow(Brand.COLUMN_AOWEB_STRUTS_VNC_BIND, pkey);
     }
 
     public EmailSmtpSmartHost getEmailSmartHost() throws IOException, SQLException {

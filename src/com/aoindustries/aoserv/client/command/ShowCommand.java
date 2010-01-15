@@ -28,7 +28,7 @@ final public class ShowCommand extends AOServCommand<String> {
     private final String object;
 
     public ShowCommand(
-        @Param(name=PARAM_OBJECT, nullable=false, syntax="<b>tables</b>") String object
+        @Param(name=PARAM_OBJECT, syntax="<b>tables</b>") String object
     ) {
         this.object = object;
     }

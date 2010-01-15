@@ -103,8 +103,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     BankTransactionService<C,F> getBankTransactions() throws RemoteException;
     BankService<C,F> getBanks() throws RemoteException;
     BlackholeEmailAddressService<C,F> getBlackholeEmailAddresses() throws RemoteException;
-    BrandService<C,F> getBrands() throws RemoteException;
      */
+    BrandService<C,F> getBrands() throws RemoteException;
     BusinessAdministratorService<C,F> getBusinessAdministrators() throws RemoteException;
     /*
     BusinessAdministratorPermissionService<C,F> getBusinessAdministratorPermissions() throws RemoteException;
@@ -228,8 +228,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     ProtocolService<C,F> getProtocols() throws RemoteException;
     /* TODO
     RackService<C,F> getRacks() throws RemoteException;
-    ResellerService<C,F> getResellers() throws RemoteException;
     */
+    ResellerService<C,F> getResellers() throws RemoteException;
     ResourceTypeService<C,F> getResourceTypes() throws RemoteException;
     ResourceService<C,F> getResources() throws RemoteException;
     ServerFarmService<C,F> getServerFarms() throws RemoteException;
@@ -249,16 +249,14 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /* TODO
     TicketActionTypeService<C,F> getTicketActionTypes() throws RemoteException;
     TicketActionService<C,F> getTicketActions() throws RemoteException;
-    TicketAssignmentService<C,F> getTicketAssignments() throws RemoteException;
-    TicketBrandCategoryService<C,F> getTicketBrandCategories() throws RemoteException;
     */
+    TicketAssignmentService<C,F> getTicketAssignments() throws RemoteException;
+    // TODO: TicketBrandCategoryService<C,F> getTicketBrandCategories() throws RemoteException;
     TicketCategoryService<C,F> getTicketCategories() throws RemoteException;
     TicketPriorityService<C,F> getTicketPriorities() throws RemoteException;
     TicketStatusService<C,F> getTicketStatuses() throws RemoteException;
     TicketTypeService<C,F> getTicketTypes() throws RemoteException;
-    /* TODO
     TicketService<C,F> getTickets() throws RemoteException;
-    */
     TimeZoneService<C,F> getTimeZones() throws RemoteException;
     /* TODO
     TransactionTypeService<C,F> getTransactionTypes() throws RemoteException;

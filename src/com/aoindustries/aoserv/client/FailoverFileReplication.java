@@ -5,8 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.command.AddFailoverFileLog;
-import com.aoindustries.aoserv.client.command.RequestReplicationDaemonAccess;
+import com.aoindustries.aoserv.client.command.AddFailoverFileLogCommand;
+import com.aoindustries.aoserv.client.command.RequestReplicationDaemonAccessCommand;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.io.BitRateProvider;
@@ -196,19 +196,19 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="BitRateProvider">
-    public int getBlockSize() {
-        return BufferManager.BUFFER_SIZE;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Commands">
     public int addFailoverFileLog(Timestamp startTime, Timestamp endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws RemoteException {
-        return new AddFailoverFileLog(key, startTime, endTime, scanned, updated, bytes, isSuccessful).execute(getService().getConnector());
+        return new AddFailoverFileLogCommand(key, startTime, endTime, scanned, updated, bytes, isSuccessful).execute(getService().getConnector());
     }
 
     public AOServer.DaemonAccess requestReplicationDaemonAccess() throws RemoteException {
-        return new RequestReplicationDaemonAccess(key).execute(getService().getConnector());
+        return new RequestReplicationDaemonAccessCommand(key).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="BitRateProvider">
+    public int getBlockSize() {
+        return BufferManager.BUFFER_SIZE;
     }
     // </editor-fold>
 

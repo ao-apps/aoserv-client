@@ -1,111 +1,101 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * @see  Ticket
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignment> {
+final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignment> implements BeanFactory<com.aoindustries.aoserv.client.beans.TicketAssignment> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_TICKET=1,
-        COLUMN_RESELLER=2,
-        COLUMN_ADMINISTRATOR=3
-    ;
-    static final String COLUMN_PKEY_name = "pkey";
-    static final String COLUMN_TICKET_name = "ticket";
-    static final String COLUMN_RESELLER_name = "reseller";
-    static final String COLUMN_ADMINISTRATOR_name = "administrator";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    private int ticket;
-    private String reseller;
-    private String administrator;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int ticket;
+    final private AccountingCode reseller;
+    final private UserId administrator;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return pkey;
-            case COLUMN_TICKET: return ticket;
-            case COLUMN_RESELLER: return reseller;
-            case COLUMN_ADMINISTRATOR: return administrator;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public TicketAssignment(
+        TicketAssignmentService<?,?> service,
+        int pkey,
+        int ticket,
+        AccountingCode reseller,
+        UserId administrator
+    ) {
+        super(service, pkey);
+        this.ticket = ticket;
+        this.reseller = reseller.intern();
+        this.administrator = administrator.intern();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(TicketAssignment other) throws RemoteException {
+        int diff = ticket==other.ticket ? 0 : getTicket().compareTo(other.getTicket());
+        if(diff!=0) return diff;
+        return reseller.equals(other.reseller) ? 0 : getReseller().compareTo(other.getReseller());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique id")
+    public int getPkey() {
+        return key;
     }
 
-    public Ticket getTicket() throws IOException, SQLException {
-        Ticket t = table.connector.getTickets().get(ticket);
-        if(t==null) throw new SQLException("Unable to find Ticket: "+ticket);
-        return t;
+    static final String COLUMN_TICKET = "ticket";
+    @SchemaColumn(order=1, name=COLUMN_TICKET, index=IndexType.INDEXED, description="the ticket id that is assigned")
+    public Ticket getTicket() throws RemoteException {
+        return getService().getConnector().getTickets().get(ticket);
     }
 
-    public Reseller getReseller() throws IOException, SQLException {
-        Reseller r = table.connector.getResellers().get(reseller);
-        if(r==null) throw new SQLException("Unable to find Reseller: "+reseller);
-        return r;
+    static final String COLUMN_RESELLER = "reseller";
+    @SchemaColumn(order=2, name=COLUMN_RESELLER, index=IndexType.INDEXED, description="the reseller for the assignment")
+    public Reseller getReseller() throws RemoteException {
+        return getService().getConnector().getResellers().get(reseller);
     }
 
-    public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
-        BusinessAdministrator ba = table.connector.getBusinessAdministrators().get(administrator);
-        if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+administrator);
-        return ba;
-        //Username un=table.connector.getUsernames().get(administrator);
-        //if(un==null) return null;
-        //return un.getBusinessAdministrator();
+    @SchemaColumn(order=3, name="administrator", description="the individual that the ticket is assigned to within the reseller")
+    public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
+        return getService().getConnector().getBusinessAdministrators().get(administrator);
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.TICKET_ASSIGNMENTS;
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TicketAssignment getBean() {
+        return new com.aoindustries.aoserv.client.beans.TicketAssignment(key, ticket, reseller.getBean(), administrator.getBean());
     }
+    // </editor-fold>
 
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        ticket = result.getInt(2);
-        reseller = result.getString(3);
-        administrator = result.getString(4);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        ticket = in.readCompressedInt();
-        reseller = in.readUTF().intern();
-        administrator = in.readUTF().intern();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
             getTicket(),
             getReseller(),
             getBusinessAdministrator()
         );
     }
+    // </editor-fold>
 
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-        );
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ticket+"|"+pkey+'|'+reseller+'|'+administrator;
+        return ticket+"|"+key+'|'+reseller+'|'+administrator;
     }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(ticket);
-        out.writeUTF(reseller);
-        out.writeUTF(administrator);
-    }
+    // </editor-fold>
 }

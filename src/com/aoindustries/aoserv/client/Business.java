@@ -307,9 +307,9 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: createDependencyList(
-            // TODO:     getBrand()
-            // TODO: ),
+            AOServObjectUtils.createDependencySet(
+                getBrand()
+            ),
             getChildBusinesses(),
             // TODO: getBusinessProfiles(),
             getBusinessServers(),
@@ -347,6 +347,13 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    /**
+     * Gets the Brand for this business or <code>null</code> if not a brand.
+     */
+    public Brand getBrand() throws RemoteException {
+        return getService().getConnector().getBrands().filterUnique(Brand.COLUMN_ACCOUNTING, this);
+    }
+
     public IndexedSet<Business> getChildBusinesses() throws RemoteException {
         return getService().getConnector().getBusinesses().filterIndexed(COLUMN_PARENT, this);
     }
@@ -986,17 +993,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /*
     public CreditCardTransaction getLastCreditCardTransaction() throws IOException, SQLException {
         return getService().getConnector().getCreditCardTransactions().getLastCreditCardTransaction(this);
-    }*/
+    }
 
-    /**
-     * Gets the Brand for this business or <code>null</code> if not a brand.
-     */
-    /*
-    public Brand getBrand() throws IOException, SQLException {
-        return getService().getConnector().getBrands().get(pkey);
-    }*/
-
-    /*
     public int addPackageDefinition(
         PackageCategory category,
         String name,

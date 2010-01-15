@@ -1,17 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A reseller may handle support tickets..
@@ -21,73 +18,36 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Reseller extends CachedObjectStringKey<Reseller> {
+final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> implements BeanFactory<com.aoindustries.aoserv.client.beans.Reseller> {
 
-    static final int COLUMN_ACCOUNTING = 0;
-    static final String COLUMN_ACCOUNTING_name = "accounting";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    private boolean ticket_auto_escalate;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private boolean ticketAutoEscalate;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_ACCOUNTING : return pkey;
-            case 1: return ticket_auto_escalate;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public Reseller(ResellerService<?,?> service, AccountingCode accounting, boolean ticketAutoEscalate) {
+        super(service, accounting);
+        this.ticketAutoEscalate = ticketAutoEscalate;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the brand of this reseller")
+    public Brand getBrand() throws RemoteException {
+        return getService().getConnector().getBrands().get(key);
     }
 
-    public Brand getBrand() throws SQLException, IOException {
-        Brand br = table.connector.getBrands().get(pkey);
-        if(br==null) throw new SQLException("Unable to find Brand: "+pkey);
-        return br;
-    }
-
+    @SchemaColumn(order=1, name="ticket_auto_escalate", description="indicates this reseller does not handle tickets directly and that they are automatically escalated to the parent reseller")
     public boolean getTicketAutoEscalate() {
-        return ticket_auto_escalate;
+        return ticketAutoEscalate;
     }
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.RESELLERS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey = result.getString(pos++);
-        ticket_auto_escalate = result.getBoolean(pos++);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        ticket_auto_escalate = in.readBoolean();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getBrand()
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getTickets(),
-            getTicketAssignments()
-        );
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeBoolean(ticket_auto_escalate);
-    }
-
-    public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
-        return table.connector.getTicketAssignments().getTicketAssignments(this);
-    }
-
-    /**
-     * Gets the immediate parent of this reseller or <code>null</code> if none available.
-     */
-    public Reseller getParentReseller() throws IOException, SQLException {
+    static final String COLUMN_PARENT = "parent";
+    @SchemaColumn(order=2, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the immediate parent of this reseller or <code>null</code> if none available")
+    public Reseller getParentReseller() throws RemoteException {
         Business bu = getBrand().getBusiness();
         if(bu==null) return null;
         Business parent = bu.getParentBusiness();
@@ -100,20 +60,46 @@ final public class Reseller extends CachedObjectStringKey<Reseller> {
         }
         return null;
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.Reseller getBean() {
+        return new com.aoindustries.aoserv.client.beans.Reseller(key.getBean(), ticketAutoEscalate);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getBrand()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getTickets(),
+            getTicketAssignments()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
+        return getService().getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_RESELLER, this);
+    }
 
     /**
-     * The children of the resller are any resellers that have their closest parent
+     * The children of the reseller are any resellers that have their closest parent
      * business (that is a reseller) equal to this one.
      */
-    public List<Reseller> getChildResellers() throws IOException, SQLException {
-        List<Reseller> children = new ArrayList<Reseller>();
-        for(Reseller reseller : table.connector.getResellers().getRows()) {
-            if(!reseller.equals(this) && this.equals(reseller.getParentReseller())) children.add(reseller);
-        }
-        return children;
+    public IndexedSet<Reseller> getChildResellers() throws RemoteException {
+        return getService().filterIndexed(COLUMN_PARENT, this);
     }
 
-    public List<Ticket> getTickets() throws IOException, SQLException {
-        return table.connector.getTickets().getIndexedRows(Ticket.COLUMN_RESELLER, pkey);
+    public IndexedSet<Ticket> getTickets() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_RESELLER, this);
     }
+    // </editor-fold>
 }

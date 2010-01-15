@@ -22,6 +22,8 @@ import com.aoindustries.aoserv.client.BackupPartition;
 import com.aoindustries.aoserv.client.BackupPartitionService;
 import com.aoindustries.aoserv.client.BackupRetention;
 import com.aoindustries.aoserv.client.BackupRetentionService;
+import com.aoindustries.aoserv.client.Brand;
+import com.aoindustries.aoserv.client.BrandService;
 import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
@@ -98,6 +100,8 @@ import com.aoindustries.aoserv.client.PostgresVersion;
 import com.aoindustries.aoserv.client.PostgresVersionService;
 import com.aoindustries.aoserv.client.Protocol;
 import com.aoindustries.aoserv.client.ProtocolService;
+import com.aoindustries.aoserv.client.Reseller;
+import com.aoindustries.aoserv.client.ResellerService;
 import com.aoindustries.aoserv.client.Resource;
 import com.aoindustries.aoserv.client.ResourceService;
 import com.aoindustries.aoserv.client.ResourceType;
@@ -119,10 +123,14 @@ import com.aoindustries.aoserv.client.TechnologyNameService;
 import com.aoindustries.aoserv.client.TechnologyService;
 import com.aoindustries.aoserv.client.TechnologyVersion;
 import com.aoindustries.aoserv.client.TechnologyVersionService;
+import com.aoindustries.aoserv.client.Ticket;
+import com.aoindustries.aoserv.client.TicketAssignment;
+import com.aoindustries.aoserv.client.TicketAssignmentService;
 import com.aoindustries.aoserv.client.TicketCategory;
 import com.aoindustries.aoserv.client.TicketCategoryService;
 import com.aoindustries.aoserv.client.TicketPriority;
 import com.aoindustries.aoserv.client.TicketPriorityService;
+import com.aoindustries.aoserv.client.TicketService;
 import com.aoindustries.aoserv.client.TicketStatus;
 import com.aoindustries.aoserv.client.TicketStatusService;
 import com.aoindustries.aoserv.client.TicketType;
@@ -182,8 +190,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         bankTransactions = new CachedBankTransactionService(this, wrapped.getBankTransactions());
         banks = new CachedBankService(this, wrapped.getBanks());
         blackholeEmailAddresss = new CachedBlackholeEmailAddressService(this, wrapped.getBlackholeEmailAddresss());
-        brands = new CachedBrandService(this, wrapped.getBrands());
          */
+        brands = new CachedBrandService(this, wrapped.getBrands());
         businessAdministrators = new CachedBusinessAdministratorService(this, wrapped.getBusinessAdministrators());
         /* TODO
         businessAdministratorPermissions = new CachedBusinessAdministratorPermissionService(this, wrapped.getBusinessAdministratorPermissions());
@@ -303,10 +311,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         // TODO: privateFTPServers = new CachedPrivateFTPServerService(this, wrapped.getPrivateFTPServers());
         // TODO: processorTypes = new CachedProcessorTypeService(this, wrapped.getProcessorTypes());
         protocols = new CachedProtocolService(this, wrapped.getProtocols());
-        /* TODO
-        racks = new CachedRackService(this, wrapped.getRacks());
+        // TODO: racks = new CachedRackService(this, wrapped.getRacks());
         resellers = new CachedResellerService(this, wrapped.getResellers());
-         */
         resourceTypes = new CachedResourceTypeService(this, wrapped.getResourceTypes());
         resources = new CachedResourceService(this, wrapped.getResources());
         serverFarms = new CachedServerFarmService(this, wrapped.getServerFarms());
@@ -323,19 +329,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         technologyClasses = new CachedTechnologyClassService(this, wrapped.getTechnologyClasses());
         technologyNames = new CachedTechnologyNameService(this, wrapped.getTechnologyNames());
         technologyVersions = new CachedTechnologyVersionService(this, wrapped.getTechnologyVersions());
-        /* TODO
-        ticketActionTypes = new CachedTicketActionTypeService(this, wrapped.getTicketActionTypes());
-        ticketActions = new CachedTicketActionService(this, wrapped.getTicketActions());
+        // TODO: ticketActionTypes = new CachedTicketActionTypeService(this, wrapped.getTicketActionTypes());
+        // TODO: ticketActions = new CachedTicketActionService(this, wrapped.getTicketActions());
         ticketAssignments = new CachedTicketAssignmentService(this, wrapped.getTicketAssignments());
-        ticketBrandCategories = new CachedTicketBrandCategoryService(this, wrapped.getTicketBrandCategorys());
-        */
+        // TODO: ticketBrandCategories = new CachedTicketBrandCategoryService(this, wrapped.getTicketBrandCategorys());
         ticketCategories = new CachedTicketCategoryService(this, wrapped.getTicketCategories());
         ticketPriorities = new CachedTicketPriorityService(this, wrapped.getTicketPriorities());
         ticketStatuses = new CachedTicketStatusService(this, wrapped.getTicketStatuses());
         ticketTypes = new CachedTicketTypeService(this, wrapped.getTicketTypes());
-        /* TODO
         tickets = new CachedTicketService(this, wrapped.getTickets());
-        */
         timeZones = new CachedTimeZoneService(this, wrapped.getTimeZones());
         /* TODO
         transactionTypes = new CachedTransactionTypeService(this, wrapped.getTransactionTypes());
@@ -493,8 +495,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public BlackholeEmailAddressService<CachedConnector,CachedConnectorFactory> getBlackholeEmailAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BrandService">
-    // TODO: final CachedBrandService brands;
-    // TODO: public BrandService<CachedConnector,CachedConnectorFactory> getBrands();
+    static class CachedBrandService extends CachedService<AccountingCode,Brand> implements BrandService<CachedConnector,CachedConnectorFactory> {
+        CachedBrandService(CachedConnector connector, BrandService<?,?> wrapped) {
+            super(connector, AccountingCode.class, Brand.class, wrapped);
+        }
+    }
+    final CachedBrandService brands;
+    public BrandService<CachedConnector,CachedConnectorFactory> getBrands() {
+        return brands;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorService">
     static class CachedBusinessAdministratorService extends CachedService<UserId,BusinessAdministrator> implements BusinessAdministratorService<CachedConnector,CachedConnectorFactory> {
@@ -1179,8 +1188,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public RackService<CachedConnector,CachedConnectorFactory> getRacks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResellerService">
-    // TODO: final CachedResellerService resellers;
-    // TODO: public ResellerService<CachedConnector,CachedConnectorFactory> getResellers();
+    static class CachedResellerService extends CachedService<AccountingCode,Reseller> implements ResellerService<CachedConnector,CachedConnectorFactory> {
+        CachedResellerService(CachedConnector connector, ResellerService<?,?> wrapped) {
+            super(connector, AccountingCode.class, Reseller.class, wrapped);
+        }
+    }
+    final CachedResellerService resellers;
+    public ResellerService<CachedConnector,CachedConnectorFactory> getResellers() {
+        return resellers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResourceTypeService">
     static class CachedResourceTypeService extends CachedService<String,ResourceType> implements ResourceTypeService<CachedConnector,CachedConnectorFactory> {
@@ -1317,8 +1333,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketAssignmentService">
-    // TODO: final CachedTicketAssignmentService ticketAssignments;
-    // TODO: public TicketAssignmentService<CachedConnector,CachedConnectorFactory> getTicketAssignments();
+    static class CachedTicketAssignmentService extends CachedService<Integer,TicketAssignment> implements TicketAssignmentService<CachedConnector,CachedConnectorFactory> {
+        CachedTicketAssignmentService(CachedConnector connector, TicketAssignmentService<?,?> wrapped) {
+            super(connector, Integer.class, TicketAssignment.class, wrapped);
+        }
+    }
+    final CachedTicketAssignmentService ticketAssignments;
+    public TicketAssignmentService<CachedConnector,CachedConnectorFactory> getTicketAssignments() {
+        return ticketAssignments;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketBrandCategoryService">
     // TODO: final CachedTicketBrandCategoryService ticketBrandCategories;
@@ -1369,8 +1392,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketService">
-    // TODO: final CachedTicketService tickets;
-    // TODO: public TicketService<CachedConnector,CachedConnectorFactory> getTickets();
+    static class CachedTicketService extends CachedService<Integer,Ticket> implements TicketService<CachedConnector,CachedConnectorFactory> {
+        CachedTicketService(CachedConnector connector, TicketService<?,?> wrapped) {
+            super(connector, Integer.class, Ticket.class, wrapped);
+        }
+    }
+    final CachedTicketService tickets;
+    public TicketService<CachedConnector,CachedConnectorFactory> getTickets() {
+        return tickets;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TimeZoneService">
     static class CachedTimeZoneService extends CachedService<String,TimeZone> implements TimeZoneService<CachedConnector,CachedConnectorFactory> {
