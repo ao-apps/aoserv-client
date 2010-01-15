@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.business_servers)
-public interface BusinessServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,BusinessServer> {
+public interface BusinessServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,BusinessServer> {
 
     /* TODO
     int addBusinessServer(Business business, Server server) throws IOException, SQLException {

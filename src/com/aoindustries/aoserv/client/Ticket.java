@@ -77,7 +77,7 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     ) {
         super(service, ticketId);
         this.brand = brand.intern();
-        this.reseller = reseller.intern();
+        this.reseller = reseller==null ? null : reseller.intern();
         this.accounting = accounting==null ? null : accounting.intern();
         this.language = language.intern();
         this.createdBy = createdBy==null ? null : createdBy.intern();
@@ -116,9 +116,13 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
         return getService().getConnector().getBrands().get(brand);
     }
 
+    /**
+     * May be filtered.
+     */
     static final String COLUMN_RESELLER = "reseller";
     @SchemaColumn(order=2, name=COLUMN_RESELLER, index=IndexType.INDEXED, description="the reseller that received the ticket")
     public Reseller getReseller() throws RemoteException {
+        if(reseller==null) return null;
         return getService().getConnector().getResellers().get(reseller);
     }
 

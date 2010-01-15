@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.linux_account_groups)
-public interface LinuxAccountGroupService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,LinuxAccountGroup> {
+public interface LinuxAccountGroupService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,LinuxAccountGroup> {
 
     /* TODO
     private boolean hashBuilt=false;

@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.mysql_databases)
-public interface MySQLDatabaseService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,MySQLDatabase> {
+public interface MySQLDatabaseService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,MySQLDatabase> {
 
     /* TODO
     int addMySQLDatabase(

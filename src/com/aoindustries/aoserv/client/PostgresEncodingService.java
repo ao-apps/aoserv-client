@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.postgres_encodings)
-public interface PostgresEncodingService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,PostgresEncoding> {
+public interface PostgresEncodingService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,PostgresEncoding> {
 
     /* TODO
     List<PostgresEncoding> getPostgresEncodings(PostgresVersion version) throws IOException, SQLException {

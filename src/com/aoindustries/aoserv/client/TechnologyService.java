@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.technologies)
-public interface TechnologyService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,Technology> {
+public interface TechnologyService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,Technology> {
 
     /* TODO
     List<Technology> getTechnologies(TechnologyName techName) throws IOException, SQLException {

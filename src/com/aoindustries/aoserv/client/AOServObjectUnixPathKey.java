@@ -20,7 +20,7 @@ abstract public class AOServObjectUnixPathKey<T extends AOServObjectUnixPathKey<
 
     final protected UnixPath key;
 
-    protected AOServObjectUnixPathKey(AOServServiceUnixPathKey<?,?,T> service, UnixPath key) {
+    protected AOServObjectUnixPathKey(AOServService<?,?,UnixPath,T> service, UnixPath key) {
         super(service);
         this.key = key.intern();
     }

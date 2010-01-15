@@ -21,7 +21,7 @@ abstract public class AOServObjectIntegerKey<T extends AOServObjectIntegerKey<T>
 
     final protected int key;
 
-    protected AOServObjectIntegerKey(AOServServiceIntegerKey<?,?,T> service, int key) {
+    protected AOServObjectIntegerKey(AOServService<?,?,Integer,T> service, int key) {
         super(service);
         this.key = key;
     }

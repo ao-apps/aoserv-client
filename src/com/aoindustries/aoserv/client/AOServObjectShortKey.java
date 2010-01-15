@@ -21,7 +21,7 @@ abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T>> ex
 
     final protected short key;
 
-    protected AOServObjectShortKey(AOServServiceShortKey<?,?,T> service, short key) {
+    protected AOServObjectShortKey(AOServService<?,?,Short,T> service, short key) {
         super(service);
         this.key = key;
     }

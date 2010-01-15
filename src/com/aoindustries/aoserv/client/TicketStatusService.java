@@ -7,5 +7,5 @@ package com.aoindustries.aoserv.client;
  */
 
 @ServiceAnnotation(ServiceName.ticket_stati)
-public interface TicketStatusService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceStringKey<C,F,TicketStatus> {
+public interface TicketStatusService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,TicketStatus> {
 }

@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.ticket_categories)
-public interface TicketCategoryService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,TicketCategory> {
+public interface TicketCategoryService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,TicketCategory> {
 
     /**
      * Gets the list of all top-level categories that have a null parent.

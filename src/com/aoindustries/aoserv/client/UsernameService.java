@@ -5,13 +5,15 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
+
 /**
  * @see  Username
  *
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.usernames)
-public interface UsernameService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceUserIdKey<C,F,Username> {
+public interface UsernameService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,UserId,Username> {
 
     /* TODO
     void addUsername(Business business, String username) throws IOException, SQLException {

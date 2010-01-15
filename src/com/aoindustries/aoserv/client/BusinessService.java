@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -12,7 +14,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.businesses)
-public interface BusinessService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceAccountingCodeKey<C,F,Business> {
+public interface BusinessService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,AccountingCode,Business> {
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /*
     private String rootAccounting;

@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.net_tcp_redirects)
-public interface NetTcpRedirectService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,NetTcpRedirect> {
+public interface NetTcpRedirectService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,NetTcpRedirect> {
 }

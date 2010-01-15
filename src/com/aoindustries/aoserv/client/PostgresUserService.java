@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.postgres_users)
-public interface PostgresUserService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,PostgresUser> {
+public interface PostgresUserService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,PostgresUser> {
 
     /* TODO
     void addPostgresUser(String username) throws IOException, SQLException {

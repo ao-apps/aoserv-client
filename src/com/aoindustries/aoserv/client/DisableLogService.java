@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.disable_log)
-public interface DisableLogService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,DisableLog> {
+public interface DisableLogService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,DisableLog> {
     /* TODO
     int addDisableLog(
         final Business bu,

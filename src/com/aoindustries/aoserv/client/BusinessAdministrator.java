@@ -284,6 +284,17 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
     // </editor-fold>
 
+    /**
+     * A ticket administrator is part of a business that is also a reseller.
+     * TODO: And has the edit_ticket permission.
+     */
+    public boolean isTicketAdmin() throws RemoteException {
+        Brand br = getUsername().getBusiness().getBrand();
+        if(br==null) return false;
+        return br.getReseller()!=null;
+        // TODO: And has the edit_ticket permission.
+    }
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public int arePasswordsSet() throws IOException, SQLException {

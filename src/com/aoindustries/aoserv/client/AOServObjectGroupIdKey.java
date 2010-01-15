@@ -20,7 +20,7 @@ abstract public class AOServObjectGroupIdKey<T extends AOServObjectGroupIdKey<T>
 
     final protected GroupId key;
 
-    protected AOServObjectGroupIdKey(AOServServiceGroupIdKey<?,?,T> service, GroupId key) {
+    protected AOServObjectGroupIdKey(AOServService<?,?,GroupId,T> service, GroupId key) {
         super(service);
         this.key = key.intern();
     }

@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+
 /*
  * Copyright 2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -12,7 +14,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.resellers)
-public interface ResellerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceAccountingCodeKey<C,F,Reseller> {
+public interface ResellerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,AccountingCode,Reseller> {
 
     /**
      * Gets the list of all resellers that either have a null parent (the

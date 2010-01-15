@@ -21,7 +21,7 @@ abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T>> 
 
     final protected String key;
 
-    protected AOServObjectStringKey(AOServServiceStringKey<?,?,T> service, String key) {
+    protected AOServObjectStringKey(AOServService<?,?,String,T> service, String key) {
         super(service);
         this.key = key.intern();
     }

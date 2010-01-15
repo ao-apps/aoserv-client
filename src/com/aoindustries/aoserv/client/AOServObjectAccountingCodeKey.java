@@ -20,7 +20,7 @@ abstract public class AOServObjectAccountingCodeKey<T extends AOServObjectAccoun
 
     final protected AccountingCode key;
 
-    protected AOServObjectAccountingCodeKey(AOServServiceAccountingCodeKey<?,?,T> service, AccountingCode key) {
+    protected AOServObjectAccountingCodeKey(AOServService<?,?,AccountingCode,T> service, AccountingCode key) {
         super(service);
         this.key = key.intern();
     }

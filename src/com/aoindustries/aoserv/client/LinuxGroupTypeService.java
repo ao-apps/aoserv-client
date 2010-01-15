@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.linux_group_types)
-public interface LinuxGroupTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceStringKey<C,F,LinuxGroupType> {
+public interface LinuxGroupTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,LinuxGroupType> {
 }

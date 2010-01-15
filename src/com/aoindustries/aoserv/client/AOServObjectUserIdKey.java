@@ -20,7 +20,7 @@ abstract public class AOServObjectUserIdKey<T extends AOServObjectUserIdKey<T>> 
 
     final protected UserId key;
 
-    protected AOServObjectUserIdKey(AOServServiceUserIdKey<?,?,T> service, UserId key) {
+    protected AOServObjectUserIdKey(AOServService<?,?,UserId,T> service, UserId key) {
         super(service);
         this.key = key.intern();
     }

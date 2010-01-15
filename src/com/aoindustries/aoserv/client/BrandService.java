@@ -5,13 +5,15 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+
 /**
  * @see  Brand
  *
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.brands)
-public interface BrandService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceAccountingCodeKey<C,F,Brand> {
+public interface BrandService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,AccountingCode,Brand> {
 
     /**
      * Gets the list of all brands that either have a null parent (the

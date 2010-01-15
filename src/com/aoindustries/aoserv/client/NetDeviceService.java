@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.net_devices)
-public interface NetDeviceService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,NetDevice> {
+public interface NetDeviceService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,NetDevice> {
 
     /* TODO
     List<NetDevice> getNetDevices(Server se) throws IOException, SQLException {

@@ -5,11 +5,13 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
+
 /**
  * @see  Shell
  *
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.shells)
-public interface ShellService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceUnixPathKey<C,F,Shell> {
+public interface ShellService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,UnixPath,Shell> {
 }

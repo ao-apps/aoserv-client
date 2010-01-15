@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.linux_groups)
-public interface LinuxGroupService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceIntegerKey<C,F,LinuxGroup> {
+public interface LinuxGroupService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,LinuxGroup> {
 
     /* TODO
     void addLinuxGroup(String name, Business business, String type) throws IOException, SQLException {

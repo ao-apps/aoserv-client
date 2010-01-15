@@ -20,7 +20,7 @@ abstract public class AOServObjectDomainLabelKey<T extends AOServObjectDomainLab
 
     final protected DomainLabel key;
 
-    protected AOServObjectDomainLabelKey(AOServServiceDomainLabelKey<?,?,T> service, DomainLabel key) {
+    protected AOServObjectDomainLabelKey(AOServService<?,?,DomainLabel,T> service, DomainLabel key) {
         super(service);
         this.key = key.intern();
     }

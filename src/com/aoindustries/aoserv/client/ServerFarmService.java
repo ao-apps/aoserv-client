@@ -1,5 +1,7 @@
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.DomainLabel;
+
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
@@ -12,5 +14,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.server_farms)
-public interface ServerFarmService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServServiceDomainLabelKey<C,F,ServerFarm> {
+public interface ServerFarmService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,DomainLabel,ServerFarm> {
 }
