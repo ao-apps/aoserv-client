@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.SetPostgresUserPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
@@ -168,6 +169,12 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
         return getService().getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_DATDBA, this);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public void setPredisablePassword(String password) throws RemoteException {
+        new SetPostgresUserPredisablePasswordCommand(key, password).execute(getService().getConnector());
     }
     // </editor-fold>
 

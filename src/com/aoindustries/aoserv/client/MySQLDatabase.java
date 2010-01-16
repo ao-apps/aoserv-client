@@ -86,7 +86,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     protected int compareToImpl(MySQLDatabase other) throws RemoteException {
         int diff = name.compareTo(other.name);
         if(diff!=0) return diff;
-        return mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
+        return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareTo(other.getMysqlServer());
     }
     // </editor-fold>
 
@@ -104,7 +104,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";
     @SchemaColumn(order=2, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the pkey of the server that this database is hosted on")
-    public MySQLServer getMySQLServer() throws RemoteException {
+    public MySQLServer getMysqlServer() throws RemoteException {
         return getService().getConnector().getMysqlServers().get(mysqlServer);
     }
     // </editor-fold>
@@ -120,7 +120,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getAoServerResource(),
-            getMySQLServer()
+            getMysqlServer()
         );
     }
 

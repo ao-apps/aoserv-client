@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.SetLinuxAccountPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.LinuxID;
@@ -244,6 +245,12 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     public LinuxGroup getPrimaryLinuxGroup() throws RemoteException {
         return getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_IS_PRIMARY, true).getLinuxGroup();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public void setPredisablePassword(String password) throws RemoteException {
+        new SetLinuxAccountPredisablePasswordCommand(key, password).execute(getService().getConnector());
     }
     // </editor-fold>
 

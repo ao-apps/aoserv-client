@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.SetMySQLUserPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
@@ -49,11 +50,10 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     /**
      * Convenience constants for the most commonly used host values.
      */
-    /* TODO
     public static final String
         ANY_HOST="%",
         ANY_LOCAL_HOST=null
-    ;*/
+    ;
 
     /**
      * The username of the MySQL super user.
@@ -428,6 +428,12 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public void setPredisablePassword(String password) throws RemoteException {
+        new SetMySQLUserPredisablePasswordCommand(key, password).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public boolean canDisable() throws IOException, SQLException {
@@ -506,34 +512,6 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
                 }
 
                 public void afterRelease() {
-                }
-            }
-        );
-    }
-
-    public void setPredisablePassword(final String password) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                IntList invalidateList;
-
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_USER_PREDISABLE_PASSWORD.ordinal());
-                    out.writeCompressedInt(pkey);
-                    out.writeNullUTF(password);
-                }
-
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                    else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-
-                public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
                 }
             }
         );

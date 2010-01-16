@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.SetIpAddressDhcpAddress;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.table.IndexType;
@@ -195,6 +196,12 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     }*/
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public void setDhcpAddress(InetAddress ipAddress) throws RemoteException {
+        new SetIpAddressDhcpAddress(key, ipAddress).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
 //    public boolean isUsed() throws IOException, SQLException {
 //        return !getNetBinds().isEmpty();
@@ -220,10 +227,6 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
 //        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_BUSINESS, pkey, bu.pkey);
 //    }
 //
-//    public void setDHCPAddress(String ipAddress) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
-//    }
-
 
     //private static final ConcurrentMap<String,String> getReverseDnsQueryCache = new ConcurrentHashMap<String,String>();
 

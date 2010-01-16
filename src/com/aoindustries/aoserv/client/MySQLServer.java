@@ -434,9 +434,9 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         return md;
     }
 
-    /* TODO public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
-        return getService().getConnector().getMysqlDBUsers().getMySQLDBUsers(this);
-    }*/
+    public IndexedSet<MySQLDBUser> getMySQLDBUsers() throws RemoteException {
+        return getService().getConnector().getMysqlDBUsers().filterIndexedSet(MySQLDBUser.COLUMN_MYSQL_DATABASE, getMysqlDatabases());
+    }
 
     public IndexedSet<MySQLUser> getMysqlUsers() throws RemoteException {
     	return getService().getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
