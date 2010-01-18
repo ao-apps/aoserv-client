@@ -1,14 +1,15 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.List;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A <code>MasterHost</code> controls which hosts a <code>MasterUser</code>
@@ -19,65 +20,67 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
+final public class MasterHost extends AOServObjectIntegerKey<MasterHost> implements BeanFactory<com.aoindustries.aoserv.client.beans.MasterHost> {
 
-    static final int
-        COLUMN_PKEY = 0,
-        COLUMN_USERNAME = 1
-    ;
-    static final String COLUMN_USERNAME_name = "username";
-    static final String COLUMN_HOST_name = "host";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    private String username;
-    private String host;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private UserId username;
+    final private InetAddress host;
 
-    Object getColumnImpl(int i) {
-        if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
-        if(i==COLUMN_USERNAME) return username;
-        if(i==2) return host;
-        throw new IllegalArgumentException("Invalid index: "+i);
+    public MasterHost(
+        MasterHostService<?,?> service,
+        int pkey,
+        UserId username,
+        InetAddress host
+    ) {
+        super(service, pkey);
+        this.username = username.intern();
+        this.host = host.intern();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(MasterHost other) throws RemoteException {
+        int diff = username.equals(other.username) ? 0 : getMasterUser().compareTo(other.getMasterUser());
+        if(diff!=0) return diff;
+        return host.compareTo(other.host);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
+    public int getPkey() {
+        return key;
     }
 
-    public String getHost() {
-	return host;
+    static final String COLUMN_USERNAME = "username";
+    @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the unique username of the user")
+    public MasterUser getMasterUser() throws RemoteException {
+    	return getService().getConnector().getMasterUsers().get(username);
     }
 
-    public MasterUser getMasterUser() throws SQLException, IOException {
-	MasterUser obj=table.connector.getMasterUsers().get(username);
-	if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
-	return obj;
+    @SchemaColumn(order=2, name="host", description="the IP address they are allowed to connect from")
+    public InetAddress getHost() {
+        return host;
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MASTER_HOSTS;
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.MasterHost getBean() {
+        return new com.aoindustries.aoserv.client.beans.MasterHost(key, username.getBean(), host.getBean());
     }
+    // </editor-fold>
 
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	username=result.getString(2);
-	host=result.getString(3);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        username=in.readUTF().intern();
-        host=in.readUTF().intern();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
             getMasterUser()
         );
     }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-        );
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeUTF(username);
-        out.writeUTF(host);
-    }
+    // </editor-fold>
 }

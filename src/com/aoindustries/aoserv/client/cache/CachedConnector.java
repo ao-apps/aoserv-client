@@ -78,6 +78,12 @@ import com.aoindustries.aoserv.client.LinuxGroup;
 import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupType;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
+import com.aoindustries.aoserv.client.MasterHost;
+import com.aoindustries.aoserv.client.MasterHostService;
+import com.aoindustries.aoserv.client.MasterServer;
+import com.aoindustries.aoserv.client.MasterServerService;
+import com.aoindustries.aoserv.client.MasterUser;
+import com.aoindustries.aoserv.client.MasterUserService;
 import com.aoindustries.aoserv.client.MySQLDBUser;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabase;
@@ -296,12 +302,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         majordomoLists = new CachedMajordomoListService(this, wrapped.getMajordomoLists());
         majordomoServers = new CachedMajordomoServerService(this, wrapped.getMajordomoServers());
         majordomoVersions = new CachedMajordomoVersionService(this, wrapped.getMajordomoVersions());
-        masterHistories = new CachedMasterHistoryService(this, wrapped.getMasterHistorys());
+         */
         masterHosts = new CachedMasterHostService(this, wrapped.getMasterHosts());
         masterServers = new CachedMasterServerService(this, wrapped.getMasterServers());
         masterUsers = new CachedMasterUserService(this, wrapped.getMasterUsers());
-        monthlyCharges = new CachedMonthlyChargeService(this, wrapped.getMonthlyCharges());
-         */
+        // TODO: monthlyCharges = new CachedMonthlyChargeService(this, wrapped.getMonthlyCharges());
         mysqlDatabases = new CachedMySQLDatabaseService(this, wrapped.getMysqlDatabases());
         mysqlDBUsers = new CachedMySQLDBUserService(this, wrapped.getMysqlDBUsers());
         mysqlServers = new CachedMySQLServerService(this, wrapped.getMysqlServers());
@@ -1003,21 +1008,38 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: final CachedMajordomoVersionService majordomoVersions;
     // TODO: public MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions();
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="MasterHistoryService">
-    // TODO: final CachedMasterHistoryService masterHistories;
-    // TODO: public MasterHistoryService<CachedConnector,CachedConnectorFactory> getMasterHistory();
-    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterHostService">
-    // TODO: final CachedMasterHostService masterHosts;
-    // TODO: public MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts();
+    static class CachedMasterHostService extends CachedService<Integer,MasterHost> implements MasterHostService<CachedConnector,CachedConnectorFactory> {
+        CachedMasterHostService(CachedConnector connector, MasterHostService<?,?> wrapped) {
+            super(connector, Integer.class, MasterHost.class, wrapped);
+        }
+    }
+    final CachedMasterHostService masterHosts;
+    public MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts() {
+        return masterHosts;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterServerService">
-    // TODO: final CachedMasterServerService masterServers;
-    // TODO: public MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers();
+    static class CachedMasterServerService extends CachedService<Integer,MasterServer> implements MasterServerService<CachedConnector,CachedConnectorFactory> {
+        CachedMasterServerService(CachedConnector connector, MasterServerService<?,?> wrapped) {
+            super(connector, Integer.class, MasterServer.class, wrapped);
+        }
+    }
+    final CachedMasterServerService masterServers;
+    public MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers() {
+        return masterServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterUserService">
-    // TODO: final CachedMasterUserService masterUsers;
-    // TODO: public MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers();
+    static class CachedMasterUserService extends CachedService<UserId,MasterUser> implements MasterUserService<CachedConnector,CachedConnectorFactory> {
+        CachedMasterUserService(CachedConnector connector, MasterUserService<?,?> wrapped) {
+            super(connector, UserId.class, MasterUser.class, wrapped);
+        }
+    }
+    final CachedMasterUserService masterUsers;
+    public MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers() {
+        return masterUsers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MonthlyChargeService">
     // TODO: final CachedMonthlyChargeService monthlyCharges;

@@ -137,9 +137,9 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
             ),
             getBusinessServers(),
             getFailoverFileReplications(),
+            getMasterServers(),
             getNetDevices(),
             getServerResources()
-            // TODO: getMasterServers()
         );
     }
     // </editor-fold>
@@ -181,6 +181,10 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
 
     public IndexedSet<ServerResource> getServerResources() throws RemoteException {
         return getService().getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_SERVER, this);
+    }
+
+    public IndexedSet<MasterServer> getMasterServers() throws RemoteException {
+        return getService().getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_SERVER, this);
     }
 
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
@@ -233,10 +237,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         }
         return null;
     }
-
-    public List<MasterServer> getMasterServers() throws IOException, SQLException {
-        return getService().getConnector().getMasterServers().getIndexedRows(MasterServer.COLUMN_SERVER, pkey);
-    }*/
+     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">

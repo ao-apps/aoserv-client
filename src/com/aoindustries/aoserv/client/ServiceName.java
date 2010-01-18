@@ -125,9 +125,11 @@ public enum ServiceName implements LocalizedToString {
     majordomo_lists,
     majordomo_servers,
     majordomo_versions,
+     */
     master_hosts,
     master_servers,
     master_users,
+    /* TODO
     monthly_charges,
      */
     mysql_databases,

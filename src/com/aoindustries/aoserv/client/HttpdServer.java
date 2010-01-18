@@ -37,7 +37,7 @@ final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> imple
     final private int number;
     final private int maxBinds;
     final private int linuxAccountGroup;
-    final private int modPhpVersion;
+    final private Integer modPhpVersion;
     final private boolean useSuexec;
     final private boolean isShared;
     final private boolean useModPerl;
@@ -49,7 +49,7 @@ final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> imple
         int number,
         int maxBinds,
         int linuxAccountGroup,
-        int modPhpVersion,
+        Integer modPhpVersion,
         boolean useSuexec,
         boolean isShared,
         boolean useModPerl,
@@ -97,15 +97,18 @@ final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> imple
     }
 
     static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    /**
+     * May be filtered.
+     */
     @SchemaColumn(order=3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the account and group the servers runs as")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
+        return getService().getConnector().getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_PKEY, linuxAccountGroup);
     }
 
     static final String COLUMN_MOD_PHP_VERSION = "mod_php_version";
     @SchemaColumn(order=4, name=COLUMN_MOD_PHP_VERSION, index=IndexType.INDEXED, description="the version of mod_php to run")
     public TechnologyVersion getModPhpVersion() throws RemoteException {
-        if(modPhpVersion==-1) return null;
+        if(modPhpVersion==null) return null;
         TechnologyVersion tv=getService().getConnector().getTechnologyVersions().get(modPhpVersion);
         if(tv.operatingSystemVersion!=getAoServerResource().getAoServer().getServer().operatingSystemVersion) throw new RemoteException("mod_php/operating system version mismatch on HttpdServer: #"+key);
         return tv;

@@ -243,10 +243,10 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            /* TODO
-            createDependencyList(
+            AOServObjectUtils.createDependencySet(
                 getMasterUser()
             ),
+            /* TODO
             getPermissions(),
             getCreditCardsByCreatedBy(),
             getCreditCardTransactionsByAuthorizationUsername(),
@@ -278,6 +278,11 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
         return getService().getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_DISABLED_BY, this);
     }
+
+    public MasterUser getMasterUser() throws RemoteException {
+    	return getService().getConnector().getMasterUsers().filterUnique(MasterUser.COLUMN_USERNAME, this);
+    }
+
 
     public IndexedSet<Resource> getResources() throws RemoteException {
         return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_CREATED_BY, this);
@@ -381,16 +386,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         return disableLog!=null;
     }
 
-    public MasterUser getMasterUser() throws IOException, SQLException {
-    	return service.connector.getMasterUsers().get(pkey);
-    }
-
     public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
     	return service.connector.getMonthlyCharges().getMonthlyCharges(this);
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BUSINESS_ADMINISTRATORS;
     }
 
     public List<Transaction> getTransactions() throws IOException, SQLException {

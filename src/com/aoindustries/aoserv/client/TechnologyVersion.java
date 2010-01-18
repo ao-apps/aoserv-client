@@ -81,14 +81,15 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     	return updated;
     }
 
-    /* TODO
-    @SchemaColumn(order=4, name="owner", description="the business_administrator who is responsible for maintaining this package")
+    static final String COLUMN_OWNER = "owner";
+    @SchemaColumn(order=4, name=COLUMN_OWNER, index=IndexType.INDEXED, description="the business_administrator who is responsible for maintaining this package")
     public MasterUser getOwner() throws RemoteException {
+        if(owner==null) return null;
         return getService().getConnector().getMasterUsers().get(owner);
-    }*/
+    }
 
     static final String COLUMN_OPERATING_SYSTEM_VERSION = "operating_system_version";
-    @SchemaColumn(order=4, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of the OS that this packages is installed")
+    @SchemaColumn(order=5, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of the OS that this packages is installed")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         return getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
     }
@@ -105,7 +106,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getTechnologyName(),
-            // TODO: getOwner(),
+            getOwner(),
             getOperatingSystemVersion()
         );
     }

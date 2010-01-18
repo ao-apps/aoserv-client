@@ -270,7 +270,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             getAoServerDaemonHosts(),
             getAoServerResources(),
             getBackupPartitions(),
-            getHttpdServers(),
             getNestedAoServers()
             // TODO: getLinuxServerAccounts(),
             // TODO: getEmailDomains(),

@@ -57,7 +57,8 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique id")
+    static final String COLUMN_PKEY = "pkey";
+    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
         return key;
     }
@@ -101,7 +102,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
         return AOServObjectUtils.createDependencySet(
             getCvsRepositories(),
             getHttpdSites(),
-            getLinuxAccountGroups()
+            getHttpdServers()
         );
     }
     // </editor-fold>
@@ -129,8 +130,8 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
         return getService().getConnector().getHttpdSites().filterIndexed(HttpdSite.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
 
-    public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().filterIndexed(HttpdServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
+    public IndexedSet<HttpdServer> getHttpdServers() throws RemoteException {
+        return getService().getConnector().getHttpdServers().filterIndexed(HttpdServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
     // </editor-fold>
 

@@ -194,12 +194,11 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     MajordomoListService<C,F> getMajordomoLists() throws RemoteException;
     MajordomoServerService<C,F> getMajordomoServers() throws RemoteException;
     MajordomoVersionService<C,F> getMajordomoVersions() throws RemoteException;
-    MasterHistoryService<C,F> getMasterHistory() throws RemoteException;
+     */
     MasterHostService<C,F> getMasterHosts() throws RemoteException;
     MasterServerService<C,F> getMasterServers() throws RemoteException;
     MasterUserService<C,F> getMasterUsers() throws RemoteException;
-    MonthlyChargeService<C,F> getMonthlyCharges() throws RemoteException;
-     */
+    // TODO: MonthlyChargeService<C,F> getMonthlyCharges() throws RemoteException;
     MySQLDatabaseService<C,F> getMysqlDatabases() throws RemoteException;
     MySQLDBUserService<C,F> getMysqlDBUsers() throws RemoteException;
     MySQLServerService<C,F> getMysqlServers() throws RemoteException;

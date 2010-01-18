@@ -14,7 +14,7 @@ public class HttpdServer {
     private int number;
     private int maxBinds;
     private int linuxAccountGroup;
-    private int modPhpVersion;
+    private Integer modPhpVersion;
     private boolean useSuexec;
     private boolean isShared;
     private boolean useModPerl;
@@ -28,7 +28,7 @@ public class HttpdServer {
         int number,
         int maxBinds,
         int linuxAccountGroup,
-        int modPhpVersion,
+        Integer modPhpVersion,
         boolean useSuexec,
         boolean isShared,
         boolean useModPerl,
@@ -77,11 +77,11 @@ public class HttpdServer {
         this.linuxAccountGroup = linuxAccountGroup;
     }
 
-    public int getModPhpVersion() {
+    public Integer getModPhpVersion() {
         return modPhpVersion;
     }
 
-    public void setModPhpVersion(int modPhpVersion) {
+    public void setModPhpVersion(Integer modPhpVersion) {
         this.modPhpVersion = modPhpVersion;
     }
 

@@ -78,6 +78,12 @@ import com.aoindustries.aoserv.client.LinuxGroup;
 import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupType;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
+import com.aoindustries.aoserv.client.MasterHost;
+import com.aoindustries.aoserv.client.MasterHostService;
+import com.aoindustries.aoserv.client.MasterServer;
+import com.aoindustries.aoserv.client.MasterServerService;
+import com.aoindustries.aoserv.client.MasterUser;
+import com.aoindustries.aoserv.client.MasterUserService;
 import com.aoindustries.aoserv.client.MySQLDBUser;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabase;
@@ -310,12 +316,11 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         majordomoLists = new RetryMajordomoListService(this);
         majordomoServers = new RetryMajordomoServerService(this);
         majordomoVersions = new RetryMajordomoVersionService(this);
-        masterHistories = new RetryMasterHistoryService(this);
+         */
         masterHosts = new RetryMasterHostService(this);
         masterServers = new RetryMasterServerService(this);
         masterUsers = new RetryMasterUserService(this);
-        monthlyCharges = new RetryMonthlyChargeService(this);
-         */
+        // TODO: monthlyCharges = new RetryMonthlyChargeService(this);
         mysqlDatabases = new RetryMySQLDatabaseService(this);
         mysqlDBUsers = new RetryMySQLDBUserService(this);
         mysqlServers = new RetryMySQLServerService(this);
@@ -1151,21 +1156,38 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     // TODO: final RetryMajordomoVersionService majordomoVersions;
     // TODO: public MajordomoVersionService<RetryConnector,RetryConnectorFactory> getMajordomoVersions();
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="MasterHistoryService">
-    // TODO: final RetryMasterHistoryService masterHistories;
-    // TODO: public MasterHistoryService<RetryConnector,RetryConnectorFactory> getMasterHistory();
-    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterHostService">
-    // TODO: final RetryMasterHostService masterHosts;
-    // TODO: public MasterHostService<RetryConnector,RetryConnectorFactory> getMasterHosts();
+    static class RetryMasterHostService extends RetryService<Integer,MasterHost> implements MasterHostService<RetryConnector,RetryConnectorFactory> {
+        RetryMasterHostService(RetryConnector connector) {
+            super(connector, Integer.class, MasterHost.class);
+        }
+    }
+    final RetryMasterHostService masterHosts;
+    public MasterHostService<RetryConnector,RetryConnectorFactory> getMasterHosts() {
+        return masterHosts;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterServerService">
-    // TODO: final RetryMasterServerService masterServers;
-    // TODO: public MasterServerService<RetryConnector,RetryConnectorFactory> getMasterServers();
+    static class RetryMasterServerService extends RetryService<Integer,MasterServer> implements MasterServerService<RetryConnector,RetryConnectorFactory> {
+        RetryMasterServerService(RetryConnector connector) {
+            super(connector, Integer.class, MasterServer.class);
+        }
+    }
+    final RetryMasterServerService masterServers;
+    public MasterServerService<RetryConnector,RetryConnectorFactory> getMasterServers() {
+        return masterServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterUserService">
-    // TODO: final RetryMasterUserService masterUsers;
-    // TODO: public MasterUserService<RetryConnector,RetryConnectorFactory> getMasterUsers();
+    static class RetryMasterUserService extends RetryService<UserId,MasterUser> implements MasterUserService<RetryConnector,RetryConnectorFactory> {
+        RetryMasterUserService(RetryConnector connector) {
+            super(connector, UserId.class, MasterUser.class);
+        }
+    }
+    final RetryMasterUserService masterUsers;
+    public MasterUserService<RetryConnector,RetryConnectorFactory> getMasterUsers() {
+        return masterUsers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MonthlyChargeService">
     // TODO: final RetryMonthlyChargeService monthlyCharges;

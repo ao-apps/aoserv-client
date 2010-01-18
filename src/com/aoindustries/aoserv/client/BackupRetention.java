@@ -6,7 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * The possible backup retention values allowed in the system.
@@ -46,10 +48,31 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getEmailInboxesByTrashEmailRetention(),
+            getEmailInboxesByJunkEmailRetention()
+            // TODO: getEmailInboxAddresses()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
     	return display;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<EmailInbox> getEmailInboxesByTrashEmailRetention() throws RemoteException {
+        return getService().getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_TRASH_EMAIL_RETENTION, this);
+    }
+
+    public IndexedSet<EmailInbox> getEmailInboxesByJunkEmailRetention() throws RemoteException {
+        return getService().getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_JUNK_EMAIL_RETENTION, this);
     }
     // </editor-fold>
 }

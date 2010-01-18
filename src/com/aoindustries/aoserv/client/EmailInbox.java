@@ -124,13 +124,15 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
         return useInbox;
     }
 
-    @SchemaColumn(order=5, name="trash_email_retention", description="the number of days before messages in the Trash folder are automatically removed.")
+    static final String COLUMN_TRASH_EMAIL_RETENTION = "trash_email_retention";
+    @SchemaColumn(order=5, name=COLUMN_TRASH_EMAIL_RETENTION, index=IndexType.INDEXED, description="the number of days before messages in the Trash folder are automatically removed.")
     public BackupRetention getTrashEmailRetention() throws RemoteException {
         if(trashEmailRetention==null) return null;
         return getService().getConnector().getBackupRetentions().get(trashEmailRetention);
     }
 
-    @SchemaColumn(order=6, name="junk_email_retention", description="the number of days before messages in the Junk folder are automatically removed.")
+    static final String COLUMN_JUNK_EMAIL_RETENTION = "junk_email_retention";
+    @SchemaColumn(order=6, name=COLUMN_JUNK_EMAIL_RETENTION, index=IndexType.INDEXED, description="the number of days before messages in the Junk folder are automatically removed.")
     public BackupRetention getJunkEmailRetention() throws RemoteException {
         if(junkEmailRetention==null) return null;
         return getService().getConnector().getBackupRetentions().get(junkEmailRetention);

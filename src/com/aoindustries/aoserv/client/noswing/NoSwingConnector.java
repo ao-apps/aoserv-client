@@ -78,6 +78,12 @@ import com.aoindustries.aoserv.client.LinuxGroup;
 import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupType;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
+import com.aoindustries.aoserv.client.MasterHost;
+import com.aoindustries.aoserv.client.MasterHostService;
+import com.aoindustries.aoserv.client.MasterServer;
+import com.aoindustries.aoserv.client.MasterServerService;
+import com.aoindustries.aoserv.client.MasterUser;
+import com.aoindustries.aoserv.client.MasterUserService;
 import com.aoindustries.aoserv.client.MySQLDBUser;
 import com.aoindustries.aoserv.client.MySQLDBUserService;
 import com.aoindustries.aoserv.client.MySQLDatabase;
@@ -287,12 +293,11 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         majordomoLists = new NoSwingMajordomoListService(this, wrapped.getMajordomoLists());
         majordomoServers = new NoSwingMajordomoServerService(this, wrapped.getMajordomoServers());
         majordomoVersions = new NoSwingMajordomoVersionService(this, wrapped.getMajordomoVersions());
-        masterHistories = new NoSwingMasterHistoryService(this, wrapped.getMasterHistorys());
+         */
         masterHosts = new NoSwingMasterHostService(this, wrapped.getMasterHosts());
         masterServers = new NoSwingMasterServerService(this, wrapped.getMasterServers());
         masterUsers = new NoSwingMasterUserService(this, wrapped.getMasterUsers());
-        monthlyCharges = new NoSwingMonthlyChargeService(this, wrapped.getMonthlyCharges());
-         */
+        // TODO: monthlyCharges = new NoSwingMonthlyChargeService(this, wrapped.getMonthlyCharges());
         mysqlDatabases = new NoSwingMySQLDatabaseService(this, wrapped.getMysqlDatabases());
         mysqlDBUsers = new NoSwingMySQLDBUserService(this, wrapped.getMysqlDBUsers());
         mysqlServers = new NoSwingMySQLServerService(this, wrapped.getMysqlServers());
@@ -1034,21 +1039,41 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     // TODO: final NoSwingMajordomoVersionService majordomoVersions;
     // TODO: public MajordomoVersionService<NoSwingConnector,NoSwingConnectorFactory> getMajordomoVersions() throws RemoteException;
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="MasterHistoryService">
-    // TODO: final NoSwingMasterHistoryService masterHistories;
-    // TODO: public MasterHistoryService<NoSwingConnector,NoSwingConnectorFactory> getMasterHistory();
-    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterHostService">
-    // TODO: final NoSwingMasterHostService masterHosts;
-    // TODO: public MasterHostService<NoSwingConnector,NoSwingConnectorFactory> getMasterHosts() throws RemoteException;
+    static class NoSwingMasterHostService extends NoSwingService<Integer,MasterHost> implements MasterHostService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingMasterHostService(NoSwingConnector connector, MasterHostService<?,?> wrapped) {
+            super(connector, Integer.class, MasterHost.class, wrapped);
+        }
+    }
+    final NoSwingMasterHostService masterHosts;
+    public MasterHostService<NoSwingConnector,NoSwingConnectorFactory> getMasterHosts() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return masterHosts;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterServerService">
-    // TODO: final NoSwingMasterServerService masterServers;
-    // TODO: public MasterServerService<NoSwingConnector,NoSwingConnectorFactory> getMasterServers() throws RemoteException;
+    static class NoSwingMasterServerService extends NoSwingService<Integer,MasterServer> implements MasterServerService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingMasterServerService(NoSwingConnector connector, MasterServerService<?,?> wrapped) {
+            super(connector, Integer.class, MasterServer.class, wrapped);
+        }
+    }
+    final NoSwingMasterServerService masterServers;
+    public MasterServerService<NoSwingConnector,NoSwingConnectorFactory> getMasterServers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return masterServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterUserService">
-    // TODO: final NoSwingMasterUserService masterUsers;
-    // TODO: public MasterUserService<NoSwingConnector,NoSwingConnectorFactory> getMasterUsers() throws RemoteException;
+    static class NoSwingMasterUserService extends NoSwingService<UserId,MasterUser> implements MasterUserService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingMasterUserService(NoSwingConnector connector, MasterUserService<?,?> wrapped) {
+            super(connector, UserId.class, MasterUser.class, wrapped);
+        }
+    }
+    final NoSwingMasterUserService masterUsers;
+    public MasterUserService<NoSwingConnector,NoSwingConnectorFactory> getMasterUsers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return masterUsers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MonthlyChargeService">
     // TODO: final NoSwingMonthlyChargeService monthlyCharges;

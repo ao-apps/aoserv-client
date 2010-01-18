@@ -443,8 +443,8 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getBusiness(),
-            // TODO: getSmtpEmailInbox(),
-            // TODO: getImapEmailInbox(),
+            getSmtpEmailInbox(),
+            getImapEmailInbox(),
             // TODO: getSupportEmailAddress(),
             // TODO: getSignupEmailAddress(),
             // TODO: getTicketEncryptionFrom(),
