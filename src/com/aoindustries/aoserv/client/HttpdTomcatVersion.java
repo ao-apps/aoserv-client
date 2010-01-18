@@ -1,15 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.UnixPath;
 
 /**
  * An <code>HttpdTomcatVersion</code> flags which
@@ -21,18 +17,12 @@ import java.sql.SQLException;
  * @see  HttpdTomcatSite
  * @see  TechnologyVersion
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcatVersion> {
+final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcatVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdTomcatVersion> {
 
-    static final int COLUMN_VERSION=0;
-
-    static final String COLUMN_VERSION_name = "version";
-
-    private String install_dir;
-    private boolean requires_mod_jk;
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String TECHNOLOGY_NAME="jakarta-tomcat";
 
@@ -43,34 +33,35 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
         VERSION_5_5_PREFIX="5.5.",
         VERSION_6_0_PREFIX="6.0."
     ;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_VERSION: return Integer.valueOf(pkey);
-            case 1: return install_dir;
-            case 2: return requires_mod_jk?Boolean.TRUE:Boolean.FALSE;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private UnixPath installDir;
+    final private boolean requiresModJk;
+
+    public HttpdTomcatVersion(HttpdTomcatVersionService<?,?> service, int version, UnixPath installDir, boolean requiresModJk) {
+        super(service, version);
+        this.installDir = installDir.intern();
+        this.requiresModJk = requiresModJk;
     }
+    // </editor-fold>
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdTomcatVersion.COLUMN_VERSION_name+'.'+TechnologyVersion.COLUMN_VERSION_name, ASCENDING)
+    };
 
     public String getInstallDirectory() {
-	return install_dir;
+	return installDir;
     }
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_TOMCAT_VERSIONS;
-    }
-
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-	TechnologyVersion obj=connector.getTechnologyVersions().get(pkey);
-	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
-	return obj;
+    public TechnologyVersion getTechnologyVersion() throws SQLException, IOException {
+        return connector.getTechnologyVersions().get(pkey);
     }
 
     public void init(ResultSet result) throws SQLException {
 	pkey=result.getInt(1);
-	install_dir=result.getString(2);
-        requires_mod_jk=result.getBoolean(3);
+	installDir=result.getString(2);
+        requiresModJk=result.getBoolean(3);
     }
 
     /**
@@ -113,17 +104,17 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 
     public void read(CompressedDataInputStream in) throws IOException {
 	pkey=in.readCompressedInt();
-	install_dir=in.readUTF();
-        requires_mod_jk=in.readBoolean();
+	installDir=in.readUTF();
+        requiresModJk=in.readBoolean();
     }
 
     public boolean requiresModJK() {
-        return requires_mod_jk;
+        return requiresModJk;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 	out.writeCompressedInt(pkey);
-	out.writeUTF(install_dir);
-        out.writeBoolean(requires_mod_jk);
+	out.writeUTF(installDir);
+        out.writeBoolean(requiresModJk);
     }
 }

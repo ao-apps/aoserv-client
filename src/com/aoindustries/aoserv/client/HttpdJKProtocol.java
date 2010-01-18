@@ -1,13 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import java.rmi.RemoteException;
 
 /**
  * Apache's <code>mod_jk</code> supports multiple versions of the
@@ -18,44 +16,30 @@ import java.sql.*;
  * @see  HttpdWorker
  * @see  Protocol
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJKProtocol extends GlobalObjectStringKey<HttpdJKProtocol> {
+final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdJKProtocol> {
 
-    static final int COLUMN_PROTOCOL=0;
-    static final String COLUMN_PROTOCOL_name = "protocol";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         AJP12="ajp12",
         AJP13="ajp13"
     ;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_PROTOCOL) return pkey;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public HttpdJKProtocol(HttpdJKProtocolService<?,?> service, String protocol) {
+        super(service, protocol);
+    }
+    // </editor-fold>
+
+    public Protocol getProtocol() throws RemoteException {
+        return getService().getConnector().getProtocols().get(key);
     }
 
-    public Protocol getProtocol(AOServConnector connector) throws SQLException, IOException {
-	Protocol protocol=connector.getProtocols().get(pkey);
-	if(protocol==null) throw new SQLException("Unable to find Protocol: "+pkey);
-	return protocol;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_JK_PROTOCOLS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getString(1);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-    }
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdJKProtocol.COLUMN_PROTOCOL_name, ASCENDING)
+    };
 }

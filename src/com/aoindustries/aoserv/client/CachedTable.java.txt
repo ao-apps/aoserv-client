@@ -1,0 +1,24 @@
+    /**
+     * Determines if the contents are currently hashed in a hashmap.
+     */
+    boolean isHashed(int uniqueColumn) {
+        return
+            columnsHashed!=null
+            && columnsHashed.get(uniqueColumn)
+        ;
+    }
+
+    /**
+     * Determines if the contents of this column are indexed.
+     */
+    boolean isIndexed(int uniqueColumn) {
+        return
+            indexesHashed!=null
+            && indexesHashed.get(uniqueColumn)
+        ;
+    }
+
+    @Override
+    final public boolean isLoaded() {
+        return lastLoaded!=-1;
+    }

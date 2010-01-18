@@ -1,13 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.UnixPath;
 
 /**
  * An <code>HttpdJBossVersion</code> flags which
@@ -18,17 +16,13 @@ import java.sql.*;
  * @see  HttpdJBossSite
  * @see  TechnologyVersion
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVersion> {
+final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdJBossVersion> {
 
-    static final int COLUMN_VERSION=0;
-    static final String COLUMN_VERSION_name = "version";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
-    private int tomcatVersion;
-    private String templateDir;
     public static final String TECHNOLOGY_NAME="JBoss";
 
     public static final String
@@ -36,49 +30,32 @@ final public class HttpdJBossVersion extends GlobalObjectIntegerKey<HttpdJBossVe
     ;
 
     public static final String DEFAULT_VERSION=VERSION_2_2_2;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_VERSION) return Integer.valueOf(pkey);
-	if(i==1) return Integer.valueOf(tomcatVersion);
-	if(i==2) return templateDir;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int tomcatVersion;
+    final private UnixPath templateDir;
+
+    public HttpdJBossVersion(HttpdJBossVersionService<?,?> service, int version, int tomcatVersion, UnixPath templateDir) {
+        super(service, version);
+        this.tomcatVersion = tomcatVersion;
+        this.templateDir = templateDir.intern();
+    }
+    // </editor-fold>
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(HttpdJBossVersion.COLUMN_VERSION_name+'.'+TechnologyVersion.COLUMN_VERSION_name, ASCENDING)
+    };
+
+    public HttpdTomcatVersion getHttpdTomcatVersion() throws SQLException, IOException {
+        return connector.getHttpdTomcatVersions().get(tomcatVersion);
     }
 
-    public HttpdTomcatVersion getHttpdTomcatVersion(AOServConnector connector) throws SQLException, IOException {
-	HttpdTomcatVersion obj=connector.getHttpdTomcatVersions().get(tomcatVersion);
-	if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
-	return obj;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_JBOSS_VERSIONS;
-    }
-
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-	TechnologyVersion obj=connector.getTechnologyVersions().get(pkey);
-	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
-	return obj;
+    public TechnologyVersion getTechnologyVersion() throws SQLException, IOException {
+        return connector.getTechnologyVersions().get(pkey);
     }
 
     public String getTemplateDirectory() {
-	return templateDir;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	tomcatVersion=result.getInt(2);
-	templateDir=result.getString(3);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	tomcatVersion=in.readCompressedInt();
-	templateDir=in.readUTF();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeCompressedInt(tomcatVersion);
-	out.writeUTF(templateDir);
+        return templateDir;
     }
 }

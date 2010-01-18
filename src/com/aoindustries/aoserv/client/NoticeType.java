@@ -1,29 +1,22 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import java.util.Locale;
 
 /**
  * Each reason for notifying clients is represented by a
  * <code>NoticeType</code>.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
+final public class NoticeType extends AOServObjectStringKey<NoticeType> implements BeanFactory<com.aoindustries.aoserv.client.beans.NoticeType> {
 
-    static final int COLUMN_TYPE=0;
-    static final String COLUMN_TYPE_name = "type";
-
-    private String description;
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         NONPAY="nonpay",
@@ -32,37 +25,19 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
         DISABLED="disabled",
         ENABLED="enabled"
     ;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_TYPE) return pkey;
-	if(i==1) return description;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public NoticeType(NoticeTypeService<?,?> service, String type) {
+        super(service, type);
     }
+    // </editor-fold>
 
-    public String getDescription() {
-	return description;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.NOTICE_TYPES;
+    public String getDescription(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "NoticeType."+key+".description");
     }
 
     public String getType() {
-	return pkey;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	description = result.getString(2);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	description=in.readUTF();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(description);
+        return key;
     }
 }

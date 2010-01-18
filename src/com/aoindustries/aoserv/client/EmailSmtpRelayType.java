@@ -1,13 +1,9 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2003-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
 
 /**
  * The <code>EmailSmtpRelayType</code> of an <code>EmailSmtpRelay</code>
@@ -15,14 +11,12 @@ import java.sql.*;
  *
  * @see  EmailSmtpRelay
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRelayType> {
+final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRelayType> implements BeanFactory<com.aoindustries.aoserv.client.beans.EmailSmtpRelayType> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The different relay types.
@@ -33,35 +27,26 @@ final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRel
         DENY_SPAM="deny_spam",
         DENY="deny"
     ;
+    // </editor-fold>
 
-    private String sendmail_config;
-    private String qmail_config;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private String sendmailConfig;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return sendmail_config;
-            case 2: return qmail_config;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public EmailSmtpRelayType(EmailSmtpRelayTypeService<?,?> service, String name, String sendmailConfig) {
+        super(service, name);
+        this.sendmailConfig = sendmailConfig.intern();
     }
+    // </editor-fold>
 
     public String getName() {
-        return pkey;
+        return key;
     }
     
     public String getSendmailConfig() {
-        return sendmail_config;
-    }
-    
-    public String getQmailConfig() {
-        return qmail_config;
+        return sendmailConfig;
     }
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.EMAIL_SMTP_RELAY_TYPES;
-    }
-
+    /* TODO
     public String getVerb() throws SQLException {
         if(pkey.equals(ALLOW)) return "allowed regular access";
         if(pkey.equals(ALLOW_RELAY)) return "allowed unauthenticated relay access";
@@ -69,22 +54,5 @@ final public class EmailSmtpRelayType extends GlobalObjectStringKey<EmailSmtpRel
         if(pkey.equals(DENY)) return "blocked";
         throw new SQLException("Unknown value for name: "+pkey);
     }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getString(1);
-	sendmail_config=result.getString(2);
-        qmail_config=result.getString(3);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-        sendmail_config=in.readUTF();
-        qmail_config=in.readUTF();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(sendmail_config);
-        out.writeUTF(qmail_config);
-    }
+     */
 }

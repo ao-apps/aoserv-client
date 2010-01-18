@@ -1,60 +1,34 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
-import java.util.List;
+package com.aoindustries.aoserv.client;
 
 /**
  * For AO Industries use only.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory> {
+final public class ExpenseCategory extends AOServObjectStringKey<ExpenseCategory> implements BeanFactory<com.aoindustries.aoserv.client.beans.ExpenseCategory> {
 
-    static final int COLUMN_EXPENSE_CODE=0;
-    static final String COLUMN_EXPENSE_CODE_name = "expense_code";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_EXPENSE_CODE) return pkey;
-	throw new IllegalArgumentException("Invalid index: "+i);
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    public ExpenseCategory(ExpenseCategoryService<?,?> service, String expenseCode) {
+        super(service, expenseCode);
     }
+    // </editor-fold>
 
     public String getExpenseCode() {
-	return pkey;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.EXPENSE_CATEGORIES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getString(1);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-    	pkey=in.readUTF().intern();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-        );
+        return key;
     }
 
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
+            getBankTransactions()
         );
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-    	out.writeUTF(pkey);
     }
 }

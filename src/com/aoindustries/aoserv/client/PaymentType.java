@@ -1,14 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
 import java.util.Locale;
 
 /**
@@ -16,14 +12,12 @@ import java.util.Locale;
  * Once processed, the amount paid is subtracted from the
  * <code>Business</code>' account as a new <code>Transaction</code>.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
+final public class PaymentType extends AOServObjectStringKey<PaymentType> implements BeanFactory<com.aoindustries.aoserv.client.beans.PaymentType> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The system supported payment types, not all of which can
@@ -39,63 +33,37 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
         VISA="visa",
         WIRE="wire"
     ;
+    // </editor-fold>
 
-    String description;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private boolean isActive;
+    final private boolean allowWeb;
 
-    private boolean isActive;
-
-    private boolean allowWeb;
+    public PaymentType(PaymentTypeService<?,?> service, String name, boolean isActive, boolean allowWeb) {
+        super(service, name);
+        this.isActive = isActive;
+        this.allowWeb = allowWeb;
+    }
+    // </editor-fold>
 
     public boolean allowWeb() {
-	return allowWeb;
+    	return allowWeb;
     }
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_NAME) return pkey;
-	if(i==1) return description;
-	if(i==2) return isActive?Boolean.TRUE:Boolean.FALSE;
-	if(i==3) return allowWeb?Boolean.TRUE:Boolean.FALSE;
-	throw new IllegalArgumentException("Invalid index: "+i);
-    }
-
-    public String getDescription() {
-	return description;
+    public String getDescription(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "PaymentType."+key+".description");
     }
 
     public String getName() {
-	return pkey;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.PAYMENT_TYPES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	description = result.getString(2);
-	isActive = result.getBoolean(3);
-	allowWeb = result.getBoolean(4);
+    	return key;
     }
 
     public boolean isActive() {
-	return isActive;
+        return isActive;
     }
 
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	description=in.readUTF();
-	isActive=in.readBoolean();
-	allowWeb=in.readBoolean();
-    }
-
+    @Override
     String toStringImpl(Locale userLocale) {
-	return description;
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeUTF(description);
-	out.writeBoolean(isActive);
-	out.writeBoolean(allowWeb);
+        return getDescription(userLocale);
     }
 }

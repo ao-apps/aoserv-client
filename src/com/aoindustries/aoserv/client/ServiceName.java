@@ -30,7 +30,9 @@ public enum ServiceName implements LocalizedToString {
     backup_retentions,
     /* TODO
     bank_accounts,
+     */
     bank_transaction_types,
+    /* TODO
     bank_transactions,
     banks,
     blackhole_email_addresses,
@@ -62,7 +64,9 @@ public enum ServiceName implements LocalizedToString {
     /* TODO
     email_addresses,
     email_attachment_blocks,
+     */
     email_attachment_types,
+    /* TODO
     email_domains,
     email_forwarding,
      */
@@ -72,14 +76,18 @@ public enum ServiceName implements LocalizedToString {
     email_lists,
     email_pipe_addresses,
     email_pipes,
+     */
     email_smtp_relay_types,
+    /* TODO
     email_smtp_relays,
     email_smtp_smart_host_domains,
     email_smtp_smart_hosts,
-    email_sa_integration_modes,
-    encryption_keys,
-    expense_categories,
      */
+    email_sa_integration_modes,
+    /* TODO
+    encryption_keys,
+     */
+    expense_categories,
     failover_file_log,
     failover_file_replications,
     failover_file_schedule,
@@ -90,10 +98,10 @@ public enum ServiceName implements LocalizedToString {
     /* TODO
     httpd_binds,
     httpd_jboss_sites,
+     */
     httpd_jboss_versions,
     httpd_jk_codes,
     httpd_jk_protocols,
-     */
     httpd_servers,
     /* TODO
     httpd_shared_tomcats,
@@ -109,7 +117,7 @@ public enum ServiceName implements LocalizedToString {
     // TODO: httpd_tomcat_sites,
     // TODO: httpd_tomcat_shared_sites,
     // TODO: httpd_tomcat_std_sites,
-    // TODO: httpd_tomcat_versions,
+    httpd_tomcat_versions,
     // TODO: httpd_workers,
     ip_addresses,
     languages,
@@ -124,8 +132,8 @@ public enum ServiceName implements LocalizedToString {
     /* TODO
     majordomo_lists,
     majordomo_servers,
-    majordomo_versions,
      */
+    majordomo_versions,
     master_hosts,
     master_servers,
     master_users,
@@ -143,24 +151,24 @@ public enum ServiceName implements LocalizedToString {
     net_tcp_redirects,
     /* TODO
     notice_log,
-    notice_types,
      */
+    notice_types,
     operating_system_versions,
     operating_systems,
     package_categories,
     /* TODO
     package_definition_limits,
     package_definitions,
-    payment_types,
-    physical_servers,
      */
+    payment_types,
+    // TODO: physical_servers,
     postgres_databases,
     postgres_encodings,
     postgres_servers,
     postgres_users,
     postgres_versions,
-    // TODO: private_ftp_servers,
-    // TODO: processor_types,
+    private_ftp_servers,
+    processor_types,
     protocols,
     /* TODO
     racks,
@@ -188,7 +196,7 @@ public enum ServiceName implements LocalizedToString {
     technology_classes,
     technology_names,
     technology_versions,
-    // TODO: ticket_action_types,
+    ticket_action_types,
     // TODO: ticket_actions,
     ticket_assignments,
     // TODO: ticket_brand_categories,
@@ -198,8 +206,8 @@ public enum ServiceName implements LocalizedToString {
     ticket_types,
     tickets,
     time_zones,
-    /* TODO
     transaction_types,
+    /* TODO
     transactions,
      */
     usernames,

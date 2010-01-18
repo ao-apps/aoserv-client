@@ -1,96 +1,55 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.List;
+package com.aoindustries.aoserv.client;
+
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * For AO Industries use only.
  *
  * @author  AO Industries, Inc.
  */
-final public class BankTransactionType extends CachedObjectStringKey<BankTransactionType> {
+final public class BankTransactionType extends AOServObjectStringKey<BankTransactionType> implements BeanFactory<com.aoindustries.aoserv.client.beans.BankTransactionType> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_DISPLAY_name = "display";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
+    // </editor-fold>
 
-    private String
-        display,
-        description
-    ;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private boolean isNegative;
 
-    private boolean isNegative;
+    public BankTransactionType(BankTransactionTypeService<?,?> service, String name, boolean isNegative) {
+        super(service, name);
+        this.isNegative = isNegative;
+    }
+    // </editor-fold>
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return display;
-            case 2: return description;
-            case 3: return isNegative?Boolean.TRUE:Boolean.FALSE;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public String getDescription(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+key+".description");
     }
 
-    public String getDescription() {
-	return description;
-    }
-
-    public String getDisplay() {
-	return display;
+    public String getDisplay(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+key+".display");
     }
 
     public String getName() {
-	return pkey;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BANK_TRANSACTION_TYPES;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	display = result.getString(2);
-	description = result.getString(3);
-	isNegative = result.getBoolean(4);
-    }
-
-    public boolean isNegative() {
-	return isNegative;
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	display=in.readUTF();
-	description=in.readUTF();
-	isNegative=in.readBoolean();
+        return key;
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-	return display;
+        return getDisplay(userLocale);
     }
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeUTF(display);
-        out.writeUTF(description);
-        out.writeBoolean(isNegative);
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getBankTransactions()
         );
     }
 }

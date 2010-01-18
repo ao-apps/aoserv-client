@@ -1,14 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2005-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import java.util.Locale;
 
 /**
  * An <code>EmailSpamAssassinIntegrationMode</code> is a simple wrapper for the types
@@ -16,14 +13,12 @@ import java.sql.*;
  *
  * @see  Server
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKey<EmailSpamAssassinIntegrationMode> {
+final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKey<EmailSpamAssassinIntegrationMode> implements BeanFactory<com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_SORT_ORDER_name = "sort_order";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     public static final String
         NONE="none",
@@ -32,50 +27,30 @@ public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKe
     ;
 
     public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE=POP3;
+    // </editor-fold>
 
-    private String display;
-    private int sort_order;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private short sortOrder;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return display;
-            case 2: return Integer.valueOf(sort_order);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    public EmailSpamAssassinIntegrationMode(EmailSpamAssassinIntegrationModeService<?,?> service, String name, short sortOrder) {
+        super(service, name);
+        this.sortOrder = sortOrder;
     }
+    // </editor-fold>
+
+    private static final OrderBy[] defaultOrderBy = {
+        new OrderBy(EmailSpamAssassinIntegrationMode.COLUMN_SORT_ORDER_name, ASCENDING)
+    };
 
     public String getName() {
-        return pkey;
+        return key;
     }
 
-    public String getDisplay() {
-        return display;
+    public String getDisplay(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "EmailSpamAssassinIntegrationMode."+key+".display");
     }
 
-    public int getSortOrder() {
-        return sort_order;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
-    }
-
-    public void init(ResultSet results) throws SQLException {
-        pkey=results.getString(1);
-        display=results.getString(2);
-        sort_order=results.getInt(3);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        display=in.readUTF();
-        sort_order=in.readCompressedInt();
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeUTF(display);
-        out.writeCompressedInt(sort_order);
+    public short getSortOrder() {
+        return sortOrder;
     }
 }

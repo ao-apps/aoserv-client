@@ -50,7 +50,8 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         MYSQL_USER="mysql_user",
         POSTGRESQL_DATABASE="postgresql_database",
         POSTGRESQL_SERVER="postgresql_server",
-        POSTGRESQL_USER="postgresql_user"
+        POSTGRESQL_USER="postgresql_user",
+        PRIVATE_FTP_SERVER="private_ftp_server"
     ;
     // </editor-fold>
 
