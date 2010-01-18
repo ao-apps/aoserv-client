@@ -160,7 +160,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         return getService().getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_SERVER, this);
     }
 
-    public IndexedSet<IPAddress> getIPAddresses() throws RemoteException {
+    public IndexedSet<IPAddress> getIpAddresses() throws RemoteException {
         return getService().getConnector().getIpAddresses().filterIndexedSet(IPAddress.COLUMN_NET_DEVICE, getNetDevices());
     }
 

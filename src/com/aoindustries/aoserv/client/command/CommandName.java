@@ -26,12 +26,23 @@ public enum CommandName {
     describe(DescribeCommand.class, null),
     // TODO: select(SelectCommand.class, null),
     show(ShowCommand.class, null),
+    // business_administrators
+    crypt(CryptCommand.class, ServiceName.business_administrators),
+    hash_password(HashPasswordCommand.class, ServiceName.business_administrators),
     // failover_file_logs
     add_failover_file_log(AddFailoverFileLogCommand.class, ServiceName.failover_file_log, AOServPermission.Permission.add_failover_file_log),
     // failover_file_replications
     request_replication_daemon_access(RequestReplicationDaemonAccessCommand.class, ServiceName.failover_file_replications, AOServPermission.Permission.request_replication_daemon_access),
+    // ip_addresses
+    set_ip_address_dhcp_address(SetIpAddressDhcpAddress.class, ServiceName.ip_addresses, AOServPermission.Permission.set_ip_address_dhcp_address),
+    // linux_accounts
+    set_linux_account_predisable_password(SetLinuxAccountPredisablePasswordCommand.class, ServiceName.linux_accounts, AOServPermission.Permission.set_linux_account_predisable_password),
+    // mysql_users
+    set_mysql_user_predisable_password(SetMySQLUserPredisablePasswordCommand.class, ServiceName.mysql_users, AOServPermission.Permission.set_mysql_user_predisable_password),
+    // postgres_users
+    set_postgres_user_predisable_password(SetPostgresUserPredisablePasswordCommand.class, ServiceName.postgres_users, AOServPermission.Permission.set_postgres_user_predisable_password),
     // ticket_actions
-    // TODO: add_ticket_annotation(AddTicketAnnotationCommand.class, ServiceName.ticket_actions, AOServPermission.Permission.add_ticket),
+    // TODO: add_ticket_annotation(AddTicketAnnotationCommand.class, ServiceName.ticket_actions, AOServPermission.Permission.add_ticket_annotation),
     // tickets
     add_ticket(AddTicketCommand.class, ServiceName.tickets, AOServPermission.Permission.add_ticket),
     // TODO: add_backup_server(TODO.class, TODO),
@@ -122,7 +133,6 @@ public enum CommandName {
     // TODO: complete_ticket(TODO.class, TODO),
     // TODO: copy_home_directory(TODO.class, TODO),
     // TODO: copy_linux_server_account_password(TODO.class, TODO),
-    // TODO: crypt(TODO.class, TODO),
     // TODO: decline_credit_card(TODO.class, TODO),
     // TODO: disable_business(TODO.class, TODO),
     // TODO: disable_business_administrator(TODO.class, TODO),

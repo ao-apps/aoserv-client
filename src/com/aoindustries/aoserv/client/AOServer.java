@@ -270,6 +270,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             getAoServerDaemonHosts(),
             getAoServerResources(),
             getBackupPartitions(),
+            getHttpdServers(),
             getNestedAoServers()
             // TODO: getLinuxServerAccounts(),
             // TODO: getEmailDomains(),
@@ -277,7 +278,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             // TODO: getEmailPipes(),
             // TODO: getSystemEmailAliases(),
             // TODO: getEmailSmtpRelays(),
-            // TODO: getHttpdServers(),
             // TODO: getFailoverMySQLReplications(),
             // TODO: getHttpdSharedTomcats(),
         );
@@ -295,6 +295,14 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     public IndexedSet<CvsRepository> getCvsRepositories() throws RemoteException {
         return getService().getConnector().getCvsRepositories().filterUniqueSet(CvsRepository.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
+    }
+
+    public IndexedSet<FtpGuestUser> getFtpGuestUsers() throws RemoteException {
+        return getService().getConnector().getFtpGuestUsers().filterUniqueSet(FtpGuestUser.COLUMN_LINUX_ACCOUNT, getLinuxAccounts());
+    }
+
+    public IndexedSet<HttpdServer> getHttpdServers() throws RemoteException {
+        return getService().getConnector().getHttpdServers().filterUniqueSet(HttpdServer.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
     }
 
     /**
@@ -421,14 +429,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     /* TODO
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException {
         return getService().getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
-    }
-
-    public List<FTPGuestUser> getFTPGuestUsers() throws IOException {
-        return getService().getConnector().getFtpGuestUsers().getFTPGuestUsers(this);
-    }
-
-    public List<HttpdServer> getHttpdServers() throws IOException {
-        return getService().getConnector().getHttpdServers().getHttpdServers(this);
     }
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException {

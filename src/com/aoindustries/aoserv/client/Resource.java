@@ -189,7 +189,8 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
             ResourceType.HTTPD_STATIC_SITE,
             ResourceType.HTTPD_TOMCAT_SHARED_SITE,
             ResourceType.HTTPD_TOMCAT_STD_SITE,
-            ResourceType.CVS_REPOSITORY
+            ResourceType.CVS_REPOSITORY,
+            ResourceType.HTTPD_SERVER
         )
     );
 

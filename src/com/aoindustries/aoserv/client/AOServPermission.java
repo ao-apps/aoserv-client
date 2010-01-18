@@ -43,8 +43,11 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
         add_failover_file_log,
         // failover_file_replications
         request_replication_daemon_access,
-        // linux_server_accounts
-        set_linux_server_account_password,
+        // ip_addresses
+        set_ip_address_dhcp_address,
+        // linux_accounts
+        set_linux_account_password,
+        set_linux_account_predisable_password,
         // mysql_databases
         check_mysql_tables,
         get_mysql_table_status,
@@ -53,8 +56,10 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
         get_mysql_slave_status,
         // mysql_users
         set_mysql_user_password,
+        set_mysql_user_predisable_password,
         // postgres_server_users
-        set_postgres_server_user_password,
+        set_postgres_user_password,
+        set_postgres_user_predisable_password,
         // tickets
         add_ticket,
         edit_ticket,

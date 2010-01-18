@@ -218,9 +218,9 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             AOServObjectUtils.createDependencySet(
-                // TODO: getFTPGuestUser()
+                getFtpGuestUser(),
+                getEmailInbox()
             ),
-            // TODO: getEmailInbox(),
             getLinuxAccountGroups()
         );
     }
@@ -234,11 +234,15 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    public FTPGuestUser getFTPGuestUser() throws IOException, SQLException {
-        return getService().getConnector().getFtpGuestUsers().get(pkey);
+    public EmailInbox getEmailInbox() throws RemoteException {
+        if(!linuxAccountType.equals(ResourceType.EMAIL_INBOX) && !linuxAccountType.equals(ResourceType.SHELL_ACCOUNT)) return null;
+        return getService().getConnector().getEmailInboxes().get(key);
     }
-     */
+
+    public FtpGuestUser getFtpGuestUser() throws RemoteException {
+        return getService().getConnector().getFtpGuestUsers().filterUnique(FtpGuestUser.COLUMN_LINUX_ACCOUNT, this);
+    }
+
     public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
         return getService().getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_ACCOUNT, this);
     }
@@ -256,8 +260,8 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public void addFTPGuestUser() throws IOException, SQLException {
-        getService().getConnector().getFtpGuestUsers().addFTPGuestUser(pkey);
+    public void addFtpGuestUser() throws IOException, SQLException {
+        getService().getConnector().getFtpGuestUsers().addFtpGuestUser(pkey);
     }
 
     public void addLinuxGroup(LinuxGroup group) throws IOException, SQLException {

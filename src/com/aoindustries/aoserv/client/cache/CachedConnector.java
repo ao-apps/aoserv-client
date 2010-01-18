@@ -36,6 +36,16 @@ import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.DnsRecord;
+import com.aoindustries.aoserv.client.DnsRecordService;
+import com.aoindustries.aoserv.client.DnsTld;
+import com.aoindustries.aoserv.client.DnsTldService;
+import com.aoindustries.aoserv.client.DnsType;
+import com.aoindustries.aoserv.client.DnsTypeService;
+import com.aoindustries.aoserv.client.DnsZone;
+import com.aoindustries.aoserv.client.DnsZoneService;
+import com.aoindustries.aoserv.client.EmailInbox;
+import com.aoindustries.aoserv.client.EmailInboxService;
 import com.aoindustries.aoserv.client.FailoverFileLog;
 import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplication;
@@ -46,8 +56,12 @@ import com.aoindustries.aoserv.client.FailoverMySQLReplication;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.FileBackupSetting;
 import com.aoindustries.aoserv.client.FileBackupSettingService;
+import com.aoindustries.aoserv.client.FtpGuestUser;
+import com.aoindustries.aoserv.client.FtpGuestUserService;
 import com.aoindustries.aoserv.client.GroupName;
 import com.aoindustries.aoserv.client.GroupNameService;
+import com.aoindustries.aoserv.client.HttpdServer;
+import com.aoindustries.aoserv.client.HttpdServerService;
 import com.aoindustries.aoserv.client.HttpdSite;
 import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.IPAddress;
@@ -142,6 +156,7 @@ import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.aoserv.client.command.AOServCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainLabel;
+import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -210,16 +225,20 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         /*
         distroFileTypes = new CachedDistroFileTypeService(this, wrapped.getDistroFileTypes());
         distroFiles = new CachedDistroFileService(this, wrapped.getDistroFiles());
-        dnsForbiddenZones = new CachedDNSForbiddenZoneService(this, wrapped.getDNSForbiddenZones());
-        dnsRecords = new CachedDNSRecordService(this, wrapped.getDNSRecords());
-        dnsTLDs = new CachedDNSTLDService(this, wrapped.getDNSTLDs());
-        dnsTypes = new CachedDNSTypeService(this, wrapped.getDNSTypes());
-        dnsZones = new CachedDNSZoneService(this, wrapped.getDNSZones());
+         */
+        dnsRecords = new CachedDnsRecordService(this, wrapped.getDnsRecords());
+        dnsTlds = new CachedDnsTldService(this, wrapped.getDnsTlds());
+        dnsTypes = new CachedDnsTypeService(this, wrapped.getDnsTypes());
+        dnsZones = new CachedDnsZoneService(this, wrapped.getDnsZones());
+        /* TODO
         emailAddresss = new CachedEmailAddressService(this, wrapped.getEmailAddresss());
         emailAttachmentBlocks = new CachedEmailAttachmentBlockService(this, wrapped.getEmailAttachmentBlocks());
         emailAttachmentTypes = new CachedEmailAttachmentTypeService(this, wrapped.getEmailAttachmentTypes());
         emailDomains = new CachedEmailDomainService(this, wrapped.getEmailDomains());
         emailForwardings = new CachedEmailForwardingService(this, wrapped.getEmailForwardings());
+         */
+        emailInboxes = new CachedEmailInboxService(this, wrapped.getEmailInboxes());
+        /* TODO
         emailListAddresss = new CachedEmailListAddressService(this, wrapped.getEmailListAddresss());
         emailLists = new CachedEmailListService(this, wrapped.getEmailLists());
         emailPipeAddresss = new CachedEmailPipeAddressService(this, wrapped.getEmailPipeAddresss());
@@ -238,14 +257,16 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         failoverMySQLReplications = new CachedFailoverMySQLReplicationService(this, wrapped.getFailoverMySQLReplications());
         fileBackupSettings = new CachedFileBackupSettingService(this, wrapped.getFileBackupSettings());
         groupNames = new CachedGroupNameService(this, wrapped.getGroupNames());
+        ftpGuestUsers = new CachedFtpGuestUserService(this, wrapped.getFtpGuestUsers());
         /* TODO
-        ftpGuestUsers = new CachedFTPGuestUserService(this, wrapped.getFTPGuestUsers());
         httpdBinds = new CachedHttpdBindService(this, wrapped.getHttpdBinds());
         httpdJBossSites = new CachedHttpdJBossSiteService(this, wrapped.getHttpdJBossSites());
         httpdJBossVersions = new CachedHttpdJBossVersionService(this, wrapped.getHttpdJBossVersions());
         httpdJKCodes = new CachedHttpdJKCodeService(this, wrapped.getHttpdJKCodes());
         httpdJKProtocols = new CachedHttpdJKProtocolService(this, wrapped.getHttpdJKProtocols());
+         */
         httpdServers = new CachedHttpdServerService(this, wrapped.getHttpdServers());
+        /* TODO
         httpdSharedTomcats = new CachedHttpdSharedTomcatService(this, wrapped.getHttpdSharedTomcats());
         httpdSiteAuthenticatedLocations = new CachedHttpdSiteAuthenticatedLocationService(this, wrapped.getHttpdSiteAuthenticatedLocations());
         httpdSiteBinds = new CachedHttpdSiteBindService(this, wrapped.getHttpdSiteBinds());
@@ -599,25 +620,49 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: final CachedDistroFileService distroFiles;
     // TODO: public DistroFileService<CachedConnector,CachedConnectorFactory> getDistroFiles();
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSForbiddenZoneService">
-    // TODO: final CachedDNSForbiddenZoneService dnsForbiddenZones;
-    // TODO: public DNSForbiddenZoneService<CachedConnector,CachedConnectorFactory> getDnsForbiddenZones();
+    // <editor-fold defaultstate="collapsed" desc="DnsRecordService">
+    static class CachedDnsRecordService extends CachedService<Integer,DnsRecord> implements DnsRecordService<CachedConnector,CachedConnectorFactory> {
+        CachedDnsRecordService(CachedConnector connector, DnsRecordService<?,?> wrapped) {
+            super(connector, Integer.class, DnsRecord.class, wrapped);
+        }
+    }
+    final CachedDnsRecordService dnsRecords;
+    public DnsRecordService<CachedConnector,CachedConnectorFactory> getDnsRecords() {
+        return dnsRecords;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSRecordService">
-    // TODO: final CachedDNSRecordService dnsRecords;
-    // TODO: public DNSRecordService<CachedConnector,CachedConnectorFactory> getDnsRecords();
+    // <editor-fold defaultstate="collapsed" desc="DnsTldService">
+    static class CachedDnsTldService extends CachedService<DomainName,DnsTld> implements DnsTldService<CachedConnector,CachedConnectorFactory> {
+        CachedDnsTldService(CachedConnector connector, DnsTldService<?,?> wrapped) {
+            super(connector, DomainName.class, DnsTld.class, wrapped);
+        }
+    }
+    final CachedDnsTldService dnsTlds;
+    public DnsTldService<CachedConnector,CachedConnectorFactory> getDnsTlds() {
+        return dnsTlds;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSTLDService">
-    // TODO: final CachedDNSTLDService dnsTLDs;
-    // TODO: public DNSTLDService<CachedConnector,CachedConnectorFactory> getDnsTLDs();
+    // <editor-fold defaultstate="collapsed" desc="DnsTypeService">
+    static class CachedDnsTypeService extends CachedService<String,DnsType> implements DnsTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedDnsTypeService(CachedConnector connector, DnsTypeService<?,?> wrapped) {
+            super(connector, String.class, DnsType.class, wrapped);
+        }
+    }
+    final CachedDnsTypeService dnsTypes;
+    public DnsTypeService<CachedConnector,CachedConnectorFactory> getDnsTypes() {
+        return dnsTypes;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSTypeService">
-    // TODO: final CachedDNSTypeService dnsTypes;
-    // TODO: public DNSTypeService<CachedConnector,CachedConnectorFactory> getDnsTypes();
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSZoneService">
-    // TODO: final CachedDNSZoneService dnsZones;
-    // TODO: public DNSZoneService<CachedConnector,CachedConnectorFactory> getDnsZones();
+    // <editor-fold defaultstate="collapsed" desc="DnsZoneService">
+    static class CachedDnsZoneService extends CachedService<Integer,DnsZone> implements DnsZoneService<CachedConnector,CachedConnectorFactory> {
+        CachedDnsZoneService(CachedConnector connector, DnsZoneService<?,?> wrapped) {
+            super(connector, Integer.class, DnsZone.class, wrapped);
+        }
+    }
+    final CachedDnsZoneService dnsZones;
+    public DnsZoneService<CachedConnector,CachedConnectorFactory> getDnsZones() {
+        return dnsZones;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAddressService">
     // TODO: final CachedEmailAddressService emailAddresss;
@@ -638,6 +683,17 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // <editor-fold defaultstate="collapsed" desc="EmailForwardingService">
     // TODO: final CachedEmailForwardingService emailForwardings;
     // TODO: public EmailForwardingService<CachedConnector,CachedConnectorFactory> getEmailForwardings();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailInboxService">
+    static class CachedEmailInboxService extends CachedService<Integer,EmailInbox> implements EmailInboxService<CachedConnector,CachedConnectorFactory> {
+        CachedEmailInboxService(CachedConnector connector, EmailInboxService<?,?> wrapped) {
+            super(connector, Integer.class, EmailInbox.class, wrapped);
+        }
+    }
+    final CachedEmailInboxService emailInboxes;
+    public EmailInboxService<CachedConnector,CachedConnectorFactory> getEmailInboxes() {
+        return emailInboxes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailListAddressService">
     // TODO: final CachedEmailListAddressService emailListAddresss;
@@ -738,9 +794,16 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return fileBackupSettings;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="FTPGuestUserService">
-    // TODO: final CachedFTPGuestUserService ftpGuestUsers;
-    // TODO: public FTPGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers();
+    // <editor-fold defaultstate="collapsed" desc="FtpGuestUserService">
+    static class CachedFtpGuestUserService extends CachedService<Integer,FtpGuestUser> implements FtpGuestUserService<CachedConnector,CachedConnectorFactory> {
+        CachedFtpGuestUserService(CachedConnector connector, FtpGuestUserService<?,?> wrapped) {
+            super(connector, Integer.class, FtpGuestUser.class, wrapped);
+        }
+    }
+    final CachedFtpGuestUserService ftpGuestUsers;
+    public FtpGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers() {
+        return ftpGuestUsers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="GroupNameService">
     static class CachedGroupNameService extends CachedService<GroupId,GroupName> implements GroupNameService<CachedConnector,CachedConnectorFactory> {
@@ -774,8 +837,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdServerService">
-    // TODO: final CachedHttpdServerService httpdServers;
-    // TODO: public HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers();
+    static class CachedHttpdServerService extends CachedService<Integer,HttpdServer> implements HttpdServerService<CachedConnector,CachedConnectorFactory> {
+        CachedHttpdServerService(CachedConnector connector, HttpdServerService<?,?> wrapped) {
+            super(connector, Integer.class, HttpdServer.class, wrapped);
+        }
+    }
+    final CachedHttpdServerService httpdServers;
+    public HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers() {
+        return httpdServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSharedTomcatService">
     // TODO: final CachedHttpdSharedTomcatService httpdSharedTomcats;

@@ -36,6 +36,16 @@ import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.DnsRecord;
+import com.aoindustries.aoserv.client.DnsRecordService;
+import com.aoindustries.aoserv.client.DnsTld;
+import com.aoindustries.aoserv.client.DnsTldService;
+import com.aoindustries.aoserv.client.DnsType;
+import com.aoindustries.aoserv.client.DnsTypeService;
+import com.aoindustries.aoserv.client.DnsZone;
+import com.aoindustries.aoserv.client.DnsZoneService;
+import com.aoindustries.aoserv.client.EmailInbox;
+import com.aoindustries.aoserv.client.EmailInboxService;
 import com.aoindustries.aoserv.client.FailoverFileLog;
 import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplication;
@@ -46,8 +56,12 @@ import com.aoindustries.aoserv.client.FailoverMySQLReplication;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.FileBackupSetting;
 import com.aoindustries.aoserv.client.FileBackupSettingService;
+import com.aoindustries.aoserv.client.FtpGuestUser;
+import com.aoindustries.aoserv.client.FtpGuestUserService;
 import com.aoindustries.aoserv.client.GroupName;
 import com.aoindustries.aoserv.client.GroupNameService;
+import com.aoindustries.aoserv.client.HttpdServer;
+import com.aoindustries.aoserv.client.HttpdServerService;
 import com.aoindustries.aoserv.client.HttpdSite;
 import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.IPAddress;
@@ -142,6 +156,7 @@ import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.aoserv.client.command.AOServCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainLabel;
+import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -198,19 +213,23 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
          */
         cvsRepositories = new NoSwingCvsRepositoryService(this, wrapped.getCvsRepositories());
         disableLogs = new NoSwingDisableLogService(this, wrapped.getDisableLogs());
-        /*
+        /* TODO
         distroFileTypes = new NoSwingDistroFileTypeService(this, wrapped.getDistroFileTypes());
         distroFiles = new NoSwingDistroFileService(this, wrapped.getDistroFiles());
-        dnsForbiddenZones = new NoSwingDNSForbiddenZoneService(this, wrapped.getDNSForbiddenZones());
-        dnsRecords = new NoSwingDNSRecordService(this, wrapped.getDNSRecords());
-        dnsTLDs = new NoSwingDNSTLDService(this, wrapped.getDNSTLDs());
-        dnsTypes = new NoSwingDNSTypeService(this, wrapped.getDNSTypes());
-        dnsZones = new NoSwingDNSZoneService(this, wrapped.getDNSZones());
+         */
+        dnsRecords = new NoSwingDnsRecordService(this, wrapped.getDnsRecords());
+        dnsTlds = new NoSwingDnsTldService(this, wrapped.getDnsTlds());
+        dnsTypes = new NoSwingDnsTypeService(this, wrapped.getDnsTypes());
+        dnsZones = new NoSwingDnsZoneService(this, wrapped.getDnsZones());
+        /* TODO
         emailAddresss = new NoSwingEmailAddressService(this, wrapped.getEmailAddresss());
         emailAttachmentBlocks = new NoSwingEmailAttachmentBlockService(this, wrapped.getEmailAttachmentBlocks());
         emailAttachmentTypes = new NoSwingEmailAttachmentTypeService(this, wrapped.getEmailAttachmentTypes());
         emailDomains = new NoSwingEmailDomainService(this, wrapped.getEmailDomains());
         emailForwardings = new NoSwingEmailForwardingService(this, wrapped.getEmailForwardings());
+         */
+        emailInboxes = new NoSwingEmailInboxService(this, wrapped.getEmailInboxes());
+        /* TODO
         emailListAddresss = new NoSwingEmailListAddressService(this, wrapped.getEmailListAddresss());
         emailLists = new NoSwingEmailListService(this, wrapped.getEmailLists());
         emailPipeAddresss = new NoSwingEmailPipeAddressService(this, wrapped.getEmailPipeAddresss());
@@ -229,14 +248,16 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         failoverMySQLReplications = new NoSwingFailoverMySQLReplicationService(this, wrapped.getFailoverMySQLReplications());
         fileBackupSettings = new NoSwingFileBackupSettingService(this, wrapped.getFileBackupSettings());
         groupNames = new NoSwingGroupNameService(this, wrapped.getGroupNames());
+        ftpGuestUsers = new NoSwingFtpGuestUserService(this, wrapped.getFtpGuestUsers());
         /* TODO
-        ftpGuestUsers = new NoSwingFTPGuestUserService(this, wrapped.getFTPGuestUsers());
         httpdBinds = new NoSwingHttpdBindService(this, wrapped.getHttpdBinds());
         httpdJBossSites = new NoSwingHttpdJBossSiteService(this, wrapped.getHttpdJBossSites());
         httpdJBossVersions = new NoSwingHttpdJBossVersionService(this, wrapped.getHttpdJBossVersions());
         httpdJKCodes = new NoSwingHttpdJKCodeService(this, wrapped.getHttpdJKCodes());
         httpdJKProtocols = new NoSwingHttpdJKProtocolService(this, wrapped.getHttpdJKProtocols());
+         */
         httpdServers = new NoSwingHttpdServerService(this, wrapped.getHttpdServers());
+        /* TODO
         httpdSharedTomcats = new NoSwingHttpdSharedTomcatService(this, wrapped.getHttpdSharedTomcats());
         httpdSiteAuthenticatedLocations = new NoSwingHttpdSiteAuthenticatedLocationService(this, wrapped.getHttpdSiteAuthenticatedLocations());
         httpdSiteBinds = new NoSwingHttpdSiteBindService(this, wrapped.getHttpdSiteBinds());
@@ -609,25 +630,53 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     // TODO: final NoSwingDistroFileService distroFiles;
     // TODO: public DistroFileService<NoSwingConnector,NoSwingConnectorFactory> getDistroFiles() throws RemoteException;
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSForbiddenZoneService">
-    // TODO: final NoSwingDNSForbiddenZoneService dnsForbiddenZones;
-    // TODO: public DNSForbiddenZoneService<NoSwingConnector,NoSwingConnectorFactory> getDnsForbiddenZones() throws RemoteException;
+    // <editor-fold defaultstate="collapsed" desc="DnsRecordService">
+    static class NoSwingDnsRecordService extends NoSwingService<Integer,DnsRecord> implements DnsRecordService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingDnsRecordService(NoSwingConnector connector, DnsRecordService<?,?> wrapped) {
+            super(connector, Integer.class, DnsRecord.class, wrapped);
+        }
+    }
+    final NoSwingDnsRecordService dnsRecords;
+    public DnsRecordService<NoSwingConnector,NoSwingConnectorFactory> getDnsRecords() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return dnsRecords;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSRecordService">
-    // TODO: final NoSwingDNSRecordService dnsRecords;
-    // TODO: public DNSRecordService<NoSwingConnector,NoSwingConnectorFactory> getDnsRecords() throws RemoteException;
+    // <editor-fold defaultstate="collapsed" desc="DnsTldService">
+    static class NoSwingDnsTldService extends NoSwingService<DomainName,DnsTld> implements DnsTldService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingDnsTldService(NoSwingConnector connector, DnsTldService<?,?> wrapped) {
+            super(connector, DomainName.class, DnsTld.class, wrapped);
+        }
+    }
+    final NoSwingDnsTldService dnsTlds;
+    public DnsTldService<NoSwingConnector,NoSwingConnectorFactory> getDnsTlds() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return dnsTlds;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSTLDService">
-    // TODO: final NoSwingDNSTLDService dnsTLDs;
-    // TODO: public DNSTLDService<NoSwingConnector,NoSwingConnectorFactory> getDnsTLDs() throws RemoteException;
+    // <editor-fold defaultstate="collapsed" desc="DnsTypeService">
+    static class NoSwingDnsTypeService extends NoSwingService<String,DnsType> implements DnsTypeService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingDnsTypeService(NoSwingConnector connector, DnsTypeService<?,?> wrapped) {
+            super(connector, String.class, DnsType.class, wrapped);
+        }
+    }
+    final NoSwingDnsTypeService dnsTypes;
+    public DnsTypeService<NoSwingConnector,NoSwingConnectorFactory> getDnsTypes() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return dnsTypes;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSTypeService">
-    // TODO: final NoSwingDNSTypeService dnsTypes;
-    // TODO: public DNSTypeService<NoSwingConnector,NoSwingConnectorFactory> getDnsTypes() throws RemoteException;
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSZoneService">
-    // TODO: final NoSwingDNSZoneService dnsZones;
-    // TODO: public DNSZoneService<NoSwingConnector,NoSwingConnectorFactory> getDnsZones() throws RemoteException;
+    // <editor-fold defaultstate="collapsed" desc="DnsZoneService">
+    static class NoSwingDnsZoneService extends NoSwingService<Integer,DnsZone> implements DnsZoneService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingDnsZoneService(NoSwingConnector connector, DnsZoneService<?,?> wrapped) {
+            super(connector, Integer.class, DnsZone.class, wrapped);
+        }
+    }
+    final NoSwingDnsZoneService dnsZones;
+    public DnsZoneService<NoSwingConnector,NoSwingConnectorFactory> getDnsZones() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return dnsZones;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAddressService">
     // TODO: final NoSwingEmailAddressService emailAddresss;
@@ -648,6 +697,18 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     // <editor-fold defaultstate="collapsed" desc="EmailForwardingService">
     // TODO: final NoSwingEmailForwardingService emailForwardings;
     // TODO: public EmailForwardingService<NoSwingConnector,NoSwingConnectorFactory> getEmailForwardings() throws RemoteException;
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailInboxService">
+    static class NoSwingEmailInboxService extends NoSwingService<Integer,EmailInbox> implements EmailInboxService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingEmailInboxService(NoSwingConnector connector, EmailInboxService<?,?> wrapped) {
+            super(connector, Integer.class, EmailInbox.class, wrapped);
+        }
+    }
+    final NoSwingEmailInboxService emailInboxes;
+    public EmailInboxService<NoSwingConnector,NoSwingConnectorFactory> getEmailInboxes() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return emailInboxes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailListAddressService">
     // TODO: final NoSwingEmailListAddressService emailListAddresss;
@@ -753,9 +814,17 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         return fileBackupSettings;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="FTPGuestUserService">
-    // TODO: final NoSwingFTPGuestUserService ftpGuestUsers;
-    // TODO: public FTPGuestUserService<NoSwingConnector,NoSwingConnectorFactory> getFtpGuestUsers() throws RemoteException;
+    // <editor-fold defaultstate="collapsed" desc="FtpGuestUserService">
+    static class NoSwingFtpGuestUserService extends NoSwingService<Integer,FtpGuestUser> implements FtpGuestUserService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingFtpGuestUserService(NoSwingConnector connector, FtpGuestUserService<?,?> wrapped) {
+            super(connector, Integer.class, FtpGuestUser.class, wrapped);
+        }
+    }
+    final NoSwingFtpGuestUserService ftpGuestUsers;
+    public FtpGuestUserService<NoSwingConnector,NoSwingConnectorFactory> getFtpGuestUsers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return ftpGuestUsers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="GroupNameService">
     static class NoSwingGroupNameService extends NoSwingService<GroupId,GroupName> implements GroupNameService<NoSwingConnector,NoSwingConnectorFactory> {
@@ -790,8 +859,16 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
     // TODO: public HttpdJKProtocolService<NoSwingConnector,NoSwingConnectorFactory> getHttpdJKProtocols() throws RemoteException;
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdServerService">
-    // TODO: final NoSwingHttpdServerService httpdServers;
-    // TODO: public HttpdServerService<NoSwingConnector,NoSwingConnectorFactory> getHttpdServers() throws RemoteException;
+    static class NoSwingHttpdServerService extends NoSwingService<Integer,HttpdServer> implements HttpdServerService<NoSwingConnector,NoSwingConnectorFactory> {
+        NoSwingHttpdServerService(NoSwingConnector connector, HttpdServerService<?,?> wrapped) {
+            super(connector, Integer.class, HttpdServer.class, wrapped);
+        }
+    }
+    final NoSwingHttpdServerService httpdServers;
+    public HttpdServerService<NoSwingConnector,NoSwingConnectorFactory> getHttpdServers() throws RemoteException {
+        NoSwingConnectorFactory.checkNotSwing();
+        return httpdServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSharedTomcatService">
     // TODO: final NoSwingHttpdSharedTomcatService httpdSharedTomcats;

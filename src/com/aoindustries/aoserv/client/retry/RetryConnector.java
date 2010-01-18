@@ -36,6 +36,16 @@ import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
 import com.aoindustries.aoserv.client.DisableLogService;
+import com.aoindustries.aoserv.client.DnsRecord;
+import com.aoindustries.aoserv.client.DnsRecordService;
+import com.aoindustries.aoserv.client.DnsTld;
+import com.aoindustries.aoserv.client.DnsTldService;
+import com.aoindustries.aoserv.client.DnsType;
+import com.aoindustries.aoserv.client.DnsTypeService;
+import com.aoindustries.aoserv.client.DnsZone;
+import com.aoindustries.aoserv.client.DnsZoneService;
+import com.aoindustries.aoserv.client.EmailInbox;
+import com.aoindustries.aoserv.client.EmailInboxService;
 import com.aoindustries.aoserv.client.FailoverFileLog;
 import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplication;
@@ -46,8 +56,12 @@ import com.aoindustries.aoserv.client.FailoverMySQLReplication;
 import com.aoindustries.aoserv.client.FailoverMySQLReplicationService;
 import com.aoindustries.aoserv.client.FileBackupSetting;
 import com.aoindustries.aoserv.client.FileBackupSettingService;
+import com.aoindustries.aoserv.client.FtpGuestUser;
+import com.aoindustries.aoserv.client.FtpGuestUserService;
 import com.aoindustries.aoserv.client.GroupName;
 import com.aoindustries.aoserv.client.GroupNameService;
+import com.aoindustries.aoserv.client.HttpdServer;
+import com.aoindustries.aoserv.client.HttpdServerService;
 import com.aoindustries.aoserv.client.HttpdSite;
 import com.aoindustries.aoserv.client.HttpdSiteService;
 import com.aoindustries.aoserv.client.IPAddress;
@@ -222,19 +236,23 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
          */
         cvsRepositories = new RetryCvsRepositoryService(this);
         disableLogs = new RetryDisableLogService(this);
-        /*
+        /* TODO
         distroFileTypes = new RetryDistroFileTypeService(this);
         distroFiles = new RetryDistroFileService(this);
-        dnsForbiddenZones = new RetryDNSForbiddenZoneService(this);
-        dnsRecords = new RetryDNSRecordService(this);
-        dnsTLDs = new RetryDNSTLDService(this);
-        dnsTypes = new RetryDNSTypeService(this);
-        dnsZones = new RetryDNSZoneService(this);
+         */
+        dnsRecords = new RetryDnsRecordService(this);
+        dnsTlds = new RetryDnsTldService(this);
+        dnsTypes = new RetryDnsTypeService(this);
+        dnsZones = new RetryDnsZoneService(this);
+        /* TODO
         emailAddresss = new RetryEmailAddressService(this);
         emailAttachmentBlocks = new RetryEmailAttachmentBlockService(this);
         emailAttachmentTypes = new RetryEmailAttachmentTypeService(this);
         emailDomains = new RetryEmailDomainService(this);
         emailForwardings = new RetryEmailForwardingService(this);
+         */
+        emailInboxes = new RetryEmailInboxService(this);
+        /* TODO
         emailListAddresss = new RetryEmailListAddressService(this);
         emailLists = new RetryEmailListService(this);
         emailPipeAddresss = new RetryEmailPipeAddressService(this);
@@ -253,14 +271,16 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         failoverMySQLReplications = new RetryFailoverMySQLReplicationService(this);
         fileBackupSettings = new RetryFileBackupSettingService(this);
         groupNames = new RetryGroupNameService(this);
+        ftpGuestUsers = new RetryFtpGuestUserService(this);
         /* TODO
-        ftpGuestUsers = new RetryFTPGuestUserService(this);
         httpdBinds = new RetryHttpdBindService(this);
         httpdJBossSites = new RetryHttpdJBossSiteService(this);
         httpdJBossVersions = new RetryHttpdJBossVersionService(this);
         httpdJKCodes = new RetryHttpdJKCodeService(this);
         httpdJKProtocols = new RetryHttpdJKProtocolService(this);
+         */
         httpdServers = new RetryHttpdServerService(this);
+        /* TODO
         httpdSharedTomcats = new RetryHttpdSharedTomcatService(this);
         httpdSiteAuthenticatedLocations = new RetryHttpdSiteAuthenticatedLocationService(this);
         httpdSiteBinds = new RetryHttpdSiteBindService(this);
@@ -748,25 +768,49 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     // TODO: final RetryDistroFileService distroFiles;
     // TODO: public DistroFileService<RetryConnector,RetryConnectorFactory> getDistroFiles();
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSForbiddenZoneService">
-    // TODO: final RetryDNSForbiddenZoneService dnsForbiddenZones;
-    // TODO: public DNSForbiddenZoneService<RetryConnector,RetryConnectorFactory> getDnsForbiddenZones();
+    // <editor-fold defaultstate="collapsed" desc="DnsRecordService">
+    static class RetryDnsRecordService extends RetryService<Integer,DnsRecord> implements DnsRecordService<RetryConnector,RetryConnectorFactory> {
+        RetryDnsRecordService(RetryConnector connector) {
+            super(connector, Integer.class, DnsRecord.class);
+        }
+    }
+    final RetryDnsRecordService dnsRecords;
+    public DnsRecordService<RetryConnector,RetryConnectorFactory> getDnsRecords() {
+        return dnsRecords;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSRecordService">
-    // TODO: final RetryDNSRecordService dnsRecords;
-    // TODO: public DNSRecordService<RetryConnector,RetryConnectorFactory> getDnsRecords();
+    // <editor-fold defaultstate="collapsed" desc="DnsTldService">
+    static class RetryDnsTldService extends RetryService<DomainName,DnsTld> implements DnsTldService<RetryConnector,RetryConnectorFactory> {
+        RetryDnsTldService(RetryConnector connector) {
+            super(connector, DomainName.class, DnsTld.class);
+        }
+    }
+    final RetryDnsTldService dnsTlds;
+    public DnsTldService<RetryConnector,RetryConnectorFactory> getDnsTlds() {
+        return dnsTlds;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSTLDService">
-    // TODO: final RetryDNSTLDService dnsTLDs;
-    // TODO: public DNSTLDService<RetryConnector,RetryConnectorFactory> getDnsTLDs();
+    // <editor-fold defaultstate="collapsed" desc="DnsTypeService">
+    static class RetryDnsTypeService extends RetryService<String,DnsType> implements DnsTypeService<RetryConnector,RetryConnectorFactory> {
+        RetryDnsTypeService(RetryConnector connector) {
+            super(connector, String.class, DnsType.class);
+        }
+    }
+    final RetryDnsTypeService dnsTypes;
+    public DnsTypeService<RetryConnector,RetryConnectorFactory> getDnsTypes() {
+        return dnsTypes;
+    }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSTypeService">
-    // TODO: final RetryDNSTypeService dnsTypes;
-    // TODO: public DNSTypeService<RetryConnector,RetryConnectorFactory> getDnsTypes();
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="DNSZoneService">
-    // TODO: final RetryDNSZoneService dnsZones;
-    // TODO: public DNSZoneService<RetryConnector,RetryConnectorFactory> getDnsZones();
+    // <editor-fold defaultstate="collapsed" desc="DnsZoneService">
+    static class RetryDnsZoneService extends RetryService<Integer,DnsZone> implements DnsZoneService<RetryConnector,RetryConnectorFactory> {
+        RetryDnsZoneService(RetryConnector connector) {
+            super(connector, Integer.class, DnsZone.class);
+        }
+    }
+    final RetryDnsZoneService dnsZones;
+    public DnsZoneService<RetryConnector,RetryConnectorFactory> getDnsZones() {
+        return dnsZones;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAddressService">
     // TODO: final RetryEmailAddressService emailAddresss;
@@ -787,6 +831,17 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     // <editor-fold defaultstate="collapsed" desc="EmailForwardingService">
     // TODO: final RetryEmailForwardingService emailForwardings;
     // TODO: public EmailForwardingService<RetryConnector,RetryConnectorFactory> getEmailForwardings();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="EmailInboxService">
+    static class RetryEmailInboxService extends RetryService<Integer,EmailInbox> implements EmailInboxService<RetryConnector,RetryConnectorFactory> {
+        RetryEmailInboxService(RetryConnector connector) {
+            super(connector, Integer.class, EmailInbox.class);
+        }
+    }
+    final RetryEmailInboxService emailInboxes;
+    public EmailInboxService<RetryConnector,RetryConnectorFactory> getEmailInboxes() {
+        return emailInboxes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailListAddressService">
     // TODO: final RetryEmailListAddressService emailListAddresss;
@@ -887,9 +942,16 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return fileBackupSettings;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="FTPGuestUserService">
-    // TODO: final RetryFTPGuestUserService ftpGuestUsers;
-    // TODO: public FTPGuestUserService<RetryConnector,RetryConnectorFactory> getFtpGuestUsers();
+    // <editor-fold defaultstate="collapsed" desc="FtpGuestUserService">
+    static class RetryFtpGuestUserService extends RetryService<Integer,FtpGuestUser> implements FtpGuestUserService<RetryConnector,RetryConnectorFactory> {
+        RetryFtpGuestUserService(RetryConnector connector) {
+            super(connector, Integer.class, FtpGuestUser.class);
+        }
+    }
+    final RetryFtpGuestUserService ftpGuestUsers;
+    public FtpGuestUserService<RetryConnector,RetryConnectorFactory> getFtpGuestUsers() {
+        return ftpGuestUsers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="GroupNameService">
     static class RetryGroupNameService extends RetryService<GroupId,GroupName> implements GroupNameService<RetryConnector,RetryConnectorFactory> {
@@ -923,8 +985,15 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     // TODO: public HttpdJKProtocolService<RetryConnector,RetryConnectorFactory> getHttpdJKProtocols();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdServerService">
-    // TODO: final RetryHttpdServerService httpdServers;
-    // TODO: public HttpdServerService<RetryConnector,RetryConnectorFactory> getHttpdServers();
+    static class RetryHttpdServerService extends RetryService<Integer,HttpdServer> implements HttpdServerService<RetryConnector,RetryConnectorFactory> {
+        RetryHttpdServerService(RetryConnector connector) {
+            super(connector, Integer.class, HttpdServer.class);
+        }
+    }
+    final RetryHttpdServerService httpdServers;
+    public HttpdServerService<RetryConnector,RetryConnectorFactory> getHttpdServers() {
+        return httpdServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSharedTomcatService">
     // TODO: final RetryHttpdSharedTomcatService httpdSharedTomcats;

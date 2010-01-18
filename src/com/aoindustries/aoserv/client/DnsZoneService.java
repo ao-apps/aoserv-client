@@ -1,62 +1,43 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.TerminalWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+package com.aoindustries.aoserv.client;
 
 /**
- * @see  DNSZone
+ * @see  DnsZone
  *
  * @author  AO Industries, Inc.
  */
-final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
+@ServiceAnnotation(ServiceName.dns_zones)
+public interface DnsZoneService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,DnsZone> {
 
-    DNSZoneTable(AOServConnector connector) {
-    	super(connector, DNSZone.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(DNSZone.COLUMN_ZONE_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
-    public DNSZone get(String zone) throws IOException, SQLException {
-        return getUniqueRow(DNSZone.COLUMN_ZONE, zone);
-    }
-
-    private List<String> getDNSTLDs() throws IOException, SQLException {
-        List<DNSTLD> tlds=connector.getDnsTLDs().getRows();
+    /* TODO
+    private List<String> getDnsTlds() throws IOException, SQLException {
+        List<DnsTld> tlds=connector.getDnsTlds().getRows();
         List<String> strings=new ArrayList<String>(tlds.size());
-        for(DNSTLD tld : tlds) strings.add(tld.getDomain());
+        for(DnsTld tld : tlds) strings.add(tld.getDomain());
         return strings;
     }
 
-    void addDNSZone(Business business, String zone, String ip, int ttl) throws IOException, SQLException {
+    void addDnsZone(Business business, String zone, String ip, int ttl) throws IOException, SQLException {
     	connector.requestUpdateIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.DNS_ZONES, business.pkey, zone, ip, ttl);
     }
-
+    */
     /**
      * Checks the formatting for a DNS zone.  The format of a DNS zone must be <code><i>name</i>.<i>tld</i>.</code>
      */
-    public boolean checkDNSZone(String zone) throws IOException, SQLException {
-        return checkDNSZone(zone, getDNSTLDs());
+    /* TODO
+    public boolean checkDnsZone(String zone) throws IOException, SQLException {
+        return checkDnsZone(zone, getDnsTlds());
     }
-
+    */
     /**
      * Checks the formatting for a DNS zone.  The format of a DNS zone must be <code><i>name</i>.<i>tld</i>.</code>
      */
-    public static boolean checkDNSZone(String zone, List<String> tlds) {
+    /* TODO
+    public static boolean checkDnsZone(String zone, List<String> tlds) {
 	int zoneLen=zone.length();
 
 	String shortestName=null;
@@ -77,16 +58,17 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	return false;
     }
 
-    public String getDNSZoneForHostname(String hostname) throws IllegalArgumentException, IOException, SQLException {
-        return getDNSZoneForHostname(hostname, getDNSTLDs());
-    }
+    public String getDnsZoneForHostname(String hostname) throws IllegalArgumentException, IOException, SQLException {
+        return getDnsZoneForHostname(hostname, getDnsTlds());
+    }*/
 
     /**
-     * Gets the zone represented by this <code>DNSZone</code>.
+     * Gets the zone represented by this <code>DnsZone</code>.
      *
      * @return  the zone in the format <code><i>name</i>.<i>tld</i>.</code>
      */
-    public static String getDNSZoneForHostname(String hostname, List<String> tlds) throws IllegalArgumentException, IOException, SQLException {
+    /* TODO
+    public static String getDnsZoneForHostname(String hostname, List<String> tlds) throws IllegalArgumentException, IOException, SQLException {
         int hlen = hostname.length();
 	if (hlen>0 && hostname.charAt(hlen-1)=='.') {
             hostname = hostname.substring(0, --hlen);
@@ -112,15 +94,16 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	return zone+longestTld+".";
     }
 
-    List<DNSZone> getDNSZones(Business business) throws IOException, SQLException {
-        return getIndexedRows(DNSZone.COLUMN_ACCOUNTING, business.pkey);
+    List<DnsZone> getDnsZones(Business business) throws IOException, SQLException {
+        return getIndexedRows(DnsZone.COLUMN_ACCOUNTING, business.pkey);
     }
-
+    */
     /**
      * Gets the hostname for a fully qualified hostname.  Gets a hostname in <code><i>name</i>.<i>tld</i>.</code> format.
      *
      * @exception  IllegalArgumentException  if hostname cannot be resolved to a top level domain
      */
+    /* TODO
     public static String getHostTLD(String hostname, List<String> tlds) throws IllegalArgumentException {
     	int hostnameLen=hostname.length();
         if (hostnameLen>0 && hostname.charAt(hostnameLen-1)!='.') {
@@ -148,11 +131,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
     }
 
     public String getHostTLD(String hostname) throws IllegalArgumentException, IOException, SQLException {
-        return getHostTLD(hostname, getDNSTLDs());
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.DNS_ZONES;
+        return getHostTLD(hostname, getDnsTlds());
     }
 
     @Override
@@ -160,7 +139,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_DNS_ZONE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_DNS_ZONE, args, 4, err)) {
-                connector.getSimpleAOClient().addDNSZone(
+                connector.getSimpleAOClient().addDnsZone(
                     args[1],
                     args[2],
                     args[3],
@@ -171,7 +150,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_DNS_ZONE)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_DNS_ZONE, args, 1, err)) {
                 try {
-                    connector.getSimpleAOClient().checkDNSZone(
+                    connector.getSimpleAOClient().checkDnsZone(
                         args[1]
                     );
                     out.println("true");
@@ -185,7 +164,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.IS_DNS_ZONE_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_DNS_ZONE_AVAILABLE, args, 1, err)) {
                 try {
-                    out.println(connector.getSimpleAOClient().isDNSZoneAvailable(args[1]));
+                    out.println(connector.getSimpleAOClient().isDnsZoneAvailable(args[1]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_DNS_ZONE_AVAILABLE+": ");
@@ -205,14 +184,14 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_DNS_ZONE)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_DNS_ZONE, args, 1, err)) {
-                connector.getSimpleAOClient().removeDNSZone(
+                connector.getSimpleAOClient().removeDnsZone(
                     args[1]
                 );
             }
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.SET_DNS_ZONE_TTL)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_DNS_ZONE, args, 2, err)) {
-                connector.getSimpleAOClient().setDNSZoneTTL(
+                connector.getSimpleAOClient().setDnsZoneTTL(
                     args[1],
                     AOSH.parseInt(args[2], "ttl")
                 );
@@ -221,7 +200,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	return false;
     }
 
-    public boolean isDNSZoneAvailable(String zone) throws IOException, SQLException {
+    public boolean isDnsZoneAvailable(String zone) throws IOException, SQLException {
     	return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_DNS_ZONE_AVAILABLE, zone);
     }
 
@@ -245,4 +224,5 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 
 	return true;
     }
+    */
 }

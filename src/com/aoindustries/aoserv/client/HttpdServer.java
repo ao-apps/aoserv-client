@@ -1,17 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * An <code>HttpdServer</code> represents one running instance of the
@@ -25,230 +22,160 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
+final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdServer> {
 
-    static final int
-        COLUMN_PKEY = 0,
-        COLUMN_AO_SERVER = 1,
-        COLUMN_LINUX_SERVER_ACCOUNT = 6,
-        COLUMN_LINUX_SERVER_GROUP = 7,
-        COLUMN_ACCOUNTING = 10
-    ;
-    static final String COLUMN_AO_SERVER_name = "ao_server";
-    static final String COLUMN_NUMBER_name = "number";
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * The highest recommended number of sites to bind in one server.
      */
-    public static final int RECOMMENDED_MAXIMUM_BINDS=128;
+    public static final int DEFAULT_MAXIMUM_BINDS=128;
+    // </editor-fold>
 
-    int ao_server;
-    private int number;
-    private boolean can_add_sites;
-    // TODO: Remove this field
-    private boolean is_mod_jk;
-    private int max_binds;
-    int linux_server_account;
-    int linux_server_group;
-    private int mod_php_version;
-    private boolean use_suexec;
-    private String accounting;
-    private boolean is_shared;
-    private boolean use_mod_perl;
-    private int timeout;
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int number;
+    final private int maxBinds;
+    final private int linuxAccountGroup;
+    final private int modPhpVersion;
+    final private boolean useSuexec;
+    final private boolean isShared;
+    final private boolean useModPerl;
+    final private int timeout;
 
-    public boolean canAddSites() {
-    	return can_add_sites;
+    public HttpdServer(
+        HttpdServerService<?,?> service,
+        int aoServerResource,
+        int number,
+        int maxBinds,
+        int linuxAccountGroup,
+        int modPhpVersion,
+        boolean useSuexec,
+        boolean isShared,
+        boolean useModPerl,
+        int timeout
+    ) {
+        super(service, aoServerResource);
+        this.number = number;
+        this.maxBinds = maxBinds;
+        this.linuxAccountGroup = linuxAccountGroup;
+        this.modPhpVersion = modPhpVersion;
+        this.useSuexec = useSuexec;
+        this.isShared = isShared;
+        this.useModPerl = useModPerl;
+        this.timeout = timeout;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(HttpdServer other) throws RemoteException {
+        if(key==other.key) return 0;
+        AOServerResource aoResource1 = getAoServerResource();
+        AOServerResource aoResource2 = other.getAoServerResource();
+        int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+        if(diff!=0) return diff;
+        return AOServObjectUtils.compare(number, other.number);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
+    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the resource id")
+    public AOServerResource getAoServerResource() throws RemoteException {
+        return getService().getConnector().getAoServerResources().get(key);
     }
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
-            case 2: return Integer.valueOf(number);
-            case 3: return can_add_sites?Boolean.TRUE:Boolean.FALSE;
-            case 4: return is_mod_jk?Boolean.TRUE:Boolean.FALSE;
-            case 5: return Integer.valueOf(max_binds);
-            case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
-            case COLUMN_LINUX_SERVER_GROUP: return Integer.valueOf(linux_server_group);
-            case 8: return mod_php_version==-1?null:Integer.valueOf(mod_php_version);
-            case 9: return use_suexec?Boolean.TRUE:Boolean.FALSE;
-            case COLUMN_ACCOUNTING: return accounting;
-            case 11: return is_shared?Boolean.TRUE:Boolean.FALSE;
-            case 12: return use_mod_perl?Boolean.TRUE:Boolean.FALSE;
-            case 13: return Integer.valueOf(timeout);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
+    @SchemaColumn(order=1, name="number", description="the number of the instance on the server")
+    public int getNumber() {
+        return number;
     }
 
-    public List<HttpdBind> getHttpdBinds() throws IOException, SQLException {
-	return table.connector.getHttpdBinds().getHttpdBinds(this);
-    }
-
-    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-	return table.connector.getHttpdSites().getHttpdSites(this);
-    }
-
-    public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
-	return table.connector.getHttpdWorkers().getHttpdWorkers(this);
-    }
-
+    @SchemaColumn(order=2, name="max_binds", description="the maximum number of httpd_site_binds on this server")
     public int getMaxBinds() {
-        return max_binds;
+        return maxBinds;
     }
 
-    /**
-     * May be filtered.
-     */
-    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        return table.connector.getLinuxServerAccounts().get(linux_server_account);
+    static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    @SchemaColumn(order=3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the account and group the servers runs as")
+    public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
+        return getService().getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
 
-    /**
-     * May be filtered.
-     */
-    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        return table.connector.getLinuxServerGroups().get(linux_server_group);
-    }
-
-    public TechnologyVersion getModPhpVersion() throws SQLException, IOException {
-        if(mod_php_version==-1) return null;
-        TechnologyVersion tv=table.connector.getTechnologyVersions().get(mod_php_version);
-        if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+mod_php_version);
-        if(
-            tv.getOperatingSystemVersion(table.connector).getPkey()
-            != getAOServer().getServer().getOperatingSystemVersion().getPkey()
-        ) {
-            throw new SQLException("mod_php/operating system version mismatch on HttpdServer: #"+pkey);
-        }
+    static final String COLUMN_MOD_PHP_VERSION = "mod_php_version";
+    @SchemaColumn(order=4, name=COLUMN_MOD_PHP_VERSION, index=IndexType.INDEXED, description="the version of mod_php to run")
+    public TechnologyVersion getModPhpVersion() throws RemoteException {
+        if(modPhpVersion==-1) return null;
+        TechnologyVersion tv=getService().getConnector().getTechnologyVersions().get(modPhpVersion);
+        if(tv.operatingSystemVersion!=getAoServerResource().getAoServer().getServer().operatingSystemVersion) throw new RemoteException("mod_php/operating system version mismatch on HttpdServer: #"+key);
         return tv;
     }
 
-    public boolean useSuexec() {
-        return use_suexec;
+    @SchemaColumn(order=5, name="use_suexec", description="indicates that the suexec wrapper will be used for CGI")
+    public boolean getUseSuexec() {
+        return useSuexec;
     }
 
-    /**
-     * May be filtered.
-     */
-    public Business getBusiness() throws IOException, SQLException {
-        return table.connector.getBusinesses().get(accounting);
-    }
-
+    @SchemaColumn(order=6, name="is_shared", description="indicates that any user on the server may use this httpd instance")
     public boolean isShared() {
-        return is_shared;
+        return isShared;
     }
-    
-    public boolean useModPERL() {
-        return use_mod_perl;
+
+    @SchemaColumn(order=7, name="use_mod_perl", description="enables mod_perl")
+    public boolean useModPerl() {
+        return useModPerl;
     }
-    
-    /**
-     * Gets the timeout value in seconds.
-     */
+
+    @SchemaColumn(order=8, name="timeout", description="the timeout setting in seconds")
     public int getTimeOut() {
         return timeout;
     }
+    // </editor-fold>
 
-    public int getNumber() {
-	return number;
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.HttpdServer getBean() {
+        return new com.aoindustries.aoserv.client.beans.HttpdServer(key, number, maxBinds, linuxAccountGroup, modPhpVersion, useSuexec, isShared, useModPerl, timeout);
     }
+    // </editor-fold>
 
-    public AOServer getAOServer() throws SQLException, IOException {
-	AOServer obj=table.connector.getAoServers().get(ao_server);
-	if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-	return obj;
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.HTTPD_SERVERS;
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        ao_server=result.getInt(2);
-        number=result.getInt(3);
-        can_add_sites=result.getBoolean(4);
-        is_mod_jk=result.getBoolean(5);
-        max_binds=result.getInt(6);
-        linux_server_account=result.getInt(7);
-        linux_server_group=result.getInt(8);
-        mod_php_version=result.getInt(9);
-        if(result.wasNull()) mod_php_version=-1;
-        use_suexec=result.getBoolean(10);
-        accounting=result.getString(11);
-        is_shared=result.getBoolean(12);
-        use_mod_perl=result.getBoolean(13);
-        timeout=result.getInt(14);
-    }
-
-    /**
-     * @deprecated  All servers now use mod_jk, mod_jserv is no longer supported.
-     */
-    @Deprecated
-    public boolean isModJK() {
-        return is_mod_jk;
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        ao_server=in.readCompressedInt();
-        number=in.readCompressedInt();
-        can_add_sites=in.readBoolean();
-        is_mod_jk=in.readBoolean();
-        max_binds=in.readCompressedInt();
-        linux_server_account=in.readCompressedInt();
-        linux_server_group=in.readCompressedInt();
-        mod_php_version=in.readCompressedInt();
-        use_suexec=in.readBoolean();
-        accounting=in.readUTF().intern();
-        is_shared=in.readBoolean();
-        use_mod_perl=in.readBoolean();
-        timeout=in.readCompressedInt();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getAOServer(),
-            getLinuxServerAccount(),
-            getLinuxServerGroup(),
-            getBusiness()
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getHttpdBinds()
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getAoServerResource(),
+            getLinuxAccountGroup(),
+            getModPhpVersion()
         );
     }
 
     @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getHttpdBinds()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
     String toStringImpl(Locale userLocale) {
     	return "httpd"+number;
     }
+    // </editor-fold>
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(ao_server);
-        out.writeCompressedInt(number);
-        out.writeBoolean(can_add_sites);
-        out.writeBoolean(is_mod_jk);
-        out.writeCompressedInt(max_binds);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) {
-            out.writeCompressedInt(linux_server_account);
-            out.writeCompressedInt(linux_server_group);
-            out.writeCompressedInt(mod_php_version);
-            out.writeBoolean(use_suexec);
-            if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeCompressedInt(-1); // packageNum
-            if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) out.writeUTF(accounting);
-            if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
-            out.writeBoolean(is_shared);
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) {
-            out.writeBoolean(use_mod_perl);
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)>=0) {
-            out.writeCompressedInt(timeout);
-        }
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public List<HttpdBind> getHttpdBinds() throws IOException, SQLException {
+        return getService().getConnector().getHttpdBinds().getHttpdBinds(this);
     }
+
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
+        return getService().getConnector().getHttpdSites().getHttpdSites(this);
+    }
+
+    public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
+        return getService().getConnector().getHttpdWorkers().getHttpdWorkers(this);
+    }
+     */
+    // </editor-fold>
 }

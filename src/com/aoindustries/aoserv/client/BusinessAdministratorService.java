@@ -1,12 +1,11 @@
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.UserId;
-
 /*
  * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.UserId;
 
 /**
  * @see  BusinessAdministrator
@@ -202,15 +201,6 @@ public interface BusinessAdministratorService<C extends AOServConnector<C,F>, F 
                     args[15],
                     args[16]
                 );
-            }
-            return true;
-        } else if(command.equalsIgnoreCase(AOSHCommand.CRYPT)) {
-            if(AOSH.checkRangeParamCount(AOSHCommand.CRYPT, args, 1, 2, err)) {
-                String encrypted=SimpleAOClient.crypt(
-                    args[1],
-                    args.length==3?args[2]:null
-                );
-                out.println(encrypted);
             }
             return true;
         }

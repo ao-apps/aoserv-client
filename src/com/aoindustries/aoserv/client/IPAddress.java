@@ -172,7 +172,7 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: getDhcpDNSRecords(),
+            // TODO: getDhcpDnsRecords(),
             getNetBinds()
         );
     }
@@ -191,8 +191,8 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     }
 
     /* TODO
-    public IndexedSet<DNSRecord> getDhcpDNSRecords() throws IOException, SQLException {
-        return getService().getConnector().getDnsRecords().getIndexedRows(DNSRecord.COLUMN_DHCP_ADDRESS, pkey);
+    public IndexedSet<DnsRecord> getDhcpDnsRecords() throws IOException, SQLException {
+        return getService().getConnector().getDnsRecords().getIndexedRows(DnsRecord.COLUMN_DHCP_ADDRESS, pkey);
     }*/
     // </editor-fold>
 

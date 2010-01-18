@@ -54,16 +54,20 @@ public enum ServiceName implements LocalizedToString {
     /* TODO
     distro_file_types,
     distro_files,
-    dns_forbidden_zones,
+     */
     dns_records,
     dns_tlds,
     dns_types,
     dns_zones,
+    /* TODO
     email_addresses,
     email_attachment_blocks,
     email_attachment_types,
     email_domains,
     email_forwarding,
+     */
+    email_inboxes,
+    /* TODO
     email_list_addresses,
     email_lists,
     email_pipe_addresses,
@@ -81,9 +85,7 @@ public enum ServiceName implements LocalizedToString {
     failover_file_schedule,
     failover_mysql_replications,
     file_backup_settings,
-    /* TODO
     ftp_guest_users,
-     */
     group_names,
     /* TODO
     httpd_binds,
@@ -91,7 +93,9 @@ public enum ServiceName implements LocalizedToString {
     httpd_jboss_versions,
     httpd_jk_codes,
     httpd_jk_protocols,
+     */
     httpd_servers,
+    /* TODO
     httpd_shared_tomcats,
     httpd_site_authenticated_locations,
     httpd_site_binds,

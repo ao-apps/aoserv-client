@@ -318,7 +318,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             // TODO: getCreditCardTransactions(),
             // TODO: getCreditCardTransactionsByCreditCardAccounting(),
             getDisableLogs(),
-            // TODO: getDNSZones(),
+            // TODO: getDnsZones(),
             getGroupNames(),
             // TODO: getIPAddresses(),
             // TODO: getEmailDomains(),
@@ -1048,8 +1048,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     }*/
 
     /*
-    public void addDNSZone(String zone, String ip, int ttl) throws IOException, SQLException {
-	    getService().getConnector().getDnsZones().addDNSZone(this, zone, ip, ttl);
+    public void addDnsZone(String zone, String ip, int ttl) throws IOException, SQLException {
+	    getService().getConnector().getDnsZones().addDnsZone(this, zone, ip, ttl);
     }
 
     public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
@@ -1072,8 +1072,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return getService().getConnector().getCvsRepositories().getCvsRepositories(this);
     }
 
-    public List<DNSZone> getDNSZones() throws IOException, SQLException {
-        return getService().getConnector().getDnsZones().getDNSZones(this);
+    public List<DnsZone> getDnsZones() throws IOException, SQLException {
+        return getService().getConnector().getDnsZones().getDnsZones(this);
     }
 
     public List<EmailPipe> getEmailPipes() throws IOException, SQLException {

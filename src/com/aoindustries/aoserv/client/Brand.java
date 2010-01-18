@@ -181,52 +181,48 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         return nameserver4;
     }
 
-    /* TODO
-    @SchemaColumn(order=5, name="smtp_email_inbox", index=IndexType.UNIQUE, description="the inbox used for outgoing email")
+    static final String COLUMN_SMTP_EMAIL_INBOX = "smtp_email_inbox";
+    @SchemaColumn(order=5, name=COLUMN_SMTP_EMAIL_INBOX, index=IndexType.UNIQUE, description="the inbox used for outgoing email")
     public EmailInbox getSmtpEmailInbox() throws RemoteException {
         return getService().getConnector().getEmailInboxes().get(smtpEmailInbox);
     }
-     */
 
     /**
      * Gets the host that should be used for SMTP.  Will use the hostname
-     * of the SmtpLinuxServerAccount's AOServer if smtp_host is null.
+     * of the SmtpEmailInbox's AOServer if smtp_host is null.
      */
-    /* TODO
     @SchemaColumn(order=6, name="smtp_host", description="the host used for outgoing email")
-    public String getSmtpHost() throws RemoteException {
-        return smtpHost!=null ? smtpHost : getEmailInbox().getAOServer().getHostname();
+    public Hostname getSmtpHost() throws RemoteException {
+        return smtpHost!=null ? smtpHost : Hostname.valueOf(getSmtpEmailInbox().getLinuxAccount().getAoServerResource().getAoServer().getHostname());
     }
-     */
+
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=5, name="smtp_password", description="the password used for outgoing email")
+    @SchemaColumn(order=7, name="smtp_password", description="the password used for outgoing email")
     public String getSmtpPassword() {
         return smtpPassword;
     }
 
-    /* TODO
-    @SchemaColumn(order=7, name="imap_email_inbox", index=IndexType.UNIQUE, description="the inbox used for incoming email")
+    static final String COLUMN_IMAP_EMAIL_INBOX = "imap_email_inbox";
+    @SchemaColumn(order=8, name=COLUMN_IMAP_EMAIL_INBOX, index=IndexType.UNIQUE, description="the inbox used for incoming email")
     public EmailInbox getImapEmailInbox() throws RemoteException {
         return getService().getConnector().getEmailInboxes().get(imapEmailInbox);
     }
-    */
 
     /**
      * Gets the host that should be used for IMAP.  Will use the hostname
      * of the ImapLinuxServerAccount's AOServer if imap_host is null.
      */
-    /* TODO
-    @SchemaColumn(order=7, name="imap_host", description="the host used for incoming email")
-    public String getImapHost() throws IOException, SQLException {
-        return imapHost!=null ? imapHost : getImapLinuxServerAccount().getAOServer().getHostname();
+    @SchemaColumn(order=9, name="imap_host", description="the host used for incoming email")
+    public Hostname getImapHost() throws RemoteException {
+        return imapHost!=null ? imapHost : Hostname.valueOf(getImapEmailInbox().getLinuxAccount().getAoServerResource().getAoServer().getHostname());
     }
-     */
+
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=6, name="imap_password", description="the password used for incoming email")
+    @SchemaColumn(order=10, name="imap_password", description="the password used for incoming email")
     public String getImapPassword() {
         return imapPassword;
     }
@@ -237,7 +233,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         return getService().getConnector().getEmailAddresses().get(supportEmailAddress);
     }*/
 
-    @SchemaColumn(order=7, name="support_email_display", index=IndexType.UNIQUE, description="the support address display")
+    @SchemaColumn(order=11, name="support_email_display", index=IndexType.UNIQUE, description="the support address display")
     public String getSupportEmailDisplay() {
         return supportEmailDisplay;
     }
@@ -248,7 +244,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         return getService().getConnector().getEmailAddresses().get(signupEmailAddress);
     }*/
 
-    @SchemaColumn(order=8, name="signup_email_display", index=IndexType.UNIQUE, description="the signup address display")
+    @SchemaColumn(order=12, name="signup_email_display", index=IndexType.UNIQUE, description="the signup address display")
     public String getSignupEmailDisplay() {
         return signupEmailDisplay;
     }
@@ -275,93 +271,93 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     }
      */
 
-    @SchemaColumn(order=9, name="support_toll_free", description="the support toll-free number")
+    @SchemaColumn(order=13, name="support_toll_free", description="the support toll-free number")
     public String getSupportTollFree() {
         return supportTollFree;
     }
 
-    @SchemaColumn(order=10, name="support_day_phone", description="the support day phone number")
+    @SchemaColumn(order=14, name="support_day_phone", description="the support day phone number")
     public String getSupportDayPhone() {
         return supportDayPhone;
     }
 
-    @SchemaColumn(order=11, name="support_emergency_phone1", description="the support 24-hour phone number")
+    @SchemaColumn(order=15, name="support_emergency_phone1", description="the support 24-hour phone number")
     public String getSupportEmergencyPhone1() {
         return supportEmergencyPhone1;
     }
 
-    @SchemaColumn(order=12, name="support_emergency_phone2", description="the secondary support 24-hour phone number")
+    @SchemaColumn(order=16, name="support_emergency_phone2", description="the secondary support 24-hour phone number")
     public String getSupportEmergencyPhone2() {
         return supportEmergencyPhone2;
     }
 
-    @SchemaColumn(order=13, name="support_fax", description="")
+    @SchemaColumn(order=17, name="support_fax", description="")
     public String getSupportFax() {
         return supportFax;
     }
 
-    @SchemaColumn(order=14, name="support_mailing_address1", description="the support mailing address line 1")
+    @SchemaColumn(order=18, name="support_mailing_address1", description="the support mailing address line 1")
     public String getSupportMailingAddress1() {
         return supportMailingAddress1;
     }
 
-    @SchemaColumn(order=15, name="support_mailing_address2", description="the support mailing address line 2")
+    @SchemaColumn(order=19, name="support_mailing_address2", description="the support mailing address line 2")
     public String getSupportMailingAddress2() {
         return supportMailingAddress2;
     }
 
-    @SchemaColumn(order=16, name="support_mailing_address3", description="the support mailing address line 3")
+    @SchemaColumn(order=20, name="support_mailing_address3", description="the support mailing address line 3")
     public String getSupportMailingAddress3() {
         return supportMailingAddress3;
     }
 
-    @SchemaColumn(order=17, name="support_mailing_address4", description="the support mailing address line 4")
+    @SchemaColumn(order=21, name="support_mailing_address4", description="the support mailing address line 4")
     public String getSupportMailingAddress4() {
         return supportMailingAddress4;
     }
 
-    @SchemaColumn(order=18, name="english_enabled", description="enables the English language in all support tools")
+    @SchemaColumn(order=22, name="english_enabled", description="enables the English language in all support tools")
     public boolean getEnglishEnabled() {
         return englishEnabled;
     }
 
-    @SchemaColumn(order=19, name="japanese_enabled", description="enables the Japanese language in all support tools")
+    @SchemaColumn(order=23, name="japanese_enabled", description="enables the Japanese language in all support tools")
     public boolean getJapaneseEnabled() {
         return japaneseEnabled;
     }
 
-    @SchemaColumn(order=20, name="aoweb_struts_http_url_base", description="the base URL for the non-SSL aoweb-struts installation")
+    @SchemaColumn(order=24, name="aoweb_struts_http_url_base", description="the base URL for the non-SSL aoweb-struts installation")
     public String getAowebStrutsHttpUrlBase() {
         return aowebStrutsHttpUrlBase;
     }
 
-    @SchemaColumn(order=21, name="aoweb_struts_https_url_base", description="the base URL for the SSL aoweb-struts installation")
+    @SchemaColumn(order=25, name="aoweb_struts_https_url_base", description="the base URL for the SSL aoweb-struts installation")
     public String getAowebStrutsHttpsUrlBase() {
         return aowebStrutsHttpsUrlBase;
     }
 
-    @SchemaColumn(order=22, name="aoweb_struts_google_verify_content", description="the Google Webmaster Tools verification code")
+    @SchemaColumn(order=26, name="aoweb_struts_google_verify_content", description="the Google Webmaster Tools verification code")
     public String getAowebStrutsGoogleVerifyContent() {
         return aowebStrutsGoogleVerifyContent;
     }
 
-    @SchemaColumn(order=23, name="aoweb_struts_noindex", description="indicates this site will have ROBOTS NOINDEX meta tags on aoweb-struts common code")
+    @SchemaColumn(order=27, name="aoweb_struts_noindex", description="indicates this site will have ROBOTS NOINDEX meta tags on aoweb-struts common code")
     public boolean getAowebStrutsNoindex() {
         return aowebStrutsNoindex;
     }
 
-    @SchemaColumn(order=24, name="aoweb_struts_google_analytics_new_tracking_code", description="the Google Analytics tracking code")
+    @SchemaColumn(order=28, name="aoweb_struts_google_analytics_new_tracking_code", description="the Google Analytics tracking code")
     public String getAowebStrutsGoogleAnalyticsNewTrackingCode() {
         return aowebStrutsGoogleAnalyticsNewTrackingCode;
     }
 
-    @SchemaColumn(order=25, name="aoweb_struts_signup_admin_address", description="the email address that will receive copies of all signups")
+    @SchemaColumn(order=29, name="aoweb_struts_signup_admin_address", description="the email address that will receive copies of all signups")
     public Email getAowebStrutsSignupAdminAddress() {
         return aowebStrutsSignupAdminAddress;
     }
 
     static final String COLUMN_AOWEB_STRUTS_VNC_BIND = "aoweb_struts_vnc_bind";
-    @SchemaColumn(order=26, name=COLUMN_AOWEB_STRUTS_VNC_BIND, index=IndexType.UNIQUE, description="the port that listens for VNC connections")
+    @SchemaColumn(order=30, name=COLUMN_AOWEB_STRUTS_VNC_BIND, index=IndexType.UNIQUE, description="the port that listens for VNC connections")
     public NetBind getAowebStrutsVncBind() throws RemoteException {
         return getService().getConnector().getNetBinds().get(aowebStrutsVncBind);
     }
@@ -369,7 +365,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=27, name="aoweb_struts_keystore_type", description="the keystore type for native Java SSL")
+    @SchemaColumn(order=31, name="aoweb_struts_keystore_type", description="the keystore type for native Java SSL")
     public String getAowebStrutsKeystoreType() {
         return aowebStrutsKeystoreType;
     }
@@ -377,13 +373,13 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=28, name="aoweb_struts_keystore_password", description="the keystore password for native Java SSL")
+    @SchemaColumn(order=32, name="aoweb_struts_keystore_password", description="the keystore password for native Java SSL")
     public String getAowebStrutsKeystorePassword() {
         return aowebStrutsKeystorePassword;
     }
 
     static final String COLUMN_PARENT = "parent";
-    @SchemaColumn(order=29, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the immediate parent of this brand or <code>null</code> if none available")
+    @SchemaColumn(order=33, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the immediate parent of this brand or <code>null</code> if none available")
     public Brand getParentBrand() throws RemoteException {
         Business bu = getBusiness();
         if(bu==null) return null;

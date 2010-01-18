@@ -25,37 +25,6 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     private static final long serialVersionUID = 1L;
 
     public static final String
-        /*
-        aoserv_daemon,
-        aoserv_master,
-        bandwidth,
-        consulting,
-        disk,
-         */
-        DISTRIBUTION_SCAN="distribution_scan",
-        /*
-        drupal,
-        failover,
-        hardware_disk_7200_120,
-         */
-        IP_ADDRESS="ip_address",
-        // joomla,
-        MYSQL_DATABASE="mysql_database",
-        //MYSQL_REPLICATION="mysql_replication",
-        MYSQL_SERVER="mysql_server",
-        MYSQL_USER="mysql_user",
-        POSTGRESQL_DATABASE="postgresql_database",
-        POSTGRESQL_SERVER="postgresql_server",
-        POSTGRESQL_USER="postgresql_user",
-        //rack,
-        //server_database,
-        //server_enterprise,
-        //server_p4,
-        //server_scsi,
-        //server_xeon,
-        //sysadmin,
-        //httpd_server,
-        //httpd_shared_tomcat,
         // linux_account types
         SHELL_ACCOUNT="shell_account",
         EMAIL_INBOX="email_inbox",
@@ -69,7 +38,19 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
         HTTPD_STATIC_SITE="httpd_static_site",
         HTTPD_TOMCAT_SHARED_SITE="httpd_tomcat_shared_site",
         HTTPD_TOMCAT_STD_SITE="httpd_tomcat_std_site",
-        CVS_REPOSITORY = "cvs_repository"
+        // others
+        CVS_REPOSITORY = "cvs_repository",
+        DISTRIBUTION_SCAN="distribution_scan",
+        DNS_RECORD = "dns_record",
+        DNS_ZONE = "dns_zone",
+        HTTPD_SERVER = "httpd_server",
+        IP_ADDRESS="ip_address",
+        MYSQL_DATABASE="mysql_database",
+        MYSQL_SERVER="mysql_server",
+        MYSQL_USER="mysql_user",
+        POSTGRESQL_DATABASE="postgresql_database",
+        POSTGRESQL_SERVER="postgresql_server",
+        POSTGRESQL_USER="postgresql_user"
     ;
     // </editor-fold>
 

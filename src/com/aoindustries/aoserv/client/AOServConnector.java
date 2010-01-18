@@ -123,16 +123,20 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /*
     DistroFileTypeService<C,F> getDistroFileTypes() throws RemoteException;
     DistroFileService<C,F> getDistroFiles() throws RemoteException;
-    DNSForbiddenZoneService<C,F> getDnsForbiddenZones() throws RemoteException;
-    DNSRecordService<C,F> getDnsRecords() throws RemoteException;
-    DNSTLDService<C,F> getDnsTLDs() throws RemoteException;
-    DNSTypeService<C,F> getDnsTypes() throws RemoteException;
-    DNSZoneService<C,F> getDnsZones() throws RemoteException;
+     */
+    DnsRecordService<C,F> getDnsRecords() throws RemoteException;
+    DnsTldService<C,F> getDnsTlds() throws RemoteException;
+    DnsTypeService<C,F> getDnsTypes() throws RemoteException;
+    DnsZoneService<C,F> getDnsZones() throws RemoteException;
+    /* TODO
     EmailAddressService<C,F> getEmailAddresses() throws RemoteException;
     EmailAttachmentBlockService<C,F> getEmailAttachmentBlocks() throws RemoteException;
     EmailAttachmentTypeService<C,F> getEmailAttachmentTypes() throws RemoteException;
     EmailDomainService<C,F> getEmailDomains() throws RemoteException;
     EmailForwardingService<C,F> getEmailForwardings() throws RemoteException;
+     */
+    EmailInboxService<C,F> getEmailInboxes() throws RemoteException;
+    /* TODO
     EmailListAddressService<C,F> getEmailListAddresses() throws RemoteException;
     EmailListService<C,F> getEmailLists() throws RemoteException;
     EmailPipeAddressService<C,F> getEmailPipeAddresses() throws RemoteException;
@@ -150,9 +154,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     FailoverFileScheduleService<C,F> getFailoverFileSchedules() throws RemoteException;
     FailoverMySQLReplicationService<C,F> getFailoverMySQLReplications() throws RemoteException;
     FileBackupSettingService<C,F> getFileBackupSettings() throws RemoteException;
-    /* TODO
-    FTPGuestUserService<C,F> getFtpGuestUsers() throws RemoteException;
-     */
+    FtpGuestUserService<C,F> getFtpGuestUsers() throws RemoteException;
     GroupNameService<C,F> getGroupNames() throws RemoteException;
     /* TODO
     HttpdBindService<C,F> getHttpdBinds() throws RemoteException;
@@ -160,7 +162,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     HttpdJBossVersionService<C,F> getHttpdJBossVersions() throws RemoteException;
     HttpdJKCodeService<C,F> getHttpdJKCodes() throws RemoteException;
     HttpdJKProtocolService<C,F> getHttpdJKProtocols() throws RemoteException;
+     */
     HttpdServerService<C,F> getHttpdServers() throws RemoteException;
+    /* TODO
     HttpdSharedTomcatService<C,F> getHttpdSharedTomcats() throws RemoteException;
     HttpdSiteAuthenticatedLocationService<C,F> getHttpdSiteAuthenticatedLocations() throws RemoteException;
     HttpdSiteBindService<C,F> getHttpdSiteBinds() throws RemoteException;
