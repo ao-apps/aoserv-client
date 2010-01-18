@@ -5,7 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * An <code>EmailSpamAssassinIntegrationMode</code> is a simple wrapper for the types
@@ -38,19 +41,50 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
     }
     // </editor-fold>
 
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(EmailSpamAssassinIntegrationMode.COLUMN_SORT_ORDER_name, ASCENDING)
-    };
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(EmailSpamAssassinIntegrationMode other) {
+        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
+    }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the mode")
     public String getName() {
         return key;
     }
 
-    public String getDisplay(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "EmailSpamAssassinIntegrationMode."+key+".display");
-    }
-
+    @SchemaColumn(order=1, name="sort_order", index=IndexType.PRIMARY_KEY, description="provides ordering of the modes")
     public short getSortOrder() {
         return sortOrder;
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode getBean() {
+        return new com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode(key, sortOrder);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getEmailInboxes()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+        return ApplicationResources.accessor.getMessage(userLocale, "EmailSpamAssassinIntegrationMode."+key+".toString");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<EmailInbox> getEmailInboxes() throws RemoteException {
+        return getService().getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_SA_INTEGRATION_MODE, this);
+    }
+    // </editor-fold>
 }

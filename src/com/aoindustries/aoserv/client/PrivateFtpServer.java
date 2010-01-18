@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UnixPath;
-import java.sql.Timestamp;
+import java.rmi.RemoteException;
 
 /**
  * When a <code>PrivateFTPServer</code> is attached to a
@@ -26,37 +26,39 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private int netBind;
     final private UnixPath logfile;
     final private DomainName hostname;
     final private Email email;
-    final private Timestamp created;
-    final private pub_linux_server_account;
+    final private int linuxAccountGroup;
     final private boolean allowAnonymous;
 
     public PrivateFtpServer(
         PrivateFtpServerService<?,?> service,
-        int pkey,
-        Integer parent,
-        String name
+        int aoServerResource,
+        int netBind,
+        UnixPath logfile,
+        DomainName hostname,
+        Email email,
+        int linuxAccountGroup,
+        boolean allowAnonymous
     ) {
-        super(service, pkey);
-        this.parent = parent;
-        this.name = name.intern();
+        super(service, aoServerResource);
+        this.netBind = netBind;
+        this.logfile = logfile;
+        this.hostname = hostname;
+        this.email = email;
+        this.linuxAccountGroup = linuxAccountGroup;
+        this.allowAnonymous = allowAnonymous;
     }
     // </editor-fold>
 
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PrivateFtpServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(PrivateFtpServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_BUSINESS_SERVER_name+'.'+BusinessServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(PrivateFtpServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-        new OrderBy(PrivateFtpServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
-        new OrderBy(PrivateFtpServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING),
-        new OrderBy(PrivateFtpServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_NET_PROTOCOL_name, ASCENDING)
-    };
-
-    public long getCreated() {
-        return created;
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(PrivateFtpServer other) throws RemoteException {
+        return netBind==other.netBind ? 0 : getNetBind().compareTo(other.getNetBind());
     }
+    // </editor-fold>
 
     public String getEmail() {
         return email;

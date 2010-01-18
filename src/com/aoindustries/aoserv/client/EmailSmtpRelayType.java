@@ -5,6 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
+
 /**
  * The <code>EmailSmtpRelayType</code> of an <code>EmailSmtpRelay</code>
  * controls the servers response.
@@ -38,14 +42,43 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the type")
     public String getName() {
         return key;
     }
     
+    @SchemaColumn(order=1, name="sendmail_config", description="the config value used for sendmail")
     public String getSendmailConfig() {
         return sendmailConfig;
     }
 
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.EmailSmtpRelayType getBean() {
+        return new com.aoindustries.aoserv.client.beans.EmailSmtpRelayType(key, sendmailConfig);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getEmailSmtpRelays()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public IndexedSet<EmailSmtpRelay> getEmailSmtpRelays() throws RemoteException {
+        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+    }
+     */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public String getVerb() throws SQLException {
         if(pkey.equals(ALLOW)) return "allowed regular access";
@@ -55,4 +88,5 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
         throw new SQLException("Unknown value for name: "+pkey);
     }
      */
+    // </editor-fold>
 }

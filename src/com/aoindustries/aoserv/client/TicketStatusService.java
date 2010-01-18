@@ -6,6 +6,6 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 
-@ServiceAnnotation(ServiceName.ticket_stati)
+@ServiceAnnotation(ServiceName.ticket_statuses)
 public interface TicketStatusService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,TicketStatus> {
 }

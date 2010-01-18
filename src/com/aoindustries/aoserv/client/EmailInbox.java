@@ -138,18 +138,18 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
         return getService().getConnector().getBackupRetentions().get(junkEmailRetention);
     }
 
-    /* TODO
-    @SchemaColumn(order=7, name="sa_integration_mode", description="the integration mode for SpamAssassin")
-    public EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode() throws SQLException, IOException {
+    static final String COLUMN_SA_INTEGRATION_MODE = "sa_integration_mode";
+    @SchemaColumn(order=7, name=COLUMN_SA_INTEGRATION_MODE, index=IndexType.INDEXED, description="the integration mode for SpamAssassin")
+    public EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode() throws RemoteException {
         return getService().getConnector().getEmailSpamAssassinIntegrationModes().get(saIntegrationMode);
-    }*/
+    }
 
-    @SchemaColumn(order=7, name="sa_required_score", description="the minimum SpamAssassin score considered Junk")
+    @SchemaColumn(order=8, name="sa_required_score", description="the minimum SpamAssassin score considered Junk")
     public float getSpamAssassinRequiredScore() {
         return saRequiredScore;
     }
 
-    @SchemaColumn(order=8, name="sa_discard_score", description="the minimum SpamAssassin score that will be discarded instead of tagged or placed in the Junk folder")
+    @SchemaColumn(order=9, name="sa_discard_score", description="the minimum SpamAssassin score that will be discarded instead of tagged or placed in the Junk folder")
     public Integer getSpamAssassinDiscardScore() {
         return saDiscardScore;
     }
@@ -168,8 +168,8 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
             getLinuxAccount(),
             // Caused cycle: getAutoresponderFrom(),
             getTrashEmailRetention(),
-            getJunkEmailRetention()
-            // TODO: getEmailSpamAssassinIntegrationMode()
+            getJunkEmailRetention(),
+            getEmailSpamAssassinIntegrationMode()
         );
     }
 

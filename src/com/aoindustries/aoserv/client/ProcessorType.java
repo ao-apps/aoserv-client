@@ -25,12 +25,15 @@ final public class ProcessorType extends AOServObjectStringKey<ProcessorType> im
     }
     // </editor-fold>
 
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(ProcessorType.COLUMN_SORT_ORDER_name, ASCENDING)
-    };
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(ProcessorType other) {
+        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
+    }
+    // </editor-fold>
 
     public String getType() {
-        return pkey;
+        return key;
     }
 
     public short getSortOrder() {

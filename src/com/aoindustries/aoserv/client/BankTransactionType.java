@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -29,6 +30,34 @@ final public class BankTransactionType extends AOServObjectStringKey<BankTransac
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the type")
+    public String getName() {
+        return key;
+    }
+
+    @SchemaColumn(order=1, name="is_negative", description="when true the amount must be negative")
+    public boolean isNegative() {
+        return isNegative;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.BankTransactionType getBean() {
+        return new com.aoindustries.aoserv.client.beans.BankTransactionType(key, isNegative);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getBankTransactions()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription(Locale userLocale) {
         return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+key+".description");
     }
@@ -37,19 +66,17 @@ final public class BankTransactionType extends AOServObjectStringKey<BankTransac
         return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+key+".display");
     }
 
-    public String getName() {
-        return key;
-    }
-
     @Override
     String toStringImpl(Locale userLocale) {
         return getDisplay(userLocale);
     }
+    // </editor-fold>
 
-    @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBankTransactions()
-        );
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
+        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
+     */
+    // </editor-fold>
 }

@@ -202,7 +202,7 @@ public enum ServiceName implements LocalizedToString {
     // TODO: ticket_brand_categories,
     ticket_categories,
     ticket_priorities,
-    ticket_stati,
+    ticket_statuses,
     ticket_types,
     tickets,
     time_zones,

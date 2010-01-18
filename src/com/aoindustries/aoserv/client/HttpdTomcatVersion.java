@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import java.rmi.RemoteException;
 
 /**
  * An <code>HttpdTomcatVersion</code> flags which
@@ -43,6 +44,13 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
         super(service, version);
         this.installDir = installDir.intern();
         this.requiresModJk = requiresModJk;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(HttpdTomcatVersion other) throws RemoteException {
+        return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
     }
     // </editor-fold>
 

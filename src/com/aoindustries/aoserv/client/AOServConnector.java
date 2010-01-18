@@ -91,9 +91,6 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     AOServerResourceService<C,F> getAoServerResources() throws RemoteException;
     AOServerService<C,F> getAoServers() throws RemoteException;
     AOServPermissionService<C,F> getAoservPermissions() throws RemoteException;
-    /* TODO
-    AOSHCommandService<C,F> getAoshCommands() throws RemoteException;
-     */
     ArchitectureService<C,F> getArchitectures() throws RemoteException;
     BackupPartitionService<C,F> getBackupPartitions() throws RemoteException;
     BackupRetentionService<C,F> getBackupRetentions() throws RemoteException;
@@ -299,6 +296,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
         );
     }
     */
+
     /**
      * Times how long it takes to make one request with the server.
      * This will not retry and will return the first error encountered.

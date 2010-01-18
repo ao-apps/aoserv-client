@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import java.rmi.RemoteException;
 
 /**
  * An <code>HttpdJBossVersion</code> flags which
@@ -43,9 +44,12 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVe
     }
     // </editor-fold>
 
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(HttpdJBossVersion.COLUMN_VERSION_name+'.'+TechnologyVersion.COLUMN_VERSION_name, ASCENDING)
-    };
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(HttpdJBossVersion other) throws RemoteException {
+        return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+    }
+    // </editor-fold>
 
     public HttpdTomcatVersion getHttpdTomcatVersion() throws SQLException, IOException {
         return connector.getHttpdTomcatVersions().get(tomcatVersion);
