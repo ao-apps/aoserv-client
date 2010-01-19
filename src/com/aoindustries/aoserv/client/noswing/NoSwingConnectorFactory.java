@@ -6,9 +6,9 @@ package com.aoindustries.aoserv.client.noswing;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
-import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.wrapped.WrappedConnectorFactory;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -24,50 +24,18 @@ import javax.swing.SwingUtilities;
  *
  * @author  AO Industries, Inc.
  */
-final public class NoSwingConnectorFactory implements AOServConnectorFactory<NoSwingConnector,NoSwingConnectorFactory> {
+final public class NoSwingConnectorFactory extends WrappedConnectorFactory<NoSwingConnector,NoSwingConnectorFactory> {
 
     static void checkNotSwing() throws RemoteException {
         if(SwingUtilities.isEventDispatchThread()) throw new RemoteException("Refusing to place AOServ call from Swing event dispatch thread");
     }
 
-    final AOServConnectorFactory<?,?> wrapped;
-
     public NoSwingConnectorFactory(AOServConnectorFactory<?,?> wrapped) {
-        this.wrapped = wrapped;
+        super(wrapped);
     }
 
-    private final AOServConnectorFactoryCache<NoSwingConnector,NoSwingConnectorFactory> connectors = new AOServConnectorFactoryCache<NoSwingConnector,NoSwingConnectorFactory>();
-
-    public NoSwingConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-        synchronized(connectors) {
-            NoSwingConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
-            if(connector!=null) {
-                connector.setLocale(locale);
-            } else {
-                connector = newConnector(
-                    locale,
-                    connectAs,
-                    authenticateAs,
-                    password,
-                    daemonServer
-                );
-            }
-            return connector;
-        }
-    }
-
-    public NoSwingConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    protected NoSwingConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         checkNotSwing();
-        synchronized(connectors) {
-            NoSwingConnector connector = new NoSwingConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
-            connectors.put(
-                connectAs,
-                authenticateAs,
-                password,
-                daemonServer,
-                connector
-            );
-            return connector;
-        }
+        return new NoSwingConnector(this, locale, connectAs, authenticateAs, password, daemonServer);
     }
 }
