@@ -6,13 +6,12 @@ package com.aoindustries.aoserv.client.retry;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
-import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.wrapped.WrappedConnectorFactory;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 
 /**
  * An implementation of <code>AOServConnectorFactory</code> that obtains a new wrapped connector from the wrapped
@@ -20,27 +19,25 @@ import java.util.concurrent.Callable;
  *
  * @author  AO Industries, Inc.
  */
-final public class RetryConnectorFactory implements AOServConnectorFactory<RetryConnector,RetryConnectorFactory> {
-
-    final AOServConnectorFactory<?,?> wrapped;
+final public class RetryConnectorFactory extends WrappedConnectorFactory<RetryConnector,RetryConnectorFactory> {
 
     public RetryConnectorFactory(AOServConnectorFactory<?,?> wrapped) {
-        this.wrapped = wrapped;
+        super(wrapped);
     }
 
-    private <T> T retry(Callable<T> callable) throws LoginException, RemoteException {
+    protected RetryConnector newWrappedConnector(final Locale locale, final UserId connectAs, final UserId authenticateAs, final String password, final DomainName daemonServer) throws LoginException, RemoteException {
         int attempt = 1;
         while(!Thread.interrupted()) {
             try {
-                return callable.call();
-            } catch(RuntimeException err) {
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                return new RetryConnector(RetryConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
             } catch(LoginException err) {
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                throw err;
             } catch(RemoteException err) {
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS) throw err;
+            } catch(RuntimeException err) {
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS) throw err;
             } catch(Exception err) {
-                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS) throw new RemoteException(err.getMessage(), err);
             }
             try {
                 Thread.sleep(RetryUtils.retryAttemptDelays[attempt-1]);
@@ -50,45 +47,5 @@ final public class RetryConnectorFactory implements AOServConnectorFactory<Retry
             attempt++;
         }
         throw new RemoteException("interrupted", new InterruptedException("interrupted"));
-    }
-
-    private final AOServConnectorFactoryCache<RetryConnector,RetryConnectorFactory> connectors = new AOServConnectorFactoryCache<RetryConnector,RetryConnectorFactory>();
-
-    public RetryConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-        synchronized(connectors) {
-            RetryConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
-            if(connector!=null) {
-                connector.setLocale(locale);
-            } else {
-                connector = newConnector(
-                    locale,
-                    connectAs,
-                    authenticateAs,
-                    password,
-                    daemonServer
-                );
-            }
-            return connector;
-        }
-    }
-
-    public RetryConnector newConnector(final Locale locale, final UserId connectAs, final UserId authenticateAs, final String password, final DomainName daemonServer) throws LoginException, RemoteException {
-        synchronized(connectors) {
-            RetryConnector connector = retry(
-                new Callable<RetryConnector>() {
-                    public RetryConnector call() throws LoginException, RemoteException {
-                        return new RetryConnector(RetryConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
-                    }
-                }
-            );
-            connectors.put(
-                connectAs,
-                authenticateAs,
-                password,
-                daemonServer,
-                connector
-            );
-            return connector;
-        }
     }
 }

@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.wrapped.WrappedConnectorFactory;
 import com.aoindustries.rmi.RMIClientSocketFactorySSL;
 import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
 import com.aoindustries.security.LoginException;
@@ -25,11 +26,92 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class RmiClientConnectorFactory implements AOServConnectorFactory {
+final public class RmiClientConnectorFactory extends WrappedConnectorFactory<RmiClientConnector,RmiClientConnectorFactory> {
 
-    final String serverAddress;
-    final int serverPort;
-    final RMIClientSocketFactory csf;
+
+    /**
+     * Makes the direct, underlying connections.  The reconnect is performed at a higher level layer.
+     */
+    static final class DirectRmiClientConnectorFactory implements AOServConnectorFactory {
+
+        private final String serverAddress;
+        private final int serverPort;
+        private final RMIClientSocketFactory csf;
+
+        private final AOServConnectorFactoryCache connectors = new AOServConnectorFactoryCache();
+
+        DirectRmiClientConnectorFactory(
+            String serverAddress,
+            int serverPort,
+            String localAddress,
+            boolean useSsl
+        ) {
+            this.serverAddress = serverAddress;
+            this.serverPort = serverPort;
+
+            // Setup the RMI system properties
+            System.setProperty("java.rmi.server.randomIDs", "true");
+            System.setProperty("java.rmi.server.useCodebaseOnly", "true");
+            System.clearProperty("java.rmi.server.codebase");
+            System.setProperty("java.rmi.server.disableHttp", "true");
+
+            if(useSsl) {
+                // SSL
+                if(localAddress!=null && localAddress.length()>0) {
+                    csf = new RMIClientSocketFactorySSL();
+                } else {
+                    csf = new RMIClientSocketFactorySSL();
+                }
+            } else {
+                // Non-SSL
+                if(localAddress!=null && localAddress.length()>0) {
+                    csf = new RMIClientSocketFactoryTCP();
+                } else {
+                    csf = new RMIClientSocketFactoryTCP();
+                }
+            }
+        }
+
+        public AOServConnector<?,?> getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+            synchronized(connectors) {
+                AOServConnector<?,?> connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+                if(connector!=null) {
+                    connector.setLocale(locale);
+                } else {
+                    connector = newConnector(
+                        locale,
+                        connectAs,
+                        authenticateAs,
+                        password,
+                        daemonServer
+                    );
+                }
+                return connector;
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        public AOServConnector<?,?> newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+            try {
+                // Connect to the remote registry and get each of the stubs
+                Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
+                AOServConnectorFactory<?,?> serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
+                synchronized(connectors) {
+                    AOServConnector<?,?> connector = serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+                    connectors.put(
+                        connectAs,
+                        authenticateAs,
+                        password,
+                        daemonServer,
+                        connector
+                    );
+                    return connector;
+                }
+            } catch(NotBoundException err) {
+                throw new RemoteException(err.getMessage(), err);
+            }
+        }
+    }
 
     public RmiClientConnectorFactory(
         String serverAddress,
@@ -37,71 +119,10 @@ final public class RmiClientConnectorFactory implements AOServConnectorFactory {
         String localAddress,
         boolean useSsl
     ) {
-        this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
-
-        // Setup the RMI system properties
-        System.setProperty("java.rmi.server.randomIDs", "true");
-        System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-        System.clearProperty("java.rmi.server.codebase");
-        System.setProperty("java.rmi.server.disableHttp", "true");
-
-        if(useSsl) {
-            // SSL
-            if(localAddress!=null && localAddress.length()>0) {
-                csf = new RMIClientSocketFactorySSL();
-            } else {
-                csf = new RMIClientSocketFactorySSL();
-            }
-        } else {
-            // Non-SSL
-            if(localAddress!=null && localAddress.length()>0) {
-                csf = new RMIClientSocketFactoryTCP();
-            } else {
-                csf = new RMIClientSocketFactoryTCP();
-            }
-        }
+        super(new DirectRmiClientConnectorFactory(serverAddress, serverPort, localAddress, useSsl));
     }
 
-    private final AOServConnectorFactoryCache connectors = new AOServConnectorFactoryCache();
-
-    public AOServConnector<?,?> getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-        synchronized(connectors) {
-            AOServConnector<?,?> connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
-            if(connector!=null) {
-                connector.setLocale(locale);
-            } else {
-                connector = newConnector(
-                    locale,
-                    connectAs,
-                    authenticateAs,
-                    password,
-                    daemonServer
-                );
-            }
-            return connector;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public AOServConnector<?,?> newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-        try {
-            // Connect to the remote registry and get each of the stubs
-            Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
-            AOServConnectorFactory<?,?> serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
-            synchronized(connectors) {
-                AOServConnector<?,?> connector = serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
-                connectors.put(
-                    connectAs,
-                    authenticateAs,
-                    password,
-                    daemonServer,
-                    connector
-                );
-                return connector;
-            }
-        } catch(NotBoundException err) {
-            throw new RemoteException(err.getMessage(), err);
-        }
+    protected RmiClientConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+        return new RmiClientConnector(this, locale, connectAs, authenticateAs, password, daemonServer);
     }
 }

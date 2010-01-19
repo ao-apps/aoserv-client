@@ -410,7 +410,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
 
     @SuppressWarnings("unchecked")
-    void connect() throws RemoteException, LoginException {
+    final void connect() throws RemoteException, LoginException {
         assert Thread.holdsLock(connectionLock);
 
         // Connect to the remote registry and get each of the stubs
@@ -425,8 +425,9 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
 
     /**
      * Disconnects this client.  The client will automatically reconnect on the next use.
+     * TODO: Clear all caches on disconnect, how to signal outer cache layers?
      */
-    void disconnect() throws RemoteException {
+    final protected void disconnect() throws RemoteException {
         synchronized(connectionLock) {
             wrapped = null;
             for(AOServService<C,F,?,?> service : getServices().values()) {
@@ -438,11 +439,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     /**
      * Gets the wrapped connector, reconnecting if needed.
      */
-    protected AOServConnector<?,?> getWrapped() throws RemoteException {
+    final protected AOServConnector<?,?> getWrapped() throws RemoteException {
         synchronized(connectionLock) {
             if(wrapped==null) {
                 try {
                     connect();
+                } catch(RemoteException err) {
+                    throw err;
                 } catch(Exception err) {
                     throw new RemoteException(err.getMessage(), err);
                 }
@@ -479,15 +482,15 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
 
-    public F getFactory() {
+    final public F getFactory() {
         return factory;
     }
 
-    public Locale getLocale() {
+    final public Locale getLocale() {
         return locale;
     }
 
-    public void setLocale(final Locale locale) throws RemoteException {
+    final public void setLocale(final Locale locale) throws RemoteException {
         if(!this.locale.equals(locale)) {
             this.locale = locale;
             call(
@@ -501,23 +504,23 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
 
-    public UserId getConnectAs() {
+    final public UserId getConnectAs() {
         return connectAs;
     }
 
-    public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
+    final public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
         return getBusinessAdministrators().get(connectAs);
     }
 
-    public UserId getAuthenticateAs() {
+    final public UserId getAuthenticateAs() {
         return authenticateAs;
     }
 
-    public String getPassword() {
+    final public String getPassword() {
         return password;
     }
 
-    public <R> R executeCommand(final AOServCommand<R> command, final boolean isInteractive) throws RemoteException {
+    final public <R> R executeCommand(final AOServCommand<R> command, final boolean isInteractive) throws RemoteException {
         return call(
             new Callable<R>() {
                 public R call() throws RemoteException {
@@ -529,7 +532,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<C,F,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<C,F,?,?>>>();
-    public Map<ServiceName,AOServService<C,F,?,?>> getServices() throws RemoteException {
+    final public Map<ServiceName,AOServService<C,F,?,?>> getServices() throws RemoteException {
         Map<ServiceName,AOServService<C,F,?,?>> ts = tables.get();
         if(ts==null) {
             ts = AOServConnectorUtils.createServiceMap(this);
@@ -545,7 +548,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedAOServerDaemonHostService<C,F> aoserverDaemonHosts;
-    public AOServerDaemonHostService<C,F> getAoServerDaemonHosts() {
+    final public AOServerDaemonHostService<C,F> getAoServerDaemonHosts() {
         return aoserverDaemonHosts;
     }
     // </editor-fold>
@@ -556,7 +559,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedAOServerResourceService<C,F> aoserverResources;
-    public AOServerResourceService<C,F> getAoServerResources() {
+    final public AOServerResourceService<C,F> getAoServerResources() {
         return aoserverResources;
     }
     // </editor-fold>
@@ -567,7 +570,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedAOServerService<C,F> aoservers;
-    public AOServerService<C,F> getAoServers() {
+    final public AOServerService<C,F> getAoServers() {
         return aoservers;
     }
     // </editor-fold>
@@ -578,7 +581,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedAOServPermissionService<C,F> aoservPermissions;
-    public AOServPermissionService<C,F> getAoservPermissions() {
+    final public AOServPermissionService<C,F> getAoservPermissions() {
         return aoservPermissions;
     }
     // </editor-fold>
@@ -589,7 +592,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedArchitectureService<C,F> architectures;
-    public ArchitectureService<C,F> getArchitectures() {
+    final public ArchitectureService<C,F> getArchitectures() {
         return architectures;
     }
     // </editor-fold>
@@ -600,7 +603,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedBackupPartitionService<C,F> backupPartitions;
-    public BackupPartitionService<C,F> getBackupPartitions() {
+    final public BackupPartitionService<C,F> getBackupPartitions() {
         return backupPartitions;
     }
     // </editor-fold>
@@ -611,13 +614,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedBackupRetentionService<C,F> backupRetentions;
-    public BackupRetentionService<C,F> getBackupRetentions() {
+    final public BackupRetentionService<C,F> getBackupRetentions() {
         return backupRetentions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankAccountService">
     // TODO: final WrappedBankAccountService<C,F> bankAccounts;
-    // TODO: public BankAccountService<C,F> getBankAccounts();
+    // TODO: final public BankAccountService<C,F> getBankAccounts();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionTypeService">
     static class WrappedBankTransactionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,BankTransactionType> implements BankTransactionTypeService<C,F> {
@@ -626,21 +629,21 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedBankTransactionTypeService<C,F> bankTransactionTypes;
-    public BankTransactionTypeService<C,F> getBankTransactionTypes() {
+    final public BankTransactionTypeService<C,F> getBankTransactionTypes() {
         return bankTransactionTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionService">
     // TODO: final WrappedBankTransactionService<C,F> bankTransactions;
-    // TODO: public BankTransactionService<C,F> getBankTransactions();
+    // TODO: final public BankTransactionService<C,F> getBankTransactions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankService">
     // TODO: final WrappedBankService<C,F> banks;
-    // TODO: public BankService<C,F> getBanks();
+    // TODO: final public BankService<C,F> getBanks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BlackholeEmailAddressService">
     // TODO: final WrappedBlackholeEmailAddressService<C,F> blackholeEmailAddresss;
-    // TODO: public BlackholeEmailAddressService<C,F> getBlackholeEmailAddresses();
+    // TODO: final public BlackholeEmailAddressService<C,F> getBlackholeEmailAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BrandService">
     static class WrappedBrandService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Brand> implements BrandService<C,F> {
@@ -649,7 +652,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedBrandService<C,F> brands;
-    public BrandService<C,F> getBrands() {
+    final public BrandService<C,F> getBrands() {
         return brands;
     }
     // </editor-fold>
@@ -660,17 +663,17 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedBusinessAdministratorService<C,F> businessAdministrators;
-    public BusinessAdministratorService<C,F> getBusinessAdministrators() {
+    final public BusinessAdministratorService<C,F> getBusinessAdministrators() {
         return businessAdministrators;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorPermissionService">
     // TODO: final WrappedBusinessAdministratorPermissionService<C,F> businessAdministratorPermissions;
-    // TODO: public BusinessAdministratorPermissionService<C,F> getBusinessAdministratorPermissions();
+    // TODO: final public BusinessAdministratorPermissionService<C,F> getBusinessAdministratorPermissions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessProfileService">
     // TODO: final WrappedBusinessProfileService<C,F> businessProfiles;
-    // TODO: public BusinessProfileService<C,F> getBusinessProfiles();
+    // TODO: final public BusinessProfileService<C,F> getBusinessProfiles();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessService">
     static class WrappedBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Business> implements BusinessService<C,F> {
@@ -679,7 +682,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedBusinessService<C,F> businesses;
-    public BusinessService<C,F> getBusinesses() {
+    final public BusinessService<C,F> getBusinesses() {
         return businesses;
     }
     // </editor-fold>
@@ -690,7 +693,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedBusinessServerService<C,F> businessServers;
-    public BusinessServerService<C,F> getBusinessServers() {
+    final public BusinessServerService<C,F> getBusinessServers() {
         return businessServers;
     }
     // </editor-fold>
@@ -701,21 +704,21 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedCountryCodeService<C,F> countryCodes;
-    public CountryCodeService<C,F> getCountryCodes() {
+    final public CountryCodeService<C,F> getCountryCodes() {
         return countryCodes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardProcessorService">
     // TODO: final WrappedCreditCardProcessorService<C,F> creditCardProcessors;
-    // TODO: public CreditCardProcessorService<C,F> getCreditCardProcessors();
+    // TODO: final public CreditCardProcessorService<C,F> getCreditCardProcessors();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardTransactionService">
     // TODO: final WrappedCreditCardTransactionService<C,F> creditCardTransactions;
-    // TODO: public CreditCardTransactionService<C,F> getCreditCardTransactions();
+    // TODO: final public CreditCardTransactionService<C,F> getCreditCardTransactions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardService">
     // TODO: final WrappedCreditCardService<C,F> creditCards;
-    // TODO: public CreditCardService<C,F> getCreditCards();
+    // TODO: final public CreditCardService<C,F> getCreditCards();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CvsRepositoryService">
     static class WrappedCvsRepositoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CvsRepository> implements CvsRepositoryService<C,F> {
@@ -724,7 +727,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedCvsRepositoryService<C,F> cvsRepositories;
-    public CvsRepositoryService<C,F> getCvsRepositories() {
+    final public CvsRepositoryService<C,F> getCvsRepositories() {
         return cvsRepositories;
     }
     // </editor-fold>
@@ -735,17 +738,17 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedDisableLogService<C,F> disableLogs;
-    public DisableLogService<C,F> getDisableLogs() {
+    final public DisableLogService<C,F> getDisableLogs() {
         return disableLogs;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DistroFileTypeService">
     // TODO: final WrappedDistroFileTypeService<C,F> distroFileTypes;
-    // TODO: public DistroFileTypeService<C,F> getDistroFileTypes();
+    // TODO: final public DistroFileTypeService<C,F> getDistroFileTypes();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DistroFileService">
     // TODO: final WrappedDistroFileService<C,F> distroFiles;
-    // TODO: public DistroFileService<C,F> getDistroFiles();
+    // TODO: final public DistroFileService<C,F> getDistroFiles();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsRecordService">
     static class WrappedDnsRecordService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DnsRecord> implements DnsRecordService<C,F> {
@@ -754,7 +757,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedDnsRecordService<C,F> dnsRecords;
-    public DnsRecordService<C,F> getDnsRecords() {
+    final public DnsRecordService<C,F> getDnsRecords() {
         return dnsRecords;
     }
     // </editor-fold>
@@ -765,7 +768,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedDnsTldService<C,F> dnsTlds;
-    public DnsTldService<C,F> getDnsTlds() {
+    final public DnsTldService<C,F> getDnsTlds() {
         return dnsTlds;
     }
     // </editor-fold>
@@ -776,7 +779,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedDnsTypeService<C,F> dnsTypes;
-    public DnsTypeService<C,F> getDnsTypes() {
+    final public DnsTypeService<C,F> getDnsTypes() {
         return dnsTypes;
     }
     // </editor-fold>
@@ -787,17 +790,17 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedDnsZoneService<C,F> dnsZones;
-    public DnsZoneService<C,F> getDnsZones() {
+    final public DnsZoneService<C,F> getDnsZones() {
         return dnsZones;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAddressService">
     // TODO: final WrappedEmailAddressService<C,F> emailAddresss;
-    // TODO: public EmailAddressService<C,F> getEmailAddresses();
+    // TODO: final public EmailAddressService<C,F> getEmailAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAttachmentBlockService">
     // TODO: final WrappedEmailAttachmentBlockService<C,F> emailAttachmentBlocks;
-    // TODO: public EmailAttachmentBlockService<C,F> getEmailAttachmentBlocks();
+    // TODO: final public EmailAttachmentBlockService<C,F> getEmailAttachmentBlocks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAttachmentTypeService">
     static class WrappedEmailAttachmentTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailAttachmentType> implements EmailAttachmentTypeService<C,F> {
@@ -806,17 +809,17 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedEmailAttachmentTypeService<C,F> emailAttachmentTypes;
-    public EmailAttachmentTypeService<C,F> getEmailAttachmentTypes() {
+    final public EmailAttachmentTypeService<C,F> getEmailAttachmentTypes() {
         return emailAttachmentTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailDomainService">
     // TODO: final WrappedEmailDomainService<C,F> emailDomains;
-    // TODO: public EmailDomainService<C,F> getEmailDomains();
+    // TODO: final public EmailDomainService<C,F> getEmailDomains();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailForwardingService">
     // TODO: final WrappedEmailForwardingService<C,F> emailForwardings;
-    // TODO: public EmailForwardingService<C,F> getEmailForwardings();
+    // TODO: final public EmailForwardingService<C,F> getEmailForwardings();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailInboxService">
     static class WrappedEmailInboxService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,EmailInbox> implements EmailInboxService<C,F> {
@@ -825,25 +828,25 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedEmailInboxService<C,F> emailInboxes;
-    public EmailInboxService<C,F> getEmailInboxes() {
+    final public EmailInboxService<C,F> getEmailInboxes() {
         return emailInboxes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailListAddressService">
     // TODO: final WrappedEmailListAddressService<C,F> emailListAddresss;
-    // TODO: public EmailListAddressService<C,F> getEmailListAddresses();
+    // TODO: final public EmailListAddressService<C,F> getEmailListAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailListService">
     // TODO: final WrappedEmailListService<C,F> emailLists;
-    // TODO: public EmailListService<C,F> getEmailLists();
+    // TODO: final public EmailListService<C,F> getEmailLists();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailPipeAddressService">
     // TODO: final WrappedEmailPipeAddressService<C,F> emailPipeAddresss;
-    // TODO: public EmailPipeAddressService<C,F> getEmailPipeAddresses();
+    // TODO: final public EmailPipeAddressService<C,F> getEmailPipeAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailPipeService">
     // TODO: final WrappedEmailPipeService<C,F> emailPipes;
-    // TODO: public EmailPipeService<C,F> getEmailPipes();
+    // TODO: final public EmailPipeService<C,F> getEmailPipes();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayTypeService">
     static class WrappedEmailSmtpRelayTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailSmtpRelayType> implements EmailSmtpRelayTypeService<C,F> {
@@ -852,21 +855,21 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedEmailSmtpRelayTypeService<C,F> emailSmtpRelayTypes;
-    public EmailSmtpRelayTypeService<C,F> getEmailSmtpRelayTypes() {
+    final public EmailSmtpRelayTypeService<C,F> getEmailSmtpRelayTypes() {
         return emailSmtpRelayTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayService">
     // TODO: final WrappedEmailSmtpRelayService<C,F> emailSmtpRelays;
-    // TODO: public EmailSmtpRelayService<C,F> getEmailSmtpRelays();
+    // TODO: final public EmailSmtpRelayService<C,F> getEmailSmtpRelays();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpSmartHostDomainService">
     // TODO: final WrappedEmailSmtpSmartHostDomainService<C,F> emailSmtpSmartHostDomains;
-    // TODO: public EmailSmtpSmartHostDomainService<C,F> getEmailSmtpSmartHostDomains();
+    // TODO: final public EmailSmtpSmartHostDomainService<C,F> getEmailSmtpSmartHostDomains();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpSmartHostService">
     // TODO: final WrappedEmailSmtpSmartHostService<C,F> emailSmtpSmartHosts;
-    // TODO: public EmailSmtpSmartHostService<C,F> getEmailSmtpSmartHosts();
+    // TODO: final public EmailSmtpSmartHostService<C,F> getEmailSmtpSmartHosts();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSpamAssassinIntegrationModeService">
     static class WrappedEmailSpamAssassinIntegrationModeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailSpamAssassinIntegrationMode> implements EmailSpamAssassinIntegrationModeService<C,F> {
@@ -875,13 +878,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedEmailSpamAssassinIntegrationModeService<C,F> emailSpamAssassinIntegrationModes;
-    public EmailSpamAssassinIntegrationModeService<C,F> getEmailSpamAssassinIntegrationModes() {
+    final public EmailSpamAssassinIntegrationModeService<C,F> getEmailSpamAssassinIntegrationModes() {
         return emailSpamAssassinIntegrationModes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EncryptionKeyService">
     // TODO: final WrappedEncryptionKeyService<C,F> encryptionKeys;
-    // TODO: public EncryptionKeyService<C,F> getEncryptionKeys();
+    // TODO: final public EncryptionKeyService<C,F> getEncryptionKeys();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ExpenseCategoryService">
     static class WrappedExpenseCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ExpenseCategory> implements ExpenseCategoryService<C,F> {
@@ -890,7 +893,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedExpenseCategoryService<C,F> expenseCategories;
-    public ExpenseCategoryService<C,F> getExpenseCategories() {
+    final public ExpenseCategoryService<C,F> getExpenseCategories() {
         return expenseCategories;
     }
     // </editor-fold>
@@ -901,7 +904,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFailoverFileLogService<C,F> failoverFileLogs;
-    public FailoverFileLogService<C,F> getFailoverFileLogs() {
+    final public FailoverFileLogService<C,F> getFailoverFileLogs() {
         return failoverFileLogs;
     }
     // </editor-fold>
@@ -912,7 +915,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFailoverFileReplicationService<C,F> failoverFileReplications;
-    public FailoverFileReplicationService<C,F> getFailoverFileReplications() {
+    final public FailoverFileReplicationService<C,F> getFailoverFileReplications() {
         return failoverFileReplications;
     }
     // </editor-fold>
@@ -923,7 +926,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFailoverFileScheduleService<C,F> failoverFileSchedules;
-    public FailoverFileScheduleService<C,F> getFailoverFileSchedules() {
+    final public FailoverFileScheduleService<C,F> getFailoverFileSchedules() {
         return failoverFileSchedules;
     }
     // </editor-fold>
@@ -934,7 +937,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFailoverMySQLReplicationService<C,F> failoverMySQLReplications;
-    public FailoverMySQLReplicationService<C,F> getFailoverMySQLReplications() {
+    final public FailoverMySQLReplicationService<C,F> getFailoverMySQLReplications() {
         return failoverMySQLReplications;
     }
     // </editor-fold>
@@ -945,7 +948,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFileBackupSettingService<C,F> fileBackupSettings;
-    public FileBackupSettingService<C,F> getFileBackupSettings() {
+    final public FileBackupSettingService<C,F> getFileBackupSettings() {
         return fileBackupSettings;
     }
     // </editor-fold>
@@ -956,7 +959,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFtpGuestUserService<C,F> ftpGuestUsers;
-    public FtpGuestUserService<C,F> getFtpGuestUsers() {
+    final public FtpGuestUserService<C,F> getFtpGuestUsers() {
         return ftpGuestUsers;
     }
     // </editor-fold>
@@ -967,17 +970,17 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedGroupNameService<C,F> groupNames;
-    public GroupNameService<C,F> getGroupNames() {
+    final public GroupNameService<C,F> getGroupNames() {
         return groupNames;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdBindService">
     // TODO: final WrappedHttpdBindService<C,F> httpdBinds;
-    // TODO: public HttpdBindService<C,F> getHttpdBinds();
+    // TODO: final public HttpdBindService<C,F> getHttpdBinds();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJBossSiteService">
     // TODO: final WrappedHttpdJBossSiteService<C,F> httpdJBossSites;
-    // TODO: public HttpdJBossSiteService<C,F> getHttpdJBossSites();
+    // TODO: final public HttpdJBossSiteService<C,F> getHttpdJBossSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJBossVersionService">
     static class WrappedHttpdJBossVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdJBossVersion> implements HttpdJBossVersionService<C,F> {
@@ -986,7 +989,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdJBossVersionService<C,F> httpdJBossVersions;
-    public HttpdJBossVersionService<C,F> getHttpdJBossVersions() {
+    final public HttpdJBossVersionService<C,F> getHttpdJBossVersions() {
         return httpdJBossVersions;
     }
     // </editor-fold>
@@ -997,7 +1000,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdJKCodeService<C,F> httpdJKCodes;
-    public HttpdJKCodeService<C,F> getHttpdJKCodes() {
+    final public HttpdJKCodeService<C,F> getHttpdJKCodes() {
         return httpdJKCodes;
     }
     // </editor-fold>
@@ -1008,7 +1011,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdJKProtocolService<C,F> httpdJKProtocols;
-    public HttpdJKProtocolService<C,F> getHttpdJKProtocols() {
+    final public HttpdJKProtocolService<C,F> getHttpdJKProtocols() {
         return httpdJKProtocols;
     }
     // </editor-fold>
@@ -1019,25 +1022,25 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdServerService<C,F> httpdServers;
-    public HttpdServerService<C,F> getHttpdServers() {
+    final public HttpdServerService<C,F> getHttpdServers() {
         return httpdServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSharedTomcatService">
     // TODO: final WrappedHttpdSharedTomcatService<C,F> httpdSharedTomcats;
-    // TODO: public HttpdSharedTomcatService<C,F> getHttpdSharedTomcats();
+    // TODO: final public HttpdSharedTomcatService<C,F> getHttpdSharedTomcats();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteAuthenticatedLocationService">
     // TODO: final WrappedHttpdSiteAuthenticatedLocationService<C,F> httpdSiteAuthenticatedLocations;
-    // TODO: public HttpdSiteAuthenticatedLocationService<C,F> getHttpdSiteAuthenticatedLocations();
+    // TODO: final public HttpdSiteAuthenticatedLocationService<C,F> getHttpdSiteAuthenticatedLocations();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteBindService">
     // TODO: final WrappedHttpdSiteBindService<C,F> httpdSiteBinds;
-    // TODO: public HttpdSiteBindService<C,F> getHttpdSiteBinds();
+    // TODO: final public HttpdSiteBindService<C,F> getHttpdSiteBinds();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteURLService">
     // TODO: final WrappedHttpdSiteURLService<C,F> httpdSiteURLs;
-    // TODO: public HttpdSiteURLService<C,F> getHttpdSiteURLs();
+    // TODO: final public HttpdSiteURLService<C,F> getHttpdSiteURLs();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteService">
     static class WrappedHttpdSiteService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdSite> implements HttpdSiteService<C,F> {
@@ -1046,37 +1049,37 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdSiteService<C,F> httpdSites;
-    public HttpdSiteService<C,F> getHttpdSites() {
+    final public HttpdSiteService<C,F> getHttpdSites() {
         return httpdSites;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdStaticSiteService">
     // TODO: final WrappedHttpdStaticSiteService<C,F> httpdStaticSites;
-    // TODO: public HttpdStaticSiteService<C,F> getHttpdStaticSites();
+    // TODO: final public HttpdStaticSiteService<C,F> getHttpdStaticSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatContextService">
     // TODO: final WrappedHttpdTomcatContextService<C,F> httpdTomcatContexts;
-    // TODO: public HttpdTomcatContextService<C,F> getHttpdTomcatContexts();
+    // TODO: final public HttpdTomcatContextService<C,F> getHttpdTomcatContexts();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatDataSourceService">
     // TODO: final WrappedHttpdTomcatDataSourceService<C,F> httpdTomcatDataSources;
-    // TODO: public HttpdTomcatDataSourceService<C,F> getHttpdTomcatDataSources();
+    // TODO: final public HttpdTomcatDataSourceService<C,F> getHttpdTomcatDataSources();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatParameterService">
     // TODO: final WrappedHttpdTomcatParameterService<C,F> httpdTomcatParameters;
-    // TODO: public HttpdTomcatParameterService<C,F> getHttpdTomcatParameters();
+    // TODO: final public HttpdTomcatParameterService<C,F> getHttpdTomcatParameters();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatSiteService">
     // TODO: final WrappedHttpdTomcatSiteService<C,F> httpdTomcatSites;
-    // TODO: public HttpdTomcatSiteService<C,F> getHttpdTomcatSites();
+    // TODO: final public HttpdTomcatSiteService<C,F> getHttpdTomcatSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatSharedSiteService">
     // TODO: final WrappedHttpdTomcatSharedSiteService<C,F> httpdTomcatSharedSites;
-    // TODO: public HttpdTomcatSharedSiteService<C,F> getHttpdTomcatSharedSites();
+    // TODO: final public HttpdTomcatSharedSiteService<C,F> getHttpdTomcatSharedSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatStdSiteService">
     // TODO: final WrappedHttpdTomcatStdSiteService<C,F> httpdTomcatStdSites;
-    // TODO: public HttpdTomcatStdSiteService<C,F> getHttpdTomcatStdSites();
+    // TODO: final public HttpdTomcatStdSiteService<C,F> getHttpdTomcatStdSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatVersionService">
     static class WrappedHttpdTomcatVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdTomcatVersion> implements HttpdTomcatVersionService<C,F> {
@@ -1085,13 +1088,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdTomcatVersionService<C,F> httpdTomcatVersions;
-    public HttpdTomcatVersionService<C,F> getHttpdTomcatVersions() {
+    final public HttpdTomcatVersionService<C,F> getHttpdTomcatVersions() {
         return httpdTomcatVersions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdWorkerService">
     // TODO: final WrappedHttpdWorkerService<C,F> httpdWorkers;
-    // TODO: public HttpdWorkerService<C,F> getHttpdWorkers();
+    // TODO: final public HttpdWorkerService<C,F> getHttpdWorkers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="IPAddressService">
     static class WrappedIPAddressService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,IPAddress> implements IPAddressService<C,F> {
@@ -1100,7 +1103,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedIPAddressService<C,F> ipAddresses;
-    public IPAddressService<C,F> getIpAddresses() {
+    final public IPAddressService<C,F> getIpAddresses() {
         return ipAddresses;
     }
     // </editor-fold>
@@ -1111,13 +1114,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLanguageService<C,F> languages;
-    public LanguageService<C,F> getLanguages() {
+    final public LanguageService<C,F> getLanguages() {
         return languages;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccAddressService">
     // TODO: final WrappedLinuxAccAddressService<C,F> linuxAccAddresss;
-    // TODO: public LinuxAccAddressService<C,F> getLinuxAccAddresses();
+    // TODO: final public LinuxAccAddressService<C,F> getLinuxAccAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccountGroupService">
     static class WrappedLinuxAccountGroupService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxAccountGroup> implements LinuxAccountGroupService<C,F> {
@@ -1126,7 +1129,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxAccountGroupService<C,F> linuxAccountGroups;
-    public LinuxAccountGroupService<C,F> getLinuxAccountGroups() {
+    final public LinuxAccountGroupService<C,F> getLinuxAccountGroups() {
         return linuxAccountGroups;
     }
     // </editor-fold>
@@ -1137,7 +1140,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxAccountTypeService<C,F> linuxAccountTypes;
-    public LinuxAccountTypeService<C,F> getLinuxAccountTypes() {
+    final public LinuxAccountTypeService<C,F> getLinuxAccountTypes() {
         return linuxAccountTypes;
     }
     // </editor-fold>
@@ -1148,7 +1151,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxAccountService<C,F> linuxAccounts;
-    public LinuxAccountService<C,F> getLinuxAccounts() {
+    final public LinuxAccountService<C,F> getLinuxAccounts() {
         return linuxAccounts;
     }
     // </editor-fold>
@@ -1159,7 +1162,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxGroupTypeService<C,F> linuxGroupTypes;
-    public LinuxGroupTypeService<C,F> getLinuxGroupTypes() {
+    final public LinuxGroupTypeService<C,F> getLinuxGroupTypes() {
         return linuxGroupTypes;
     }
     // </editor-fold>
@@ -1170,17 +1173,17 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxGroupService<C,F> linuxGroups;
-    public LinuxGroupService<C,F> getLinuxGroups() {
+    final public LinuxGroupService<C,F> getLinuxGroups() {
         return linuxGroups;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MajordomoListService">
     // TODO: final WrappedMajordomoListService<C,F> majordomoLists;
-    // TODO: public MajordomoListService<C,F> getMajordomoLists();
+    // TODO: final public MajordomoListService<C,F> getMajordomoLists();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MajordomoServerService">
     // TODO: final WrappedMajordomoServerService<C,F> majordomoServers;
-    // TODO: public MajordomoServerService<C,F> getMajordomoServers();
+    // TODO: final public MajordomoServerService<C,F> getMajordomoServers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MajordomoVersionService">
     static class WrappedMajordomoVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,MajordomoVersion> implements MajordomoVersionService<C,F> {
@@ -1189,7 +1192,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMajordomoVersionService<C,F> majordomoVersions;
-    public MajordomoVersionService<C,F> getMajordomoVersions() {
+    final public MajordomoVersionService<C,F> getMajordomoVersions() {
         return majordomoVersions;
     }
     // </editor-fold>
@@ -1200,7 +1203,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMasterHostService<C,F> masterHosts;
-    public MasterHostService<C,F> getMasterHosts() {
+    final public MasterHostService<C,F> getMasterHosts() {
         return masterHosts;
     }
     // </editor-fold>
@@ -1211,7 +1214,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMasterServerService<C,F> masterServers;
-    public MasterServerService<C,F> getMasterServers() {
+    final public MasterServerService<C,F> getMasterServers() {
         return masterServers;
     }
     // </editor-fold>
@@ -1222,13 +1225,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMasterUserService<C,F> masterUsers;
-    public MasterUserService<C,F> getMasterUsers() {
+    final public MasterUserService<C,F> getMasterUsers() {
         return masterUsers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MonthlyChargeService">
     // TODO: final WrappedMonthlyChargeService<C,F> monthlyCharges;
-    // TODO: public MonthlyChargeService<C,F> getMonthlyCharges();
+    // TODO: final public MonthlyChargeService<C,F> getMonthlyCharges();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLDatabaseService">
     static class WrappedMySQLDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLDatabase> implements MySQLDatabaseService<C,F> {
@@ -1237,7 +1240,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMySQLDatabaseService<C,F> mysqlDatabases;
-    public MySQLDatabaseService<C,F> getMysqlDatabases() {
+    final public MySQLDatabaseService<C,F> getMysqlDatabases() {
         return mysqlDatabases;
     }
     // </editor-fold>
@@ -1248,7 +1251,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMySQLDBUserService<C,F> mysqlDBUsers;
-    public MySQLDBUserService<C,F> getMysqlDBUsers() {
+    final public MySQLDBUserService<C,F> getMysqlDBUsers() {
         return mysqlDBUsers;
     }
     // </editor-fold>
@@ -1259,7 +1262,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMySQLServerService<C,F> mysqlServers;
-    public MySQLServerService<C,F> getMysqlServers() {
+    final public MySQLServerService<C,F> getMysqlServers() {
         return mysqlServers;
     }
     // </editor-fold>
@@ -1270,7 +1273,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMySQLUserService<C,F> mysqlUsers;
-    public MySQLUserService<C,F> getMysqlUsers() {
+    final public MySQLUserService<C,F> getMysqlUsers() {
         return mysqlUsers;
     }
     // </editor-fold>
@@ -1281,7 +1284,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetBindService<C,F> netBinds;
-    public NetBindService<C,F> getNetBinds() {
+    final public NetBindService<C,F> getNetBinds() {
         return netBinds;
     }
     // </editor-fold>
@@ -1292,7 +1295,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetDeviceIDService<C,F> netDeviceIDs;
-    public NetDeviceIDService<C,F> getNetDeviceIDs() {
+    final public NetDeviceIDService<C,F> getNetDeviceIDs() {
         return netDeviceIDs;
     }
     // </editor-fold>
@@ -1303,7 +1306,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetDeviceService<C,F> netDevices;
-    public NetDeviceService<C,F> getNetDevices() {
+    final public NetDeviceService<C,F> getNetDevices() {
         return netDevices;
     }
     // </editor-fold>
@@ -1314,7 +1317,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetProtocolService<C,F> netProtocols;
-    public NetProtocolService<C,F> getNetProtocols() {
+    final public NetProtocolService<C,F> getNetProtocols() {
         return netProtocols;
     }
     // </editor-fold>
@@ -1325,13 +1328,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetTcpRedirectService<C,F> netTcpRedirects;
-    public NetTcpRedirectService<C,F> getNetTcpRedirects() {
+    final public NetTcpRedirectService<C,F> getNetTcpRedirects() {
         return netTcpRedirects;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NoticeLogService">
     // TODO: final WrappedNoticeLogService<C,F> noticeLogs;
-    // TODO: public NoticeLogService<C,F> getNoticeLogs();
+    // TODO: final public NoticeLogService<C,F> getNoticeLogs();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NoticeTypeService">
     static class WrappedNoticeTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NoticeType> implements NoticeTypeService<C,F> {
@@ -1340,7 +1343,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNoticeTypeService<C,F> noticeTypes;
-    public NoticeTypeService<C,F> getNoticeTypes() {
+    final public NoticeTypeService<C,F> getNoticeTypes() {
         return noticeTypes;
     }
     // </editor-fold>
@@ -1351,7 +1354,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedOperatingSystemVersionService<C,F> operatingSystemVersions;
-    public OperatingSystemVersionService<C,F> getOperatingSystemVersions() {
+    final public OperatingSystemVersionService<C,F> getOperatingSystemVersions() {
         return operatingSystemVersions;
     }
     // </editor-fold>
@@ -1362,7 +1365,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedOperatingSystemService<C,F> operatingSystems;
-    public OperatingSystemService<C,F> getOperatingSystems() {
+    final public OperatingSystemService<C,F> getOperatingSystems() {
         return operatingSystems;
     }
     // </editor-fold>
@@ -1373,17 +1376,17 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPackageCategoryService<C,F> packageCategories;
-    public PackageCategoryService<C,F> getPackageCategories() {
+    final public PackageCategoryService<C,F> getPackageCategories() {
         return packageCategories;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionLimitService">
     // TODO: final WrappedPackageDefinitionLimitService<C,F> packageDefinitionLimits;
-    // TODO: public PackageDefinitionLimitService<C,F> getPackageDefinitionLimits();
+    // TODO: final public PackageDefinitionLimitService<C,F> getPackageDefinitionLimits();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionService">
     // TODO: final WrappedPackageDefinitionService<C,F> packageDefinitions;
-    // TODO: public PackageDefinitionService<C,F> getPackageDefinitions();
+    // TODO: final public PackageDefinitionService<C,F> getPackageDefinitions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PaymentTypeService">
     static class WrappedPaymentTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,PaymentType> implements PaymentTypeService<C,F> {
@@ -1392,13 +1395,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPaymentTypeService<C,F> paymentTypes;
-    public PaymentTypeService<C,F> getPaymentTypes() {
+    final public PaymentTypeService<C,F> getPaymentTypes() {
         return paymentTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PhysicalServerService">
     // TODO: final WrappedPhysicalServerService<C,F> physicalServers;
-    // TODO: public PhysicalServerService<C,F> getPhysicalServers();
+    // TODO: final public PhysicalServerService<C,F> getPhysicalServers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresDatabaseService">
     static class WrappedPostgresDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresDatabase> implements PostgresDatabaseService<C,F> {
@@ -1407,7 +1410,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPostgresDatabaseService<C,F> postgresDatabases;
-    public PostgresDatabaseService<C,F> getPostgresDatabases() {
+    final public PostgresDatabaseService<C,F> getPostgresDatabases() {
         return postgresDatabases;
     }
     // </editor-fold>
@@ -1418,7 +1421,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPostgresEncodingService<C,F> postgresEncodings;
-    public PostgresEncodingService<C,F> getPostgresEncodings() {
+    final public PostgresEncodingService<C,F> getPostgresEncodings() {
         return postgresEncodings;
     }
     // </editor-fold>
@@ -1429,7 +1432,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPostgresServerService<C,F> postgresServers;
-    public PostgresServerService<C,F> getPostgresServers() {
+    final public PostgresServerService<C,F> getPostgresServers() {
         return postgresServers;
     }
     // </editor-fold>
@@ -1440,7 +1443,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPostgresUserService<C,F> postgresUsers;
-    public PostgresUserService<C,F> getPostgresUsers() {
+    final public PostgresUserService<C,F> getPostgresUsers() {
         return postgresUsers;
     }
     // </editor-fold>
@@ -1451,7 +1454,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPostgresVersionService<C,F> postgresVersions;
-    public PostgresVersionService<C,F> getPostgresVersions() {
+    final public PostgresVersionService<C,F> getPostgresVersions() {
         return postgresVersions;
     }
     // </editor-fold>
@@ -1462,7 +1465,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPrivateFtpServerService<C,F> privateFtpServers;
-    public PrivateFtpServerService<C,F> getPrivateFtpServers() {
+    final public PrivateFtpServerService<C,F> getPrivateFtpServers() {
         return privateFtpServers;
     }
     // </editor-fold>
@@ -1473,7 +1476,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedProcessorTypeService<C,F> processorTypes;
-    public ProcessorTypeService<C,F> getProcessorTypes() {
+    final public ProcessorTypeService<C,F> getProcessorTypes() {
         return processorTypes;
     }
     // </editor-fold>
@@ -1484,13 +1487,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedProtocolService<C,F> protocols;
-    public ProtocolService<C,F> getProtocols() {
+    final public ProtocolService<C,F> getProtocols() {
         return protocols;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="RackService">
     // TODO: final WrappedRackService<C,F> racks;
-    // TODO: public RackService<C,F> getRacks();
+    // TODO: final public RackService<C,F> getRacks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResellerService">
     static class WrappedResellerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Reseller> implements ResellerService<C,F> {
@@ -1499,7 +1502,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedResellerService<C,F> resellers;
-    public ResellerService<C,F> getResellers() {
+    final public ResellerService<C,F> getResellers() {
         return resellers;
     }
     // </editor-fold>
@@ -1510,7 +1513,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedResourceTypeService<C,F> resourceTypes;
-    public ResourceTypeService<C,F> getResourceTypes() {
+    final public ResourceTypeService<C,F> getResourceTypes() {
         return resourceTypes;
     }
     // </editor-fold>
@@ -1521,7 +1524,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedResourceService<C,F> resources;
-    public ResourceService<C,F> getResources() {
+    final public ResourceService<C,F> getResources() {
         return resources;
     }
     // </editor-fold>
@@ -1532,7 +1535,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedServerFarmService<C,F> serverFarms;
-    public ServerFarmService<C,F> getServerFarms() {
+    final public ServerFarmService<C,F> getServerFarms() {
         return serverFarms;
     }
     // </editor-fold>
@@ -1543,7 +1546,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedServerResourceService<C,F> serverResources;
-    public ServerResourceService<C,F> getServerResources() {
+    final public ServerResourceService<C,F> getServerResources() {
         return serverResources;
     }
     // </editor-fold>
@@ -1554,7 +1557,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedServerService<C,F> servers;
-    public ServerService<C,F> getServers() {
+    final public ServerService<C,F> getServers() {
         return servers;
     }
     // </editor-fold>
@@ -1565,25 +1568,25 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedShellService<C,F> shells;
-    public ShellService<C,F> getShells() {
+    final public ShellService<C,F> getShells() {
         return shells;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SignupRequestOptionService">
     // TODO: final WrappedSignupRequestOptionService<C,F> signupRequestOptions;
-    // TODO: public SignupRequestOptionService<C,F> getSignupRequestOptions();
+    // TODO: final public SignupRequestOptionService<C,F> getSignupRequestOptions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SignupRequestService">
     // TODO: final WrappedSignupRequestService<C,F> signupRequests;
-    // TODO: public SignupRequestService<C,F> getSignupRequests();
+    // TODO: final public SignupRequestService<C,F> getSignupRequests();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SpamEmailMessageService">
     // TODO: final WrappedSpamEmailMessageService<C,F> spamEmailMessages;
-    // TODO: public SpamEmailMessageService<C,F> getSpamEmailMessages();
+    // TODO: final public SpamEmailMessageService<C,F> getSpamEmailMessages();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SystemEmailAliasService">
     // TODO: final WrappedSystemEmailAliasService<C,F> systemEmailAliass;
-    // TODO: public SystemEmailAliasService<C,F> getSystemEmailAliases();
+    // TODO: final public SystemEmailAliasService<C,F> getSystemEmailAliases();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyService">
     final class WrappedTechnologyService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Technology> implements TechnologyService<C,F> {
@@ -1592,7 +1595,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTechnologyService<C,F> technologies;
-    public TechnologyService<C,F> getTechnologies() {
+    final public TechnologyService<C,F> getTechnologies() {
         return technologies;
     }
     // </editor-fold>
@@ -1603,7 +1606,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTechnologyClassService<C,F> technologyClasses;
-    public TechnologyClassService<C,F> getTechnologyClasses() {
+    final public TechnologyClassService<C,F> getTechnologyClasses() {
         return technologyClasses;
     }
     // </editor-fold>
@@ -1614,7 +1617,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTechnologyNameService<C,F> technologyNames;
-    public TechnologyNameService<C,F> getTechnologyNames() {
+    final public TechnologyNameService<C,F> getTechnologyNames() {
         return technologyNames;
     }
     // </editor-fold>
@@ -1625,7 +1628,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTechnologyVersionService<C,F> technologyVersions;
-    public TechnologyVersionService<C,F> getTechnologyVersions() {
+    final public TechnologyVersionService<C,F> getTechnologyVersions() {
         return technologyVersions;
     }
     // </editor-fold>
@@ -1636,13 +1639,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTicketActionTypeService<C,F> ticketActionTypes;
-    public TicketActionTypeService<C,F> getTicketActionTypes() {
+    final public TicketActionTypeService<C,F> getTicketActionTypes() {
         return ticketActionTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionService">
     // TODO: final WrappedTicketActionService<C,F> ticketActions;
-    // TODO: public TicketActionService<C,F> getTicketActions();
+    // TODO: final public TicketActionService<C,F> getTicketActions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketAssignmentService">
     static class WrappedTicketAssignmentService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAssignment> implements TicketAssignmentService<C,F> {
@@ -1651,13 +1654,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTicketAssignmentService<C,F> ticketAssignments;
-    public TicketAssignmentService<C,F> getTicketAssignments() {
+    final public TicketAssignmentService<C,F> getTicketAssignments() {
         return ticketAssignments;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketBrandCategoryService">
     // TODO: final WrappedTicketBrandCategoryService<C,F> ticketBrandCategories;
-    // TODO: public TicketBrandCategoryService<C,F> getTicketBrandCategories();
+    // TODO: final public TicketBrandCategoryService<C,F> getTicketBrandCategories();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketCategoryService">
     static class WrappedTicketCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketCategory> implements TicketCategoryService<C,F> {
@@ -1666,7 +1669,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTicketCategoryService<C,F> ticketCategories;
-    public TicketCategoryService<C,F> getTicketCategories() {
+    final public TicketCategoryService<C,F> getTicketCategories() {
         return ticketCategories;
     }
     // </editor-fold>
@@ -1677,7 +1680,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTicketPriorityService<C,F> ticketPriorities;
-    public TicketPriorityService<C,F> getTicketPriorities() {
+    final public TicketPriorityService<C,F> getTicketPriorities() {
         return ticketPriorities;
     }
     // </editor-fold>
@@ -1688,7 +1691,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTicketStatusService<C,F> ticketStatuses;
-    public TicketStatusService<C,F> getTicketStatuses() {
+    final public TicketStatusService<C,F> getTicketStatuses() {
         return ticketStatuses;
     }
     // </editor-fold>
@@ -1699,7 +1702,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTicketTypeService<C,F> ticketTypes;
-    public TicketTypeService<C,F> getTicketTypes() {
+    final public TicketTypeService<C,F> getTicketTypes() {
         return ticketTypes;
     }
     // </editor-fold>
@@ -1710,7 +1713,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTicketService<C,F> tickets;
-    public TicketService<C,F> getTickets() {
+    final public TicketService<C,F> getTickets() {
         return tickets;
     }
     // </editor-fold>
@@ -1721,7 +1724,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTimeZoneService<C,F> timeZones;
-    public TimeZoneService<C,F> getTimeZones() {
+    final public TimeZoneService<C,F> getTimeZones() {
         return timeZones;
     }
     // </editor-fold>
@@ -1732,13 +1735,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedTransactionTypeService<C,F> transactionTypes;
-    public TransactionTypeService<C,F> getTransactionTypes() {
+    final public TransactionTypeService<C,F> getTransactionTypes() {
         return transactionTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionService">
     // TODO: final WrappedTransactionService<C,F> transactions;
-    // TODO: public TransactionService<C,F> getTransactions();
+    // TODO: final public TransactionService<C,F> getTransactions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="UsernameService">
     static class WrappedUsernameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,Username> implements UsernameService<C,F> {
@@ -1747,20 +1750,20 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedUsernameService<C,F> usernames;
-    public UsernameService<C,F> getUsernames() {
+    final public UsernameService<C,F> getUsernames() {
         return usernames;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="VirtualDiskService">
     // TODO: final WrappedVirtualDiskService<C,F> virtualDisks;
-    // TODO: public VirtualDiskService<C,F> getVirtualDisks();
+    // TODO: final public VirtualDiskService<C,F> getVirtualDisks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="VirtualServerService">
     // TODO: final WrappedVirtualServerService<C,F> virtualServers;
-    // TODO: public VirtualServerService<C,F> getVirtualServers();
+    // TODO: final public VirtualServerService<C,F> getVirtualServers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="WhoisHistoryService">
     // TODO: final WrappedWhoisHistoryService<C,F> whoisHistories;
-    // TODO: public WhoisHistoryService<C,F> getWhoisHistory();
+    // TODO: final public WhoisHistoryService<C,F> getWhoisHistory();
     // </editor-fold>
 }

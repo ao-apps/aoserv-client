@@ -5,8 +5,6 @@ package com.aoindustries.aoserv.client.retry;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.security.LoginException;
-import java.io.IOException;
 
 /**
  * @author  AO Industries, Inc.
@@ -50,28 +48,4 @@ final class RetryUtils {
      * The number of attempts that will be made when request retry is allowed.
      */
     static final int RETRY_ATTEMPTS = retryAttemptDelays.length + 1;
-
-    /**
-     * Certain errors will not be retried.
-     */
-    static boolean isImmediateFail(Throwable T) {
-        while(T!=null) {
-            String message = T.getMessage();
-            if(
-                (
-                    (T instanceof IOException)
-                    && message!=null
-                    && (
-                        message.equals("Connection attempted with invalid password")
-                        || message.equals("Connection attempted with empty password")
-                        || message.equals("Connection attempted with empty connect username")
-                        || message.startsWith("Unable to find BusinessAdministrator: ")
-                        || message.startsWith("Not allowed to switch users from ")
-                    )
-                ) || (T instanceof LoginException)
-            ) return true;
-            T = T.getCause();
-        }
-        return false;
-    }
 }

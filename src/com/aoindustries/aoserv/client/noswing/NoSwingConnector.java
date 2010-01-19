@@ -5,13 +5,14 @@ package com.aoindustries.aoserv.client.noswing;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.wrapped.WrappedConnector;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.concurrent.Callable;
 
 /**
  * @see NoSwingConnectorFactory
@@ -25,9 +26,9 @@ final public class NoSwingConnector extends WrappedConnector<NoSwingConnector,No
     }
 
     @Override
-    protected AOServConnector<?,?> getWrapped() throws RemoteException {
+    protected <T> T call(Callable<T> callable, boolean allowRetry) throws RemoteException, NoSuchElementException {
         NoSwingConnectorFactory.checkNotSwing();
-        return super.getWrapped();
+        return super.call(callable, allowRetry);
     }
 
     protected boolean isAoServObjectServiceSettable() {

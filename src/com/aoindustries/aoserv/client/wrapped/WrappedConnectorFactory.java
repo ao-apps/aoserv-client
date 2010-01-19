@@ -28,7 +28,7 @@ abstract public class WrappedConnectorFactory<C extends WrappedConnector<C,F>, F
 
     private final AOServConnectorFactoryCache<C,F> connectors = new AOServConnectorFactoryCache<C,F>();
 
-    public C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    final public C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             C connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
             if(connector!=null) {
@@ -46,7 +46,7 @@ abstract public class WrappedConnectorFactory<C extends WrappedConnector<C,F>, F
         }
     }
 
-    public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    final public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             C connector = newWrappedConnector(locale, connectAs, authenticateAs, password, daemonServer);
             connectors.put(
