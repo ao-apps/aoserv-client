@@ -175,9 +175,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -464,42 +461,17 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
     <T> T call(Callable<T> callable, boolean allowRetry) throws RemoteException, NoSuchElementException {
         int attempt = 1;
         while(!Thread.interrupted()) {
-            if(factory.timeout>0) {
-                Future<T> future = RetryUtils.executorService.submit(callable);
-                try {
-                    return future.get(factory.timeout, factory.unit);
-                } catch(RuntimeException err) {
-                    disconnectIfNeeded(err);
-                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-                } catch(ExecutionException err) {
-                    disconnectIfNeeded(err);
-                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) {
-                        Throwable cause = err.getCause();
-                        if(cause instanceof RemoteException) throw (RemoteException)cause;
-                        if(cause instanceof NoSuchElementException) throw (NoSuchElementException)cause;
-                        throw new RemoteException(err.getMessage(), err);
-                    }
-                } catch(TimeoutException err) {
-                    future.cancel(true);
-                    disconnectIfNeeded(err);
-                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
-                } catch(Exception err) {
-                    disconnectIfNeeded(err);
-                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
-                }
-            } else {
-                try {
-                    return callable.call();
-                } catch(RuntimeException err) {
-                    disconnectIfNeeded(err);
-                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-                } catch(RemoteException err) {
-                    disconnectIfNeeded(err);
-                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-                } catch(Exception err) {
-                    disconnectIfNeeded(err);
-                    if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
-                }
+            try {
+                return callable.call();
+            } catch(RuntimeException err) {
+                disconnectIfNeeded(err);
+                if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            } catch(RemoteException err) {
+                disconnectIfNeeded(err);
+                if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            } catch(Exception err) {
+                disconnectIfNeeded(err);
+                if(!allowRetry || Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
             }
             if(!allowRetry) throw new AssertionError("allowRetry==false");
             try {

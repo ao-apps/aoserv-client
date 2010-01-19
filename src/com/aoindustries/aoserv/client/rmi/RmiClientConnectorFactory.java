@@ -21,7 +21,7 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.util.Locale;
 
 /**
- * An implementation of <code>AOServConnectorFactory</code> that connects to an RMI server.
+ * An implementation of <code>AOServConnectorFactory</code> that performs a direct RMI connection to the server.
  *
  * @author  AO Industries, Inc.
  */

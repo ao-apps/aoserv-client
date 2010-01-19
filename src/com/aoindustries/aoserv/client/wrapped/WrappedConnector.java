@@ -213,7 +213,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> implements AOServConnector<C,F> {
 
-    final F factory;
+    protected final F factory;
     Locale locale;
     final UserId connectAs;
     private final UserId authenticateAs;

@@ -13,10 +13,6 @@ import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * An implementation of <code>AOServConnectorFactory</code> that obtains a new wrapped connector from the wrapped
@@ -26,50 +22,25 @@ import java.util.concurrent.TimeoutException;
  */
 final public class RetryConnectorFactory implements AOServConnectorFactory<RetryConnector,RetryConnectorFactory> {
 
-    final long timeout;
-    final TimeUnit unit;
     final AOServConnectorFactory<?,?> wrapped;
 
-    public RetryConnectorFactory(long timeout, TimeUnit unit, AOServConnectorFactory<?,?> wrapped) {
-        this.timeout = timeout;
-        this.unit = unit;
+    public RetryConnectorFactory(AOServConnectorFactory<?,?> wrapped) {
         this.wrapped = wrapped;
     }
 
     private <T> T retry(Callable<T> callable) throws LoginException, RemoteException {
         int attempt = 1;
         while(!Thread.interrupted()) {
-            if(timeout>0) {
-                Future<T> future = RetryUtils.executorService.submit(callable);
-                try {
-                    return future.get(timeout, unit);
-                } catch(RuntimeException err) {
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-                } catch(ExecutionException err) {
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) {
-                        Throwable cause = err.getCause();
-                        if(cause instanceof LoginException) throw (LoginException)cause;
-                        if(cause instanceof RemoteException) throw (RemoteException)cause;
-                        throw new RemoteException(err.getMessage(), err);
-                    }
-                } catch(TimeoutException err) {
-                    future.cancel(true);
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
-                } catch(Exception err) {
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
-                }
-            } else {
-                try {
-                    return callable.call();
-                } catch(RuntimeException err) {
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-                } catch(LoginException err) {
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-                } catch(RemoteException err) {
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
-                } catch(Exception err) {
-                    if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
-                }
+            try {
+                return callable.call();
+            } catch(RuntimeException err) {
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            } catch(LoginException err) {
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            } catch(RemoteException err) {
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw err;
+            } catch(Exception err) {
+                if(Thread.interrupted() || attempt>=RetryUtils.RETRY_ATTEMPTS || RetryUtils.isImmediateFail(err)) throw new RemoteException(err.getMessage(), err);
             }
             try {
                 Thread.sleep(RetryUtils.retryAttemptDelays[attempt-1]);

@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.cache.CachedConnectorFactory;
 import com.aoindustries.aoserv.client.noswing.NoSwingConnectorFactory;
 import com.aoindustries.aoserv.client.retry.RetryConnectorFactory;
 import com.aoindustries.aoserv.client.rmi.RmiClientConnectorFactory;
+import com.aoindustries.aoserv.client.timeout.TimeoutConnectorFactory;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Hostname;
 import com.aoindustries.aoserv.client.validator.InetAddress;
@@ -130,18 +131,18 @@ final public class AOServClientConfiguration {
     }
 
     /**
-     * Gets the retry timeout.  Defaults to true.
+     * Gets the timeout.  Defaults to zero (off).
      */
-    static long getRetryTimeout() throws IOException {
-        String timeout = getProperty("aoserv.client.retry.timeout");
+    static long getTimeout() throws IOException {
+        String timeout = getProperty("aoserv.client.timeout");
         return timeout==null || timeout.length()==0 ? 0 : Long.parseLong(timeout);
     }
 
     /**
-     * Gets the retry timeout unit.  Defaults to true.
+     * Gets the timeout unit.  Defaults to SECONDS.
      */
-    static TimeUnit getRetryTimeoutUnit() throws IOException {
-        String unit = getProperty("aoserv.client.retry.timeout.unit");
+    static TimeUnit getTimeoutUnit() throws IOException {
+        String unit = getProperty("aoserv.client.timeout.unit");
         return unit==null || unit.length()==0 ? TimeUnit.SECONDS : TimeUnit.valueOf(unit);
     }
 
@@ -251,7 +252,9 @@ final public class AOServClientConfiguration {
                     } else {
                         throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unsupportedProtocol", protocol));
                     }
-                    if(getRetry()) newFactory = new RetryConnectorFactory(getRetryTimeout(), getRetryTimeoutUnit(), newFactory);
+                    long timeout = getTimeout();
+                    if(timeout>0) newFactory = new TimeoutConnectorFactory(newFactory, timeout, getTimeoutUnit());
+                    if(getRetry()) newFactory = new RetryConnectorFactory(newFactory);
                     if(getUseCache()) newFactory = new CachedConnectorFactory(newFactory);
                     if(getNoSwing()) newFactory = new NoSwingConnectorFactory(newFactory);
                     factory = newFactory;
