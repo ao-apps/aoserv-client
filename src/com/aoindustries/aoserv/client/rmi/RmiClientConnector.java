@@ -65,8 +65,4 @@ final public class RmiClientConnector extends WrappedConnector<RmiClientConnecto
             throw new RemoteException(err.getMessage(), err);
         }
     }
-
-    protected boolean isAoServObjectServiceSettable() {
-        return true;
-    }
 }

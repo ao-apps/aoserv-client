@@ -30,8 +30,4 @@ final public class NoSwingConnector extends WrappedConnector<NoSwingConnector,No
         NoSwingConnectorFactory.checkNotSwing();
         return super.call(callable, allowRetry);
     }
-
-    protected boolean isAoServObjectServiceSettable() {
-        return true;
-    }
 }

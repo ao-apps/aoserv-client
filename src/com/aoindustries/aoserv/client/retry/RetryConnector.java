@@ -25,10 +25,6 @@ final public class RetryConnector extends WrappedConnector<RetryConnector,RetryC
         super(factory, locale, connectAs, authenticateAs, password, daemonServer);
     }
 
-    protected boolean isAoServObjectServiceSettable() {
-        return true;
-    }
-
     @Override
     protected <T> T call(Callable<T> callable, boolean allowRetry) throws RemoteException, NoSuchElementException {
         int attempt = 1;

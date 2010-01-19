@@ -456,8 +456,11 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
 
     /**
      * All services call this to determine if the service is settable on objects returned by this connector.
+     * Defaults to <code>true</code>.
      */
-    abstract protected boolean isAoServObjectServiceSettable();
+    protected boolean isAoServObjectServiceSettable() {
+        return true;
+    }
 
     /**
      * Performs the call on the wrapped object, allowing retry.

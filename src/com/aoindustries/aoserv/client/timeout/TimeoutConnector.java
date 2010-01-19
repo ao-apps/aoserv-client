@@ -28,13 +28,9 @@ final public class TimeoutConnector extends WrappedConnector<TimeoutConnector,Ti
         super(factory, locale, connectAs, authenticateAs, password, daemonServer);
     }
 
-    protected boolean isAoServObjectServiceSettable() {
-        return true;
-    }
-
     @Override
     protected <T> T call(Callable<T> callable, boolean allowRetry) throws RemoteException, NoSuchElementException {
-        Future<T> future = TimeoutUtils.executorService.submit(callable);
+        Future<T> future = TimeoutConnectorFactory.executorService.submit(callable);
         try {
             return future.get(factory.timeout, factory.unit);
         } catch(RuntimeException err) {

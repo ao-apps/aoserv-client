@@ -14,7 +14,10 @@ import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -26,6 +29,14 @@ import java.util.concurrent.TimeoutException;
  */
 final public class TimeoutConnectorFactory extends WrappedConnectorFactory<TimeoutConnector,TimeoutConnectorFactory> {
 
+    static final ExecutorService executorService = Executors.newCachedThreadPool(
+        new ThreadFactory() {
+            public Thread newThread(Runnable r) {
+                return new Thread(r, TimeoutConnectorFactory.class.getName());
+            }
+        }
+    );
+
     final long timeout;
     final TimeUnit unit;
 
@@ -36,7 +47,7 @@ final public class TimeoutConnectorFactory extends WrappedConnectorFactory<Timeo
     }
 
     protected TimeoutConnector newWrappedConnector(final Locale locale, final UserId connectAs, final UserId authenticateAs, final String password, final DomainName daemonServer) throws LoginException, RemoteException {
-        Future<TimeoutConnector> future = TimeoutUtils.executorService.submit(
+        Future<TimeoutConnector> future = executorService.submit(
             new Callable<TimeoutConnector>() {
                 public TimeoutConnector call() throws RemoteException, LoginException {
                     return new TimeoutConnector(TimeoutConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);

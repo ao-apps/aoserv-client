@@ -30,7 +30,7 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
 
 
     /**
-     * Makes the direct, underlying connections.  The reconnect is performed at a higher level layer.
+     * Makes the direct, underlying connections.  The reconnect is performed at the outer layer.
      */
     static final class DirectRmiClientConnectorFactory implements AOServConnectorFactory {
 
