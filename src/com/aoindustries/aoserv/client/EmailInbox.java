@@ -46,13 +46,13 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private Integer autoresponderFrom;
-    final private String autoresponderSubject;
-    final private UnixPath autoresponderPath;
+    private String autoresponderSubject;
+    private UnixPath autoresponderPath;
     final private boolean isAutoresponderEnabled;
     final private boolean useInbox;
     final private Short trashEmailRetention;
     final private Short junkEmailRetention;
-    final private String saIntegrationMode;
+    private String saIntegrationMode;
     final private float saRequiredScore;
     final private Integer saDiscardScore;
 
@@ -73,14 +73,26 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
         super(service, linuxAccount);
         this.autoresponderFrom = autoresponderFrom;
         this.autoresponderSubject = autoresponderSubject;
-        this.autoresponderPath = autoresponderPath==null ? null : autoresponderPath.intern();
+        this.autoresponderPath = autoresponderPath;
         this.isAutoresponderEnabled = isAutoresponderEnabled;
         this.useInbox = useInbox;
         this.trashEmailRetention = trashEmailRetention;
         this.junkEmailRetention = junkEmailRetention;
-        this.saIntegrationMode = saIntegrationMode.intern();
+        this.saIntegrationMode = saIntegrationMode;
         this.saRequiredScore = saRequiredScore;
         this.saDiscardScore = saDiscardScore;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        autoresponderSubject = intern(autoresponderSubject);
+        autoresponderPath = intern(autoresponderPath);
+        saIntegrationMode = intern(saIntegrationMode);
     }
     // </editor-fold>
 
@@ -404,10 +416,10 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
         }
 
         // No private FTP servers
-        for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
+        for(PrivateFtpServer pfs : ao.getPrivateFtpServers()) {
             if(pfs.pub_linux_server_account==pkey) {
                 LinuxServerAccount lsa = pfs.getLinuxServerAccount();
-                reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+lsa.getHome()+" on "+lsa.getAOServer().getHostname(), pfs));
+                reasons.add(new CannotRemoveReason<PrivateFtpServer>("Used by private FTP server "+lsa.getHome()+" on "+lsa.getAOServer().getHostname(), pfs));
             }
         }
 

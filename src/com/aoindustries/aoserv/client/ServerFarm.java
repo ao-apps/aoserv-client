@@ -25,22 +25,33 @@ final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String description;
-    final private AccountingCode owner;
+    private String description;
+    private AccountingCode owner;
     final private boolean useRestrictedSmtpPort;
 
     public ServerFarm(ServerFarmService<?,?> service, DomainLabel name, String description, AccountingCode owner, boolean useRestrictedSmtpPort) {
         super(service, name);
         this.description = description;
-        this.owner = owner.intern();
+        this.owner = owner;
         this.useRestrictedSmtpPort = useRestrictedSmtpPort;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        description = intern(description);
+        owner = intern(owner);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the farm")
     public DomainLabel getName() {
-    	return key;
+    	return getKey();
     }
 
     @SchemaColumn(order=1, name="description", description="a description of the farm")
@@ -65,7 +76,7 @@ final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> imp
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.ServerFarm getBean() {
-        return new com.aoindustries.aoserv.client.beans.ServerFarm(key.getBean(), description, owner.getBean(), useRestrictedSmtpPort);
+        return new com.aoindustries.aoserv.client.beans.ServerFarm(getKey().getBean(), description, owner.getBean(), useRestrictedSmtpPort);
     }
     // </editor-fold>
 

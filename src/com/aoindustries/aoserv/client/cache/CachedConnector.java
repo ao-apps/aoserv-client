@@ -22,6 +22,8 @@ import com.aoindustries.aoserv.client.BackupPartition;
 import com.aoindustries.aoserv.client.BackupPartitionService;
 import com.aoindustries.aoserv.client.BackupRetention;
 import com.aoindustries.aoserv.client.BackupRetentionService;
+import com.aoindustries.aoserv.client.BankTransactionType;
+import com.aoindustries.aoserv.client.BankTransactionTypeService;
 import com.aoindustries.aoserv.client.Brand;
 import com.aoindustries.aoserv.client.BrandService;
 import com.aoindustries.aoserv.client.Business;
@@ -44,8 +46,16 @@ import com.aoindustries.aoserv.client.DnsType;
 import com.aoindustries.aoserv.client.DnsTypeService;
 import com.aoindustries.aoserv.client.DnsZone;
 import com.aoindustries.aoserv.client.DnsZoneService;
+import com.aoindustries.aoserv.client.EmailAttachmentType;
+import com.aoindustries.aoserv.client.EmailAttachmentTypeService;
 import com.aoindustries.aoserv.client.EmailInbox;
 import com.aoindustries.aoserv.client.EmailInboxService;
+import com.aoindustries.aoserv.client.EmailSmtpRelayType;
+import com.aoindustries.aoserv.client.EmailSmtpRelayTypeService;
+import com.aoindustries.aoserv.client.EmailSpamAssassinIntegrationMode;
+import com.aoindustries.aoserv.client.EmailSpamAssassinIntegrationModeService;
+import com.aoindustries.aoserv.client.ExpenseCategory;
+import com.aoindustries.aoserv.client.ExpenseCategoryService;
 import com.aoindustries.aoserv.client.FailoverFileLog;
 import com.aoindustries.aoserv.client.FailoverFileLogService;
 import com.aoindustries.aoserv.client.FailoverFileReplication;
@@ -60,10 +70,18 @@ import com.aoindustries.aoserv.client.FtpGuestUser;
 import com.aoindustries.aoserv.client.FtpGuestUserService;
 import com.aoindustries.aoserv.client.GroupName;
 import com.aoindustries.aoserv.client.GroupNameService;
+import com.aoindustries.aoserv.client.HttpdJBossVersion;
+import com.aoindustries.aoserv.client.HttpdJBossVersionService;
+import com.aoindustries.aoserv.client.HttpdJKCode;
+import com.aoindustries.aoserv.client.HttpdJKCodeService;
+import com.aoindustries.aoserv.client.HttpdJKProtocol;
+import com.aoindustries.aoserv.client.HttpdJKProtocolService;
 import com.aoindustries.aoserv.client.HttpdServer;
 import com.aoindustries.aoserv.client.HttpdServerService;
 import com.aoindustries.aoserv.client.HttpdSite;
 import com.aoindustries.aoserv.client.HttpdSiteService;
+import com.aoindustries.aoserv.client.HttpdTomcatVersion;
+import com.aoindustries.aoserv.client.HttpdTomcatVersionService;
 import com.aoindustries.aoserv.client.IPAddress;
 import com.aoindustries.aoserv.client.IPAddressService;
 import com.aoindustries.aoserv.client.Language;
@@ -78,6 +96,8 @@ import com.aoindustries.aoserv.client.LinuxGroup;
 import com.aoindustries.aoserv.client.LinuxGroupService;
 import com.aoindustries.aoserv.client.LinuxGroupType;
 import com.aoindustries.aoserv.client.LinuxGroupTypeService;
+import com.aoindustries.aoserv.client.MajordomoVersion;
+import com.aoindustries.aoserv.client.MajordomoVersionService;
 import com.aoindustries.aoserv.client.MasterHost;
 import com.aoindustries.aoserv.client.MasterHostService;
 import com.aoindustries.aoserv.client.MasterServer;
@@ -102,12 +122,16 @@ import com.aoindustries.aoserv.client.NetProtocol;
 import com.aoindustries.aoserv.client.NetProtocolService;
 import com.aoindustries.aoserv.client.NetTcpRedirect;
 import com.aoindustries.aoserv.client.NetTcpRedirectService;
+import com.aoindustries.aoserv.client.NoticeType;
+import com.aoindustries.aoserv.client.NoticeTypeService;
 import com.aoindustries.aoserv.client.OperatingSystem;
 import com.aoindustries.aoserv.client.OperatingSystemService;
 import com.aoindustries.aoserv.client.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategory;
 import com.aoindustries.aoserv.client.PackageCategoryService;
+import com.aoindustries.aoserv.client.PaymentType;
+import com.aoindustries.aoserv.client.PaymentTypeService;
 import com.aoindustries.aoserv.client.PostgresDatabase;
 import com.aoindustries.aoserv.client.PostgresDatabaseService;
 import com.aoindustries.aoserv.client.PostgresEncoding;
@@ -118,6 +142,10 @@ import com.aoindustries.aoserv.client.PostgresUser;
 import com.aoindustries.aoserv.client.PostgresUserService;
 import com.aoindustries.aoserv.client.PostgresVersion;
 import com.aoindustries.aoserv.client.PostgresVersionService;
+import com.aoindustries.aoserv.client.PrivateFtpServer;
+import com.aoindustries.aoserv.client.PrivateFtpServerService;
+import com.aoindustries.aoserv.client.ProcessorType;
+import com.aoindustries.aoserv.client.ProcessorTypeService;
 import com.aoindustries.aoserv.client.Protocol;
 import com.aoindustries.aoserv.client.ProtocolService;
 import com.aoindustries.aoserv.client.Reseller;
@@ -144,6 +172,8 @@ import com.aoindustries.aoserv.client.TechnologyService;
 import com.aoindustries.aoserv.client.TechnologyVersion;
 import com.aoindustries.aoserv.client.TechnologyVersionService;
 import com.aoindustries.aoserv.client.Ticket;
+import com.aoindustries.aoserv.client.TicketActionType;
+import com.aoindustries.aoserv.client.TicketActionTypeService;
 import com.aoindustries.aoserv.client.TicketAssignment;
 import com.aoindustries.aoserv.client.TicketAssignmentService;
 import com.aoindustries.aoserv.client.TicketCategory;
@@ -157,6 +187,8 @@ import com.aoindustries.aoserv.client.TicketType;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZone;
 import com.aoindustries.aoserv.client.TimeZoneService;
+import com.aoindustries.aoserv.client.TransactionType;
+import com.aoindustries.aoserv.client.TransactionTypeService;
 import com.aoindustries.aoserv.client.Username;
 import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.aoserv.client.command.AOServCommand;
@@ -198,65 +230,51 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         aoserverResources = new CachedAOServerResourceService(this, wrapped.getAoServerResources());
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAoservPermissions());
-        /* TODO
-        aoservProtocols = new CachedAOServProtocolService(this, wrapped.getAOServProtocols());
-        aoshCommands = new CachedAOSHCommandService(this, wrapped.getAOSHCommands());
-         */
         architectures = new CachedArchitectureService(this, wrapped.getArchitectures());
         backupPartitions = new CachedBackupPartitionService(this, wrapped.getBackupPartitions());
         backupRetentions = new CachedBackupRetentionService(this, wrapped.getBackupRetentions());
-        /* TODO
-        bankAccounts = new CachedBankAccountService(this, wrapped.getBankAccounts());
+        // TODO: bankAccounts = new CachedBankAccountService(this, wrapped.getBankAccounts());
         bankTransactionTypes = new CachedBankTransactionTypeService(this, wrapped.getBankTransactionTypes());
-        bankTransactions = new CachedBankTransactionService(this, wrapped.getBankTransactions());
-        banks = new CachedBankService(this, wrapped.getBanks());
-        blackholeEmailAddresss = new CachedBlackholeEmailAddressService(this, wrapped.getBlackholeEmailAddresss());
-         */
+        // TODO: bankTransactions = new CachedBankTransactionService(this, wrapped.getBankTransactions());
+        // TODO: banks = new CachedBankService(this, wrapped.getBanks());
+        // TODO: blackholeEmailAddresss = new CachedBlackholeEmailAddressService(this, wrapped.getBlackholeEmailAddresss());
         brands = new CachedBrandService(this, wrapped.getBrands());
         businessAdministrators = new CachedBusinessAdministratorService(this, wrapped.getBusinessAdministrators());
-        /* TODO
-        businessAdministratorPermissions = new CachedBusinessAdministratorPermissionService(this, wrapped.getBusinessAdministratorPermissions());
-        businessProfiles = new CachedBusinessProfileService(this, wrapped.getBusinessProfiles());
-         */
+        // TODO: businessAdministratorPermissions = new CachedBusinessAdministratorPermissionService(this, wrapped.getBusinessAdministratorPermissions());
+        // TODO: businessProfiles = new CachedBusinessProfileService(this, wrapped.getBusinessProfiles());
         businesses = new CachedBusinessService(this, wrapped.getBusinesses());
         businessServers = new CachedBusinessServerService(this, wrapped.getBusinessServers());
         countryCodes = new CachedCountryCodeService(this, wrapped.getCountryCodes());
-        /* TODO
-        creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
-        creditCardTransactions = new CachedCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
-        creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
-         */
+        // TODO: creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
+        // TODO: creditCardTransactions = new CachedCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
+        // TODO: creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
         cvsRepositories = new CachedCvsRepositoryService(this, wrapped.getCvsRepositories());
         disableLogs = new CachedDisableLogService(this, wrapped.getDisableLogs());
-        /*
-        distroFileTypes = new CachedDistroFileTypeService(this, wrapped.getDistroFileTypes());
-        distroFiles = new CachedDistroFileService(this, wrapped.getDistroFiles());
-         */
+        // TODO: distroFileTypes = new CachedDistroFileTypeService(this, wrapped.getDistroFileTypes());
+        // TODO: distroFiles = new CachedDistroFileService(this, wrapped.getDistroFiles());
         dnsRecords = new CachedDnsRecordService(this, wrapped.getDnsRecords());
         dnsTlds = new CachedDnsTldService(this, wrapped.getDnsTlds());
         dnsTypes = new CachedDnsTypeService(this, wrapped.getDnsTypes());
         dnsZones = new CachedDnsZoneService(this, wrapped.getDnsZones());
-        /* TODO
-        emailAddresss = new CachedEmailAddressService(this, wrapped.getEmailAddresss());
-        emailAttachmentBlocks = new CachedEmailAttachmentBlockService(this, wrapped.getEmailAttachmentBlocks());
+        // TODO: emailAddresss = new CachedEmailAddressService(this, wrapped.getEmailAddresss());
+        // TODO: emailAttachmentBlocks = new CachedEmailAttachmentBlockService(this, wrapped.getEmailAttachmentBlocks());
         emailAttachmentTypes = new CachedEmailAttachmentTypeService(this, wrapped.getEmailAttachmentTypes());
-        emailDomains = new CachedEmailDomainService(this, wrapped.getEmailDomains());
-        emailForwardings = new CachedEmailForwardingService(this, wrapped.getEmailForwardings());
-         */
+        // TODO: emailDomains = new CachedEmailDomainService(this, wrapped.getEmailDomains());
+        // TODO: emailForwardings = new CachedEmailForwardingService(this, wrapped.getEmailForwardings());
         emailInboxes = new CachedEmailInboxService(this, wrapped.getEmailInboxes());
         /* TODO
         emailListAddresss = new CachedEmailListAddressService(this, wrapped.getEmailListAddresss());
         emailLists = new CachedEmailListService(this, wrapped.getEmailLists());
         emailPipeAddresss = new CachedEmailPipeAddressService(this, wrapped.getEmailPipeAddresss());
         emailPipes = new CachedEmailPipeService(this, wrapped.getEmailPipes());
-        emailSmtpRelayTypes = new CachedEmailSmtpRelayTypeService(this, wrapped.getEmailSmtpRelayTypes());
-        emailSmtpRelays = new CachedEmailSmtpRelayService(this, wrapped.getEmailSmtpRelays());
-        emailSmtpSmartHostDomains = new CachedEmailSmtpSmartHostDomainService(this, wrapped.getEmailSmtpSmartHostDomains());
-        emailSmtpSmartHosts = new CachedEmailSmtpSmartHostService(this, wrapped.getEmailSmtpSmartHosts());
-        emailSpamAssassinIntegrationModes = new CachedEmailSpamAssassinIntegrationModeService(this, wrapped.getEmailSpamAssassinIntegrationModes());
-        encryptionKeys = new CachedEncryptionKeyService(this, wrapped.getEncryptionKeys());
-        expenseCategories = new CachedExpenseCategoryService(this, wrapped.getExpenseCategorys());
          */
+        emailSmtpRelayTypes = new CachedEmailSmtpRelayTypeService(this, wrapped.getEmailSmtpRelayTypes());
+        // TODO: emailSmtpRelays = new CachedEmailSmtpRelayService(this, wrapped.getEmailSmtpRelays());
+        // TODO: emailSmtpSmartHostDomains = new CachedEmailSmtpSmartHostDomainService(this, wrapped.getEmailSmtpSmartHostDomains());
+        // TODO: emailSmtpSmartHosts = new CachedEmailSmtpSmartHostService(this, wrapped.getEmailSmtpSmartHosts());
+        emailSpamAssassinIntegrationModes = new CachedEmailSpamAssassinIntegrationModeService(this, wrapped.getEmailSpamAssassinIntegrationModes());
+        // TODO: encryptionKeys = new CachedEncryptionKeyService(this, wrapped.getEncryptionKeys());
+        expenseCategories = new CachedExpenseCategoryService(this, wrapped.getExpenseCategories());
         failoverFileLogs = new CachedFailoverFileLogService(this, wrapped.getFailoverFileLogs());
         failoverFileReplications = new CachedFailoverFileReplicationService(this, wrapped.getFailoverFileReplications());
         failoverFileSchedules = new CachedFailoverFileScheduleService(this, wrapped.getFailoverFileSchedules());
@@ -267,10 +285,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         /* TODO
         httpdBinds = new CachedHttpdBindService(this, wrapped.getHttpdBinds());
         httpdJBossSites = new CachedHttpdJBossSiteService(this, wrapped.getHttpdJBossSites());
+         */
         httpdJBossVersions = new CachedHttpdJBossVersionService(this, wrapped.getHttpdJBossVersions());
         httpdJKCodes = new CachedHttpdJKCodeService(this, wrapped.getHttpdJKCodes());
         httpdJKProtocols = new CachedHttpdJKProtocolService(this, wrapped.getHttpdJKProtocols());
-         */
         httpdServers = new CachedHttpdServerService(this, wrapped.getHttpdServers());
         /* TODO
         httpdSharedTomcats = new CachedHttpdSharedTomcatService(this, wrapped.getHttpdSharedTomcats());
@@ -286,7 +304,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         // TODO: httpdTomcatSites = new CachedHttpdTomcatSiteService(this, wrapped.getHttpdTomcatSites());
         // TODO: httpdTomcatSharedSites = new CachedHttpdTomcatSharedSiteService(this, wrapped.getHttpdTomcatSharedSites());
         // TODO: httpdTomcatStdSites = new CachedHttpdTomcatStdSiteService(this, wrapped.getHttpdTomcatStdSites());
-        // TODO: httpdTomcatVersions = new CachedHttpdTomcatVersionService(this, wrapped.getHttpdTomcatVersions());
+        httpdTomcatVersions = new CachedHttpdTomcatVersionService(this, wrapped.getHttpdTomcatVersions());
         // TODO: httpdWorkers = new CachedHttpdWorkerService(this, wrapped.getHttpdWorkers());
         ipAddresses = new CachedIPAddressService(this, wrapped.getIpAddresses());
         languages = new CachedLanguageService(this, wrapped.getLanguages());
@@ -301,8 +319,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         /* TODO
         majordomoLists = new CachedMajordomoListService(this, wrapped.getMajordomoLists());
         majordomoServers = new CachedMajordomoServerService(this, wrapped.getMajordomoServers());
-        majordomoVersions = new CachedMajordomoVersionService(this, wrapped.getMajordomoVersions());
          */
+        majordomoVersions = new CachedMajordomoVersionService(this, wrapped.getMajordomoVersions());
         masterHosts = new CachedMasterHostService(this, wrapped.getMasterHosts());
         masterServers = new CachedMasterServerService(this, wrapped.getMasterServers());
         masterUsers = new CachedMasterUserService(this, wrapped.getMasterUsers());
@@ -316,26 +334,24 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         netDevices = new CachedNetDeviceService(this, wrapped.getNetDevices());
         netProtocols = new CachedNetProtocolService(this, wrapped.getNetProtocols());
         netTcpRedirects = new CachedNetTcpRedirectService(this, wrapped.getNetTcpRedirects());
-        /* TODO
-        noticeLogs = new CachedNoticeLogService(this, wrapped.getNoticeLogs());
+        // TODO: noticeLogs = new CachedNoticeLogService(this, wrapped.getNoticeLogs());
         noticeTypes = new CachedNoticeTypeService(this, wrapped.getNoticeTypes());
-        */
         operatingSystemVersions = new CachedOperatingSystemVersionService(this, wrapped.getOperatingSystemVersions());
         operatingSystems = new CachedOperatingSystemService(this, wrapped.getOperatingSystems());
         packageCategories = new CachedPackageCategoryService(this, wrapped.getPackageCategories());
         /* TODO
         packageDefinitionLimits = new CachedPackageDefinitionLimitService(this, wrapped.getPackageDefinitionLimits());
         packageDefinitions = new CachedPackageDefinitionService(this, wrapped.getPackageDefinitions());
-        paymentTypes = new CachedPaymentTypeService(this, wrapped.getPaymentTypes());
-        physicalServers = new CachedPhysicalServerService(this, wrapped.getPhysicalServers());
          */
+        paymentTypes = new CachedPaymentTypeService(this, wrapped.getPaymentTypes());
+        // TODO: physicalServers = new CachedPhysicalServerService(this, wrapped.getPhysicalServers());
         postgresDatabases = new CachedPostgresDatabaseService(this, wrapped.getPostgresDatabases());
         postgresEncodings = new CachedPostgresEncodingService(this, wrapped.getPostgresEncodings());
         postgresServers = new CachedPostgresServerService(this, wrapped.getPostgresServers());
         postgresUsers = new CachedPostgresUserService(this, wrapped.getPostgresUsers());
         postgresVersions = new CachedPostgresVersionService(this, wrapped.getPostgresVersions());
-        // TODO: privateFTPServers = new CachedPrivateFTPServerService(this, wrapped.getPrivateFTPServers());
-        // TODO: processorTypes = new CachedProcessorTypeService(this, wrapped.getProcessorTypes());
+        privateFtpServers = new CachedPrivateFtpServerService(this, wrapped.getPrivateFtpServers());
+        processorTypes = new CachedProcessorTypeService(this, wrapped.getProcessorTypes());
         protocols = new CachedProtocolService(this, wrapped.getProtocols());
         // TODO: racks = new CachedRackService(this, wrapped.getRacks());
         resellers = new CachedResellerService(this, wrapped.getResellers());
@@ -355,7 +371,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         technologyClasses = new CachedTechnologyClassService(this, wrapped.getTechnologyClasses());
         technologyNames = new CachedTechnologyNameService(this, wrapped.getTechnologyNames());
         technologyVersions = new CachedTechnologyVersionService(this, wrapped.getTechnologyVersions());
-        // TODO: ticketActionTypes = new CachedTicketActionTypeService(this, wrapped.getTicketActionTypes());
+        ticketActionTypes = new CachedTicketActionTypeService(this, wrapped.getTicketActionTypes());
         // TODO: ticketActions = new CachedTicketActionService(this, wrapped.getTicketActions());
         ticketAssignments = new CachedTicketAssignmentService(this, wrapped.getTicketAssignments());
         // TODO: ticketBrandCategories = new CachedTicketBrandCategoryService(this, wrapped.getTicketBrandCategorys());
@@ -365,17 +381,12 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         ticketTypes = new CachedTicketTypeService(this, wrapped.getTicketTypes());
         tickets = new CachedTicketService(this, wrapped.getTickets());
         timeZones = new CachedTimeZoneService(this, wrapped.getTimeZones());
-        /* TODO
         transactionTypes = new CachedTransactionTypeService(this, wrapped.getTransactionTypes());
-        transactions = new CachedTransactionService(this, wrapped.getTransactions());
-        usStates = new CachedUSStateService(this, wrapped.getUSStates());
-         */
+        // TODO: transactions = new CachedTransactionService(this, wrapped.getTransactions());
         usernames = new CachedUsernameService(this, wrapped.getUsernames());
-        /* TODO
-        virtualDisks = new CachedVirtualDiskService(this, wrapped.getVirtualDisks());
-        virtualServers = new CachedVirtualServerService(this, wrapped.getVirtualServers());
-        whoisHistories = new CachedWhoisHistoryService(this, wrapped.getWhoisHistorys());
-         */
+        // TODO: virtualDisks = new CachedVirtualDiskService(this, wrapped.getVirtualDisks());
+        // TODO: virtualServers = new CachedVirtualServerService(this, wrapped.getVirtualServers());
+        // TODO: whoisHistories = new CachedWhoisHistoryService(this, wrapped.getWhoisHistorys());
     }
 
     public CachedConnectorFactory getFactory() {
@@ -505,8 +516,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public BankAccountService<CachedConnector,CachedConnectorFactory> getBankAccounts();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionTypeService">
-    // TODO: final CachedBankTransactionTypeService bankTransactionTypes;
-    // TODO: public BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes();
+    static class CachedBankTransactionTypeService extends CachedService<String,BankTransactionType> implements BankTransactionTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedBankTransactionTypeService(CachedConnector connector, BankTransactionTypeService<?,?> wrapped) {
+            super(connector, String.class, BankTransactionType.class, wrapped);
+        }
+    }
+    final CachedBankTransactionTypeService bankTransactionTypes;
+    public BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes() {
+        return bankTransactionTypes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionService">
     // TODO: final CachedBankTransactionService bankTransactions;
@@ -678,8 +696,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public EmailAttachmentBlockService<CachedConnector,CachedConnectorFactory> getEmailAttachmentBlocks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAttachmentTypeService">
-    // TODO: final CachedEmailAttachmentTypeService emailAttachmentTypes;
-    // TODO: public EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> getEmailAttachmentTypes();
+    static class CachedEmailAttachmentTypeService extends CachedService<String,EmailAttachmentType> implements EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedEmailAttachmentTypeService(CachedConnector connector, EmailAttachmentTypeService<?,?> wrapped) {
+            super(connector, String.class, EmailAttachmentType.class, wrapped);
+        }
+    }
+    final CachedEmailAttachmentTypeService emailAttachmentTypes;
+    public EmailAttachmentTypeService<CachedConnector,CachedConnectorFactory> getEmailAttachmentTypes() {
+        return emailAttachmentTypes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailDomainService">
     // TODO: final CachedEmailDomainService emailDomains;
@@ -717,8 +742,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public EmailPipeService<CachedConnector,CachedConnectorFactory> getEmailPipes();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayTypeService">
-    // TODO: final CachedEmailSmtpRelayTypeService emailSmtpRelayTypes;
-    // TODO: public EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelayTypes();
+    static class CachedEmailSmtpRelayTypeService extends CachedService<String,EmailSmtpRelayType> implements EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedEmailSmtpRelayTypeService(CachedConnector connector, EmailSmtpRelayTypeService<?,?> wrapped) {
+            super(connector, String.class, EmailSmtpRelayType.class, wrapped);
+        }
+    }
+    final CachedEmailSmtpRelayTypeService emailSmtpRelayTypes;
+    public EmailSmtpRelayTypeService<CachedConnector,CachedConnectorFactory> getEmailSmtpRelayTypes() {
+        return emailSmtpRelayTypes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayService">
     // TODO: final CachedEmailSmtpRelayService emailSmtpRelays;
@@ -733,16 +765,30 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public EmailSmtpSmartHostService<CachedConnector,CachedConnectorFactory> getEmailSmtpSmartHosts();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSpamAssassinIntegrationModeService">
-    // TODO: final CachedEmailSpamAssassinIntegrationModeService emailSpamAssassinIntegrationModes;
-    // TODO: public EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> getEmailSpamAssassinIntegrationModes();
+    static class CachedEmailSpamAssassinIntegrationModeService extends CachedService<String,EmailSpamAssassinIntegrationMode> implements EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> {
+        CachedEmailSpamAssassinIntegrationModeService(CachedConnector connector, EmailSpamAssassinIntegrationModeService<?,?> wrapped) {
+            super(connector, String.class, EmailSpamAssassinIntegrationMode.class, wrapped);
+        }
+    }
+    final CachedEmailSpamAssassinIntegrationModeService emailSpamAssassinIntegrationModes;
+    public EmailSpamAssassinIntegrationModeService<CachedConnector,CachedConnectorFactory> getEmailSpamAssassinIntegrationModes() {
+        return emailSpamAssassinIntegrationModes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EncryptionKeyService">
     // TODO: final CachedEncryptionKeyService encryptionKeys;
     // TODO: public EncryptionKeyService<CachedConnector,CachedConnectorFactory> getEncryptionKeys();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ExpenseCategoryService">
-    // TODO: final CachedExpenseCategoryService expenseCategories;
-    // TODO: public ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories();
+    static class CachedExpenseCategoryService extends CachedService<String,ExpenseCategory> implements ExpenseCategoryService<CachedConnector,CachedConnectorFactory> {
+        CachedExpenseCategoryService(CachedConnector connector, ExpenseCategoryService<?,?> wrapped) {
+            super(connector, String.class, ExpenseCategory.class, wrapped);
+        }
+    }
+    final CachedExpenseCategoryService expenseCategories;
+    public ExpenseCategoryService<CachedConnector,CachedConnectorFactory> getExpenseCategories() {
+        return expenseCategories;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverFileLogService">
     static class CachedFailoverFileLogService extends CachedService<Integer,FailoverFileLog> implements FailoverFileLogService<CachedConnector,CachedConnectorFactory> {
@@ -830,16 +876,37 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public HttpdJBossSiteService<CachedConnector,CachedConnectorFactory> getHttpdJBossSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJBossVersionService">
-    // TODO: final CachedHttpdJBossVersionService httpdJBossVersions;
-    // TODO: public HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions();
+    static class CachedHttpdJBossVersionService extends CachedService<Integer,HttpdJBossVersion> implements HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> {
+        CachedHttpdJBossVersionService(CachedConnector connector, HttpdJBossVersionService<?,?> wrapped) {
+            super(connector, Integer.class, HttpdJBossVersion.class, wrapped);
+        }
+    }
+    final CachedHttpdJBossVersionService httpdJBossVersions;
+    public HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions() {
+        return httpdJBossVersions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJKCodeService">
-    // TODO: final CachedHttpdJKCodeService httpdJKCodes;
-    // TODO: public HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes();
+    static class CachedHttpdJKCodeService extends CachedService<String,HttpdJKCode> implements HttpdJKCodeService<CachedConnector,CachedConnectorFactory> {
+        CachedHttpdJKCodeService(CachedConnector connector, HttpdJKCodeService<?,?> wrapped) {
+            super(connector, String.class, HttpdJKCode.class, wrapped);
+        }
+    }
+    final CachedHttpdJKCodeService httpdJKCodes;
+    public HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes() {
+        return httpdJKCodes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJKProtocolService">
-    // TODO: final CachedHttpdJKProtocolService httpdJKProtocols;
-    // TODO: public HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols();
+    static class CachedHttpdJKProtocolService extends CachedService<String,HttpdJKProtocol> implements HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> {
+        CachedHttpdJKProtocolService(CachedConnector connector, HttpdJKProtocolService<?,?> wrapped) {
+            super(connector, String.class, HttpdJKProtocol.class, wrapped);
+        }
+    }
+    final CachedHttpdJKProtocolService httpdJKProtocols;
+    public HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols() {
+        return httpdJKProtocols;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdServerService">
     static class CachedHttpdServerService extends CachedService<Integer,HttpdServer> implements HttpdServerService<CachedConnector,CachedConnectorFactory> {
@@ -908,8 +975,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public HttpdTomcatStdSiteService<CachedConnector,CachedConnectorFactory> getHttpdTomcatStdSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatVersionService">
-    // TODO: final CachedHttpdTomcatVersionService httpdTomcatVersions;
-    // TODO: public HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions();
+    static class CachedHttpdTomcatVersionService extends CachedService<Integer,HttpdTomcatVersion> implements HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> {
+        CachedHttpdTomcatVersionService(CachedConnector connector, HttpdTomcatVersionService<?,?> wrapped) {
+            super(connector, Integer.class, HttpdTomcatVersion.class, wrapped);
+        }
+    }
+    final CachedHttpdTomcatVersionService httpdTomcatVersions;
+    public HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions() {
+        return httpdTomcatVersions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdWorkerService">
     // TODO: final CachedHttpdWorkerService httpdWorkers;
@@ -1005,8 +1079,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public MajordomoServerService<CachedConnector,CachedConnectorFactory> getMajordomoServers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MajordomoVersionService">
-    // TODO: final CachedMajordomoVersionService majordomoVersions;
-    // TODO: public MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions();
+    static class CachedMajordomoVersionService extends CachedService<String,MajordomoVersion> implements MajordomoVersionService<CachedConnector,CachedConnectorFactory> {
+        CachedMajordomoVersionService(CachedConnector connector, MajordomoVersionService<?,?> wrapped) {
+            super(connector, String.class, MajordomoVersion.class, wrapped);
+        }
+    }
+    final CachedMajordomoVersionService majordomoVersions;
+    public MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions() {
+        return majordomoVersions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterHostService">
     static class CachedMasterHostService extends CachedService<Integer,MasterHost> implements MasterHostService<CachedConnector,CachedConnectorFactory> {
@@ -1149,8 +1230,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public NoticeLogService<CachedConnector,CachedConnectorFactory> getNoticeLogs();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NoticeTypeService">
-    // TODO: final CachedNoticeTypeService noticeTypes;
-    // TODO: public NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes();
+    static class CachedNoticeTypeService extends CachedService<String,NoticeType> implements NoticeTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedNoticeTypeService(CachedConnector connector, NoticeTypeService<?,?> wrapped) {
+            super(connector, String.class, NoticeType.class, wrapped);
+        }
+    }
+    final CachedNoticeTypeService noticeTypes;
+    public NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes() {
+        return noticeTypes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="OperatingSystemVersionService">
     static class CachedOperatingSystemVersionService extends CachedService<Integer,OperatingSystemVersion> implements OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> {
@@ -1194,8 +1282,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public PackageDefinitionService<CachedConnector,CachedConnectorFactory> getPackageDefinitions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PaymentTypeService">
-    // TODO: final CachedPaymentTypeService paymentTypes;
-    // TODO: public PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes();
+    static class CachedPaymentTypeService extends CachedService<String,PaymentType> implements PaymentTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedPaymentTypeService(CachedConnector connector, PaymentTypeService<?,?> wrapped) {
+            super(connector, String.class, PaymentType.class, wrapped);
+        }
+    }
+    final CachedPaymentTypeService paymentTypes;
+    public PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes() {
+        return paymentTypes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PhysicalServerService">
     // TODO: final CachedPhysicalServerService physicalServers;
@@ -1256,13 +1351,27 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return postgresVersions;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="PrivateFTPServerService">
-    // TODO: final CachedPrivateFTPServerService privateFTPServers;
-    // TODO: public PrivateFTPServerService<CachedConnector,CachedConnectorFactory> getPrivateFTPServers();
+    // <editor-fold defaultstate="collapsed" desc="PrivateFtpServerService">
+    static class CachedPrivateFtpServerService extends CachedService<Integer,PrivateFtpServer> implements PrivateFtpServerService<CachedConnector,CachedConnectorFactory> {
+        CachedPrivateFtpServerService(CachedConnector connector, PrivateFtpServerService<?,?> wrapped) {
+            super(connector, Integer.class, PrivateFtpServer.class, wrapped);
+        }
+    }
+    final CachedPrivateFtpServerService privateFtpServers;
+    public PrivateFtpServerService<CachedConnector,CachedConnectorFactory> getPrivateFtpServers() {
+        return privateFtpServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ProcessorTypeService">
-    // TODO: final CachedProcessorTypeService processorTypes;
-    // TODO: public ProcessorTypeService<CachedConnector,CachedConnectorFactory> getProcessorTypes();
+    static class CachedProcessorTypeService extends CachedService<String,ProcessorType> implements ProcessorTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedProcessorTypeService(CachedConnector connector, ProcessorTypeService<?,?> wrapped) {
+            super(connector, String.class, ProcessorType.class, wrapped);
+        }
+    }
+    final CachedProcessorTypeService processorTypes;
+    public ProcessorTypeService<CachedConnector,CachedConnectorFactory> getProcessorTypes() {
+        return processorTypes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ProtocolService">
     static class CachedProtocolService extends CachedService<String,Protocol> implements ProtocolService<CachedConnector,CachedConnectorFactory> {
@@ -1417,8 +1526,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionTypeService">
-    // TODO: final CachedTicketActionTypeService ticketActionTypes;
-    // TODO: public TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes();
+    static class CachedTicketActionTypeService extends CachedService<String,TicketActionType> implements TicketActionTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedTicketActionTypeService(CachedConnector connector, TicketActionTypeService<?,?> wrapped) {
+            super(connector, String.class, TicketActionType.class, wrapped);
+        }
+    }
+    final CachedTicketActionTypeService ticketActionTypes;
+    public TicketActionTypeService<CachedConnector,CachedConnectorFactory> getTicketActionTypes() {
+        return ticketActionTypes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionService">
     // TODO: final CachedTicketActionService ticketActions;
@@ -1506,8 +1622,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionTypeService">
-    // TODO: final CachedTransactionTypeService transactionTypes;
-    // TODO: public TransactionTypeService<CachedConnector,CachedConnectorFactory> getTransactionTypes();
+    static class CachedTransactionTypeService extends CachedService<String,TransactionType> implements TransactionTypeService<CachedConnector,CachedConnectorFactory> {
+        CachedTransactionTypeService(CachedConnector connector, TransactionTypeService<?,?> wrapped) {
+            super(connector, String.class, TransactionType.class, wrapped);
+        }
+    }
+    final CachedTransactionTypeService transactionTypes;
+    public TransactionTypeService<CachedConnector,CachedConnectorFactory> getTransactionTypes() {
+        return transactionTypes;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionService">
     // TODO: final CachedTransactionService transactions;

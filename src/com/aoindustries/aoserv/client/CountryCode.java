@@ -31,9 +31,9 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String name;
+    private String name;
     final private boolean chargeComSupported;
-    final private String chargeComName;
+    private String chargeComName;
 
     public CountryCode(
         CountryCodeService<?,?> table,
@@ -46,6 +46,17 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
         this.name = name;
         this.chargeComSupported = chargeComSupported;
         this.chargeComName = chargeComName;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
+        chargeComName = intern(chargeComName);
     }
     // </editor-fold>
 
@@ -62,7 +73,7 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
      */
     @SchemaColumn(order=0, name="code", index=IndexType.PRIMARY_KEY, description="the two-character code for the country")
     public String getCode() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="name", description="the name of the country")
@@ -83,7 +94,7 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.CountryCode getBean() {
-        return new com.aoindustries.aoserv.client.beans.CountryCode(key, name, chargeComSupported, chargeComName);
+        return new com.aoindustries.aoserv.client.beans.CountryCode(getKey(), name, chargeComSupported, chargeComName);
     }
     // </editor-fold>
 

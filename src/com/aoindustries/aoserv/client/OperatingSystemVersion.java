@@ -36,11 +36,11 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String operatingSystem;
-    final private String versionNumber;
-    final private String versionName;
-    final private String architecture;
-    final private String display;
+    private String operatingSystem;
+    private String versionNumber;
+    private String versionName;
+    private String architecture;
+    private String display;
     final private boolean isAoservDaemonSupported;
     final private short sortOrder;
 
@@ -56,13 +56,27 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
         short sortOrder
     ) {
         super(service, pkey);
-        this.operatingSystem = operatingSystem.intern();
+        this.operatingSystem = operatingSystem;
         this.versionNumber = versionNumber;
         this.versionName = versionName;
-        this.architecture = architecture.intern();
+        this.architecture = architecture;
         this.display = display;
         this.isAoservDaemonSupported = isAoservDaemonSupported;
         this.sortOrder = sortOrder;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        operatingSystem = intern(operatingSystem);
+        versionNumber = intern(versionNumber);
+        versionName = intern(versionName);
+        architecture = intern(architecture);
+        display = intern(display);
     }
     // </editor-fold>
 

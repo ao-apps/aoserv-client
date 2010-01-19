@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.Row;
+import com.aoindustries.util.Internable;
 import com.aoindustries.util.i18n.LocalizedToString;
 import com.aoindustries.util.WrappedException;
 import java.io.Serializable;
@@ -33,6 +34,20 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      * Value used when data has been filtered.
      */
     public static final String FILTERED = "*";
+
+    /**
+     * null-safe intern.
+     */
+    protected static <V extends Internable<V>> V intern(V value) {
+        return value==null ? null : value.intern();
+    }
+
+    /**
+     * null-safe intern.
+     */
+    protected static String intern(String value) {
+        return value==null ? null : value.intern();
+    }
 
     private volatile transient AOServService<?,?,K,T> service;
 

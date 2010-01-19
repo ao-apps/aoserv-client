@@ -28,12 +28,22 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private Integer parent;
-    final private String name;
+    private String name;
 
     public TicketCategory(TicketCategoryService<?,?> service, int pkey, Integer parent, String name) {
         super(service, pkey);
         this.parent = parent;
-        this.name = name.intern();
+        this.name = name;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
     }
     // </editor-fold>
 

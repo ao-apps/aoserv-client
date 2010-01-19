@@ -30,7 +30,7 @@ final public class MasterServer extends AOServObjectIntegerKey<MasterServer> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private UserId username;
+    private UserId username;
     final private int server;
 
     public MasterServer(
@@ -40,8 +40,18 @@ final public class MasterServer extends AOServObjectIntegerKey<MasterServer> imp
         int server
     ) {
         super(service, pkey);
-        this.username = username.intern();
+        this.username = username;
         this.server = server;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        username = intern(username);
     }
     // </editor-fold>
 

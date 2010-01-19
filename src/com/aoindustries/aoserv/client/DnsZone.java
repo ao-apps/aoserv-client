@@ -45,9 +45,9 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private DomainName zone;
-    final private String file;
-    final private DomainName hostmaster;
+    private DomainName zone;
+    private String file;
+    private DomainName hostmaster;
     final private long serial;
     final private int ttl;
 
@@ -61,11 +61,23 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
         int ttl
     ) {
         super(service, resource);
-        this.zone = zone.intern();
-        this.file = file.intern();
-        this.hostmaster = hostmaster.intern();
+        this.zone = zone;
+        this.file = file;
+        this.hostmaster = hostmaster;
         this.serial = serial;
         this.ttl = ttl;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        zone = intern(zone);
+        file = intern(file);
+        hostmaster = intern(hostmaster);
     }
     // </editor-fold>
 
@@ -271,12 +283,12 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
             if(hasConflictAbove) out.append("; Disabled due to conflict: ");
             // Each record type
             InetAddress dataIpAddress = record.getDataIpAddress();
-            if(dataIpAddress!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.type, record.getMxPriority(), dataIpAddress.getAddress());
+            if(dataIpAddress!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.getType().getType(), record.getMxPriority(), dataIpAddress.getAddress());
             else {
-                if(record.getDataDomainName()!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.type, record.getMxPriority(), record.getRelativeDataDomainName());
+                if(record.getDataDomainName()!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.getType().getType(), record.getMxPriority(), record.getRelativeDataDomainName());
                 else {
                     String dataText = record.getDataText();
-                    if(dataText!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.type, record.getMxPriority(), dataText);
+                    if(dataText!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.getType().getType(), record.getMxPriority(), dataText);
                     else throw new AssertionError();
                 }
             }

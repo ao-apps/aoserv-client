@@ -52,7 +52,7 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the architecture")
     public String getName() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="bits", description="the number of bits used by the architecture")
@@ -63,7 +63,7 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Architecture getBean() {
-        return new com.aoindustries.aoserv.client.beans.Architecture(key, bits);
+        return new com.aoindustries.aoserv.client.beans.Architecture(getKey(), bits);
     }
     // </editor-fold>
 

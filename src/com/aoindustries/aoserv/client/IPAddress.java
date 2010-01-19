@@ -22,7 +22,7 @@ import java.util.Set;
  * @see  Business
  * @see  NetBind
  * @see  NetDevice
- * @see  PrivateFTPServer
+ * @see  PrivateFtpServer
  *
  * @author  AO Industries, Inc.
  */
@@ -33,15 +33,15 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private InetAddress ipAddress;
+    private InetAddress ipAddress;
     final private Integer netDevice;
     final private boolean isAlias;
-    final private DomainName hostname;
+    private DomainName hostname;
     final private boolean available;
     final private boolean isOverflow;
     final private boolean isDhcp;
     final private boolean pingMonitorEnabled;
-    final private InetAddress externalIpAddress;
+    private InetAddress externalIpAddress;
     final private short netmask;
 
     public IPAddress(
@@ -59,7 +59,7 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
         short netmask
     ) {
         super(service, serverResource);
-        this.ipAddress = ipAddress.intern();
+        this.ipAddress = ipAddress;
         this.netDevice = netDevice;
         this.isAlias = isAlias;
         this.hostname = hostname;
@@ -67,8 +67,20 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
         this.isOverflow = isOverflow;
         this.isDhcp = isDhcp;
         this.pingMonitorEnabled = pingMonitorEnabled;
-        this.externalIpAddress = externalIpAddress==null ? null : externalIpAddress.intern();
+        this.externalIpAddress = externalIpAddress;
         this.netmask = netmask;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        ipAddress = intern(ipAddress);
+        hostname = intern(hostname);
+        externalIpAddress = intern(externalIpAddress);
     }
     // </editor-fold>
 

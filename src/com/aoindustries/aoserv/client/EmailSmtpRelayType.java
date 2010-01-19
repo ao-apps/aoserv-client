@@ -34,18 +34,28 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String sendmailConfig;
+    private String sendmailConfig;
 
     public EmailSmtpRelayType(EmailSmtpRelayTypeService<?,?> service, String name, String sendmailConfig) {
         super(service, name);
-        this.sendmailConfig = sendmailConfig.intern();
+        this.sendmailConfig = sendmailConfig;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        sendmailConfig = intern(sendmailConfig);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the type")
     public String getName() {
-        return key;
+        return getKey();
     }
     
     @SchemaColumn(order=1, name="sendmail_config", description="the config value used for sendmail")
@@ -57,7 +67,7 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.EmailSmtpRelayType getBean() {
-        return new com.aoindustries.aoserv.client.beans.EmailSmtpRelayType(key, sendmailConfig);
+        return new com.aoindustries.aoserv.client.beans.EmailSmtpRelayType(getKey(), sendmailConfig);
     }
     // </editor-fold>
 

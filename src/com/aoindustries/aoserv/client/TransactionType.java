@@ -5,7 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>TransactionType</code> is one type that may be used
@@ -44,27 +47,45 @@ final public class TransactionType extends AOServObjectStringKey<TransactionType
     }
     // </editor-fold>
 
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+pkey+".description");
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of this transaction type")
+    public String getName() {
+        return getKey();
     }
 
-    /**
-     * Gets the unique name of this transaction type.
-     */
-    public String getName() {
-        return pkey;
+    @SchemaColumn(order=1, name="is_credit", description="indicates that this type of transaction represents payment or credit")
+    public boolean isCredit() {
+        return isCredit;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TransactionType getBean() {
+        return new com.aoindustries.aoserv.client.beans.TransactionType(getKey(), isCredit);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getTransactions()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public String getDescription(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+getKey()+".description");
     }
 
     public String getUnit(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+pkey+".unit");
-    }
-
-    public boolean isCredit() {
-        return isCredit;
+        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+getKey()+".unit");
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "TransactionType."+getKey()+".toString");
     }
+    // </editor-fold>
 }

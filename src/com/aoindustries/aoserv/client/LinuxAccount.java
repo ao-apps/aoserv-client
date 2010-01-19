@@ -72,16 +72,16 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String linuxAccountType;
-    final private UserId username;
+    private String linuxAccountType;
+    private UserId username;
     final private LinuxID uid;
-    final private UnixPath home;
-    final private Gecos name;
-    final private Gecos officeLocation;
-    final private Gecos officePhone;
-    final private Gecos homePhone;
-    final private UnixPath shell;
-    final private String predisablePassword;
+    private UnixPath home;
+    private Gecos name;
+    private Gecos officeLocation;
+    private Gecos officePhone;
+    private Gecos homePhone;
+    private UnixPath shell;
+    private String predisablePassword;
 
     public LinuxAccount(
         LinuxAccountService<?,?> service,
@@ -98,16 +98,34 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         String predisablePassword
     ) {
         super(service, aoServerResource);
-        this.linuxAccountType = linuxAccountType.intern();
-        this.username = username.intern();
+        this.linuxAccountType = linuxAccountType;
+        this.username = username;
         this.uid = uid;
         this.home = home;
         this.name = name;
         this.officeLocation = officeLocation;
         this.officePhone = officePhone;
         this.homePhone = homePhone;
-        this.shell = shell.intern();
+        this.shell = shell;
         this.predisablePassword = predisablePassword;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        linuxAccountType = intern(linuxAccountType);
+        username = intern(username);
+        home = intern(home);
+        name = intern(name);
+        officeLocation = intern(officeLocation);
+        officePhone = intern(officePhone);
+        homePhone = intern(homePhone);
+        shell = intern(shell);
+        predisablePassword = intern(predisablePassword);
     }
     // </editor-fold>
 

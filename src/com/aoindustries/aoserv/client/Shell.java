@@ -64,13 +64,13 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanF
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="path", index=IndexType.PRIMARY_KEY, description="the complete path to the executable")
     public UnixPath getPath() {
-    	return key;
+    	return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Shell getBean() {
-        return new com.aoindustries.aoserv.client.beans.Shell(key.getBean());
+        return new com.aoindustries.aoserv.client.beans.Shell(getKey().getBean());
     }
     // </editor-fold>
 

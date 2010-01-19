@@ -18,15 +18,25 @@ abstract public class AOServObjectUserIdKey<T extends AOServObjectUserIdKey<T>> 
 
     private static final long serialVersionUID = 1L;
 
-    final protected UserId key;
+    private UserId key;
 
     protected AOServObjectUserIdKey(AOServService<?,?,UserId,T> service, UserId key) {
         super(service);
-        this.key = key.intern();
+        this.key = key;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        key = intern(key);
     }
 
     /**
-     * Gets the key value for this object.
+     * Gets the interned key value for this object.
      */
     final public UserId getKey() {
         return key;

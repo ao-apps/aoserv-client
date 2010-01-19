@@ -103,7 +103,7 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the permission")
     public String getName() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="the sort order for the permission")
@@ -114,21 +114,21 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.AOServPermission getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServPermission(key, sortOrder);
+        return new com.aoindustries.aoserv.client.beans.AOServPermission(getKey(), sortOrder);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+getKey()+".toString");
     }
 
     /**
      * Gets the locale-specific description of this permission.
      */
     public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+key+".description");
+        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+getKey()+".description");
     }
     // </editor-fold>
 }

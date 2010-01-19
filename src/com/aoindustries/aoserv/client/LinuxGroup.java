@@ -75,8 +75,8 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String linuxGroupType;
-    final private GroupId groupName;
+    private String linuxGroupType;
+    private GroupId groupName;
     final private LinuxID gid;
 
     public LinuxGroup(
@@ -87,9 +87,20 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
         LinuxID gid
     ) {
         super(service, aoServerResource);
-        this.linuxGroupType = linuxGroupType.intern();
-        this.groupName = groupName.intern();
+        this.linuxGroupType = linuxGroupType;
+        this.groupName = groupName;
         this.gid = gid;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        linuxGroupType = intern(linuxGroupType);
+        groupName = intern(groupName);
     }
     // </editor-fold>
 
@@ -253,8 +264,8 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
             }
         }
 
-        //for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
-        //    if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
+        //for(PrivateFtpServer pfs : ao.getPrivateFtpServers()) {
+        //    if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFtpServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
         //}
 
         return reasons;

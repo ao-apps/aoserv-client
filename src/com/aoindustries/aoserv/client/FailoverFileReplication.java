@@ -34,8 +34,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     final private int maxBitRate;
     final private boolean useCompression;
     final private short retention;
-    final private InetAddress connectAddress;
-    final private InetAddress connectFrom;
+    private InetAddress connectAddress;
+    private InetAddress connectFrom;
     final private boolean enabled;
     final private LinuxID quotaGid;
 
@@ -58,10 +58,21 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         this.maxBitRate = maxBitRate;
         this.useCompression = useCompression;
         this.retention = retention;
-        this.connectAddress = connectAddress==null ? null : connectAddress.intern();
-        this.connectFrom = connectFrom==null ? null : connectFrom.intern();
+        this.connectAddress = connectAddress;
+        this.connectFrom = connectFrom;
         this.enabled = enabled;
         this.quotaGid = quotaGid;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        connectAddress = intern(connectAddress);
+        connectFrom = intern(connectFrom);
     }
     // </editor-fold>
 

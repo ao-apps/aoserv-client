@@ -7,11 +7,14 @@ package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.AOServObjectUtils;
 import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
 import java.io.Serializable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Used for the various user-provided fields in the <code>/etc/passwd</code> file.
@@ -20,7 +23,7 @@ import java.io.Serializable;
  *
  * @author  AO Industries, Inc.
  */
-final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.Gecos> {
+final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.Gecos>, Internable<Gecos> {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,40 +40,45 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
     public static void validate(String value) throws ValidationException {
         // Be non-null
         if(value==null) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isNull");
-        int len = value.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isEmpty");
-        if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.tooLong", MAX_LENGTH, len);
+        if(!interned.containsKey(value)) { // Is valid if already interned
+            int len = value.length();
+            if(len==0) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isEmpty");
+            if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.tooLong", MAX_LENGTH, len);
 
-        for (int c = 0; c < len; c++) {
-            char ch = value.charAt(c);
-            if (
-                (ch < 'a' || ch > 'z')
-                && (ch<'A' || ch>'Z')
-                && (ch < '0' || ch > '9')
-                && ch != '-'
-                && ch != '_'
-                && ch != '@'
-                && ch != ' '
-                && ch != '.'
-                && ch != '#'
-                && ch != '='
-                && ch != '/'
-                && ch != '$'
-                && ch != '%'
-                && ch != '^'
-                && ch != '&'
-                && ch != '*'
-                && ch != '('
-                && ch != ')'
-                && ch != '?'
-                && ch != '\''
-                && ch != '+'
-            ) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.invalidCharacter", ch);
+            for (int c = 0; c < len; c++) {
+                char ch = value.charAt(c);
+                if (
+                    (ch < 'a' || ch > 'z')
+                    && (ch<'A' || ch>'Z')
+                    && (ch < '0' || ch > '9')
+                    && ch != '-'
+                    && ch != '_'
+                    && ch != '@'
+                    && ch != ' '
+                    && ch != '.'
+                    && ch != '#'
+                    && ch != '='
+                    && ch != '/'
+                    && ch != '$'
+                    && ch != '%'
+                    && ch != '^'
+                    && ch != '&'
+                    && ch != '*'
+                    && ch != '('
+                    && ch != ')'
+                    && ch != '?'
+                    && ch != '\''
+                    && ch != '+'
+                ) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.invalidCharacter", ch);
+            }
         }
     }
 
+    private static final ConcurrentMap<String,Gecos> interned = new ConcurrentHashMap<String,Gecos>();
+
     public static Gecos valueOf(String value) throws ValidationException {
-        return new Gecos(value);
+        Gecos existing = interned.get(value);
+        return existing!=null ? existing : new Gecos(value);
     }
 
     final private String value;
@@ -102,6 +110,14 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
         }
     }
 
+    /**
+     * Automatically uses previously interned values on deserialization.
+     */
+    private Object readResolve() throws InvalidObjectException {
+        Gecos existing = interned.get(value);
+        return existing!=null ? existing : this;
+    }
+
     @Override
     public boolean equals(Object O) {
     	return
@@ -123,6 +139,27 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
     @Override
     public String toString() {
         return value;
+    }
+
+    /**
+     * Interns this id much in the same fashion as <code>String.intern()</code>.
+     *
+     * @see  String#intern()
+     */
+    public Gecos intern() {
+        try {
+            Gecos existing = interned.get(value);
+            if(existing==null) {
+                String internedValue = value.intern();
+                Gecos addMe = value==internedValue ? this : new Gecos(internedValue); // Using identity String comparison to see if already interned
+                existing = interned.putIfAbsent(internedValue, addMe);
+                if(existing==null) existing = addMe;
+            }
+            return existing;
+        } catch(ValidationException err) {
+            // Should not fail validation since original object passed
+            throw new AssertionError(err.getMessage());
+        }
     }
 
     public String getValue() {

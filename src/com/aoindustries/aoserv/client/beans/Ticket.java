@@ -27,8 +27,8 @@ public class Ticket {
     private String adminPriority;
     private String status;
     private Date statusTimeout;
-    private Email[] contactEmails;
-    private String[] contactPhoneNumbers;
+    private String contactEmails;
+    private String contactPhoneNumbers;
 
     public Ticket() {
     }
@@ -49,8 +49,8 @@ public class Ticket {
         String adminPriority,
         String status,
         Date statusTimeout,
-        Email[] contactEmails,
-        String[] contactPhoneNumbers
+        String contactEmails,
+        String contactPhoneNumbers
     ) {
         this.ticketId = ticketId;
         this.brand = brand;
@@ -191,19 +191,19 @@ public class Ticket {
         this.statusTimeout = statusTimeout;
     }
 
-    public Email[] getContactEmails() {
+    public String getContactEmails() {
         return contactEmails;
     }
 
-    public void setContactEmails(Email[] contactEmails) {
+    public void setContactEmails(String contactEmails) {
         this.contactEmails = contactEmails;
     }
 
-    public String[] getContactPhoneNumbers() {
+    public String getContactPhoneNumbers() {
         return contactPhoneNumbers;
     }
 
-    public void setContactPhoneNumbers(String[] contactPhoneNumbers) {
+    public void setContactPhoneNumbers(String contactPhoneNumbers) {
         this.contactPhoneNumbers = contactPhoneNumbers;
     }
 }

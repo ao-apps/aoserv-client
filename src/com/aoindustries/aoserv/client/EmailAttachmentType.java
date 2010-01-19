@@ -36,7 +36,7 @@ final public class EmailAttachmentType extends AOServObjectStringKey<EmailAttach
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="extension", index=IndexType.PRIMARY_KEY, description="the unique filename extension")
     public String getExtension() {
-        return key;
+        return getKey();
     }
     
     @SchemaColumn(order=1, name="is_default_block", description="indicates that the type will be blocked by default")
@@ -47,7 +47,7 @@ final public class EmailAttachmentType extends AOServObjectStringKey<EmailAttach
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.EmailAttachmentType getBean() {
-        return new com.aoindustries.aoserv.client.beans.EmailAttachmentType(key, isDefaultBlock);
+        return new com.aoindustries.aoserv.client.beans.EmailAttachmentType(getKey(), isDefaultBlock);
     }
     // </editor-fold>
 
@@ -62,7 +62,7 @@ final public class EmailAttachmentType extends AOServObjectStringKey<EmailAttach
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "EmailAttachmentType."+key+".description");
+        return ApplicationResources.accessor.getMessage(userLocale, "EmailAttachmentType."+getKey()+".description");
     }
     // </editor-fold>
 

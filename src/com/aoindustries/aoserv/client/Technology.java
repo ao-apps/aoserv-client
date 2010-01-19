@@ -25,13 +25,24 @@ final public class Technology extends AOServObjectIntegerKey<Technology> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final String name;
-    final String technologyClass;
+    private String name;
+    private String technologyClass;
 
     public Technology(TechnologyService<?,?> service, int pkey, String name, String technologyClass) {
         super(service, pkey);
-        this.name = name.intern();
-        this.technologyClass = technologyClass.intern();
+        this.name = name;
+        this.technologyClass = technologyClass;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
+        technologyClass = intern(technologyClass);
     }
     // </editor-fold>
 

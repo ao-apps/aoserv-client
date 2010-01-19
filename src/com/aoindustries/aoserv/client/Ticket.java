@@ -32,26 +32,26 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private AccountingCode brand;
-    final private AccountingCode reseller;
-    final private AccountingCode accounting;
-    final private String language;
-    final private UserId createdBy;
+    private AccountingCode brand;
+    private AccountingCode reseller;
+    private AccountingCode accounting;
+    private String language;
+    private UserId createdBy;
     final private Integer category;
-    final private String ticketType;
-    final private Email fromAddress;
-    final private String summary;
+    private String ticketType;
+    private Email fromAddress;
+    private String summary;
     transient private boolean detailsLoaded;
     transient private String details;
     transient private boolean rawEmailLoaded;
     transient private String rawEmail;
     final private Timestamp openDate;
-    final private String clientPriority;
-    final private String adminPriority;
-    final private String status;
+    private String clientPriority;
+    private String adminPriority;
+    private String status;
     final private Timestamp statusTimeout;
-    final private Set<Email> contactEmails;
-    final private Set<String> contactPhoneNumbers;
+    private String contactEmails;
+    private String contactPhoneNumbers;
     transient private boolean internalNotesLoaded;
     transient private String internalNotes;
 
@@ -72,26 +72,48 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
         String adminPriority,
         String status,
         Timestamp statusTimeout,
-        Set<Email> contactEmails,
-        Set<String> contactPhoneNumbers
+        String contactEmails,
+        String contactPhoneNumbers
     ) {
         super(service, ticketId);
-        this.brand = brand.intern();
-        this.reseller = reseller==null ? null : reseller.intern();
-        this.accounting = accounting==null ? null : accounting.intern();
-        this.language = language.intern();
-        this.createdBy = createdBy==null ? null : createdBy.intern();
+        this.brand = brand;
+        this.reseller = reseller;
+        this.accounting = accounting;
+        this.language = language;
+        this.createdBy = createdBy;
         this.category = category;
-        this.ticketType = ticketType.intern();
-        this.fromAddress = fromAddress==null ? null : fromAddress.intern();
+        this.ticketType = ticketType;
+        this.fromAddress = fromAddress;
         this.summary = summary;
         this.openDate = openDate;
-        this.clientPriority = clientPriority.intern();
-        this.adminPriority = adminPriority==null ? null : adminPriority.intern();
-        this.status = status.intern();
+        this.clientPriority = clientPriority;
+        this.adminPriority = adminPriority;
+        this.status = status;
         this.statusTimeout = statusTimeout;
         this.contactEmails = contactEmails;
         this.contactPhoneNumbers = contactPhoneNumbers;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        brand = intern(brand);
+        reseller = intern(reseller);
+        accounting = intern(accounting);
+        language = intern(language);
+        createdBy = intern(createdBy);
+        ticketType = intern(ticketType);
+        fromAddress = intern(fromAddress);
+        summary = intern(summary);
+        clientPriority = intern(clientPriority);
+        adminPriority = intern(adminPriority);
+        status = intern(status);
+        contactEmails = intern(contactEmails);
+        contactPhoneNumbers = intern(contactPhoneNumbers);
     }
     // </editor-fold>
 
@@ -211,12 +233,12 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     }
 
     @SchemaColumn(order=15, name="contact_emails", description="the set of email addresses that will be notified for the ticket")
-    public Set<Email> getContactEmails() {
+    public String getContactEmails() {
         return contactEmails;
     }
 
     @SchemaColumn(order=16, name="contact_phone_numbers", description="the set of phone numbers that may be used in handling the ticket request")
-    public Set<String> getContactPhoneNumbers() {
+    public String getContactPhoneNumbers() {
         return contactPhoneNumbers;
     }
 
@@ -233,13 +255,6 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Ticket getBean() {
-        com.aoindustries.aoserv.client.beans.Email[] emails;
-        if(contactEmails==null) emails = null;
-        else {
-            emails = new com.aoindustries.aoserv.client.beans.Email[contactEmails.size()];
-            int index = 0;
-            for(Email email : contactEmails) emails[index++] = email.getBean();
-        }
         return new com.aoindustries.aoserv.client.beans.Ticket(
             key,
             brand.getBean(),
@@ -256,8 +271,8 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
             adminPriority,
             status,
             statusTimeout,
-            emails,
-            contactPhoneNumbers==null ? null : contactPhoneNumbers.toArray(new String[contactPhoneNumbers.size()])
+            contactEmails,
+            contactPhoneNumbers
         );
     }
     // </editor-fold>

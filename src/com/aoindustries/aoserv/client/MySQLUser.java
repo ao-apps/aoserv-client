@@ -77,9 +77,9 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private MySQLUserId username;
+    private MySQLUserId username;
     final private int mysqlServer;
-    final private InetAddress host;
+    private InetAddress host;
     final private boolean selectPriv;
     final private boolean insertPriv;
     final private boolean updatePriv;
@@ -108,7 +108,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     final private boolean createUserPriv;
     final private boolean eventPriv;
     final private boolean triggerPriv;
-    final private String predisablePassword;
+    private String predisablePassword;
     final private int maxQuestions;
     final private int maxUpdates;
     final private int maxConnections;
@@ -155,9 +155,9 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
         int maxUserConnections
     ) {
         super(service, aoServerResource);
-        this.username = username.intern();
+        this.username = username;
         this.mysqlServer = mysqlServer;
-        this.host = host==null ? null : host.intern();
+        this.host = host;
         this.selectPriv = selectPriv;
         this.insertPriv = insertPriv;
         this.updatePriv = updatePriv;
@@ -191,6 +191,18 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
         this.maxUpdates = maxUpdates;
         this.maxConnections = maxConnections;
         this.maxUserConnections = maxUserConnections;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        username = intern(username);
+        host = intern(host);
+        predisablePassword = intern(predisablePassword);
     }
     // </editor-fold>
 

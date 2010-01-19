@@ -316,7 +316,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private MySQLServerName name;
+    private MySQLServerName name;
     final private int version;
     final private int maxConnections;
     final private int netBind;
@@ -330,10 +330,20 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         int netBind
     ) {
         super(service, aoServerResource);
-        this.name = name.intern();
+        this.name = name;
         this.version = version;
         this.maxConnections = maxConnections;
         this.netBind = netBind;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
     }
     // </editor-fold>
 

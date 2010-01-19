@@ -28,7 +28,7 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private AccountingCode accounting;
+    private AccountingCode accounting;
     final private int server;
     final private boolean isDefault;
     final private boolean canVncConsole;
@@ -42,10 +42,20 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
         boolean canVncConsole
     ) {
         super(service, pkey);
-        this.accounting = accounting.intern();
+        this.accounting = accounting;
         this.server = server;
         this.isDefault = isDefault;
         this.canVncConsole = canVncConsole;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        accounting = intern(accounting);
     }
     // </editor-fold>
 

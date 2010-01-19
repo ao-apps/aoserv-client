@@ -60,7 +60,7 @@ final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implemen
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique username of this master user")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(key);
+        return getService().getConnector().getBusinessAdministrators().get(getKey());
     }
 
     @SchemaColumn(order=1, name="is_active", description="this level of access may be disabled")
@@ -96,7 +96,7 @@ final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implemen
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MasterUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.MasterUser(key.getBean(), isActive, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, isDnsAdmin);
+        return new com.aoindustries.aoserv.client.beans.MasterUser(getKey().getBean(), isActive, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, isDnsAdmin);
     }
     // </editor-fold>
 

@@ -67,13 +67,13 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
      */
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the resource type")
     public String getName() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.ResourceType getBean() {
-        return new com.aoindustries.aoserv.client.beans.ResourceType(key);
+        return new com.aoindustries.aoserv.client.beans.ResourceType(getKey());
     }
     // </editor-fold>
 
@@ -89,6 +89,7 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     }
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
+        String key = getKey();
         AOServObject obj;
         if(
             key.equals(ResourceType.EMAIL_INBOX)
@@ -110,27 +111,27 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     }
 
     public LinuxAccountType getLinuxAccountType() throws RemoteException {
-        return getService().getConnector().getLinuxAccountTypes().get(key);
+        return getService().getConnector().getLinuxAccountTypes().get(getKey());
     }
 
     public LinuxGroupType getLinuxGroupType() throws RemoteException {
-        return getService().getConnector().getLinuxGroupTypes().get(key);
+        return getService().getConnector().getLinuxGroupTypes().get(getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDisplayUnit(Locale userLocale, int quantity) {
-        if(quantity==1) return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+key+".singularDisplayUnit", quantity);
-        else return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+key+".pluralDisplayUnit", quantity);
+        if(quantity==1) return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+getKey()+".singularDisplayUnit", quantity);
+        else return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+getKey()+".pluralDisplayUnit", quantity);
     }
 
     public String getPerUnit(Locale userLocale, Object amount) {
-        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+key+".perUnit", amount);
+        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+getKey()+".perUnit", amount);
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+getKey()+".toString");
     }
     // </editor-fold>
     

@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.BeanFactory;
 import com.aoindustries.aoserv.client.MySQLServer;
+import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.MySQLDatabaseName> {
+final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.MySQLDatabaseName>, Internable<MySQLDatabaseName> {
 
     private static final long serialVersionUID = 1L;
 

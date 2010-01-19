@@ -29,13 +29,13 @@ final public class ExpenseCategory extends AOServObjectStringKey<ExpenseCategory
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="expense_code", index=IndexType.PRIMARY_KEY, description="a simple code used as primary key")
     public String getExpenseCode() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.ExpenseCategory getBean() {
-        return new com.aoindustries.aoserv.client.beans.ExpenseCategory(key);
+        return new com.aoindustries.aoserv.client.beans.ExpenseCategory(getKey());
     }
     // </editor-fold>
 

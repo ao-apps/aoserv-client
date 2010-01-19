@@ -11,14 +11,12 @@ package com.aoindustries.aoserv.client.beans;
 public class TechnologyClass {
 
     private String name;
-    private String description;
 
     public TechnologyClass() {
     }
 
-    public TechnologyClass(String name, String description) {
+    public TechnologyClass(String name) {
         this.name = name;
-        this.description = description;
     }
 
     public String getName() {
@@ -27,13 +25,5 @@ public class TechnologyClass {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

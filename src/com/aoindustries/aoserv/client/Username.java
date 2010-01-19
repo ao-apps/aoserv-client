@@ -30,20 +30,30 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final AccountingCode accounting;
-    final Integer disableLog;
+    private AccountingCode accounting;
+    final private Integer disableLog;
 
     public Username(UsernameService<?,?> table, UserId username, AccountingCode accounting, Integer disableLog) {
         super(table, username);
-        this.accounting = accounting.intern();
+        this.accounting = accounting;
         this.disableLog = disableLog;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        accounting = intern(accounting);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="username", index=IndexType.PRIMARY_KEY, description="the unique username")
     public UserId getUsername() {
-        return key;
+        return getKey();
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
@@ -62,7 +72,7 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Username getBean() {
-        return new com.aoindustries.aoserv.client.beans.Username(key.getBean(), accounting.getBean(), disableLog);
+        return new com.aoindustries.aoserv.client.beans.Username(getKey().getBean(), accounting.getBean(), disableLog);
     }
     // </editor-fold>
 

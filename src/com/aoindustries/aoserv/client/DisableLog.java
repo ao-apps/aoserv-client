@@ -26,9 +26,9 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private Timestamp time;
-    final private AccountingCode accounting;
-    final private UserId disabledBy;
-    final private String disableReason;
+    private AccountingCode accounting;
+    private UserId disabledBy;
+    private String disableReason;
 
     public DisableLog(
         DisableLogService<?,?> service,
@@ -40,9 +40,21 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     ) {
         super(service, pkey);
         this.time = time;
-        this.accounting = accounting.intern();
-        this.disabledBy = disabledBy.intern();
+        this.accounting = accounting;
+        this.disabledBy = disabledBy;
         this.disableReason = disableReason;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        accounting = intern(accounting);
+        disabledBy = intern(disabledBy);
+        disableReason = intern(disableReason);
     }
     // </editor-fold>
 

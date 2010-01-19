@@ -51,7 +51,7 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the mode")
     public String getName() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="sort_order", index=IndexType.PRIMARY_KEY, description="provides ordering of the modes")
@@ -62,7 +62,7 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode getBean() {
-        return new com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode(key, sortOrder);
+        return new com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode(getKey(), sortOrder);
     }
     // </editor-fold>
 
@@ -78,7 +78,7 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "EmailSpamAssassinIntegrationMode."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "EmailSpamAssassinIntegrationMode."+getKey()+".toString");
     }
     // </editor-fold>
 

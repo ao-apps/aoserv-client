@@ -31,20 +31,20 @@ final public class Language extends AOServObjectStringKey<Language> implements B
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="code", index=IndexType.PRIMARY_KEY, description="the language code")
     public String getCode() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Language getBean() {
-        return new com.aoindustries.aoserv.client.beans.Language(key);
+        return new com.aoindustries.aoserv.client.beans.Language(getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "Language."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "Language."+getKey()+".toString");
     }
     // </editor-fold>
 }

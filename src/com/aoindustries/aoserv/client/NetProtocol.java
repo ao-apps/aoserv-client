@@ -38,13 +38,13 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implem
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="protocol", index=IndexType.PRIMARY_KEY, description="the network protocol")
     public String getProtocol() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.NetProtocol getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetProtocol(key);
+        return new com.aoindustries.aoserv.client.beans.NetProtocol(getKey());
     }
     // </editor-fold>
 

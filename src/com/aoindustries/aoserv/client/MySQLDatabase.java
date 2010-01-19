@@ -66,7 +66,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private MySQLDatabaseName name;
+    private MySQLDatabaseName name;
     final private int mysqlServer;
 
     public MySQLDatabase(
@@ -78,6 +78,16 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
         super(service, aoServerResource);
         this.name = name;
         this.mysqlServer = mysqlServer;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
     }
     // </editor-fold>
 

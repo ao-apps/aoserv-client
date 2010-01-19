@@ -52,7 +52,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private PostgresDatabaseName name;
+    private PostgresDatabaseName name;
     final private int postgresServer;
     final private int datdba;
     final private int encoding;
@@ -79,6 +79,16 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         this.isTemplate = isTemplate;
         this.allowConn = allowConn;
         this.enablePostgis = enablePostgis;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
     }
     // </editor-fold>
 
@@ -120,12 +130,12 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     public PostgresEncoding getPostgresEncoding() throws RemoteException {
     	PostgresEncoding obj=getService().getConnector().getPostgresEncodings().get(encoding);
         // Make sure the postgres encoding postgresql version matches the server this database is part of
-        if(
-            obj.postgresVersion
-            != getPostgresServer().version
-        ) {
-            throw new RemoteException("encoding/postgres server version mismatch on PostgresDatabase: #"+key);
-        }
+//        if(
+//            obj.postgresVersion
+//            != getPostgresServer().version
+//        ) {
+//            throw new RemoteException("encoding/postgres server version mismatch on PostgresDatabase: #"+key);
+//        }
     	return obj;
     }
 

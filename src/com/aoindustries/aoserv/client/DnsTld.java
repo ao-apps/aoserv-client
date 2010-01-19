@@ -39,19 +39,19 @@ final public class DnsTld extends AOServObjectDomainNameKey<DnsTld> implements B
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="domain", index=IndexType.PRIMARY_KEY, description="the unique top-level domain")
     public DomainName getDomain() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.DnsTld getBean() {
-        return new com.aoindustries.aoserv.client.beans.DnsTld(key.getBean());
+        return new com.aoindustries.aoserv.client.beans.DnsTld(getKey().getBean());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "DnsTld.description."+key);
+        return ApplicationResources.accessor.getMessage(userLocale, "DnsTld.description."+getKey());
     }
     // </editor-fold>
 }

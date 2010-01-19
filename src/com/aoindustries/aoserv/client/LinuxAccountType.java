@@ -89,13 +89,13 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="resource_type", index=IndexType.PRIMARY_KEY, description="the resource type this represents")
     public ResourceType getResourceType() throws RemoteException {
-        return getService().getConnector().getResourceTypes().get(key);
+        return getService().getConnector().getResourceTypes().get(getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.LinuxAccountType getBean() {
-        return new com.aoindustries.aoserv.client.beans.LinuxAccountType(key);
+        return new com.aoindustries.aoserv.client.beans.LinuxAccountType(getKey());
     }
     // </editor-fold>
 
@@ -118,7 +118,7 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "LinuxAccountType."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "LinuxAccountType."+getKey()+".toString");
     }
     // </editor-fold>
 

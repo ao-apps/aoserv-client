@@ -47,7 +47,7 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the device")
     public String getName() {
-    	return key;
+    	return getKey();
     }
 
     @SchemaColumn(order=1, name="is_loopback", description="if the device is the loopback device")
@@ -58,7 +58,7 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.NetDeviceID getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetDeviceID(key, isLoopback);
+        return new com.aoindustries.aoserv.client.beans.NetDeviceID(getKey(), isLoopback);
     }
     // </editor-fold>
 

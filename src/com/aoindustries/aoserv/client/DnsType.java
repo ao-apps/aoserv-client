@@ -48,13 +48,13 @@ final public class DnsType extends AOServObjectStringKey<DnsType> implements Bea
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the type name")
     public String getType() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.DnsType getBean() {
-        return new com.aoindustries.aoserv.client.beans.DnsType(key);
+        return new com.aoindustries.aoserv.client.beans.DnsType(getKey());
     }
     // </editor-fold>
 
@@ -70,7 +70,7 @@ final public class DnsType extends AOServObjectStringKey<DnsType> implements Bea
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "DnsType."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "DnsType."+getKey()+".toString");
     }
     // </editor-fold>
 

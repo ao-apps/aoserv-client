@@ -33,19 +33,19 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private DomainName hostname;
+    private DomainName hostname;
     final private Integer daemonBind;
     final private HashedPassword daemonKey;
     final private int poolSize;
     final private int distroHour;
     final private Timestamp lastDistroTime;
     final private Integer failoverServer;
-    final private String daemonDeviceId;
+    private String daemonDeviceId;
     final private Integer daemonConnectBind;
-    final private String timeZone;
+    private String timeZone;
     final private Integer jilterBind;
     final private boolean restrictOutboundEmail;
-    final private InetAddress daemonConnectAddress;
+    private InetAddress daemonConnectAddress;
     final private int failoverBatchSize;
     final private Float monitoringLoadLow;
     final private Float monitoringLoadMedium;
@@ -75,24 +75,37 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         Float monitoringLoadCritical
     ) {
         super(service, server);
-        this.hostname = hostname.intern();
+        this.hostname = hostname;
         this.daemonBind = daemonBind;
         this.daemonKey = daemonKey;
         this.poolSize = poolSize;
         this.distroHour = distroHour;
         this.lastDistroTime = lastDistroTime;
         this.failoverServer = failoverServer;
-        this.daemonDeviceId = daemonDeviceId.intern();
+        this.daemonDeviceId = daemonDeviceId;
         this.daemonConnectBind = daemonConnectBind;
-        this.timeZone = timeZone.intern();
+        this.timeZone = timeZone;
         this.jilterBind = jilterBind;
         this.restrictOutboundEmail = restrictOutboundEmail;
-        this.daemonConnectAddress = daemonConnectAddress==null ? null : daemonConnectAddress.intern();
+        this.daemonConnectAddress = daemonConnectAddress;
         this.failoverBatchSize = failoverBatchSize;
         this.monitoringLoadLow = monitoringLoadLow;
         this.monitoringLoadMedium = monitoringLoadMedium;
         this.monitoringLoadHigh = monitoringLoadHigh;
         this.monitoringLoadCritical = monitoringLoadCritical;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        hostname = intern(hostname);
+        daemonDeviceId = intern(daemonDeviceId);
+        timeZone = intern(timeZone);
+        daemonConnectAddress = intern(daemonConnectAddress);
     }
     // </editor-fold>
 
@@ -458,8 +471,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return getService().getConnector().getMajordomoServers().getMajordomoServers(this);
     }
 
-    public List<PrivateFTPServer> getPrivateFTPServers() throws IOException {
-    	return getService().getConnector().getPrivateFTPServers().getPrivateFTPServers(this);
+    public List<PrivateFtpServer> getPrivateFtpServers() throws IOException {
+    	return getService().getConnector().getPrivateFtpServers().getPrivateFtpServers(this);
     }
 
     public List<SystemEmailAlias> getSystemEmailAliases() throws IOException {
@@ -802,8 +815,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return pss.isEmpty()?null:pss.get(0);
     }
 
-    public PrivateFTPServer getPrivateFTPServer(String path) {
-    	return getService().getConnector().privateFTPServers.getPrivateFTPServer(this, path);
+    public PrivateFtpServer getPrivateFtpServer(String path) {
+    	return getService().getConnector().privateFtpServers.getPrivateFtpServer(this, path);
     }
 
     public boolean isEmailDomainAvailable(String domain) throws SQLException, IOException {

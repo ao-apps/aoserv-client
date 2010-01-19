@@ -5,7 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * The system can process several different <code>PaymentType</code>s.
@@ -46,24 +49,46 @@ final public class PaymentType extends AOServObjectStringKey<PaymentType> implem
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the type")
+    public String getName() {
+    	return getKey();
+    }
+
+    @SchemaColumn(order=1, name="active", description="indicates if payment is currently accepted via this method")
+    public boolean isActive() {
+        return isActive;
+    }
+
+    @SchemaColumn(order=2, name="allow_web", description="indicates if payment is allowed via a web form")
     public boolean allowWeb() {
     	return allowWeb;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.PaymentType getBean() {
+        return new com.aoindustries.aoserv.client.beans.PaymentType(getKey(), isActive, allowWeb);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getTransactions()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "PaymentType."+key+".description");
-    }
-
-    public String getName() {
-    	return key;
-    }
-
-    public boolean isActive() {
-        return isActive;
+        return ApplicationResources.accessor.getMessage(userLocale, "PaymentType."+getKey()+".description");
     }
 
     @Override
     String toStringImpl(Locale userLocale) {
         return getDescription(userLocale);
     }
+    // </editor-fold>
 }

@@ -348,7 +348,7 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         postgresServers = new RetryPostgresServerService(this);
         postgresUsers = new RetryPostgresUserService(this);
         postgresVersions = new RetryPostgresVersionService(this);
-        // TODO: privateFTPServers = new RetryPrivateFTPServerService(this);
+        // TODO: privateFtpServers = new RetryPrivateFtpServerService(this);
         // TODO: processorTypes = new RetryProcessorTypeService(this);
         protocols = new RetryProtocolService(this);
         // TODO: racks = new RetryRackService(this);
@@ -1404,9 +1404,9 @@ final public class RetryConnector implements AOServConnector<RetryConnector,Retr
         return postgresVersions;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="PrivateFTPServerService">
-    // TODO: final RetryPrivateFTPServerService privateFTPServers;
-    // TODO: public PrivateFTPServerService<RetryConnector,RetryConnectorFactory> getPrivateFTPServers();
+    // <editor-fold defaultstate="collapsed" desc="PrivateFtpServerService">
+    // TODO: final RetryPrivateFtpServerService privateFtpServers;
+    // TODO: public PrivateFtpServerService<RetryConnector,RetryConnectorFactory> getPrivateFtpServers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ProcessorTypeService">
     // TODO: final RetryProcessorTypeService processorTypes;

@@ -22,11 +22,21 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String display;
+    private String display;
 
     public BackupRetention(BackupRetentionService<?,?> service, short days, String display) {
         super(service, days);
         this.display = display;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        display = intern(display);
     }
     // </editor-fold>
 

@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -42,29 +43,21 @@ final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String description;
-
-    public TechnologyClass(TechnologyClassService<?,?> service, String name, String description) {
+    public TechnologyClass(TechnologyClassService<?,?> service, String name) {
         super(service, name);
-        this.description = description;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the class")
     public String getName() {
-    	return key;
-    }
-
-    @SchemaColumn(order=1, name="description", description="a description of the class")
-    public String getDescription() {
-        return description;
+    	return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TechnologyClass getBean() {
-        return new com.aoindustries.aoserv.client.beans.TechnologyClass(key, description);
+        return new com.aoindustries.aoserv.client.beans.TechnologyClass(getKey());
     }
     // </editor-fold>
 
@@ -74,6 +67,17 @@ final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass
         return AOServObjectUtils.createDependencySet(
             getTechnologies()
         );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public String getDescription(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "TechnologyClass."+getKey()+".description");
+    }
+
+    @Override
+    String toStringImpl(Locale userLocale) throws RemoteException {
+        return ApplicationResources.accessor.getMessage(userLocale, "TechnologyClass."+getKey()+".toString");
     }
     // </editor-fold>
 

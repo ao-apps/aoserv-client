@@ -18,15 +18,25 @@ abstract public class AOServObjectAccountingCodeKey<T extends AOServObjectAccoun
 
     private static final long serialVersionUID = 1L;
 
-    final protected AccountingCode key;
+    private AccountingCode key;
 
     protected AOServObjectAccountingCodeKey(AOServService<?,?,AccountingCode,T> service, AccountingCode key) {
         super(service);
-        this.key = key.intern();
+        this.key = key;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        key = intern(key);
     }
 
     /**
-     * Gets the key value for this object.
+     * Gets the interned key value for this object.
      */
     final public AccountingCode getKey() {
         return key;

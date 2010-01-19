@@ -325,7 +325,7 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         postgresServers = new NoSwingPostgresServerService(this, wrapped.getPostgresServers());
         postgresUsers = new NoSwingPostgresUserService(this, wrapped.getPostgresUsers());
         postgresVersions = new NoSwingPostgresVersionService(this, wrapped.getPostgresVersions());
-        // TODO: privateFTPServers = new NoSwingPrivateFTPServerService(this, wrapped.getPrivateFTPServers());
+        // TODO: privateFtpServers = new NoSwingPrivateFtpServerService(this, wrapped.getPrivateFtpServers());
         // TODO: processorTypes = new NoSwingProcessorTypeService(this, wrapped.getProcessorTypes());
         protocols = new NoSwingProtocolService(this, wrapped.getProtocols());
         // TODO: racks = new NoSwingRackService(this, wrapped.getRacks());
@@ -1307,9 +1307,9 @@ final public class NoSwingConnector implements AOServConnector<NoSwingConnector,
         return postgresVersions;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="PrivateFTPServerService">
-    // TODO: final NoSwingPrivateFTPServerService privateFTPServers;
-    // TODO: public PrivateFTPServerService<NoSwingConnector,NoSwingConnectorFactory> getPrivateFTPServers() throws RemoteException;
+    // <editor-fold defaultstate="collapsed" desc="PrivateFtpServerService">
+    // TODO: final NoSwingPrivateFtpServerService privateFtpServers;
+    // TODO: public PrivateFtpServerService<NoSwingConnector,NoSwingConnectorFactory> getPrivateFtpServers() throws RemoteException;
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ProcessorTypeService">
     // TODO: final NoSwingProcessorTypeService processorTypes;

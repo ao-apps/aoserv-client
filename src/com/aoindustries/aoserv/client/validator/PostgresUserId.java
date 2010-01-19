@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.BeanFactory;
 import com.aoindustries.aoserv.client.PostgresServer;
+import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -29,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUserId implements Comparable<PostgresUserId>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.PostgresUserId> {
+final public class PostgresUserId implements Comparable<PostgresUserId>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.PostgresUserId>, Internable<PostgresUserId> {
 
     private static final long serialVersionUID = 1L;
 

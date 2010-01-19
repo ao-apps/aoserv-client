@@ -41,20 +41,20 @@ final public class TicketType extends AOServObjectStringKey<TicketType> implemen
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the unique type name")
     public String getType() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TicketType getBean() {
-        return new com.aoindustries.aoserv.client.beans.TicketType(key);
+        return new com.aoindustries.aoserv.client.beans.TicketType(getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketType."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "TicketType."+getKey()+".toString");
     }
     // </editor-fold>
 }

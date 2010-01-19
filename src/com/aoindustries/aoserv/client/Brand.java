@@ -31,44 +31,44 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private DomainName nameserver1;
-    final private DomainName nameserver2;
-    final private DomainName nameserver3;
-    final private DomainName nameserver4;
+    private DomainName nameserver1;
+    private DomainName nameserver2;
+    private DomainName nameserver3;
+    private DomainName nameserver4;
     final private int smtpEmailInbox;
-    final private Hostname smtpHost;
-    final private String smtpPassword;
+    private Hostname smtpHost;
+    private String smtpPassword;
     final private int imapEmailInbox;
-    final private Hostname imapHost;
-    final private String imapPassword;
+    private Hostname imapHost;
+    private String imapPassword;
     final private int supportEmailAddress;
-    final private String supportEmailDisplay;
+    private String supportEmailDisplay;
     final private int signupEmailAddress;
-    final private String signupEmailDisplay;
+    private String signupEmailDisplay;
     final private int ticketEncryptionFrom;
     final private int ticketEncryptionRecipient;
     final private int signupEncryptionFrom;
     final private int signupEncryptionRecipient;
-    final private String supportTollFree;
-    final private String supportDayPhone;
-    final private String supportEmergencyPhone1;
-    final private String supportEmergencyPhone2;
-    final private String supportFax;
-    final private String supportMailingAddress1;
-    final private String supportMailingAddress2;
-    final private String supportMailingAddress3;
-    final private String supportMailingAddress4;
+    private String supportTollFree;
+    private String supportDayPhone;
+    private String supportEmergencyPhone1;
+    private String supportEmergencyPhone2;
+    private String supportFax;
+    private String supportMailingAddress1;
+    private String supportMailingAddress2;
+    private String supportMailingAddress3;
+    private String supportMailingAddress4;
     final private boolean englishEnabled;
     final private boolean japaneseEnabled;
-    final private String aowebStrutsHttpUrlBase;
-    final private String aowebStrutsHttpsUrlBase;
-    final private String aowebStrutsGoogleVerifyContent;
+    private String aowebStrutsHttpUrlBase;
+    private String aowebStrutsHttpsUrlBase;
+    private String aowebStrutsGoogleVerifyContent;
     final private boolean aowebStrutsNoindex;
-    final private String aowebStrutsGoogleAnalyticsNewTrackingCode;
-    final private Email aowebStrutsSignupAdminAddress;
+    private String aowebStrutsGoogleAnalyticsNewTrackingCode;
+    private Email aowebStrutsSignupAdminAddress;
     final private int aowebStrutsVncBind;
-    final private String aowebStrutsKeystoreType;
-    final private String aowebStrutsKeystorePassword;
+    private String aowebStrutsKeystoreType;
+    private String aowebStrutsKeystorePassword;
 
     public Brand(
         BrandService<?,?> service,
@@ -113,15 +113,15 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         String aowebStrutsKeystorePassword
     ) {
         super(service, accounting);
-        this.nameserver1 = nameserver1.intern();
-        this.nameserver2 = nameserver2.intern();
-        this.nameserver3 = nameserver3==null ? null : nameserver3.intern();
-        this.nameserver4 = nameserver4==null ? null : nameserver4.intern();
+        this.nameserver1 = nameserver1;
+        this.nameserver2 = nameserver2;
+        this.nameserver3 = nameserver3;
+        this.nameserver4 = nameserver4;
         this.smtpEmailInbox = smtpEmailInbox;
-        this.smtpHost = smtpHost==null ? null : smtpHost.intern();
+        this.smtpHost = smtpHost;
         this.smtpPassword = smtpPassword;
         this.imapEmailInbox = imapEmailInbox;
-        this.imapHost = imapHost==null ? null : imapHost.intern();
+        this.imapHost = imapHost;
         this.imapPassword = imapPassword;
         this.supportEmailAddress = supportEmailAddress;
         this.supportEmailDisplay = supportEmailDisplay;
@@ -147,10 +147,45 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         this.aowebStrutsGoogleVerifyContent = aowebStrutsGoogleVerifyContent;
         this.aowebStrutsNoindex = aowebStrutsNoindex;
         this.aowebStrutsGoogleAnalyticsNewTrackingCode = aowebStrutsGoogleAnalyticsNewTrackingCode;
-        this.aowebStrutsSignupAdminAddress = aowebStrutsSignupAdminAddress.intern();
+        this.aowebStrutsSignupAdminAddress = aowebStrutsSignupAdminAddress;
         this.aowebStrutsVncBind = aowebStrutsVncBind;
-        this.aowebStrutsKeystoreType = aowebStrutsKeystoreType==null ? null : aowebStrutsKeystoreType.intern();
+        this.aowebStrutsKeystoreType = aowebStrutsKeystoreType;
         this.aowebStrutsKeystorePassword = aowebStrutsKeystorePassword;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        nameserver1 = intern(nameserver1);
+        nameserver2 = intern(nameserver2);
+        nameserver3 = intern(nameserver3);
+        nameserver4 = intern(nameserver4);
+        smtpHost = intern(smtpHost);
+        smtpPassword = intern(smtpPassword);
+        imapHost = intern(imapHost);
+        imapPassword = intern(imapPassword);
+        supportEmailDisplay = intern(supportEmailDisplay);
+        signupEmailDisplay = intern(signupEmailDisplay);
+        supportTollFree = intern(supportTollFree);
+        supportDayPhone = intern(supportDayPhone);
+        supportEmergencyPhone1 = intern(supportEmergencyPhone1);
+        supportEmergencyPhone2 = intern(supportEmergencyPhone2);
+        supportFax = intern(supportFax);
+        supportMailingAddress1 = intern(supportMailingAddress1);
+        supportMailingAddress2 = intern(supportMailingAddress2);
+        supportMailingAddress3 = intern(supportMailingAddress3);
+        supportMailingAddress4 = intern(supportMailingAddress4);
+        aowebStrutsHttpUrlBase = intern(aowebStrutsHttpUrlBase);
+        aowebStrutsHttpsUrlBase = intern(aowebStrutsHttpsUrlBase);
+        aowebStrutsGoogleVerifyContent = intern(aowebStrutsGoogleVerifyContent);
+        aowebStrutsGoogleAnalyticsNewTrackingCode = intern(aowebStrutsGoogleAnalyticsNewTrackingCode);
+        aowebStrutsSignupAdminAddress = intern(aowebStrutsSignupAdminAddress);
+        aowebStrutsKeystoreType = intern(aowebStrutsKeystoreType);
+        aowebStrutsKeystorePassword = intern(aowebStrutsKeystorePassword);
     }
     // </editor-fold>
 
@@ -158,7 +193,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the business that is a brand")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(key);
+        return getService().getConnector().getBusinesses().get(getKey());
     }
 
     @SchemaColumn(order=1, name="nameserver1", description="the primary nameserver")
@@ -395,7 +430,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Brand getBean() {
         return new com.aoindustries.aoserv.client.beans.Brand(
-            key.getBean(),
+            getKey().getBean(),
             nameserver1.getBean(),
             nameserver2.getBean(),
             nameserver3==null ? null : nameserver3.getBean(),
@@ -514,7 +549,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         Set<String> contactPhoneNumbers
     ) throws RemoteException {
         return new AddTicketCommand(
-            key,
+            getKey(),
             business==null ? null : business.getAccounting(),
             language.getKey(),
             category==null ? null : category.getKey(),

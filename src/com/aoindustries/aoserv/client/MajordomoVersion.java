@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
 import java.sql.Timestamp;
 
 /**
@@ -37,11 +38,21 @@ final public class MajordomoVersion extends AOServObjectStringKey<MajordomoVersi
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="version", index=IndexType.PRIMARY_KEY, description="the version number")
+    public String getVersion() {
+        return getKey();
+    }
+
+    @SchemaColumn(order=1, name="created", description="the time the version was added")
     public Timestamp getCreated() {
         return created;
     }
+    // </editor-fold>
 
-    public String getVersion() {
-        return key;
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.MajordomoVersion getBean() {
+        return new com.aoindustries.aoserv.client.beans.MajordomoVersion(getKey(), created);
     }
+    // </editor-fold>
 }

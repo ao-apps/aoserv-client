@@ -27,12 +27,12 @@ final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implement
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int server;
-    final private String deviceId;
-    final private String description;
-    final private InetAddress gateway;
-    final private InetAddress network;
-    final private InetAddress broadcast;
-    final private MacAddress macAddress;
+    private String deviceId;
+    private String description;
+    private InetAddress gateway;
+    private InetAddress network;
+    private InetAddress broadcast;
+    private MacAddress macAddress;
     final private Long maxBitRate;
     final private Long monitoringBitRateLow;
     final private Long monitoringBitRateMedium;
@@ -68,6 +68,21 @@ final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implement
         this.monitoringBitRateMedium = monitoringBitRateMedium;
         this.monitoringBitRateHigh = monitoringBitRateHigh;
         this.monitoringBitRateCritical = monitoringBitRateCritical;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        deviceId = intern(deviceId);
+        description = intern(description);
+        gateway = intern(gateway);
+        network = intern(network);
+        broadcast = intern(broadcast);
+        macAddress = intern(macAddress);
     }
     // </editor-fold>
 

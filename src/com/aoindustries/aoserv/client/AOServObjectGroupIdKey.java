@@ -18,15 +18,25 @@ abstract public class AOServObjectGroupIdKey<T extends AOServObjectGroupIdKey<T>
 
     private static final long serialVersionUID = 1L;
 
-    final protected GroupId key;
+    private GroupId key;
 
     protected AOServObjectGroupIdKey(AOServService<?,?,GroupId,T> service, GroupId key) {
         super(service);
-        this.key = key.intern();
+        this.key = key;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        key = intern(key);
     }
 
     /**
-     * Gets the key value for this object.
+     * Gets the interned key value for this object.
      */
     final public GroupId getKey() {
         return key;

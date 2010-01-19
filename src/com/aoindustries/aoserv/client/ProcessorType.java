@@ -5,6 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
+
 /**
  * All of the types of processors.
  *
@@ -32,11 +36,31 @@ final public class ProcessorType extends AOServObjectStringKey<ProcessorType> im
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the unique name of the type of processor")
     public String getType() {
-        return key;
+        return getKey();
     }
 
+    @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="the sort order of the processor, those sorted higher may be substituted for those sorted lower")
     public short getSortOrder() {
         return sortOrder;
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.ProcessorType getBean() {
+        return new com.aoindustries.aoserv.client.beans.ProcessorType(getKey(), sortOrder);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getPhysicalServers()
+            // TODO: getVirtualServers()
+        );
+    }
+    // </editor-fold>
 }

@@ -52,13 +52,13 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private PostgresUserId username;
+    private PostgresUserId username;
     final private int postgresServer;
     final private boolean createdb;
     final private boolean trace;
     final private boolean superPriv;
     final private boolean catupd;
-    final private String predisablePassword;
+    private String predisablePassword;
 
     public PostgresUser(
         PostgresUserService<?,?> service,
@@ -72,13 +72,24 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
         String predisablePassword
     ) {
         super(service, aoServerResource);
-        this.username = username.intern();
+        this.username = username;
         this.postgresServer = postgresServer;
         this.createdb = createdb;
         this.trace = trace;
         this.superPriv = superPriv;
         this.catupd = catupd;
         this.predisablePassword = predisablePassword;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        username = intern(username);
+        predisablePassword = intern(predisablePassword);
     }
     // </editor-fold>
 

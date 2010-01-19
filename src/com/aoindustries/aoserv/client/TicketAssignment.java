@@ -25,8 +25,8 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int ticket;
-    final private AccountingCode reseller;
-    final private UserId administrator;
+    private AccountingCode reseller;
+    private UserId administrator;
 
     public TicketAssignment(
         TicketAssignmentService<?,?> service,
@@ -37,8 +37,19 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
     ) {
         super(service, pkey);
         this.ticket = ticket;
-        this.reseller = reseller.intern();
-        this.administrator = administrator.intern();
+        this.reseller = reseller;
+        this.administrator = administrator;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        reseller = intern(reseller);
+        administrator = intern(administrator);
     }
     // </editor-fold>
 

@@ -26,7 +26,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey<NetTcpRedirect>
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int cps;
     final private int cpsOverloadSleepTime;
-    final private Hostname destinationHost;
+    private Hostname destinationHost;
     final private NetPort destinationPort;
 
     public NetTcpRedirect(
@@ -40,8 +40,18 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey<NetTcpRedirect>
         super(service, netBind);
         this.cps = cps;
         this.cpsOverloadSleepTime = cpsOverloadSleepTime;
-        this.destinationHost = destinationHost.intern();
+        this.destinationHost = destinationHost;
         this.destinationPort = destinationPort;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        destinationHost = intern(destinationHost);
     }
     // </editor-fold>
 

@@ -55,12 +55,12 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private DomainName siteName;
+    private DomainName siteName;
     final private boolean listFirst;
     final private int linuxAccountGroup;
-    final private Email serverAdmin;
+    private Email serverAdmin;
     final private boolean isManualConfig;
-    final private String awstatsSkipFiles;
+    private String awstatsSkipFiles;
 
     public HttpdSite(
         HttpdSiteService<?,?> service,
@@ -79,6 +79,18 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
         this.serverAdmin = serverAdmin;
         this.isManualConfig = isManualConfig;
         this.awstatsSkipFiles = awstatsSkipFiles;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        siteName = intern(siteName);
+        serverAdmin = intern(serverAdmin);
+        awstatsSkipFiles = intern(awstatsSkipFiles);
     }
     // </editor-fold>
 

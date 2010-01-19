@@ -33,7 +33,7 @@ final public class BankTransactionType extends AOServObjectStringKey<BankTransac
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the type")
     public String getName() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="is_negative", description="when true the amount must be negative")
@@ -44,7 +44,7 @@ final public class BankTransactionType extends AOServObjectStringKey<BankTransac
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BankTransactionType getBean() {
-        return new com.aoindustries.aoserv.client.beans.BankTransactionType(key, isNegative);
+        return new com.aoindustries.aoserv.client.beans.BankTransactionType(getKey(), isNegative);
     }
     // </editor-fold>
 
@@ -59,11 +59,11 @@ final public class BankTransactionType extends AOServObjectStringKey<BankTransac
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+key+".description");
+        return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+getKey()+".description");
     }
 
     public String getDisplay(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+key+".display");
+        return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+getKey()+".display");
     }
 
     @Override

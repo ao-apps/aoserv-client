@@ -32,13 +32,13 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of this time zone")
     public String getName() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TimeZone getBean() {
-        return new com.aoindustries.aoserv.client.beans.TimeZone(key);
+        return new com.aoindustries.aoserv.client.beans.TimeZone(getKey());
     }
     // </editor-fold>
 
@@ -64,6 +64,7 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
      * Gets the Java TimeZone for this TimeZone.
      */
     public java.util.TimeZone getTimeZone() {
+        String key = getKey();
         java.util.TimeZone timeZone = timeZones.get(key);
         if(timeZone==null) {
             String[] ids = java.util.TimeZone.getAvailableIDs();

@@ -175,7 +175,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private PostgresServerName name;
+    private PostgresServerName name;
     final int version;
     final private int maxConnections;
     final private int netBind;
@@ -195,13 +195,23 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
         boolean fsync
     ) {
         super(service, aoServerResource);
-        this.name = name.intern();
+        this.name = name;
         this.version = version;
         this.maxConnections = maxConnections;
         this.netBind = netBind;
         this.sortMem = sortMem;
         this.sharedBuffers = sharedBuffers;
         this.fsync = fsync;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
     }
     // </editor-fold>
 

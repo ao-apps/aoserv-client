@@ -5,7 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Each reason for notifying clients is represented by a
@@ -33,11 +36,31 @@ final public class NoticeType extends AOServObjectStringKey<NoticeType> implemen
     }
     // </editor-fold>
 
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "NoticeType."+key+".description");
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the unique type name")
     public String getType() {
-        return key;
+        return getKey();
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.NoticeType getBean() {
+        return new com.aoindustries.aoserv.client.beans.NoticeType(getKey());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getNoticeLogs()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public String getDescription(Locale userLocale) {
+        return ApplicationResources.accessor.getMessage(userLocale, "NoticeType."+getKey()+".description");
+    }
+    // </editor-fold>
 }

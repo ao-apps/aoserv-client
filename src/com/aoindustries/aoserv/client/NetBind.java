@@ -40,11 +40,11 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     final private int businessServer;
     final private Integer ipAddress;
     final private NetPort port;
-    final private String netProtocol;
-    final private String appProtocol;
+    private String netProtocol;
+    private String appProtocol;
     final private boolean openFirewall;
     final private boolean monitoringEnabled;
-    final private String monitoringParameters;
+    private String monitoringParameters;
 
     public NetBind(
         NetBindService<?,?> service,
@@ -62,11 +62,23 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         this.businessServer = businessServer;
         this.ipAddress = ipAddress;
         this.port = port;
-        this.netProtocol = netProtocol.intern();
-        this.appProtocol = appProtocol.intern();
+        this.netProtocol = netProtocol;
+        this.appProtocol = appProtocol;
         this.openFirewall = openFirewall;
         this.monitoringEnabled = monitoringEnabled;
         this.monitoringParameters = monitoringParameters;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        netProtocol = intern(netProtocol);
+        appProtocol = intern(appProtocol);
+        monitoringParameters = intern(monitoringParameters);
     }
     // </editor-fold>
 
@@ -176,7 +188,8 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             getBrandByAowebStrutsVncBind(),
             getMySQLServer(),
             getNetTcpRedirect(),
-            getPostgresServer()
+            getPostgresServer(),
+            getPrivateFtpServer()
             // TODO: getEmailSmartHost(),
             // TODO: getHttpdBind(),
             // TODO: getHttpdJBossSiteByJNPPort(),
@@ -187,7 +200,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
             // TODO: getHttpdSharedTomcatByShutdownPort(),
             // TODO: getHttpdWorker(),
             // TODO: getHttpdTomcatStdSiteByShutdownPort(),
-            // TODO: getPrivateFTPServer(),
         );
     }
     // </editor-fold>
@@ -232,6 +244,10 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         return getService().getConnector().getPostgresServers().filterUnique(PostgresServer.COLUMN_NET_BIND, this);
     }
 
+    public PrivateFtpServer getPrivateFtpServer() throws RemoteException {
+        return getService().getConnector().getPrivateFtpServers().filterUnique(PrivateFtpServer.COLUMN_NET_BIND, this);
+    }
+
     /* TODO
     public HttpdBind getHttpdBind() throws IOException, SQLException {
         return getService().getConnector().getHttpdBinds().get(pkey);
@@ -267,10 +283,6 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
         return getService().getConnector().getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
-    }
-
-    public PrivateFTPServer getPrivateFTPServer() throws IOException, SQLException {
-        return getService().getConnector().getPrivateFTPServers().get(pkey);
     }
 
     public EmailSmtpSmartHost getEmailSmartHost() throws IOException, SQLException {
@@ -448,7 +460,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         NetTcpRedirect ntr=getNetTcpRedirect();
         if(ntr!=null) return "Port redirected to "+ntr.getDestinationHost()+':'+ntr.getDestinationPort().getPort();
 
-        PrivateFTPServer pfs=getPrivateFTPServer();
+        PrivateFtpServer pfs=getPrivateFtpServer();
         if(pfs!=null) return "Private FTP server in "+pfs.getLinuxServerAccount().getHome();
 
         return null;

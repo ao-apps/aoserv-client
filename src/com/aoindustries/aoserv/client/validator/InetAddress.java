@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.BeanFactory;
 import com.aoindustries.math.LongLong;
+import com.aoindustries.util.Internable;
 import com.aoindustries.util.persistent.PersistentCollections;
 import java.io.InvalidObjectException;
 import java.io.Serializable;
@@ -22,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class InetAddress implements Comparable<InetAddress>, Serializable, BeanFactory<com.aoindustries.aoserv.client.beans.InetAddress> {
+final public class InetAddress implements Comparable<InetAddress>, Serializable, BeanFactory<com.aoindustries.aoserv.client.beans.InetAddress>, Internable<InetAddress> {
 
     private static final long serialVersionUID = 1L;
 

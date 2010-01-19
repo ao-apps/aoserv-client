@@ -5,6 +5,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+
 /**
  * When using Apache's <code>mod_jk</code>, each connection to a servlet
  * container is assigned a unique two-character identifier.  This
@@ -26,7 +28,16 @@ final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implem
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="code", index=IndexType.PRIMARY_KEY, description="the unique, two-character code")
     public String getCode() {
-        return key;
+        return getKey();
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.HttpdJKCode getBean() {
+        return new com.aoindustries.aoserv.client.beans.HttpdJKCode(getKey());
+    }
+    // </editor-fold>
 }

@@ -28,12 +28,12 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int zone;
-    final private String domain;
-    final String type;
+    private String domain;
+    private String type;
     final private Integer mxPriority;
-    final private InetAddress dataIpAddress;
-    final private DomainName dataDomainName;
-    final private String dataText;
+    private InetAddress dataIpAddress;
+    private DomainName dataDomainName;
+    private String dataText;
     final private Integer dhcpAddress;
     final private Integer ttl;
 
@@ -52,14 +52,28 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
     ) {
         super(service, resource);
         this.zone = zone;
-        this.domain = domain==null ? null : domain.intern();
-        this.type = type.intern();
+        this.domain = domain;
+        this.type = type;
         this.mxPriority = mxPriority;
-        this.dataIpAddress = dataIpAddress==null ? null : dataIpAddress.intern();
-        this.dataDomainName = dataDomainName==null ? null : dataDomainName.intern();
+        this.dataIpAddress = dataIpAddress;
+        this.dataDomainName = dataDomainName;
         this.dataText = dataText;
         this.dhcpAddress = dhcpAddress;
         this.ttl = ttl;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        domain = intern(domain);
+        type = intern(type);
+        dataIpAddress = intern(dataIpAddress);
+        dataDomainName = intern(dataDomainName);
+        dataText = intern(dataText);
     }
     // </editor-fold>
 

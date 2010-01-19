@@ -31,11 +31,11 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private DomainLabel farm;
-    final private String description;
+    private DomainLabel farm;
+    private String description;
     final Integer operatingSystemVersion;
-    final private AccountingCode accounting;
-    final private String name;
+    private AccountingCode accounting;
+    private String name;
     final private boolean monitoringEnabled;
 
     public Server(
@@ -49,12 +49,25 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
         boolean monitoringEnabled
     ) {
         super(service, pkey);
-        this.farm = farm.intern();
+        this.farm = farm;
         this.description = description;
         this.operatingSystemVersion = operatingSystemVersion;
-        this.accounting = accounting.intern();
+        this.accounting = accounting;
         this.name = name;
         this.monitoringEnabled = monitoringEnabled;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        farm = intern(farm);
+        description = intern(description);
+        accounting = intern(accounting);
+        name = intern(name);
     }
     // </editor-fold>
 

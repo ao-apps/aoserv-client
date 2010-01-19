@@ -43,7 +43,7 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private UnixPath path;
+    private UnixPath path;
     final private int linuxAccountGroup;
     final private long mode;
 
@@ -58,6 +58,16 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
         this.path = path;
         this.linuxAccountGroup = linuxAccountGroup;
         this.mode = mode;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        path = intern(path);
     }
     // </editor-fold>
 

@@ -33,13 +33,13 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the package")
     public String getName() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TechnologyName getBean() {
-        return new com.aoindustries.aoserv.client.beans.TechnologyName(key);
+        return new com.aoindustries.aoserv.client.beans.TechnologyName(getKey());
     }
     // </editor-fold>
 

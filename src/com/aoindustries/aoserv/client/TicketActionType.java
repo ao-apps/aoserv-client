@@ -5,7 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * All of the types of ticket changes are represented by these
@@ -46,13 +49,37 @@ final public class TicketActionType extends AOServObjectStringKey<TicketActionTy
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the type name")
     public String getType() {
-        return key;
+        return getKey();
     }
 
+    @SchemaColumn(order=1, name="visible_admin_only", description="when true, only visible to ticket administrators")
+    public boolean isVisibleAdminOnly() {
+        return visibleAdminOnly;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.TicketActionType getBean() {
+        return new com.aoindustries.aoserv.client.beans.TicketActionType(getKey(), visibleAdminOnly);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getTicketActions()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+pkey+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".toString");
     }
 
     /**
@@ -60,11 +87,12 @@ final public class TicketActionType extends AOServObjectStringKey<TicketActionTy
      */
     String generateSummary(AOServConnector connector, Locale userLocale, String oldValue, String newValue) {
         if(oldValue==null) {
-            if(newValue==null) return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+key+".generatedSummary.null.null");
-            return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+key+".generatedSummary.null.notNull", newValue);
+            if(newValue==null) return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.null.null");
+            return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.null.notNull", newValue);
         } else {
-            if(newValue==null) return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+key+".generatedSummary.notNull.null", oldValue);
-            return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+key+".generatedSummary.notNull.notNull", oldValue, newValue);
+            if(newValue==null) return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.notNull.null", oldValue);
+            return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.notNull.notNull", oldValue, newValue);
         }
     }
+    // </editor-fold>
 }

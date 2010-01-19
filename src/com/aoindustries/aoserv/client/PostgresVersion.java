@@ -56,7 +56,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String minorVersion;
+    private String minorVersion;
     final private Integer postgisVersion;
 
     public PostgresVersion(
@@ -66,8 +66,18 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
         Integer postgisVersion
     ) {
         super(service, version);
-        this.minorVersion = minorVersion.intern();
+        this.minorVersion = minorVersion;
         this.postgisVersion = postgisVersion;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        minorVersion = intern(minorVersion);
     }
     // </editor-fold>
 

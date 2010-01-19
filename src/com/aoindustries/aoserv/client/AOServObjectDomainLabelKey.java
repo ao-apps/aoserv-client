@@ -18,15 +18,25 @@ abstract public class AOServObjectDomainLabelKey<T extends AOServObjectDomainLab
 
     private static final long serialVersionUID = 1L;
 
-    final protected DomainLabel key;
+    private DomainLabel key;
 
     protected AOServObjectDomainLabelKey(AOServService<?,?,DomainLabel,T> service, DomainLabel key) {
         super(service);
-        this.key = key.intern();
+        this.key = key;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        key = intern(key);
     }
 
     /**
-     * Gets the key value for this object.
+     * Gets the interned key value for this object.
      */
     final public DomainLabel getKey() {
         return key;

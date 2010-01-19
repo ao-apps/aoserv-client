@@ -88,7 +88,7 @@ final public class ServerResource extends AOServObjectIntegerKey<ServerResource>
     }
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
-        String resourceType = getResource().resourceType;
+        String resourceType = getResource().getResourceType().getName();
         AOServObject obj;
         if(resourceType.equals(ResourceType.IP_ADDRESS)) obj = getIpAddress();
         else throw new AssertionError("Unexpected resource type: "+resourceType);

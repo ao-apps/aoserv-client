@@ -53,7 +53,7 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="status", index=IndexType.PRIMARY_KEY, description="the name of this status")
     public String getStatus() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="the default sort ordering")
@@ -64,21 +64,21 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TicketStatus getBean() {
-        return new com.aoindustries.aoserv.client.beans.TicketStatus(key, sortOrder);
+        return new com.aoindustries.aoserv.client.beans.TicketStatus(getKey(), sortOrder);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+getKey()+".toString");
     }
 
     /**
      * Localized description.
      */
     public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+key+".description");
+        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+getKey()+".description");
     }
     // </editor-fold>
 }

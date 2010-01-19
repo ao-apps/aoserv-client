@@ -6,7 +6,9 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * An <code>HttpdTomcatVersion</code> flags which
@@ -37,13 +39,23 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private UnixPath installDir;
+    private UnixPath installDir;
     final private boolean requiresModJk;
 
     public HttpdTomcatVersion(HttpdTomcatVersionService<?,?> service, int version, UnixPath installDir, boolean requiresModJk) {
         super(service, version);
-        this.installDir = installDir.intern();
+        this.installDir = installDir;
         this.requiresModJk = requiresModJk;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        installDir = intern(installDir);
     }
     // </editor-fold>
 
@@ -54,75 +66,76 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
     }
     // </editor-fold>
 
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(HttpdTomcatVersion.COLUMN_VERSION_name+'.'+TechnologyVersion.COLUMN_VERSION_name, ASCENDING)
-    };
-
-    public String getInstallDirectory() {
-	return installDir;
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    static final String COLUMN_VERSION = "version";
+    @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="a reference to the tomcat details in the technology_versions table")
+    public TechnologyVersion getTechnologyVersion() throws RemoteException {
+        return getService().getConnector().getTechnologyVersions().get(key);
     }
 
-    public TechnologyVersion getTechnologyVersion() throws SQLException, IOException {
-        return connector.getTechnologyVersions().get(pkey);
+    @SchemaColumn(order=1, name="install_dir", description="the directory the basic install files are located in")
+    public UnixPath getInstallDirectory() {
+        return installDir;
     }
 
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	installDir=result.getString(2);
-        requiresModJk=result.getBoolean(3);
-    }
-
-    /**
-     * @deprecated  Please check all uses of this, because it also returns <code>true</code> for Tomcat 5, which doesn't seem
-     *              to match the method name very well.
-     *
-     * @see  #isTomcat4_1_X(AOServConnector)
-     * @see  #isTomcat5_5_X(AOServConnector)
-     * @see  #isTomcat6_0_X(AOServConnector)
-     */
-    public boolean isTomcat4(AOServConnector connector) throws SQLException, IOException {
-        String version = getTechnologyVersion(connector).getVersion();
-        return version.startsWith("4.") || version.startsWith("5.");
-    }
-
-    public boolean isTomcat3_1(AOServConnector connector) throws SQLException, IOException {
-        String version = getTechnologyVersion(connector).getVersion();
-        return version.equals(VERSION_3_1);
-    }
-
-    public boolean isTomcat3_2_4(AOServConnector connector) throws SQLException, IOException {
-        String version = getTechnologyVersion(connector).getVersion();
-        return version.equals(VERSION_3_2_4);
-    }
-
-    public boolean isTomcat4_1_X(AOServConnector connector) throws SQLException, IOException {
-        String version = getTechnologyVersion(connector).getVersion();
-        return version.startsWith(VERSION_4_1_PREFIX);
-    }
-
-    public boolean isTomcat5_5_X(AOServConnector connector) throws SQLException, IOException {
-        String version = getTechnologyVersion(connector).getVersion();
-        return version.startsWith(VERSION_5_5_PREFIX);
-    }
-
-    public boolean isTomcat6_0_X(AOServConnector connector) throws SQLException, IOException {
-        String version = getTechnologyVersion(connector).getVersion();
-        return version.startsWith(VERSION_6_0_PREFIX);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	installDir=in.readUTF();
-        requiresModJk=in.readBoolean();
-    }
-
+    @SchemaColumn(order=2, name="requires_mod_jk", description="indicates that this version of Tomcat requires the use of mod_jk")
     public boolean requiresModJK() {
         return requiresModJk;
     }
+    // </editor-fold>
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(installDir);
-        out.writeBoolean(requiresModJk);
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.HttpdTomcatVersion getBean() {
+        return new com.aoindustries.aoserv.client.beans.HttpdTomcatVersion(key, installDir.getBean(), requiresModJk);
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getTechnologyVersion()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Convenient Version Checking">
+    /**
+     * deprecated  Please check all uses of this, because it also returns <code>true</code> for Tomcat 5, which doesn't seem
+     *              to match the method name very well.
+     *
+     * @see  #isTomcat4_1_X()
+     * @see  #isTomcat5_5_X()
+     * @see  #isTomcat6_0_X()
+     */
+    //public boolean isTomcat4() throws SQLException, IOException {
+    //    String version = getTechnologyVersion(connector).getVersion();
+    //    return version.startsWith("4.") || version.startsWith("5.");
+    //}
+
+    public boolean isTomcat3_1() throws RemoteException {
+        String version = getTechnologyVersion().getVersion();
+        return version.equals(VERSION_3_1);
+    }
+
+    public boolean isTomcat3_2_4() throws RemoteException {
+        String version = getTechnologyVersion().getVersion();
+        return version.equals(VERSION_3_2_4);
+    }
+
+    public boolean isTomcat4_1_X() throws RemoteException {
+        String version = getTechnologyVersion().getVersion();
+        return version.startsWith(VERSION_4_1_PREFIX);
+    }
+
+    public boolean isTomcat5_5_X() throws RemoteException {
+        String version = getTechnologyVersion().getVersion();
+        return version.startsWith(VERSION_5_5_PREFIX);
+    }
+
+    public boolean isTomcat6_0_X() throws RemoteException {
+        String version = getTechnologyVersion().getVersion();
+        return version.startsWith(VERSION_6_0_PREFIX);
+    }
+    // </editor-fold>
 }

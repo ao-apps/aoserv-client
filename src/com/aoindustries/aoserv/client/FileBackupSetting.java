@@ -21,7 +21,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSe
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int replication;
-    final private String path;
+    private String path;
     final private boolean backupEnabled;
 
     public FileBackupSetting(
@@ -35,6 +35,16 @@ final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSe
         this.replication = replication;
         this.path = path;
         this.backupEnabled = backupEnabled;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        path = intern(path);
     }
     // </editor-fold>
 

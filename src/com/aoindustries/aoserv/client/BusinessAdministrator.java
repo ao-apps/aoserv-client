@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -32,26 +31,26 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private HashedPassword password;
-    final private String name;
-    final private String title;
+    private String name;
+    private String title;
     final private Date birthday;
     final private boolean isPreferred;
     final private boolean isPrivate;
     final private Timestamp created;
-    final private String workPhone;
-    final private String homePhone;
-    final private String cellPhone;
-    final private String fax;
-    final private Email email;
-    final private String address1;
-    final private String address2;
-    final private String city;
-    final private String state;
-    final private String country;
-    final private String zip;
+    private String workPhone;
+    private String homePhone;
+    private String cellPhone;
+    private String fax;
+    private Email email;
+    private String address1;
+    private String address2;
+    private String city;
+    private String state;
+    private String country;
+    private String zip;
     final private Integer disableLog;
     final private boolean canSwitchUsers;
-    final private String supportCode;
+    private String supportCode;
 
     public BusinessAdministrator(
         BusinessAdministratorService<?,?> service,
@@ -95,21 +94,42 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         this.address2 = address2;
         this.city = city;
         this.state = state;
-        this.country = StringUtility.intern(country);
+        this.country = country;
         this.zip = zip;
         this.disableLog = disableLog;
         this.canSwitchUsers = canSwitchUsers;
         this.supportCode = supportCode;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
+        title = intern(title);
+        workPhone = intern(workPhone);
+        homePhone = intern(homePhone);
+        cellPhone = intern(cellPhone);
+        fax = intern(fax);
+        email = intern(email);
+        address1 = intern(address1);
+        address2 = intern(address2);
+        city = intern(city);
+        state = intern(state);
+        country = intern(country);
+        zip = intern(zip);
+        supportCode = intern(supportCode);
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
     public Username getUsername() throws RemoteException {
-        Username usernameObject = getService().getConnector().getUsernames().get(key);
-        if (usernameObject == null) throw new RemoteException("Username not found: " + key);
-        return usernameObject;
+        return getService().getConnector().getUsernames().get(getKey());
     }
 
     @SchemaColumn(order=1, name="password", description="the encrypted password for this admin")
@@ -226,7 +246,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(key.getBean(), password.getBean(), name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, email.getBean(), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
+        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(getKey().getBean(), password.getBean(), name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, email.getBean(), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
     // </editor-fold>
 

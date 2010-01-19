@@ -37,7 +37,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> impl
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the brand of this reseller")
     public Brand getBrand() throws RemoteException {
-        return getService().getConnector().getBrands().get(key);
+        return getService().getConnector().getBrands().get(getKey());
     }
 
     @SchemaColumn(order=1, name="ticket_auto_escalate", description="indicates this reseller does not handle tickets directly and that they are automatically escalated to the parent reseller")
@@ -64,7 +64,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> impl
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Reseller getBean() {
-        return new com.aoindustries.aoserv.client.beans.Reseller(key.getBean(), ticketAutoEscalate);
+        return new com.aoindustries.aoserv.client.beans.Reseller(getKey().getBean(), ticketAutoEscalate);
     }
     // </editor-fold>
 

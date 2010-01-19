@@ -31,10 +31,10 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final String resourceType;
-    final private AccountingCode accounting;
+    private String resourceType;
+    private AccountingCode accounting;
     final private Timestamp created;
-    final private UserId createdBy;
+    private UserId createdBy;
     final private Integer disableLog;
     final private Timestamp lastEnabled;
 
@@ -49,12 +49,24 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         Timestamp lastEnabled
     ) {
         super(service, pkey);
-        this.resourceType = resourceType.intern();
-        this.accounting = accounting.intern();
+        this.resourceType = resourceType;
+        this.accounting = accounting;
         this.created = created;
-        this.createdBy = createdBy.intern();
+        this.createdBy = createdBy;
         this.disableLog = disableLog;
         this.lastEnabled = lastEnabled;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        resourceType = intern(resourceType);
+        accounting = intern(accounting);
+        createdBy = intern(createdBy);
     }
     // </editor-fold>
 

@@ -27,8 +27,8 @@ final public class MasterHost extends AOServObjectIntegerKey<MasterHost> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private UserId username;
-    final private InetAddress host;
+    private UserId username;
+    private InetAddress host;
 
     public MasterHost(
         MasterHostService<?,?> service,
@@ -37,8 +37,19 @@ final public class MasterHost extends AOServObjectIntegerKey<MasterHost> impleme
         InetAddress host
     ) {
         super(service, pkey);
-        this.username = username.intern();
-        this.host = host.intern();
+        this.username = username;
+        this.host = host;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        username = intern(username);
+        host = intern(host);
     }
     // </editor-fold>
 

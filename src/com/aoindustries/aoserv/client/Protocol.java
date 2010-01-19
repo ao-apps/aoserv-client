@@ -62,9 +62,9 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private NetPort port;
-    final private String name;
+    private String name;
     final private boolean isUserService;
-    final private String netProtocol;
+    private String netProtocol;
 
     public Protocol(
         ProtocolService<?,?> service,
@@ -78,7 +78,18 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
         this.port = port;
         this.name = name;
         this.isUserService = isUserService;
-        this.netProtocol = netProtocol.intern();
+        this.netProtocol = netProtocol;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
+        netProtocol = intern(netProtocol);
     }
     // </editor-fold>
 
@@ -94,7 +105,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="protocol", index=IndexType.PRIMARY_KEY, description="the unique name of the protocol")
     public String getProtocol() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="port", description="the default port of the protocol")
@@ -121,7 +132,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Protocol getBean() {
-        return new com.aoindustries.aoserv.client.beans.Protocol(key, port.getBean(), name, isUserService, netProtocol);
+        return new com.aoindustries.aoserv.client.beans.Protocol(getKey(), port.getBean(), name, isUserService, netProtocol);
     }
     // </editor-fold>
 
@@ -136,12 +147,19 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
+            AOServObjectUtils.createDependencySet(
+                getHttpdJKProtocol()
+            ),
             getNetBinds()
         );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public HttpdJKProtocol getHttpdJKProtocol() throws RemoteException {
+        return getService().getConnector().getHttpdJKProtocols().filterUnique(HttpdJKProtocol.COLUMN_PROTOCOL, this);
+    }
+
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
         return getService().getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_APP_PROTOCOL, this);
     }

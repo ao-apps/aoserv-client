@@ -26,10 +26,10 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String name;
-    final private String version;
+    private String name;
+    private String version;
     final private Timestamp updated;
-    final private UserId owner;
+    private UserId owner;
     final int operatingSystemVersion;
 
     public TechnologyVersion(
@@ -42,11 +42,23 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
         int operatingSystemVersion
     ) {
         super(service, pkey);
-        this.name = name.intern();
+        this.name = name;
         this.version = version;
         this.updated = updated;
-        this.owner = owner==null ? null : owner.intern();
+        this.owner = owner;
         this.operatingSystemVersion = operatingSystemVersion;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        name = intern(name);
+        version = intern(version);
+        owner = intern(owner);
     }
     // </editor-fold>
 
@@ -115,6 +127,8 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             AOServObjectUtils.createDependencySet(
+                getHttpdJBossVersion(),
+                getHttpdTomcatVersion(),
                 getPostgresVersion()
             ),
             getHttpdServers(),
@@ -130,6 +144,14 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
 
     public IndexedSet<MySQLServer> getMySQLServers() throws RemoteException {
         return getService().getConnector().getMysqlServers().filterIndexed(MySQLServer.COLUMN_VERSION, this);
+    }
+
+    public HttpdJBossVersion getHttpdJBossVersion() throws RemoteException {
+        return getService().getConnector().getHttpdJBossVersions().filterUnique(HttpdJBossVersion.COLUMN_VERSION, this);
+    }
+
+    public HttpdTomcatVersion getHttpdTomcatVersion() throws RemoteException {
+        return getService().getConnector().getHttpdTomcatVersions().filterUnique(HttpdTomcatVersion.COLUMN_VERSION, this);
     }
 
     public PostgresVersion getPostgresVersion() throws RemoteException {

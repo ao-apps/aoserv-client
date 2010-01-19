@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -26,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupId implements Comparable<GroupId>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.GroupId> {
+final public class GroupId implements Comparable<GroupId>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.GroupId>, Internable<GroupId> {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,37 +38,39 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
      */
     public static void validate(String id) throws ValidationException {
         if(id==null) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.isNull");
-    	int len = id.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.isEmpty");
-        if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.tooLong", MAX_LENGTH, len);
+        if(!interned.containsKey(id)) { // Is valid if already interned
+            int len = id.length();
+            if(len==0) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.isEmpty");
+            if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.tooLong", MAX_LENGTH, len);
 
-        // The first character must be [a-z]
-        char ch = id.charAt(0);
-        if(ch < 'a' || ch > 'z') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.startAToZ");
+            // The first character must be [a-z]
+            char ch = id.charAt(0);
+            if(ch < 'a' || ch > 'z') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.startAToZ");
 
-        // The rest may have additional characters
-        for (int c = 1; c < len; c++) {
-            ch = id.charAt(c);
-            if(ch==' ') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.noSpace");
-            if(ch<=0x21 || ch>0x7f) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.specialCharacter");
-            if(ch>='A' && ch<='Z') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.noCapital");
-            switch(ch) {
-                case ',' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.comma");
-                case ':' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.colon");
-                case '(' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.leftParen");
-                case ')' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.rightParen");
-                case '[' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.leftSquare");
-                case ']' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.rightSquare");
-                case '\'' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.apostrophe");
-                case '"' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.quote");
-                case '|' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.verticalBar");
-                case '&' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.ampersand");
-                case ';' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.semicolon");
-                case '\\' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.backslash");
-                case '/' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.slash");
-                case '@' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.at");
+            // The rest may have additional characters
+            for (int c = 1; c < len; c++) {
+                ch = id.charAt(c);
+                if(ch==' ') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.noSpace");
+                if(ch<=0x21 || ch>0x7f) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.specialCharacter");
+                if(ch>='A' && ch<='Z') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.noCapital");
+                switch(ch) {
+                    case ',' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.comma");
+                    case ':' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.colon");
+                    case '(' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.leftParen");
+                    case ')' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.rightParen");
+                    case '[' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.leftSquare");
+                    case ']' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.rightSquare");
+                    case '\'' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.apostrophe");
+                    case '"' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.quote");
+                    case '|' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.verticalBar");
+                    case '&' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.ampersand");
+                    case ';' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.semicolon");
+                    case '\\' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.backslash");
+                    case '/' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.slash");
+                    case '@' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.at");
+                }
             }
-    	}
+        }
     }
 
     private static final ConcurrentMap<String,GroupId> interned = new ConcurrentHashMap<String,GroupId>();

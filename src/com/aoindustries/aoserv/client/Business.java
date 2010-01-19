@@ -68,20 +68,20 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String contractVersion;
+    private String contractVersion;
     final private Timestamp created;
     final private Timestamp canceled;
-    final private String cancelReason;
-    final private AccountingCode parent;
+    private String cancelReason;
+    private AccountingCode parent;
     final private boolean canAddBackupServer;
     final private boolean canAddBusinesses;
     final private boolean canSeePrices;
     final private Integer disableLog;
-    final private String doNotDisableReason;
+    private String doNotDisableReason;
     final private boolean autoEnable;
     final private boolean billParent;
     final private int packageDefinition;
-    final private UserId createdBy;
+    private UserId createdBy;
     final private Integer emailInBurst;
     final private Float emailInRate;
     final private Integer emailOutBurst;
@@ -114,11 +114,11 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         Float emailRelayRate
     ) {
         super(service, accounting);
-        this.contractVersion = contractVersion.intern();
+        this.contractVersion = contractVersion;
         this.created = created;
         this.canceled = canceled;
         this.cancelReason = cancelReason;
-        this.parent = parent==null ? null : parent.intern();
+        this.parent = parent;
         this.canAddBackupServer = canAddBackupServer;
         this.canAddBusinesses = canAddBusinesses;
         this.canSeePrices = canSeePrices;
@@ -127,13 +127,27 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         this.autoEnable = autoEnable;
         this.billParent = billParent;
         this.packageDefinition = packageDefinition;
-        this.createdBy = createdBy==null ? null : createdBy.intern();
+        this.createdBy = createdBy;
         this.emailInBurst = emailInBurst;
         this.emailInRate = emailInRate;
         this.emailOutBurst = emailOutBurst;
         this.emailOutRate = emailOutRate;
         this.emailRelayBurst = emailRelayBurst;
         this.emailRelayRate = emailRelayRate;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        contractVersion = intern(contractVersion);
+        cancelReason = intern(cancelReason);
+        parent = intern(parent);
+        doNotDisableReason = intern(doNotDisableReason);
+        createdBy = intern(createdBy);
     }
     // </editor-fold>
     
@@ -141,7 +155,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
     public AccountingCode getAccounting() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="contract_version", description="the version number of the contract")
@@ -289,7 +303,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Business getBean() {
-        return new com.aoindustries.aoserv.client.beans.Business(key.getBean(), contractVersion, created, canceled, cancelReason, parent==null ? null : parent.getBean(), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, createdBy==null ? null : createdBy.getBean(), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
+        return new com.aoindustries.aoserv.client.beans.Business(getKey().getBean(), contractVersion, created, canceled, cancelReason, parent==null ? null : parent.getBean(), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, createdBy==null ? null : createdBy.getBean(), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
     // </editor-fold>
 

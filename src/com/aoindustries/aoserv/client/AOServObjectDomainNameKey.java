@@ -18,15 +18,25 @@ abstract public class AOServObjectDomainNameKey<T extends AOServObjectDomainName
 
     private static final long serialVersionUID = 1L;
 
-    final protected DomainName key;
+    private DomainName key;
 
     protected AOServObjectDomainNameKey(AOServService<?,?,DomainName,T> service, DomainName key) {
         super(service);
-        this.key = key.intern();
+        this.key = key;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        key = intern(key);
     }
 
     /**
-     * Gets the key value for this object.
+     * Gets the interned key value for this object.
      */
     final public DomainName getKey() {
         return key;

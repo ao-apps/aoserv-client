@@ -36,20 +36,30 @@ final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String display;
+    private String display;
     final private boolean isUnix;
 
     public OperatingSystem(OperatingSystemService<?,?> service, String name, String display, boolean is_unix) {
         super(service, name);
         this.display = display;
         this.isUnix = is_unix;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        display = intern(display);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the operating system")
     public String getName() {
-        return key;
+        return getKey();
     }
 
     @SchemaColumn(order=1, name="display", description="the display version of the name")
@@ -65,7 +75,7 @@ final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.OperatingSystem getBean() {
-        return new com.aoindustries.aoserv.client.beans.OperatingSystem(key, display, isUnix);
+        return new com.aoindustries.aoserv.client.beans.OperatingSystem(getKey(), display, isUnix);
     }
     // </editor-fold>
 

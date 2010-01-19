@@ -70,13 +70,23 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private String encoding;
-    final int postgresVersion;
+    private String encoding;
+    final private int postgresVersion;
 
     public PostgresEncoding(PostgresEncodingService<?,?> service, int pkey, String encoding, int postgresVersion) {
         super(service, pkey);
-        this.encoding = encoding.intern();
+        this.encoding = encoding;
         this.postgresVersion = postgresVersion;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        encoding = intern(encoding);
     }
     // </editor-fold>
 

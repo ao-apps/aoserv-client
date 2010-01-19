@@ -27,20 +27,30 @@ final public class GroupName extends AOServObjectGroupIdKey<GroupName> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final AccountingCode accounting;
+    private AccountingCode accounting;
     final Integer disableLog;
 
     public GroupName(GroupNameService<?,?> table, GroupId groupName, AccountingCode accounting, Integer disableLog) {
         super(table, groupName);
-        this.accounting = accounting.intern();
+        this.accounting = accounting;
         this.disableLog = disableLog;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        accounting = intern(accounting);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="group_name", index=IndexType.PRIMARY_KEY, description="the unique group name")
     public GroupId getGroupName() {
-        return key;
+        return getKey();
     }
 
     /**
@@ -62,7 +72,7 @@ final public class GroupName extends AOServObjectGroupIdKey<GroupName> implement
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.GroupName getBean() {
-        return new com.aoindustries.aoserv.client.beans.GroupName(key.getBean(), accounting.getBean(), disableLog);
+        return new com.aoindustries.aoserv.client.beans.GroupName(getKey().getBean(), accounting.getBean(), disableLog);
     }
     // </editor-fold>
 

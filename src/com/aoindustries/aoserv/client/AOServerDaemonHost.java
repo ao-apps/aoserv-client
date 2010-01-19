@@ -27,7 +27,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDae
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int aoServer;
-    final private Hostname host;
+    private Hostname host;
 
     public AOServerDaemonHost(
         AOServerDaemonHostService<?,?> service,
@@ -37,7 +37,17 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDae
     ) {
         super(service, pkey);
         this.aoServer = aoServer;
-        this.host = host.intern();
+        this.host = host;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        host = intern(host);
     }
     // </editor-fold>
 

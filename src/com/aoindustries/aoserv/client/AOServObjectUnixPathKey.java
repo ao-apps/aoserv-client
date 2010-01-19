@@ -18,15 +18,25 @@ abstract public class AOServObjectUnixPathKey<T extends AOServObjectUnixPathKey<
 
     private static final long serialVersionUID = 1L;
 
-    final protected UnixPath key;
+    private UnixPath key;
 
     protected AOServObjectUnixPathKey(AOServService<?,?,UnixPath,T> service, UnixPath key) {
         super(service);
-        this.key = key.intern();
+        this.key = key;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        key = intern(key);
     }
 
     /**
-     * Gets the key value for this object.
+     * Gets the interned key value for this object.
      */
     final public UnixPath getKey() {
         return key;

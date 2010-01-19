@@ -88,7 +88,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     }
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
-        String resourceType = getResource().resourceType;
+        String resourceType = getResource().getResourceType().getName();
         AOServObject obj;
         if(resourceType.equals(ResourceType.MYSQL_DATABASE)) obj = getMysqlDatabase();
         else if(resourceType.equals(ResourceType.MYSQL_SERVER)) obj = getMysqlServer();

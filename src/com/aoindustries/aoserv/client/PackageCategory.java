@@ -47,20 +47,20 @@ final public class PackageCategory extends AOServObjectStringKey<PackageCategory
      */
     @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the category name")
     public String getName() {
-        return key;
+        return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.PackageCategory getBean() {
-        return new com.aoindustries.aoserv.client.beans.PackageCategory(key);
+        return new com.aoindustries.aoserv.client.beans.PackageCategory(getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "PackageCategory."+key+".toString");
+        return ApplicationResources.accessor.getMessage(userLocale, "PackageCategory."+getKey()+".toString");
     }
     // </editor-fold>
 }

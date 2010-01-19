@@ -40,13 +40,13 @@ final public class TicketPriority extends AOServObjectStringKey<TicketPriority> 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="priority", index=IndexType.PRIMARY_KEY, description="the unique priority")
     public String getPriority() {
-    	return key;
+    	return getKey();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TicketPriority getBean() {
-        return new com.aoindustries.aoserv.client.beans.TicketPriority(key);
+        return new com.aoindustries.aoserv.client.beans.TicketPriority(getKey());
     }
     // </editor-fold>
 }

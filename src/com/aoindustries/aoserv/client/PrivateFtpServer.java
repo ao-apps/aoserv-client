@@ -8,12 +8,15 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
+import java.util.Locale;
+import java.util.Set;
 
 /**
- * When a <code>PrivateFTPServer</code> is attached to a
+ * When a <code>PrivateFtpServer</code> is attached to a
  * <code>NetBind</code>, the FTP server reponds as configured
- * in the <code>PrivateFTPServer</code>.
+ * in the <code>PrivateFtpServer</code>.
  *
  * @see  NetBind
  *
@@ -27,9 +30,9 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int netBind;
-    final private UnixPath logfile;
-    final private DomainName hostname;
-    final private Email email;
+    private UnixPath logfile;
+    private DomainName hostname;
+    private Email email;
     final private int linuxAccountGroup;
     final private boolean allowAnonymous;
 
@@ -50,6 +53,18 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
         this.email = email;
         this.linuxAccountGroup = linuxAccountGroup;
         this.allowAnonymous = allowAnonymous;
+        intern();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        logfile = intern(logfile);
+        hostname = intern(hostname);
+        email = intern(email);
     }
     // </editor-fold>
 
@@ -60,62 +75,64 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
     }
     // </editor-fold>
 
-    public String getEmail() {
-        return email;
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the resource id")
+    public AOServerResource getAoServerResource() throws RemoteException {
+        return getService().getConnector().getAoServerResources().get(key);
     }
 
-    public String getHostname() {
-        return hostname;
+    static final String COLUMN_NET_BIND = "net_bind";
+    @SchemaColumn(order=1, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the pkey of the net_bind that the FTP server is on")
+    public NetBind getNetBind() throws RemoteException {
+        return getService().getConnector().getNetBinds().get(key);
     }
 
-    public NetBind getNetBind() throws SQLException, IOException {
-        return getService().getConnector().getNetBinds().get(pkey);
-    }
-
-    public String getLogfile() {
+    @SchemaColumn(order=2, name="logfile", description="the file transfers are logged to")
+    public UnixPath getLogfile() {
         return logfile;
     }
 
-    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        return getService().getConnector().getLinuxServerAccounts().get(pub_linux_server_account);
+    @SchemaColumn(order=3, name="hostname", description="the hostname the server reports")
+    public DomainName getHostname() {
+        return hostname;
     }
 
-    /**
-     * @deprecated  use getLinuxServerAccount().getPrimaryLinuxServerGroup()
-     */
-    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        return getLinuxServerAccount().getPrimaryLinuxServerGroup();
+    @SchemaColumn(order=4, name="email", description="the email address the server reports")
+    public Email getEmail() {
+        return email;
     }
 
+    @SchemaColumn(order=5, name="linux_account_group", description="the Linux account and group this FTP server runs as")
+    public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
+        return getService().getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
+    }
+
+    @SchemaColumn(order=6, name="allow_anonymous", description="enabled or disabled anonymous access to the server")
     public boolean allowAnonymous() {
         return allowAnonymous;
     }
+    // </editor-fold>
 
-    /**
-     * @deprecated  use getLinuxServerAccount().getHome()
-     */
-    public String getRoot() throws SQLException, IOException {
-        return getLinuxServerAccount().getHome();
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    public com.aoindustries.aoserv.client.beans.PrivateFtpServer getBean() {
+        return new com.aoindustries.aoserv.client.beans.PrivateFtpServer(key, netBind, logfile.getBean(), hostname.getBean(), email.getBean(), linuxAccountGroup, allowAnonymous);
     }
+    // </editor-fold>
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.PRIVATE_FTP_SERVERS;
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
             getNetBind(),
-            getLinuxServerAccount()
+            getLinuxAccountGroup(),
+            getAoServerResource()
         );
     }
+    // </editor-fold>
 
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-        );
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
-        return hostname;
+        return hostname.getDomain();
     }
+    // </editor-fold>
 }
