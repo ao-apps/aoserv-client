@@ -54,7 +54,7 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="sort_order", index=IndexType.PRIMARY_KEY, description="provides ordering of the modes")
+    @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="provides ordering of the modes")
     public short getSortOrder() {
         return sortOrder;
     }

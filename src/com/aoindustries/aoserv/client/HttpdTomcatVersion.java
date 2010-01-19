@@ -97,6 +97,19 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
             getTechnologyVersion()
         );
     }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getHttpdJBossVersions()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<HttpdJBossVersion> getHttpdJBossVersions() throws RemoteException {
+        return getService().getConnector().getHttpdJBossVersions().filterIndexed(HttpdJBossVersion.COLUMN_TOMCAT_VERSION, this);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Convenient Version Checking">
