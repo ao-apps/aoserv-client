@@ -45,8 +45,8 @@ final public class AddTicketCommand extends AOServCommand<Integer> {
     final private String summary;
     final private String details;
     final private String clientPriority;
-    final private Set<Email> contactEmails;
-    final private Set<String> contactPhoneNumbers;
+    final private String contactEmails;
+    final private String contactPhoneNumbers;
 
     public AddTicketCommand(
         @Param(name=PARAM_BRAND) AccountingCode brand,
@@ -58,8 +58,8 @@ final public class AddTicketCommand extends AOServCommand<Integer> {
         @Param(name=PARAM_SUMMARY) String summary,
         @Param(name=PARAM_DETAILS, nullable=true) String details,
         @Param(name=PARAM_CLIENT_PRIORITY) String clientPriority,
-        @Param(name=PARAM_CONTACT_EMAILS) Set<Email> contactEmails,
-        @Param(name=PARAM_CONTACT_PHONE_NUMBERS) Set<String> contactPhoneNumbers
+        @Param(name=PARAM_CONTACT_EMAILS) String contactEmails,
+        @Param(name=PARAM_CONTACT_PHONE_NUMBERS) String contactPhoneNumbers
     ) {
         this.brand = brand;
         this.business = business;

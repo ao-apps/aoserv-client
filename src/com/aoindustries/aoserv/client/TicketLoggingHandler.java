@@ -12,10 +12,8 @@ import com.aoindustries.util.logging.QueuedHandler;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -130,8 +128,6 @@ final public class TicketLoggingHandler extends QueuedHandler {
                 else if(intLevel<=Level.WARNING.intValue()) priorityName = TicketPriority.HIGH;    // INFO < level <=WARNING
                 else priorityName = TicketPriority.URGENT;                                         // WARNING < level
                 TicketPriority priority = connector.getTicketPriorities().get(priorityName);
-                Set<Email> contactEmails = Collections.emptySet();
-                Set<String> contactPhoneNumbers = Collections.emptySet();
                 brand.addTicket(
                     business,
                     language,
@@ -141,8 +137,8 @@ final public class TicketLoggingHandler extends QueuedHandler {
                     summary,
                     fullReport,
                     priority,
-                    contactEmails,
-                    contactPhoneNumbers
+                    "",
+                    ""
                 );
             }
         } catch(Exception err) {

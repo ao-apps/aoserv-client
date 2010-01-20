@@ -545,8 +545,8 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         String summary,
         String details,
         TicketPriority clientPriority,
-        Set<Email> contactEmails,
-        Set<String> contactPhoneNumbers
+        String contactEmails,
+        String contactPhoneNumbers
     ) throws RemoteException {
         return new AddTicketCommand(
             getKey(),

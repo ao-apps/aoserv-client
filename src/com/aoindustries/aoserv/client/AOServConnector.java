@@ -258,11 +258,6 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     public void clearCaches() {
         for(AOServTable table : tables) table.clearCache();
     }
-
-    private static final Random random = new SecureRandom();
-    public static Random getRandom() {
-        return random;
-    }
     */
     /**
      * Manually invalidates the system caches.
