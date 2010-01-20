@@ -9,6 +9,10 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.AOServPermissionService;
+import com.aoindustries.aoserv.client.AOServRole;
+import com.aoindustries.aoserv.client.AOServRolePermission;
+import com.aoindustries.aoserv.client.AOServRolePermissionService;
+import com.aoindustries.aoserv.client.AOServRoleService;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServer;
 import com.aoindustries.aoserv.client.AOServerDaemonHost;
@@ -28,6 +32,8 @@ import com.aoindustries.aoserv.client.Brand;
 import com.aoindustries.aoserv.client.BrandService;
 import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.BusinessAdministratorRole;
+import com.aoindustries.aoserv.client.BusinessAdministratorRoleService;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessServer;
 import com.aoindustries.aoserv.client.BusinessServerService;
@@ -230,6 +236,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         aoserverResources = new CachedAOServerResourceService(this, wrapped.getAoServerResources());
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAoservPermissions());
+        aoservRoles = new CachedAOServRoleService(this, wrapped.getAoservRoles());
+        aoservRolePermissions = new CachedAOServRolePermissionService(this, wrapped.getAoservRolePermissions());
         architectures = new CachedArchitectureService(this, wrapped.getArchitectures());
         backupPartitions = new CachedBackupPartitionService(this, wrapped.getBackupPartitions());
         backupRetentions = new CachedBackupRetentionService(this, wrapped.getBackupRetentions());
@@ -240,7 +248,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         // TODO: blackholeEmailAddresss = new CachedBlackholeEmailAddressService(this, wrapped.getBlackholeEmailAddresss());
         brands = new CachedBrandService(this, wrapped.getBrands());
         businessAdministrators = new CachedBusinessAdministratorService(this, wrapped.getBusinessAdministrators());
-        // TODO: businessAdministratorPermissions = new CachedBusinessAdministratorPermissionService(this, wrapped.getBusinessAdministratorPermissions());
+        businessAdministratorRoles = new CachedBusinessAdministratorRoleService(this, wrapped.getBusinessAdministratorRoles());
         // TODO: businessProfiles = new CachedBusinessProfileService(this, wrapped.getBusinessProfiles());
         businesses = new CachedBusinessService(this, wrapped.getBusinesses());
         businessServers = new CachedBusinessServerService(this, wrapped.getBusinessServers());
@@ -478,6 +486,28 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return aoservPermissions;
     }
     // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="AOServRoleService">
+    static class CachedAOServRoleService extends CachedService<Integer,AOServRole> implements AOServRoleService<CachedConnector,CachedConnectorFactory> {
+        CachedAOServRoleService(CachedConnector connector, AOServRoleService<?,?> wrapped) {
+            super(connector, Integer.class, AOServRole.class, wrapped);
+        }
+    }
+    final CachedAOServRoleService aoservRoles;
+    public AOServRoleService<CachedConnector,CachedConnectorFactory> getAoservRoles() {
+        return aoservRoles;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="AOServRolePermissionService">
+    static class CachedAOServRolePermissionService extends CachedService<Integer,AOServRolePermission> implements AOServRolePermissionService<CachedConnector,CachedConnectorFactory> {
+        CachedAOServRolePermissionService(CachedConnector connector, AOServRolePermissionService<?,?> wrapped) {
+            super(connector, Integer.class, AOServRolePermission.class, wrapped);
+        }
+    }
+    final CachedAOServRolePermissionService aoservRolePermissions;
+    public AOServRolePermissionService<CachedConnector,CachedConnectorFactory> getAoservRolePermissions() {
+        return aoservRolePermissions;
+    }
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ArchitectureService">
     static class CachedArchitectureService extends CachedService<String,Architecture> implements ArchitectureService<CachedConnector,CachedConnectorFactory> {
         CachedArchitectureService(CachedConnector connector, ArchitectureService<?,?> wrapped) {
@@ -560,9 +590,16 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return businessAdministrators;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorPermissionService">
-    // TODO: final CachedBusinessAdministratorPermissionService businessAdministratorPermissions;
-    // TODO: public BusinessAdministratorPermissionService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorPermissions();
+    // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorRoleService">
+    static class CachedBusinessAdministratorRoleService extends CachedService<Integer,BusinessAdministratorRole> implements BusinessAdministratorRoleService<CachedConnector,CachedConnectorFactory> {
+        CachedBusinessAdministratorRoleService(CachedConnector connector, BusinessAdministratorRoleService<?,?> wrapped) {
+            super(connector, Integer.class, BusinessAdministratorRole.class, wrapped);
+        }
+    }
+    final CachedBusinessAdministratorRoleService businessAdministratorRoles;
+    public BusinessAdministratorRoleService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorRoles() {
+        return businessAdministratorRoles;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessProfileService">
     // TODO: final CachedBusinessProfileService businessProfiles;

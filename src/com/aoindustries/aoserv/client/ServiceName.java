@@ -22,9 +22,8 @@ public enum ServiceName implements LocalizedToString {
     ao_server_resources,
     ao_servers,
     aoserv_permissions,
-    /*
-    aosh_commands,
-     */
+    aoserv_roles,
+    aoserv_role_permissions,
     architectures,
     backup_partitions,
     backup_retentions,
@@ -39,10 +38,8 @@ public enum ServiceName implements LocalizedToString {
      */
     brands,
     business_administrators,
-    /* TODO
-    business_administrator_permissions,
-    business_profiles,
-     */
+    business_administrator_roles,
+    // TODO: business_profiles,
     businesses,
     business_servers,
     country_codes,

@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
+import java.security.Principal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -23,7 +24,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessAdministrator> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessAdministrator> /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
+final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessAdministrator> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessAdministrator>, Principal /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -138,7 +139,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
 
     @SchemaColumn(order=2, name="name", description="the name of this admin")
-    public String getName() {
+    public String getFullName() {
     	return name;
     }
 
@@ -266,8 +267,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
             AOServObjectUtils.createDependencySet(
                 getMasterUser()
             ),
+            getBusinessAdministratorRoles(),
             /* TODO
-            getPermissions(),
             getCreditCardsByCreatedBy(),
             getCreditCardTransactionsByAuthorizationUsername(),
             getCreditCardTransactionsByCaptureUsername(),
@@ -295,6 +296,10 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         return getService().getConnector().getBusinesses().filterIndexed(Business.COLUMN_CREATED_BY, this);
     }
 
+    public IndexedSet<BusinessAdministratorRole> getBusinessAdministratorRoles() throws RemoteException {
+        return getService().getConnector().getBusinessAdministratorRoles().filterIndexed(BusinessAdministratorRole.COLUMN_USERNAME, this);
+    }
+
     public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
         return getService().getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_DISABLED_BY, this);
     }
@@ -319,6 +324,15 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         return br.getReseller()!=null;
         // TODO: And has the edit_ticket permission.
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Principal">
+    /**
+     * Gets the unique name of this Principal.
+     */
+    public String getName() {
+        return getKey().getId();
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
@@ -606,10 +620,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     public boolean canSetPassword() {
         return disableLog==null;
     }
-
-    public List<BusinessAdministratorPermission> getPermissions() throws IOException, SQLException {
-        return getService().getConnector().getBusinessAdministratorPermissions().getPermissions(this);
-    }*/
+     */
 
     /**
      * Checks if this business administrator has the provided permission.

@@ -91,6 +91,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     AOServerResourceService<C,F> getAoServerResources() throws RemoteException;
     AOServerService<C,F> getAoServers() throws RemoteException;
     AOServPermissionService<C,F> getAoservPermissions() throws RemoteException;
+    AOServRoleService<C,F> getAoservRoles() throws RemoteException;
+    AOServRolePermissionService<C,F> getAoservRolePermissions() throws RemoteException;
     ArchitectureService<C,F> getArchitectures() throws RemoteException;
     BackupPartitionService<C,F> getBackupPartitions() throws RemoteException;
     BackupRetentionService<C,F> getBackupRetentions() throws RemoteException;
@@ -103,8 +105,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
      */
     BrandService<C,F> getBrands() throws RemoteException;
     BusinessAdministratorService<C,F> getBusinessAdministrators() throws RemoteException;
+    BusinessAdministratorRoleService<C,F> getBusinessAdministratorRoles() throws RemoteException;
     /*
-    BusinessAdministratorPermissionService<C,F> getBusinessAdministratorPermissions() throws RemoteException;
     BusinessProfileService<C,F> getBusinessProfiles() throws RemoteException;
      */
     BusinessService<C,F> getBusinesses() throws RemoteException;

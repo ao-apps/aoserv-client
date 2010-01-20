@@ -7,14 +7,16 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.i18n.LocalizedToString;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * All of the permissions within the system.
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServPermission extends AOServObjectStringKey<AOServPermission> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServPermission> {
+final public class AOServPermission extends AOServObjectStringKey<AOServPermission> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServPermission>, java.security.acl.Permission {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -118,6 +120,15 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getAoservRolePermissions()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
@@ -129,6 +140,12 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
      */
     public String getDescription(Locale userLocale) {
         return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+getKey()+".description");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<AOServRolePermission> getAoservRolePermissions() throws RemoteException {
+        return getService().getConnector().getAoservRolePermissions().filterIndexed(AOServRolePermission.COLUMN_PERMISSION, this);
     }
     // </editor-fold>
 }

@@ -9,6 +9,10 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermission;
 import com.aoindustries.aoserv.client.AOServPermissionService;
+import com.aoindustries.aoserv.client.AOServRole;
+import com.aoindustries.aoserv.client.AOServRolePermission;
+import com.aoindustries.aoserv.client.AOServRolePermissionService;
+import com.aoindustries.aoserv.client.AOServRoleService;
 import com.aoindustries.aoserv.client.AOServService;
 import com.aoindustries.aoserv.client.AOServer;
 import com.aoindustries.aoserv.client.AOServerDaemonHost;
@@ -28,6 +32,8 @@ import com.aoindustries.aoserv.client.Brand;
 import com.aoindustries.aoserv.client.BrandService;
 import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.BusinessAdministratorRole;
+import com.aoindustries.aoserv.client.BusinessAdministratorRoleService;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessServer;
 import com.aoindustries.aoserv.client.BusinessServerService;
@@ -235,10 +241,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         aoserverResources = new WrappedAOServerResourceService(this);
         aoservers = new WrappedAOServerService(this);
         aoservPermissions = new WrappedAOServPermissionService(this);
-        /* TODO
-        aoservProtocols = new WrappedAOServProtocolService(this);
-        aoshCommands = new WrappedAOSHCommandService(this);
-         */
+        aoservRoles = new WrappedAOServRoleService(this);
+        aoservRolePermissions = new WrappedAOServRolePermissionService(this);
         architectures = new WrappedArchitectureService(this);
         backupPartitions = new WrappedBackupPartitionService(this);
         backupRetentions = new WrappedBackupRetentionService(this);
@@ -249,10 +253,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         // TODO: blackholeEmailAddresss = new WrappedBlackholeEmailAddressService(this);
         brands = new WrappedBrandService(this);
         businessAdministrators = new WrappedBusinessAdministratorService(this);
-        /* TODO
-        businessAdministratorPermissions = new WrappedBusinessAdministratorPermissionService(this);
-        businessProfiles = new WrappedBusinessProfileService(this);
-         */
+        businessAdministratorRoles = new WrappedBusinessAdministratorRoleService(this);
+        // TODO: businessProfiles = new WrappedBusinessProfileService(this);
         businesses = new WrappedBusinessService(this);
         businessServers = new WrappedBusinessServerService(this);
         countryCodes = new WrappedCountryCodeService(this);
@@ -573,6 +575,28 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return aoservPermissions;
     }
     // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="AOServRoleService">
+    static class WrappedAOServRoleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServRole> implements AOServRoleService<C,F> {
+        WrappedAOServRoleService(C connector) {
+            super(connector, Integer.class, AOServRole.class);
+        }
+    }
+    final WrappedAOServRoleService<C,F> aoservRoles;
+    final public AOServRoleService<C,F> getAoservRoles() {
+        return aoservRoles;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="AOServRolePermissionService">
+    static class WrappedAOServRolePermissionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServRolePermission> implements AOServRolePermissionService<C,F> {
+        WrappedAOServRolePermissionService(C connector) {
+            super(connector, Integer.class, AOServRolePermission.class);
+        }
+    }
+    final WrappedAOServRolePermissionService<C,F> aoservRolePermissions;
+    final public AOServRolePermissionService<C,F> getAoservRolePermissions() {
+        return aoservRolePermissions;
+    }
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ArchitectureService">
     static class WrappedArchitectureService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Architecture> implements ArchitectureService<C,F> {
         WrappedArchitectureService(C connector) {
@@ -655,9 +679,16 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return businessAdministrators;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorPermissionService">
-    // TODO: final WrappedBusinessAdministratorPermissionService<C,F> businessAdministratorPermissions;
-    // TODO: final public BusinessAdministratorPermissionService<C,F> getBusinessAdministratorPermissions();
+    // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorRoleService">
+    static class WrappedBusinessAdministratorRoleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessAdministratorRole> implements BusinessAdministratorRoleService<C,F> {
+        WrappedBusinessAdministratorRoleService(C connector) {
+            super(connector, Integer.class, BusinessAdministratorRole.class);
+        }
+    }
+    final WrappedBusinessAdministratorRoleService<C,F> businessAdministratorRoles;
+    final public BusinessAdministratorRoleService<C,F> getBusinessAdministratorRoles() {
+        return businessAdministratorRoles;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessProfileService">
     // TODO: final WrappedBusinessProfileService<C,F> businessProfiles;

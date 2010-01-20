@@ -8,8 +8,15 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
+import java.security.Principal;
+import java.security.acl.Group;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -21,7 +28,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Business extends AOServObjectAccountingCodeKey<Business> implements BeanFactory<com.aoindustries.aoserv.client.beans.Business> /* TODO: implements Disablable*/ {
+final public class Business extends AOServObjectAccountingCodeKey<Business> implements BeanFactory<com.aoindustries.aoserv.client.beans.Business>, Group /* TODO: implements Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -324,6 +331,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             AOServObjectUtils.createDependencySet(
                 getBrand()
             ),
+            getAoservRoles(),
             getChildBusinesses(),
             // TODO: getBusinessProfiles(),
             getBusinessServers(),
@@ -364,6 +372,10 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /**
      * Gets the Brand for this business or <code>null</code> if not a brand.
      */
+    public IndexedSet<AOServRole> getAoservRoles() throws RemoteException {
+        return getService().getConnector().getAoservRoles().filterIndexed(AOServRole.COLUMN_ACCOUNTING, this);
+    }
+
     public Brand getBrand() throws RemoteException {
         return getService().getConnector().getBrands().filterUnique(Brand.COLUMN_ACCOUNTING, this);
     }
@@ -398,6 +410,86 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public IndexedSet<Username> getUsernames() throws RemoteException {
         return getService().getConnector().getUsernames().filterIndexed(Username.COLUMN_ACCOUNTING, this);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Group">
+    /**
+     * A group contains all users of its own business plus all parent businesses.
+     */
+    public boolean addMember(Principal user) {
+        if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
+        try {
+            Business userBusiness = ((BusinessAdministrator)user).getUsername().getBusiness();
+            Business thisBusiness = this;
+            do {
+                if(userBusiness.equals(thisBusiness)) return false;
+                thisBusiness = thisBusiness.getParentBusiness();
+            } while(thisBusiness!=null);
+            throw new UnsupportedOperationException("Not implemented");
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    /**
+     * A group contains all users of its own business plus all parent businesses.
+     */
+    public boolean removeMember(Principal user) {
+        if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
+        try {
+            Business userBusiness = ((BusinessAdministrator)user).getUsername().getBusiness();
+            Business thisBusiness = this;
+            do {
+                if(userBusiness.equals(thisBusiness)) throw new UnsupportedOperationException("Not implemented");
+                thisBusiness = thisBusiness.getParentBusiness();
+            } while(thisBusiness!=null);
+            return false;
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    /**
+     * A group contains all users of its own business plus all parent businesses.
+     */
+    public boolean isMember(Principal user) {
+        if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
+        try {
+            Business userBusiness = ((BusinessAdministrator)user).getUsername().getBusiness();
+            Business thisBusiness = this;
+            do {
+                if(userBusiness.equals(thisBusiness)) return true;
+                thisBusiness = thisBusiness.getParentBusiness();
+            } while(thisBusiness!=null);
+            return false;
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    /**
+     * A group contains all users of its own business plus all parent businesses.
+     */
+    public Enumeration<BusinessAdministrator> members() {
+        List<BusinessAdministrator> members = new ArrayList<BusinessAdministrator>();
+        try {
+            Business thisBusiness = this;
+            do {
+                for(Username un : thisBusiness.getUsernames()) {
+                    BusinessAdministrator ba = un.getBusinessAdministrator();
+                    if(ba!=null) members.add(ba);
+                }
+                thisBusiness = thisBusiness.getParentBusiness();
+            } while(thisBusiness!=null);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
+        return Collections.enumeration(members);
+    }
+
+    public String getName() {
+        return getKey().getAccounting();
     }
     // </editor-fold>
 
