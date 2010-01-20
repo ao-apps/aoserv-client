@@ -45,11 +45,12 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
     /**
      * Gets the wrapped service, reconnecting if necessary.
      */
+    @SuppressWarnings("unchecked")
     protected AOServService<?,?,K,V> getWrapped() throws RemoteException {
         synchronized(connector.connectionLock) {
             if(wrapped==null) {
                 try {
-                    connector.connect();
+                    wrapped = (AOServService<?,?,K,V>)connector.getWrapped().getServices().get(serviceName);
                 } catch(LoginException err) {
                     throw new RemoteException(err.getMessage(), err);
                 }

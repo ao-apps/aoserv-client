@@ -404,23 +404,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         whoisHistories = new WrappedWhoisHistoryService(this);
          */
         // Connect immediately in order to have the chance to throw exceptions that will occur during connection
-        synchronized(connectionLock) {
-            connect();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    final void connect() throws RemoteException, LoginException {
-        assert Thread.holdsLock(connectionLock);
-
-        // Connect to the remote registry and get each of the stubs
-        AOServConnector<?,?> newWrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
-
-        // Now that each stub has been successfully received, store as the current connection
-        this.wrapped = newWrapped;
-        for(ServiceName serviceName : ServiceName.values) {
-            ((WrappedService)getServices().get(serviceName)).wrapped = newWrapped.getServices().get(serviceName);
-        }
+        getWrapped();
     }
 
     /**
@@ -439,17 +423,10 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     /**
      * Gets the wrapped connector, reconnecting if needed.
      */
-    final protected AOServConnector<?,?> getWrapped() throws RemoteException {
+    final protected AOServConnector<?,?> getWrapped() throws RemoteException, LoginException {
         synchronized(connectionLock) {
-            if(wrapped==null) {
-                try {
-                    connect();
-                } catch(RemoteException err) {
-                    throw err;
-                } catch(Exception err) {
-                    throw new RemoteException(err.getMessage(), err);
-                }
-            }
+            // (Re)connects to the wrapped factory
+            if(wrapped==null) wrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
             return wrapped;
         }
     }
@@ -499,8 +476,12 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
             call(
                 new Callable<Void>() {
                     public Void call() throws RemoteException {
-                        getWrapped().setLocale(locale);
-                        return null;
+                        try {
+                            getWrapped().setLocale(locale);
+                            return null;
+                        } catch(LoginException err) {
+                            throw new RemoteException(err.getMessage(), err);
+                        }
                     }
                 }
             );
@@ -527,7 +508,11 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return call(
             new Callable<R>() {
                 public R call() throws RemoteException {
-                    return getWrapped().executeCommand(command, isInteractive);
+                    try {
+                        return getWrapped().executeCommand(command, isInteractive);
+                    } catch(LoginException err) {
+                        throw new RemoteException(err.getMessage(), err);
+                    }
                 }
             },
             command.isRetryable()
