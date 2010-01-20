@@ -17,8 +17,6 @@ import java.util.Locale;
  * Performs password checking for all password protected
  * services.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class PasswordChecker {
@@ -82,7 +80,14 @@ final public class PasswordChecker {
         return results;
     }
 
-    public static Result[] checkPassword(Locale userLocale, String username, String password, boolean strict, boolean superLax) throws IOException {
+    public enum PasswordStrength {
+        SUPER_LAX,
+        MODERATE,
+        STRICT
+    }
+
+    public static Result[] checkPassword(Locale userLocale, String username, String password, PasswordStrength strength) throws IOException {
+        if(strength==null) throw new IllegalArgumentException("strength==null");
         Result[] results = getAllGoodResults(userLocale);
         int passwordLen = password.length();
         if (passwordLen > 0) {
@@ -91,7 +96,7 @@ final public class PasswordChecker {
              *
              * Must be at least eight characters
              */
-            if (passwordLen < (superLax?6:8)) results[0].result = ApplicationResources.accessor.getMessage(userLocale, superLax ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
+            if (passwordLen < (strength==PasswordStrength.SUPER_LAX?6:8)) results[0].result = ApplicationResources.accessor.getMessage(userLocale, strength==PasswordStrength.SUPER_LAX ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
 
             /*
              * Gather password stats
@@ -116,7 +121,7 @@ final public class PasswordChecker {
              * 3) Must not contain a space
              */
             if ((numbercount + specialcount) == passwordLen) results[1].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.characters.notOnlyNumbers");
-            else if (!superLax && (lowercount + uppercount + specialcount) == passwordLen) results[1].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.characters.numbersAndPunctuation");
+            else if (strength!=PasswordStrength.SUPER_LAX && (lowercount + uppercount + specialcount) == passwordLen) results[1].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.characters.numbersAndPunctuation");
             else if (password.indexOf(' ')!=-1) results[1].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.characters.notContainSpace");
 
             /*
@@ -125,7 +130,7 @@ final public class PasswordChecker {
              * If more than one letter exists, force different case
              */
             if (
-                !superLax
+                strength!=PasswordStrength.SUPER_LAX
                 && (
                     (lowercount > 1 && uppercount == 0)
                     || (uppercount > 1 && lowercount == 0)
@@ -157,7 +162,7 @@ final public class PasswordChecker {
              * Removed -> Does not contain the two digit representation of the current year, last year, or
              * Removed -> next year, and a month 1-12 (strict mode only)
              */
-            if (!superLax) {
+            if (strength!=PasswordStrength.SUPER_LAX) {
                 String lowerf = password.toLowerCase();
                 String lowerb = backwards.toLowerCase();
                 boolean goodb = true;
@@ -180,7 +185,7 @@ final public class PasswordChecker {
                      */
                     byte[] words = getDictionary();
 
-                    int max_allowed_dict_len = strict ? 3 : (passwordLen / 2);
+                    int max_allowed_dict_len = strength==PasswordStrength.STRICT ? 3 : (passwordLen / 2);
 
                     // Search through each dictionary word
                     int wordslen = words.length;

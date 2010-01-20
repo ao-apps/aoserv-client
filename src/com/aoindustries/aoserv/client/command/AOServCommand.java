@@ -106,6 +106,13 @@ abstract public class AOServCommand<R> implements Serializable {
     }
 
     /**
+     * Validates the command using the provided connector, using the connector's locale and connectAs user.
+     */
+    final public Map<String,List<String>> validate(AOServConnector<?,?> conn) throws RemoteException {
+        return validate(conn.getLocale(), conn.getThisBusinessAdministrator());
+    }
+
+    /**
      * Validates this command, returning a set of error messages on a per-parameter
      * basis.  Messages that are not associated with a specific parameters will have
      * a <code>null</code> key.  If there is no validation problems, returns an

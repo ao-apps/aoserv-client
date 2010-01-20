@@ -5,14 +5,17 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.SetBusinessAdministratorPasswordCommand;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -314,6 +317,21 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    /**
+     * Validates a password and returns a description of the problem.  If the
+     * password is valid, then <code>null</code> is returned.
+     */
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
+        return PasswordChecker.checkPassword(userLocale, username, password, PasswordChecker.PasswordStrength.STRICT);
+    }
+
+    public void setPassword(String plaintext) throws RemoteException {
+        new SetBusinessAdministratorPasswordCommand(getKey(), plaintext).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Permissions">
     /**
      * A ticket administrator is part of a business that is also a reseller.
      * TODO: And has the edit_ticket permission.
@@ -324,6 +342,38 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         return br.getReseller()!=null;
         // TODO: And has the edit_ticket permission.
     }
+
+    /**
+     * Checks if this business administrator has the provided permission.
+     */
+    public boolean hasPermission(AOServPermission permission) throws RemoteException {
+        for(BusinessAdministratorRole role : getBusinessAdministratorRoles()) {
+            if(role.getRole().getAoservRolePermissions().filterUnique(AOServRolePermission.COLUMN_PERMISSION, permission)!=null) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if this business administrator has the provided permission.
+     */
+    public boolean hasPermission(AOServPermission.Permission permission) throws RemoteException {
+        return hasPermission(getService().getConnector().getAoservPermissions().get(permission.name()));
+    }
+
+    /**
+     * Checks if this business administrator has all of the permissions.
+     *
+     * @param permissions a non-null, non-empty set of permissions.
+     */
+    public boolean hasPermissions(Set<AOServPermission.Permission> permissions) throws RemoteException {
+        if(permissions==null) throw new IllegalArgumentException("permissions==null");
+        if(permissions.isEmpty()) throw new IllegalArgumentException("permissions is empty");
+        for(AOServPermission.Permission permission : permissions) {
+            if(!hasPermission(permission)) return false;
+        }
+        return true;
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Principal">
     /**
@@ -361,15 +411,6 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         return checkPassword(userLocale, pkey, password);
     }
     */
-
-    /**
-     * Validates a password and returns a description of the problem.  If the
-     * password is valid, then <code>null</code> is returned.
-     */
-    /* TODO
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
-	return PasswordChecker.checkPassword(userLocale, username, password, true, false);
-    }*/
 
     /**
      * Validates a password and returns a description of the problem.  If the
@@ -500,19 +541,6 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
             pkey
         );
     }
-    */
-
-    /**
-     * Sets the password for this <code>BusinessAdministrator</code>.  All connections must
-     * be over secure protocols for this method to work.  If the connections
-     * are not secure, an <code>IOException</code> is thrown.
-     */
-    /* TODO
-    public void setPassword(String plaintext) throws IOException, SQLException {
-        AOServConnector connector=getService().getConnector();
-        if(!connector.isSecure()) throw new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
-    	connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
-    }
 
     public void setProfile(
         final String name,
@@ -626,28 +654,11 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
      * Checks if this business administrator has the provided permission.
      */
     /* TODO
-    public boolean hasPermission(AOServPermission permission) throws IOException, SQLException {
-        return hasPermission(permission.getName());
-    }*/
-
-    /**
-     * Checks if this business administrator has the provided permission.
-     */
-    /* TODO
-    public boolean hasPermission(AOServPermission.Permission permission) throws IOException, SQLException {
-        return hasPermission(permission.name());
-    }*/
-
-    /**
-     * Checks if this business administrator has the provided permission.
-     */
-    /* TODO
     public boolean hasPermission(String permission) throws IOException, SQLException {
         return getService().getConnector().getBusinessAdministratorPermissions().hasPermission(this, permission);
     }*/
 
     /* TODO
-
     public List<CreditCard> getCreditCardsByCreatedBy() throws IOException, SQLException {
         return getService().getConnector().getCreditCards().getIndexedRows(CreditCard.COLUMN_CREATED_BY, pkey);
     }

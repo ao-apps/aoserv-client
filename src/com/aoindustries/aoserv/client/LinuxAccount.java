@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.SetLinuxAccountPasswordCommand;
 import com.aoindustries.aoserv.client.command.SetLinuxAccountPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.UnixPath;
@@ -12,6 +13,7 @@ import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -271,6 +273,21 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Commands">
+    /**
+     * Checks the strength of a password as required for this
+     * <code>LinuxAccount</code>.  The strength requirement
+     * depends on the <code>LinuxAccountType</code>.
+     *
+     * @see PasswordChecker
+     */
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, LinuxAccountType.Constant type, String password) throws IOException {
+        return PasswordChecker.checkPassword(userLocale, username, password, type.getPasswordStrength());
+    }
+
+    public void setPassword(String plaintext) throws RemoteException {
+        new SetLinuxAccountPasswordCommand(getKey(), plaintext).execute(getService().getConnector());
+    }
+
     public void setPredisablePassword(String password) throws RemoteException {
         new SetLinuxAccountPredisablePasswordCommand(key, password).execute(getService().getConnector());
     }
@@ -312,20 +329,6 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
         return checkPassword(userLocale, pkey, type, password);
-    }
-    */
-    /**
-     * Checks the strength of a password as required for this
-     * <code>LinuxAccount</code>.  The strength requirement
-     * depends on the <code>LinuxAccountType</code>.
-     *
-     * @see  LinuxAccountType#enforceStrongPassword(String)
-     * @see  PasswordChecker#checkPassword(Locale,String,String,boolean,boolean)
-     */
-    /* TODO
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String type, String password) throws IOException {
-        boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
-        return PasswordChecker.checkPassword(userLocale, username, password, enforceStrong, !enforceStrong);
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {

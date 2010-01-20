@@ -298,7 +298,7 @@ final public class AOSH extends ShellInterpreter {
                                     // TODO: Check permissions
 
                                     // Validate
-                                    Map<String,List<String>> errors = aoservCommand.validate(connector.getLocale(), connector.getThisBusinessAdministrator());
+                                    Map<String,List<String>> errors = aoservCommand.validate(connector);
                                     if(!errors.isEmpty()) throw new ValidationException(aoservCommand, errors);
 
                                     Object resultObj = aoservCommand.execute(connector, isInteractive());

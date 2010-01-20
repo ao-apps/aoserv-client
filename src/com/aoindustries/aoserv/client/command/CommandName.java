@@ -26,9 +26,12 @@ public enum CommandName {
     describe(DescribeCommand.class, null),
     // TODO: select(SelectCommand.class, null),
     show(ShowCommand.class, null),
+    // businesses
+    cancel_business(CancelBusinessCommand.class, ServiceName.businesses, AOServPermission.Permission.cancel_business),
     // business_administrators
     crypt(CryptCommand.class, ServiceName.business_administrators),
     hash_password(HashPasswordCommand.class, ServiceName.business_administrators),
+    set_business_administrator_password(SetBusinessAdministratorPasswordCommand.class, ServiceName.business_administrators),
     // failover_file_logs
     add_failover_file_log(AddFailoverFileLogCommand.class, ServiceName.failover_file_log, AOServPermission.Permission.add_failover_file_log),
     // failover_file_replications
@@ -36,6 +39,7 @@ public enum CommandName {
     // ip_addresses
     set_ip_address_dhcp_address(SetIpAddressDhcpAddress.class, ServiceName.ip_addresses, AOServPermission.Permission.set_ip_address_dhcp_address),
     // linux_accounts
+    set_linux_account_password(SetLinuxAccountPasswordCommand.class, ServiceName.linux_accounts, AOServPermission.Permission.set_linux_account_password),
     set_linux_account_predisable_password(SetLinuxAccountPredisablePasswordCommand.class, ServiceName.linux_accounts, AOServPermission.Permission.set_linux_account_predisable_password),
     // mysql_users
     set_mysql_user_predisable_password(SetMySQLUserPredisablePasswordCommand.class, ServiceName.mysql_users, AOServPermission.Permission.set_mysql_user_predisable_password),
@@ -96,7 +100,6 @@ public enum CommandName {
     // TODO: are_postgres_user_passwords_set(TODO.class, TODO),
     // TODO: are_username_passwords_set(TODO.class, TODO),
     // TODO: bounce_ticket(TODO.class, TODO),
-    // TODO: cancel_business(TODO.class, TODO),
     // TODO: change_ticket_admin_priority(TODO.class, TODO),
     // TODO: change_ticket_client_priority(TODO.class, TODO),
     // TODO: change_ticket_deadline(TODO.class, TODO),
@@ -262,7 +265,6 @@ public enum CommandName {
     // TODO: restart_xvfb(TODO.class, TODO),
     // TODO: set_autoresponder(TODO.class, TODO),
     // TODO: set_business_accounting(TODO.class, TODO),
-    // TODO: set_business_administrator_password(TODO.class, TODO),
     // TODO: set_business_administrator_profile(TODO.class, TODO),
     // TODO: set_cron_table(TODO.class, TODO),
     // TODO: set_cvs_repository_mode(TODO.class, TODO),
@@ -286,7 +288,6 @@ public enum CommandName {
     // TODO: set_linux_account_password(TODO.class, TODO),
     // TODO: set_linux_account_shell(TODO.class, TODO),
     // TODO: set_linux_server_account_junk_email_retention(TODO.class, TODO),
-    // TODO: set_linux_server_account_password(TODO.class, TODO),
     // TODO: set_linux_server_account_spamassassin_integration_mode(TODO.class, TODO),
     // TODO: set_linux_server_account_spamassassin_required_score(TODO.class, TODO),
     // TODO: set_linux_server_account_trash_email_retention(TODO.class, TODO),

@@ -5,8 +5,12 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -26,58 +30,104 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
 
-//    /**
-//     * The different Linux account types.
-//     */
-//    public enum Constant {
-//        shell_account(ResourceType.Constant.shell_account, true, true, true, true, Shell.Constant.NOLOGIN, Shell.Constant.BASH, Shell.Constant.KSH, Shell.Constant.SH, Shell.Constant.TCSH),
-//        email_inbox(ResourceType.Constant.email_inbox, true, false, true, false),
-//        ftponly_account(ResourceType.Constant.ftponly_account, false, true, true, false),
-//        system_account(ResourceType.Constant.system_account, false, false, false, true);
-//
-//        private final ResourceType.Constant resourceType;
-//        private final boolean emailAllowed;
-//        private final boolean ftpAllowed;
-//        private final boolean setPasswordAllowed;
-//        private final boolean strongPassword;
-//        private final Set<Shell.Constant> allowedShells;
-//
-//        private Constant(ResourceType.Constant resourceType, boolean emailAllowed, boolean ftpAllowed, boolean setPasswordAllowed, boolean strongPassword, Shell.Constant... allowedShells) {
-//            this.resourceType = resourceType;
-//            this.emailAllowed = emailAllowed;
-//            this.ftpAllowed = ftpAllowed;
-//            this.setPasswordAllowed = setPasswordAllowed;
-//            this.strongPassword = strongPassword;
-//            this.allowedShells = Collections.unmodifiableSet(EnumSet.copyOf(Arrays.asList(allowedShells)));
-//        }
-//
-//        public ResourceType.Constant getResourceType() {
-//            return resourceType;
-//        }
-//
-//        public boolean isEmailAllowed() {
-//            return emailAllowed;
-//        }
-//
-//        public boolean isFtpAllowed() {
-//            return ftpAllowed;
-//        }
-//
-//        public boolean isSetPasswordAllowed() {
-//            return setPasswordAllowed;
-//        }
-//
-//        /**
-//         * Indicates that strong passwords should be enforced for this account type.
-//         */
-//        public boolean isStrongPassword() {
-//            return strongPassword;
-//        }
-//
-//        public Set<Shell.Constant> getAllowedShells() {
-//            return allowedShells;
-//        }
-//    }
+    /**
+     * The different Linux account types.
+     */
+    public enum Constant {
+        shell_account(
+            ResourceType.SHELL_ACCOUNT,
+            true,
+            true,
+            true,
+            PasswordChecker.PasswordStrength.STRICT,
+            Shell.NOLOGIN,
+            Shell.BASH,
+            Shell.KSH,
+            Shell.SH,
+            Shell.TCSH
+        ),
+        email_inbox(
+            ResourceType.EMAIL_INBOX,
+            true,
+            false,
+            true,
+            PasswordChecker.PasswordStrength.SUPER_LAX,
+            Shell.NOLOGIN,
+            Shell.PASSWD
+        ),
+        ftponly_account(
+            ResourceType.FTPONLY_ACCOUNT,
+            false,
+            true,
+            true,
+            PasswordChecker.PasswordStrength.MODERATE,
+            Shell.NOLOGIN,
+            Shell.FTPPASSWD
+        ),
+        system_account(
+            ResourceType.SYSTEM_ACCOUNT,
+            false,
+            false,
+            false,
+            PasswordChecker.PasswordStrength.STRICT,
+            Shell.NOLOGIN,
+            Shell.BASH,
+            Shell.SYNC,
+            Shell.HALT,
+            Shell.SHUTDOWN
+        );
+
+        private final String resourceType;
+        private final boolean emailAllowed;
+        private final boolean ftpAllowed;
+        private final boolean setPasswordAllowed;
+        private final PasswordChecker.PasswordStrength passwordStrength;
+        private final Set<UnixPath> allowedShells;
+
+        private Constant(
+            String resourceType,
+            boolean emailAllowed,
+            boolean ftpAllowed,
+            boolean setPasswordAllowed,
+            PasswordChecker.PasswordStrength passwordStrength,
+            UnixPath... allowedShells
+        ) {
+            this.resourceType = resourceType;
+            this.emailAllowed = emailAllowed;
+            this.ftpAllowed = ftpAllowed;
+            this.setPasswordAllowed = setPasswordAllowed;
+            this.passwordStrength = passwordStrength;
+            if(allowedShells.length==1) this.allowedShells = Collections.singleton(allowedShells[0]);
+            else this.allowedShells = Collections.unmodifiableSet(new HashSet<UnixPath>(Arrays.asList(allowedShells)));
+        }
+
+        public String getResourceType() {
+            return resourceType;
+        }
+
+        public boolean isEmailAllowed() {
+            return emailAllowed;
+        }
+
+        public boolean isFtpAllowed() {
+            return ftpAllowed;
+        }
+
+        public boolean isSetPasswordAllowed() {
+            return setPasswordAllowed;
+        }
+
+        public PasswordChecker.PasswordStrength getPasswordStrength() {
+            return passwordStrength;
+        }
+
+        /**
+         * This matches that enforced by the linux_accounts table.
+         */
+        public Set<UnixPath> getAllowedShells() {
+            return allowedShells;
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">

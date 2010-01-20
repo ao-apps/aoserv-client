@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.CancelBusinessCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
@@ -413,6 +414,12 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public void cancel(String cancelReason) throws RemoteException {
+        new CancelBusinessCommand(getKey(), cancelReason).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Group">
     /**
      * A group contains all users of its own business plus all parent businesses.
@@ -745,49 +752,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             processor,
             payment_confirmed
         );
-    }
-    */
-
-    /* TODO
-    public void cancel(String cancelReason) throws IllegalArgumentException, IOException, SQLException {
-        // Automatically disable if not already disabled
-        if(disableLog==null) {
-            new SimpleAOClient(service.connector).disableBusiness(pkey, "Account canceled");
-        }
-
-        // Now cancel the account
-        if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
-        final String finalCancelReason = cancelReason;
-        service.connector.requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                IntList invalidateList;
-
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
-                    out.writeUTF(pkey);
-                    out.writeNullUTF(finalCancelReason);
-                }
-
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                    else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-
-                public void afterRelease() {
-                    service.connector.tablesUpdated(invalidateList);
-                }
-            }
-        );
-    }
-    */
-    /* TODO
-    public boolean canCancel() throws IOException, SQLException {
-        return canceled==null && !isRootBusiness();
     }
 
     public boolean isRootBusiness() throws IOException, SQLException {
