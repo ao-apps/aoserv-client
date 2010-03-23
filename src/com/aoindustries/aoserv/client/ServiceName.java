@@ -43,8 +43,8 @@ public enum ServiceName implements LocalizedToString {
     businesses,
     business_servers,
     country_codes,
-    /* TODO
     credit_card_processors,
+    /* TODO
     credit_card_transactions,
     credit_cards,
      */

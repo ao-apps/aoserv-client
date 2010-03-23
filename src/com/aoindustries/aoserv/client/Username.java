@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.SetUsernamePasswordCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
@@ -113,6 +114,12 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
 
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
         return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_USERNAME, this);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public void setPassword(String password) throws RemoteException {
+        new SetUsernamePasswordCommand(getKey(), password).execute(getService().getConnector());
     }
     // </editor-fold>
 
@@ -311,37 +318,6 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
             SchemaTable.TableID.USERNAMES,
             pkey
     	);
-    }
-
-    public void setPassword(String password) throws SQLException, IOException {
-        BusinessAdministrator ba=getBusinessAdministrator();
-        if(ba!=null) ba.setPassword(password);
-
-        LinuxAccount la=getLinuxAccount();
-    	if(la!=null) la.setPassword(password);
-
-        for(MySQLUser mu : getMySQLUsers()) mu.setPassword(password);
-
-        PostgresUser pu=getPostgresUser();
-        if(pu!=null) pu.setPassword(password);
-    }
-
-    public boolean canSetPassword() throws IOException, SQLException {
-        if(disableLog!=null) return false;
-
-        BusinessAdministrator ba=getBusinessAdministrator();
-    	if(ba!=null && !ba.canSetPassword()) return false;
-
-        LinuxAccount la=getLinuxAccount();
-    	if(la!=null && !la.canSetPassword()) return false;
-
-        List<MySQLUser> mus = getMySQLUsers();
-    	for(MySQLUser mu : mus) if(!mu.canSetPassword()) return false;
-
-        PostgresUser pu=getPostgresUser();
-        if(pu!=null && !pu.canSetPassword()) return false;
-        
-        return ba!=null || la!=null || !mus.isEmpty() || pu!=null;
     }
      */
     // </editor-fold>

@@ -7,11 +7,13 @@ package com.aoindustries.aoserv.client.command;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -106,6 +108,31 @@ abstract public class AOServCommand<R> implements Serializable {
     }
 
     /**
+     * Adds the error from the AOSH commands application resources bundle.
+     */
+    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, Locale locale, String messageKey, Object... messageArgs) {
+        return addValidationError(errors, param, ApplicationResources.accessor, locale, messageKey, messageArgs);
+    }
+
+    /**
+     * Adds the error from the provided resources bundle.
+     */
+    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, ApplicationResourcesAccessor applicationResources, Locale locale, String messageKey, Object... messageArgs) {
+        return addValidationError(errors, param, applicationResources.getMessage(locale, messageKey, messageArgs));
+    }
+
+    /**
+     * Adds the provided error.
+     */
+    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, String message) {
+        if(errors.isEmpty()) errors = new HashMap<String,List<String>>();
+        List<String> list = errors.get(param);
+        if(list==null) errors.put(param, list = new ArrayList<String>());
+        list.add(message);
+        return errors;
+    }
+
+    /**
      * Validates the command using the provided connector, using the connector's locale and connectAs user.
      */
     final public Map<String,List<String>> validate(AOServConnector<?,?> conn) throws RemoteException {
@@ -140,6 +167,6 @@ abstract public class AOServCommand<R> implements Serializable {
      * serializes the command to the server for execution.
      */
     public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
-        return connector.executeCommand(this, isInteractive);
+        return connector.executeCommand(this, isInteractive).getResult();
     }
 }

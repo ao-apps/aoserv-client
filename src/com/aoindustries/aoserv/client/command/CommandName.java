@@ -36,19 +36,34 @@ public enum CommandName {
     add_failover_file_log(AddFailoverFileLogCommand.class, ServiceName.failover_file_log, AOServPermission.Permission.add_failover_file_log),
     // failover_file_replications
     request_replication_daemon_access(RequestReplicationDaemonAccessCommand.class, ServiceName.failover_file_replications, AOServPermission.Permission.request_replication_daemon_access),
+    // failover_mysql_replications
+    get_mysql_slave_status(GetMySQLSlaveStatusCommand.class, ServiceName.failover_mysql_replications, AOServPermission.Permission.get_mysql_slave_status),
     // ip_addresses
     set_ip_address_dhcp_address(SetIpAddressDhcpAddress.class, ServiceName.ip_addresses, AOServPermission.Permission.set_ip_address_dhcp_address),
     // linux_accounts
     set_linux_account_password(SetLinuxAccountPasswordCommand.class, ServiceName.linux_accounts, AOServPermission.Permission.set_linux_account_password),
     set_linux_account_predisable_password(SetLinuxAccountPredisablePasswordCommand.class, ServiceName.linux_accounts, AOServPermission.Permission.set_linux_account_predisable_password),
+    // mysql_servers
+    get_mysql_master_status(GetMySQLMasterStatusCommand.class, ServiceName.mysql_servers, AOServPermission.Permission.get_mysql_master_status),
     // mysql_users
+    set_mysql_user_password(SetMySQLUserPasswordCommand.class, ServiceName.mysql_users, AOServPermission.Permission.set_mysql_user_password),
     set_mysql_user_predisable_password(SetMySQLUserPredisablePasswordCommand.class, ServiceName.mysql_users, AOServPermission.Permission.set_mysql_user_predisable_password),
     // postgres_users
+    set_postgres_user_password(SetPostgresUserPasswordCommand.class, ServiceName.postgres_users, AOServPermission.Permission.set_postgres_user_password),
     set_postgres_user_predisable_password(SetPostgresUserPredisablePasswordCommand.class, ServiceName.postgres_users, AOServPermission.Permission.set_postgres_user_predisable_password),
     // ticket_actions
     // TODO: add_ticket_annotation(AddTicketAnnotationCommand.class, ServiceName.ticket_actions, AOServPermission.Permission.add_ticket_annotation),
     // tickets
     add_ticket(AddTicketCommand.class, ServiceName.tickets, AOServPermission.Permission.add_ticket),
+    // usernames
+    set_username_password(
+        SetUsernamePasswordCommand.class,
+        ServiceName.usernames,
+        AOServPermission.Permission.set_business_administrator_password,
+        AOServPermission.Permission.set_linux_account_password,
+        AOServPermission.Permission.set_mysql_user_password,
+        AOServPermission.Permission.set_postgres_user_password
+    ),
     // TODO: add_backup_server(TODO.class, TODO),
     // TODO: add_business(TODO.class, TODO),
     // TODO: add_business_administrator(TODO.class, TODO),
@@ -294,14 +309,10 @@ public enum CommandName {
     // TODO: set_linux_server_account_use_inbox(TODO.class, TODO),
     // TODO: set_majordomo_info_file(TODO.class, TODO),
     // TODO: set_majordomo_intro_file(TODO.class, TODO),
-    // TODO: set_mysql_user_password(TODO.class, TODO),
     // TODO: set_net_bind_monitoring_enabled(TODO.class, TODO),
     // TODO: set_net_bind_open_firewall(TODO.class, TODO),
-    // TODO: set_postgres_server_user_password(TODO.class, TODO),
-    // TODO: set_postgres_user_password(TODO.class, TODO),
     // TODO: set_primary_httpd_site_url(TODO.class, TODO),
     // TODO: set_primary_linux_group_account(TODO.class, TODO),
-    // TODO: set_username_password(TODO.class, TODO),
     // TODO: sleep(TODO.class, TODO),
     // TODO: start_apache(TODO.class, TODO),
     // TODO: start_cron(TODO.class, TODO),

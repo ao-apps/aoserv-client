@@ -11,6 +11,7 @@ import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.Hostname;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.LinuxID;
+import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
@@ -122,10 +123,10 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return getService().getConnector().getServers().get(key);
     }
 
+    public static final String COLUMN_HOSTNAME = "hostname";
     /**
      * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
      */
-    public static final String COLUMN_HOSTNAME = "hostname";
     @SchemaColumn(order=1, name=COLUMN_HOSTNAME, index=IndexType.UNIQUE, description="the unique hostname of the server")
     public DomainName getHostname() {
         return hostname;
@@ -376,8 +377,30 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return getService().getConnector().getMysqlServers().filterUniqueSet(MySQLServer.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
     }
 
+    /**
+     * Gets the MySQL server with the given server name.
+     *
+     * @throws NoSuchElementException if group not found.
+     */
+    public MySQLServer getMysqlServer(MySQLServerName name) throws RemoteException {
+        MySQLServer ms = getMysqlServers().filterUnique(MySQLServer.COLUMN_NAME, name);
+        if(ms==null) throw new NoSuchElementException("this="+this+", name="+name);
+        return ms;
+    }
+
     public IndexedSet<PostgresServer> getPostgresServers() throws RemoteException {
         return getService().getConnector().getPostgresServers().filterUniqueSet(PostgresServer.COLUMN_AO_SERVER_RESOURCE, getAoServerResources());
+    }
+
+    /**
+     * Gets the PostgresSQL server with the given server name.
+     *
+     * @throws NoSuchElementException if group not found.
+     */
+    public PostgresServer getPostgresServer(String name) throws RemoteException {
+        PostgresServer ps = getPostgresServers().filterUnique(PostgresServer.COLUMN_NAME, name);
+        if(ps==null) throw new NoSuchElementException("this="+this+", name="+name);
+        return ps;
     }
 
     public IndexedSet<AOServerDaemonHost> getAoServerDaemonHosts() throws RemoteException {
@@ -767,14 +790,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         }
     }
 
-    public MySQLServer getMySQLServer(String name) throws IOException {
-        // Use the index first
-        for(MySQLServer ms : getService().getConnector().getMysqlServers().getIndexedRows(MySQLServer.COLUMN_NAME, name)) {
-            if(ms.getAoServerResource().ao_server==pkey) return ms;
-        }
-        return null;
-    }
-
     public MySQLServer getPreferredMySQLServer() throws IOException {
         // Look for the most-preferred version that has an instance on the server
         List<MySQLServer> pss=getMySQLServers();
@@ -791,10 +806,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
         // Default to first available server if no preferred ones round
         return pss.isEmpty()?null:pss.get(0);
-    }
-
-    public PostgresServer getPostgresServer(String name) throws IOException {
-        return getService().getConnector().getPostgresServers().getPostgresServer(name, this);
     }
 
     public PostgresServer getPreferredPostgresServer() throws IOException {

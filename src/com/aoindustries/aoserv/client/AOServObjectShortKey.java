@@ -34,10 +34,9 @@ abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T>> ex
     }
 
     @Override
-    final public boolean equals(Object o) {
-        if(o==null) return false;
-        Class<? extends AOServObjectShortKey> clazz = getClass();
-        return clazz==o.getClass() && key==clazz.cast(o).key;
+    final public boolean equals(T other) {
+        if(other==null) return false;
+        return key==other.key;
     }
 
     /**

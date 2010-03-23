@@ -633,24 +633,6 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }*/
 
     /**
-     * Determines if a name can be used as a username.  The same rules apply as for
-     * Username.
-     *
-     * @deprecated  Please use <code>checkUsername(String)</code> to give users more details when the check fails.
-     *
-     * @see  Username#isValidUsername
-     */
-    /* TODO
-    public static boolean isValidUsername(String name) {
-        return Username.isValidUsername(name);
-    }
-
-    public boolean canSetPassword() {
-        return disableLog==null;
-    }
-     */
-
-    /**
      * Checks if this business administrator has the provided permission.
      */
     /* TODO

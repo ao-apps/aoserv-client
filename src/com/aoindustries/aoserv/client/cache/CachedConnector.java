@@ -38,8 +38,11 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessServer;
 import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
+import com.aoindustries.aoserv.client.CommandResult;
 import com.aoindustries.aoserv.client.CountryCode;
 import com.aoindustries.aoserv.client.CountryCodeService;
+import com.aoindustries.aoserv.client.CreditCardProcessor;
+import com.aoindustries.aoserv.client.CreditCardProcessorService;
 import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
@@ -253,7 +256,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         businesses = new CachedBusinessService(this, wrapped.getBusinesses());
         businessServers = new CachedBusinessServerService(this, wrapped.getBusinessServers());
         countryCodes = new CachedCountryCodeService(this, wrapped.getCountryCodes());
-        // TODO: creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
+        creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
         // TODO: creditCardTransactions = new CachedCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
         // TODO: creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
         cvsRepositories = new CachedCvsRepositoryService(this, wrapped.getCvsRepositories());
@@ -428,7 +431,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return password;
     }
 
-    public <R> R executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException {
+    public <R> CommandResult<R> executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException {
         return wrapped.executeCommand(command, isInteractive);
     }
 
@@ -639,8 +642,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardProcessorService">
-    // TODO: final CachedCreditCardProcessorService creditCardProcessors;
-    // TODO: public CreditCardProcessorService<CachedConnector,CachedConnectorFactory> getCreditCardProcessors();
+    static class CachedCreditCardProcessorService extends CachedService<String,CreditCardProcessor> implements CreditCardProcessorService<CachedConnector,CachedConnectorFactory> {
+        CachedCreditCardProcessorService(CachedConnector connector, CreditCardProcessorService<?,?> wrapped) {
+            super(connector, String.class, CreditCardProcessor.class, wrapped);
+        }
+    }
+    final CachedCreditCardProcessorService creditCardProcessors;
+    public CreditCardProcessorService<CachedConnector,CachedConnectorFactory> getCreditCardProcessors() {
+        return creditCardProcessors;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardTransactionService">
     // TODO: final CachedCreditCardTransactionService creditCardTransactions;

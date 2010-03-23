@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.aoserv.client.validator.PostgresServerName;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
@@ -234,7 +235,8 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
         return getService().getConnector().getAoServerResources().get(key);
     }
 
-    @SchemaColumn(order=1, name="name", description="the name of the database")
+    static final String COLUMN_NAME = "name";
+    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
     public PostgresServerName getName() {
         return name;
     }
@@ -329,6 +331,17 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
 
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
         return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
+    }
+
+    /**
+     * Gets the user with the provided username.
+     *
+     * @throws java.util.NoSuchElementException if not found
+     */
+    public PostgresUser getPostgresUser(PostgresUserId username) throws RemoteException, NoSuchElementException {
+        PostgresUser pu = getPostgresUsers().filterUnique(PostgresUser.COLUMN_USERNAME, getService().getConnector().getUsernames().get(username.getUserId()));
+        if(pu==null) throw new NoSuchElementException("Unable to find PostgresUser: "+name+" on "+this);
+        return pu;
     }
     // </editor-fold>
 

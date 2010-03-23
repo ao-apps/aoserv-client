@@ -5,10 +5,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.GetMySQLMasterStatusCommand;
 import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
 import com.aoindustries.aoserv.client.validator.MySQLServerName;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.table.IndexType;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -366,7 +367,8 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         return getService().getConnector().getAoServerResources().get(key);
     }
 
-    @SchemaColumn(order=1, name="name", description="the name of the database")
+    static final String COLUMN_NAME = "name";
+    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
     public MySQLServerName getName() {
     	return name;
     }
@@ -451,6 +453,28 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     public IndexedSet<MySQLUser> getMysqlUsers() throws RemoteException {
     	return getService().getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
     }
+
+    /**
+     * Gets the MySQL user with the given username.
+     *
+     * @throws NoSuchElementException if group not found.
+     */
+    public MySQLUser getMysqlUser(MySQLUserId username) throws RemoteException {
+        MySQLUser mu = getMysqlUsers().filterUnique(MySQLUser.COLUMN_USERNAME, getService().getConnector().getUsernames().get(username.getUserId()));
+        if(mu==null) throw new NoSuchElementException("this="+this+", username="+username);
+        return mu;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Master Status">
+    /**
+     * Gets the master status or <code>null</code> if no master status provided by MySQL.
+     *
+     * @exception  RemoteException  If any error occurs.
+     */
+    public GetMySQLMasterStatusCommand.MasterStatus getMasterStatus() throws RemoteException {
+        return new GetMySQLMasterStatusCommand(key).execute(getService().getConnector());
+    }
     // </editor-fold>
 
     /**
@@ -487,10 +511,6 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     */
 
     /* TODO
-    public MySQLUser getMySQLUser(String username) throws IOException, SQLException {
-    	return getService().getConnector().getMysqlUsers().getMySQLUser(username, this);
-    }
-
     public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
     	return getService().getConnector().getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
     }
@@ -507,67 +527,5 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_MYSQL, pkey);
     }
     */
-    final public static class MasterStatus implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        final private String file;
-        final private String position;
-        
-        public MasterStatus(
-            String file,
-            String position
-        ) {
-            this.file=file;
-            this.position=position;
-        }
-
-        public String getFile() {
-            return file;
-        }
-
-        public String getPosition() {
-            return position;
-        }
-    }
-
-    /**
-     * Gets the master status or <code>null</code> if no master status provided by MySQL.  If any error occurs, throws either
-     * IOException or SQLException.
-     */
-    /* TODO
-    public MasterStatus getMasterStatus() throws IOException, SQLException {
-        return getService().getConnector().requestResult(
-            true,
-            new AOServConnector.ResultRequest<MasterStatus>() {
-                MasterStatus result;
-
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_MASTER_STATUS.ordinal());
-                    out.writeCompressedInt(pkey);
-                }
-
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.NEXT) {
-                        result = new MasterStatus(
-                            in.readNullUTF(),
-                            in.readNullUTF()
-                        );
-                    } else if(code==AOServProtocol.DONE) {
-                        result = null;
-                    } else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-
-                public MasterStatus afterRelease() {
-                    return result;
-                }
-            }
-        );
-    }
-     */
     // </editor-fold>
 }

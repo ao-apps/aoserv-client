@@ -38,8 +38,11 @@ import com.aoindustries.aoserv.client.BusinessAdministratorService;
 import com.aoindustries.aoserv.client.BusinessServer;
 import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
+import com.aoindustries.aoserv.client.CommandResult;
 import com.aoindustries.aoserv.client.CountryCode;
 import com.aoindustries.aoserv.client.CountryCodeService;
+import com.aoindustries.aoserv.client.CreditCardProcessor;
+import com.aoindustries.aoserv.client.CreditCardProcessorService;
 import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
@@ -258,8 +261,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         businesses = new WrappedBusinessService(this);
         businessServers = new WrappedBusinessServerService(this);
         countryCodes = new WrappedCountryCodeService(this);
-        /* TODO
         creditCardProcessors = new WrappedCreditCardProcessorService(this);
+        /* TODO
         creditCardTransactions = new WrappedCreditCardTransactionService(this);
         creditCards = new WrappedCreditCardService(this);
          */
@@ -506,10 +509,10 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return password;
     }
 
-    final public <R> R executeCommand(final AOServCommand<R> command, final boolean isInteractive) throws RemoteException {
+    final public <R> CommandResult<R> executeCommand(final AOServCommand<R> command, final boolean isInteractive) throws RemoteException {
         return call(
-            new Callable<R>() {
-                public R call() throws RemoteException {
+            new Callable<CommandResult<R>>() {
+                public CommandResult<R> call() throws RemoteException {
                     try {
                         return getWrapped().executeCommand(command, isInteractive);
                     } catch(LoginException err) {
@@ -728,8 +731,15 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardProcessorService">
-    // TODO: final WrappedCreditCardProcessorService<C,F> creditCardProcessors;
-    // TODO: final public CreditCardProcessorService<C,F> getCreditCardProcessors();
+    static class WrappedCreditCardProcessorService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,CreditCardProcessor> implements CreditCardProcessorService<C,F> {
+        WrappedCreditCardProcessorService(C connector) {
+            super(connector, String.class, CreditCardProcessor.class);
+        }
+    }
+    final WrappedCreditCardProcessorService<C,F> creditCardProcessors;
+    final public CreditCardProcessorService<C,F> getCreditCardProcessors() {
+        return creditCardProcessors;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardTransactionService">
     // TODO: final WrappedCreditCardTransactionService<C,F> creditCardTransactions;

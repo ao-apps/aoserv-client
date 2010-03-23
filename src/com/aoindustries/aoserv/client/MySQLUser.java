@@ -5,11 +5,13 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.SetMySQLUserPasswordCommand;
 import com.aoindustries.aoserv.client.command.SetMySQLUserPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -441,8 +443,16 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Commands">
+    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
+        return PasswordChecker.checkPassword(userLocale, username, password, PasswordChecker.PasswordStrength.STRICT);
+    }
+
     public void setPredisablePassword(String password) throws RemoteException {
         new SetMySQLUserPredisablePasswordCommand(key, password).execute(getService().getConnector());
+    }
+
+    public void setPassword(String password) throws RemoteException {
+        new SetMySQLUserPasswordCommand(key, password).execute(getService().getConnector());
     }
     // </editor-fold>
 
@@ -461,10 +471,6 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
 
     public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
         return checkPassword(userLocale, username, password);
-    }
-
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
-        return PasswordChecker.checkPassword(userLocale, username, password, true, false);
     }
 
     public String checkPasswordDescribe(String password) {
@@ -500,37 +506,6 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
             SchemaTable.TableID.MYSQL_USERS,
             pkey
         );
-    }
-
-    public void setPassword(final String password) throws IOException, SQLException {
-        AOServConnector connector=getService().getConnector();
-        if(!connector.isSecure()) throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
-
-        connector.requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_USER_PASSWORD.ordinal());
-                    out.writeCompressedInt(pkey);
-                    out.writeNullUTF(password);
-                }
-
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code!=AOServProtocol.DONE) {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-
-                public void afterRelease() {
-                }
-            }
-        );
-    }
-
-    public boolean canSetPassword() {
-        return disable_log==-1 && !username.equals(ROOT);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {

@@ -186,10 +186,10 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return cancelReason;
     }
 
-    /**
-     * May be filtered.
-     */
     static final String COLUMN_PARENT = "parent";
+    /**
+     * Gets the parent of this business or <code>null</code> if filtered or is top-level business.
+     */
     @SchemaColumn(order=5, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the parent business to this one")
     public Business getParentBusiness() throws RemoteException {
         if(parent==null) return null;
@@ -337,7 +337,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             // TODO: getBusinessProfiles(),
             getBusinessServers(),
             // TODO: getCreditCards(),
-            // TODO: getCreditCardProcessors(),
+            getCreditCardProcessors(),
             // TODO: getCreditCardTransactions(),
             // TODO: getCreditCardTransactionsByCreditCardAccounting(),
             getDisableLogs(),
@@ -411,6 +411,23 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public IndexedSet<Username> getUsernames() throws RemoteException {
         return getService().getConnector().getUsernames().filterIndexed(Username.COLUMN_ACCOUNTING, this);
+    }
+
+    public IndexedSet<CreditCardProcessor> getCreditCardProcessors() throws RemoteException {
+    	return getService().getConnector().getCreditCardProcessors().filterIndexed(CreditCardProcessor.COLUMN_ACCOUNTING, this);
+    }
+
+    /**
+     * Determines if this <code>Business</code> is the other business
+     * or a parent of it.  This is often used for access control between
+     * accounts.
+     */
+    public boolean isBusinessOrParentOf(Business other) throws RemoteException {
+        while(other!=null) {
+            if(equals(other)) return true;
+            other = other.getParentBusiness();
+        }
+        return false;
     }
     // </editor-fold>
 
@@ -882,10 +899,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     	return service.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
     }
 
-    public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
-    	return service.connector.getCreditCardProcessors().getIndexedRows(CreditCardProcessor.COLUMN_ACCOUNTING, pkey);
-    }
-
     public List<CreditCardTransaction> getCreditCardTransactions() throws IOException, SQLException {
     	return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_ACCOUNTING, pkey);
     }
@@ -992,21 +1005,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /* TODO
     public boolean isBusinessOrParent(Business other) throws IOException, SQLException {
         return isBusinessOrParentOf(other);
-    }
-     */
-
-    /**
-     * Determines if this <code>Business</code> is the other business
-     * or a parent of it.  This is often used for access control between
-     * accounts.
-     */
-    /* TODO
-    public boolean isBusinessOrParentOf(Business other) throws IOException, SQLException {
-        while(other!=null) {
-            if(equals(other)) return true;
-            other=other.getParentBusiness();
-        }
-        return false;
     }
      */
 

@@ -29,7 +29,7 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
         IMAP="imap"
     ;
 
-    public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE=POP3;
+    public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE=IMAP;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">

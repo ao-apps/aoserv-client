@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetBusinessAdministratorPasswordCommand extends AOServCommand<Void> {
+final public class SetUsernamePasswordCommand extends AOServCommand<Void> {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,7 +28,7 @@ final public class SetBusinessAdministratorPasswordCommand extends AOServCommand
     final private UserId username;
     final private String plaintext;
 
-    public SetBusinessAdministratorPasswordCommand(
+    public SetUsernamePasswordCommand(
         @Param(name=PARAM_USERNAME) UserId username,
         @Param(name=PARAM_PLAINTEXT) String plaintext
     ) {
@@ -37,9 +37,25 @@ final public class SetBusinessAdministratorPasswordCommand extends AOServCommand
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
-        Map<String,List<String>> errors = Collections.emptyMap();
-        if(connectedUser.getService().get(username).getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, locale, "SetBusinessAdministratorPasswordCommand.validate.disabled");
-        // TODO: Check password strength
-        return errors;
+        // TODO: Check LinuxAccountType.Constant for no password set allowed
+        // TODO
+        /*
+        if(disableLog!=null) return false;
+
+        BusinessAdministrator ba=getBusinessAdministrator();
+    	if(ba!=null && !ba.canSetPassword()) return false;
+
+        IndexedSet<LinuxAccount> las = getLinuxAccounts();
+        for(LinuxAccount la : las) if(!la.canSetPassword()) return false;
+
+        IndexedSet<MySQLUser> mus = getMysqlUsers();
+    	for(MySQLUser mu : mus) if(!mu.canSetPassword()) return false;
+
+        IndexedSet<PostgresUser> pus = getPostgresUser();
+        for(PostgresUser pu : pus) if(!pu.canSetPassword()) return false;
+
+        return ba!=null || !las.isEmpty() || !mus.isEmpty() || !pus.isEmpty();
+         */
+        return Collections.emptyMap();
     }
 }

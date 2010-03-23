@@ -5,10 +5,12 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.SetPostgresUserPasswordCommand;
 import com.aoindustries.aoserv.client.command.SetPostgresUserPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -187,6 +189,10 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     public void setPredisablePassword(String password) throws RemoteException {
         new SetPostgresUserPredisablePasswordCommand(key, password).execute(getService().getConnector());
     }
+
+    public void setPassword(String password) throws RemoteException {
+        new SetPostgresUserPasswordCommand(key, password).execute(getService().getConnector());
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
@@ -208,11 +214,12 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
         return checkPassword(userLocale, pkey, password);
     }
-
+    */
     public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
-        return PasswordChecker.checkPassword(userLocale, username, password, true, false);
+        return PasswordChecker.checkPassword(userLocale, username, password, PasswordChecker.PasswordStrength.STRICT);
     }
 
+    /*
     public String checkPasswordDescribe(String password) {
         return checkPasswordDescribe(pkey, password);
     }
@@ -253,60 +260,6 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
             SchemaTable.TableID.POSTGRES_USERS,
             pkey
         );
-    }
-
-    public void setPassword(String password) throws IOException, SQLException {
-        AOServConnector connector=getService().getConnector();
-        if(!connector.isSecure()) throw new IOException("Passwords for PostgreSQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
-
-        connector.requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PASSWORD.ordinal());
-                    out.writeCompressedInt(pkey);
-                    out.writeBoolean(password!=null); if(password!=null) out.writeUTF(password);
-                }
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code!=AOServProtocol.DONE) {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-                public void afterRelease() {
-                }
-            }
-        );
-    }
-
-    public void setPredisablePassword(final String password) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                IntList invalidateList;
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
-                    out.writeCompressedInt(pkey);
-                    out.writeNullUTF(password);
-                }
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                    else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-                public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
-                }
-            }
-        );
-    }
-
-    public boolean canSetPassword() {
-        return disable_log==-1 && !POSTGRES.equals(pkey);
     }
     */
     // </editor-fold>

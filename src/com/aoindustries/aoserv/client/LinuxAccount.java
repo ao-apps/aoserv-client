@@ -13,7 +13,6 @@ import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -273,17 +272,6 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Commands">
-    /**
-     * Checks the strength of a password as required for this
-     * <code>LinuxAccount</code>.  The strength requirement
-     * depends on the <code>LinuxAccountType</code>.
-     *
-     * @see PasswordChecker
-     */
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, LinuxAccountType.Constant type, String password) throws IOException {
-        return PasswordChecker.checkPassword(userLocale, username, password, type.getPasswordStrength());
-    }
-
     public void setPassword(String plaintext) throws RemoteException {
         new SetLinuxAccountPasswordCommand(getKey(), plaintext).execute(getService().getConnector());
     }
@@ -348,7 +336,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     }
 
     /**
-     * @deprecated  Please provide the locale for locale-specific errors.
+     * @ deprecated  Please provide the locale for locale-specific errors.
      */
     /* TODO
     public List<String> getValidHomeDirectories(AOServer ao) throws SQLException, IOException {
@@ -360,7 +348,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     }
     */
     /**
-     * @deprecated  Please provide the locale for locale-specific errors.
+     * @ deprecated  Please provide the locale for locale-specific errors.
      */
     /* TODO
     public static List<String> getValidHomeDirectories(String username, AOServer ao) throws SQLException, IOException {
@@ -437,10 +425,6 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     public void setShell(Shell shell) throws IOException, SQLException {
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
-    }
-
-    public boolean canSetPassword() throws IOException, SQLException {
-        return disable_log==-1 && getType().canSetPassword();
     }
 
     public void setPrimaryLinuxGroup(LinuxGroup group) throws SQLException, IOException {

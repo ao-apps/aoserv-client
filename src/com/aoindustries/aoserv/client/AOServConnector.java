@@ -75,9 +75,10 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     String getPassword() throws RemoteException;
 
     /**
-     * Executes an aosh command and returns its result.
+     * Executes the command and retrieves the result.  If the command return
+     * value is void, returns a CommandResult containing <code>null</code>.
      */
-    <R> R executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException;
+    <R> CommandResult<R> executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException;
 
     /**
      * Gets an unmodifiable map of all of the services in the system.
@@ -112,8 +113,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     BusinessService<C,F> getBusinesses() throws RemoteException;
     BusinessServerService<C,F> getBusinessServers() throws RemoteException;
     CountryCodeService<C,F> getCountryCodes() throws RemoteException;
-    /*
     CreditCardProcessorService<C,F> getCreditCardProcessors() throws RemoteException;
+    /*
     CreditCardTransactionService<C,F> getCreditCardTransactions() throws RemoteException;
     CreditCardService<C,F> getCreditCards() throws RemoteException;
      */

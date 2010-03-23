@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client.command;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.LinuxAccount;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -36,8 +37,11 @@ final public class SetLinuxAccountPasswordCommand extends AOServCommand<Void> {
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
-        // TODO: Check LinuxAccountType.Constant for no password set allowed
-        // TODO
-        return Collections.emptyMap();
+        Map<String,List<String>> errors = Collections.emptyMap();
+        LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
+        if(la.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, locale, "SetLinuxAccountPasswordCommand.validate.disabled");
+        if(!la.getLinuxAccountType().isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, locale, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
+        // TODO: Check password strength
+        return errors;
     }
 }

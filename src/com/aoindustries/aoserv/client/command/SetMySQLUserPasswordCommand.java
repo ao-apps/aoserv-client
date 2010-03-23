@@ -6,7 +6,7 @@ package com.aoindustries.aoserv.client.command;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.BusinessAdministrator;
-import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.MySQLUser;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -16,29 +16,31 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetBusinessAdministratorPasswordCommand extends AOServCommand<Void> {
+final public class SetMySQLUserPasswordCommand extends AOServCommand<Void> {
 
     private static final long serialVersionUID = 1L;
 
     public static final String
-        PARAM_USERNAME = "username",
+        PARAM_MYSQL_USER = "mysql_user",
         PARAM_PLAINTEXT = "plaintext"
     ;
 
-    final private UserId username;
+    final private int mysqlUser;
     final private String plaintext;
 
-    public SetBusinessAdministratorPasswordCommand(
-        @Param(name=PARAM_USERNAME) UserId username,
+    public SetMySQLUserPasswordCommand(
+        @Param(name=PARAM_MYSQL_USER) int mysqlUser,
         @Param(name=PARAM_PLAINTEXT) String plaintext
     ) {
-        this.username = username;
+        this.mysqlUser = mysqlUser;
         this.plaintext = plaintext;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
-        if(connectedUser.getService().get(username).getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, locale, "SetBusinessAdministratorPasswordCommand.validate.disabled");
+        MySQLUser mu = connectedUser.getService().getConnector().getMysqlUsers().get(mysqlUser);
+        if(mu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_MYSQL_USER, locale, "SetMySQLUserPasswordCommand.validate.disabled");
+        if(mu.getUsername().getUsername().equals(MySQLUser.ROOT.getUserId())) errors = addValidationError(errors, PARAM_MYSQL_USER, locale, "SetMySQLUserPasswordCommand.validate.noSetRoot");
         // TODO: Check password strength
         return errors;
     }

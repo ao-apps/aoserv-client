@@ -115,12 +115,22 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
 
     /**
      * Every object's equality is based on being of the same class and having the same key value.
+     * This default implementation checks for class compatibility and calls equals(T).
      */
     @Override
     @SuppressWarnings("unchecked")
-    public boolean equals(Object o) {
+    final public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        return getKey().equals(((T)o).getKey());
+        return equals((T)o);
+    }
+
+    /**
+     * Every object also provides a type-specific equals implementation for
+     * higher performance.
+     */
+    public boolean equals(T other) {
+        if(other==null) return false;
+        return getKey().equals(other.getKey());
     }
 
     /**

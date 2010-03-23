@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +34,7 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     /**
      * The different Linux account types.
      */
-    public enum Constant {
+    private enum Constant {
         shell_account(
             ResourceType.SHELL_ACCOUNT,
             true,
@@ -100,7 +101,7 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
             if(allowedShells.length==1) this.allowedShells = Collections.singleton(allowedShells[0]);
             else this.allowedShells = Collections.unmodifiableSet(new HashSet<UnixPath>(Arrays.asList(allowedShells)));
         }
-
+        /*
         public String getResourceType() {
             return resourceType;
         }
@@ -121,12 +122,33 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
             return passwordStrength;
         }
 
-        /**
-         * This matches that enforced by the linux_accounts table.
-         */
         public Set<UnixPath> getAllowedShells() {
             return allowedShells;
         }
+        */
+    }
+
+    public boolean isEmailAllowed() {
+        return Constant.valueOf(getKey()).emailAllowed;
+    }
+
+    public boolean isFtpAllowed() {
+        return Constant.valueOf(getKey()).ftpAllowed;
+    }
+
+    public boolean isSetPasswordAllowed() {
+        return Constant.valueOf(getKey()).setPasswordAllowed;
+    }
+
+    public PasswordChecker.PasswordStrength getPasswordStrength() {
+        return Constant.valueOf(getKey()).passwordStrength;
+    }
+
+    /**
+     * This matches that enforced by the linux_accounts table.
+     */
+    public Set<UnixPath> getAllowedShells() {
+        return Constant.valueOf(getKey()).allowedShells;
     }
     // </editor-fold>
 
@@ -178,6 +200,16 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     }
     // </editor-fold>
 
+    /**
+     * Checks the strength of a password as required for this type of
+     * <code>LinuxAccount</code>.
+     *
+     * @see PasswordChecker
+     */
+    public PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
+        return PasswordChecker.checkPassword(userLocale, username, password, getPasswordStrength());
+    }
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
@@ -211,10 +243,6 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
 
     public boolean isEmail() {
         return is_email;
-    }
-
-    public boolean canSetPassword() {
-        return canSetPassword(pkey);
     }
      */
     // </editor-fold>
