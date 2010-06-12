@@ -195,6 +195,15 @@ final public class AOServClientConfiguration {
         return DomainName.valueOf(domain);
     }
 
+    /**
+     * Gets the read-only flag.  If empty or missing will be read-write.
+     */
+    static boolean getReadOnly() throws IOException {
+        String readOnly = getProperty("aoserv.client.readOnly");
+        if(readOnly==null || readOnly.length()==0) return false;
+        return Boolean.valueOf(readOnly);
+    }
+
     private static final Object factoryLock = new Object();
     private static AOServConnectorFactory<?,?> factory;
 
@@ -279,7 +288,8 @@ final public class AOServClientConfiguration {
             UserId switchUser = getSwitchUser();
             if(switchUser==null) switchUser = username;
             DomainName daemonServer = getDaemonServer();
-            return getConnector(Locale.getDefault(), username, password, switchUser, daemonServer);
+            boolean readOnly = getReadOnly();
+            return getConnector(Locale.getDefault(), username, password, switchUser, daemonServer, readOnly);
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         } catch(ValidationException err) {
@@ -297,8 +307,8 @@ final public class AOServClientConfiguration {
      * @param  username  the username to connect as
      * @param  password  the password to connect with
      */
-    public static AOServConnector<?,?> getConnector(UserId username, String password) throws RemoteException, LoginException {
-        return getConnector(Locale.getDefault(), username, password, username, null);
+    public static AOServConnector<?,?> getConnector(UserId username, String password, boolean readOnly) throws RemoteException, LoginException {
+        return getConnector(Locale.getDefault(), username, password, username, null, readOnly);
     }
 
     /**
@@ -311,13 +321,14 @@ final public class AOServClientConfiguration {
      * @param  username  the username to connect as
      * @param  password  the password to connect with
      */
-    public static AOServConnector<?,?> getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer) throws RemoteException, LoginException {
+    public static AOServConnector<?,?> getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException {
         return getAOServConnectorFactory().getConnector(
             locale,
             switchUser,
             username,
             password,
-            daemonServer
+            daemonServer,
+            readOnly
         );
     }
 }

@@ -75,6 +75,11 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     String getPassword() throws RemoteException;
 
     /**
+     * Checks if the connector is read-only.
+     */
+    boolean isReadOnly() throws RemoteException;
+
+    /**
      * Executes the command and retrieves the result.  If the command return
      * value is void, returns a CommandResult containing <code>null</code>.
      */
@@ -107,9 +112,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     BrandService<C,F> getBrands() throws RemoteException;
     BusinessAdministratorService<C,F> getBusinessAdministrators() throws RemoteException;
     BusinessAdministratorRoleService<C,F> getBusinessAdministratorRoles() throws RemoteException;
-    /*
     BusinessProfileService<C,F> getBusinessProfiles() throws RemoteException;
-     */
     BusinessService<C,F> getBusinesses() throws RemoteException;
     BusinessServerService<C,F> getBusinessServers() throws RemoteException;
     CountryCodeService<C,F> getCountryCodes() throws RemoteException;

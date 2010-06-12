@@ -13,7 +13,7 @@ public class FailoverFileReplication {
     private int pkey;
     private int server;
     private int backupPartition;
-    private int maxBitRate;
+    private Long maxBitRate;
     private boolean useCompression;
     private short retention;
     private InetAddress connectAddress;
@@ -28,7 +28,7 @@ public class FailoverFileReplication {
         int pkey,
         int server,
         int backupPartition,
-        int maxBitRate,
+        Long maxBitRate,
         boolean useCompression,
         short retention,
         InetAddress connectAddress,
@@ -72,11 +72,11 @@ public class FailoverFileReplication {
         this.backupPartition = backupPartition;
     }
 
-    public int getMaxBitRate() {
+    public Long getMaxBitRate() {
         return maxBitRate;
     }
 
-    public void setMaxBitRate(int maxBitRate) {
+    public void setMaxBitRate(Long maxBitRate) {
         this.maxBitRate = maxBitRate;
     }
 

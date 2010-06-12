@@ -334,7 +334,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             ),
             getAoservRoles(),
             getChildBusinesses(),
-            // TODO: getBusinessProfiles(),
+            getBusinessProfiles(),
             getBusinessServers(),
             // TODO: getCreditCards(),
             getCreditCardProcessors(),
@@ -428,6 +428,13 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             other = other.getParentBusiness();
         }
         return false;
+    }
+
+    /**
+     * Gets all of the <code>BusinessProfile</code>s for this <code>Business</code>.
+     */
+    public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
+        return getService().getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_ACCOUNTING, this);
     }
     // </editor-fold>
 
@@ -878,15 +885,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return service.connector.getBusinessProfiles().getBusinessProfile(this);
     }*/
 
-    /**
-     * Gets a list of all <code>BusinessProfiles</code> for this <code>Business</code>
-     * sorted with the highest priority profile at the zero index.
-     */
-    /* TODO
-    public List<BusinessProfile> getBusinessProfiles() throws IOException, SQLException {
-        return service.connector.getBusinessProfiles().getBusinessProfiles(this);
-    }
-
+    /*
     public BusinessServer getBusinessServer(Server server) throws IOException, SQLException {
         return service.connector.getBusinessServers().getBusinessServer(pkey, server.pkey);
     }

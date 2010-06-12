@@ -125,7 +125,7 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
     }
 
     public int compareTo(MySQLDatabaseName other) {
-        return name.compareTo(other.name);
+        return this==other ? 0 : name.compareTo(other.name);
     }
 
     @Override

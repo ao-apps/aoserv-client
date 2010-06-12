@@ -31,7 +31,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int server;
     final private int backupPartition;
-    final private int maxBitRate;
+    final private Long maxBitRate;
     final private boolean useCompression;
     final private short retention;
     private InetAddress connectAddress;
@@ -44,7 +44,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         int pkey,
         int server,
         int backupPartition,
-        int maxBitRate,
+        Long maxBitRate,
         boolean useCompression,
         short retention,
         InetAddress connectAddress,
@@ -103,7 +103,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     }
 
     @SchemaColumn(order=3, name="max_bit_rate", description="the maximum bit rate for files being replicated")
-    public int getBitRate() {
+    public Long getBitRate() {
         return maxBitRate;
     }
 

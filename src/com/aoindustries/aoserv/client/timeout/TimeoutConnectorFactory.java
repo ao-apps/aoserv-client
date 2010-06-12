@@ -46,11 +46,11 @@ final public class TimeoutConnectorFactory extends WrappedConnectorFactory<Timeo
         this.unit = unit;
     }
 
-    protected TimeoutConnector newWrappedConnector(final Locale locale, final UserId connectAs, final UserId authenticateAs, final String password, final DomainName daemonServer) throws LoginException, RemoteException {
+    protected TimeoutConnector newWrappedConnector(final Locale locale, final UserId connectAs, final UserId authenticateAs, final String password, final DomainName daemonServer, final boolean readOnly) throws LoginException, RemoteException {
         Future<TimeoutConnector> future = executorService.submit(
             new Callable<TimeoutConnector>() {
                 public TimeoutConnector call() throws RemoteException, LoginException {
-                    return new TimeoutConnector(TimeoutConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
+                    return new TimeoutConnector(TimeoutConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer, readOnly);
                 }
             }
         );

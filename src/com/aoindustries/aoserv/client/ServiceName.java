@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.util.i18n.LocalizedToString;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,7 +39,7 @@ public enum ServiceName implements LocalizedToString {
     brands,
     business_administrators,
     business_administrator_roles,
-    // TODO: business_profiles,
+    business_profiles,
     businesses,
     business_servers,
     country_codes,

@@ -23,8 +23,8 @@ import java.util.Map;
  * <p>
  * Except normal tabular data queries, all other data access and data manipulation occurs as commands.
  * Commands may run entirely client-side, or be serialized to the server for processing.
- * Commands are checked client-side for performance and then checked server-side for safety.  The client-side
- * checks may be used in interface design.
+ * Commands are checked client-side for performance and then checked server-side for security.  The client-side
+ * checks may be efficiently used in interface design.
  * </p>
  * <p>
  * Each command may have any number of public constructors.  One of the public constructors should
@@ -144,6 +144,8 @@ abstract public class AOServCommand<R> implements Serializable {
      * basis.  Messages that are not associated with a specific parameters will have
      * a <code>null</code> key.  If there is no validation problems, returns an
      * empty map.
+     *
+     * // TODO: Check for read-only connectors
      */
     abstract public Map<String,List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException;
 

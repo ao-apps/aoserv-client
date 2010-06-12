@@ -131,7 +131,7 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
     }
 
     public int compareTo(PostgresUserId other) {
-        return id.compareTo(other.id);
+        return this==other ? 0 : id.compareTo(other.id);
     }
 
     @Override

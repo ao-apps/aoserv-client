@@ -91,9 +91,9 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
 
     private final AOServConnectorFactoryCache<C,F> connectors = new AOServConnectorFactoryCache<C,F>();
 
-    public C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    public C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
-            C connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+            C connector = connectors.get(connectAs, authenticateAs, password, daemonServer, readOnly);
             if(connector!=null) {
                 connector.setLocale(locale);
             } else {
@@ -102,7 +102,8 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
                     connectAs,
                     authenticateAs,
                     password,
-                    daemonServer
+                    daemonServer,
+                    readOnly
                 );
             }
             return connector;
@@ -112,9 +113,9 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
     /**
      * Connectors are exported as they are created.
      */
-    public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
-            C connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+            C connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer, readOnly);
             UnicastRemoteObject.exportObject(connector, port.getPort(), csf, ssf);
             for(AOServService<C,F,?,?> service : connector.getServices().values()) {
                 UnicastRemoteObject.exportObject(service, port.getPort(), csf, ssf);
@@ -124,6 +125,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
                 authenticateAs,
                 password,
                 daemonServer,
+                readOnly,
                 connector
             );
             return connector;

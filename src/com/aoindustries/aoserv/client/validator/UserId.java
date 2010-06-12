@@ -145,7 +145,7 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
     }
 
     public int compareTo(UserId other) {
-        return id.compareTo(other.id);
+        return this==other ? 0 : id.compareTo(other.id);
     }
 
     @Override

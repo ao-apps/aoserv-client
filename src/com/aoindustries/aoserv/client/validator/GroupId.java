@@ -132,7 +132,7 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
     }
 
     public int compareTo(GroupId other) {
-        return id.compareTo(other.id);
+        return this==other ? 0 : id.compareTo(other.id);
     }
 
     @Override

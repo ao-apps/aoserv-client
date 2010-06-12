@@ -127,7 +127,7 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
     }
 
     public int compareTo(PostgresDatabaseName other) {
-        return name.compareTo(other.name);
+        return this==other ? 0 : name.compareTo(other.name);
     }
 
     @Override

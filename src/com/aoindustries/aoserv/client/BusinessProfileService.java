@@ -1,38 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  BusinessProfile
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessProfile> {
+@ServiceAnnotation(ServiceName.business_profiles)
+public interface BusinessProfileService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,BusinessProfile> {
 
-    BusinessProfileTable(AOServConnector connector) {
-	super(connector, BusinessProfile.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(BusinessProfile.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(BusinessProfile.COLUMN_PRIORITY_name, DESCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addBusinessProfile(
         final Business business,
         final String name,
@@ -109,15 +90,13 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
             }
         );
     }
-
-    public BusinessProfile get(int pkey) throws IOException, SQLException {
-        return getUniqueRow(BusinessProfile.COLUMN_PKEY, pkey);
-    }
+    */
 
     /**
      * Gets the highest priority  <code>BusinessProfile</code> for
      * the provided <code>Business</code>.
      */
+    /* TODO
     BusinessProfile getBusinessProfile(Business business) throws IOException, SQLException {
 	String accounting=business.getAccounting();
 	List<BusinessProfile> cached=getRows();
@@ -128,16 +107,14 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
             if(profile.accounting.equals(accounting)) return profile;
 	}
 	return null;
-    }
+    }*/
 
+    /* TODO
     List<BusinessProfile> getBusinessProfiles(Business business) throws IOException, SQLException {
         return getIndexedRows(BusinessProfile.COLUMN_ACCOUNTING, business.pkey);
-    }
+    }   */
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BUSINESS_PROFILES;
-    }
-
+    /* TODO
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 	String command=args[0];
@@ -179,4 +156,5 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
             return true;
 	} else return false;
     }
+     */
 }

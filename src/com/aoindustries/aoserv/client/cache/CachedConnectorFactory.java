@@ -29,9 +29,9 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
 
     private final AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory> connectors = new AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory>();
 
-    public CachedConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    public CachedConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
-            CachedConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+            CachedConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer, readOnly);
             if(connector!=null) {
                 connector.setLocale(locale);
             } else {
@@ -40,21 +40,23 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
                     connectAs,
                     authenticateAs,
                     password,
-                    daemonServer
+                    daemonServer,
+                    readOnly
                 );
             }
             return connector;
         }
     }
 
-    public CachedConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    public CachedConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
-            CachedConnector connector = new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
+            CachedConnector connector = new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer, readOnly));
             connectors.put(
                 connectAs,
                 authenticateAs,
                 password,
                 daemonServer,
+                readOnly,
                 connector
             );
             return connector;

@@ -126,7 +126,7 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
     }
 
     public int compareTo(MySQLUserId other) {
-        return id.compareTo(other.id);
+        return this==other ? 0 : id.compareTo(other.id);
     }
 
     @Override

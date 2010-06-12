@@ -133,7 +133,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
     }
 
     public int compareTo(Gecos other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(value, other.value);
+        return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(value, other.value);
     }
 
     @Override

@@ -35,6 +35,8 @@ import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorRole;
 import com.aoindustries.aoserv.client.BusinessAdministratorRoleService;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
+import com.aoindustries.aoserv.client.BusinessProfile;
+import com.aoindustries.aoserv.client.BusinessProfileService;
 import com.aoindustries.aoserv.client.BusinessServer;
 import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
@@ -227,6 +229,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final UserId connectAs;
     private final UserId authenticateAs;
     private final String password;
+    private final boolean readOnly;
 
     CachedConnector(CachedConnectorFactory factory, AOServConnector<?,?> wrapped) throws RemoteException, LoginException {
         this.factory = factory;
@@ -235,6 +238,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         connectAs = wrapped.getConnectAs();
         authenticateAs = wrapped.getAuthenticateAs();
         password = wrapped.getPassword();
+        readOnly = wrapped.isReadOnly();
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAoServerDaemonHosts());
         aoserverResources = new CachedAOServerResourceService(this, wrapped.getAoServerResources());
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
@@ -252,7 +256,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         brands = new CachedBrandService(this, wrapped.getBrands());
         businessAdministrators = new CachedBusinessAdministratorService(this, wrapped.getBusinessAdministrators());
         businessAdministratorRoles = new CachedBusinessAdministratorRoleService(this, wrapped.getBusinessAdministratorRoles());
-        // TODO: businessProfiles = new CachedBusinessProfileService(this, wrapped.getBusinessProfiles());
+        businessProfiles = new CachedBusinessProfileService(this, wrapped.getBusinessProfiles());
         businesses = new CachedBusinessService(this, wrapped.getBusinesses());
         businessServers = new CachedBusinessServerService(this, wrapped.getBusinessServers());
         countryCodes = new CachedCountryCodeService(this, wrapped.getCountryCodes());
@@ -431,6 +435,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return password;
     }
 
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
     public <R> CommandResult<R> executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException {
         return wrapped.executeCommand(command, isInteractive);
     }
@@ -605,8 +613,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessProfileService">
-    // TODO: final CachedBusinessProfileService businessProfiles;
-    // TODO: public BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles();
+    static class CachedBusinessProfileService extends CachedService<Integer,BusinessProfile> implements BusinessProfileService<CachedConnector,CachedConnectorFactory> {
+        CachedBusinessProfileService(CachedConnector connector, BusinessProfileService<?,?> wrapped) {
+            super(connector, Integer.class, BusinessProfile.class, wrapped);
+        }
+    }
+    final CachedBusinessProfileService businessProfiles;
+    public BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles() {
+        return businessProfiles;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessService">
     static class CachedBusinessService extends CachedService<AccountingCode,Business> implements BusinessService<CachedConnector,CachedConnectorFactory> {

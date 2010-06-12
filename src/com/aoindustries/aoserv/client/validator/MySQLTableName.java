@@ -112,7 +112,7 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
     }
 
     public int compareTo(MySQLTableName other) {
-        return name.compareTo(other.name);
+        return this==other ? 0 : name.compareTo(other.name);
     }
 
     @Override

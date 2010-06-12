@@ -24,17 +24,20 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
         final UserId authenticateAs;
         final String password;
         final DomainName daemonServer;
+        final boolean readOnly;
 
         CacheKey(
             UserId connectAs,
             UserId authenticateAs,
             String password,
-            DomainName daemonServer
+            DomainName daemonServer,
+            boolean readOnly
         ) {
             this.connectAs = connectAs.intern();
             this.authenticateAs = authenticateAs.intern();
             this.password = password.intern();
             this.daemonServer = daemonServer==null ? null : daemonServer.intern();
+            this.readOnly = readOnly;
         }
 
         @Override
@@ -45,7 +48,8 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
                 connectAs==connectAs
                 && authenticateAs==other.authenticateAs
                 && password==other.password // interned - OK
-                && daemonServer==other.daemonServer
+                && daemonServer==other.daemonServer // interned - OK
+                && readOnly==other.readOnly
             ;
         }
 
@@ -56,6 +60,7 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
             hash = 29 * hash + authenticateAs.hashCode();
             hash = 29 * hash + password.hashCode();
             hash = 29 * hash + (daemonServer!=null ? daemonServer.hashCode() : 0);
+            hash = 29 * hash + (readOnly ? 1 : 0);
             return hash;
         }
     }
@@ -66,9 +71,10 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
         UserId connectAs,
         UserId authenticateAs,
         String password,
-        DomainName daemonServer
+        DomainName daemonServer,
+        boolean readOnly
     ) {
-        return connectors.get(new CacheKey(connectAs, authenticateAs, password, daemonServer));
+        return connectors.get(new CacheKey(connectAs, authenticateAs, password, daemonServer, readOnly));
     }
 
     public void put(
@@ -76,8 +82,9 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
         UserId authenticateAs,
         String password,
         DomainName daemonServer,
+        boolean readOnly,
         C connector
     ) {
-        connectors.put(new CacheKey(connectAs, authenticateAs, password, daemonServer), connector);
+        connectors.put(new CacheKey(connectAs, authenticateAs, password, daemonServer, readOnly), connector);
     }
 }

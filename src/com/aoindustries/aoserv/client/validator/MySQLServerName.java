@@ -120,7 +120,7 @@ final public class MySQLServerName implements Comparable<MySQLServerName>, Seria
     }
 
     public int compareTo(MySQLServerName other) {
-        return name.compareTo(other.name);
+        return this==other ? 0 : name.compareTo(other.name);
     }
 
     @Override

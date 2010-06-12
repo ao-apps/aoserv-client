@@ -128,7 +128,7 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
     }
 
     public int compareTo(AccountingCode other) {
-        return accounting.compareTo(other.accounting);
+        return this==other ? 0 : accounting.compareTo(other.accounting);
     }
 
     @Override

@@ -137,6 +137,7 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
      * Sorts IP addresses before domain names.
      */
     public int compareTo(Hostname other) {
+        if(this==other) return 0;
         if(domainName!=null) {
             if(other.domainName!=null) return domainName.compareTo(other.domainName);
             else return 1;

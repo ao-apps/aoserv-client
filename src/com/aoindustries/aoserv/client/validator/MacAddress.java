@@ -123,7 +123,7 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
     }
 
     public int compareTo(MacAddress other) {
-        return address.compareTo(other.address);
+        return this==other ? 0 : address.compareTo(other.address);
     }
 
     @Override

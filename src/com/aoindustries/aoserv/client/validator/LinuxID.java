@@ -96,7 +96,7 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
     }
 
     public int compareTo(LinuxID other) {
-        return AOServObjectUtils.compare(id, other.id);
+        return this==other ? 0 : AOServObjectUtils.compare(id, other.id);
     }
 
     @Override

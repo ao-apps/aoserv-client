@@ -96,7 +96,7 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
     }
 
     public int compareTo(NetPort other) {
-        return AOServObjectUtils.compare(port, other.port);
+        return this==other ? 0 : AOServObjectUtils.compare(port, other.port);
     }
 
     @Override

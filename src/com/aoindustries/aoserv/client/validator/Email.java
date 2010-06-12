@@ -186,6 +186,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
      * Sorts by domain and then by local part.
      */
     public int compareTo(Email other) {
+        if(this==other) return 0;
         int diff = domain.compareTo(other.domain);
         if(diff!=0) return diff;
         return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(localPart, other.localPart);

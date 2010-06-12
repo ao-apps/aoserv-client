@@ -25,10 +25,10 @@ public interface AOServConnectorFactory<C extends AOServConnector<C,F>, F extend
     /**
      * Gets an existing <code>AOServConnector</code> or creates a new one if does not yet exist.
      */
-    C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException;
+    C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException;
 
     /**
      * Creates a new <code>AOServConnector</code> for the provided connectAs, authenticateAs, and password.
      */
-    C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException;
+    C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException;
 }

@@ -116,7 +116,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
     }
 
     public int compareTo(UnixPath other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
+        return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
     }
 
     @Override

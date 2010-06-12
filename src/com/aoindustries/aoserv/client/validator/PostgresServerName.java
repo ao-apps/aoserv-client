@@ -120,7 +120,7 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
     }
 
     public int compareTo(PostgresServerName other) {
-        return name.compareTo(other.name);
+        return this==other ? 0 : name.compareTo(other.name);
     }
 
     @Override

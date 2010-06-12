@@ -121,6 +121,7 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
      * Sorts by top level domain, then subdomain, then sub-subdomain, ...
      */
     public int compareTo(DomainName other) {
+        if(this==other) return 0;
         String domain1 = domain;
         String domain2 = other.domain;
         if(domain1==domain2) return 0; // Shortcut for interned

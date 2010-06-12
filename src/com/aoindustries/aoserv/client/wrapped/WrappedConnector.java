@@ -35,6 +35,8 @@ import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.BusinessAdministratorRole;
 import com.aoindustries.aoserv.client.BusinessAdministratorRoleService;
 import com.aoindustries.aoserv.client.BusinessAdministratorService;
+import com.aoindustries.aoserv.client.BusinessProfile;
+import com.aoindustries.aoserv.client.BusinessProfileService;
 import com.aoindustries.aoserv.client.BusinessServer;
 import com.aoindustries.aoserv.client.BusinessServerService;
 import com.aoindustries.aoserv.client.BusinessService;
@@ -228,18 +230,20 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     private final UserId authenticateAs;
     private final String password;
     private final DomainName daemonServer;
+    private final boolean readOnly;
 
     final Object connectionLock = new Object();
     private AOServConnector<?,?> wrapped;
 
     @SuppressWarnings("unchecked")
-    protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
+    protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException {
         this.factory = factory;
         this.locale = locale;
         this.connectAs = connectAs;
         this.authenticateAs = authenticateAs;
         this.password = password;
         this.daemonServer = daemonServer;
+        this.readOnly = readOnly;
         aoserverDaemonHosts = new WrappedAOServerDaemonHostService(this);
         aoserverResources = new WrappedAOServerResourceService(this);
         aoservers = new WrappedAOServerService(this);
@@ -257,7 +261,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         brands = new WrappedBrandService(this);
         businessAdministrators = new WrappedBusinessAdministratorService(this);
         businessAdministratorRoles = new WrappedBusinessAdministratorRoleService(this);
-        // TODO: businessProfiles = new WrappedBusinessProfileService(this);
+        businessProfiles = new WrappedBusinessProfileService(this);
         businesses = new WrappedBusinessService(this);
         businessServers = new WrappedBusinessServerService(this);
         countryCodes = new WrappedCountryCodeService(this);
@@ -431,7 +435,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     final protected AOServConnector<?,?> getWrapped() throws RemoteException, LoginException {
         synchronized(connectionLock) {
             // (Re)connects to the wrapped factory
-            if(wrapped==null) wrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+            if(wrapped==null) wrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer, readOnly);
             return wrapped;
         }
     }
@@ -507,6 +511,10 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
 
     final public String getPassword() {
         return password;
+    }
+
+    final public boolean isReadOnly() {
+        return readOnly;
     }
 
     final public <R> CommandResult<R> executeCommand(final AOServCommand<R> command, final boolean isInteractive) throws RemoteException {
@@ -694,8 +702,15 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessProfileService">
-    // TODO: final WrappedBusinessProfileService<C,F> businessProfiles;
-    // TODO: final public BusinessProfileService<C,F> getBusinessProfiles();
+    static class WrappedBusinessProfileService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessProfile> implements BusinessProfileService<C,F> {
+        WrappedBusinessProfileService(C connector) {
+            super(connector, Integer.class, BusinessProfile.class);
+        }
+    }
+    final WrappedBusinessProfileService<C,F> businessProfiles;
+    final public BusinessProfileService<C,F> getBusinessProfiles() {
+        return businessProfiles;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessService">
     static class WrappedBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Business> implements BusinessService<C,F> {

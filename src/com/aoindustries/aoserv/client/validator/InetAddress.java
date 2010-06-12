@@ -265,7 +265,7 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
     }
 
     public int compareTo(InetAddress other) {
-        return ip.compareToUnsigned(other.ip);
+        return this==other ? 0 : ip.compareToUnsigned(other.ip);
     }
 
     @Override

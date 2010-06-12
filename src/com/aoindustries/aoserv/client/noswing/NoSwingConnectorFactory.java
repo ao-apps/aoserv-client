@@ -34,8 +34,8 @@ final public class NoSwingConnectorFactory extends WrappedConnectorFactory<NoSwi
         super(wrapped);
     }
 
-    protected NoSwingConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    protected NoSwingConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         checkNotSwing();
-        return new NoSwingConnector(this, locale, connectAs, authenticateAs, password, daemonServer);
+        return new NoSwingConnector(this, locale, connectAs, authenticateAs, password, daemonServer, readOnly);
     }
 }

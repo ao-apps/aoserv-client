@@ -119,7 +119,7 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
     }
 
     public int compareTo(DomainLabel other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(label, other.label);
+        return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(label, other.label);
     }
 
     @Override

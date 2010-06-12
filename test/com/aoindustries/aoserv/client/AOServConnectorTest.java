@@ -33,9 +33,9 @@ public class AOServConnectorTest extends TestCase {
      */
     static List<AOServConnector<?,?>> getTestConnectors() throws IOException, RemoteException, LoginException, ValidationException {
         List<AOServConnector<?,?>> conns = new ArrayList<AOServConnector<?,?>>();
-        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("aoweb_app"), "changeme"));
-        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf(REGULAR_USER_USERNAME), REGULAR_USER_PASSWORD));
-        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("test_svr"), "Ogrol3Veve5"));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("aoweb_app"), "changeme", true));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf(REGULAR_USER_USERNAME), REGULAR_USER_PASSWORD, true));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("test_svr"), "Ogrol3Veve5", true));
         return conns;
     }
 
