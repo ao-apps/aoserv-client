@@ -15,28 +15,39 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class AddTicketAnnotationCommand extends AOServCommand<Integer> {
+final public class AddTicketAnnotationCommand extends RemoteCommand<Integer> {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String
-        PARAM_TICKET = "ticket",
-        PARAM_SUMMARY = "summary",
-        PARAM_DETAILS = "details"
-    ;
 
     final private int ticket;
     final private String summary;
     final private String details;
 
     public AddTicketAnnotationCommand(
-        @Param(name=PARAM_TICKET) int ticket,
-        @Param(name=PARAM_SUMMARY) String summary,
-        @Param(name=PARAM_DETAILS, nullable=true) String details
+        @Param(name="ticket") int ticket,
+        @Param(name="summary") String summary,
+        @Param(name="details", nullable=true) String details
     ) {
         this.ticket = ticket;
         this.summary = summary;
-        this.details = details;
+        this.details = details==null || details.length()==0 ? null : details;
+    }
+
+    public int getTicket() {
+        return ticket;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

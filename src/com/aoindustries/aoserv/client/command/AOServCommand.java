@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client.command;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
-import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -36,9 +35,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServCommand<R> implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+abstract public class AOServCommand<R> {
 
     private static final Map<Class<? extends AOServCommand>,CommandName> commandNames = new HashMap<Class<? extends AOServCommand>,CommandName>();
     private static final Map<CommandName,Constructor<? extends AOServCommand<?>>> commandConstructors = new HashMap<CommandName,Constructor<? extends AOServCommand<?>>>();
@@ -145,16 +142,9 @@ abstract public class AOServCommand<R> implements Serializable {
      * a <code>null</code> key.  If there is no validation problems, returns an
      * empty map.
      *
-     * // TODO: Check for read-only connectors
+     * // TODO: Check for read-only connectors with non-read-only commands.
      */
     abstract public Map<String,List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException;
-
-    /**
-     * Determines if this command may be retried in the event of an error.  Defaults to <code>true</code>.
-     */
-    public boolean isRetryable() {
-        return true;
-    }
 
     /**
      * Executes this command in non-interactive mode.
@@ -164,11 +154,8 @@ abstract public class AOServCommand<R> implements Serializable {
     }
 
     /**
-     * Executes the command and retrieves the result.  If the command return
-     * value is void, returns <code>null</code>.  This default implementation
-     * serializes the command to the server for execution.
+     * Executes the command and retrieves the result.
+     * If the command return value is void, returns <code>null</code>.
      */
-    public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
-        return connector.executeCommand(this, isInteractive).getResult();
-    }
+    abstract public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException;
 }

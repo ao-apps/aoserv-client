@@ -16,18 +16,25 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class RequestReplicationDaemonAccessCommand extends AOServCommand<AOServer.DaemonAccess> {
+final public class RequestReplicationDaemonAccessCommand extends RemoteCommand<AOServer.DaemonAccess> {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String PARAM_REPLICATION = "replication";
 
     final private int replication;
 
     public RequestReplicationDaemonAccessCommand(
-        @Param(name=PARAM_REPLICATION) int replication
+        @Param(name="replication") int replication
     ) {
         this.replication = replication;
+    }
+
+    public int getReplication() {
+        return replication;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return true;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

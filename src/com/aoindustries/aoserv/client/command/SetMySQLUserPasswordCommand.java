@@ -16,24 +16,34 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetMySQLUserPasswordCommand extends AOServCommand<Void> {
+final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String
-        PARAM_MYSQL_USER = "mysql_user",
-        PARAM_PLAINTEXT = "plaintext"
-    ;
+    public static final String PARAM_MYSQL_USER = "mysqlUser";
 
     final private int mysqlUser;
     final private String plaintext;
 
     public SetMySQLUserPasswordCommand(
         @Param(name=PARAM_MYSQL_USER) int mysqlUser,
-        @Param(name=PARAM_PLAINTEXT) String plaintext
+        @Param(name="plaintext") String plaintext
     ) {
         this.mysqlUser = mysqlUser;
         this.plaintext = plaintext;
+    }
+
+    public int getMysqlUser() {
+        return mysqlUser;
+    }
+
+    public String getPlaintext() {
+        return plaintext;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

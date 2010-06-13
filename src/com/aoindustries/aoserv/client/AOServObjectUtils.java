@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.table.IndexType;
 import java.lang.reflect.Method;
+import java.sql.Timestamp;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +62,18 @@ public class AOServObjectUtils {
             return obj2!=null ? 1 : 0;
         }
     }
+
+    /**
+     * Compares two timestamps allowing for nulls, sorts non-null before null.
+     */
+    /*
+    public static int compare(Timestamp obj1, Timestamp obj2) {
+        if(obj1!=null) {
+            return obj2!=null ? obj1.compareTo(obj2) : -1;
+        } else {
+            return obj2!=null ? 1 : 0;
+        }
+    }*/
 
     /**
      * Returns an unmodifiable set of the provided objects, not including any null values.

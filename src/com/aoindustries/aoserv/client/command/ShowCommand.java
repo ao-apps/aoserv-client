@@ -21,9 +21,7 @@ import java.util.Map;
  */
 final public class ShowCommand extends AOServCommand<String> {
 
-    private static final long serialVersionUID = 1L;
-
-    public static final String PARAM_OBJECT = "object";
+    private static final String PARAM_OBJECT = "object";
 
     private final String object;
 
@@ -31,6 +29,10 @@ final public class ShowCommand extends AOServCommand<String> {
         @Param(name=PARAM_OBJECT, syntax="<b>tables</b>") String object
     ) {
         this.object = object;
+    }
+
+    public String getObject() {
+        return object;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

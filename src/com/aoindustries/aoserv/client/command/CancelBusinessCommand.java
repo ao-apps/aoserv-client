@@ -16,24 +16,32 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class CancelBusinessCommand extends AOServCommand<Void> {
+final public class CancelBusinessCommand extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String
-        PARAM_ACCOUNTING = "accounting",
-        PARAM_CANCEL_REASON = "cancel_reason"
-    ;
 
     final private AccountingCode accounting;
     final private String cancelReason;
 
     public CancelBusinessCommand(
-        @Param(name=PARAM_ACCOUNTING) AccountingCode accounting,
-        @Param(name=PARAM_CANCEL_REASON, nullable=true) String cancelReason
+        @Param(name="accounting") AccountingCode accounting,
+        @Param(name="cancelReason", nullable=true) String cancelReason
     ) {
         this.accounting = accounting;
-        this.cancelReason = cancelReason;
+        this.cancelReason = cancelReason==null || cancelReason.length()==0 ? null : cancelReason;
+    }
+
+    public AccountingCode getAccounting() {
+        return accounting;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

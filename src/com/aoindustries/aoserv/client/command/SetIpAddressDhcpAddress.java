@@ -16,24 +16,32 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetIpAddressDhcpAddress extends AOServCommand<Void> {
+final public class SetIpAddressDhcpAddress extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String
-        PARAM_IP_ADDRESS = "ip_address",
-        PARAM_NEW_ADDRESS = "new_address"
-    ;
 
     final private int ipAddress;
     final private InetAddress newAddress;
 
     public SetIpAddressDhcpAddress(
-        @Param(name=PARAM_IP_ADDRESS) int ipAddress,
-        @Param(name=PARAM_NEW_ADDRESS) InetAddress newAddress
+        @Param(name="ipAddress") int ipAddress,
+        @Param(name="newAddress") InetAddress newAddress
     ) {
         this.ipAddress = ipAddress;
         this.newAddress = newAddress;
+    }
+
+    public int getIpAddress() {
+        return ipAddress;
+    }
+
+    public InetAddress getNewAddress() {
+        return newAddress;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

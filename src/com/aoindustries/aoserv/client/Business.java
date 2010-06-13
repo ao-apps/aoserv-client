@@ -10,9 +10,11 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.security.acl.Group;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -435,6 +437,14 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      */
     public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
         return getService().getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_ACCOUNTING, this);
+    }
+
+    /**
+     * Gets the <code>BusinessProfile</code> with the highest priority or <code>null</code> if there
+     * are no business profiles for this <code>Business</code>.
+     */
+    public BusinessProfile getBusinessProfile() throws IOException, SQLException {
+        return Collections.min(getBusinessProfiles());
     }
     // </editor-fold>
 
@@ -875,17 +885,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             if(bu==null) throw new AssertionError("Unable to find the accounting business for '"+pkey+'\'');
         }
         return bu;
-    }*/
+    }
 
-    /**
-     * Gets the <code>BusinessProfile</code> with the highest priority.
-     */
-    /* TODO
-    public BusinessProfile getBusinessProfile() throws IOException, SQLException {
-        return service.connector.getBusinessProfiles().getBusinessProfile(this);
-    }*/
-
-    /*
     public BusinessServer getBusinessServer(Server server) throws IOException, SQLException {
         return service.connector.getBusinessServers().getBusinessServer(pkey, server.pkey);
     }

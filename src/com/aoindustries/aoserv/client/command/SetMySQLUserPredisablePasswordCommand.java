@@ -15,24 +15,32 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetMySQLUserPredisablePasswordCommand extends AOServCommand<Void> {
+final public class SetMySQLUserPredisablePasswordCommand extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String
-        PARAM_MYSQL_USER = "mysql_user",
-        PARAM_ENCRYPTED_PASSWORD = "encrypted_password"
-    ;
 
     final private int mysqlUser;
     final private String encryptedPassword;
 
     public SetMySQLUserPredisablePasswordCommand(
-        @Param(name=PARAM_MYSQL_USER) int mysqlUser,
-        @Param(name=PARAM_ENCRYPTED_PASSWORD) String encryptedPassword
+        @Param(name="mysqlUser") int mysqlUser,
+        @Param(name="encryptedPassword") String encryptedPassword
     ) {
         this.mysqlUser = mysqlUser;
         this.encryptedPassword = encryptedPassword;
+    }
+
+    public int getMysqlUser() {
+        return mysqlUser;
+    }
+
+    public String getEncryptedPassword() {
+        return encryptedPassword;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

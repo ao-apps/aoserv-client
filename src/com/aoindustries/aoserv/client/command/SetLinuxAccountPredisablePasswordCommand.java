@@ -15,24 +15,32 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetLinuxAccountPredisablePasswordCommand extends AOServCommand<Void> {
+final public class SetLinuxAccountPredisablePasswordCommand extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String
-        PARAM_LINUX_ACCOUNT = "linux_account",
-        PARAM_ENCRYPTED_PASSWORD = "encrypted_password"
-    ;
 
     final private int linuxAccount;
     final private String encryptedPassword;
 
     public SetLinuxAccountPredisablePasswordCommand(
-        @Param(name=PARAM_LINUX_ACCOUNT) int linuxAccount,
-        @Param(name=PARAM_ENCRYPTED_PASSWORD) String encryptedPassword
+        @Param(name="linuxAccount") int linuxAccount,
+        @Param(name="encryptedPassword") String encryptedPassword
     ) {
         this.linuxAccount = linuxAccount;
         this.encryptedPassword = encryptedPassword;
+    }
+
+    public int getLinuxAccount() {
+        return linuxAccount;
+    }
+
+    public String getEncryptedPassword() {
+        return encryptedPassword;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

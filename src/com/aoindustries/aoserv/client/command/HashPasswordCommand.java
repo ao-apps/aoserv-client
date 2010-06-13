@@ -19,16 +19,16 @@ import java.util.Map;
  */
 final public class HashPasswordCommand extends AOServCommand<String> {
 
-    private static final long serialVersionUID = 1L;
-
-    public static final String PARAM_PASSWORD = "password";
-
     private final String password;
 
     public HashPasswordCommand(
-        @Param(name=PARAM_PASSWORD) String password
+        @Param(name="password") String password
     ) {
         this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

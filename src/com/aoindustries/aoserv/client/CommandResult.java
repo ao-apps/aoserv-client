@@ -22,6 +22,7 @@ public class CommandResult<R> implements Serializable {
     final private Set<ServiceName> modifiedServiceNames;
 
     public CommandResult(R result, Set<ServiceName> modifiedServiceNames) {
+        if(modifiedServiceNames==null) throw new IllegalArgumentException("modifiedServiceNames==null");
         this.result = result;
         this.modifiedServiceNames = modifiedServiceNames;
     }

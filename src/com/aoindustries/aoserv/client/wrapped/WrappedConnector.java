@@ -43,8 +43,10 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CommandResult;
 import com.aoindustries.aoserv.client.CountryCode;
 import com.aoindustries.aoserv.client.CountryCodeService;
+import com.aoindustries.aoserv.client.CreditCard;
 import com.aoindustries.aoserv.client.CreditCardProcessor;
 import com.aoindustries.aoserv.client.CreditCardProcessorService;
+import com.aoindustries.aoserv.client.CreditCardService;
 import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
@@ -202,7 +204,8 @@ import com.aoindustries.aoserv.client.TransactionType;
 import com.aoindustries.aoserv.client.TransactionTypeService;
 import com.aoindustries.aoserv.client.Username;
 import com.aoindustries.aoserv.client.UsernameService;
-import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.command.RemoteCommand;
+import com.aoindustries.aoserv.client.command.ReadOnlyException;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.aoserv.client.validator.DomainName;
@@ -266,10 +269,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         businessServers = new WrappedBusinessServerService(this);
         countryCodes = new WrappedCountryCodeService(this);
         creditCardProcessors = new WrappedCreditCardProcessorService(this);
-        /* TODO
-        creditCardTransactions = new WrappedCreditCardTransactionService(this);
+        // TODO: creditCardTransactions = new WrappedCreditCardTransactionService(this);
         creditCards = new WrappedCreditCardService(this);
-         */
         cvsRepositories = new WrappedCvsRepositoryService(this);
         disableLogs = new WrappedDisableLogService(this);
         /* TODO
@@ -517,7 +518,9 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return readOnly;
     }
 
-    final public <R> CommandResult<R> executeCommand(final AOServCommand<R> command, final boolean isInteractive) throws RemoteException {
+    final public <R> CommandResult<R> executeCommand(final RemoteCommand<R> command, final boolean isInteractive) throws RemoteException {
+        // Check read-only commands
+        if(readOnly && !command.isReadOnlyCommand()) throw new ReadOnlyException();
         return call(
             new Callable<CommandResult<R>>() {
                 public CommandResult<R> call() throws RemoteException {
@@ -528,7 +531,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
                     }
                 }
             },
-            command.isRetryable()
+            command.isRetryableCommand()
         );
     }
 
@@ -761,8 +764,15 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // TODO: final public CreditCardTransactionService<C,F> getCreditCardTransactions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardService">
-    // TODO: final WrappedCreditCardService<C,F> creditCards;
-    // TODO: final public CreditCardService<C,F> getCreditCards();
+    static class WrappedCreditCardService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCard> implements CreditCardService<C,F> {
+        WrappedCreditCardService(C connector) {
+            super(connector, Integer.class, CreditCard.class);
+        }
+    }
+    final WrappedCreditCardService<C,F> creditCards;
+    final public CreditCardService<C,F> getCreditCards() {
+        return creditCards;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CvsRepositoryService">
     static class WrappedCvsRepositoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CvsRepository> implements CvsRepositoryService<C,F> {

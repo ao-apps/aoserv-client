@@ -18,20 +18,23 @@ import java.util.Map;
  */
 final public class CryptCommand extends AOServCommand<String> {
 
-    private static final long serialVersionUID = 1L;
-
-    public static final String PARAM_PASSWORD = "password";
-    public static final String PARAM_SALT = "salt";
-
     private final String password;
     private final String salt;
 
     public CryptCommand(
-        @Param(name=PARAM_PASSWORD) String password,
-        @Param(name=PARAM_SALT, nullable=true) String salt
+        @Param(name="password") String password,
+        @Param(name="salt", nullable=true) String salt
     ) {
         this.password = password;
-        this.salt = salt;
+        this.salt = salt==null || salt.length()==0 ? null : salt;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getSalt() {
+        return salt;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

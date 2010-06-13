@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class GetMySQLSlaveStatusCommand extends AOServCommand<GetMySQLSlaveStatusCommand.SlaveStatus> {
+final public class GetMySQLSlaveStatusCommand extends RemoteCommand<GetMySQLSlaveStatusCommand.SlaveStatus> {
 
     final public static class SlaveStatus implements Serializable {
 
@@ -128,18 +128,23 @@ final public class GetMySQLSlaveStatusCommand extends AOServCommand<GetMySQLSlav
 
     private static final long serialVersionUID = 1L;
 
-    public static final String
-        PARAM_PKEY = "pkey"
-    ;
-
     final private int pkey;
 
     public GetMySQLSlaveStatusCommand(
-        @Param(name=PARAM_PKEY) int pkey
+        @Param(name="pkey") int pkey
     ) {
         this.pkey = pkey;
     }
 
+    public int getPkey() {
+        return pkey;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return true;
+    }
+    
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();

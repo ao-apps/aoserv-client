@@ -17,23 +17,13 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class AddTicketCommand extends AOServCommand<Integer> {
+final public class AddTicketCommand extends RemoteCommand<Integer> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String
-        PARAM_BRAND = "brand",
-        PARAM_BUSINESS = "business",
-        PARAM_LANGUAGE = "language",
-        PARAM_CATEGORY = "category",
-        PARAM_TICKET_TYPE = "ticket_type",
-        PARAM_FROM_ADDRESS = "from_address",
-        PARAM_SUMMARY = "summary",
-        PARAM_DETAILS = "details",
-        PARAM_CLIENT_PRIORITY = "client_priority",
-        PARAM_CONTACT_EMAILS = "contact_emails",
-        PARAM_CONTACT_PHONE_NUMBERS = "contact_phone_numbers"
-    ;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     final private AccountingCode brand;
     final private AccountingCode business;
@@ -48,17 +38,17 @@ final public class AddTicketCommand extends AOServCommand<Integer> {
     final private String contactPhoneNumbers;
 
     public AddTicketCommand(
-        @Param(name=PARAM_BRAND) AccountingCode brand,
-        @Param(name=PARAM_BUSINESS, nullable=true) AccountingCode business,
-        @Param(name=PARAM_LANGUAGE) String language,
-        @Param(name=PARAM_CATEGORY, nullable=true) Integer category,
-        @Param(name=PARAM_TICKET_TYPE) String ticketType,
-        @Param(name=PARAM_FROM_ADDRESS, nullable=true) Email fromAddress,
-        @Param(name=PARAM_SUMMARY) String summary,
-        @Param(name=PARAM_DETAILS, nullable=true) String details,
-        @Param(name=PARAM_CLIENT_PRIORITY) String clientPriority,
-        @Param(name=PARAM_CONTACT_EMAILS) String contactEmails,
-        @Param(name=PARAM_CONTACT_PHONE_NUMBERS) String contactPhoneNumbers
+        @Param(name="brand") AccountingCode brand,
+        @Param(name="business", nullable=true) AccountingCode business,
+        @Param(name="language") String language,
+        @Param(name="category", nullable=true) Integer category,
+        @Param(name="ticketType") String ticketType,
+        @Param(name="fromAddress", nullable=true) Email fromAddress,
+        @Param(name="summary") String summary,
+        @Param(name="details", nullable=true) String details,
+        @Param(name="clientPriority") String clientPriority,
+        @Param(name="contactEmails") String contactEmails,
+        @Param(name="contactPhoneNumbers") String contactPhoneNumbers
     ) {
         this.brand = brand;
         this.business = business;
@@ -67,10 +57,59 @@ final public class AddTicketCommand extends AOServCommand<Integer> {
         this.ticketType = ticketType;
         this.fromAddress = fromAddress;
         this.summary = summary;
-        this.details = details;
+        this.details = details==null || details.length()==0 ? null : details;
         this.clientPriority = clientPriority;
         this.contactEmails = contactEmails;
         this.contactPhoneNumbers = contactPhoneNumbers;
+    }
+
+    public AccountingCode getBrand() {
+        return brand;
+    }
+
+    public AccountingCode getBusiness() {
+        return business;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public Integer getCategory() {
+        return category;
+    }
+
+    public String getTicketType() {
+        return ticketType;
+    }
+
+    public Email getFromAddress() {
+        return fromAddress;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public String getClientPriority() {
+        return clientPriority;
+    }
+
+    public String getContactEmails() {
+        return contactEmails;
+    }
+
+    public String getContactPhoneNumbers() {
+        return contactPhoneNumbers;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

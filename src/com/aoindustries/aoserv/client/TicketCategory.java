@@ -6,6 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Set;
@@ -37,7 +39,7 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
         intern();
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         intern();
     }

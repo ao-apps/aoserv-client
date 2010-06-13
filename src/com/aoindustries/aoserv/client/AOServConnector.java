@@ -5,7 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.command.RemoteCommand;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -83,7 +83,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
      * Executes the command and retrieves the result.  If the command return
      * value is void, returns a CommandResult containing <code>null</code>.
      */
-    <R> CommandResult<R> executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException;
+    <R> CommandResult<R> executeCommand(RemoteCommand<R> command, boolean isInteractive) throws RemoteException;
 
     /**
      * Gets an unmodifiable map of all of the services in the system.
@@ -117,16 +117,12 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     BusinessServerService<C,F> getBusinessServers() throws RemoteException;
     CountryCodeService<C,F> getCountryCodes() throws RemoteException;
     CreditCardProcessorService<C,F> getCreditCardProcessors() throws RemoteException;
-    /*
-    CreditCardTransactionService<C,F> getCreditCardTransactions() throws RemoteException;
+    // TODO: CreditCardTransactionService<C,F> getCreditCardTransactions() throws RemoteException;
     CreditCardService<C,F> getCreditCards() throws RemoteException;
-     */
     CvsRepositoryService<C,F> getCvsRepositories() throws RemoteException;
     DisableLogService<C,F> getDisableLogs() throws RemoteException;
-    /*
-    DistroFileTypeService<C,F> getDistroFileTypes() throws RemoteException;
-    DistroFileService<C,F> getDistroFiles() throws RemoteException;
-     */
+    // TODO: DistroFileTypeService<C,F> getDistroFileTypes() throws RemoteException;
+    // TODO: DistroFileService<C,F> getDistroFiles() throws RemoteException;
     DnsRecordService<C,F> getDnsRecords() throws RemoteException;
     DnsTldService<C,F> getDnsTlds() throws RemoteException;
     DnsTypeService<C,F> getDnsTypes() throws RemoteException;

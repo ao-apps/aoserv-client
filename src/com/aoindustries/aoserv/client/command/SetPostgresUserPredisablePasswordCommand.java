@@ -15,24 +15,32 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetPostgresUserPredisablePasswordCommand extends AOServCommand<Void> {
+final public class SetPostgresUserPredisablePasswordCommand extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String
-        PARAM_POSTGRES_USER = "postgres_user",
-        PARAM_ENCRYPTED_PASSWORD = "encrypted_password"
-    ;
 
     final private int postgresUser;
     final private String encryptedPassword;
 
     public SetPostgresUserPredisablePasswordCommand(
-        @Param(name=PARAM_POSTGRES_USER) int postgresUser,
-        @Param(name=PARAM_ENCRYPTED_PASSWORD) String encryptedPassword
+        @Param(name="postgresUser") int postgresUser,
+        @Param(name="encryptedPassword") String encryptedPassword
     ) {
         this.postgresUser = postgresUser;
         this.encryptedPassword = encryptedPassword;
+    }
+
+    public int getPostgresUser() {
+        return postgresUser;
+    }
+
+    public String getEncryptedPassword() {
+        return encryptedPassword;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

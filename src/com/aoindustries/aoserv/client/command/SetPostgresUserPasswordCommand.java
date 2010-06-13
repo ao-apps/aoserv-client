@@ -16,24 +16,34 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetPostgresUserPasswordCommand extends AOServCommand<Void> {
+final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String
-        PARAM_POSTGRES_USER = "postgres_user",
-        PARAM_PLAINTEXT = "plaintext"
-    ;
+    public static final String PARAM_POSTGRES_USER = "postgresUser";
 
     final private int postgresUser;
     final private String plaintext;
 
     public SetPostgresUserPasswordCommand(
         @Param(name=PARAM_POSTGRES_USER) int postgresUser,
-        @Param(name=PARAM_PLAINTEXT) String plaintext
+        @Param(name="plaintext") String plaintext
     ) {
         this.postgresUser = postgresUser;
         this.plaintext = plaintext;
+    }
+
+    public int getPostgresUser() {
+        return postgresUser;
+    }
+
+    public String getPlaintext() {
+        return plaintext;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {

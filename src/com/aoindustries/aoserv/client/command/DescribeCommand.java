@@ -26,23 +26,25 @@ import java.util.Map;
  */
 final public class DescribeCommand extends AOServCommand<String> {
 
-    private static final long serialVersionUID = 1L;
-
     private static final String eol = System.getProperty("line.separator");
 
-    public static final String PARAM_TABLE_NAME = "table_name";
+    private static final String PARAM_TABLE_NAME = "tableName";
 
-    private final String table_name;
+    private final String tableName;
 
     public DescribeCommand(
-        @Param(name=PARAM_TABLE_NAME) String table_name
+        @Param(name=PARAM_TABLE_NAME) String tableName
     ) {
-        this.table_name = table_name;
+        this.tableName = tableName;
+    }
+
+    public String getTableName() {
+        return tableName;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
         // Must be able to find the command name
-        if(table_name==null) {
+        if(tableName==null) {
             return Collections.singletonMap(
                 PARAM_TABLE_NAME,
                 Collections.singletonList(
@@ -51,13 +53,13 @@ final public class DescribeCommand extends AOServCommand<String> {
             );
         }
         try {
-            ServiceName.valueOf(table_name);
+            ServiceName.valueOf(tableName);
             return Collections.emptyMap();
         } catch(IllegalArgumentException err) {
             return Collections.singletonMap(
                 PARAM_TABLE_NAME,
                 Collections.singletonList(
-                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.validate.tableNotFound", table_name)
+                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.validate.tableNotFound", tableName)
                 )
             );
         }
@@ -71,11 +73,11 @@ final public class DescribeCommand extends AOServCommand<String> {
     @Override
     public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         // Find the table given its name
-        AOServService<?,?,?,?> service = connector.getServices().get(ServiceName.valueOf(table_name));
+        AOServService<?,?,?,?> service = connector.getServices().get(ServiceName.valueOf(tableName));
         Locale locale = connector.getLocale();
         StringBuilder SB = new StringBuilder();
         SB.append("<b>").append(ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.tableName")).append("</b>").append(eol);
-        SB.append("       ").append(table_name).append(eol);
+        SB.append("       ").append(tableName).append(eol);
         String description = service.getServiceName().getDescription(locale);
         if(description!=null && description.length()>0) {
             SB.append(eol);

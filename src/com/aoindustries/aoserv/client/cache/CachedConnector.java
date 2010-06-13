@@ -43,8 +43,10 @@ import com.aoindustries.aoserv.client.BusinessService;
 import com.aoindustries.aoserv.client.CommandResult;
 import com.aoindustries.aoserv.client.CountryCode;
 import com.aoindustries.aoserv.client.CountryCodeService;
+import com.aoindustries.aoserv.client.CreditCard;
 import com.aoindustries.aoserv.client.CreditCardProcessor;
 import com.aoindustries.aoserv.client.CreditCardProcessorService;
+import com.aoindustries.aoserv.client.CreditCardService;
 import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
@@ -202,7 +204,8 @@ import com.aoindustries.aoserv.client.TransactionType;
 import com.aoindustries.aoserv.client.TransactionTypeService;
 import com.aoindustries.aoserv.client.Username;
 import com.aoindustries.aoserv.client.UsernameService;
-import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.command.RemoteCommand;
+import com.aoindustries.aoserv.client.command.ReadOnlyException;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.aoserv.client.validator.DomainName;
@@ -262,7 +265,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         countryCodes = new CachedCountryCodeService(this, wrapped.getCountryCodes());
         creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
         // TODO: creditCardTransactions = new CachedCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
-        // TODO: creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
+        creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
         cvsRepositories = new CachedCvsRepositoryService(this, wrapped.getCvsRepositories());
         disableLogs = new CachedDisableLogService(this, wrapped.getDisableLogs());
         // TODO: distroFileTypes = new CachedDistroFileTypeService(this, wrapped.getDistroFileTypes());
@@ -439,7 +442,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return readOnly;
     }
 
-    public <R> CommandResult<R> executeCommand(AOServCommand<R> command, boolean isInteractive) throws RemoteException {
+    public <R> CommandResult<R> executeCommand(RemoteCommand<R> command, boolean isInteractive) throws RemoteException {
+        // Check read-only commands
+        if(readOnly && !command.isReadOnlyCommand()) throw new ReadOnlyException();
         return wrapped.executeCommand(command, isInteractive);
     }
 
@@ -672,8 +677,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardService">
-    // TODO: final CachedCreditCardService creditCards;
-    // TODO: public CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards();
+    static class CachedCreditCardService extends CachedService<Integer,CreditCard> implements CreditCardService<CachedConnector,CachedConnectorFactory> {
+        CachedCreditCardService(CachedConnector connector, CreditCardService<?,?> wrapped) {
+            super(connector, Integer.class, CreditCard.class, wrapped);
+        }
+    }
+    final CachedCreditCardService creditCards;
+    public CreditCardService<CachedConnector,CachedConnectorFactory> getCreditCards() {
+        return creditCards;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CvsRepositoryService">
     static class CachedCvsRepositoryService extends CachedService<Integer,CvsRepository> implements CvsRepositoryService<CachedConnector,CachedConnectorFactory> {

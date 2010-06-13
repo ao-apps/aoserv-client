@@ -295,6 +295,8 @@ final public class AOSH extends ShellInterpreter {
                                     AOServCommand<?> aoservCommand = constructor.newInstance(parameters);
                                     // TODO: Make sure current user is enabled
 
+                                    // TODO: Check read-only status
+                                    
                                     // TODO: Check permissions
 
                                     // Validate

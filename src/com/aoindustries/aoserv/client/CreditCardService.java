@@ -1,39 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.IntList;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.List;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  CreditCard
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
+@ServiceAnnotation(ServiceName.credit_cards)
+public interface CreditCardService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,CreditCard> {
 
-    CreditCardTable(AOServConnector connector) {
-	super(connector, CreditCard.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(CreditCard.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(CreditCard.COLUMN_CREATED_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addCreditCard(
         final CreditCardProcessor processor,
         final Business business,
@@ -133,14 +113,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
             }
         );
     }
-
-    public CreditCard get(int pkey) throws SQLException, IOException {
-        return getUniqueRow(CreditCard.COLUMN_PKEY, pkey);
-    }
-
-    List<CreditCard> getCreditCards(Business business) throws IOException, SQLException {
-        return getIndexedRows(CreditCard.COLUMN_ACCOUNTING, business.pkey);
-    }
+     */
 
     /**
      * Gets the active credit card with the highest priority for a business.
@@ -149,6 +122,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
      *
      * @return  the <code>CreditCard</code> or <code>null</code> if none found
      */
+    /* TODO
     CreditCard getMonthlyCreditCard(Business business) throws IOException, SQLException {
 	String accounting = business.getAccounting();
 
@@ -161,11 +135,9 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 
 	return null;
     }
+     */
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.CREDIT_CARDS;
-    }
-
+    /* TODO
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
@@ -186,4 +158,5 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
             return true;
 	} else return false;
     }
+     */
 }

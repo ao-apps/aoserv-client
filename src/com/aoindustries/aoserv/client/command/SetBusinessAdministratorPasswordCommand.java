@@ -16,24 +16,34 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetBusinessAdministratorPasswordCommand extends AOServCommand<Void> {
+final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String
-        PARAM_USERNAME = "username",
-        PARAM_PLAINTEXT = "plaintext"
-    ;
+    public static final String PARAM_USERNAME = "username";
 
     final private UserId username;
     final private String plaintext;
 
     public SetBusinessAdministratorPasswordCommand(
         @Param(name=PARAM_USERNAME) UserId username,
-        @Param(name=PARAM_PLAINTEXT) String plaintext
+        @Param(name="plaintext") String plaintext
     ) {
         this.username = username;
         this.plaintext = plaintext;
+    }
+
+    public UserId getUsername() {
+        return username;
+    }
+
+    public String getPlaintext() {
+        return plaintext;
+    }
+
+    @Override
+    public boolean isReadOnlyCommand() {
+        return false;
     }
 
     public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
