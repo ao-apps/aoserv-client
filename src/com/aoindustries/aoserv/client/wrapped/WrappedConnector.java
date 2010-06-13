@@ -204,6 +204,8 @@ import com.aoindustries.aoserv.client.TransactionType;
 import com.aoindustries.aoserv.client.TransactionTypeService;
 import com.aoindustries.aoserv.client.Username;
 import com.aoindustries.aoserv.client.UsernameService;
+import com.aoindustries.aoserv.client.VirtualServer;
+import com.aoindustries.aoserv.client.VirtualServerService;
 import com.aoindustries.aoserv.client.command.RemoteCommand;
 import com.aoindustries.aoserv.client.command.ReadOnlyException;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
@@ -408,11 +410,9 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         usStates = new WrappedUSStateService(this);
          */
         usernames = new WrappedUsernameService(this);
-        /* TODO
-        virtualDisks = new WrappedVirtualDiskService(this);
+        // TODO: virtualDisks = new WrappedVirtualDiskService(this);
         virtualServers = new WrappedVirtualServerService(this);
-        whoisHistories = new WrappedWhoisHistoryService(this);
-         */
+        // TODO: whoisHistories = new WrappedWhoisHistoryService(this);
         // Connect immediately in order to have the chance to throw exceptions that will occur during connection
         getWrapped();
     }
@@ -1813,8 +1813,15 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // TODO: final public VirtualDiskService<C,F> getVirtualDisks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="VirtualServerService">
-    // TODO: final WrappedVirtualServerService<C,F> virtualServers;
-    // TODO: final public VirtualServerService<C,F> getVirtualServers();
+    static class WrappedVirtualServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,VirtualServer> implements VirtualServerService<C,F> {
+        WrappedVirtualServerService(C connector) {
+            super(connector, Integer.class, VirtualServer.class);
+        }
+    }
+    final WrappedVirtualServerService<C,F> virtualServers;
+    final public VirtualServerService<C,F> getVirtualServers() {
+        return virtualServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="WhoisHistoryService">
     // TODO: final WrappedWhoisHistoryService<C,F> whoisHistories;

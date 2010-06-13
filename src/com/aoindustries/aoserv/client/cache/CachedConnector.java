@@ -204,6 +204,8 @@ import com.aoindustries.aoserv.client.TransactionType;
 import com.aoindustries.aoserv.client.TransactionTypeService;
 import com.aoindustries.aoserv.client.Username;
 import com.aoindustries.aoserv.client.UsernameService;
+import com.aoindustries.aoserv.client.VirtualServer;
+import com.aoindustries.aoserv.client.VirtualServerService;
 import com.aoindustries.aoserv.client.command.RemoteCommand;
 import com.aoindustries.aoserv.client.command.ReadOnlyException;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
@@ -403,7 +405,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         // TODO: transactions = new CachedTransactionService(this, wrapped.getTransactions());
         usernames = new CachedUsernameService(this, wrapped.getUsernames());
         // TODO: virtualDisks = new CachedVirtualDiskService(this, wrapped.getVirtualDisks());
-        // TODO: virtualServers = new CachedVirtualServerService(this, wrapped.getVirtualServers());
+        virtualServers = new CachedVirtualServerService(this, wrapped.getVirtualServers());
         // TODO: whoisHistories = new CachedWhoisHistoryService(this, wrapped.getWhoisHistorys());
     }
 
@@ -1726,8 +1728,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // TODO: public VirtualDiskService<CachedConnector,CachedConnectorFactory> getVirtualDisks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="VirtualServerService">
-    // TODO: final CachedVirtualServerService virtualServers;
-    // TODO: public VirtualServerService<CachedConnector,CachedConnectorFactory> getVirtualServers();
+    static class CachedVirtualServerService extends CachedService<Integer,VirtualServer> implements VirtualServerService<CachedConnector,CachedConnectorFactory> {
+        CachedVirtualServerService(CachedConnector connector, VirtualServerService<?,?> wrapped) {
+            super(connector, Integer.class, VirtualServer.class, wrapped);
+        }
+    }
+    final CachedVirtualServerService virtualServers;
+    public VirtualServerService<CachedConnector,CachedConnectorFactory> getVirtualServers() {
+        return virtualServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="WhoisHistoryService">
     // TODO: final CachedWhoisHistoryService whoisHistories;

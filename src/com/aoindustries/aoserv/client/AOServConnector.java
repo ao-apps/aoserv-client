@@ -247,11 +247,9 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     TransactionTypeService<C,F> getTransactionTypes() throws RemoteException;
     // TODO: TransactionService<C,F> getTransactions() throws RemoteException;
     UsernameService<C,F> getUsernames() throws RemoteException;
-    /* TODO
-    VirtualDiskService<C,F> getVirtualDisks() throws RemoteException;
+    // TODO: VirtualDiskService<C,F> getVirtualDisks() throws RemoteException;
     VirtualServerService<C,F> getVirtualServers() throws RemoteException;
-    WhoisHistoryService<C,F> getWhoisHistory() throws RemoteException;
-     */
+    // TODO: WhoisHistoryService<C,F> getWhoisHistory() throws RemoteException;
 
     /**
      * Clears all caches used by this connector.

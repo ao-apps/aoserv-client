@@ -337,14 +337,16 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="Permissions">
     /**
-     * A ticket administrator is part of a business that is also a reseller.
-     * TODO: And has the edit_ticket permission.
+     * A ticket administrator is part of a business that is also a reseller
+     * and has the edit_ticket permission.
      */
     public boolean isTicketAdmin() throws RemoteException {
         Brand br = getUsername().getBusiness().getBrand();
         if(br==null) return false;
-        return br.getReseller()!=null;
-        // TODO: And has the edit_ticket permission.
+        return
+            br.getReseller()!=null
+            && hasPermission(AOServPermission.Permission.edit_ticket)
+        ;
     }
 
     /**

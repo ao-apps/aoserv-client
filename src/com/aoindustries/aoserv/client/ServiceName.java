@@ -206,11 +206,9 @@ public enum ServiceName implements LocalizedToString {
     transactions,
      */
     usernames,
-    /* TODO
-    virtual_disks,
+    // TODO: virtual_disks,
     virtual_servers,
-    whois_history
-     */
+    // TODO: whois_history
     ;
 
     /**
