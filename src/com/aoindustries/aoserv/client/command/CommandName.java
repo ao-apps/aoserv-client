@@ -57,6 +57,7 @@ public enum CommandName {
     // TODO: add_ticket_annotation(AddTicketAnnotationCommand.class, ServiceName.ticket_actions, AOServPermission.Permission.add_ticket_annotation),
     // tickets
     add_ticket(AddTicketCommand.class, ServiceName.tickets, AOServPermission.Permission.add_ticket),
+    get_ticket_details(GetTicketDetailsCommand.class, ServiceName.tickets, AOServPermission.Permission.get_ticket_details),
     // usernames
     set_username_password(
         SetUsernamePasswordCommand.class,
@@ -65,6 +66,12 @@ public enum CommandName {
         AOServPermission.Permission.set_linux_account_password,
         AOServPermission.Permission.set_mysql_user_password,
         AOServPermission.Permission.set_postgres_user_password
+    ),
+    // virtual_servers
+    request_vnc_console_access(
+        RequestVncConsoleAccessCommand.class,
+        ServiceName.virtual_servers,
+        AOServPermission.Permission.vnc_console
     ),
     // TODO: add_backup_server(TODO.class, TODO),
     // TODO: add_business(TODO.class, TODO),

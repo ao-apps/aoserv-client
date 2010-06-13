@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.AddTicketAnnotationCommand;
+import com.aoindustries.aoserv.client.command.GetTicketDetailsCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -186,15 +187,14 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
         return summary;
     }
 
-    /* TODO
     @SchemaColumn(order=10, name="details", description="the details of the ticket")
-    synchronized public String getDetails() throws IOException, SQLException {
+    synchronized public String getDetails() throws RemoteException {
         if(!detailsLoaded) {
-            details = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_DETAILS, key);
+            details = new GetTicketDetailsCommand(key).execute(getService().getConnector());
             detailsLoaded = true;
         }
         return details;
-    }*/
+    }
 
     /* TODO
     @SchemaColumn(order=11, name="raw_email", description="the raw email content of the original ticket requeset")

@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.RequestVncConsoleAccessCommand;
 import com.aoindustries.table.IndexType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -282,36 +283,8 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
     */
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /*
-    public AOServer.DaemonAccess requestVncConsoleAccess() throws IOException, SQLException {
-        return getService().getConnector().requestResult(
-            true,
-            new AOServConnector.ResultRequest<AOServer.DaemonAccess>() {
-                private AOServer.DaemonAccess daemonAccess;
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS.ordinal());
-                    out.writeCompressedInt(pkey);
-                }
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) {
-                        daemonAccess = new AOServer.DaemonAccess(
-                            in.readUTF(),
-                            in.readUTF(),
-                            in.readCompressedInt(),
-                            in.readLong()
-                        );
-                    } else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-                public AOServer.DaemonAccess afterRelease() {
-                    return daemonAccess;
-                }
-            }
-        );
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public AOServer.DaemonAccess requestVncConsoleAccess() throws RemoteException {
+        return new RequestVncConsoleAccessCommand(key).execute(getService().getConnector());
     }
-     */
 }
