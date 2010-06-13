@@ -20,6 +20,7 @@ import java.util.Set;
  * A <code>CreditCard</code> stores credit card information.
  *
  * @author  AO Industries, Inc.
+ * @author  AO Industries, Inc.
  */
 final public class CreditCard extends AOServObjectIntegerKey<CreditCard> implements BeanFactory<com.aoindustries.aoserv.client.beans.CreditCard> /*, TODO: Removable */ {
 
@@ -162,15 +163,17 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
         return key;
     }
 
+    static final String COLUMN_PROCESSOR_ID = "processor_id";
     /**
      * Gets the processor that is storing the credit card numbers.
      */
-    @SchemaColumn(order=1, name="processor_id", description="the processor that is storing the card number and expiration date")
+    @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, description="the processor that is storing the card number and expiration date")
     public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
         return getService().getConnector().getCreditCardProcessors().get(processorId);
     }
 
-    @SchemaColumn(order=2, name="accounting", description="the accounting code for the card")
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, description="the accounting code for the card")
     public Business getBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(accounting);
     }
@@ -257,7 +260,8 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
         return postalCode;
     }
 
-    @SchemaColumn(order=18, name="country_code", description="the two-character country code")
+    static final String COLUMN_COUNTRY_CODE = "country_code";
+    @SchemaColumn(order=18, name=COLUMN_COUNTRY_CODE, description="the two-character country code")
     public CountryCode getCountryCode() throws RemoteException {
         return getService().getConnector().getCountryCodes().get(this.countryCode);
     }
@@ -267,7 +271,8 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
         return created;
     }
 
-    @SchemaColumn(order=20, name="created_by", description="the business_administrator who added the card to the database")
+    static final String COLUMN_CREATED_BY = "created_by";
+    @SchemaColumn(order=20, name=COLUMN_CREATED_BY, description="the business_administrator who added the card to the database")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         return getService().getConnector().getBusinessAdministrators().get(createdBy);
     }

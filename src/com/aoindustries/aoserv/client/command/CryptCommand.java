@@ -26,7 +26,7 @@ final public class CryptCommand extends AOServCommand<String> {
         @Param(name="salt", nullable=true) String salt
     ) {
         this.password = password;
-        this.salt = salt==null || salt.length()==0 ? null : salt;
+        this.salt = nullIfEmpty(salt);
     }
 
     public String getPassword() {

@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.command;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -92,6 +93,13 @@ abstract public class AOServCommand<R> {
         Constructor<? extends AOServCommand<?>> commandConstructor = commandConstructors.get(commandName);
         if(commandConstructor==null) throw new AssertionError("commandConstructor==null");
         return commandConstructor;
+    }
+
+    /**
+     * Converts empty strings to <code>null</code>.
+     */
+    protected static String nullIfEmpty(String param) {
+        return param==null || param.length()==0 ? null : param;
     }
 
     /**

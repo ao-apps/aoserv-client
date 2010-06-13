@@ -28,7 +28,7 @@ final public class CancelBusinessCommand extends RemoteCommand<Void> {
         @Param(name="cancelReason", nullable=true) String cancelReason
     ) {
         this.accounting = accounting;
-        this.cancelReason = cancelReason==null || cancelReason.length()==0 ? null : cancelReason;
+        this.cancelReason = nullIfEmpty(cancelReason);
     }
 
     public AccountingCode getAccounting() {

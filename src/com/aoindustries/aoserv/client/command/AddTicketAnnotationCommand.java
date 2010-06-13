@@ -30,7 +30,7 @@ final public class AddTicketAnnotationCommand extends RemoteCommand<Integer> {
     ) {
         this.ticket = ticket;
         this.summary = summary;
-        this.details = details==null || details.length()==0 ? null : details;
+        this.details = nullIfEmpty(details);
     }
 
     public int getTicket() {

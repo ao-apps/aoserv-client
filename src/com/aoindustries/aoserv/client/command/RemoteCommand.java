@@ -6,8 +6,18 @@ package com.aoindustries.aoserv.client.command;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnector;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -39,7 +49,6 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
      * </p>
      * @see  #createRemoteCommand  to reconstruct the command object
      */
-    /* TODO
     public Map<String,String> getParamMap() {
         try {
             Constructor<? extends AOServCommand<?>> constructor = getCommandConstructor(getCommandName());
@@ -95,7 +104,6 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
             throw new RuntimeException(err);
         }
     }
-    */
 
     /**
      * <p>
@@ -114,11 +122,9 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
      *
      * @see  #getParamMap()
      */
-    /* TODO
     public static RemoteCommand<?> createRemoteCommand(CommandName commandName, Map<String,String> paramMap) {
-
+        throw new RuntimeException("TODO: Implement method");
     }
-    */
 
     /**
      * Checks if this command is read-only.  Read-only commands must have no side-affects.

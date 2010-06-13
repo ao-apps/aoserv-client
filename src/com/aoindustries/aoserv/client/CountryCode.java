@@ -103,7 +103,8 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getBusinessAdministrators(),
-            getBusinessProfiles()
+            getBusinessProfiles(),
+            getCreditCards()
         );
     }
     // </editor-fold>
@@ -115,6 +116,10 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
 
     public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
         return getService().getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_COUNTRY, this);
+    }
+
+    public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
+        return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_COUNTRY_CODE, this);
     }
     // </editor-fold>
 

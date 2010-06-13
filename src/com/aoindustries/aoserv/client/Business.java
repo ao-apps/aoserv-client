@@ -5,16 +5,16 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.AddCreditCardCommand;
 import com.aoindustries.aoserv.client.command.CancelBusinessCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.security.acl.Group;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -338,7 +338,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             getChildBusinesses(),
             getBusinessProfiles(),
             getBusinessServers(),
-            // TODO: getCreditCards(),
+            getCreditCards(),
             getCreditCardProcessors(),
             // TODO: getCreditCardTransactions(),
             // TODO: getCreditCardTransactionsByCreditCardAccounting(),
@@ -419,6 +419,10 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     	return getService().getConnector().getCreditCardProcessors().filterIndexed(CreditCardProcessor.COLUMN_ACCOUNTING, this);
     }
 
+    public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
+    	return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_ACCOUNTING, this);
+    }
+
     /**
      * Determines if this <code>Business</code> is the other business
      * or a parent of it.  This is often used for access control between
@@ -443,7 +447,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      * Gets the <code>BusinessProfile</code> with the highest priority or <code>null</code> if there
      * are no business profiles for this <code>Business</code>.
      */
-    public BusinessProfile getBusinessProfile() throws IOException, SQLException {
+    public BusinessProfile getBusinessProfile() throws RemoteException {
         return Collections.min(getBusinessProfiles());
     }
     // </editor-fold>
@@ -451,6 +455,57 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // <editor-fold defaultstate="collapsed" desc="Commands">
     public void cancel(String cancelReason) throws RemoteException {
         new CancelBusinessCommand(getKey(), cancelReason).execute(getService().getConnector());
+    }
+
+    public int addCreditCard(
+        CreditCardProcessor processor,
+        String groupName,
+        String cardInfo,
+        String providerUniqueId,
+        String firstName,
+        String lastName,
+        String companyName,
+        Email email,
+        String phone,
+        String fax,
+        String customerTaxId,
+        String streetAddress1,
+        String streetAddress2,
+        String city,
+        String state,
+        String postalCode,
+        CountryCode countryCode,
+        String principalName,
+        String description,
+        String cardNumber,
+        byte expirationMonth,
+        short expirationYear
+    ) throws RemoteException {
+        return new AddCreditCardCommand(
+            processor.getProviderId(),
+            getAccounting(),
+            groupName,
+            cardInfo,
+            providerUniqueId,
+            firstName,
+            lastName,
+            companyName,
+            email,
+            phone,
+            fax,
+            customerTaxId,
+            streetAddress1,
+            streetAddress2,
+            city,
+            state,
+            postalCode,
+            countryCode.getCode(),
+            principalName,
+            description,
+            cardNumber,
+            expirationMonth,
+            expirationYear
+        ).execute(getService().getConnector());
     }
     // </editor-fold>
 
@@ -577,57 +632,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         Server server
     ) throws IOException, SQLException {
         return service.connector.getBusinessServers().addBusinessServer(this, server);
-    }
-
-    public int addCreditCard(
-        CreditCardProcessor processor,
-        String groupName,
-        String cardInfo,
-        String providerUniqueId,
-        String firstName,
-        String lastName,
-        String companyName,
-        String email,
-        String phone,
-        String fax,
-        String customerTaxId,
-        String streetAddress1,
-        String streetAddress2,
-        String city,
-        String state,
-        String postalCode,
-        CountryCode countryCode,
-        String principalName,
-        String description,
-        String cardNumber,
-        byte expirationMonth,
-        short expirationYear
-    ) throws IOException, SQLException {
-        return service.connector.getCreditCards().addCreditCard(
-            processor,
-            this,
-            groupName,
-            cardInfo,
-            providerUniqueId,
-            firstName,
-            lastName,
-            companyName,
-            email,
-            phone,
-            fax,
-            customerTaxId,
-            streetAddress1,
-            streetAddress2,
-            city,
-            state,
-            postalCode,
-            countryCode,
-            principalName,
-            description,
-            cardNumber,
-            expirationMonth,
-            expirationYear
-        );
     }
     */
 
@@ -905,10 +909,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public List<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws IOException, SQLException {
     	return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, pkey);
-    }
-
-    public List<CreditCard> getCreditCards() throws IOException, SQLException {
-    	return getService().getConnector().getCreditCards().getCreditCards(this);
     }
 
     public Server getDefaultServer() throws IOException, SQLException {

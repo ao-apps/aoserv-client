@@ -21,10 +21,6 @@ final public class AddTicketCommand extends RemoteCommand<Integer> {
 
     private static final long serialVersionUID = 1L;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
     final private AccountingCode brand;
     final private AccountingCode business;
     final private String language;
@@ -57,7 +53,7 @@ final public class AddTicketCommand extends RemoteCommand<Integer> {
         this.ticketType = ticketType;
         this.fromAddress = fromAddress;
         this.summary = summary;
-        this.details = details==null || details.length()==0 ? null : details;
+        this.details = nullIfEmpty(details);
         this.clientPriority = clientPriority;
         this.contactEmails = contactEmails;
         this.contactPhoneNumbers = contactPhoneNumbers;

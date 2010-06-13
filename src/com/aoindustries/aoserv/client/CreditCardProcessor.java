@@ -179,7 +179,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             // TODO: getBankTransactions(),
-            // TODO: getCreditCards(),
+            getCreditCards()
             // TODO: getCreditCardTransactions(),
             // TODO: getTransactions()
         );
@@ -187,13 +187,13 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
+        return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_PROCESSOR_ID, this);
+    }
+
     /* TODO
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
         return getService().getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_PROCESSOR, pkey);
-    }
-
-    public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-        return getService().getConnector().getCreditCards().getIndexedRows(CreditCard.COLUMN_PROCESSOR_ID, pkey);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
