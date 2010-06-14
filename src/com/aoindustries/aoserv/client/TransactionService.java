@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -24,9 +24,9 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
+final public class TransactionService extends CachedTableIntegerKey<Transaction> {
 
-    TransactionTable(AOServConnector connector) {
+    TransactionService(AOServConnector connector) {
         super(connector, Transaction.class);
     }
 

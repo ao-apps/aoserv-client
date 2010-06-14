@@ -202,9 +202,7 @@ public enum ServiceName implements LocalizedToString {
     tickets,
     time_zones,
     transaction_types,
-    /* TODO
     transactions,
-     */
     usernames,
     // TODO: virtual_disks,
     virtual_servers,
