@@ -92,7 +92,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey<NetTcpRedirect>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.NetTcpRedirect getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetTcpRedirect(key, cps, cpsOverloadSleepTime, destinationHost.getBean(), destinationPort.getBean());
+        return new com.aoindustries.aoserv.client.beans.NetTcpRedirect(key, cps, cpsOverloadSleepTime, getBean(destinationHost), getBean(destinationPort));
     }
     // </editor-fold>
 

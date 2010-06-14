@@ -153,7 +153,7 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.DnsRecord getBean() {
-        return new com.aoindustries.aoserv.client.beans.DnsRecord(key, zone, domain, type, mxPriority, dataIpAddress==null ? null : dataIpAddress.getBean(), dataDomainName==null ? null : dataDomainName.getBean(), dataText, dhcpAddress, ttl);
+        return new com.aoindustries.aoserv.client.beans.DnsRecord(key, zone, domain, type, mxPriority, getBean(dataIpAddress), getBean(dataDomainName), dataText, dhcpAddress, ttl);
     }
     // </editor-fold>
 

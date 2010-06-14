@@ -6,7 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * The <code>TicketStatus</code> of a <code>Ticket</code> changes
@@ -68,6 +70,17 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getTicketActionsByOldStatus(),
+            getTicketActionsByNewStatus(),
+            getTickets()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
@@ -79,6 +92,20 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
      */
     public String getDescription(Locale userLocale) {
         return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+getKey()+".description");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<TicketAction> getTicketActionsByOldStatus() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_STATUS, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActionsByNewStatus() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_STATUS, this);
+    }
+
+    public IndexedSet<Ticket> getTickets() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_STATUS, this);
     }
     // </editor-fold>
 }

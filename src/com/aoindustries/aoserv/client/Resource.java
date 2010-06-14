@@ -143,7 +143,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Resource getBean() {
-        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, accounting.getBean(), created, createdBy.getBean(), disableLog, lastEnabled);
+        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, getBean(accounting), created, getBean(createdBy), disableLog, lastEnabled);
     }
     // </editor-fold>
 

@@ -108,7 +108,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.DisableLog getBean() {
-        return new com.aoindustries.aoserv.client.beans.DisableLog(key, time, accounting.getBean(), disabledBy.getBean(), disableReason);
+        return new com.aoindustries.aoserv.client.beans.DisableLog(key, time, getBean(accounting), getBean(disabledBy), disableReason);
     }
     // </editor-fold>
 

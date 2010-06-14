@@ -6,7 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author  AO Industries, Inc.
@@ -41,10 +43,25 @@ final public class Language extends AOServObjectStringKey<Language> implements B
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getTickets()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
         return ApplicationResources.accessor.getMessage(userLocale, "Language."+getKey()+".toString");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<Ticket> getTickets() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_LANGUAGE, this);
     }
     // </editor-fold>
 }

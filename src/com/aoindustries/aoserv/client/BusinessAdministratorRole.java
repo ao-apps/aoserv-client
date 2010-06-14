@@ -74,7 +74,7 @@ final public class BusinessAdministratorRole extends AOServObjectIntegerKey<Busi
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BusinessAdministratorRole getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessAdministratorRole(key, username.getBean(), role);
+        return new com.aoindustries.aoserv.client.beans.BusinessAdministratorRole(key, getBean(username), role);
     }
     // </editor-fold>
 

@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client.cache;
-
 /*
  * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.cache;
+
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermission;
@@ -185,6 +185,8 @@ import com.aoindustries.aoserv.client.TechnologyService;
 import com.aoindustries.aoserv.client.TechnologyVersion;
 import com.aoindustries.aoserv.client.TechnologyVersionService;
 import com.aoindustries.aoserv.client.Ticket;
+import com.aoindustries.aoserv.client.TicketAction;
+import com.aoindustries.aoserv.client.TicketActionService;
 import com.aoindustries.aoserv.client.TicketActionType;
 import com.aoindustries.aoserv.client.TicketActionTypeService;
 import com.aoindustries.aoserv.client.TicketAssignment;
@@ -392,7 +394,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         technologyNames = new CachedTechnologyNameService(this, wrapped.getTechnologyNames());
         technologyVersions = new CachedTechnologyVersionService(this, wrapped.getTechnologyVersions());
         ticketActionTypes = new CachedTicketActionTypeService(this, wrapped.getTicketActionTypes());
-        // TODO: ticketActions = new CachedTicketActionService(this, wrapped.getTicketActions());
+        ticketActions = new CachedTicketActionService(this, wrapped.getTicketActions());
         ticketAssignments = new CachedTicketAssignmentService(this, wrapped.getTicketAssignments());
         // TODO: ticketBrandCategories = new CachedTicketBrandCategoryService(this, wrapped.getTicketBrandCategorys());
         ticketCategories = new CachedTicketCategoryService(this, wrapped.getTicketCategories());
@@ -1613,8 +1615,15 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionService">
-    // TODO: final CachedTicketActionService ticketActions;
-    // TODO: public TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions();
+    static class CachedTicketActionService extends CachedService<Integer,TicketAction> implements TicketActionService<CachedConnector,CachedConnectorFactory> {
+        CachedTicketActionService(CachedConnector connector, TicketActionService<?,?> wrapped) {
+            super(connector, Integer.class, TicketAction.class, wrapped);
+        }
+    }
+    final CachedTicketActionService ticketActions;
+    public TicketActionService<CachedConnector,CachedConnectorFactory> getTicketActions() {
+        return ticketActions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketAssignmentService">
     static class CachedTicketAssignmentService extends CachedService<Integer,TicketAssignment> implements TicketAssignmentService<CachedConnector,CachedConnectorFactory> {

@@ -64,7 +64,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> impl
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Reseller getBean() {
-        return new com.aoindustries.aoserv.client.beans.Reseller(getKey().getBean(), ticketAutoEscalate);
+        return new com.aoindustries.aoserv.client.beans.Reseller(getBean(getKey()), ticketAutoEscalate);
     }
     // </editor-fold>
 

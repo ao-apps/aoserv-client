@@ -80,7 +80,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDae
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.AOServerDaemonHost getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServerDaemonHost(key, aoServer, host.getBean());
+        return new com.aoindustries.aoserv.client.beans.AOServerDaemonHost(key, aoServer, getBean(host));
     }
     // </editor-fold>
 

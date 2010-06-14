@@ -126,7 +126,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Server getBean() {
-        return new com.aoindustries.aoserv.client.beans.Server(key, farm.getBean(), description, operatingSystemVersion, accounting.getBean(), name, monitoringEnabled);
+        return new com.aoindustries.aoserv.client.beans.Server(key, getBean(farm), description, operatingSystemVersion, getBean(accounting), name, monitoringEnabled);
     }
     // </editor-fold>
 

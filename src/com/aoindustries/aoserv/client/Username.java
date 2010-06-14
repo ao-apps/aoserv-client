@@ -73,7 +73,7 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Username getBean() {
-        return new com.aoindustries.aoserv.client.beans.Username(getKey().getBean(), accounting.getBean(), disableLog);
+        return new com.aoindustries.aoserv.client.beans.Username(getBean(getKey()), getBean(accounting), disableLog);
     }
     // </editor-fold>
 

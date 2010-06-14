@@ -6,7 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Each <code>Ticket</code> is of a specific <code>TicketType</code>.
@@ -51,10 +53,35 @@ final public class TicketType extends AOServObjectStringKey<TicketType> implemen
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getTicketActionsByOldType(),
+            getTicketActionsByNewType(),
+            getTickets()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl(Locale userLocale) {
         return ApplicationResources.accessor.getMessage(userLocale, "TicketType."+getKey()+".toString");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<TicketAction> getTicketActionsByOldType() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_TYPE, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActionsByNewType() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_TYPE, this);
+    }
+
+    public IndexedSet<Ticket> getTickets() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_TICKET_TYPE, this);
     }
     // </editor-fold>
 }

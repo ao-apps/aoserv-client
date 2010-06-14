@@ -159,7 +159,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.FailoverFileReplication getBean() {
-        return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, connectAddress==null ? null : connectAddress.getBean(), connectFrom==null ? null : connectFrom.getBean(), enabled, quotaGid.getBean());
+        return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, getBean(connectAddress), getBean(connectFrom), enabled, getBean(quotaGid));
     }
     // </editor-fold>
 

@@ -146,8 +146,8 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
         return new com.aoindustries.aoserv.client.beans.LinuxGroup(
             key,
             linuxGroupType,
-            groupName.getBean(),
-            gid.getBean()
+            getBean(groupName),
+            getBean(gid)
         );
     }
     // </editor-fold>

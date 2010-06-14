@@ -84,7 +84,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVe
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.HttpdJBossVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdJBossVersion(key, tomcatVersion, templateDir.getBean());
+        return new com.aoindustries.aoserv.client.beans.HttpdJBossVersion(key, tomcatVersion, getBean(templateDir));
     }
     // </editor-fold>
 

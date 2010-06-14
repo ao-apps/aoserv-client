@@ -7,6 +7,11 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.AddTicketAnnotationCommand;
 import com.aoindustries.aoserv.client.command.GetTicketDetailsCommand;
+import com.aoindustries.aoserv.client.command.SetTicketBusinessCommand;
+import com.aoindustries.aoserv.client.command.SetTicketClientPriorityCommand;
+import com.aoindustries.aoserv.client.command.SetTicketContactEmailsCommand;
+import com.aoindustries.aoserv.client.command.SetTicketContactPhoneNumbersCommand;
+import com.aoindustries.aoserv.client.command.SetTicketSummaryCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -51,8 +56,8 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     private String adminPriority;
     private String status;
     final private Timestamp statusTimeout;
-    private String contactEmails;
-    private String contactPhoneNumbers;
+    final private String contactEmails;
+    final private String contactPhoneNumbers;
     transient private boolean internalNotesLoaded;
     transient private String internalNotes;
 
@@ -113,8 +118,6 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
         clientPriority = intern(clientPriority);
         adminPriority = intern(adminPriority);
         status = intern(status);
-        contactEmails = intern(contactEmails);
-        contactPhoneNumbers = intern(contactPhoneNumbers);
     }
     // </editor-fold>
 
@@ -149,30 +152,35 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
         return getService().getConnector().getResellers().get(reseller);
     }
 
-    @SchemaColumn(order=3, name="accounting", description="the business the ticket is for (optional)")
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=3, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business the ticket is for (optional)")
     public Business getBusiness() throws RemoteException {
         if(accounting==null) return null;
         return getService().getConnector().getBusinesses().get(accounting);
     }
 
-    @SchemaColumn(order=4, name="language", description="the language of the ticket")
+    static final String COLUMN_LANGUAGE = "language";
+    @SchemaColumn(order=4, name=COLUMN_LANGUAGE, index=IndexType.INDEXED, description="the language of the ticket")
     public Language getLanguage() throws RemoteException {
         return getService().getConnector().getLanguages().get(language);
     }
 
-    @SchemaColumn(order=5, name="created_by", description="the person who created the ticket")
+    static final String COLUMN_CREATED_BY = "created_by";
+    @SchemaColumn(order=5, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the person who created the ticket")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
         return getService().getConnector().getBusinessAdministrators().get(createdBy);
     }
 
-    @SchemaColumn(order=6, name="category", description="the category of the ticket")
+    static final String COLUMN_CATEGORY = "category";
+    @SchemaColumn(order=6, name=COLUMN_CATEGORY, index=IndexType.INDEXED, description="the category of the ticket")
     public TicketCategory getCategory() throws RemoteException {
         if(category==null) return null;
         return getService().getConnector().getTicketCategories().get(category);
     }
 
-    @SchemaColumn(order=7, name="ticket_type", description="the type of the ticket")
+    static final String COLUMN_TICKET_TYPE = "ticket_type";
+    @SchemaColumn(order=7, name=COLUMN_TICKET_TYPE, index=IndexType.INDEXED, description="the type of the ticket")
     public TicketType getTicketType() throws RemoteException {
         return getService().getConnector().getTicketTypes().get(ticketType);
     }
@@ -206,38 +214,41 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
         return rawEmail;
     }*/
 
-    @SchemaColumn(order=10, name="open_date", description="the time the ticket was opened")
+    @SchemaColumn(order=11, name="open_date", description="the time the ticket was opened")
     public Timestamp getOpenDate() {
         return openDate;
     }
 
-    @SchemaColumn(order=11, name="client_priority", description="the priority assigned by the client")
+    static final String COLUMN_CLIENT_PRIORITY = "client_priority";
+    @SchemaColumn(order=12, name=COLUMN_CLIENT_PRIORITY, index=IndexType.INDEXED, description="the priority assigned by the client")
     public TicketPriority getClientPriority() throws RemoteException {
         return getService().getConnector().getTicketPriorities().get(clientPriority);
     }
 
-    @SchemaColumn(order=12, name="admin_priority", description="the priority assigned by the administrator")
+    static final String COLUMN_ADMIN_PRIORITY = "admin_priority";
+    @SchemaColumn(order=13, name=COLUMN_ADMIN_PRIORITY, index=IndexType.INDEXED, description="the priority assigned by the administrator")
     public TicketPriority getAdminPriority() throws RemoteException {
         if(adminPriority==null) return null;
         return getService().getConnector().getTicketPriorities().get(adminPriority);
     }
 
-    @SchemaColumn(order=13, name="status", description="the status of the ticket")
+    static final String COLUMN_STATUS = "status";
+    @SchemaColumn(order=14, name=COLUMN_STATUS, index=IndexType.INDEXED, description="the status of the ticket")
     public TicketStatus getStatus() throws RemoteException {
         return getService().getConnector().getTicketStatuses().get(status);
     }
 
-    @SchemaColumn(order=14, name="status_timeout", description="the time the ticket status will automatically return to \"opened\"")
+    @SchemaColumn(order=15, name="status_timeout", description="the time the ticket status will automatically return to \"opened\"")
     public Timestamp getStatusTimeout() {
         return statusTimeout;
     }
 
-    @SchemaColumn(order=15, name="contact_emails", description="the set of email addresses that will be notified for the ticket")
+    @SchemaColumn(order=16, name="contact_emails", description="the set of email addresses that will be notified for the ticket")
     public String getContactEmails() {
         return contactEmails;
     }
 
-    @SchemaColumn(order=16, name="contact_phone_numbers", description="the set of phone numbers that may be used in handling the ticket request")
+    @SchemaColumn(order=17, name="contact_phone_numbers", description="the set of phone numbers that may be used in handling the ticket request")
     public String getContactPhoneNumbers() {
         return contactPhoneNumbers;
     }
@@ -257,14 +268,14 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     public com.aoindustries.aoserv.client.beans.Ticket getBean() {
         return new com.aoindustries.aoserv.client.beans.Ticket(
             key,
-            brand.getBean(),
-            reseller.getBean(),
-            accounting==null ? null : accounting.getBean(),
+            getBean(brand),
+            getBean(reseller),
+            getBean(accounting),
             language,
-            createdBy==null ? null : createdBy.getBean(),
+            getBean(createdBy),
             category,
             ticketType,
-            fromAddress==null ? null : fromAddress.getBean(),
+            getBean(fromAddress),
             summary,
             openDate,
             clientPriority,
@@ -284,15 +295,20 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
             getBrand(),
             getReseller(),
             getBusiness(),
+            getLanguage(),
             getCreatedBy(),
-            getCategory()
+            getCategory(),
+            getTicketType(),
+            getClientPriority(),
+            getAdminPriority(),
+            getStatus()
         );
     }
 
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: getTicketActions(),
+            getTicketActions(),
             getTicketAssignments()
         );
     }
@@ -306,17 +322,16 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    public List<TicketAction> getTicketActions() throws IOException, SQLException {
-        return getService().getConnector().getTicketActions().getActions(this);
+    public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_TICKET, this);
     }
-    */
+
     public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
         return getService().getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_TICKET, this);
     }
     // </editor-fold>
 
-    // <editor-fold desc="Commands">
+    // <editor-fold defaultstate="collapsed" desc="Commands">
     public int addAnnotation(String summary, String details) throws RemoteException {
         return new AddTicketAnnotationCommand(
             key,
@@ -324,6 +339,36 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
             details
         ).execute(getService().getConnector());
     }
+
+    /**
+     * Updates the ticket business if the old business matches the current value.
+     *
+     * @return <code>true</code> if successfully updated or <code>false</code> if oldBusiness doesn't match the current business.
+     */
+    public boolean setBusiness(Business oldBusiness, Business newBusiness) throws RemoteException {
+        return new SetTicketBusinessCommand(
+            key,
+            oldBusiness==null ? null : oldBusiness.getAccounting(),
+            newBusiness==null ? null : newBusiness.getAccounting()
+        ).execute(getService().getConnector());
+    }
+
+    public void setContactEmails(String contactEmails) throws RemoteException {
+        new SetTicketContactEmailsCommand(key, contactEmails).execute(getService().getConnector());
+    }
+
+    public void setContactPhoneNumbers(String contactPhoneNumbers) throws RemoteException {
+        new SetTicketContactPhoneNumbersCommand(key, contactPhoneNumbers).execute(getService().getConnector());
+    }
+
+    public void setClientPriority(TicketPriority clientPriority) throws RemoteException {
+        new SetTicketClientPriorityCommand(key, clientPriority.getPriority()).execute(getService().getConnector());
+    }
+
+    public void setSummary(String summary) throws RemoteException {
+        new SetTicketSummaryCommand(key, summary).execute(getService().getConnector());
+    }
+
     // TODO
 //    /*
 //    public void actBounceTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
@@ -334,24 +379,8 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
 //        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, key, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
 //    }
 //
-//    public void setClientPriority(TicketPriority clientPriority) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_CLIENT_PRIORITY, key, clientPriority.pkey);
-//    }
-//
-//    public void setSummary(String summary) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_SUMMARY, key, summary);
-//    }
-//
 //    public void actAssignTo(BusinessAdministrator assignedTo, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
 //        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, key, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
-//    }
-//
-//    public void setContactEmails(String contactEmails) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_CONTACT_EMAILS, key, contactEmails);
-//    }
-//
-//    public void setContactPhoneNumbers(String contactPhoneNumbers) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_CONTACT_PHONE_NUMBERS, key, contactPhoneNumbers);
 //    }
 //
 //    /*
@@ -378,20 +407,6 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
 //        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);
 //    }
 //
-//    /**
-//     * Updates the ticket business if the old business matches the current value.
-//     *
-//     * @return <code>true</code> if successfully updated or <code>false</code> if oldBusiness doesn't match the current business.
-//     */
-//    public boolean setBusiness(Business oldBusiness, Business newBusiness) throws IOException, SQLException {
-//        return getService().getConnector().requestBooleanQueryIL(
-//            true,
-//            AOServProtocol.CommandID.SET_TICKET_BUSINESS,
-//            key,
-//            oldBusiness==null ? "" : oldBusiness.getAccounting(),
-//            newBusiness==null ? "" : newBusiness.getAccounting()
-//        );
-//    }
 //
 //    /**
 //     * Updates the ticket type if the old value matches the current value.

@@ -169,7 +169,7 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.EmailInbox getBean() {
-        return new com.aoindustries.aoserv.client.beans.EmailInbox(key, autoresponderFrom, autoresponderSubject, autoresponderPath==null ? null : autoresponderPath.getBean(), isAutoresponderEnabled, useInbox, trashEmailRetention, junkEmailRetention, saIntegrationMode, saRequiredScore, saDiscardScore);
+        return new com.aoindustries.aoserv.client.beans.EmailInbox(key, autoresponderFrom, autoresponderSubject, getBean(autoresponderPath), isAutoresponderEnabled, useInbox, trashEmailRetention, junkEmailRetention, saIntegrationMode, saRequiredScore, saDiscardScore);
     }
     // </editor-fold>
 

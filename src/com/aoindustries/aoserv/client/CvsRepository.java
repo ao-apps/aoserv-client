@@ -109,7 +109,7 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.CvsRepository getBean() {
-        return new com.aoindustries.aoserv.client.beans.CvsRepository(key, path.getBean(), linuxAccountGroup, mode);
+        return new com.aoindustries.aoserv.client.beans.CvsRepository(key, getBean(path), linuxAccountGroup, mode);
     }
     // </editor-fold>
 

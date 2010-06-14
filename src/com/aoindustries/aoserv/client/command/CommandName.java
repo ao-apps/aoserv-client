@@ -54,10 +54,15 @@ public enum CommandName {
     set_postgres_user_password(SetPostgresUserPasswordCommand.class, ServiceName.postgres_users, AOServPermission.Permission.set_postgres_user_password),
     set_postgres_user_predisable_password(SetPostgresUserPredisablePasswordCommand.class, ServiceName.postgres_users, AOServPermission.Permission.set_postgres_user_predisable_password),
     // ticket_actions
-    // TODO: add_ticket_annotation(AddTicketAnnotationCommand.class, ServiceName.ticket_actions, AOServPermission.Permission.add_ticket_annotation),
+    add_ticket_annotation(AddTicketAnnotationCommand.class, ServiceName.ticket_actions, AOServPermission.Permission.add_ticket_annotation),
     // tickets
     add_ticket(AddTicketCommand.class, ServiceName.tickets, AOServPermission.Permission.add_ticket),
     get_ticket_details(GetTicketDetailsCommand.class, ServiceName.tickets, AOServPermission.Permission.get_ticket_details),
+    set_ticket_business(SetTicketBusinessCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
+    set_ticket_contact_emails(SetTicketContactEmailsCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
+    set_ticket_contact_phone_numbers(SetTicketContactPhoneNumbersCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
+    set_ticket_client_priority(SetTicketClientPriorityCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
+    set_ticket_summary(SetTicketSummaryCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
     // usernames
     set_username_password(
         SetUsernamePasswordCommand.class,

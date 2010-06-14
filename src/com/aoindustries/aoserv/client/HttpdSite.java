@@ -147,7 +147,7 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.HttpdSite getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdSite(key, siteName.getBean(), listFirst, linuxAccountGroup, serverAdmin.getBean(), isManualConfig, awstatsSkipFiles);
+        return new com.aoindustries.aoserv.client.beans.HttpdSite(key, getBean(siteName), listFirst, linuxAccountGroup, getBean(serverAdmin), isManualConfig, awstatsSkipFiles);
     }
     // </editor-fold>
 

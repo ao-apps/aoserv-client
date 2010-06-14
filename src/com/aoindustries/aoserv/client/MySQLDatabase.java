@@ -121,7 +121,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MySQLDatabase getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, name.getBean(), mysqlServer);
+        return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, getBean(name), mysqlServer);
     }
     // </editor-fold>
 

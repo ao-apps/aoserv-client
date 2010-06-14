@@ -122,7 +122,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.DnsZone getBean() {
-        return new com.aoindustries.aoserv.client.beans.DnsZone(key, zone.getBean(), file, hostmaster.getBean(), serial, ttl);
+        return new com.aoindustries.aoserv.client.beans.DnsZone(key, getBean(zone), file, getBean(hostmaster), serial, ttl);
     }
     // </editor-fold>
 

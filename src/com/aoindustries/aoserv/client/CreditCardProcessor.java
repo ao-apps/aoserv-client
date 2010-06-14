@@ -163,7 +163,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.CreditCardProcessor getBean() {
-        return new com.aoindustries.aoserv.client.beans.CreditCardProcessor(getKey(), accounting.getBean(), className, param1, param2, param3, param4, enabled, weight, description, encryptionFrom, encryptionRecipient);
+        return new com.aoindustries.aoserv.client.beans.CreditCardProcessor(getKey(), getBean(accounting), className, param1, param2, param3, param4, enabled, weight, description, encryptionFrom, encryptionRecipient);
     }
     // </editor-fold>
 

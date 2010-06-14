@@ -164,7 +164,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.NetBind getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetBind(key, businessServer, ipAddress, port.getBean(), netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
+        return new com.aoindustries.aoserv.client.beans.NetBind(key, businessServer, ipAddress, getBean(port), netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
     }
     // </editor-fold>
 

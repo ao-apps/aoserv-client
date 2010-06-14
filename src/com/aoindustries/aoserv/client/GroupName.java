@@ -72,7 +72,7 @@ final public class GroupName extends AOServObjectGroupIdKey<GroupName> implement
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.GroupName getBean() {
-        return new com.aoindustries.aoserv.client.beans.GroupName(getKey().getBean(), accounting.getBean(), disableLog);
+        return new com.aoindustries.aoserv.client.beans.GroupName(getBean(getKey()), getBean(accounting), disableLog);
     }
     // </editor-fold>
 

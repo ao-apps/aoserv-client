@@ -124,12 +124,12 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
      * other things like processor type, speed, architecture, processor cores and
      * processor weights will also not be allocated.
      */
-    @SchemaColumn(order=3, name="secondary_ram", description="the amount of RAM required in primary mode in megabytes or 0 if secondary not required")
+    @SchemaColumn(order=3, name="secondary_ram", description="the amount of RAM required in primary mode in megabytes or null if secondary not required")
     public Integer getSecondaryRam() {
         return secondaryRam;
     }
 
-    @SchemaColumn(order=4, name="secondary_ram_target", description="the amount of RAM required in primary mode in megabytes or 0 if secondary not required")
+    @SchemaColumn(order=4, name="secondary_ram_target", description="the amount of RAM required in primary mode in megabytes or null if secondary not required")
     public Integer getSecondaryRamTarget() {
         return secondaryRamTarget;
     }

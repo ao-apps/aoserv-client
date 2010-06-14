@@ -132,7 +132,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Protocol getBean() {
-        return new com.aoindustries.aoserv.client.beans.Protocol(getKey(), port.getBean(), name, isUserService, netProtocol);
+        return new com.aoindustries.aoserv.client.beans.Protocol(getKey(), getBean(port), name, isUserService, netProtocol);
     }
     // </editor-fold>
 

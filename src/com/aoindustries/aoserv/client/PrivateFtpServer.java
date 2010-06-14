@@ -115,7 +115,7 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.PrivateFtpServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.PrivateFtpServer(key, netBind, logfile.getBean(), hostname.getBean(), email.getBean(), linuxAccountGroup, allowAnonymous);
+        return new com.aoindustries.aoserv.client.beans.PrivateFtpServer(key, netBind, getBean(logfile), getBean(hostname), getBean(email), linuxAccountGroup, allowAnonymous);
     }
     // </editor-fold>
 

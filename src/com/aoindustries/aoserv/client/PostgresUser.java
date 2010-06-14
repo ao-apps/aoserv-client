@@ -150,7 +150,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.PostgresUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresUser(key, username.getBean(), postgresServer, createdb, trace, superPriv, catupd, predisablePassword);
+        return new com.aoindustries.aoserv.client.beans.PostgresUser(key, getBean(username), postgresServer, createdb, trace, superPriv, catupd, predisablePassword);
     }
     // </editor-fold>
 

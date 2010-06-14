@@ -407,7 +407,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MySQLUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLUser(key, username.getBean(), mysqlServer, host==null ? null : host.getBean(), selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, reloadPriv, shutdownPriv, processPriv, filePriv, grantPriv, referencesPriv, indexPriv, alterPriv, showDbPriv, superPriv, createTmpTablePriv, lockTablesPriv, executePriv, replSlavePriv, replClientPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, createUserPriv, eventPriv, triggerPriv, predisablePassword, maxQuestions, maxUpdates, maxConnections, maxUserConnections);
+        return new com.aoindustries.aoserv.client.beans.MySQLUser(key, getBean(username), mysqlServer, getBean(host), selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, reloadPriv, shutdownPriv, processPriv, filePriv, grantPriv, referencesPriv, indexPriv, alterPriv, showDbPriv, superPriv, createTmpTablePriv, lockTablesPriv, executePriv, replSlavePriv, replClientPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, createUserPriv, eventPriv, triggerPriv, predisablePassword, maxQuestions, maxUpdates, maxConnections, maxUserConnections);
     }
     // </editor-fold>
 

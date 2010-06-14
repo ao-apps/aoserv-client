@@ -62,6 +62,8 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
         // postgres_server_users
         set_postgres_user_password,
         set_postgres_user_predisable_password,
+        // ticket_actions
+        add_ticket_annotation,
         // tickets
         add_ticket,
         edit_ticket,

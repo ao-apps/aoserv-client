@@ -430,16 +430,16 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Brand getBean() {
         return new com.aoindustries.aoserv.client.beans.Brand(
-            getKey().getBean(),
-            nameserver1.getBean(),
-            nameserver2.getBean(),
-            nameserver3==null ? null : nameserver3.getBean(),
-            nameserver4==null ? null : nameserver4.getBean(),
+            getBean(getKey()),
+            getBean(nameserver1),
+            getBean(nameserver2),
+            getBean(nameserver3),
+            getBean(nameserver4),
             smtpEmailInbox,
-            smtpHost==null ? null : smtpHost.getBean(),
+            getBean(smtpHost),
             smtpPassword,
             imapEmailInbox,
-            imapHost==null ? null : imapHost.getBean(),
+            getBean(imapHost),
             imapPassword,
             supportEmailAddress,
             supportEmailDisplay,
@@ -465,7 +465,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
             aowebStrutsGoogleVerifyContent,
             aowebStrutsNoindex,
             aowebStrutsGoogleAnalyticsNewTrackingCode,
-            aowebStrutsSignupAdminAddress.getBean(),
+            getBean(aowebStrutsSignupAdminAddress),
             aowebStrutsVncBind,
             aowebStrutsKeystoreType,
             aowebStrutsKeystorePassword

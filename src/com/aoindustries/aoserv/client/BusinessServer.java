@@ -102,7 +102,7 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BusinessServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessServer(key, accounting.getBean(), server, isDefault, canVncConsole);
+        return new com.aoindustries.aoserv.client.beans.BusinessServer(key, getBean(accounting), server, isDefault, canVncConsole);
     }
     // </editor-fold>
 

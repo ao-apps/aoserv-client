@@ -6,6 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * <code>Ticket</code>s are prioritized by both the client and
@@ -47,6 +49,36 @@ final public class TicketPriority extends AOServObjectStringKey<TicketPriority> 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TicketPriority getBean() {
         return new com.aoindustries.aoserv.client.beans.TicketPriority(getKey());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getTicketActionsByOldPriority(),
+            getTicketActionsByNewPriority(),
+            getTicketsByClientPriority(),
+            getTicketsByAdminPriority()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<TicketAction> getTicketActionsByOldPriority() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_PRIORITY, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActionsByNewPriority() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_PRIORITY, this);
+    }
+
+    public IndexedSet<Ticket> getTicketsByClientPriority() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_CLIENT_PRIORITY, this);
+    }
+
+    public IndexedSet<Ticket> getTicketsByAdminPriority() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_ADMIN_PRIORITY, this);
     }
     // </editor-fold>
 }

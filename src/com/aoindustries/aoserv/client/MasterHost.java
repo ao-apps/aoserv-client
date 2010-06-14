@@ -82,7 +82,7 @@ final public class MasterHost extends AOServObjectIntegerKey<MasterHost> impleme
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MasterHost getBean() {
-        return new com.aoindustries.aoserv.client.beans.MasterHost(key, username.getBean(), host.getBean());
+        return new com.aoindustries.aoserv.client.beans.MasterHost(key, getBean(username), getBean(host));
     }
     // </editor-fold>
 

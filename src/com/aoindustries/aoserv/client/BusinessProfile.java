@@ -227,7 +227,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BusinessProfile getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessProfile(key, accounting.getBean(), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
+        return new com.aoindustries.aoserv.client.beans.BusinessProfile(key, getBean(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
     }
     // </editor-fold>
 

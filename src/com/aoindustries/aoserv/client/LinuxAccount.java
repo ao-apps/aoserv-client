@@ -209,14 +209,14 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         return new com.aoindustries.aoserv.client.beans.LinuxAccount(
             key,
             linuxAccountType,
-            username.getBean(),
-            uid.getBean(),
-            home.getBean(),
-            name==null ? null : name.getBean(),
-            officeLocation==null ? null : officeLocation.getBean(),
-            officePhone==null ? null : officePhone.getBean(),
-            homePhone==null ? null : homePhone.getBean(),
-            shell.getBean(),
+            getBean(username),
+            getBean(uid),
+            getBean(home),
+            getBean(name),
+            getBean(officeLocation),
+            getBean(officePhone),
+            getBean(homePhone),
+            getBean(shell),
             predisablePassword
         );
     }

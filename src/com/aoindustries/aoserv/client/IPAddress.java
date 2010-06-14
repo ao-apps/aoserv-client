@@ -158,15 +158,15 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     public com.aoindustries.aoserv.client.beans.IPAddress getBean() {
         return new com.aoindustries.aoserv.client.beans.IPAddress(
             key,
-            ipAddress.getBean(),
+            getBean(ipAddress),
             netDevice,
             isAlias,
-            hostname.getBean(),
+            getBean(hostname),
             available,
             isOverflow,
             isDhcp,
             pingMonitorEnabled,
-            externalIpAddress==null ? null : externalIpAddress.getBean(),
+            getBean(externalIpAddress),
             netmask
         );
     }

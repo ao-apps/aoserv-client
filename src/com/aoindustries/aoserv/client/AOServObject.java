@@ -49,6 +49,13 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         return value==null ? null : value.intern();
     }
 
+    /**
+     * null-safe getBean.
+     */
+    protected static <B> B getBean(BeanFactory<B> beanFactory) {
+        return beanFactory==null ? null : beanFactory.getBean();
+    }
+
     private volatile transient AOServService<?,?,K,T> service;
 
     protected AOServObject(AOServService<?,?,K,T> service) {

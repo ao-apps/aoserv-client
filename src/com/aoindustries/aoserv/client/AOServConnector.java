@@ -235,7 +235,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     TechnologyNameService<C,F> getTechnologyNames() throws RemoteException;
     TechnologyVersionService<C,F> getTechnologyVersions() throws RemoteException;
     TicketActionTypeService<C,F> getTicketActionTypes() throws RemoteException;
-    // TODO: TicketActionService<C,F> getTicketActions() throws RemoteException;
+    TicketActionService<C,F> getTicketActions() throws RemoteException;
     TicketAssignmentService<C,F> getTicketAssignments() throws RemoteException;
     // TODO: TicketBrandCategoryService<C,F> getTicketBrandCategories() throws RemoteException;
     TicketCategoryService<C,F> getTicketCategories() throws RemoteException;

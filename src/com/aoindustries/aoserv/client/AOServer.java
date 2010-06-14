@@ -260,7 +260,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.AOServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServer(key, hostname.getBean(), daemonBind, daemonKey.getBean(), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, daemonConnectAddress==null ? null : daemonConnectAddress.getBean(), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
+        return new com.aoindustries.aoserv.client.beans.AOServer(key, getBean(hostname), daemonBind, getBean(daemonKey), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getBean(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 
@@ -549,7 +549,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         }
 
         public com.aoindustries.aoserv.client.beans.DaemonAccess getBean() {
-            return new com.aoindustries.aoserv.client.beans.DaemonAccess(protocol, host.getBean(), port.getBean(), key);
+            return new com.aoindustries.aoserv.client.beans.DaemonAccess(protocol, AOServObject.getBean(host), AOServObject.getBean(port), key);
         }
     }
     // </editor-fold>

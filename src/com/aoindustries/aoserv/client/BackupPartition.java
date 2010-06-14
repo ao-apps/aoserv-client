@@ -101,7 +101,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BackupPartition getBean() {
-        return new com.aoindustries.aoserv.client.beans.BackupPartition(key, aoServer, path.getBean(), enabled, quotaEnabled);
+        return new com.aoindustries.aoserv.client.beans.BackupPartition(key, aoServer, getBean(path), enabled, quotaEnabled);
     }
     // </editor-fold>
 

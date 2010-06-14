@@ -76,7 +76,7 @@ final public class AOServRole extends AOServObjectIntegerKey<AOServRole> impleme
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.AOServRole getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServRole(key, accounting.getBean(), name);
+        return new com.aoindustries.aoserv.client.beans.AOServRole(key, getBean(accounting), name);
     }
     // </editor-fold>
 

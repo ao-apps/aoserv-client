@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.AddCreditCardCommand;
 import com.aoindustries.aoserv.client.command.CancelBusinessCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
@@ -313,7 +313,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Business getBean() {
-        return new com.aoindustries.aoserv.client.beans.Business(getKey().getBean(), contractVersion, created, canceled, cancelReason, parent==null ? null : parent.getBean(), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, createdBy==null ? null : createdBy.getBean(), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
+        return new com.aoindustries.aoserv.client.beans.Business(getBean(getKey()), contractVersion, created, canceled, cancelReason, getBean(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getBean(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
     // </editor-fold>
 
@@ -361,10 +361,10 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             getResources(),
             getServers(),
             getServerFarms(),
-            getUsernames()
-            // TODO: getTickets(),
-            // TODO: getTicketActionsByOldBusiness(),
-            // TODO: getTicketActionsByNewBusiness(),
+            getUsernames(),
+            getTickets(),
+            getTicketActionsByOldBusiness(),
+            getTicketActionsByNewBusiness()
             // TODO: getTransactions(),
             // TODO: getTransactionsBySourceAccounting()
         );
@@ -421,6 +421,18 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
     	return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_ACCOUNTING, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActionsByOldBusiness() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ACCOUNTING, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActionsByNewBusiness() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ACCOUNTING, this);
+    }
+
+    public IndexedSet<Ticket> getTickets() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_ACCOUNTING, this);
     }
 
     /**
@@ -1028,10 +1040,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         if(!isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
     }
-
-    public List<Ticket> getTickets() throws SQLException, IOException {
-        return getService().getConnector().getTickets().getTickets(this);
-    }
     */
     /**
      * Gets all of the encryption keys for this business.
@@ -1219,14 +1227,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public List<PackageDefinition> getPackageDefinitions() throws IOException, SQLException {
         return getService().getConnector().getPackageDefinitions().getIndexedRows(PackageDefinition.COLUMN_ACCOUNTING, pkey);
-    }
-
-    public List<TicketAction> getTicketActionsByOldBusiness() throws IOException, SQLException {
-        return getService().getConnector().getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_ACCOUNTING, pkey);
-    }
-
-    public List<TicketAction> getTicketActionsByNewBusiness() throws IOException, SQLException {
-        return getService().getConnector().getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_ACCOUNTING, pkey);
     }
 
     public List<Transaction> getTransactionsBySourceAccounting() throws IOException, SQLException {

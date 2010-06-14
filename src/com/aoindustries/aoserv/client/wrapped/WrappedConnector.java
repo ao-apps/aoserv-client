@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client.wrapped;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.wrapped;
+
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorUtils;
 import com.aoindustries.aoserv.client.AOServPermission;
@@ -185,6 +185,8 @@ import com.aoindustries.aoserv.client.TechnologyService;
 import com.aoindustries.aoserv.client.TechnologyVersion;
 import com.aoindustries.aoserv.client.TechnologyVersionService;
 import com.aoindustries.aoserv.client.Ticket;
+import com.aoindustries.aoserv.client.TicketAction;
+import com.aoindustries.aoserv.client.TicketActionService;
 import com.aoindustries.aoserv.client.TicketActionType;
 import com.aoindustries.aoserv.client.TicketActionTypeService;
 import com.aoindustries.aoserv.client.TicketAssignment;
@@ -395,7 +397,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         technologyNames = new WrappedTechnologyNameService(this);
         technologyVersions = new WrappedTechnologyVersionService(this);
         ticketActionTypes = new WrappedTicketActionTypeService(this);
-        // TODO: ticketActions = new WrappedTicketActionService(this);
+        ticketActions = new WrappedTicketActionService(this);
         ticketAssignments = new WrappedTicketAssignmentService(this);
         // TODO: ticketBrandCategories = new WrappedTicketBrandCategoryService(this);
         ticketCategories = new WrappedTicketCategoryService(this);
@@ -1698,8 +1700,15 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionService">
-    // TODO: final WrappedTicketActionService<C,F> ticketActions;
-    // TODO: final public TicketActionService<C,F> getTicketActions();
+    static class WrappedTicketActionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAction> implements TicketActionService<C,F> {
+        WrappedTicketActionService(C connector) {
+            super(connector, Integer.class, TicketAction.class);
+        }
+    }
+    final WrappedTicketActionService<C,F> ticketActions;
+    final public TicketActionService<C,F> getTicketActions() {
+        return ticketActions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketAssignmentService">
     static class WrappedTicketAssignmentService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAssignment> implements TicketAssignmentService<C,F> {

@@ -96,7 +96,7 @@ final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implemen
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MasterUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.MasterUser(getKey().getBean(), isActive, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, isDnsAdmin);
+        return new com.aoindustries.aoserv.client.beans.MasterUser(getBean(getKey()), isActive, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, isDnsAdmin);
     }
     // </editor-fold>
 

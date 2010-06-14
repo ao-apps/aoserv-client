@@ -88,7 +88,7 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.TicketAssignment getBean() {
-        return new com.aoindustries.aoserv.client.beans.TicketAssignment(key, ticket, reseller.getBean(), administrator.getBean());
+        return new com.aoindustries.aoserv.client.beans.TicketAssignment(key, ticket, getBean(reseller), getBean(administrator));
     }
     // </editor-fold>
 

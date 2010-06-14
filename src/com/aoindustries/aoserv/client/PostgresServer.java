@@ -283,7 +283,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.PostgresServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresServer(key, name.getBean(), version, maxConnections, netBind, sortMem, sharedBuffers, fsync);
+        return new com.aoindustries.aoserv.client.beans.PostgresServer(key, getBean(name), version, maxConnections, netBind, sortMem, sharedBuffers, fsync);
     }
     // </editor-fold>
 

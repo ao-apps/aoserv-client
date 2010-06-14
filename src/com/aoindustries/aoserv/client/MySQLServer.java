@@ -400,7 +400,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MySQLServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLServer(key, name.getBean(), version, maxConnections, netBind);
+        return new com.aoindustries.aoserv.client.beans.MySQLServer(key, getBean(name), version, maxConnections, netBind);
     }
     // </editor-fold>
 

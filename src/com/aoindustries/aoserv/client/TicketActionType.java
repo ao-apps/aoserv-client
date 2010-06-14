@@ -71,7 +71,7 @@ final public class TicketActionType extends AOServObjectStringKey<TicketActionTy
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: getTicketActions()
+            getTicketActions()
         );
     }
     // </editor-fold>
@@ -93,6 +93,12 @@ final public class TicketActionType extends AOServObjectStringKey<TicketActionTy
             if(newValue==null) return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.notNull.null", oldValue);
             return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.notNull.notNull", oldValue, newValue);
         }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_ACTION_TYPE, this);
     }
     // </editor-fold>
 }

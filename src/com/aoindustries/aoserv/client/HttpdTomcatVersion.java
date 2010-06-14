@@ -86,7 +86,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.HttpdTomcatVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdTomcatVersion(key, installDir.getBean(), requiresModJk);
+        return new com.aoindustries.aoserv.client.beans.HttpdTomcatVersion(key, getBean(installDir), requiresModJk);
     }
     // </editor-fold>
 

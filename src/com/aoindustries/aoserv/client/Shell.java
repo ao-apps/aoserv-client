@@ -70,7 +70,7 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanF
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.Shell getBean() {
-        return new com.aoindustries.aoserv.client.beans.Shell(getKey().getBean());
+        return new com.aoindustries.aoserv.client.beans.Shell(getBean(getKey()));
     }
     // </editor-fold>
 

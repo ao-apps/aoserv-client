@@ -250,7 +250,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(getKey().getBean(), password.getBean(), name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, email.getBean(), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
+        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(getBean(getKey()), getBean(password), name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, getBean(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
     // </editor-fold>
 
@@ -282,12 +282,12 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
             getMonthlyCharges(),
             getMonthlyChargesByCreatedBy(),*/
             getBusinessesByCreatedBy(),
-            getResources()
-            // TODO: getCreatedTickets(),
+            getResources(),
+            getTicketsByCreatedBy(),
             // TODO: getCompletedSignupRequests(),
-            // TODO: getTicketActions(),
-            // TODO: getTicketActionsByOldAssignedTo(),
-            // TODO: getTicketActionsByNewAssignedTo(),
+            getTicketActions(),
+            getTicketActionsByOldAssignedTo(),
+            getTicketActionsByNewAssignedTo()
             // TODO: getTicketAssignments(),
             // TODO: getTransactions()
         );
@@ -315,9 +315,24 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     	return getService().getConnector().getMasterUsers().filterUnique(MasterUser.COLUMN_USERNAME, this);
     }
 
-
     public IndexedSet<Resource> getResources() throws RemoteException {
         return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_CREATED_BY, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_ADMINISTRATOR, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActionsByOldAssignedTo() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ASSIGNED_TO, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActionsByNewAssignedTo() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ASSIGNED_TO, this);
+    }
+
+    public IndexedSet<Ticket> getTicketsByCreatedBy() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_CREATED_BY, this);
     }
     // </editor-fold>
 
@@ -443,24 +458,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         service.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
     }
 
-    public List<TicketAction> getTicketActions() throws IOException, SQLException {
-        return service.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_ADMINISTRATOR, pkey);
-    }
-
-    public List<TicketAction> getTicketActionsByOldAssignedTo() throws IOException, SQLException {
-        return service.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_ASSIGNED_TO, pkey);
-    }
-
-    public List<TicketAction> getTicketActionsByNewAssignedTo() throws IOException, SQLException {
-        return service.connector.getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_ASSIGNED_TO, pkey);
-    }
-
     public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
         return service.connector.getTicketAssignments().getTicketAssignments(this);
-    }
-
-    public List<Ticket> getCreatedTickets() throws IOException, SQLException {
-        return service.connector.getTickets().getIndexedRows(Ticket.COLUMN_CREATED_BY, pkey);
     }
 
     public boolean isDisabled() {

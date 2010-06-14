@@ -157,7 +157,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.PostgresDatabase getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresDatabase(key, name.getBean(), postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
+        return new com.aoindustries.aoserv.client.beans.PostgresDatabase(key, getBean(name), postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
     }
     // </editor-fold>
 

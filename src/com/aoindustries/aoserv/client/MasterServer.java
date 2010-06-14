@@ -85,7 +85,7 @@ final public class MasterServer extends AOServObjectIntegerKey<MasterServer> imp
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.MasterServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.MasterServer(key, username.getBean(), server);
+        return new com.aoindustries.aoserv.client.beans.MasterServer(key, getBean(username), server);
     }
     // </editor-fold>
 

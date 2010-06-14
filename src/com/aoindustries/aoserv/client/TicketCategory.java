@@ -110,11 +110,11 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: getTickets(),
-            getChildrenCategories()
-            // TODO: getTicketActionsByOldCategory(),
-            // TODO: getTicketActionsByNewCategory(),
-            // TODO: getTicketBrandCategorys()
+            getTickets(),
+            getChildrenCategories(),
+            getTicketActionsByOldCategory(),
+            getTicketActionsByNewCategory()
+            // TODO: getTicketBrandCategories()
         );
     }
     // </editor-fold>
@@ -130,21 +130,23 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     public IndexedSet<TicketCategory> getChildrenCategories() throws RemoteException {
         return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
+
+    public IndexedSet<TicketAction> getTicketActionsByOldCategory() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_CATEGORY, this);
+    }
+
+    public IndexedSet<TicketAction> getTicketActionsByNewCategory() throws RemoteException {
+        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_CATEGORY, this);
+    }
+
+    public IndexedSet<Ticket> getTickets() throws RemoteException {
+        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_CATEGORY, this);
+    }
+
     /* TODO
-    public List<TicketBrandCategory> getTicketBrandCategorys() throws IOException, SQLException {
+    public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
         return getService().getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
     }
-
-    public List<Ticket> getTickets() throws IOException, SQLException {
-        return getService().getConnector().getTickets().getIndexedRows(Ticket.COLUMN_CATEGORY, pkey);
-    }
-
-    public List<TicketAction> getTicketActionsByOldCategory() throws IOException, SQLException {
-        return getService().getConnector().getTicketActions().getIndexedRows(TicketAction.COLUMN_OLD_CATEGORY, pkey);
-    }
-
-    public List<TicketAction> getTicketActionsByNewCategory() throws IOException, SQLException {
-        return getService().getConnector().getTicketActions().getIndexedRows(TicketAction.COLUMN_NEW_CATEGORY, pkey);
-    }*/
+    */
     // </editor-fold>
 }

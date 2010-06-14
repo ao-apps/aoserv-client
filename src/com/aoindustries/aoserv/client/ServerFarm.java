@@ -76,7 +76,7 @@ final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> imp
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.ServerFarm getBean() {
-        return new com.aoindustries.aoserv.client.beans.ServerFarm(getKey().getBean(), description, owner.getBean(), useRestrictedSmtpPort);
+        return new com.aoindustries.aoserv.client.beans.ServerFarm(getBean(getKey()), description, getBean(owner), useRestrictedSmtpPort);
     }
     // </editor-fold>
 

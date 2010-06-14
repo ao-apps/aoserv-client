@@ -45,7 +45,7 @@ final public class DnsTld extends AOServObjectDomainNameKey<DnsTld> implements B
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     public com.aoindustries.aoserv.client.beans.DnsTld getBean() {
-        return new com.aoindustries.aoserv.client.beans.DnsTld(getKey().getBean());
+        return new com.aoindustries.aoserv.client.beans.DnsTld(getBean(getKey()));
     }
     // </editor-fold>
 
