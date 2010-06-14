@@ -59,8 +59,14 @@ final public class ProcessorType extends AOServObjectStringKey<ProcessorType> im
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             // TODO: getPhysicalServers()
-            // TODO: getVirtualServers()
+            getVirtualServersByMinimumProcessorType()
         );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<VirtualServer> getVirtualServersByMinimumProcessorType() throws RemoteException {
+        return getService().getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_TYPE, this);
     }
     // </editor-fold>
 }

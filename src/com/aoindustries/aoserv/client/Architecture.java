@@ -71,7 +71,8 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            getOperatingSystemVersions()
+            getOperatingSystemVersions(),
+            getVirtualServersByMinimumProcessorArchitecture()
         );
     }
     // </editor-fold>
@@ -79,6 +80,10 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
         return getService().getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_ARCHITECTURE, this);
+    }
+
+    public IndexedSet<VirtualServer> getVirtualServersByMinimumProcessorArchitecture() throws RemoteException {
+        return getService().getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, this);
     }
     // </editor-fold>
 }

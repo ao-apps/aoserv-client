@@ -102,7 +102,8 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="server", index=IndexType.PRIMARY_KEY, description="the server that is virtualized")
+    static final String COLUMN_SERVER = "server";
+    @SchemaColumn(order=0, name=COLUMN_SERVER, index=IndexType.PRIMARY_KEY, description="the server that is virtualized")
     public Server getServer() throws RemoteException {
         return getService().getConnector().getServers().get(key);
     }
@@ -134,19 +135,21 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
         return secondaryRamTarget;
     }
 
+    static final String COLUMN_MINIMUM_PROCESSOR_TYPE = "minimum_processor_type";
     /**
      * Gets the minimum processor type or <code>null</code> if none.
      */
-    @SchemaColumn(order=5, name="minimum_processor_type", description="the minimum processor type")
+    @SchemaColumn(order=5, name=COLUMN_MINIMUM_PROCESSOR_TYPE, description="the minimum processor type")
     public ProcessorType getMinimumProcessorType() throws RemoteException {
         if(minimumProcessorType==null) return null;
         return getService().getConnector().getProcessorTypes().get(minimumProcessorType);
     }
 
+    static final String COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE = "minimum_processor_architecture";
     /**
      * Gets the minimum processor architecture.
      */
-    @SchemaColumn(order=6, name="minimum_processor_architecture", description="the minimum processor architecture, compatible architectures may be substituted")
+    @SchemaColumn(order=6, name=COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, index=IndexType.INDEXED, description="the minimum processor architecture, compatible architectures may be substituted")
     public Architecture getMinimumProcessorArchitecture() throws RemoteException {
         return getService().getConnector().getArchitectures().get(minimumProcessorArchitecture);
     }
@@ -287,4 +290,5 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
     public AOServer.DaemonAccess requestVncConsoleAccess() throws RemoteException {
         return new RequestVncConsoleAccessCommand(key).execute(getService().getConnector());
     }
+    // </editor-fold>
 }

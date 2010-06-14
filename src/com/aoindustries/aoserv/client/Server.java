@@ -144,9 +144,9 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             AOServObjectUtils.createDependencySet(
-                getAoServer()
+                getAoServer(),
                 // TODO: getPhysicalServer(),
-                // TODO: getVirtualServer()
+                getVirtualServer()
             ),
             getBusinessServers(),
             getFailoverFileReplications(),
@@ -159,7 +159,16 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public AOServer getAoServer() throws RemoteException {
-        return getService().getConnector().getAoServers().get(key);
+        return getService().getConnector().getAoServers().filterUnique(AOServer.COLUMN_SERVER, this);
+    }
+
+    /* TODO
+    public PhysicalServer getPhysicalServer() throws IOException, SQLException {
+        return getService().getConnector().getPhysicalServers().get(pkey);
+    }
+     */
+    public VirtualServer getVirtualServer() throws RemoteException {
+        return getService().getConnector().getVirtualServers().filterUnique(VirtualServer.COLUMN_SERVER, this);
     }
 
     public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
@@ -209,14 +218,6 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     }
 
     /* TODO
-    public PhysicalServer getPhysicalServer() throws IOException, SQLException {
-        return getService().getConnector().getPhysicalServers().get(pkey);
-    }
-
-    public VirtualServer getVirtualServer() throws IOException, SQLException {
-        return getService().getConnector().getVirtualServers().get(pkey);
-    }
-
     public List<Business> getBusinesses() throws IOException, SQLException {
         return getService().getConnector().getBusinessServers().getBusinesses(this);
     }

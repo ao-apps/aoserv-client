@@ -118,7 +118,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="server", index=IndexType.PRIMARY_KEY, description="a reference to servers")
+    static final String COLUMN_SERVER = "server";
+    @SchemaColumn(order=0, name=COLUMN_SERVER, index=IndexType.PRIMARY_KEY, description="a reference to servers")
     public Server getServer() throws RemoteException {
         return getService().getConnector().getServers().get(key);
     }
