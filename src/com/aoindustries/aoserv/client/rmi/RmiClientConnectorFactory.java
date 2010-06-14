@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.rmi;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -72,6 +72,7 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
             }
         }
 
+        @Override
         public AOServConnector<?,?> getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
             synchronized(connectors) {
                 AOServConnector<?,?> connector = connectors.get(connectAs, authenticateAs, password, daemonServer, readOnly);
@@ -92,6 +93,7 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
         }
 
         @SuppressWarnings("unchecked")
+        @Override
         public AOServConnector<?,?> newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
             try {
                 // Connect to the remote registry and get each of the stubs
@@ -124,6 +126,7 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
         super(new DirectRmiClientConnectorFactory(serverAddress, serverPort, localAddress, useSsl));
     }
 
+    @Override
     protected RmiClientConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         return new RmiClientConnector(this, locale, connectAs, authenticateAs, password, daemonServer, readOnly);
     }

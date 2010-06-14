@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -109,10 +108,9 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         LinuxAccount la = getLinuxAccount();
         return ApplicationResources.accessor.getMessage(
-            userLocale,
             "LinuxAccountGroup.toString",
             la.getAoServerResource().getAoServer().getHostname(),
             la.getUsername().getUsername(),
@@ -137,7 +135,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(is_primary) reasons.add(new CannotRemoveReason<LinuxAccountGroup>("Not allowed to drop a primary group", this));
         return reasons;

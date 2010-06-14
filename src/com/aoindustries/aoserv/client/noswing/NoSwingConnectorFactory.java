@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.noswing;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -34,6 +34,7 @@ final public class NoSwingConnectorFactory extends WrappedConnectorFactory<NoSwi
         super(wrapped);
     }
 
+    @Override
     protected NoSwingConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         checkNotSwing();
         return new NoSwingConnector(this, locale, connectAs, authenticateAs, password, daemonServer, readOnly);

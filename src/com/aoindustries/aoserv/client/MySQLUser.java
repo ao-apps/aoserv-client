@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -13,7 +13,6 @@ import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -406,6 +405,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.MySQLUser getBean() {
         return new com.aoindustries.aoserv.client.beans.MySQLUser(key, getBean(username), mysqlServer, getBean(host), selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, reloadPriv, shutdownPriv, processPriv, filePriv, grantPriv, referencesPriv, indexPriv, alterPriv, showDbPriv, superPriv, createTmpTablePriv, lockTablesPriv, executePriv, replSlavePriv, replClientPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, createUserPriv, eventPriv, triggerPriv, predisablePassword, maxQuestions, maxUpdates, maxConnections, maxUserConnections);
     }
@@ -431,8 +431,8 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "MySQLUser.toString", username, getMysqlServer().toStringImpl(userLocale));
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("MySQLUser.toString", username, getMysqlServer().toStringImpl());
     }
     // </editor-fold>
 
@@ -443,8 +443,8 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Commands">
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
-        return PasswordChecker.checkPassword(userLocale, username, password, PasswordChecker.PasswordStrength.STRICT);
+    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
+        return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
     }
 
     public void setPredisablePassword(String password) throws RemoteException {
@@ -469,8 +469,8 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
-        return checkPassword(userLocale, username, password);
+    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
+        return checkPassword(username, password);
     }
 
     public String checkPasswordDescribe(String password) {
@@ -493,7 +493,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
         return disable_log!=-1;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(username.equals(ROOT)) reasons.add(new CannotRemoveReason<MySQLUser>("Not allowed to remove the "+ROOT+" MySQL user", this));
         return reasons;

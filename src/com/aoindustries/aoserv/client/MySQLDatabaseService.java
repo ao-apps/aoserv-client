@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -55,7 +55,6 @@ public interface MySQLDatabaseService<C extends AOServConnector<C,F>, F extends 
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DATABASE, args, 4, err)) {
                 int pkey=connector.getSimpleAOClient().addMySQLDatabase(
-                    Locale.getDefault(),
                     args[1],
                     args[2],
                     args[3],
@@ -68,7 +67,7 @@ public interface MySQLDatabaseService<C extends AOServConnector<C,F>, F extends 
     	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_DATABASE_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_DATABASE_NAME, args, 1, err)) {
                 try {
-                    connector.getSimpleAOClient().checkMySQLDatabaseName(Locale.getDefault(), args[1]);
+                    connector.getSimpleAOClient().checkMySQLDatabaseName(args[1]);
                     out.println("true");
                     out.flush();
                 } catch(IllegalArgumentException iae) {
@@ -99,7 +98,7 @@ public interface MySQLDatabaseService<C extends AOServConnector<C,F>, F extends 
     	} else if(command.equalsIgnoreCase(AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE, args, 3, err)) {
                 try {
-                    out.println(connector.getSimpleAOClient().isMySQLDatabaseNameAvailable(Locale.getDefault(), args[1], args[2], args[3]));
+                    out.println(connector.getSimpleAOClient().isMySQLDatabaseNameAvailable(args[1], args[2], args[3]));
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE+": ");

@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.cache;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -29,6 +29,7 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
 
     private final AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory> connectors = new AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory>();
 
+    @Override
     public CachedConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
             CachedConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer, readOnly);
@@ -48,6 +49,7 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
         }
     }
 
+    @Override
     public CachedConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
             CachedConnector connector = new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer, readOnly));

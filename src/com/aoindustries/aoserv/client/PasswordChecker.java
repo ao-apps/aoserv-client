@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -11,7 +11,6 @@ import com.aoindustries.util.zip.CorrectedGZIPInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 
 /**
  * Performs password checking for all password protected
@@ -58,9 +57,9 @@ final public class PasswordChecker {
         private String category;
         private String result;
 
-        private Result(Locale userLocale, String category) {
+        private Result(String category) {
             this.category = category;
-            this.result = ApplicationResources.accessor.getMessage(userLocale, GOOD_KEY);
+            this.result = ApplicationResources.accessor.getMessage(GOOD_KEY);
         }
 
         public String getCategory() {
@@ -74,9 +73,9 @@ final public class PasswordChecker {
 
     private PasswordChecker() {}
 
-    public static Result[] getAllGoodResults(Locale userLocale) {
+    public static Result[] getAllGoodResults() {
         Result[] results = new Result[NUM_CATEGORIES];
-        for(int c=0;c<NUM_CATEGORIES;c++) results[c]=new Result(userLocale, ApplicationResources.accessor.getMessage(userLocale, categoryKeys[c]));
+        for(int c=0;c<NUM_CATEGORIES;c++) results[c]=new Result(ApplicationResources.accessor.getMessage(categoryKeys[c]));
         return results;
     }
 
@@ -86,9 +85,9 @@ final public class PasswordChecker {
         STRICT
     }
 
-    public static Result[] checkPassword(Locale userLocale, String username, String password, PasswordStrength strength) throws IOException {
+    public static Result[] checkPassword(String username, String password, PasswordStrength strength) throws IOException {
         if(strength==null) throw new IllegalArgumentException("strength==null");
-        Result[] results = getAllGoodResults(userLocale);
+        Result[] results = getAllGoodResults();
         int passwordLen = password.length();
         if (passwordLen > 0) {
             /*
@@ -96,7 +95,7 @@ final public class PasswordChecker {
              *
              * Must be at least eight characters
              */
-            if (passwordLen < (strength==PasswordStrength.SUPER_LAX?6:8)) results[0].result = ApplicationResources.accessor.getMessage(userLocale, strength==PasswordStrength.SUPER_LAX ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
+            if (passwordLen < (strength==PasswordStrength.SUPER_LAX?6:8)) results[0].result = ApplicationResources.accessor.getMessage(strength==PasswordStrength.SUPER_LAX ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
 
             /*
              * Gather password stats
@@ -120,9 +119,9 @@ final public class PasswordChecker {
              * 2) Must not be all numbers
              * 3) Must not contain a space
              */
-            if ((numbercount + specialcount) == passwordLen) results[1].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.characters.notOnlyNumbers");
-            else if (strength!=PasswordStrength.SUPER_LAX && (lowercount + uppercount + specialcount) == passwordLen) results[1].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.characters.numbersAndPunctuation");
-            else if (password.indexOf(' ')!=-1) results[1].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.characters.notContainSpace");
+            if ((numbercount + specialcount) == passwordLen) results[1].result = ApplicationResources.accessor.getMessage("PasswordChecker.characters.notOnlyNumbers");
+            else if (strength!=PasswordStrength.SUPER_LAX && (lowercount + uppercount + specialcount) == passwordLen) results[1].result = ApplicationResources.accessor.getMessage("PasswordChecker.characters.numbersAndPunctuation");
+            else if (password.indexOf(' ')!=-1) results[1].result = ApplicationResources.accessor.getMessage("PasswordChecker.characters.notContainSpace");
 
             /*
              * Must use different cases
@@ -136,7 +135,7 @@ final public class PasswordChecker {
                     || (uppercount > 1 && lowercount == 0)
                     || (lowercount == 0 && uppercount == 0)
                 )
-            ) results[2].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.case.capitalAndLower");
+            ) results[2].result = ApplicationResources.accessor.getMessage("PasswordChecker.case.capitalAndLower");
 
             /*
              * Generate the backwards version of the password
@@ -152,7 +151,7 @@ final public class PasswordChecker {
              * Must not be the same as your username
              */
             if(username!=null && username.equalsIgnoreCase(password)) {
-                results[4].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.dictionary.notSameAsUsername");
+                results[4].result = ApplicationResources.accessor.getMessage("PasswordChecker.dictionary.notSameAsUsername");
             }
 
             /*
@@ -174,9 +173,9 @@ final public class PasswordChecker {
                         break;
                     }
                 }
-                if (!goodb) results[3].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.dates.noDate");
+                if (!goodb) results[3].result = ApplicationResources.accessor.getMessage("PasswordChecker.dates.noDate");
 
-                if(results[4].result.equals(ApplicationResources.accessor.getMessage(userLocale, GOOD_KEY))) {
+                if(results[4].result.equals(ApplicationResources.accessor.getMessage(GOOD_KEY))) {
                     /*
                      * Dictionary check
                      *
@@ -218,11 +217,11 @@ final public class PasswordChecker {
                         }
                     }
                     if (longest.length() > 0) {
-                        results[4].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.dictionary.basedOnWord", longest);
+                        results[4].result = ApplicationResources.accessor.getMessage("PasswordChecker.dictionary.basedOnWord", longest);
                     }
                 }
             }
-        } else results[0].result = ApplicationResources.accessor.getMessage(userLocale, "PasswordChecker.length.noPassword");
+        } else results[0].result = ApplicationResources.accessor.getMessage("PasswordChecker.length.noPassword");
         return results;
     }
 /**
@@ -267,9 +266,9 @@ final public class PasswordChecker {
 	return cachedWords;
     }
 
-    public static boolean hasResults(Locale userLocale, Result[] results) {
+    public static boolean hasResults(Result[] results) {
         if(results==null) return false;
-        String good = ApplicationResources.accessor.getMessage(userLocale, GOOD_KEY);
+        String good = ApplicationResources.accessor.getMessage(GOOD_KEY);
 	for(int c=0;c<NUM_CATEGORIES;c++) {
             if(!results[c].result.equals(good)) return true;
 	}
@@ -302,7 +301,7 @@ final public class PasswordChecker {
     private static final String EOL = System.getProperty("line.separator");
 
     /**
-     * Prints the results in the provided locale.
+     * Prints the results.
      */
     public static void printResults(Result[] results, Appendable out) throws IOException {
         for(int c=0;c<NUM_CATEGORIES;c++) {
@@ -314,7 +313,7 @@ final public class PasswordChecker {
     }
 
     /**
-     * Prints the results in the provided locale in HTML format.
+     * Prints the results in HTML format.
      */
     public static void printResultsHtml(Result[] results, Appendable out) throws IOException {
         out.append("    <table style='border:0px;' cellspacing='0' cellpadding='4'>\n");
@@ -329,7 +328,7 @@ final public class PasswordChecker {
     }
 
     /**
-     * Gets the results in the provided locale in HTML format.
+     * Gets the results in HTML format.
      */
     public static String getResultsHtml(Result[] results) throws IOException {
         StringBuilder out = new StringBuilder();

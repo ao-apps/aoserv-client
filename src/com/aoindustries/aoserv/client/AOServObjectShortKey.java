@@ -1,12 +1,11 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2006-2009 by AO Industries, Inc.,
+ * Copyright 2006-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import java.rmi.RemoteException;
-import java.util.Locale;
 
 /**
  * An object that uses a short as its key value.
@@ -29,6 +28,7 @@ abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T>> ex
     /**
      * Gets the key value for this object.
      */
+    @Override
     final public Short getKey() {
         return key;
     }
@@ -56,7 +56,7 @@ abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T>> ex
      * The default string representation is that of the key value.
      */
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         return Short.toString(key);
     }
 }

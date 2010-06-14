@@ -426,8 +426,8 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "MySQLServer.toString", name, getAoServerResource().getAoServer().getHostname());
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("MySQLServer.toString", name, getAoServerResource().getAoServer().getHostname());
     }
     // </editor-fold>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -56,6 +55,7 @@ final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TechnologyClass getBean() {
         return new com.aoindustries.aoserv.client.beans.TechnologyClass(getKey());
     }
@@ -71,13 +71,13 @@ final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TechnologyClass."+getKey()+".description");
+    public String getDescription() {
+        return ApplicationResources.accessor.getMessage("TechnologyClass."+getKey()+".description");
     }
 
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "TechnologyClass."+getKey()+".toString");
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("TechnologyClass."+getKey()+".toString");
     }
     // </editor-fold>
 

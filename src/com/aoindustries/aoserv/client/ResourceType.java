@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -72,6 +71,7 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.ResourceType getBean() {
         return new com.aoindustries.aoserv.client.beans.ResourceType(getKey());
     }
@@ -120,18 +120,18 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
-    public String getDisplayUnit(Locale userLocale, int quantity) {
-        if(quantity==1) return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+getKey()+".singularDisplayUnit", quantity);
-        else return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+getKey()+".pluralDisplayUnit", quantity);
+    public String getDisplayUnit(int quantity) {
+        if(quantity==1) return ApplicationResources.accessor.getMessage("ResourceType."+getKey()+".singularDisplayUnit", quantity);
+        else return ApplicationResources.accessor.getMessage("ResourceType."+getKey()+".pluralDisplayUnit", quantity);
     }
 
-    public String getPerUnit(Locale userLocale, Object amount) {
-        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+getKey()+".perUnit", amount);
+    public String getPerUnit(Object amount) {
+        return ApplicationResources.accessor.getMessage("ResourceType."+getKey()+".perUnit", amount);
     }
 
     @Override
-    String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "ResourceType."+getKey()+".toString");
+    String toStringImpl() {
+        return ApplicationResources.accessor.getMessage("ResourceType."+getKey()+".toString");
     }
     // </editor-fold>
     

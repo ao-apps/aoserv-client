@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -17,6 +17,7 @@ import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.security.LoginException;
+import com.aoindustries.util.i18n.ThreadLocale;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,7 @@ final public class AOServClientConfiguration {
             Properties newProps = new Properties();
             if (props == null) {
                 InputStream in = AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties");
-                if(in==null) throw new IOException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToFindConfiguration", "aoserv-client.properties"));
+                if(in==null) throw new IOException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unableToFindConfiguration", "aoserv-client.properties"));
                 try {
                     in = new BufferedInputStream(in);
                     newProps.load(in);
@@ -231,7 +232,7 @@ final public class AOServClientConfiguration {
                                 getRmiUseSsl()
                             );
                         } catch(ValidationException err) {
-                            throw new RemoteException(err.getLocalizedMessage(Locale.getDefault()), err);
+                            throw new RemoteException(err.getLocalizedMessage(), err);
                         }
                     } else if(protocol.equalsIgnoreCase(Protocol.SOAP)) {
                         // Load through reflection to avoid dependency relationship
@@ -246,20 +247,20 @@ final public class AOServClientConfiguration {
                                 newFactory = clazz.getConstructor(String.class).newInstance(targetEndpoint);
                             }
                         } catch(ClassNotFoundException err) {
-                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                            throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
                         } catch(ClassCastException err) {
-                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                            throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
                         } catch(NoSuchMethodException err) {
-                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                            throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
                         } catch(InstantiationException err) {
-                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                            throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
                         } catch(IllegalAccessException err) {
-                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                            throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
                         } catch(InvocationTargetException err) {
-                            throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
+                            throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
                         }
                     } else {
-                        throw new RemoteException(ApplicationResources.accessor.getMessage(Locale.getDefault(), "AOServClientConfiguration.unsupportedProtocol", protocol));
+                        throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unsupportedProtocol", protocol));
                     }
                     long timeout = getTimeout();
                     if(timeout>0) newFactory = new TimeoutConnectorFactory(newFactory, timeout, getTimeoutUnit());
@@ -278,8 +279,8 @@ final public class AOServClientConfiguration {
     /**
      * Gets the default <code>AOServConnector</code> as defined in the
      * <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
-     * resource, in the system default locale.  Only one instance will
-     * be created and its locale will be reset back to the default locale.
+     * resource, in the thread locale.  Only one instance will
+     * be created and its locale will be reset back to the thread locale.
      */
     public static AOServConnector<?,?> getConnector() throws RemoteException, LoginException {
         try {
@@ -289,34 +290,33 @@ final public class AOServClientConfiguration {
             if(switchUser==null) switchUser = username;
             DomainName daemonServer = getDaemonServer();
             boolean readOnly = getReadOnly();
-            return getConnector(Locale.getDefault(), username, password, switchUser, daemonServer, readOnly);
+            return getConnector(ThreadLocale.get(), username, password, switchUser, daemonServer, readOnly);
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         } catch(ValidationException err) {
-            throw new LoginException(err.getLocalizedMessage(Locale.getDefault()), err);
+            throw new LoginException(err.getLocalizedMessage(), err);
         }
     }
 
     /**
      * Gets the <code>AOServConnector</code> with the provided authentication
      * information.  The <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
-     * resource determines the connection parameters.  Uses the default locale.
+     * resource determines the connection parameters.  Uses the thread locale.
      * Only one instance will be created for each username/password pair and its
-     * locale will be reset back to the default locale.
+     * locale will be reset back to the thread locale.
      *
      * @param  username  the username to connect as
      * @param  password  the password to connect with
      */
     public static AOServConnector<?,?> getConnector(UserId username, String password, boolean readOnly) throws RemoteException, LoginException {
-        return getConnector(Locale.getDefault(), username, password, username, null, readOnly);
+        return getConnector(ThreadLocale.get(), username, password, username, null, readOnly);
     }
 
     /**
      * Gets the <code>AOServConnector</code> with the provided authentication
      * information.  The <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
-     * resource determines the connection parameters.  Uses the default locale.
-     * Only one instance will be created for each unique set of authentication parameters
-     * and its locale will be reset back to the provided locale.
+     * resource determines the connection parameters.  Only one instance will be created for
+     * each unique set of authentication parameters and its locale will be reset back to the provided locale.
      *
      * @param  username  the username to connect as
      * @param  password  the password to connect with

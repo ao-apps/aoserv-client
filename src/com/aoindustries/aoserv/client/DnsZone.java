@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -13,7 +13,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -144,7 +143,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         return zone.getDomain();
     }
     // </editor-fold>
@@ -377,7 +376,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
     	;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         if(pkey.equals(API_ZONE)) reasons.add(new CannotRemoveReason<DnsZone>("Not allowed to remove the API Zone: "+API_ZONE));
         return reasons;

@@ -474,14 +474,17 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
 
+    @Override
     final public F getFactory() {
         return factory;
     }
 
+    @Override
     final public Locale getLocale() {
         return locale;
     }
 
+    @Override
     final public void setLocale(final Locale locale) throws RemoteException {
         if(!this.locale.equals(locale)) {
             this.locale = locale;
@@ -500,26 +503,32 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
 
+    @Override
     final public UserId getConnectAs() {
         return connectAs;
     }
 
+    @Override
     final public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
         return getBusinessAdministrators().get(connectAs);
     }
 
+    @Override
     final public UserId getAuthenticateAs() {
         return authenticateAs;
     }
 
+    @Override
     final public String getPassword() {
         return password;
     }
 
+    @Override
     final public boolean isReadOnly() {
         return readOnly;
     }
 
+    @Override
     final public <R> CommandResult<R> executeCommand(final RemoteCommand<R> command, final boolean isInteractive) throws RemoteException {
         // Check read-only commands
         if(readOnly && !command.isReadOnlyCommand()) throw new ReadOnlyException();
@@ -538,6 +547,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<C,F,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<C,F,?,?>>>();
+    @Override
     final public Map<ServiceName,AOServService<C,F,?,?>> getServices() throws RemoteException {
         Map<ServiceName,AOServService<C,F,?,?>> ts = tables.get();
         if(ts==null) {
@@ -554,6 +564,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedAOServerDaemonHostService<C,F> aoserverDaemonHosts;
+    @Override
     final public AOServerDaemonHostService<C,F> getAoServerDaemonHosts() {
         return aoserverDaemonHosts;
     }

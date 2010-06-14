@@ -1,13 +1,12 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -125,7 +124,7 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
     	return name;
     }
     // </editor-fold>

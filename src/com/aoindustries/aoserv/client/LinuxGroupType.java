@@ -1,13 +1,12 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -62,6 +61,7 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.LinuxGroupType getBean() {
         return new com.aoindustries.aoserv.client.beans.LinuxGroupType (getKey());
     }
@@ -85,8 +85,8 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "LinuxGroupType."+getKey()+".toString");
+    String toStringImpl() {
+        return ApplicationResources.accessor.getMessage("LinuxGroupType."+getKey()+".toString");
     }
     // </editor-fold>
 

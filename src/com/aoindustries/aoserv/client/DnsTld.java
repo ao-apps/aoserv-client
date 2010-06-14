@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.table.IndexType;
-import java.util.Locale;
 
 /**
  * A <code>DnsTld</code> is a name server top level domain.  A top level domain
@@ -50,8 +49,8 @@ final public class DnsTld extends AOServObjectDomainNameKey<DnsTld> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
-    String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "DnsTld.description."+getKey());
+    String getDescription() {
+        return ApplicationResources.accessor.getMessage("DnsTld.description."+getKey());
     }
     // </editor-fold>
 }

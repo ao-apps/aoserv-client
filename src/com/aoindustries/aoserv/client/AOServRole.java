@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -99,7 +98,7 @@ final public class AOServRole extends AOServObjectIntegerKey<AOServRole> impleme
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
         return name;
     }
     // </editor-fold>

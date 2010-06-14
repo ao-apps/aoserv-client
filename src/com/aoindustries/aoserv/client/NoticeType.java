@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -59,8 +58,8 @@ final public class NoticeType extends AOServObjectStringKey<NoticeType> implemen
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "NoticeType."+getKey()+".description");
+    public String getDescription() {
+        return ApplicationResources.accessor.getMessage("NoticeType."+getKey()+".description");
     }
     // </editor-fold>
 }

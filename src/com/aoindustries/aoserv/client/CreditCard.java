@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -406,14 +405,14 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
     	return cardInfo;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
         return Collections.emptyList();
     }
     */

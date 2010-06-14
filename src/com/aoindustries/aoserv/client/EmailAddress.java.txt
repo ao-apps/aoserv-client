@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -203,20 +203,20 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         );
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Everything using this address must be removable
         BlackholeEmailAddress bea=getBlackholeEmailAddress();
-        if(bea!=null) reasons.addAll(bea.getCannotRemoveReasons(userLocale));
+        if(bea!=null) reasons.addAll(bea.getCannotRemoveReasons());
 
-        for(EmailForwarding ef : getEmailForwardings()) reasons.addAll(ef.getCannotRemoveReasons(userLocale));
+        for(EmailForwarding ef : getEmailForwardings()) reasons.addAll(ef.getCannotRemoveReasons());
 
-        for(EmailListAddress ela : getService().getConnector().getEmailListAddresses().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons(userLocale));
+        for(EmailListAddress ela : getService().getConnector().getEmailListAddresses().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons());
 
-        for(EmailPipeAddress epa : getEmailPipeAddresses()) reasons.addAll(epa.getCannotRemoveReasons(userLocale));
+        for(EmailPipeAddress epa : getEmailPipeAddresses()) reasons.addAll(epa.getCannotRemoveReasons());
 
-        for(LinuxAccAddress laa : getLinuxAccAddresses()) reasons.addAll(laa.getCannotRemoveReasons(userLocale));
+        for(LinuxAccAddress laa : getLinuxAccAddresses()) reasons.addAll(laa.getCannotRemoveReasons());
 
         // Cannot be used as any part of a majordomo list
         for(MajordomoList ml : getService().getConnector().getMajordomoLists().getRows()) {
@@ -260,7 +260,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     }
 
     @Override
-    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+    String toStringImpl() throws SQLException, IOException {
         return address+'@'+getDomain().getDomain();
     }
 

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -136,6 +135,7 @@ final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.HttpdServer getBean() {
         return new com.aoindustries.aoserv.client.beans.HttpdServer(key, number, maxBinds, linuxAccountGroup, modPhpVersion, useSuexec, isShared, useModPerl, timeout);
     }
@@ -161,7 +161,7 @@ final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> imple
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
     	return "httpd"+number;
     }
     // </editor-fold>

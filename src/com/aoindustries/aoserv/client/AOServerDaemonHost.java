@@ -1,14 +1,13 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.validator.Hostname;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -95,8 +94,8 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDae
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-    	return host+"->"+getAoServer().toStringImpl(userLocale);
+    String toStringImpl() throws RemoteException {
+    	return host+"->"+getAoServer().toStringImpl();
     }
     // </editor-fold>
 }

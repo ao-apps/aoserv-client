@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -88,7 +88,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSe
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
         return Collections.emptyList();
     }
 

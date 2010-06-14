@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Each <code>HttpdServer</code> may listen for network connections on
@@ -79,10 +78,10 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     }
 
     @Override
-    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+    String toStringImpl() throws SQLException, IOException {
         HttpdServer server=getHttpdServer();
         NetBind bind=getNetBind();
-        return server.toStringImpl(userLocale)+'|'+bind.toStringImpl(userLocale);
+        return server.toStringImpl()+'|'+bind.toStringImpl();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -127,9 +126,9 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         Business bu = getBusiness();
-    	return (bu==null ? accounting : bu.toString(userLocale))+"->"+getServer().toStringImpl(userLocale);
+    	return (bu==null ? accounting : bu.toString())+"->"+getServer().toStringImpl();
     }
     // </editor-fold>
 
@@ -149,7 +148,7 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         Business bu=getBusiness();
@@ -173,12 +172,12 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
                 // net_binds
                 for(NetBind nb : getNetBinds()) {
                     String details=nb.getDetails();
-                    if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(userLocale), nb));
+                    if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(), nb));
                     else {
                         IPAddress ia=nb.getIPAddress();
                         NetDevice nd=ia.getNetDevice();
-                        if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), nb));
-                        else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(userLocale), nb));
+                        if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), nb));
+                        else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(), nb));
                     }
                 }
 
@@ -188,7 +187,7 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
                     if(
                         nd!=null
                         && se.equals(nd.getServer())
-                    ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(userLocale), ia));
+                    ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), ia));
                 }
 
                 if(ao!=null) {

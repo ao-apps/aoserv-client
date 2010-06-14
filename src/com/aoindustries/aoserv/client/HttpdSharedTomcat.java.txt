@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * An <code>HttpdSharedTomcat</code> stores configuration information
@@ -83,7 +82,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
         ;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         for(HttpdTomcatSharedSite htss : getHttpdTomcatSharedSites()) {
@@ -266,7 +265,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     @Override
-    String toStringImpl(Locale userLocale) throws SQLException, IOException {
+    String toStringImpl() throws SQLException, IOException {
         return name+" on "+getAOServer().getHostname();
     }
 

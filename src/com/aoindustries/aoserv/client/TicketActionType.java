@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -62,6 +61,7 @@ final public class TicketActionType extends AOServObjectStringKey<TicketActionTy
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TicketActionType getBean() {
         return new com.aoindustries.aoserv.client.beans.TicketActionType(getKey(), visibleAdminOnly);
     }
@@ -78,20 +78,20 @@ final public class TicketActionType extends AOServObjectStringKey<TicketActionTy
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".toString");
+    String toStringImpl() {
+        return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".toString");
     }
 
     /**
      * Generates a locale-specific summary.
      */
-    String generateSummary(AOServConnector connector, Locale userLocale, String oldValue, String newValue) {
+    String generateSummary(AOServConnector connector, String oldValue, String newValue) {
         if(oldValue==null) {
-            if(newValue==null) return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.null.null");
-            return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.null.notNull", newValue);
+            if(newValue==null) return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.null.null");
+            return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.null.notNull", newValue);
         } else {
-            if(newValue==null) return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.notNull.null", oldValue);
-            return ApplicationResources.accessor.getMessage(userLocale, "TicketActionType."+getKey()+".generatedSummary.notNull.notNull", oldValue, newValue);
+            if(newValue==null) return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.notNull.null", oldValue);
+            return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.notNull.notNull", oldValue, newValue);
         }
     }
     // </editor-fold>

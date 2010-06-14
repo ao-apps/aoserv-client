@@ -1,12 +1,11 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2006-2009 by AO Industries, Inc.,
+ * Copyright 2006-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import java.rmi.RemoteException;
-import java.util.Locale;
 
 /**
  * An object that uses a String as its key value.
@@ -39,6 +38,7 @@ abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T>> 
     /**
      * Gets the interned key value for this object.
      */
+    @Override
     final public String getKey() {
         return key;
     }
@@ -55,7 +55,7 @@ abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T>> 
      * The default string representation is that of the key value.
      */
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         return key;
     }
 }

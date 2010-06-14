@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -250,15 +250,15 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      * @return  an empty <code>List</code> if this resource would be enableable given all dependencies were enabled, or a list of reasons
      */
     /* TODO
-    public List<Reason> getCannotEnableReasons(Locale userLocale) throws IOException, SQLException {
+    public List<Reason> getCannotEnableReasons() throws IOException, SQLException {
         List<Reason> reasons = new ArrayList<Reason>();
 
         // Be currently disabled
         DisableLog dl=getDisableLog();
-        if(dl==null) reasons.add(new Reason(ApplicationResources.accessor.getMessage(userLocale, "Resource.getCannotEnableReasons.notDisabled"), this));
+        if(dl==null) reasons.add(new Reason(ApplicationResources.accessor.getMessage("Resource.getCannotEnableReasons.notDisabled"), this));
         else {
             // Be enableable by the current user
-            if(!dl.canEnable()) reasons.add(new Reason(ApplicationResources.accessor.getMessage(userLocale, "Resource.getCannotEnableReasons.notAllowed"), this));
+            if(!dl.canEnable()) reasons.add(new Reason(ApplicationResources.accessor.getMessage("Resource.getCannotEnableReasons.notAllowed"), this));
         }
 
         // TODO: Not be restricted by any type-specific rules
@@ -275,7 +275,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      * @see  #getAllDependencies() for the order these are returned
      */
     /* TODO
-    public List<Reason> getAllCannotEnableReasons(Locale userLocale) throws IOException, SQLException {
+    public List<Reason> getAllCannotEnableReasons() throws IOException, SQLException {
         // TODO
         return Collections.emptyList();
     }
@@ -298,7 +298,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      * @return  an empty <code>List</code> if this resource would be disableable given all dependent resources were disabled, or a list of reasons
      */
     /* TODO
-    public List<Reason> getCannotDisableReasons(Locale userLocale) throws IOException, SQLException {
+    public List<Reason> getCannotDisableReasons() throws IOException, SQLException {
         // TODO
         return Collections.emptyList();
     }
@@ -312,7 +312,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      * @see  #getAllDependentResources() for the order these are returned
      */
     /* TODO
-    public List<Reason> getAllCannotDisableReasons(Locale userLocale) throws IOException, SQLException {
+    public List<Reason> getAllCannotDisableReasons() throws IOException, SQLException {
         // TODO
         return Collections.emptyList();
     }
@@ -334,7 +334,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      * @return  an empty <code>List</code> if this resource would be removable given all dependent resources were removed, or a list of reasons
      */
     /* TODO
-    public List<Reason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
+    public List<Reason> getCannotRemoveReasons() throws IOException, SQLException {
         // TODO
         return Collections.emptyList();
     }
@@ -348,7 +348,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      * @see  #getAllDependentResources() for the order these are returned
      */
     /* TODO
-    public List<Reason> getAllCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
+    public List<Reason> getAllCannotRemoveReasons() throws IOException, SQLException {
         // TODO
         return Collections.emptyList();
     }

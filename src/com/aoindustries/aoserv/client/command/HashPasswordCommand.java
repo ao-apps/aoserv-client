@@ -11,7 +11,6 @@ import com.aoindustries.aoserv.client.validator.HashedPassword;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -31,7 +30,8 @@ final public class HashPasswordCommand extends AOServCommand<String> {
         return password;
     }
 
-    public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
+    @Override
+    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();
     }

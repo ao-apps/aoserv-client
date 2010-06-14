@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -72,6 +72,7 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Username getBean() {
         return new com.aoindustries.aoserv.client.beans.Username(getBean(getKey()), getBean(accounting), disableLog);
     }
@@ -238,31 +239,31 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
      * Checks the strength of a password as used by this <code>Username</code>.
      */
     /*
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException, SQLException {
+    public PasswordChecker.Result[] checkPassword(String password) throws IOException, SQLException {
         BusinessAdministrator ba=getBusinessAdministrator();
         if(ba!=null) {
-            PasswordChecker.Result[] results=ba.checkPassword(userLocale, password);
-            if(PasswordChecker.hasResults(userLocale, results)) return results;
+            PasswordChecker.Result[] results=ba.checkPassword(password);
+            if(PasswordChecker.hasResults(results)) return results;
     	}
 
         LinuxAccount la=getLinuxAccount();
     	if(la!=null) {
-            PasswordChecker.Result[] results=la.checkPassword(userLocale, password);
-            if(PasswordChecker.hasResults(userLocale, results)) return results;
+            PasswordChecker.Result[] results=la.checkPassword(password);
+            if(PasswordChecker.hasResults(results)) return results;
     	}
 
         for(MySQLUser mu : getMySQLUsers()) {
-            PasswordChecker.Result[] results=mu.checkPassword(userLocale, password);
-            if(PasswordChecker.hasResults(userLocale, results)) return results;
+            PasswordChecker.Result[] results=mu.checkPassword(password);
+            if(PasswordChecker.hasResults(results)) return results;
     	}
 
         PostgresUser pu=getPostgresUser();
         if(pu!=null) {
-            PasswordChecker.Result[] results=pu.checkPassword(userLocale, password);
-            if(PasswordChecker.hasResults(userLocale, results)) return results;
+            PasswordChecker.Result[] results=pu.checkPassword(password);
+            if(PasswordChecker.hasResults(results)) return results;
     	}
 
-        return PasswordChecker.getAllGoodResults(userLocale);
+        return PasswordChecker.getAllGoodResults();
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
@@ -296,7 +297,7 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
     	;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         LinuxAccount la=getLinuxAccount();

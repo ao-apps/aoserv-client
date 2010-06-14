@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.retry;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -25,6 +25,7 @@ final public class RetryConnectorFactory extends WrappedConnectorFactory<RetryCo
         super(wrapped);
     }
 
+    @Override
     protected RetryConnector newWrappedConnector(final Locale locale, final UserId connectAs, final UserId authenticateAs, final String password, final DomainName daemonServer, final boolean readOnly) throws LoginException, RemoteException {
         int attempt = 1;
         while(!Thread.interrupted()) {

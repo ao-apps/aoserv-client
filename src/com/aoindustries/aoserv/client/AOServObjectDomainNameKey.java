@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.aoserv.client.validator.DomainName;
 import java.rmi.RemoteException;
-import java.util.Locale;
 
 /**
  * An object that uses a DomainName as its key value.
@@ -38,12 +37,13 @@ abstract public class AOServObjectDomainNameKey<T extends AOServObjectDomainName
     /**
      * Gets the interned key value for this object.
      */
+    @Override
     final public DomainName getKey() {
         return key;
     }
 
     /**
-     * Compares keys in a case-insensitive manner using the English locale.
+     * Compares keys.
      */
     @Override
     protected int compareToImpl(T other) throws RemoteException {
@@ -54,7 +54,7 @@ abstract public class AOServObjectDomainNameKey<T extends AOServObjectDomainName
      * The default string representation is that of the key value.
      */
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         return key.toString();
     }
 }

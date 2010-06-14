@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2009 by AO Industries, Inc.,
+ * Copyright 2005-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -77,8 +76,8 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "EmailSpamAssassinIntegrationMode."+getKey()+".toString");
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("EmailSpamAssassinIntegrationMode."+getKey()+".toString");
     }
     // </editor-fold>
 

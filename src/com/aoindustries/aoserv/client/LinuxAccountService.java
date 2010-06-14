@@ -134,7 +134,7 @@ public interface LinuxAccountService<C extends AOServConnector<C,F>, F extends A
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
                 PasswordChecker.Result[] results = connector.getSimpleAOClient().checkLinuxAccountPassword(args[1], args[2]);
-                if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                if(PasswordChecker.hasResults(results)) {
                     PasswordChecker.printResults(results, out);
                     out.flush();
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -131,7 +131,7 @@ public interface BusinessAdministratorService<C extends AOServConnector<C,F>, F 
                     args[1],
                     args[2]
                 );
-                if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                if(PasswordChecker.hasResults(results)) {
                     PasswordChecker.printResults(results, out);
                     out.flush();
                 }

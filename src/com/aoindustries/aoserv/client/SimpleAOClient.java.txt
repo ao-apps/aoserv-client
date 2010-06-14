@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * <code>SimpleAOClient</code> is a simplified interface into the client
@@ -1516,7 +1515,7 @@ final public class SimpleAOClient {
             home==null
             || home.length()==0
             || home.equals("~")
-        ) home=LinuxServerAccount.getDefaultHomeDirectory(username, Locale.getDefault());
+        ) home=LinuxServerAccount.getDefaultHomeDirectory(username);
         return la.addLinuxServerAccount(ao, home);
     }
 
@@ -1636,13 +1635,12 @@ final public class SimpleAOClient {
      * @see  #waitForMySQLDatabaseRebuild
      */
     public int addMySQLDatabase(
-        Locale userLocale,
         String name,
         String mysqlServer,
         String aoServer,
         String accounting
     ) throws IllegalArgumentException, IOException, SQLException {
-        checkMySQLDatabaseName(userLocale, name);
+        checkMySQLDatabaseName(name);
         return connector.getMysqlDatabases().addMySQLDatabase(
             name,
             getMySQLServer(aoServer, mysqlServer),
@@ -2501,9 +2499,9 @@ final public class SimpleAOClient {
         String username,
         String password
     ) throws IllegalArgumentException, IOException, SQLException {
-        String check = Username.checkUsername(username, Locale.getDefault());
+        String check = Username.checkUsername(username);
         if(check!=null) throw new IllegalArgumentException(check);
-        return BusinessAdministrator.checkPassword(Locale.getDefault(), username, password);
+        return BusinessAdministrator.checkPassword(username, password);
     }
 
     /**
@@ -2519,7 +2517,7 @@ final public class SimpleAOClient {
     public static void checkBusinessAdministratorUsername(
         String username
     ) throws IllegalArgumentException {
-        String check = BusinessAdministrator.checkUsername(username, Locale.getDefault());
+        String check = BusinessAdministrator.checkUsername(username);
         if(check!=null) throw new IllegalArgumentException(check);
     }
 
@@ -2657,7 +2655,7 @@ final public class SimpleAOClient {
         String username,
         String password
     ) throws IllegalArgumentException, IOException, SQLException {
-        return getLinuxAccount(username).checkPassword(Locale.getDefault(), password);
+        return getLinuxAccount(username).checkPassword(password);
     }
 
     /**
@@ -2706,10 +2704,9 @@ final public class SimpleAOClient {
      * @see  #addMySQLDatabase
      */
     public void checkMySQLDatabaseName(
-        Locale userLocale,
         String name
     ) throws IllegalArgumentException, IOException, SQLException {
-        String invalidReason = connector.getMysqlDatabases().isValidDatabaseName(userLocale, name);
+        String invalidReason = connector.getMysqlDatabases().isValidDatabaseName(name);
         if(invalidReason!=null) throw new IllegalArgumentException(invalidReason);
     }
 
@@ -2733,7 +2730,7 @@ final public class SimpleAOClient {
         String username,
         String password
     ) throws IOException {
-        return MySQLUser.checkPassword(Locale.getDefault(), username, password);
+        return MySQLUser.checkPassword(username, password);
     }
 
     /**
@@ -2810,7 +2807,7 @@ final public class SimpleAOClient {
         String username,
         String password
     ) throws IOException {
-        return PostgresUser.checkPassword(Locale.getDefault(), username, password);
+        return PostgresUser.checkPassword(username, password);
     }
 
     /**
@@ -2923,7 +2920,7 @@ final public class SimpleAOClient {
     public static void checkUsername(
         String username
     ) throws IllegalArgumentException {
-        String check = Username.checkUsername(username, Locale.getDefault());
+        String check = Username.checkUsername(username);
         if(check!=null) throw new IllegalArgumentException(check);
     }
 
@@ -2949,7 +2946,7 @@ final public class SimpleAOClient {
         String username,
         String password
     ) throws IllegalArgumentException, IOException, SQLException {
-        return getUsername(username).checkPassword(Locale.getDefault(), password);
+        return getUsername(username).checkPassword(password);
     }
 
     /**
@@ -4660,12 +4657,11 @@ final public class SimpleAOClient {
      * @see  #checkMySQLDatabaseName
      */
     public boolean isMySQLDatabaseNameAvailable(
-        Locale userLocale,
         String name,
         String mysqlServer,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
-        checkMySQLDatabaseName(userLocale, name);
+        checkMySQLDatabaseName(name);
         return getMySQLServer(aoServer, mysqlServer).isMySQLDatabaseNameAvailable(name);
     }
 
@@ -4878,7 +4874,7 @@ final public class SimpleAOClient {
         String username
     ) throws IllegalArgumentException, IOException, SQLException {
         checkUsername(username);
-        return connector.getUsernames().isUsernameAvailable(username, Locale.getDefault());
+        return connector.getUsernames().isUsernameAvailable(username);
     }
 
     /**
@@ -5069,7 +5065,7 @@ final public class SimpleAOClient {
         BlackholeEmailAddress bea=addr.getBlackholeEmailAddress();
         if(bea==null) throw new IllegalArgumentException("Unable to find BlackholeEmailAddress: "+address+'@'+domain+" on "+aoServer);
         bea.remove();
-        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**
@@ -5287,7 +5283,7 @@ final public class SimpleAOClient {
         EmailForwarding ef=addr.getEmailForwarding(destination);
         if(ef==null) throw new IllegalArgumentException("Unable to find EmailForwarding: "+address+'@'+domain+"->"+destination+" on "+aoServer);
         ef.remove();
-        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**
@@ -5341,7 +5337,7 @@ final public class SimpleAOClient {
         EmailListAddress ela=addr.getEmailListAddress(el);
         if(ela==null) throw new IllegalArgumentException("Unable to find EmailListAddress: "+address+'@'+domain+"->"+path+" on "+aoServer);
         ela.remove();
-        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**
@@ -5398,7 +5394,7 @@ final public class SimpleAOClient {
         EmailPipeAddress epa=addr.getEmailPipeAddress(ep);
         if(epa==null) throw new IllegalArgumentException("Unable to find EmailPipeAddress: "+address+'@'+domain+"->"+ep);
         epa.remove();
-        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**
@@ -5573,7 +5569,7 @@ final public class SimpleAOClient {
         LinuxAccAddress laa=addr.getLinuxAccAddress(lsa);
         if(laa==null) throw new IllegalArgumentException("Unable to find LinuxAccAddress: "+address+'@'+domain+"->"+username+" on "+aoServer);
         laa.remove();
-        if(addr.getCannotRemoveReasons(Locale.getDefault()).isEmpty() && !addr.isUsed()) addr.remove();
+        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
     }
 
     /**

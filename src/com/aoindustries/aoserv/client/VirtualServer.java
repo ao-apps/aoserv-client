@@ -10,7 +10,6 @@ import com.aoindustries.table.IndexType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -232,6 +231,7 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.VirtualServer getBean() {
         return new com.aoindustries.aoserv.client.beans.VirtualServer(key, primaryRam, primaryRamTarget, secondaryRam, secondaryRamTarget, minimumProcessorType, minimumProcessorArchitecture, minimumProcessorSpeed, minimumProcessorSpeedTarget, processorCores, processorCoresTarget, processorWeight, processorWeightTarget, primaryPhysicalServerLocked, secondaryPhysicalServerLocked, requiresHvm, vncPassword);
     }
@@ -259,8 +259,8 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return getServer().toStringImpl(userLocale);
+    String toStringImpl() throws RemoteException {
+        return getServer().toStringImpl();
     }
     // </editor-fold>
 

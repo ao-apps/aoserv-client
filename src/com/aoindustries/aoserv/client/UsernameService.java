@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -74,7 +74,7 @@ public interface UsernameService<C extends AOServConnector<C,F>, F extends AOSer
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_USERNAME_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_USERNAME_PASSWORD, args, 2, err)) {
                 PasswordChecker.Result[] results = connector.getSimpleAOClient().checkUsernamePassword(args[1], args[2]);
-                if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                if(PasswordChecker.hasResults(results)) {
                     PasswordChecker.printResults(results, out);
                     out.flush();
                 }
@@ -121,18 +121,9 @@ public interface UsernameService<C extends AOServConnector<C,F>, F extends AOSer
 	}
 	return false;
     }
-    */
 
-    /**
-     * @deprecated  Please provide the locale for locale-specific errors.
-     */
-    /* TODO
     public boolean isUsernameAvailable(String username) throws SQLException, IOException {
-        return isUsernameAvailable(username, Locale.getDefault());
-    }
-
-    public boolean isUsernameAvailable(String username, Locale locale) throws SQLException, IOException {
-        String check = Username.checkUsername(username, locale);
+        String check = Username.checkUsername(username);
         if(check!=null) throw new SQLException(check);
         return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_USERNAME_AVAILABLE, username);
     }*/

@@ -1,13 +1,12 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -132,6 +131,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.OperatingSystemVersion getBean() {
         return new com.aoindustries.aoserv.client.beans.OperatingSystemVersion(key, operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);
     }
@@ -167,7 +167,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
         return display;
     }
     // </editor-fold>

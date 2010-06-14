@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.rmi;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -91,6 +91,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
 
     private final AOServConnectorFactoryCache<C,F> connectors = new AOServConnectorFactoryCache<C,F>();
 
+    @Override
     public C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
             C connector = connectors.get(connectAs, authenticateAs, password, daemonServer, readOnly);
@@ -113,6 +114,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
     /**
      * Connectors are exported as they are created.
      */
+    @Override
     public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
             C connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer, readOnly);

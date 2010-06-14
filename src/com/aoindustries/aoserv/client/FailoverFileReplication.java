@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -14,7 +14,6 @@ import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -103,6 +102,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     }
 
     @SchemaColumn(order=3, name="max_bit_rate", description="the maximum bit rate for files being replicated")
+    @Override
     public Long getBitRate() {
         return maxBitRate;
     }
@@ -158,6 +158,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.FailoverFileReplication getBean() {
         return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, getBean(connectAddress), getBean(connectFrom), enabled, getBean(quotaGid));
     }
@@ -184,8 +185,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return getServer().toStringImpl(userLocale)+"->"+getBackupPartition().toStringImpl(userLocale);
+    String toStringImpl() throws RemoteException {
+        return getServer().toStringImpl()+"->"+getBackupPartition().toStringImpl();
     }
     // </editor-fold>
 
@@ -218,6 +219,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="BitRateProvider">
+    @Override
     public int getBlockSize() {
         return BufferManager.BUFFER_SIZE;
     }

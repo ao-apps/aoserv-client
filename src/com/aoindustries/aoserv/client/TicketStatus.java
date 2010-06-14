@@ -1,13 +1,12 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -83,15 +82,15 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+getKey()+".toString");
+    String toStringImpl() {
+        return ApplicationResources.accessor.getMessage("TicketStatus."+getKey()+".toString");
     }
 
     /**
      * Localized description.
      */
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketStatus."+getKey()+".description");
+    public String getDescription() {
+        return ApplicationResources.accessor.getMessage("TicketStatus."+getKey()+".description");
     }
     // </editor-fold>
 

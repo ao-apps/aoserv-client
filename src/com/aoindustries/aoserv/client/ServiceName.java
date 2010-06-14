@@ -5,11 +5,9 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.util.i18n.LocalizedToString;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Each service has a unique identifier.  These IDs may change over time, but
@@ -17,7 +15,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-public enum ServiceName implements LocalizedToString {
+public enum ServiceName {
     ao_server_daemon_hosts,
     ao_server_resources,
     ao_servers,
@@ -218,22 +216,12 @@ public enum ServiceName implements LocalizedToString {
         )
     );
 
-    /**
-     * Gets the service name in the default locale.
-     */
     @Override
     public String toString() {
-        return toString(Locale.getDefault());
+        return ApplicationResources.accessor.getMessage("ServiceName."+name()+".toString");
     }
 
-    /**
-     * Gets the service name in the provided locale.
-     */
-    public String toString(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "ServiceName."+name()+".toString");
-    }
-
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "ServiceName."+name()+".description");
+    public String getDescription() {
+        return ApplicationResources.accessor.getMessage("ServiceName."+name()+".description");
     }
 }

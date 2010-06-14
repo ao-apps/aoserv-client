@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,7 +10,6 @@ import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -178,8 +177,8 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "LinuxGroup.toString", groupName, getAoServerResource().getAoServer().getHostname());
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("LinuxGroup.toString", groupName, getAoServerResource().getAoServer().getHostname());
     }
     // </editor-fold>
 
@@ -207,7 +206,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
         return getService().getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be the primary group for any linux accounts
@@ -218,7 +217,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
         }
 
         // All LinuxServerGroups must be removable
-        for(LinuxServerGroup lsg : getLinuxServerGroups()) reasons.addAll(lsg.getCannotRemoveReasons(userLocale));
+        for(LinuxServerGroup lsg : getLinuxServerGroups()) reasons.addAll(lsg.getCannotRemoveReasons());
 
         return reasons;
     }
@@ -231,7 +230,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
             pkey
         );
     }
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServer ao=getAOServer();

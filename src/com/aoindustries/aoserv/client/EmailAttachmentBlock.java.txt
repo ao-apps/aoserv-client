@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2004-2009 by AO Industries, Inc.,
+ * Copyright 2004-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,7 +10,6 @@ import java.io.*;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * An <code>EmailAttachmentBlock</code> restricts one attachment type on one email inbox.
@@ -76,7 +75,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
         );
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
         return Collections.emptyList();
     }
 
@@ -90,8 +89,8 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     }
 
     @Override
-    String toStringImpl(Locale userLocale) throws SQLException, IOException {
-        return getLinuxServerAccount().toStringImpl(userLocale)+"->"+extension;
+    String toStringImpl() throws SQLException, IOException {
+        return getLinuxServerAccount().toStringImpl()+"->"+extension;
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

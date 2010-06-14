@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.command;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -396,8 +395,8 @@ public enum CommandName {
     /**
      * Gets a short description of the command.
      */
-    public String getShortDesc(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "CommandName."+name()+".shortDesc");
+    public String getShortDesc() {
+        return ApplicationResources.accessor.getMessage("CommandName."+name()+".shortDesc");
     }
 
     /**

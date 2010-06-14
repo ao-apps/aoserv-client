@@ -15,7 +15,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -243,7 +242,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
         return accounting + " (" + priority + ')';
     }
     // </editor-fold>

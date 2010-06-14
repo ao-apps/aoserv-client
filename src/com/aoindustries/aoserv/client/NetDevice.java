@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MacAddress;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -165,6 +164,7 @@ final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.NetDevice getBean() {
         return new com.aoindustries.aoserv.client.beans.NetDevice(
             key,
@@ -203,8 +203,8 @@ final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implement
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return deviceId+"@"+getServer().toStringImpl(userLocale);
+    String toStringImpl() throws RemoteException {
+        return deviceId+"@"+getServer().toStringImpl();
     }
     // </editor-fold>
 

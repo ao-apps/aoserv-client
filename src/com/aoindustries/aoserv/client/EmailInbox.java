@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -168,6 +167,7 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.EmailInbox getBean() {
         return new com.aoindustries.aoserv.client.beans.EmailInbox(key, autoresponderFrom, autoresponderSubject, getBean(autoresponderPath), isAutoresponderEnabled, useInbox, trashEmailRetention, junkEmailRetention, saIntegrationMode, saRequiredScore, saDiscardScore);
     }
@@ -200,9 +200,9 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         LinuxAccount la = getLinuxAccount();
-        return ApplicationResources.accessor.getMessage(userLocale, "EmailInbox.toString", la.getUsername().getUsername(), la.getAoServerResource().getAoServer().getHostname());
+        return ApplicationResources.accessor.getMessage("EmailInbox.toString", la.getUsername().getUsername(), la.getAoServerResource().getAoServer().getHostname());
     }
     // </editor-fold>
 
@@ -264,8 +264,8 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
         else return dl.canEnable() && getLinuxAccount().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws SQLException, IOException {
-        return getLinuxAccount().checkPassword(userLocale, password);
+    public PasswordChecker.Result[] checkPassword(String password) throws SQLException, IOException {
+        return getLinuxAccount().checkPassword(password);
     }
 
     public void copyPassword(LinuxServerAccount other) throws IOException, SQLException {
@@ -356,18 +356,9 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
         }
         return sizes;
     }
-    */
 
-    /**
-     * @deprecated  Please provide the locale for generated errors.
-     */
-    /* TODO
     public static String getDefaultHomeDirectory(String username) {
-        return getDefaultHomeDirectory(username, Locale.getDefault());
-    }
-
-    public static String getDefaultHomeDirectory(String username, Locale locale) {
-        String check = Username.checkUsername(username, locale);
+        String check = Username.checkUsername(username);
         if(check!=null) throw new IllegalArgumentException(check);
         return "/home/"+username.charAt(0)+'/'+username;
     }
@@ -380,7 +371,7 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
         return getService().getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         if(uid<UnixFile.MINIMUM_USER_UID) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than "+UnixFile.MINIMUM_USER_UID));

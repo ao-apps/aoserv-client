@@ -39,7 +39,7 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
 
     @Override
     final public String toString() {
-        return getServiceName().toString(connector.getLocale());
+        return getServiceName().toString();
     }
 
     /**

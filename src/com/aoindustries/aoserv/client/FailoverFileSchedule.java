@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 
 /**
  * A <code>FailoverFileSchedule</code> controls which time of day (in server
@@ -90,9 +89,9 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverF
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         StringBuilder SB = new StringBuilder();
-        SB.append(getFailoverFileReplication().toStringImpl(userLocale));
+        SB.append(getFailoverFileReplication().toStringImpl());
         SB.append('@');
         if(hour<10) SB.append('0');
         SB.append(hour);

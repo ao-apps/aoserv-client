@@ -11,7 +11,6 @@ import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -192,7 +191,7 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         return getIpAddress().getAddress();
     }
     // </editor-fold>

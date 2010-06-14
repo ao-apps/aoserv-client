@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -215,7 +214,7 @@ public class PasswordGenerator {
 
             } while(entropy<413000000000L);
             password=pw.toString();
-        } while(PasswordChecker.hasResults(Locale.getDefault(), PasswordChecker.checkPassword(Locale.getDefault(), null, password, PasswordChecker.PasswordStrength.STRICT)));
+        } while(PasswordChecker.hasResults(PasswordChecker.checkPassword(null, password, PasswordChecker.PasswordStrength.STRICT)));
         return password;
     }
 

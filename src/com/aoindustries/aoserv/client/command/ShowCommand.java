@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.command;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -35,13 +34,14 @@ final public class ShowCommand extends AOServCommand<String> {
         return object;
     }
 
-    public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
+    @Override
+    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // Must be able to find the command name
         if(object==null) {
             return Collections.singletonMap(
                 PARAM_OBJECT,
                 Collections.singletonList(
-                    ApplicationResources.accessor.getMessage(locale, "AOServCommand.validate.paramRequired", PARAM_OBJECT)
+                    ApplicationResources.accessor.getMessage("AOServCommand.validate.paramRequired", PARAM_OBJECT)
                 )
             );
         }
@@ -49,7 +49,7 @@ final public class ShowCommand extends AOServCommand<String> {
             return Collections.singletonMap(
                 PARAM_OBJECT,
                 Collections.singletonList(
-                    ApplicationResources.accessor.getMessage(locale, "AOServCommand.validate.unknownObject", object)
+                    ApplicationResources.accessor.getMessage("AOServCommand.validate.unknownObject", object)
                 )
             );
         }
@@ -58,14 +58,12 @@ final public class ShowCommand extends AOServCommand<String> {
 
     @Override
     public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
-        Locale locale = connector.getLocale();
-
         // Build the Object[] of values
         Object[] values=new Object[ServiceName.values.size()*2];
         int pos=0;
         for(ServiceName serviceName : ServiceName.values) {
             values[pos++]=serviceName.name();
-            values[pos++]=serviceName.getDescription(locale);
+            values[pos++]=serviceName.getDescription();
         }
 
         // Display the results
@@ -73,8 +71,8 @@ final public class ShowCommand extends AOServCommand<String> {
             StringBuilder SB = new StringBuilder();
             SQLUtility.printTable(
                 new String[] {
-                    ApplicationResources.accessor.getMessage(locale, "ShowCommand.header.name"),
-                    ApplicationResources.accessor.getMessage(locale, "ShowCommand.header.description")
+                    ApplicationResources.accessor.getMessage("ShowCommand.header.name"),
+                    ApplicationResources.accessor.getMessage("ShowCommand.header.description")
                 },
                 values,
                 SB,

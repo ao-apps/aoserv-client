@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2002-2009 by AO Industries, Inc.,
+ * Copyright 2002-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -125,7 +124,7 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         return getAoServerResource().getAoServer().getHostname()+":"+path.getPath();
     }
     // </editor-fold>
@@ -150,7 +149,7 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
         return Collections.emptyList();
     }
 

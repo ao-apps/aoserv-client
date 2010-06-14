@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -239,10 +239,10 @@ final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> imple
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        reasons.addAll(getMySQLUser().getCannotRemoveReasons(userLocale));
-        reasons.addAll(getMySQLDatabase().getCannotRemoveReasons(userLocale));
+        reasons.addAll(getMySQLUser().getCannotRemoveReasons());
+        reasons.addAll(getMySQLDatabase().getCannotRemoveReasons());
         return reasons;
     }
 

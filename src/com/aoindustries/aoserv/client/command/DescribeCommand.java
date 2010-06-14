@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client.command;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -42,13 +41,14 @@ final public class DescribeCommand extends AOServCommand<String> {
         return tableName;
     }
 
-    public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
+    @Override
+    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // Must be able to find the command name
         if(tableName==null) {
             return Collections.singletonMap(
                 PARAM_TABLE_NAME,
                 Collections.singletonList(
-                    ApplicationResources.accessor.getMessage(locale, "AOServCommand.validate.paramRequired", PARAM_TABLE_NAME)
+                    ApplicationResources.accessor.getMessage("AOServCommand.validate.paramRequired", PARAM_TABLE_NAME)
                 )
             );
         }
@@ -59,7 +59,7 @@ final public class DescribeCommand extends AOServCommand<String> {
             return Collections.singletonMap(
                 PARAM_TABLE_NAME,
                 Collections.singletonList(
-                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.validate.tableNotFound", tableName)
+                    ApplicationResources.accessor.getMessage("DescribeCommand.validate.tableNotFound", tableName)
                 )
             );
         }
@@ -74,18 +74,17 @@ final public class DescribeCommand extends AOServCommand<String> {
     public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         // Find the table given its name
         AOServService<?,?,?,?> service = connector.getServices().get(ServiceName.valueOf(tableName));
-        Locale locale = connector.getLocale();
         StringBuilder SB = new StringBuilder();
-        SB.append("<b>").append(ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.tableName")).append("</b>").append(eol);
+        SB.append("<b>").append(ApplicationResources.accessor.getMessage("DescribeCommand.header.tableName")).append("</b>").append(eol);
         SB.append("       ").append(tableName).append(eol);
-        String description = service.getServiceName().getDescription(locale);
+        String description = service.getServiceName().getDescription();
         if(description!=null && description.length()>0) {
             SB.append(eol);
-            SB.append("<b>").append(ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.description")).append("</b>").append(eol);
+            SB.append("<b>").append(ApplicationResources.accessor.getMessage("DescribeCommand.header.description")).append("</b>").append(eol);
             SB.append("       ").append(description).append(eol);
         }
         SB.append(eol);
-        SB.append("<b>").append(ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns")).append("</b>").append(eol);
+        SB.append("<b>").append(ApplicationResources.accessor.getMessage("DescribeCommand.header.columns")).append("</b>").append(eol);
         SB.append(eol);
 
         // Get the list of columns
@@ -109,10 +108,10 @@ final public class DescribeCommand extends AOServCommand<String> {
         try {
             SQLUtility.printTable(
                 new String[] {
-                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.column"),
-                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.type"),
-                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.index"),
-                    ApplicationResources.accessor.getMessage(locale, "DescribeCommand.header.columns.description")
+                    ApplicationResources.accessor.getMessage("DescribeCommand.header.columns.column"),
+                    ApplicationResources.accessor.getMessage("DescribeCommand.header.columns.type"),
+                    ApplicationResources.accessor.getMessage("DescribeCommand.header.columns.index"),
+                    ApplicationResources.accessor.getMessage("DescribeCommand.header.columns.description")
                 },
                 values,
                 SB,

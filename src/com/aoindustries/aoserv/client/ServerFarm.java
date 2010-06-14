@@ -1,15 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -75,6 +74,7 @@ final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.ServerFarm getBean() {
         return new com.aoindustries.aoserv.client.beans.ServerFarm(getBean(getKey()), description, getBean(owner), useRestrictedSmtpPort);
     }
@@ -99,7 +99,7 @@ final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> imp
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
     	return description;
     }
     // </editor-fold>

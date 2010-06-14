@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -67,6 +66,7 @@ final public class PaymentType extends AOServObjectStringKey<PaymentType> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.PaymentType getBean() {
         return new com.aoindustries.aoserv.client.beans.PaymentType(getKey(), isActive, allowWeb);
     }
@@ -82,13 +82,13 @@ final public class PaymentType extends AOServObjectStringKey<PaymentType> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "PaymentType."+getKey()+".description");
+    public String getDescription() {
+        return ApplicationResources.accessor.getMessage("PaymentType."+getKey()+".description");
     }
 
     @Override
-    String toStringImpl(Locale userLocale) {
-        return getDescription(userLocale);
+    String toStringImpl() {
+        return getDescription();
     }
     // </editor-fold>
 }

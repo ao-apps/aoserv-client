@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -176,8 +175,8 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "HttpdSite.toString", siteName, getAoServerResource().getAoServer().getHostname());
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("HttpdSite.toString", siteName, getAoServerResource().getAoServer().getHostname());
     }
     // </editor-fold>
 
@@ -237,7 +236,7 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
         ;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) {
+    public List<CannotRemoveReason> getCannotRemoveReasons() {
         return Collections.emptyList();
     }
 

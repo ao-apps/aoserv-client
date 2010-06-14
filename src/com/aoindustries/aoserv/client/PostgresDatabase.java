@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -156,6 +155,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.PostgresDatabase getBean() {
         return new com.aoindustries.aoserv.client.beans.PostgresDatabase(key, getBean(name), postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
     }
@@ -175,7 +175,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
         return name.toString();
     }
     // </editor-fold>
@@ -186,10 +186,12 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
      */
     public static final String JDBC_DRIVER="org.postgresql.Driver";
 
+    @Override
     public String getJdbcDriver() {
         return JDBC_DRIVER;
     }
 
+    @Override
     public String getJdbcUrl(boolean ipOnly) throws RemoteException {
         AOServer ao=getPostgresServer().getAoServerResource().getAoServer();
         return
@@ -205,6 +207,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         ;
     }
 
+    @Override
     public String getJdbcDocumentationUrl() throws RemoteException {
         String version=getPostgresServer().getPostgresVersion().getTechnologyVersion().getVersion();
         return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
@@ -257,7 +260,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         );
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
         
         PostgresServer ps=getPostgresServer();

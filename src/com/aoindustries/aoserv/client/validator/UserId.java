@@ -112,6 +112,7 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -144,6 +145,7 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
         return id.hashCode();
     }
 
+    @Override
     public int compareTo(UserId other) {
         return this==other ? 0 : id.compareTo(other.id);
     }
@@ -158,6 +160,7 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
      *
      * @see  String#intern()
      */
+    @Override
     public UserId intern() {
         try {
             UserId existing = interned.get(id);
@@ -178,6 +181,7 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
         return id;
     }
 
+    @Override
     public com.aoindustries.aoserv.client.beans.UserId getBean() {
         return new com.aoindustries.aoserv.client.beans.UserId(id);
     }

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.table.Row;
 import com.aoindustries.util.Internable;
-import com.aoindustries.util.i18n.LocalizedToString;
 import com.aoindustries.util.WrappedException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +25,7 @@ import java.util.Set;
  *
  * @see  AOServService
  */
-abstract public class AOServObject<K extends Comparable<K>,T extends AOServObject<K,T>> implements Row, Serializable, LocalizedToString, Comparable<T>, Cloneable {
+abstract public class AOServObject<K extends Comparable<K>,T extends AOServObject<K,T>> implements Row, Serializable, Comparable<T>, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -145,6 +144,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      */
     public abstract K getKey();
 
+    @Override
     final public int compareTo(T other) {
         try {
             return compareToImpl(other);
@@ -172,27 +172,14 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     }
 
     /**
-     * Gets a string representation of this object in the connector's current locale.
+     * Gets a string representation of this object.
      *
-     * @see  #toString(java.util.Locale)
+     * @see  #toStringImpl()
      */
     @Override
     final public String toString() {
         try {
-            return toString(service.getConnector().getLocale());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    /**
-     * Gets a string representation of this object in the provided locale.
-     *
-     * @see  #toString()
-     */
-    final public String toString(Locale userLocale) {
-        try {
-            return toStringImpl(userLocale);
+            return toStringImpl();
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -201,10 +188,12 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     /**
      * The default string representation is that of the key value.
      */
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        K key=getKey();
-        if(key instanceof LocalizedToString) return ((LocalizedToString)key).toString(userLocale);
-        return key.toString();
+    String toStringImpl() throws RemoteException {
+        return getKey().toString();
+    }
+
+    final String toStringImpl(Locale userLocale) throws RemoteException {
+        throw new RuntimeException("TODO: Delete this method once all implementations have been removed");
     }
 
     /**
@@ -236,6 +225,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     /**
      * Gets value of the column with the provided index, by using the SchemaColumn annotation.
      */
+    @Override
     final public Object getColumn(int index) {
         try {
             return AOServObjectUtils.getMethodColumns(getClass()).get(index).getMethod().invoke(this);
@@ -249,6 +239,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     /**
      * Gets value of the column with the provided name, by using the SchemaColumn annotation.
      */
+    @Override
     final public Object getColumn(String name) {
         try {
             return AOServObjectUtils.getMethodColumnMap(getClass()).get(name).getMethod().invoke(this);

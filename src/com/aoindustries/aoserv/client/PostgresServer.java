@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2009 by AO Industries, Inc.,
+ * Copyright 2002-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -282,6 +282,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.PostgresServer getBean() {
         return new com.aoindustries.aoserv.client.beans.PostgresServer(key, getBean(name), version, maxConnections, netBind, sortMem, sharedBuffers, fsync);
     }
@@ -308,8 +309,8 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "PostgresServer.toString", name, getAoServerResource().getAoServer().getHostname());
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("PostgresServer.toString", name, getAoServerResource().getAoServer().getHostname());
     }
     // </editor-fold>
 

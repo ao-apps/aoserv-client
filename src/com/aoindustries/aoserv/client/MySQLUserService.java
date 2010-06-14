@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -94,7 +94,7 @@ public interface MySQLUserService<C extends AOServConnector<C,F>, F extends AOSe
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_PASSWORD, args, 2, err)) {
                 PasswordChecker.Result[] results=SimpleAOClient.checkMySQLPassword(args[1], args[2]);
-                if(PasswordChecker.hasResults(Locale.getDefault(), results)) {
+                if(PasswordChecker.hasResults(results)) {
                     PasswordChecker.printResults(results, out);
                     out.flush();
                 }

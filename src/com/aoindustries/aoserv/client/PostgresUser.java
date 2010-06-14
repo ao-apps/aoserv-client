@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -12,7 +12,6 @@ import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -174,8 +173,8 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "PostgresUser.toString", username, getPostgresServer().toStringImpl(userLocale));
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("PostgresUser.toString", username, getPostgresServer().toStringImpl());
     }
     // </editor-fold>
 
@@ -211,12 +210,12 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
-        return checkPassword(userLocale, pkey, password);
+    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
+        return checkPassword(pkey, password);
     }
     */
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
-        return PasswordChecker.checkPassword(userLocale, username, password, PasswordChecker.PasswordStrength.STRICT);
+    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
+        return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
     }
 
     /*
@@ -240,7 +239,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
         return disable_log!=-1;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         if(username.equals(PostgresUser.POSTGRES)) reasons.add(new CannotRemoveReason<PostgresServerUser>("Not allowed to remove the "+PostgresUser.POSTGRES+" PostgreSQL user", this));

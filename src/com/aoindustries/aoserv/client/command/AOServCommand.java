@@ -1,13 +1,12 @@
 package com.aoindustries.aoserv.client.command;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
-import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -16,7 +15,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -115,15 +113,15 @@ abstract public class AOServCommand<R> {
     /**
      * Adds the error from the AOSH commands application resources bundle.
      */
-    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, Locale locale, String messageKey, Object... messageArgs) {
-        return addValidationError(errors, param, ApplicationResources.accessor, locale, messageKey, messageArgs);
+    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, String messageKey, Object... messageArgs) {
+        return addValidationError(errors, param, ApplicationResources.accessor, messageKey, messageArgs);
     }
 
     /**
      * Adds the error from the provided resources bundle.
      */
-    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, ApplicationResourcesAccessor applicationResources, Locale locale, String messageKey, Object... messageArgs) {
-        return addValidationError(errors, param, applicationResources.getMessage(locale, messageKey, messageArgs));
+    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, ApplicationResourcesAccessor applicationResources, String messageKey, Object... messageArgs) {
+        return addValidationError(errors, param, applicationResources.getMessage(messageKey, messageArgs));
     }
 
     /**
@@ -138,10 +136,10 @@ abstract public class AOServCommand<R> {
     }
 
     /**
-     * Validates the command using the provided connector, using the connector's locale and connectAs user.
+     * Validates the command using the provided connector.
      */
     final public Map<String,List<String>> validate(AOServConnector<?,?> conn) throws RemoteException {
-        return validate(conn.getLocale(), conn.getThisBusinessAdministrator());
+        return validate(conn.getThisBusinessAdministrator());
     }
 
     /**
@@ -152,7 +150,7 @@ abstract public class AOServCommand<R> {
      *
      * // TODO: Check for read-only connectors with non-read-only commands.
      */
-    abstract public Map<String,List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException;
+    abstract public Map<String,List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException;
 
     /**
      * Executes this command in non-interactive mode.

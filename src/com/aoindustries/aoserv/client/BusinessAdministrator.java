@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -15,7 +15,6 @@ import java.rmi.RemoteException;
 import java.security.Principal;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -341,8 +340,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public static PasswordChecker.Result[] checkPassword(Locale userLocale, String username, String password) throws IOException {
-        return PasswordChecker.checkPassword(userLocale, username, password, PasswordChecker.PasswordStrength.STRICT);
+    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
+        return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
     }
 
     public void setPassword(String plaintext) throws RemoteException {
@@ -428,8 +427,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         else return dl.canEnable();
     }
 
-    public PasswordChecker.Result[] checkPassword(Locale userLocale, String password) throws IOException {
-        return checkPassword(userLocale, pkey, password);
+    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
+        return checkPassword(pkey, password);
     }
     */
 
@@ -519,7 +518,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 	;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServConnector conn=getService().getConnector();
@@ -633,8 +632,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
      * @see  Username#checkUsername
      */
     /* TODO
-    public static String checkUsername(String name, Locale locale) {
-        return Username.checkUsername(name, locale);
+    public static String checkUsername(String name) {
+        return Username.checkUsername(name);
     }*/
 
     /**

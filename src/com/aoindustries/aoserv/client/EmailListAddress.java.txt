@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -81,7 +81,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
         );
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws SQLException, IOException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be used as the list for a majordomo list
@@ -105,8 +105,8 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     }
 
     @Override
-    String toStringImpl(Locale userLocale) throws SQLException, IOException {
-        return getEmailAddress().toStringImpl(userLocale)+"->"+getEmailList().getPath();
+    String toStringImpl() throws SQLException, IOException {
+        return getEmailAddress().toStringImpl()+"->"+getEmailList().getPath();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

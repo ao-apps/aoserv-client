@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -43,6 +42,7 @@ final public class BankTransactionType extends AOServObjectStringKey<BankTransac
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.BankTransactionType getBean() {
         return new com.aoindustries.aoserv.client.beans.BankTransactionType(getKey(), isNegative);
     }
@@ -58,17 +58,17 @@ final public class BankTransactionType extends AOServObjectStringKey<BankTransac
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+getKey()+".description");
+    public String getDescription() {
+        return ApplicationResources.accessor.getMessage("BankTransactionType."+getKey()+".description");
     }
 
-    public String getDisplay(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "BankTransactionType."+getKey()+".display");
+    public String getDisplay() {
+        return ApplicationResources.accessor.getMessage("BankTransactionType."+getKey()+".display");
     }
 
     @Override
-    String toStringImpl(Locale userLocale) {
-        return getDisplay(userLocale);
+    String toStringImpl() {
+        return getDisplay();
     }
     // </editor-fold>
 

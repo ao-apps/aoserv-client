@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,7 +10,6 @@ import com.aoindustries.aoserv.client.command.GetMySQLSlaveStatusCommand.SlaveSt
 import com.aoindustries.table.IndexType;
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -131,9 +130,9 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        if(aoServer!=null) return getMySQLServer().toString(userLocale)+"->"+getAOServer().toString(userLocale);
-        else return getMySQLServer().toString(userLocale)+"->"+getFailoverFileReplication().toString(userLocale);
+    String toStringImpl() throws RemoteException {
+        if(aoServer!=null) return getMySQLServer().toStringImpl()+"->"+getAOServer().toStringImpl();
+        else return getMySQLServer().toStringImpl()+"->"+getFailoverFileReplication().toStringImpl();
     }
     // </editor-fold>
 

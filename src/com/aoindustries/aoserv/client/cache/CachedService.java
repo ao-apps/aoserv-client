@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -62,7 +62,7 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
 
     @Override
     final public String toString() {
-        return getServiceName().toString(connector.getLocale());
+        return getServiceName().toString();
     }
 
     final public CachedConnector getConnector() {

@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -87,6 +86,7 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TicketAssignment getBean() {
         return new com.aoindustries.aoserv.client.beans.TicketAssignment(key, ticket, getBean(reseller), getBean(administrator));
     }
@@ -105,7 +105,7 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
         return ticket+"|"+key+'|'+reseller+'|'+administrator;
     }
     // </editor-fold>

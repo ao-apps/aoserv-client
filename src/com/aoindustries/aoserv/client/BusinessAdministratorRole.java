@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -90,8 +89,8 @@ final public class BusinessAdministratorRole extends AOServObjectIntegerKey<Busi
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "BusinessAdministratorRole.toString", username, getRole().getName());
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("BusinessAdministratorRole.toString", username, getRole().getName());
     }
     // </editor-fold>
 }

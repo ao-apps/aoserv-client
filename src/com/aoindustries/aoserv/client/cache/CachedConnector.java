@@ -411,14 +411,17 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         // TODO: whoisHistories = new CachedWhoisHistoryService(this, wrapped.getWhoisHistorys());
     }
 
+    @Override
     public CachedConnectorFactory getFactory() {
         return factory;
     }
 
+    @Override
     public Locale getLocale() {
         return locale;
     }
 
+    @Override
     public void setLocale(Locale locale) throws RemoteException {
         if(!this.locale.equals(locale)) {
             wrapped.setLocale(locale);
@@ -426,26 +429,32 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
 
+    @Override
     public UserId getConnectAs() {
         return connectAs;
     }
 
+    @Override
     public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
         return getBusinessAdministrators().get(connectAs);
     }
 
+    @Override
     public UserId getAuthenticateAs() {
         return authenticateAs;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public boolean isReadOnly() {
         return readOnly;
     }
 
+    @Override
     public <R> CommandResult<R> executeCommand(RemoteCommand<R> command, boolean isInteractive) throws RemoteException {
         // Check read-only commands
         if(readOnly && !command.isReadOnlyCommand()) throw new ReadOnlyException();
@@ -453,6 +462,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>>>();
+    @Override
     final public Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>> getServices() throws RemoteException {
         Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>> ts = tables.get();
         if(ts==null) {
@@ -469,6 +479,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedAOServerDaemonHostService aoserverDaemonHosts;
+    @Override
     public AOServerDaemonHostService<CachedConnector,CachedConnectorFactory> getAoServerDaemonHosts() {
         return aoserverDaemonHosts;
     }
@@ -480,6 +491,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedAOServerResourceService aoserverResources;
+    @Override
     public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources() {
         return aoserverResources;
     }
@@ -491,6 +503,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedAOServerService aoservers;
+    @Override
     public AOServerService<CachedConnector,CachedConnectorFactory> getAoServers() {
         return aoservers;
     }
@@ -502,6 +515,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedAOServPermissionService aoservPermissions;
+    @Override
     public AOServPermissionService<CachedConnector,CachedConnectorFactory> getAoservPermissions() {
         return aoservPermissions;
     }
@@ -513,6 +527,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedAOServRoleService aoservRoles;
+    @Override
     public AOServRoleService<CachedConnector,CachedConnectorFactory> getAoservRoles() {
         return aoservRoles;
     }
@@ -524,6 +539,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedAOServRolePermissionService aoservRolePermissions;
+    @Override
     public AOServRolePermissionService<CachedConnector,CachedConnectorFactory> getAoservRolePermissions() {
         return aoservRolePermissions;
     }
@@ -535,6 +551,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedArchitectureService architectures;
+    @Override
     public ArchitectureService<CachedConnector,CachedConnectorFactory> getArchitectures() {
         return architectures;
     }
@@ -546,6 +563,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedBackupPartitionService backupPartitions;
+    @Override
     public BackupPartitionService<CachedConnector,CachedConnectorFactory> getBackupPartitions() {
         return backupPartitions;
     }
@@ -557,6 +575,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedBackupRetentionService backupRetentions;
+    @Override
     public BackupRetentionService<CachedConnector,CachedConnectorFactory> getBackupRetentions() {
         return backupRetentions;
     }
@@ -572,6 +591,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedBankTransactionTypeService bankTransactionTypes;
+    @Override
     public BankTransactionTypeService<CachedConnector,CachedConnectorFactory> getBankTransactionTypes() {
         return bankTransactionTypes;
     }
@@ -595,6 +615,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedBrandService brands;
+    @Override
     public BrandService<CachedConnector,CachedConnectorFactory> getBrands() {
         return brands;
     }
@@ -606,6 +627,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedBusinessAdministratorService businessAdministrators;
+    @Override
     public BusinessAdministratorService<CachedConnector,CachedConnectorFactory> getBusinessAdministrators() {
         return businessAdministrators;
     }
@@ -617,6 +639,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedBusinessAdministratorRoleService businessAdministratorRoles;
+    @Override
     public BusinessAdministratorRoleService<CachedConnector,CachedConnectorFactory> getBusinessAdministratorRoles() {
         return businessAdministratorRoles;
     }
@@ -628,6 +651,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedBusinessProfileService businessProfiles;
+    @Override
     public BusinessProfileService<CachedConnector,CachedConnectorFactory> getBusinessProfiles() {
         return businessProfiles;
     }
@@ -639,6 +663,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedBusinessService businesses;
+    @Override
     public BusinessService<CachedConnector,CachedConnectorFactory> getBusinesses() {
         return businesses;
     }

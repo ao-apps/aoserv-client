@@ -10,7 +10,6 @@ import com.aoindustries.aoserv.client.LinuxAccount;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -46,11 +45,12 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
         return false;
     }
 
-    public Map<String, List<String>> validate(Locale locale, BusinessAdministrator connectedUser) throws RemoteException {
+    @Override
+    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
-        if(la.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, locale, "SetLinuxAccountPasswordCommand.validate.disabled");
-        if(!la.getLinuxAccountType().isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, locale, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
+        if(la.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.disabled");
+        if(!la.getLinuxAccountType().isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
         // TODO: Check password strength
         return errors;
     }

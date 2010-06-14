@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -16,7 +16,6 @@ import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Each <code>Business</code> has an account of all the
@@ -341,7 +340,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
     }
 
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
 	return
             pkey
             +"|"

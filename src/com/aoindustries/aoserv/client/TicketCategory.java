@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -9,7 +9,6 @@ import com.aoindustries.table.IndexType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -94,6 +93,7 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TicketCategory getBean() {
         return new com.aoindustries.aoserv.client.beans.TicketCategory(key, parent, name);
     }
@@ -121,8 +121,8 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketCategory."+getDotPath()+".toString");
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("TicketCategory."+getDotPath()+".toString");
     }
     // </editor-fold>
 

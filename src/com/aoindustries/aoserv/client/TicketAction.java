@@ -11,7 +11,6 @@ import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -307,11 +306,10 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     }
 
     /**
-     * Gets the summary for the Locale of the connector, may be generated for certain action types.
+     * Gets the summary, may be generated for certain action types.
      */
     @SchemaColumn(order=18, name="summary", description="a summary of the action")
     public String getSummary() throws RemoteException {
-        Locale userLocale = getService().getConnector().getLocale();
         if(summary!=null) return summary;
         final String myOldValue;
         final String myNewValue;
@@ -325,21 +323,21 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
             myOldValue = oldPriority;
             myNewValue = newPriority;
         } else if(actionType.equals(TicketActionType.SET_TYPE)) {
-            myOldValue = getOldType().toStringImpl(userLocale);
-            myNewValue = getNewType().toStringImpl(userLocale);
+            myOldValue = getOldType().toStringImpl();
+            myNewValue = getNewType().toStringImpl();
         } else if(actionType.equals(TicketActionType.SET_STATUS)) {
-            myOldValue = getOldStatus().toStringImpl(userLocale);
-            myNewValue = getNewStatus().toStringImpl(userLocale);
+            myOldValue = getOldStatus().toStringImpl();
+            myNewValue = getNewStatus().toStringImpl();
         } else if(actionType.equals(TicketActionType.ASSIGN)) {
             BusinessAdministrator myOldAssignedTo = getOldAssignedTo();
             BusinessAdministrator myNewAssignedTo = getNewAssignedTo();
-            myOldValue = myOldAssignedTo!=null ? myOldAssignedTo.getName() : myOldAssignedTo!=null ? ApplicationResources.accessor.getMessage(userLocale, "TicketAction.old_assigned_to.filtered") : null;
-            myNewValue = myNewAssignedTo!=null ? myNewAssignedTo.getName() : myNewAssignedTo!=null ? ApplicationResources.accessor.getMessage(userLocale, "TicketAction.new_assigned_to.filtered") : null;
+            myOldValue = myOldAssignedTo!=null ? myOldAssignedTo.getName() : myOldAssignedTo!=null ? ApplicationResources.accessor.getMessage("TicketAction.old_assigned_to.filtered") : null;
+            myNewValue = myNewAssignedTo!=null ? myNewAssignedTo.getName() : myNewAssignedTo!=null ? ApplicationResources.accessor.getMessage("TicketAction.new_assigned_to.filtered") : null;
         } else if(actionType.equals(TicketActionType.SET_CATEGORY)) {
             TicketCategory myOldCategory = getOldCategory();
             TicketCategory myNewCategory = getNewCategory();
-            myOldValue = myOldCategory!=null ? myOldCategory.toStringImpl(userLocale) : null;
-            myNewValue = myNewCategory!=null ? myNewCategory.toStringImpl(userLocale) : null;
+            myOldValue = myOldCategory!=null ? myOldCategory.toStringImpl() : null;
+            myNewValue = myNewCategory!=null ? myNewCategory.toStringImpl() : null;
         } else if(
             actionType.equals(TicketActionType.SET_CONTACT_EMAILS)
             || actionType.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
@@ -357,7 +355,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
         } else {
             throw new AssertionError("Unexpected value for action_type: "+actionType);
         }
-        return getActionType().generateSummary(getService().getConnector(), userLocale, myOldValue, myNewValue);
+        return getActionType().generateSummary(getService().getConnector(), myOldValue, myNewValue);
     }
 
     /* TODO
@@ -394,6 +392,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TicketAction getBean() {
         return new com.aoindustries.aoserv.client.beans.TicketAction(
             key,
@@ -444,7 +443,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
+    String toStringImpl() {
         return ticket+"|"+key+'|'+actionType+'|'+administrator;
     }
     // </editor-fold>

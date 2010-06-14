@@ -1,14 +1,12 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2007-2009 by AO Industries, Inc.,
+ * Copyright 2007-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.i18n.LocalizedToString;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -24,7 +22,7 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
     /**
      * The possible permissions.
      */
-    public enum Permission implements LocalizedToString {
+    public enum Permission {
         // business_administrators
         set_business_administrator_password,
         // businesses
@@ -72,19 +70,9 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
         vnc_console
         ;
 
-        /**
-         * Gets the permission display value in the JVM-default locale.
-         */
         @Override
         public String toString() {
-            return toString(Locale.getDefault());
-        }
-        
-        /**
-         * Gets the permission display value in the provided locale.
-         */
-        public String toString(Locale userLocale) {
-            return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+name()+".toString");
+            return ApplicationResources.accessor.getMessage("AOServPermission."+name()+".toString");
         }
     }
     // </editor-fold>
@@ -118,6 +106,7 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.AOServPermission getBean() {
         return new com.aoindustries.aoserv.client.beans.AOServPermission(getKey(), sortOrder);
     }
@@ -134,15 +123,15 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+getKey()+".toString");
+    String toStringImpl() {
+        return ApplicationResources.accessor.getMessage("AOServPermission."+getKey()+".toString");
     }
 
     /**
      * Gets the locale-specific description of this permission.
      */
-    public String getDescription(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "AOServPermission."+getKey()+".description");
+    public String getDescription() {
+        return ApplicationResources.accessor.getMessage("AOServPermission."+getKey()+".description");
     }
     // </editor-fold>
 

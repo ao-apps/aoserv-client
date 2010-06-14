@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.table.IndexType;
 import java.lang.reflect.Method;
-import java.sql.Timestamp;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;

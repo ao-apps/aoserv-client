@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -15,7 +15,6 @@ import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -163,6 +162,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.NetBind getBean() {
         return new com.aoindustries.aoserv.client.beans.NetBind(key, businessServer, ipAddress, getBean(port), netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
     }
@@ -206,7 +206,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
+    String toStringImpl() throws RemoteException {
         IPAddress ip = getIpAddress();
         if(ip==null) return "*:"+getPort()+'/'+getNetProtocol();
         String address = ip.getIpAddress().getAddress();
@@ -466,7 +466,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
         return null;
     }
 
-    public List<CannotRemoveReason> getCannotRemoveReasons(Locale userLocale) throws IOException, SQLException {
+    public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         AOServConnector conn=getService().getConnector();

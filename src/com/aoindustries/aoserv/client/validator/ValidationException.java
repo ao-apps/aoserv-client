@@ -7,16 +7,14 @@ package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.util.Arrays;
 import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
-import com.aoindustries.util.i18n.LocalizedMessage;
 import java.io.Serializable;
-import java.util.Locale;
 
 /**
  * Thrown when internal object validation fails.
  *
  * @author  AO Industries, Inc.
  */
-public class ValidationException extends Exception implements LocalizedMessage {
+public class ValidationException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,28 +23,28 @@ public class ValidationException extends Exception implements LocalizedMessage {
     private final Serializable[] args;
 
     public ValidationException(ApplicationResourcesAccessor accessor, String key) {
-        super(accessor.getMessage(Locale.getDefault(), key));
+        super(accessor.getMessage(key));
         this.accessor = accessor;
         this.key = key;
         this.args = Arrays.EMPTY_SERIALIZABLE_ARRAY;
     }
 
     public ValidationException(ApplicationResourcesAccessor accessor, String key, Serializable... args) {
-        super(accessor.getMessage(Locale.getDefault(), key, (Object[])args));
+        super(accessor.getMessage(key, (Object[])args));
         this.accessor = accessor;
         this.key = key;
         this.args = args;
     }
 
     public ValidationException(Throwable cause, ApplicationResourcesAccessor accessor, String key) {
-        super(accessor.getMessage(Locale.getDefault(), key), cause);
+        super(accessor.getMessage(key), cause);
         this.accessor = accessor;
         this.key = key;
         this.args = Arrays.EMPTY_SERIALIZABLE_ARRAY;
     }
 
     public ValidationException(Throwable cause, ApplicationResourcesAccessor accessor, String key, Serializable... args) {
-        super(accessor.getMessage(Locale.getDefault(), key, (Object[])args), cause);
+        super(accessor.getMessage(key, (Object[])args), cause);
         this.accessor = accessor;
         this.key = key;
         this.args = args;
@@ -54,10 +52,6 @@ public class ValidationException extends Exception implements LocalizedMessage {
 
     @Override
     public String getLocalizedMessage() {
-        return getLocalizedMessage(Locale.getDefault());
-    }
-
-    public String getLocalizedMessage(Locale userLocale) {
-        return accessor.getMessage(userLocale, key, (Object[])args);
+        return accessor.getMessage(key, (Object[])args);
     }
 }

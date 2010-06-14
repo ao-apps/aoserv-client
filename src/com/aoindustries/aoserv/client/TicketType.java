@@ -1,13 +1,12 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -66,8 +65,8 @@ final public class TicketType extends AOServObjectStringKey<TicketType> implemen
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) {
-        return ApplicationResources.accessor.getMessage(userLocale, "TicketType."+getKey()+".toString");
+    String toStringImpl() {
+        return ApplicationResources.accessor.getMessage("TicketType."+getKey()+".toString");
     }
     // </editor-fold>
 

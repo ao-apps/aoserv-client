@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -71,6 +70,7 @@ final public class AOServRolePermission extends AOServObjectIntegerKey<AOServRol
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.AOServRolePermission getBean() {
         return new com.aoindustries.aoserv.client.beans.AOServRolePermission(key, role, permission);
     }
@@ -88,8 +88,8 @@ final public class AOServRolePermission extends AOServObjectIntegerKey<AOServRol
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl(Locale userLocale) throws RemoteException {
-        return ApplicationResources.accessor.getMessage(userLocale, "AOServRolePermission.toString", getRole().getName(), getPermission().toStringImpl(userLocale));
+    String toStringImpl() throws RemoteException {
+        return ApplicationResources.accessor.getMessage("AOServRolePermission.toString", getRole().getName(), getPermission().toStringImpl());
     }
     // </editor-fold>
 }
