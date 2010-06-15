@@ -202,6 +202,8 @@ import com.aoindustries.aoserv.client.TicketType;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZone;
 import com.aoindustries.aoserv.client.TimeZoneService;
+import com.aoindustries.aoserv.client.Transaction;
+import com.aoindustries.aoserv.client.TransactionService;
 import com.aoindustries.aoserv.client.TransactionType;
 import com.aoindustries.aoserv.client.TransactionTypeService;
 import com.aoindustries.aoserv.client.Username;
@@ -404,7 +406,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         tickets = new CachedTicketService(this, wrapped.getTickets());
         timeZones = new CachedTimeZoneService(this, wrapped.getTimeZones());
         transactionTypes = new CachedTransactionTypeService(this, wrapped.getTransactionTypes());
-        // TODO: transactions = new CachedTransactionService(this, wrapped.getTransactions());
+        transactions = new CachedTransactionService(this, wrapped.getTransactions());
         usernames = new CachedUsernameService(this, wrapped.getUsernames());
         // TODO: virtualDisks = new CachedVirtualDiskService(this, wrapped.getVirtualDisks());
         virtualServers = new CachedVirtualServerService(this, wrapped.getVirtualServers());
@@ -1743,8 +1745,16 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionService">
-    // TODO: final CachedTransactionService transactions;
-    // TODO: public TransactionService<CachedConnector,CachedConnectorFactory> getTransactions();
+    static class CachedTransactionService extends CachedService<Integer,Transaction> implements TransactionService<CachedConnector,CachedConnectorFactory> {
+        CachedTransactionService(CachedConnector connector, TransactionService<?,?> wrapped) {
+            super(connector, Integer.class, Transaction.class, wrapped);
+        }
+    }
+    final CachedTransactionService transactions;
+    @Override
+    public TransactionService<CachedConnector,CachedConnectorFactory> getTransactions() {
+        return transactions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="UsernameService">
     static class CachedUsernameService extends CachedService<UserId,Username> implements UsernameService<CachedConnector,CachedConnectorFactory> {

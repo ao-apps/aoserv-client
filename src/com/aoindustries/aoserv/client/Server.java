@@ -124,6 +124,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Server getBean() {
         return new com.aoindustries.aoserv.client.beans.Server(key, getBean(farm), description, operatingSystemVersion, getBean(accounting), name, monitoringEnabled);
     }
@@ -256,7 +257,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        AOServer aoServer = getAOServer();
+        AOServer aoServer = getAoServer();
         if(aoServer!=null) return aoServer.toStringImpl();
         return accounting.toString()+'/'+name;
     }

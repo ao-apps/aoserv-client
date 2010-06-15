@@ -245,7 +245,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     TicketService<C,F> getTickets() throws RemoteException;
     TimeZoneService<C,F> getTimeZones() throws RemoteException;
     TransactionTypeService<C,F> getTransactionTypes() throws RemoteException;
-    // TODO: TransactionService<C,F> getTransactions() throws RemoteException;
+    TransactionService<C,F> getTransactions() throws RemoteException;
     UsernameService<C,F> getUsernames() throws RemoteException;
     // TODO: VirtualDiskService<C,F> getVirtualDisks() throws RemoteException;
     VirtualServerService<C,F> getVirtualServers() throws RemoteException;

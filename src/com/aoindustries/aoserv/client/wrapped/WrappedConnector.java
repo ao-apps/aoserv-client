@@ -202,6 +202,8 @@ import com.aoindustries.aoserv.client.TicketType;
 import com.aoindustries.aoserv.client.TicketTypeService;
 import com.aoindustries.aoserv.client.TimeZone;
 import com.aoindustries.aoserv.client.TimeZoneService;
+import com.aoindustries.aoserv.client.Transaction;
+import com.aoindustries.aoserv.client.TransactionService;
 import com.aoindustries.aoserv.client.TransactionType;
 import com.aoindustries.aoserv.client.TransactionTypeService;
 import com.aoindustries.aoserv.client.Username;
@@ -407,10 +409,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         tickets = new WrappedTicketService(this);
         timeZones = new WrappedTimeZoneService(this);
         transactionTypes = new WrappedTransactionTypeService(this);
-        /* TODO
         transactions = new WrappedTransactionService(this);
-        usStates = new WrappedUSStateService(this);
-         */
+        // TODO: usStates = new WrappedUSStateService(this);
         usernames = new WrappedUsernameService(this);
         // TODO: virtualDisks = new WrappedVirtualDiskService(this);
         virtualServers = new WrappedVirtualServerService(this);
@@ -1814,8 +1814,16 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionService">
-    // TODO: final WrappedTransactionService<C,F> transactions;
-    // TODO: final public TransactionService<C,F> getTransactions();
+    static class WrappedTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Transaction> implements TransactionService<C,F> {
+        WrappedTransactionService(C connector) {
+            super(connector, Integer.class, Transaction.class);
+        }
+    }
+    final WrappedTransactionService<C,F> transactions;
+    @Override
+    final public TransactionService<C,F> getTransactions() {
+        return transactions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="UsernameService">
     static class WrappedUsernameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,Username> implements UsernameService<C,F> {
@@ -1839,6 +1847,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedVirtualServerService<C,F> virtualServers;
+    @Override
     final public VirtualServerService<C,F> getVirtualServers() {
         return virtualServers;
     }

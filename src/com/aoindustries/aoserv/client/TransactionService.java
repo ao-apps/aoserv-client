@@ -5,40 +5,15 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 /**
  * @see  Transaction
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionService extends CachedTableIntegerKey<Transaction> {
+@ServiceAnnotation(ServiceName.transactions)
+public interface TransactionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,Transaction> {
 
-    TransactionService(AOServConnector connector) {
-        super(connector, Transaction.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(Transaction.COLUMN_TIME_name+"::"+SchemaType.DATE_name, ASCENDING),
-        new OrderBy(Transaction.COLUMN_TRANSID_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addTransaction(
         final Business business,
         final Business sourceBusiness,
@@ -92,7 +67,9 @@ final public class TransactionService extends CachedTableIntegerKey<Transaction>
             }
         );
     }
+     */
 
+    /* TODO
     BigDecimal getAccountBalance(String accounting) throws IOException, SQLException {
         BigDecimal total = BigDecimal.valueOf(0, 2);
         for(Transaction tr : getTransactions(accounting)) {
@@ -131,15 +108,9 @@ final public class TransactionService extends CachedTableIntegerKey<Transaction>
         for(Transaction payment : payments) if(payment.getPaymentConfirmation()==Transaction.WAITING_CONFIRMATION) pending.add(payment);
         return Collections.unmodifiableList(pending);
     }
+     */
 
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.TRANSACTIONS;
-    }
-
-    public Transaction get(int transid) throws IOException, SQLException {
-        return getUniqueRow(Transaction.COLUMN_TRANSID, transid);
-    }
-
+    /* TODO
     List<Transaction> getTransactions(TransactionSearchCriteria criteria) throws IOException, SQLException {
         List<Transaction> matches = new ArrayList<Transaction>();
         // Uses the indexes when possible
@@ -196,15 +167,9 @@ final public class TransactionService extends CachedTableIntegerKey<Transaction>
         }
         return Collections.unmodifiableList(matches);
     }
+     */
 
-    List<Transaction> getTransactions(String accounting) throws IOException, SQLException {
-        return getIndexedRows(Transaction.COLUMN_ACCOUNTING, accounting);
-    }
-
-    List<Transaction> getTransactions(BusinessAdministrator ba) throws IOException, SQLException {
-        return getIndexedRows(Transaction.COLUMN_USERNAME, ba.pkey);
-    }
-
+    /* TODO
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
@@ -235,4 +200,5 @@ final public class TransactionService extends CachedTableIntegerKey<Transaction>
         }
         return false;
     }
+     */
 }

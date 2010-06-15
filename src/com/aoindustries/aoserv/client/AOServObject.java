@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.WrappedException;
+import com.aoindustries.util.i18n.Money;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
@@ -53,6 +54,13 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      */
     protected static <B> B getBean(BeanFactory<B> beanFactory) {
         return beanFactory==null ? null : beanFactory.getBean();
+    }
+
+    /**
+     * null-safe getBean for Money.
+     */
+    protected static com.aoindustries.aoserv.client.beans.Money getBean(Money money) {
+        return money==null ? null : new com.aoindustries.aoserv.client.beans.Money(money.getCurrency().getCurrencyCode(), money.getValue());
     }
 
     private volatile transient AOServService<?,?,K,T> service;

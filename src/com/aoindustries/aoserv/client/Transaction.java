@@ -5,17 +5,16 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.table.IndexType;
+import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.util.Set;
 
 /**
  * Each <code>Business</code> has an account of all the
@@ -26,63 +25,254 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Transaction extends CachedObjectIntegerKey<Transaction> {
+final public class Transaction extends AOServObjectIntegerKey<Transaction> implements BeanFactory<com.aoindustries.aoserv.client.beans.Transaction> {
 
-    static final int
-        COLUMN_TRANSID = 1,
-        COLUMN_ACCOUNTING = 2,
-        COLUMN_SOURCE_ACCOUNTING = 3,
-        COLUMN_USERNAME = 4,
-        COLUMN_TYPE = 5,
-        COLUMN_PAYMENT_TYPE = 9,
-        COLUMN_PROCESSOR = 11,
-        COLUMN_CREDIT_CARD_TRANSACTION = 12
-    ;
-    static final String COLUMN_TIME_name = "time";
-    static final String COLUMN_TRANSID_name = "transid";
-
-    /**
-     * Represents not being assigned for a field of the <code>int</code> type.
-     */
-    public static final int UNASSIGNED = -1;
-
-    private long time;
-    String
-        accounting,
-        source_accounting,
-        username,
-        type
-    ;
-    private String description;
-
-    /**
-     * The quantity in 1000th's of a unit
-     */
-    private int quantity;
-
-    /**
-     * The rate in pennies.
-     */
-    private int rate;
-
-    String payment_type, payment_info, processor;
-    private int creditCardTransaction;
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    private static final long serialVersionUID = 1L;
 
     /**
      * Payment confirmation.
      */
-    public static final byte WAITING_CONFIRMATION = 0, CONFIRMED = 1, NOT_CONFIRMED = 2;
+    public enum Status {
+        W,
+        Y,
+        N;
+
+        @Override
+        public String toString() {
+            return ApplicationResources.accessor.getMessage("Transaction.Status."+name()+".toString");
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Fields">
+    final private Timestamp time;
+    private AccountingCode accounting;
+    private AccountingCode sourceAccounting;
+    private UserId username;
+    private String type;
+    transient private String description;
+    final private BigDecimal quantity;
+    final private Money rate;
+    private String paymentType;
+    final private String paymentInfo;
+    private String processor;
+    final private Integer creditCardTransaction;
+    final private Status status;
+
+    public Transaction(
+        TransactionService<?,?> service,
+        int transid,
+        Timestamp time,
+        AccountingCode accounting,
+        AccountingCode sourceAccounting,
+        UserId username,
+        String type,
+        BigDecimal quantity,
+        Money rate,
+        String paymentType,
+        String paymentInfo,
+        String processor,
+        Integer creditCardTransaction,
+        Status status
+    ) {
+        super(service, transid);
+        this.time = time;
+        this.accounting = accounting;
+        this.sourceAccounting = sourceAccounting;
+        this.username = username;
+        this.type = type;
+        this.quantity = quantity;
+        this.rate = rate;
+        this.paymentType = paymentType;
+        this.paymentInfo = paymentInfo;
+        this.processor = processor;
+        this.creditCardTransaction = creditCardTransaction;
+        this.status = status;
+        intern();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        intern();
+    }
+
+    private void intern() {
+        accounting = intern(accounting);
+        sourceAccounting = intern(sourceAccounting);
+        username = intern(username);
+        type = intern(type);
+        paymentType = intern(paymentType);
+        processor = intern(processor);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    protected int compareToImpl(Transaction other) {
+        int diff = time.compareTo(other.time);
+        if(diff!=0) return diff;
+        return AOServObjectUtils.compare(key, other.key);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Columns">
+    @SchemaColumn(order=0, name="transid", index=IndexType.PRIMARY_KEY, description="the unique identifier for this transaction")
+    public int getTransid() {
+    	return key;
+    }
+
+    @SchemaColumn(order=1, name="time", description="the time the transaction occured")
+    public Timestamp getTime() {
+    	return time;
+    }
+
+    @SchemaColumn(order=2, name="accounting", description="the identifier for the business")
+    public Business getBusiness() throws RemoteException {
+        return getService().getConnector().getBusinesses().get(accounting);
+    }
+
+    @SchemaColumn(order=3, name="source_accounting", description="the source of the charge to this account")
+    public Business getSourceBusiness() throws RemoteException {
+        return getService().getConnector().getBusinesses().get(sourceAccounting);
+    }
 
     /**
-     * The text to display for different confirmation statuses.
+     * May be filtered.
      */
-    private static final String[] paymentConfirmationLabels = { "Waiting", "Confirmed", "Failed" };
+    @SchemaColumn(order=4, name="username", description="the admin involved in the transaction")
+    public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
+        return getService().getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, username);
+    }
 
-    public static final int NUM_PAYMENT_CONFIRMATION_STATES=3;
+    @SchemaColumn(order=5, name="type", description="the type of transaction")
+    public TransactionType getType() throws RemoteException {
+        return getService().getConnector().getTransactionTypes().get(type);
+    }
 
-    byte payment_confirmed;
+    /* TODO
+    @SchemaColumn(order=6, name="description", description="description of the transaction")
+    synchronized public String getDescription() throws RemoteException {
+        if(description==null) description = new GetTransactionDescriptionCommand(key).execute(getService().getConnector());
+        return description;
+    }
+     */
 
-    public void approved(final int creditCardTransaction) throws IOException, SQLException {
+    @SchemaColumn(order=6, name="quantity", description="the quantity of the rate applied to the account")
+    public BigDecimal getQuantity() {
+    	return quantity;
+    }
+
+    @SchemaColumn(order=7, name="rate", description="the amount per unit of quantity")
+    public Money getRate() {
+    	return rate;
+    }
+
+    @SchemaColumn(order=8, name="payment_type", description="the type of payment made")
+    public PaymentType getPaymentType() throws RemoteException {
+        if (paymentType == null) return null;
+        return getService().getConnector().getPaymentTypes().get(paymentType);
+    }
+
+    @SchemaColumn(order=9, name="payment_info", description="the payment info, such as last four of a credit card number or a check number")
+    public String getPaymentInfo() {
+    	return paymentInfo;
+    }
+
+    @SchemaColumn(order=10, name="processor", description="the credit card processor that handled the payment")
+    public CreditCardProcessor getProcessor() throws RemoteException {
+        if(processor==null) return null;
+        return getService().getConnector().getCreditCardProcessors().get(processor);
+    }
+
+    /* TODO
+    @SchemaColumn(order=12, name="credit_card_transaction", description="the credit card transaction for this transaction")
+    public CreditCardTransaction getCreditCardTransaction() throws RemoteException {
+        if(creditCardTransaction==null) return null;
+        return getService().getConnector().getCreditCardTransactions().get(creditCardTransaction);
+    }
+     */
+
+    @SchemaColumn(order=11, name="status", description="the status of the transaction")
+    public Status getStatus() {
+    	return status;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
+    public com.aoindustries.aoserv.client.beans.Transaction getBean() {
+        return new com.aoindustries.aoserv.client.beans.Transaction(
+            key,
+            time,
+            getBean(accounting),
+            getBean(sourceAccounting),
+            getBean(username),
+            type,
+            quantity,
+            getBean(rate),
+            paymentType,
+            paymentInfo,
+            processor,
+            creditCardTransaction,
+            status.name()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getBusiness(),
+            getSourceBusiness(),
+            getBusinessAdministrator(),
+            getType(),
+            getPaymentType(),
+            getProcessor()
+            // TODO: getCreditCardTransaction()
+        );
+    }
+
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            // TODO: getNoticeLogs()
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="i18n">
+    @Override
+    String toStringImpl() throws RemoteException {
+        return
+            key
+            + "|"
+            + accounting
+            + '|'
+            + sourceAccounting
+            + '|'
+            + type
+            + '|'
+            + quantity
+            + 'x'
+            + rate
+            + '|'
+            + status.name()
+        ;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    /* TODO
+    public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
+        return getService().getConnector().getNoticeLogs().getIndexedRows(NoticeLog.COLUMN_TRANSID, pkey);
+    } */
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="TODO">
+    /*
+    public void approved(final int creditCardTransaction) throws RemoteException {
         getService().getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
@@ -165,6 +355,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
             }
         );
     }
+    */
 
     /**
      * @deprecated  Please directly access via <code>getCreditCardTransaction()</code>.
@@ -173,75 +364,14 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
      * @see  #getCreditCardTransaction()
      * @see  CreditCardTransaction#getAuthorizationApprovalCode()
      */
+    /* TODO
     public String getAprNum() throws SQLException, IOException {
         CreditCardTransaction cct = getCreditCardTransaction();
         return cct==null ? null : cct.getAuthorizationApprovalCode();
     }
+    */
 
-    public Business getBusiness() throws SQLException, IOException {
-        return getService().getConnector().getBusinesses().get(accounting);
-    }
-    
-    public Business getSourceBusiness() throws SQLException, IOException {
-        return getService().getConnector().getBusinesses().get(source_accounting);
-    }
-
-    public BusinessAdministrator getBusinessAdministrator() throws SQLException, IOException {
-        return getService().getConnector().getBusinessAdministrators().get(username);
-    }
-
-    Object getColumnImpl(int i) throws IOException, SQLException {
-        switch(i) {
-            case 0: return new java.sql.Date(time);
-            case COLUMN_TRANSID: return pkey;
-            case COLUMN_ACCOUNTING: return accounting;
-            case COLUMN_SOURCE_ACCOUNTING: return source_accounting;
-            case COLUMN_USERNAME: return username;
-            case COLUMN_TYPE: return type;
-            case 6: return getDescription();
-            case 7: return Integer.valueOf(quantity);
-            case 8: return Integer.valueOf(rate);
-            case COLUMN_PAYMENT_TYPE: return payment_type;
-            case 10: return payment_info;
-            case COLUMN_PROCESSOR: return processor;
-            case COLUMN_CREDIT_CARD_TRANSACTION: return creditCardTransaction==-1 ? null : Integer.valueOf(creditCardTransaction);
-            case 13: return payment_confirmed==CONFIRMED?"Y":payment_confirmed==NOT_CONFIRMED?"N":"W";
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
-
-    synchronized public String getDescription() throws IOException, SQLException {
-        if(description==null) description = getService().getConnector().requestLongStringQuery(true, AOServProtocol.CommandID.GET_TRANSACTION_DESCRIPTION, pkey);
-        return description;
-    }
-
-    public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
-        if (processor == null) return null;
-        return getService().getConnector().getCreditCardProcessors().get(processor);
-    }
-
-    public CreditCardTransaction getCreditCardTransaction() throws SQLException, IOException {
-        if (creditCardTransaction == -1) return null;
-        return getService().getConnector().getCreditCardTransactions().get(creditCardTransaction);
-    }
-
-    public byte getPaymentConfirmation() {
-    	return payment_confirmed;
-    }
-
-    public static String getPaymentConfirmationLabel(int index) {
-    	return paymentConfirmationLabels[index];
-    }
-
-    public String getPaymentInfo() {
-    	return payment_info;
-    }
-
-    public PaymentType getPaymentType() throws SQLException, IOException {
-        if (payment_type == null) return null;
-        return getService().getConnector().getPaymentTypes().get(payment_type);
-    }
-
+    /* TODO
     private long getPennies() {
         long pennies=(long)quantity*(long)rate/(long)100;
         int fraction=(int)(pennies%10);
@@ -250,145 +380,17 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
         else if(fraction<=-5) pennies--;
         return pennies;
     }
-
-    public BigDecimal getQuantity() {
-    	return BigDecimal.valueOf(quantity, 3);
-    }
-
-    public BigDecimal getRate() {
-    	return BigDecimal.valueOf(rate, 2);
-    }
+    */
 
     /**
      * Gets the amount of the transaction, which is the quantity*rate scaled back
      * to two digits, rounding half_up.
      */
+    /* TODO
     public BigDecimal getAmount() {
         BigDecimal amount = getQuantity().multiply(getRate()).setScale(2, RoundingMode.HALF_UP);
         if(!amount.equals(BigDecimal.valueOf(getPennies(), 2))) throw new AssertionError("amount!=pennies");
         return amount;
-    }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.TRANSACTIONS;
-    }
-
-    public long getTime() {
-    	return time;
-    }
-
-    public int getTransID() {
-    	return pkey;
-    }
-
-    public TransactionType getType() throws SQLException, IOException {
-        return getService().getConnector().getTransactionTypes().get(type);
-    }
-
-    public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        time = result.getTimestamp(pos++).getTime();
-        pkey = result.getInt(pos++);
-        accounting = result.getString(pos++);
-        source_accounting = result.getString(pos++);
-        username = result.getString(pos++);
-        type = result.getString(pos++);
-        quantity = SQLUtility.getMillis(result.getString(pos++));
-        rate = SQLUtility.getPennies(result.getString(pos++));
-        payment_type = result.getString(pos++);
-        payment_info = result.getString(pos++);
-        processor = result.getString(pos++);
-        creditCardTransaction = result.getInt(pos++);
-        if(result.wasNull()) creditCardTransaction = -1;
-        String typeString = result.getString(pos++);
-        if("Y".equals(typeString)) payment_confirmed=CONFIRMED;
-        else if("N".equals(typeString)) payment_confirmed=NOT_CONFIRMED;
-        else if("W".equals(typeString)) payment_confirmed=WAITING_CONFIRMATION;
-        else throw new SQLException("Unknown payment_confirmed '" + typeString + "' for transid=" + pkey);
-    }
-
-    public void read(CompressedDataInputStream in) throws IOException {
-        time=in.readLong();
-        pkey=in.readCompressedInt();
-    	accounting=in.readCompressedUTF().intern();
-        source_accounting=in.readCompressedUTF().intern();
-        username=in.readCompressedUTF().intern();
-        type=in.readCompressedUTF().intern();
-        quantity=in.readCompressedInt();
-        rate=in.readCompressedInt();
-        payment_type=StringUtility.intern(in.readNullUTF());
-        payment_info=in.readNullUTF();
-        processor = StringUtility.intern(in.readNullUTF());
-        creditCardTransaction = in.readCompressedInt();
-    	payment_confirmed=in.readByte();
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getBusiness(),
-            getSourceBusiness(),
-            getBusinessAdministrator(),
-            getCreditCardProcessor(),
-            getCreditCardTransaction()
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getNoticeLogs()
-        );
-    }
-
-    @Override
-    String toStringImpl() {
-	return
-            pkey
-            +"|"
-            +accounting
-            +'|'
-            +source_accounting
-            +'|'
-            +type
-            +'|'
-            +SQLUtility.getMilliDecimal(quantity)
-            +'x'
-            +SQLUtility.getDecimal(rate)
-            +'|'
-            +(
-                payment_confirmed==CONFIRMED?'Y'
-                :payment_confirmed==NOT_CONFIRMED?'N'
-                :'W'
-            )
-	;
-    }
-
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeLong(time);
-        out.writeCompressedInt(pkey);
-        out.writeCompressedUTF(accounting, 0);
-        out.writeCompressedUTF(source_accounting, 1);
-        out.writeCompressedUTF(username, 2);
-        out.writeCompressedUTF(type, 3);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0) out.writeCompressedUTF("Descriptions are unavailable for client version<=1.61", 4);
-        out.writeCompressedInt(quantity);
-        out.writeCompressedInt(rate);
-        out.writeNullUTF(payment_type);
-        out.writeNullUTF(payment_info);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
-            out.writeNullUTF(null);
-        } else {
-            out.writeNullUTF(processor);
-            out.writeCompressedInt(creditCardTransaction);
-        }
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)<0) {
-            out.writeCompressedInt(-1);
-        } else if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
-            out.writeNullUTF(null);
-        }
-    	out.writeByte(payment_confirmed);
-    }
-
-    public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
-        return getService().getConnector().getNoticeLogs().getIndexedRows(NoticeLog.COLUMN_TRANSID, pkey);
-    }
+    }*/
+    // </editor-fold>
 }

@@ -61,6 +61,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
         System.setProperty("java.rmi.server.useCodebaseOnly", "true");
         System.clearProperty("java.rmi.server.codebase");
         System.setProperty("java.rmi.server.disableHttp", "true");
+        System.setProperty("sun.rmi.server.suppressStackTraces", "true");
 
         if(useSsl) {
             // SSL
