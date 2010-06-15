@@ -13,6 +13,7 @@ import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
+import com.aoindustries.util.i18n.CurrencyComparator;
 import com.aoindustries.util.i18n.Money;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -23,11 +24,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * A <code>Business</code> is one distinct set of resources and permissions.
@@ -637,11 +638,11 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      * if there is not any transactions for that currency.
      * </p>
      * <p>
-     * If the business has no packages, will default to USD0.00.
+     * If the business has no packages, will default to $0.00.
      * </p>
      */
-    public Map<Currency,Money> getAccountBalances() throws RemoteException {
-        Map<Currency,Money> totals = new HashMap<Currency,Money>();
+    public SortedMap<Currency,Money> getAccountBalances() throws RemoteException {
+        SortedMap<Currency,Money> totals = new TreeMap<Currency,Money>(CurrencyComparator.getInstance());
         // TODO: Add each currency that is used by any package definition that is part of this account.
 
         // Get the total for each currency
@@ -661,7 +662,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             Currency usd = Currency.getInstance("USD");
             totals.put(usd, new Money(usd, BigDecimal.valueOf(0, usd.getDefaultFractionDigits())));
         }
-        return Collections.unmodifiableMap(totals);
+        return Collections.unmodifiableSortedMap(totals);
     }
 
     /**
