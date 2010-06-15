@@ -7,19 +7,25 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.AddCreditCardCommand;
 import com.aoindustries.aoserv.client.command.CancelBusinessCommand;
+import com.aoindustries.aoserv.client.command.SetCreditCardUseMonthlyCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
+import com.aoindustries.util.i18n.Money;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -365,9 +371,9 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             getUsernames(),
             getTickets(),
             getTicketActionsByOldBusiness(),
-            getTicketActionsByNewBusiness()
-            // TODO: getTransactions(),
-            // TODO: getTransactionsBySourceAccounting()
+            getTicketActionsByNewBusiness(),
+            getTransactions(),
+            getTransactionsBySourceAccounting()
         );
     }
     // </editor-fold>
@@ -434,6 +440,14 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {
         return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_ACCOUNTING, this);
+    }
+
+    public IndexedSet<Transaction> getTransactions() throws RemoteException {
+        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_ACCOUNTING, this);
+    }
+
+    public IndexedSet<Transaction> getTransactionsBySourceAccounting() throws RemoteException {
+        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_SOURCE_ACCOUNTING, this);
     }
 
     /**
@@ -520,12 +534,21 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             expirationYear
         ).execute(getService().getConnector());
     }
+
+    /**
+     * Sets the credit card that will be used monthly.  Any other selected card will
+     * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
+     */
+    public void setCreditCardUseMonthly(CreditCard creditCard) throws RemoteException {
+        new SetCreditCardUseMonthlyCommand(getKey(), creditCard==null ? null : creditCard.getKey()).execute(getService().getConnector());
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Group">
     /**
      * A group contains all users of its own business plus all parent businesses.
      */
+    @Override
     public boolean addMember(Principal user) {
         if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
         try {
@@ -544,6 +567,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /**
      * A group contains all users of its own business plus all parent businesses.
      */
+    @Override
     public boolean removeMember(Principal user) {
         if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
         try {
@@ -562,6 +586,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /**
      * A group contains all users of its own business plus all parent businesses.
      */
+    @Override
     public boolean isMember(Principal user) {
         if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
         try {
@@ -580,6 +605,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /**
      * A group contains all users of its own business plus all parent businesses.
      */
+    @Override
     public Enumeration<BusinessAdministrator> members() {
         List<BusinessAdministrator> members = new ArrayList<BusinessAdministrator>();
         try {
@@ -601,6 +627,53 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     public String getName() {
         return getKey().toString();
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Account Balances">
+    /**
+     * <p>
+     * Gets the account balances for this account.  This will always include
+     * the currencies used for any package that is part of the business, even
+     * if there is not any transactions for that currency.
+     * </p>
+     * <p>
+     * If the business has no packages, will default to USD0.00.
+     * </p>
+     */
+    public Map<Currency,Money> getAccountBalances() throws RemoteException {
+        Map<Currency,Money> totals = new HashMap<Currency,Money>();
+        // TODO: Add each currency that is used by any package definition that is part of this account.
+
+        // Get the total for each currency
+        for(Transaction tr : getTransactions()) {
+            if(tr.getStatus()!=Transaction.Status.N) {
+                Money amount = tr.getAmount();
+                Currency currency = amount.getCurrency();
+                Money total = totals.get(currency);
+                if(total==null) total = amount;
+                else total = total.add(amount);
+                totals.put(currency, total);
+            }
+        }
+
+        // Add USD0.00 if there is no balance yet
+        if(totals.isEmpty()) {
+            Currency usd = Currency.getInstance("USD");
+            totals.put(usd, new Money(usd, BigDecimal.valueOf(0, usd.getDefaultFractionDigits())));
+        }
+        return Collections.unmodifiableMap(totals);
+    }
+
+    /**
+     * Determines if this account has any non-zero balance in any currency.
+     */
+    public boolean hasNonZeroBalance() throws RemoteException {
+        for(Money balance : getAccountBalances().values()) {
+            if(balance.getValue().compareTo(BigDecimal.ZERO)!=0) return true;
+        }
+        return false;
+    }
+
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
@@ -846,20 +919,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         service.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
     }
 
-    public BigDecimal getAccountBalance() throws IOException, SQLException {
-        return service.connector.getTransactions().getAccountBalance(pkey);
-    }
-
     public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
         return service.connector.getTransactions().getAccountBalance(pkey, before);
-    }*/
-
-    /**
-     * @see  #getAccountBalance()
-     */
-    /*
-    public String getAccountBalanceString() throws IOException, SQLException {
-        return "$"+getAccountBalance().toPlainString();
     }*/
 
     /**
@@ -1005,10 +1066,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return sum;
     }
 
-    public List<Transaction> getTransactions() throws IOException, SQLException {
-        return getService().getConnector().getTransactions().getTransactions(pkey);
-    }
-
     public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
         return getService().getConnector().getWhoisHistory().getWhoisHistory(this);
     }
@@ -1049,20 +1106,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /* TODO
     public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
         return getService().getConnector().getEncryptionKeys().getEncryptionKeys(this);
-    }*/
-
-    /**
-     * Sets the credit card that will be used monthly.  Any other selected card will
-     * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
-     */
-    /*
-    public void setUseMonthlyCreditCard(CreditCard creditCard) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
-            true,
-            AOServProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
-            pkey,
-            creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPkey())
-        );
     }*/
 
     /**
@@ -1229,10 +1272,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public List<PackageDefinition> getPackageDefinitions() throws IOException, SQLException {
         return getService().getConnector().getPackageDefinitions().getIndexedRows(PackageDefinition.COLUMN_ACCOUNTING, pkey);
-    }
-
-    public List<Transaction> getTransactionsBySourceAccounting() throws IOException, SQLException {
-        return getService().getConnector().getTransactions().getIndexedRows(Transaction.COLUMN_SOURCE_ACCOUNTING, pkey);
     }
      */
     // </editor-fold>

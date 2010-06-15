@@ -70,14 +70,6 @@ public interface TransactionService<C extends AOServConnector<C,F>, F extends AO
      */
 
     /* TODO
-    BigDecimal getAccountBalance(String accounting) throws IOException, SQLException {
-        BigDecimal total = BigDecimal.valueOf(0, 2);
-        for(Transaction tr : getTransactions(accounting)) {
-            if(tr.getPaymentConfirmation()!=Transaction.NOT_CONFIRMED) total = total.add(tr.getAmount());
-        }
-        return total;
-    }
-
     BigDecimal getAccountBalance(String accounting, long before) throws IOException, SQLException {
         BigDecimal total = BigDecimal.valueOf(0, 2);
         for(Transaction tr : getTransactions(accounting)) {

@@ -12,6 +12,7 @@ import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -127,12 +128,14 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     	return time;
     }
 
-    @SchemaColumn(order=2, name="accounting", description="the identifier for the business")
+    static final String COLUMN_ACCOUNTING = "accounting";
+    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the identifier for the business")
     public Business getBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(accounting);
     }
 
-    @SchemaColumn(order=3, name="source_accounting", description="the source of the charge to this account")
+    static final String COLUMN_SOURCE_ACCOUNTING = "source_accounting";
+    @SchemaColumn(order=3, name=COLUMN_SOURCE_ACCOUNTING, index=IndexType.INDEXED, description="the source of the charge to this account")
     public Business getSourceBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(sourceAccounting);
     }
@@ -270,6 +273,16 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     } */
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Monetary Calculations">
+    /**
+     * Gets the amount of the transaction, which is the quantity*rate scaled
+     * to the number of digits for the currency, rounding half_up.
+     */
+    public Money getAmount() {
+        return getRate().multiply(getQuantity(), RoundingMode.HALF_UP);
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /*
     public void approved(final int creditCardTransaction) throws RemoteException {
@@ -381,16 +394,5 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
         return pennies;
     }
     */
-
-    /**
-     * Gets the amount of the transaction, which is the quantity*rate scaled back
-     * to two digits, rounding half_up.
-     */
-    /* TODO
-    public BigDecimal getAmount() {
-        BigDecimal amount = getQuantity().multiply(getRate()).setScale(2, RoundingMode.HALF_UP);
-        if(!amount.equals(BigDecimal.valueOf(getPennies(), 2))) throw new AssertionError("amount!=pennies");
-        return amount;
-    }*/
     // </editor-fold>
 }

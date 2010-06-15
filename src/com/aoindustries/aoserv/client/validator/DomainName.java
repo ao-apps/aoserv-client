@@ -85,6 +85,7 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -120,6 +121,7 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
     /**
      * Sorts by top level domain, then subdomain, then sub-subdomain, ...
      */
+    @Override
     public int compareTo(DomainName other) {
         if(this==other) return 0;
         String domain1 = domain;
@@ -162,6 +164,7 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
      *
      * @see  String#intern()
      */
+    @Override
     public DomainName intern() {
         try {
             DomainName existing = interned.get(domain);
@@ -178,10 +181,7 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
         }
     }
 
-    public String getDomain() {
-        return domain;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.DomainName getBean() {
         return new com.aoindustries.aoserv.client.beans.DomainName(domain);
     }
