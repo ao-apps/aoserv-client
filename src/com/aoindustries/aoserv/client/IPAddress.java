@@ -192,7 +192,7 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return getIpAddress().getAddress();
+        return getIpAddress().toString();
     }
     // </editor-fold>
 

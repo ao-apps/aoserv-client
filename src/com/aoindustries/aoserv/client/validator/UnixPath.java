@@ -83,6 +83,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -115,6 +116,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
         return path.hashCode();
     }
 
+    @Override
     public int compareTo(UnixPath other) {
         return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
     }
@@ -129,6 +131,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
      *
      * @see  String#intern()
      */
+    @Override
     public UnixPath intern() {
         try {
             UnixPath existing = interned.get(path);
@@ -145,10 +148,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
         }
     }
 
-    public String getPath() {
-        return path;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.UnixPath getBean() {
         return new com.aoindustries.aoserv.client.beans.UnixPath(path);
     }

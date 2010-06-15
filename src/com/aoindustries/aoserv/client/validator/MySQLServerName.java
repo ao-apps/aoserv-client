@@ -87,6 +87,7 @@ final public class MySQLServerName implements Comparable<MySQLServerName>, Seria
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -119,6 +120,7 @@ final public class MySQLServerName implements Comparable<MySQLServerName>, Seria
         return name.hashCode();
     }
 
+    @Override
     public int compareTo(MySQLServerName other) {
         return this==other ? 0 : name.compareTo(other.name);
     }
@@ -133,6 +135,7 @@ final public class MySQLServerName implements Comparable<MySQLServerName>, Seria
      *
      * @see  String#intern()
      */
+    @Override
     public MySQLServerName intern() {
         try {
             MySQLServerName existing = interned.get(name);
@@ -149,10 +152,7 @@ final public class MySQLServerName implements Comparable<MySQLServerName>, Seria
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.MySQLServerName getBean() {
         return new com.aoindustries.aoserv.client.beans.MySQLServerName(name);
     }

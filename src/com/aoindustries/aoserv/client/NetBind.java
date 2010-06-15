@@ -209,7 +209,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     String toStringImpl() throws RemoteException {
         IPAddress ip = getIpAddress();
         if(ip==null) return "*:"+getPort()+'/'+getNetProtocol();
-        String address = ip.getIpAddress().getAddress();
+        String address = ip.getIpAddress().toString();
         if(address.indexOf(':')==-1) return address+':'+getPort()+'/'+getNetProtocol();
         else return '['+address+"]:"+getPort()+'/'+getNetProtocol();
     }

@@ -312,6 +312,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Business getBean() {
         return new com.aoindustries.aoserv.client.beans.Business(getBean(getKey()), contractVersion, created, canceled, cancelReason, getBean(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getBean(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
@@ -596,8 +597,9 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return Collections.enumeration(members);
     }
 
+    @Override
     public String getName() {
-        return getKey().getAccounting();
+        return getKey().toString();
     }
     // </editor-fold>
 

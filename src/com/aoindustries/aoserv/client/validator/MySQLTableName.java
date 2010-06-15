@@ -87,6 +87,7 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -111,6 +112,7 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
         return name.hashCode();
     }
 
+    @Override
     public int compareTo(MySQLTableName other) {
         return this==other ? 0 : name.compareTo(other.name);
     }
@@ -120,10 +122,7 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
         return name;
     }
 
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.MySQLTableName getBean() {
         return new com.aoindustries.aoserv.client.beans.MySQLTableName(name);
     }

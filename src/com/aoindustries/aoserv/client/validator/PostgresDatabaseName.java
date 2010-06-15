@@ -94,6 +94,7 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -126,6 +127,7 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
         return name.hashCode();
     }
 
+    @Override
     public int compareTo(PostgresDatabaseName other) {
         return this==other ? 0 : name.compareTo(other.name);
     }
@@ -140,6 +142,7 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
      *
      * @see  String#intern()
      */
+    @Override
     public PostgresDatabaseName intern() {
         try {
             PostgresDatabaseName existing = interned.get(name);
@@ -156,10 +159,7 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.PostgresDatabaseName getBean() {
         return new com.aoindustries.aoserv.client.beans.PostgresDatabaseName(name);
     }

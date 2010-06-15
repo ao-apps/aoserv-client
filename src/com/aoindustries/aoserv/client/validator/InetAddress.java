@@ -264,39 +264,16 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         return ip.hashCode();
     }
 
+    @Override
     public int compareTo(InetAddress other) {
         return this==other ? 0 : ip.compareToUnsigned(other.ip);
-    }
-
-    @Override
-    public String toString() {
-        return getAddress();
-    }
-
-    /**
-     * Interns this IP much in the same fashion as <code>String.intern()</code>.
-     *
-     * @see  String#intern()
-     */
-    public InetAddress intern() {
-        InetAddress existing = interned.get(ip);
-        if(existing==null) {
-            existing = interned.putIfAbsent(ip, this);
-            if(existing==null) existing = this;
-            InetAddress existing2 = internedByAddress.putIfAbsent(existing.getAddress(), existing);
-            if(existing2!=null && existing2!=existing) throw new AssertionError("existing2!=null && existing2!=existing");
-        }
-        return existing;
-    }
-
-    public LongLong getIp() {
-        return ip;
     }
 
     /**
      * Converts this IP address to its String representation.
      */
-    public String getAddress() {
+    @Override
+    public String toString() {
         long hi = ip.getHigh();
         long lo = ip.getLow();
         if(hi==0) {
@@ -394,8 +371,30 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         return SB.toString();
     }
 
+    /**
+     * Interns this IP much in the same fashion as <code>String.intern()</code>.
+     *
+     * @see  String#intern()
+     */
+    @Override
+    public InetAddress intern() {
+        InetAddress existing = interned.get(ip);
+        if(existing==null) {
+            existing = interned.putIfAbsent(ip, this);
+            if(existing==null) existing = this;
+            InetAddress existing2 = internedByAddress.putIfAbsent(existing.toString(), existing);
+            if(existing2!=null && existing2!=existing) throw new AssertionError("existing2!=null && existing2!=existing");
+        }
+        return existing;
+    }
+
+    public LongLong getIp() {
+        return ip;
+    }
+
+    @Override
     public com.aoindustries.aoserv.client.beans.InetAddress getBean() {
-        return new com.aoindustries.aoserv.client.beans.InetAddress(getAddress());
+        return new com.aoindustries.aoserv.client.beans.InetAddress(toString());
     }
 
     public boolean isUnspecified() {

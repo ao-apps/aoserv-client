@@ -95,6 +95,7 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -127,6 +128,7 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
         return accounting.hashCode();
     }
 
+    @Override
     public int compareTo(AccountingCode other) {
         return this==other ? 0 : accounting.compareTo(other.accounting);
     }
@@ -141,6 +143,7 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
      *
      * @see  String#intern()
      */
+    @Override
     public AccountingCode intern() {
         try {
             AccountingCode existing = interned.get(accounting);
@@ -157,10 +160,7 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
         }
     }
 
-    public String getAccounting() {
-        return accounting;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.AccountingCode getBean() {
         return new com.aoindustries.aoserv.client.beans.AccountingCode(accounting);
     }

@@ -100,6 +100,7 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -136,6 +137,7 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
     /**
      * Sorts IP addresses before domain names.
      */
+    @Override
     public int compareTo(Hostname other) {
         if(this==other) return 0;
         if(domainName!=null) {
@@ -157,6 +159,7 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
      *
      * @see  String#intern()
      */
+    @Override
     public Hostname intern() {
         if(domainName!=null) {
             Hostname existing = internedByDomainName.get(domainName);
@@ -187,6 +190,7 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
         return inetAddress;
     }
 
+    @Override
     public com.aoindustries.aoserv.client.beans.Hostname getBean() {
         return new com.aoindustries.aoserv.client.beans.Hostname(toString());
     }

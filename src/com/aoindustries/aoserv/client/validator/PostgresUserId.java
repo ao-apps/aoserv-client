@@ -98,6 +98,7 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -130,6 +131,7 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
         return id.hashCode();
     }
 
+    @Override
     public int compareTo(PostgresUserId other) {
         return this==other ? 0 : id.compareTo(other.id);
     }
@@ -144,6 +146,7 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
      *
      * @see  String#intern()
      */
+    @Override
     public PostgresUserId intern() {
         // Interning implies interning the eqvilalent UserId
         getUserId().intern();
@@ -162,10 +165,7 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
         }
     }
 
-    public String getId() {
-        return id;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.PostgresUserId getBean() {
         return new com.aoindustries.aoserv.client.beans.PostgresUserId(id);
     }

@@ -133,7 +133,7 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
-        return hostname.getDomain();
+        return hostname.toString();
     }
     // </editor-fold>
 }

@@ -228,7 +228,7 @@ final public class AOServClientConfiguration {
                             newFactory = new RmiClientConnectorFactory(
                                 getRmiHostname().toString(),
                                 getRmiPort().getPort(),
-                                localIp==null ? null : localIp.getAddress(),
+                                localIp==null ? null : localIp.toString(),
                                 getRmiUseSsl()
                             );
                         } catch(ValidationException err) {

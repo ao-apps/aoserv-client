@@ -61,6 +61,7 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -95,6 +96,7 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
         return id;
     }
 
+    @Override
     public int compareTo(LinuxID other) {
         return this==other ? 0 : AOServObjectUtils.compare(id, other.id);
     }
@@ -112,6 +114,7 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
         return id<500 || id==65534 || id==65535;
     }
 
+    @Override
     public com.aoindustries.aoserv.client.beans.LinuxID getBean() {
         return new com.aoindustries.aoserv.client.beans.LinuxID(id);
     }

@@ -100,6 +100,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -132,6 +133,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
         return value.hashCode();
     }
 
+    @Override
     public int compareTo(Gecos other) {
         return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(value, other.value);
     }
@@ -146,6 +148,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
      *
      * @see  String#intern()
      */
+    @Override
     public Gecos intern() {
         try {
             Gecos existing = interned.get(value);
@@ -162,10 +165,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
         }
     }
 
-    public String getValue() {
-        return value;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.Gecos getBean() {
         return new com.aoindustries.aoserv.client.beans.Gecos(value);
     }

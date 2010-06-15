@@ -197,8 +197,8 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         return
             "jdbc:postgresql://"
             + (ipOnly
-               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID()).getPrimaryIPAddress().getIpAddress().getAddress()
-               :ao.getHostname().getDomain()
+               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID()).getPrimaryIPAddress().getIpAddress().toString()
+               :ao.getHostname().toString()
             )
             + ':'
             + getPostgresServer().getNetBind().getPort()

@@ -92,6 +92,7 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -124,6 +125,7 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
         return name.hashCode();
     }
 
+    @Override
     public int compareTo(MySQLDatabaseName other) {
         return this==other ? 0 : name.compareTo(other.name);
     }
@@ -138,6 +140,7 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
      *
      * @see  String#intern()
      */
+    @Override
     public MySQLDatabaseName intern() {
         try {
             MySQLDatabaseName existing = interned.get(name);
@@ -154,10 +157,7 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.MySQLDatabaseName getBean() {
         return new com.aoindustries.aoserv.client.beans.MySQLDatabaseName(name);
     }

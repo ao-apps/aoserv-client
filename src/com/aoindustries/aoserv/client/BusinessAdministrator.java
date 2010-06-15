@@ -400,7 +400,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
      * Gets the unique name of this Principal.
      */
     public String getName() {
-        return getKey().getId();
+        return getKey().toString();
     }
     // </editor-fold>
 

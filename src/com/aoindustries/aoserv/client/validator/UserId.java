@@ -177,10 +177,6 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
         }
     }
 
-    public String getId() {
-        return id;
-    }
-
     @Override
     public com.aoindustries.aoserv.client.beans.UserId getBean() {
         return new com.aoindustries.aoserv.client.beans.UserId(id);

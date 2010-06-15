@@ -95,6 +95,7 @@ final public class HashedPassword implements Serializable, ObjectInputValidation
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -123,10 +124,7 @@ final public class HashedPassword implements Serializable, ObjectInputValidation
         return hashedPassword;
     }
 
-    public String getHashedPassword() {
-        return hashedPassword;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.HashedPassword getBean() {
         return new com.aoindustries.aoserv.client.beans.HashedPassword(hashedPassword);
     }

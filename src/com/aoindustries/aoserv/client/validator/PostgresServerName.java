@@ -87,6 +87,7 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -119,6 +120,7 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
         return name.hashCode();
     }
 
+    @Override
     public int compareTo(PostgresServerName other) {
         return this==other ? 0 : name.compareTo(other.name);
     }
@@ -133,6 +135,7 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
      *
      * @see  String#intern()
      */
+    @Override
     public PostgresServerName intern() {
         try {
             PostgresServerName existing = interned.get(name);
@@ -149,10 +152,7 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.PostgresServerName getBean() {
         return new com.aoindustries.aoserv.client.beans.PostgresServerName(name);
     }

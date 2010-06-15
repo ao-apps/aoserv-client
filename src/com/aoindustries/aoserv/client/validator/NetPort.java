@@ -61,6 +61,7 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -95,6 +96,7 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
         return port;
     }
 
+    @Override
     public int compareTo(NetPort other) {
         return this==other ? 0 : AOServObjectUtils.compare(port, other.port);
     }
@@ -112,6 +114,7 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
         return port>=1024;
     }
 
+    @Override
     public com.aoindustries.aoserv.client.beans.NetPort getBean() {
         return new com.aoindustries.aoserv.client.beans.NetPort(port);
     }

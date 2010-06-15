@@ -54,9 +54,9 @@ public class InetAddressTest extends TestCase {
         // Test toString performance
         List<String> toParse = new ArrayList<String>(NUM_TEST);
         startNanos = System.nanoTime();
-        for(int c=0;c<NUM_TEST;c++) toParse.add(inetAddresses.get(c).getAddress());
+        for(int c=0;c<NUM_TEST;c++) toParse.add(inetAddresses.get(c).toString());
         endNanos = System.nanoTime();
-        System.out.println("    "+NUM_TEST+" getAddress() in "+SQLUtility.getMilliDecimal((endNanos-startNanos)/1000)+" ms");
+        System.out.println("    "+NUM_TEST+" toString() in "+SQLUtility.getMilliDecimal((endNanos-startNanos)/1000)+" ms");
 
         // Test toString performance
         List<InetAddress> parsed = new ArrayList<InetAddress>(NUM_TEST);

@@ -199,17 +199,17 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
      * Gets the domain, but in fully-qualified, absolute path (with trailing period).
      */
     public String getFullyQualifiedDomain() throws RemoteException {
-        if(domain.equals("@")) return getZone().getZone().getDomain()+'.';
+        if(domain.equals("@")) return getZone().getZone().toString()+'.';
         if(domain.endsWith(".")) return domain;
-        return domain+'.'+getZone().getZone().getDomain()+'.';
+        return domain+'.'+getZone().getZone().toString()+'.';
     }
 
     /**
      * Gets the data domain in relative form if in same domain or fully-qualified if in different domain.
      */
     public String getRelativeDataDomainName() throws RemoteException {
-        String dotZone = "."+getZone().getZone().getDomain();
-        String dataDomain = dataDomainName.getDomain();
+        String dotZone = "."+getZone().getZone().toString();
+        String dataDomain = dataDomainName.toString();
         if(dataDomain.startsWith(dotZone)) return dataDomain.substring(0, dataDomain.length()-dotZone.length()); // Relative
         else return dataDomain+'.'; // Absolute
     }

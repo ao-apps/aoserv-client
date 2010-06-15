@@ -91,6 +91,7 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -122,6 +123,7 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
         return address.hashCode();
     }
 
+    @Override
     public int compareTo(MacAddress other) {
         return this==other ? 0 : address.compareTo(other.address);
     }
@@ -136,6 +138,7 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
      *
      * @see  String#intern()
      */
+    @Override
     public MacAddress intern() {
         try {
             MacAddress existing = interned.get(address);
@@ -152,10 +155,7 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
         }
     }
 
-    public String getAddress() {
-        return address;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.MacAddress getBean() {
         return new com.aoindustries.aoserv.client.beans.MacAddress(address);
     }

@@ -314,8 +314,8 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
         final String myOldValue;
         final String myNewValue;
         if(actionType.equals(TicketActionType.SET_BUSINESS)) {
-            myOldValue = oldAccounting==null ? null : oldAccounting.getAccounting();
-            myNewValue = newAccounting==null ? null : newAccounting.getAccounting();
+            myOldValue = oldAccounting==null ? null : oldAccounting.toString();
+            myNewValue = newAccounting==null ? null : newAccounting.toString();
         } else if(
             actionType.equals(TicketActionType.SET_CLIENT_PRIORITY)
             || actionType.equals(TicketActionType.SET_ADMIN_PRIORITY)

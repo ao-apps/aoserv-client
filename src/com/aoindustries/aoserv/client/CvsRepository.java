@@ -125,7 +125,7 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return getAoServerResource().getAoServer().getHostname()+":"+path.getPath();
+        return getAoServerResource().getAoServer().getHostname()+":"+path.toString();
     }
     // </editor-fold>
 

@@ -99,6 +99,7 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -131,6 +132,7 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
         return id.hashCode();
     }
 
+    @Override
     public int compareTo(GroupId other) {
         return this==other ? 0 : id.compareTo(other.id);
     }
@@ -145,6 +147,7 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
      *
      * @see  String#intern()
      */
+    @Override
     public GroupId intern() {
         try {
             GroupId existing = interned.get(id);
@@ -161,10 +164,7 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
         }
     }
 
-    public String getId() {
-        return id;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.GroupId getBean() {
         return new com.aoindustries.aoserv.client.beans.GroupId(id);
     }

@@ -200,10 +200,6 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
         return getKey().toString();
     }
 
-    final String toStringImpl(Locale userLocale) throws RemoteException {
-        throw new RuntimeException("TODO: Delete this method once all implementations have been removed");
-    }
-
     /**
      * Gets an unmodifiable set of objects this object directly depends on.
      * This should result in a directed acyclic graph - there should never be any loops in the graph.

@@ -93,6 +93,7 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -125,6 +126,7 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
         return id.hashCode();
     }
 
+    @Override
     public int compareTo(MySQLUserId other) {
         return this==other ? 0 : id.compareTo(other.id);
     }
@@ -139,6 +141,7 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
      *
      * @see  String#intern()
      */
+    @Override
     public MySQLUserId intern() {
         // Interning implies interning the eqvilalent UserId
         getUserId().intern();
@@ -157,10 +160,7 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
         }
     }
 
-    public String getId() {
-        return id;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.MySQLUserId getBean() {
         return new com.aoindustries.aoserv.client.beans.MySQLUserId(id);
     }

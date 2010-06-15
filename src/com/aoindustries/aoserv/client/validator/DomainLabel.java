@@ -86,6 +86,7 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -118,6 +119,7 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
         return label.hashCode();
     }
 
+    @Override
     public int compareTo(DomainLabel other) {
         return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(label, other.label);
     }
@@ -132,6 +134,7 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
      *
      * @see  String#intern()
      */
+    @Override
     public DomainLabel intern() {
         try {
             DomainLabel existing = interned.get(label);
@@ -148,10 +151,7 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
         }
     }
 
-    public String getLabel() {
-        return label;
-    }
-
+    @Override
     public com.aoindustries.aoserv.client.beans.DomainLabel getBean() {
         return new com.aoindustries.aoserv.client.beans.DomainLabel(label);
     }

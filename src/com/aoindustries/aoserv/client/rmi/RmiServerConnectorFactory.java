@@ -53,7 +53,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
         if(publicAddress!=null) {
             System.setProperty("java.rmi.server.hostname", publicAddress.toString());
         } else if(listenAddress!=null) {
-            System.setProperty("java.rmi.server.hostname", listenAddress.getAddress());
+            System.setProperty("java.rmi.server.hostname", listenAddress.toString());
         } else {
             System.clearProperty("java.rmi.server.hostname");
         }
@@ -67,7 +67,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
             // SSL
             if(listenAddress!=null) {
                 csf = new RMIClientSocketFactorySSL();
-                ssf = new RMIServerSocketFactorySSL(listenAddress.getAddress());
+                ssf = new RMIServerSocketFactorySSL(listenAddress.toString());
             } else {
                 csf = new RMIClientSocketFactorySSL();
                 ssf = new RMIServerSocketFactorySSL();
@@ -76,7 +76,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
             // Non-SSL
             if(listenAddress!=null) {
                 csf = new RMIClientSocketFactoryTCP();
-                ssf = new RMIServerSocketFactoryTCP(listenAddress.getAddress());
+                ssf = new RMIServerSocketFactoryTCP(listenAddress.toString());
             } else {
                 csf = new RMIClientSocketFactoryTCP();
                 ssf = new RMIServerSocketFactoryTCP();

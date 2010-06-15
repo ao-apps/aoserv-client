@@ -58,7 +58,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
         if(localPart==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.isNull");
         if(domain==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isNull");
         int len = localPart.length();
-        int totalLen = len + domain.getDomain().length();
+        int totalLen = len + domain.toString().length();
         if(totalLen>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Email.validate.tooLong", MAX_LENGTH, totalLen);
 
         // If found in interned, it is valid
@@ -145,6 +145,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
         ois.defaultReadObject();
     }
 
+    @Override
     public void validateObject() throws InvalidObjectException {
         try {
             validate();
@@ -185,6 +186,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
     /**
      * Sorts by domain and then by local part.
      */
+    @Override
     public int compareTo(Email other) {
         if(this==other) return 0;
         int diff = domain.compareTo(other.domain);
@@ -202,6 +204,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
      *
      * @see  String#intern()
      */
+    @Override
     public Email intern() {
         try {
             // Intern the domain
@@ -238,6 +241,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
         return domain;
     }
 
+    @Override
     public com.aoindustries.aoserv.client.beans.Email getBean() {
         return new com.aoindustries.aoserv.client.beans.Email(localPart, domain.getBean());
     }

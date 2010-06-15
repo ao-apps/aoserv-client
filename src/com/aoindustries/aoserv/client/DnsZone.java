@@ -144,7 +144,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return zone.getDomain();
+        return zone.toString();
     }
     // </editor-fold>
 
@@ -161,7 +161,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="Zone File Creation">
     public boolean isArpa() {
-        return zone.getDomain().endsWith(".in-addr.arpa");
+        return zone.toString().endsWith(".in-addr.arpa");
     }
 
     private static void printRecord(Appendable out, String domain, int ttl, Integer recordTtl, String type, Integer mx, String destination) throws IOException {
@@ -223,7 +223,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
         out.append('\n');
     	if(!isArpa()) {
             out.append("$ORIGIN ");
-            out.append(zone.getDomain());
+            out.append(zone.toString());
             out.append(".\n");
     	}
     	out.append("@                       ");
@@ -239,11 +239,11 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
         }
         if(firstNS==null) {
             if(brand==null) throw new RemoteException("Unable to find Brand");
-            out.append(brand.getNameserver1().getDomain());
+            out.append(brand.getNameserver1().toString());
         } else {
-            out.append(firstNS.getDataDomainName().getDomain());
+            out.append(firstNS.getDataDomainName().toString());
         }
-        out.append(".   "); out.append(hostmaster.getDomain()); out.append(". (\n"
+        out.append(".   "); out.append(hostmaster.toString()); out.append(". (\n"
                 + "                                "); out.append(Long.toString(serial)); out.append(" ; serial\n"
                 + "                                3600    ; refresh\n"
                 + "                                600     ; retry\n"
@@ -254,18 +254,18 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
             // Add the default nameservers because named will refuse to start without them
             out.append("; No name servers configured, using the defaults\n");
             if(brand==null) throw new RemoteException("Unable to find Brand");
-            printRecord(out, "@", ttl, null, DnsType.NS, null, brand.getNameserver1().getDomain()+'.');
+            printRecord(out, "@", ttl, null, DnsType.NS, null, brand.getNameserver1().toString()+'.');
             out.append('\n');
-            printRecord(out, "@", ttl, null, DnsType.NS, null, brand.getNameserver2().getDomain()+'.');
+            printRecord(out, "@", ttl, null, DnsType.NS, null, brand.getNameserver2().toString()+'.');
             out.append('\n');
             DomainName ns3 = brand.getNameserver3();
             if(ns3!=null) {
-                printRecord(out, "@", ttl, null, DnsType.NS, null, ns3.getDomain()+'.');
+                printRecord(out, "@", ttl, null, DnsType.NS, null, ns3.toString()+'.');
                 out.append('\n');
             }
             DomainName ns4 = brand.getNameserver3();
             if(ns4!=null) {
-                printRecord(out, "@", ttl, null, DnsType.NS, null, ns4.getDomain()+'.');
+                printRecord(out, "@", ttl, null, DnsType.NS, null, ns4.toString()+'.');
                 out.append('\n');
             }
         }
@@ -282,7 +282,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
             if(hasConflictAbove) out.append("; Disabled due to conflict: ");
             // Each record type
             InetAddress dataIpAddress = record.getDataIpAddress();
-            if(dataIpAddress!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.getType().getType(), record.getMxPriority(), dataIpAddress.getAddress());
+            if(dataIpAddress!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.getType().getType(), record.getMxPriority(), dataIpAddress.toString());
             else {
                 if(record.getDataDomainName()!=null) printRecord(out, record.getDomain(), ttl, record.getTtl(), record.getType().getType(), record.getMxPriority(), record.getRelativeDataDomainName());
                 else {
