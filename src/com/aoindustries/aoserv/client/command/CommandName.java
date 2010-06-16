@@ -68,6 +68,7 @@ public enum CommandName {
     set_ticket_client_priority(SetTicketClientPriorityCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
     set_ticket_summary(SetTicketSummaryCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
     // transactions
+    get_transaction_description(GetTransactionDescriptionCommand.class, ServiceName.transactions, AOServPermission.Permission.get_transaction_description),
     add_transaction(AddTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),
     approve_transaction(ApproveTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),
     decline_transaction(DeclineTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),

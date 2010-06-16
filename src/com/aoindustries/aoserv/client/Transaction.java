@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
  */
 import com.aoindustries.aoserv.client.command.ApproveTransactionCommand;
 import com.aoindustries.aoserv.client.command.DeclineTransactionCommand;
+import com.aoindustries.aoserv.client.command.GetTransactionDescriptionCommand;
 import com.aoindustries.aoserv.client.command.HoldTransactionCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -158,52 +159,49 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
         return getService().getConnector().getTransactionTypes().get(type);
     }
 
-    /* TODO
     @SchemaColumn(order=6, name="description", description="description of the transaction")
     synchronized public String getDescription() throws RemoteException {
         if(description==null) description = new GetTransactionDescriptionCommand(key).execute(getService().getConnector());
         return description;
     }
-     */
 
-    @SchemaColumn(order=6, name="quantity", description="the quantity of the rate applied to the account")
+    @SchemaColumn(order=7, name="quantity", description="the quantity of the rate applied to the account")
     public BigDecimal getQuantity() {
     	return quantity;
     }
 
-    @SchemaColumn(order=7, name="rate", description="the amount per unit of quantity")
+    @SchemaColumn(order=8, name="rate", description="the amount per unit of quantity")
     public Money getRate() {
     	return rate;
     }
 
     static final String COLUMN_PAYMENT_TYPE = "payment_type";
-    @SchemaColumn(order=8, name=COLUMN_PAYMENT_TYPE, index=IndexType.INDEXED, description="the type of payment made")
+    @SchemaColumn(order=9, name=COLUMN_PAYMENT_TYPE, index=IndexType.INDEXED, description="the type of payment made")
     public PaymentType getPaymentType() throws RemoteException {
         if (paymentType == null) return null;
         return getService().getConnector().getPaymentTypes().get(paymentType);
     }
 
-    @SchemaColumn(order=9, name="payment_info", description="the payment info, such as last four of a credit card number or a check number")
+    @SchemaColumn(order=10, name="payment_info", description="the payment info, such as last four of a credit card number or a check number")
     public String getPaymentInfo() {
     	return paymentInfo;
     }
 
     static final String COLUMN_PROCESSOR = "processor";
-    @SchemaColumn(order=10, name=COLUMN_PROCESSOR, index=IndexType.INDEXED, description="the credit card processor that handled the payment")
+    @SchemaColumn(order=11, name=COLUMN_PROCESSOR, index=IndexType.INDEXED, description="the credit card processor that handled the payment")
     public CreditCardProcessor getProcessor() throws RemoteException {
         if(processor==null) return null;
         return getService().getConnector().getCreditCardProcessors().get(processor);
     }
 
-    /* TODO
-    @SchemaColumn(order=12, name="credit_card_transaction", description="the credit card transaction for this transaction")
+    static final String COLUMN_CREDIT_CARD_TRANSACTION = "credit_card_transaction";
+    @SchemaColumn(order=12, name=COLUMN_CREDIT_CARD_TRANSACTION, index=IndexType.UNIQUE, description="the credit card transaction for this transaction")
     public CreditCardTransaction getCreditCardTransaction() throws RemoteException {
         if(creditCardTransaction==null) return null;
         return getService().getConnector().getCreditCardTransactions().get(creditCardTransaction);
     }
-     */
 
-    @SchemaColumn(order=11, name="status", description="the status of the transaction")
+    @SchemaColumn(order=13, name="status", description="the status of the transaction")
     public Status getStatus() {
     	return status;
     }
@@ -239,8 +237,8 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
             getBusinessAdministrator(),
             getType(),
             getPaymentType(),
-            getProcessor()
-            // TODO: getCreditCardTransaction()
+            getProcessor(),
+            getCreditCardTransaction()
         );
     }
 

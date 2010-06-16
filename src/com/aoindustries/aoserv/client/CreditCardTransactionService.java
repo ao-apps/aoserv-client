@@ -1,39 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2007-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.IntList;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.List;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  CreditCardTransaction
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardTransactionTable extends CachedTableIntegerKey<CreditCardTransaction> {
+@ServiceAnnotation(ServiceName.credit_card_transactions)
+public interface CreditCardTransactionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,CreditCardTransaction> {
 
-    CreditCardTransactionTable(AOServConnector<?,?> connector) {
-	super(connector, CreditCardTransaction.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(CreditCardTransaction.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(CreditCardTransaction.COLUMN_AUTHORIZATION_TIME_name, ASCENDING),
-        new OrderBy(CreditCardTransaction.COLUMN_PKEY_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addCreditCardTransaction(
         final CreditCardProcessor processor,
         final Business business,
@@ -164,14 +144,6 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
         );
     }
 
-    public CreditCardTransaction get(int pkey) throws IOException, SQLException {
-    	return getUniqueRow(CreditCardTransaction.COLUMN_PKEY, pkey);
-    }
-
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.CREDIT_CARD_TRANSACTIONS;
-    }
-    
     CreditCardTransaction getLastCreditCardTransaction(Business bu) throws IOException, SQLException {
         String accounting = bu.pkey;
         // Sorted by accounting, time, so we search for first match from the bottom
@@ -183,4 +155,5 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
         }
         return null;
     }
+     */
 }

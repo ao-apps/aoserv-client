@@ -47,6 +47,8 @@ import com.aoindustries.aoserv.client.CreditCard;
 import com.aoindustries.aoserv.client.CreditCardProcessor;
 import com.aoindustries.aoserv.client.CreditCardProcessorService;
 import com.aoindustries.aoserv.client.CreditCardService;
+import com.aoindustries.aoserv.client.CreditCardTransaction;
+import com.aoindustries.aoserv.client.CreditCardTransactionService;
 import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
@@ -272,7 +274,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         businessServers = new CachedBusinessServerService(this, wrapped.getBusinessServers());
         countryCodes = new CachedCountryCodeService(this, wrapped.getCountryCodes());
         creditCardProcessors = new CachedCreditCardProcessorService(this, wrapped.getCreditCardProcessors());
-        // TODO: creditCardTransactions = new CachedCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
+        creditCardTransactions = new CachedCreditCardTransactionService(this, wrapped.getCreditCardTransactions());
         creditCards = new CachedCreditCardService(this, wrapped.getCreditCards());
         cvsRepositories = new CachedCvsRepositoryService(this, wrapped.getCvsRepositories());
         disableLogs = new CachedDisableLogService(this, wrapped.getDisableLogs());
@@ -707,8 +709,16 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardTransactionService">
-    // TODO: final CachedCreditCardTransactionService creditCardTransactions;
-    // TODO: public CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions();
+    static class CachedCreditCardTransactionService extends CachedService<Integer,CreditCardTransaction> implements CreditCardTransactionService<CachedConnector,CachedConnectorFactory> {
+        CachedCreditCardTransactionService(CachedConnector connector, CreditCardTransactionService<?,?> wrapped) {
+            super(connector, Integer.class, CreditCardTransaction.class, wrapped);
+        }
+    }
+    final CachedCreditCardTransactionService creditCardTransactions;
+    @Override
+    public CreditCardTransactionService<CachedConnector,CachedConnectorFactory> getCreditCardTransactions() {
+        return creditCardTransactions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardService">
     static class CachedCreditCardService extends CachedService<Integer,CreditCard> implements CreditCardService<CachedConnector,CachedConnectorFactory> {
@@ -977,6 +987,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedFtpGuestUserService ftpGuestUsers;
+    @Override
     public FtpGuestUserService<CachedConnector,CachedConnectorFactory> getFtpGuestUsers() {
         return ftpGuestUsers;
     }
@@ -988,6 +999,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedGroupNameService groupNames;
+    @Override
     public GroupNameService<CachedConnector,CachedConnectorFactory> getGroupNames() {
         return groupNames;
     }
@@ -1007,6 +1019,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedHttpdJBossVersionService httpdJBossVersions;
+    @Override
     public HttpdJBossVersionService<CachedConnector,CachedConnectorFactory> getHttpdJBossVersions() {
         return httpdJBossVersions;
     }
@@ -1018,6 +1031,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedHttpdJKCodeService httpdJKCodes;
+    @Override
     public HttpdJKCodeService<CachedConnector,CachedConnectorFactory> getHttpdJKCodes() {
         return httpdJKCodes;
     }
@@ -1029,6 +1043,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedHttpdJKProtocolService httpdJKProtocols;
+    @Override
     public HttpdJKProtocolService<CachedConnector,CachedConnectorFactory> getHttpdJKProtocols() {
         return httpdJKProtocols;
     }
@@ -1040,6 +1055,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedHttpdServerService httpdServers;
+    @Override
     public HttpdServerService<CachedConnector,CachedConnectorFactory> getHttpdServers() {
         return httpdServers;
     }
@@ -1067,6 +1083,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedHttpdSiteService httpdSites;
+    @Override
     public HttpdSiteService<CachedConnector,CachedConnectorFactory> getHttpdSites() {
         return httpdSites;
     }
@@ -1106,6 +1123,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedHttpdTomcatVersionService httpdTomcatVersions;
+    @Override
     public HttpdTomcatVersionService<CachedConnector,CachedConnectorFactory> getHttpdTomcatVersions() {
         return httpdTomcatVersions;
     }
@@ -1121,6 +1139,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedIPAddressService ipAddresses;
+    @Override
     public IPAddressService<CachedConnector,CachedConnectorFactory> getIpAddresses() {
         return ipAddresses;
     }
@@ -1132,6 +1151,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedLanguageService languages;
+    @Override
     public LanguageService<CachedConnector,CachedConnectorFactory> getLanguages() {
         return languages;
     }
@@ -1147,6 +1167,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedLinuxAccountGroupService linuxAccountGroups;
+    @Override
     public LinuxAccountGroupService<CachedConnector,CachedConnectorFactory> getLinuxAccountGroups() {
         return linuxAccountGroups;
     }
@@ -1158,6 +1179,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedLinuxAccountTypeService linuxAccountTypes;
+    @Override
     public LinuxAccountTypeService<CachedConnector,CachedConnectorFactory> getLinuxAccountTypes() {
         return linuxAccountTypes;
     }
@@ -1169,6 +1191,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedLinuxAccountService linuxAccounts;
+    @Override
     public LinuxAccountService<CachedConnector,CachedConnectorFactory> getLinuxAccounts() {
         return linuxAccounts;
     }
@@ -1180,6 +1203,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedLinuxGroupTypeService linuxGroupTypes;
+    @Override
     public LinuxGroupTypeService<CachedConnector,CachedConnectorFactory> getLinuxGroupTypes() {
         return linuxGroupTypes;
     }
@@ -1191,6 +1215,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedLinuxGroupService linuxGroups;
+    @Override
     public LinuxGroupService<CachedConnector,CachedConnectorFactory> getLinuxGroups() {
         return linuxGroups;
     }
@@ -1210,6 +1235,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedMajordomoVersionService majordomoVersions;
+    @Override
     public MajordomoVersionService<CachedConnector,CachedConnectorFactory> getMajordomoVersions() {
         return majordomoVersions;
     }
@@ -1221,6 +1247,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedMasterHostService masterHosts;
+    @Override
     public MasterHostService<CachedConnector,CachedConnectorFactory> getMasterHosts() {
         return masterHosts;
     }
@@ -1232,6 +1259,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedMasterServerService masterServers;
+    @Override
     public MasterServerService<CachedConnector,CachedConnectorFactory> getMasterServers() {
         return masterServers;
     }
@@ -1243,6 +1271,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedMasterUserService masterUsers;
+    @Override
     public MasterUserService<CachedConnector,CachedConnectorFactory> getMasterUsers() {
         return masterUsers;
     }
@@ -1258,6 +1287,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedMySQLDatabaseService mysqlDatabases;
+    @Override
     public MySQLDatabaseService<CachedConnector,CachedConnectorFactory> getMysqlDatabases() {
         return mysqlDatabases;
     }
@@ -1269,6 +1299,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedMySQLDBUserService mysqlDBUsers;
+    @Override
     public MySQLDBUserService<CachedConnector,CachedConnectorFactory> getMysqlDBUsers() {
         return mysqlDBUsers;
     }
@@ -1280,6 +1311,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedMySQLServerService mysqlServers;
+    @Override
     public MySQLServerService<CachedConnector,CachedConnectorFactory> getMysqlServers() {
         return mysqlServers;
     }
@@ -1291,6 +1323,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedMySQLUserService mysqlUsers;
+    @Override
     public MySQLUserService<CachedConnector,CachedConnectorFactory> getMysqlUsers() {
         return mysqlUsers;
     }
@@ -1302,6 +1335,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedNetBindService netBinds;
+    @Override
     public NetBindService<CachedConnector,CachedConnectorFactory> getNetBinds() {
         return netBinds;
     }
@@ -1313,6 +1347,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedNetDeviceIDService netDeviceIDs;
+    @Override
     public NetDeviceIDService<CachedConnector,CachedConnectorFactory> getNetDeviceIDs() {
         return netDeviceIDs;
     }
@@ -1324,6 +1359,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedNetDeviceService netDevices;
+    @Override
     public NetDeviceService<CachedConnector,CachedConnectorFactory> getNetDevices() {
         return netDevices;
     }
@@ -1335,6 +1371,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedNetProtocolService netProtocols;
+    @Override
     public NetProtocolService<CachedConnector,CachedConnectorFactory> getNetProtocols() {
         return netProtocols;
     }
@@ -1346,6 +1383,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedNetTcpRedirectService netTcpRedirects;
+    @Override
     public NetTcpRedirectService<CachedConnector,CachedConnectorFactory> getNetTcpRedirects() {
         return netTcpRedirects;
     }
@@ -1361,6 +1399,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedNoticeTypeService noticeTypes;
+    @Override
     public NoticeTypeService<CachedConnector,CachedConnectorFactory> getNoticeTypes() {
         return noticeTypes;
     }
@@ -1372,6 +1411,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedOperatingSystemVersionService operatingSystemVersions;
+    @Override
     public OperatingSystemVersionService<CachedConnector,CachedConnectorFactory> getOperatingSystemVersions() {
         return operatingSystemVersions;
     }
@@ -1383,6 +1423,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedOperatingSystemService operatingSystems;
+    @Override
     public OperatingSystemService<CachedConnector,CachedConnectorFactory> getOperatingSystems() {
         return operatingSystems;
     }
@@ -1394,6 +1435,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedPackageCategoryService packageCategories;
+    @Override
     public PackageCategoryService<CachedConnector,CachedConnectorFactory> getPackageCategories() {
         return packageCategories;
     }
@@ -1421,6 +1463,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         }
     }
     final CachedPaymentTypeService paymentTypes;
+    @Override
     public PaymentTypeService<CachedConnector,CachedConnectorFactory> getPaymentTypes() {
         return paymentTypes;
     }

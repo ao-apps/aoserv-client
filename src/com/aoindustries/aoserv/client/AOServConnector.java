@@ -117,7 +117,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     BusinessServerService<C,F> getBusinessServers() throws RemoteException;
     CountryCodeService<C,F> getCountryCodes() throws RemoteException;
     CreditCardProcessorService<C,F> getCreditCardProcessors() throws RemoteException;
-    // TODO: CreditCardTransactionService<C,F> getCreditCardTransactions() throws RemoteException;
+    CreditCardTransactionService<C,F> getCreditCardTransactions() throws RemoteException;
     CreditCardService<C,F> getCreditCards() throws RemoteException;
     CvsRepositoryService<C,F> getCvsRepositories() throws RemoteException;
     DisableLogService<C,F> getDisableLogs() throws RemoteException;

@@ -47,6 +47,8 @@ import com.aoindustries.aoserv.client.CreditCard;
 import com.aoindustries.aoserv.client.CreditCardProcessor;
 import com.aoindustries.aoserv.client.CreditCardProcessorService;
 import com.aoindustries.aoserv.client.CreditCardService;
+import com.aoindustries.aoserv.client.CreditCardTransaction;
+import com.aoindustries.aoserv.client.CreditCardTransactionService;
 import com.aoindustries.aoserv.client.CvsRepository;
 import com.aoindustries.aoserv.client.CvsRepositoryService;
 import com.aoindustries.aoserv.client.DisableLog;
@@ -277,7 +279,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         businessServers = new WrappedBusinessServerService(this);
         countryCodes = new WrappedCountryCodeService(this);
         creditCardProcessors = new WrappedCreditCardProcessorService(this);
-        // TODO: creditCardTransactions = new WrappedCreditCardTransactionService(this);
+        creditCardTransactions = new WrappedCreditCardTransactionService(this);
         creditCards = new WrappedCreditCardService(this);
         cvsRepositories = new WrappedCvsRepositoryService(this);
         disableLogs = new WrappedDisableLogService(this);
@@ -794,8 +796,16 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardTransactionService">
-    // TODO: final WrappedCreditCardTransactionService<C,F> creditCardTransactions;
-    // TODO: final public CreditCardTransactionService<C,F> getCreditCardTransactions();
+    static class WrappedCreditCardTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCardTransaction> implements CreditCardTransactionService<C,F> {
+        WrappedCreditCardTransactionService(C connector) {
+            super(connector, Integer.class, CreditCardTransaction.class);
+        }
+    }
+    final WrappedCreditCardTransactionService<C,F> creditCardTransactions;
+    @Override
+    final public CreditCardTransactionService<C,F> getCreditCardTransactions() {
+        return creditCardTransactions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardService">
     static class WrappedCreditCardService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCard> implements CreditCardService<C,F> {
@@ -1004,6 +1014,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFailoverFileLogService<C,F> failoverFileLogs;
+    @Override
     final public FailoverFileLogService<C,F> getFailoverFileLogs() {
         return failoverFileLogs;
     }
@@ -1015,6 +1026,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFailoverFileReplicationService<C,F> failoverFileReplications;
+    @Override
     final public FailoverFileReplicationService<C,F> getFailoverFileReplications() {
         return failoverFileReplications;
     }
@@ -1026,6 +1038,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFailoverFileScheduleService<C,F> failoverFileSchedules;
+    @Override
     final public FailoverFileScheduleService<C,F> getFailoverFileSchedules() {
         return failoverFileSchedules;
     }
@@ -1037,6 +1050,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFailoverMySQLReplicationService<C,F> failoverMySQLReplications;
+    @Override
     final public FailoverMySQLReplicationService<C,F> getFailoverMySQLReplications() {
         return failoverMySQLReplications;
     }
@@ -1048,6 +1062,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFileBackupSettingService<C,F> fileBackupSettings;
+    @Override
     final public FileBackupSettingService<C,F> getFileBackupSettings() {
         return fileBackupSettings;
     }
@@ -1059,6 +1074,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedFtpGuestUserService<C,F> ftpGuestUsers;
+    @Override
     final public FtpGuestUserService<C,F> getFtpGuestUsers() {
         return ftpGuestUsers;
     }
@@ -1070,6 +1086,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedGroupNameService<C,F> groupNames;
+    @Override
     final public GroupNameService<C,F> getGroupNames() {
         return groupNames;
     }
@@ -1089,6 +1106,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdJBossVersionService<C,F> httpdJBossVersions;
+    @Override
     final public HttpdJBossVersionService<C,F> getHttpdJBossVersions() {
         return httpdJBossVersions;
     }
@@ -1100,6 +1118,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdJKCodeService<C,F> httpdJKCodes;
+    @Override
     final public HttpdJKCodeService<C,F> getHttpdJKCodes() {
         return httpdJKCodes;
     }
@@ -1111,6 +1130,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdJKProtocolService<C,F> httpdJKProtocols;
+    @Override
     final public HttpdJKProtocolService<C,F> getHttpdJKProtocols() {
         return httpdJKProtocols;
     }
@@ -1122,6 +1142,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdServerService<C,F> httpdServers;
+    @Override
     final public HttpdServerService<C,F> getHttpdServers() {
         return httpdServers;
     }
@@ -1149,6 +1170,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdSiteService<C,F> httpdSites;
+    @Override
     final public HttpdSiteService<C,F> getHttpdSites() {
         return httpdSites;
     }
@@ -1188,6 +1210,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedHttpdTomcatVersionService<C,F> httpdTomcatVersions;
+    @Override
     final public HttpdTomcatVersionService<C,F> getHttpdTomcatVersions() {
         return httpdTomcatVersions;
     }
@@ -1203,6 +1226,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedIPAddressService<C,F> ipAddresses;
+    @Override
     final public IPAddressService<C,F> getIpAddresses() {
         return ipAddresses;
     }
@@ -1214,6 +1238,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLanguageService<C,F> languages;
+    @Override
     final public LanguageService<C,F> getLanguages() {
         return languages;
     }
@@ -1229,6 +1254,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxAccountGroupService<C,F> linuxAccountGroups;
+    @Override
     final public LinuxAccountGroupService<C,F> getLinuxAccountGroups() {
         return linuxAccountGroups;
     }
@@ -1240,6 +1266,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxAccountTypeService<C,F> linuxAccountTypes;
+    @Override
     final public LinuxAccountTypeService<C,F> getLinuxAccountTypes() {
         return linuxAccountTypes;
     }
@@ -1251,6 +1278,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxAccountService<C,F> linuxAccounts;
+    @Override
     final public LinuxAccountService<C,F> getLinuxAccounts() {
         return linuxAccounts;
     }
@@ -1262,6 +1290,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxGroupTypeService<C,F> linuxGroupTypes;
+    @Override
     final public LinuxGroupTypeService<C,F> getLinuxGroupTypes() {
         return linuxGroupTypes;
     }
@@ -1273,6 +1302,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedLinuxGroupService<C,F> linuxGroups;
+    @Override
     final public LinuxGroupService<C,F> getLinuxGroups() {
         return linuxGroups;
     }
@@ -1292,6 +1322,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMajordomoVersionService<C,F> majordomoVersions;
+    @Override
     final public MajordomoVersionService<C,F> getMajordomoVersions() {
         return majordomoVersions;
     }
@@ -1303,6 +1334,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMasterHostService<C,F> masterHosts;
+    @Override
     final public MasterHostService<C,F> getMasterHosts() {
         return masterHosts;
     }
@@ -1314,6 +1346,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMasterServerService<C,F> masterServers;
+    @Override
     final public MasterServerService<C,F> getMasterServers() {
         return masterServers;
     }
@@ -1325,6 +1358,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMasterUserService<C,F> masterUsers;
+    @Override
     final public MasterUserService<C,F> getMasterUsers() {
         return masterUsers;
     }
@@ -1340,6 +1374,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMySQLDatabaseService<C,F> mysqlDatabases;
+    @Override
     final public MySQLDatabaseService<C,F> getMysqlDatabases() {
         return mysqlDatabases;
     }
@@ -1351,6 +1386,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMySQLDBUserService<C,F> mysqlDBUsers;
+    @Override
     final public MySQLDBUserService<C,F> getMysqlDBUsers() {
         return mysqlDBUsers;
     }
@@ -1362,6 +1398,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMySQLServerService<C,F> mysqlServers;
+    @Override
     final public MySQLServerService<C,F> getMysqlServers() {
         return mysqlServers;
     }
@@ -1373,6 +1410,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedMySQLUserService<C,F> mysqlUsers;
+    @Override
     final public MySQLUserService<C,F> getMysqlUsers() {
         return mysqlUsers;
     }
@@ -1384,6 +1422,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetBindService<C,F> netBinds;
+    @Override
     final public NetBindService<C,F> getNetBinds() {
         return netBinds;
     }
@@ -1395,6 +1434,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetDeviceIDService<C,F> netDeviceIDs;
+    @Override
     final public NetDeviceIDService<C,F> getNetDeviceIDs() {
         return netDeviceIDs;
     }
@@ -1406,6 +1446,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetDeviceService<C,F> netDevices;
+    @Override
     final public NetDeviceService<C,F> getNetDevices() {
         return netDevices;
     }
@@ -1417,6 +1458,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetProtocolService<C,F> netProtocols;
+    @Override
     final public NetProtocolService<C,F> getNetProtocols() {
         return netProtocols;
     }
@@ -1428,6 +1470,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNetTcpRedirectService<C,F> netTcpRedirects;
+    @Override
     final public NetTcpRedirectService<C,F> getNetTcpRedirects() {
         return netTcpRedirects;
     }
@@ -1443,6 +1486,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedNoticeTypeService<C,F> noticeTypes;
+    @Override
     final public NoticeTypeService<C,F> getNoticeTypes() {
         return noticeTypes;
     }
@@ -1454,6 +1498,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedOperatingSystemVersionService<C,F> operatingSystemVersions;
+    @Override
     final public OperatingSystemVersionService<C,F> getOperatingSystemVersions() {
         return operatingSystemVersions;
     }
@@ -1465,6 +1510,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedOperatingSystemService<C,F> operatingSystems;
+    @Override
     final public OperatingSystemService<C,F> getOperatingSystems() {
         return operatingSystems;
     }
@@ -1476,6 +1522,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         }
     }
     final WrappedPackageCategoryService<C,F> packageCategories;
+    @Override
     final public PackageCategoryService<C,F> getPackageCategories() {
         return packageCategories;
     }
