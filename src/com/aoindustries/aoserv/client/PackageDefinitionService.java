@@ -1,41 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2005-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.IntList;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  PackageDefinition
  *
  * @author  AO Industries, Inc.
  */
-public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageDefinition> {
+@ServiceAnnotation(ServiceName.package_definitions)
+public interface PackageDefinitionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,PackageDefinition> {
 
-    PackageDefinitionTable(AOServConnector connector) {
-	super(connector, PackageDefinition.class);
-    }
-
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
-        new OrderBy(PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
-        new OrderBy(PackageDefinition.COLUMN_MONTHLY_RATE_name, ASCENDING),
-        new OrderBy(PackageDefinition.COLUMN_NAME_name, ASCENDING),
-        new OrderBy(PackageDefinition.COLUMN_VERSION_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
-
+    /* TODO
     int addPackageDefinition(
         final Business business,
         final PackageCategory category,
@@ -88,11 +66,9 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
             }
         );
     }
+    */
 
-    public PackageDefinition get(int pkey) throws IOException, SQLException {
-    	return getUniqueRow(PackageDefinition.COLUMN_PKEY, pkey);
-    }
-
+    /* TODO
     PackageDefinition getPackageDefinition(Business business, PackageCategory category, String name, String version) throws IOException, SQLException {
         String accounting=business.pkey;
         String categoryName=category.pkey;
@@ -126,8 +102,5 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
         }
         return matches;
     }
-
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.PACKAGE_DEFINITIONS;
-    }
+     */
 }

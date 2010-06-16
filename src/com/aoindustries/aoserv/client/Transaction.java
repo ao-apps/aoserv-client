@@ -140,15 +140,17 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
         return getService().getConnector().getBusinesses().get(sourceAccounting);
     }
 
+    static final String COLUMN_USERNAME = "username";
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=4, name="username", description="the admin involved in the transaction")
+    @SchemaColumn(order=4, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the admin involved in the transaction")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         return getService().getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, username);
     }
 
-    @SchemaColumn(order=5, name="type", description="the type of transaction")
+    static final String COLUMN_TYPE = "type";
+    @SchemaColumn(order=5, name=COLUMN_TYPE, index=IndexType.INDEXED, description="the type of transaction")
     public TransactionType getType() throws RemoteException {
         return getService().getConnector().getTransactionTypes().get(type);
     }
@@ -171,7 +173,8 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     	return rate;
     }
 
-    @SchemaColumn(order=8, name="payment_type", description="the type of payment made")
+    static final String COLUMN_PAYMENT_TYPE = "payment_type";
+    @SchemaColumn(order=8, name=COLUMN_PAYMENT_TYPE, index=IndexType.INDEXED, description="the type of payment made")
     public PaymentType getPaymentType() throws RemoteException {
         if (paymentType == null) return null;
         return getService().getConnector().getPaymentTypes().get(paymentType);
@@ -182,7 +185,8 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     	return paymentInfo;
     }
 
-    @SchemaColumn(order=10, name="processor", description="the credit card processor that handled the payment")
+    static final String COLUMN_PROCESSOR = "processor";
+    @SchemaColumn(order=10, name=COLUMN_PROCESSOR, index=IndexType.INDEXED, description="the credit card processor that handled the payment")
     public CreditCardProcessor getProcessor() throws RemoteException {
         if(processor==null) return null;
         return getService().getConnector().getCreditCardProcessors().get(processor);

@@ -6,6 +6,8 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * A <code>PackageCategory</code> represents one type of service
@@ -57,10 +59,25 @@ final public class PackageCategory extends AOServObjectStringKey<PackageCategory
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    @Override
+    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        return AOServObjectUtils.createDependencySet(
+            getPackageDefinitions()
+        );
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
         return ApplicationResources.accessor.getMessage("PackageCategory."+getKey()+".toString");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<PackageDefinition> getPackageDefinitions() throws RemoteException {
+        return getService().getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_CATEGORY, this);
     }
     // </editor-fold>
 }

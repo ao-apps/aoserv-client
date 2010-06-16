@@ -162,6 +162,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.CreditCardProcessor getBean() {
         return new com.aoindustries.aoserv.client.beans.CreditCardProcessor(getKey(), getBean(accounting), className, param1, param2, param3, param4, enabled, weight, description, encryptionFrom, encryptionRecipient);
     }
@@ -179,9 +180,9 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             // TODO: getBankTransactions(),
-            getCreditCards()
+            getCreditCards(),
             // TODO: getCreditCardTransactions(),
-            // TODO: getTransactions()
+            getTransactions()
         );
     }
     // </editor-fold>
@@ -191,6 +192,9 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
         return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_PROCESSOR_ID, this);
     }
 
+    public IndexedSet<Transaction> getTransactions() throws RemoteException {
+        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PROCESSOR, this);
+    }
     /* TODO
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
         return getService().getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_PROCESSOR, pkey);
@@ -198,10 +202,6 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
         return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_PROCESSOR_ID, pkey);
-    }
-
-    public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getService().getConnector().getTransactions().getIndexedRows(Transaction.COLUMN_PROCESSOR, pkey);
     }
      */
     // </editor-fold>

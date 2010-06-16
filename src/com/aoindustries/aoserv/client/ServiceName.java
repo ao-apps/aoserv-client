@@ -149,10 +149,8 @@ public enum ServiceName {
     operating_system_versions,
     operating_systems,
     package_categories,
-    /* TODO
-    package_definition_limits,
+    // TODO: package_definition_limits,
     package_definitions,
-     */
     payment_types,
     // TODO: physical_servers,
     postgres_databases,

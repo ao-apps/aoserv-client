@@ -34,6 +34,13 @@ abstract public class AOServObjectUserIdKey<T extends AOServObjectUserIdKey<T>> 
         key = intern(key);
     }
 
+    @Override
+    final public boolean equals(Object o) {
+        if(o==null || getClass()!=o.getClass()) return false;
+        @SuppressWarnings("unchecked") T other = (T)o;
+        return key==other.key; // OK because interned
+    }
+
     /**
      * Gets the interned key value for this object.
      */

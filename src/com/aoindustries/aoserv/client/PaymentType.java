@@ -76,7 +76,7 @@ final public class PaymentType extends AOServObjectStringKey<PaymentType> implem
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: getTransactions()
+            getTransactions()
         );
     }
     // </editor-fold>
@@ -89,6 +89,12 @@ final public class PaymentType extends AOServObjectStringKey<PaymentType> implem
     @Override
     String toStringImpl() {
         return getDescription();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<Transaction> getTransactions() throws RemoteException {
+        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PAYMENT_TYPE, this);
     }
     // </editor-fold>
 }

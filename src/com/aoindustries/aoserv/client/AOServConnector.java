@@ -203,7 +203,7 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     OperatingSystemService<C,F> getOperatingSystems() throws RemoteException;
     PackageCategoryService<C,F> getPackageCategories() throws RemoteException;
     // TODO: PackageDefinitionLimitService<C,F> getPackageDefinitionLimits() throws RemoteException;
-    // TODO: PackageDefinitionService<C,F> getPackageDefinitions() throws RemoteException;
+    PackageDefinitionService<C,F> getPackageDefinitions() throws RemoteException;
     PaymentTypeService<C,F> getPaymentTypes() throws RemoteException;
     // TODO: PhysicalServerService<C,F> getPhysicalServers() throws RemoteException;
     PostgresDatabaseService<C,F> getPostgresDatabases() throws RemoteException;

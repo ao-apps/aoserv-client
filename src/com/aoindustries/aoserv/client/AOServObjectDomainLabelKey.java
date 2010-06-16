@@ -42,6 +42,13 @@ abstract public class AOServObjectDomainLabelKey<T extends AOServObjectDomainLab
         return key;
     }
 
+    @Override
+    final public boolean equals(Object o) {
+        if(o==null || getClass()!=o.getClass()) return false;
+        @SuppressWarnings("unchecked") T other = (T)o;
+        return key==other.key; // OK because interned
+    }
+
     /**
      * Compares keys.
      */

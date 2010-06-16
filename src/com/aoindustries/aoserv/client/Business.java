@@ -242,17 +242,17 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return billParent;
     }
 
-    /* TODO
-    @SchemaColumn(order=13, name="package_definition", description="the definition of the package")
-    public PackageDefinition getPackageDefinition() {
-        return getService().getConnector().getPackageDefinitions().get(package_definition);
-    } */
+    static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
+    @SchemaColumn(order=13, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the definition of the package")
+    public PackageDefinition getPackageDefinition() throws RemoteException {
+        return getService().getConnector().getPackageDefinitions().get(packageDefinition);
+    }
 
     /**
      * May be filtered.  May also be null for the root business only.
      */
     static final String COLUMN_CREATED_BY = "created_by";
-    @SchemaColumn(order=13, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the user who added this business")
+    @SchemaColumn(order=14, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the user who added this business")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
         try {
@@ -267,7 +267,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=14, name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
+    @SchemaColumn(order=15, name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
     public Integer getEmailInBurst() {
         return emailInBurst;
     }
@@ -276,7 +276,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      * Gets the inbound sustained email rate in emails/second.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=15, name="email_in_rate", description="the number of sustained inbound emails per second")
+    @SchemaColumn(order=16, name="email_in_rate", description="the number of sustained inbound emails per second")
     public Float getEmailInRate() {
         return emailInRate;
     }
@@ -285,7 +285,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=16, name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
+    @SchemaColumn(order=17, name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
     public Integer getEmailOutBurst() {
         return emailOutBurst;
     }
@@ -294,7 +294,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      * Gets the outbound sustained email rate in emails/second.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=17, name="email_out_rate", description="the number of sustained outbound emails per second")
+    @SchemaColumn(order=18, name="email_out_rate", description="the number of sustained outbound emails per second")
     public Float getEmailOutRate() {
         return emailOutRate;
     }
@@ -303,7 +303,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=18, name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
+    @SchemaColumn(order=19, name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
     public Integer getEmailRelayBurst() {
         return emailRelayBurst;
     }
@@ -312,7 +312,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      * Gets the relay sustained email rate in emails/second.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=19, name="email_relay_rate", description="the number of sustained relay emails per second")
+    @SchemaColumn(order=20, name="email_relay_rate", description="the number of sustained relay emails per second")
     public Float getEmailRelayRate() {
         return emailRelayRate;
     }
@@ -331,7 +331,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return AOServObjectUtils.createDependencySet(
             getParentBusiness(),
             getDisableLog(),
-            // TODO: getPackageDefinition(),
+            getPackageDefinition(),
             getCreatedBy()
         );
     }
@@ -365,7 +365,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             // TODO: getMonthlyChargesBySourceBusiness(),
             // TODO: getMysqlDatabases(),
             // TODO: getNoticeLogs(),
-            // TODO: getPackageDefinitions(),
             getResources(),
             getServers(),
             getServerFarms(),
@@ -696,7 +695,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         String technicalContact,
         String technicalEmail
     ) throws IOException, SQLException {
-        return service.connector.getBusinessProfiles().addBusinessProfile(
+        return getService().getConnector().getBusinessProfiles().addBusinessProfile(
             this,
             name,
             isPrivate,
@@ -719,7 +718,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     public int addBusinessServer(
         Server server
     ) throws IOException, SQLException {
-        return service.connector.getBusinessServers().addBusinessServer(this, server);
+        return getService().getConnector().getBusinessServers().addBusinessServer(this, server);
     }
     */
 
@@ -776,7 +775,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         long authorizationTime,
         String authorizationPrincipalName
     ) throws IOException, SQLException {
-        return service.connector.getCreditCardTransactions().addCreditCardTransaction(
+        return getService().getConnector().getCreditCardTransactions().addCreditCardTransaction(
             processor,
             this,
             groupName,
@@ -832,7 +831,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     public int addDisableLog(
         String disableReason
     ) throws IOException, SQLException {
-        return service.connector.getDisableLogs().addDisableLog(this, disableReason);
+        return getService().getConnector().getDisableLogs().addDisableLog(this, disableReason);
     }*/
 
     /* TODO
@@ -843,7 +842,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         String type,
         int transid
     ) throws IOException, SQLException {
-	    service.connector.getNoticeLogs().addNoticeLog(
+	    getService().getConnector().getNoticeLogs().addNoticeLog(
             pkey,
             billingContact,
             emailAddress,
@@ -865,7 +864,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         CreditCardProcessor processor,
     	byte payment_confirmed
     ) throws IOException, SQLException {
-    	return service.connector.getTransactions().addTransaction(
+    	return getService().getConnector().getTransactions().addTransaction(
             this,
             sourceBusiness,
             business_administrator,
@@ -881,7 +880,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     }
 
     public boolean isRootBusiness() throws IOException, SQLException {
-        return pkey.equals(service.connector.getBusinesses().getRootAccounting());
+        return pkey.equals(getService().getConnector().getBusinesses().getRootAccounting());
     }
 
     public boolean canDisable() throws IOException, SQLException {
@@ -921,7 +920,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     }
 
     public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
-        return service.connector.getTransactions().getAccountBalance(pkey, before);
+        return getService().getConnector().getTransactions().getAccountBalance(pkey, before);
     }*/
 
     /**
@@ -947,7 +946,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      */
     /* TODO
     public Business getTopLevelBusiness() throws IOException, SQLException {
-        String rootAccounting=service.connector.getBusinesses().getRootAccounting();
+        String rootAccounting=getService().getConnector().getBusinesses().getRootAccounting();
         Business bu=this;
         Business tempParent;
         while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
@@ -968,7 +967,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     }
 
     public BusinessServer getBusinessServer(Server server) throws IOException, SQLException {
-        return service.connector.getBusinessServers().getBusinessServer(pkey, server.pkey);
+        return getService().getConnector().getBusinessServers().getBusinessServer(pkey, server.pkey);
     }
 
     public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
@@ -976,7 +975,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     }
 
     public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
-    	return service.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
+    	return getService().getConnector().getTransactions().getConfirmedAccountBalance(pkey, before);
     }
 
     public List<CreditCardTransaction> getCreditCardTransactions() throws IOException, SQLException {
@@ -1269,10 +1268,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
         return getService().getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
-    }
-
-    public List<PackageDefinition> getPackageDefinitions() throws IOException, SQLException {
-        return getService().getConnector().getPackageDefinitions().getIndexedRows(PackageDefinition.COLUMN_ACCOUNTING, pkey);
     }
      */
     // </editor-fold>

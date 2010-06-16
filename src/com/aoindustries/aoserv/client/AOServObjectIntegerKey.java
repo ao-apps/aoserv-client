@@ -34,8 +34,9 @@ abstract public class AOServObjectIntegerKey<T extends AOServObjectIntegerKey<T>
     }
 
     @Override
-    final public boolean equals(T other) {
-        if(other==null) return false;
+    final public boolean equals(Object o) {
+        if(o==null || getClass()!=o.getClass()) return false;
+        @SuppressWarnings("unchecked") T other = (T)o;
         return key==other.key;
     }
 

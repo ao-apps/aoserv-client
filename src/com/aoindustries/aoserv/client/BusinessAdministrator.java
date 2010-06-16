@@ -248,6 +248,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
         return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(getBean(getKey()), getBean(password), name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, getBean(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
@@ -286,9 +287,9 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
             // TODO: getCompletedSignupRequests(),
             getTicketActions(),
             getTicketActionsByOldAssignedTo(),
-            getTicketActionsByNewAssignedTo()
+            getTicketActionsByNewAssignedTo(),
             // TODO: getTicketAssignments(),
-            // TODO: getTransactions()
+            getTransactions()
         );
     }
     // </editor-fold>
@@ -332,6 +333,10 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     public IndexedSet<Ticket> getTicketsByCreatedBy() throws RemoteException {
         return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_CREATED_BY, this);
+    }
+
+    public IndexedSet<Transaction> getTransactions() throws RemoteException {
+        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_USERNAME, this);
     }
     // </editor-fold>
 
@@ -399,6 +404,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     /**
      * Gets the unique name of this Principal.
      */
+    @Override
     public String getName() {
         return getKey().toString();
     }
@@ -411,7 +417,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
 
     public boolean canDisable() throws SQLException, IOException {
-        return disableLog==null && !equals(service.connector.getThisBusinessAdministrator());
+        return disableLog==null && !equals(getService().getConnector().getThisBusinessAdministrator());
     }
 
     public boolean canSwitchUser(BusinessAdministrator other) throws SQLException, IOException {
@@ -458,7 +464,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
 
     public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
-        return service.connector.getTicketAssignments().getTicketAssignments(this);
+        return getService().getConnector().getTicketAssignments().getTicketAssignments(this);
     }
 
     public boolean isDisabled() {
@@ -466,11 +472,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
-    	return service.connector.getMonthlyCharges().getMonthlyCharges(this);
-    }
-
-    public List<Transaction> getTransactions() throws IOException, SQLException {
-        return service.connector.getTransactions().getTransactions(this);
+    	return getService().getConnector().getMonthlyCharges().getMonthlyCharges(this);
     }
 
     public boolean isActiveAccounting() throws IOException, SQLException {

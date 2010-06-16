@@ -69,7 +69,9 @@ final public class TransactionType extends AOServObjectStringKey<TransactionType
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            // TODO: getTransactions()
+            getTransactions(),
+            getPackageDefinitionsBySetupFeeTransactionType(),
+            getPackageDefinitionsByMonthlyRateTransactionType()
         );
     }
     // </editor-fold>
@@ -86,6 +88,20 @@ final public class TransactionType extends AOServObjectStringKey<TransactionType
     @Override
     String toStringImpl() {
         return ApplicationResources.accessor.getMessage("TransactionType."+getKey()+".toString");
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Relations">
+    public IndexedSet<Transaction> getTransactions() throws RemoteException {
+        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_TYPE, this);
+    }
+
+    public IndexedSet<PackageDefinition> getPackageDefinitionsBySetupFeeTransactionType() throws RemoteException {
+        return getService().getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_SETUP_FEE_TRANSACTION_TYPE, this);
+    }
+
+    public IndexedSet<PackageDefinition> getPackageDefinitionsByMonthlyRateTransactionType() throws RemoteException {
+        return getService().getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, this);
     }
     // </editor-fold>
 }

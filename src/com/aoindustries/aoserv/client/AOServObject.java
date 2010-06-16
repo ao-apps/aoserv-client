@@ -12,7 +12,6 @@ import com.aoindustries.util.i18n.Money;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -132,18 +131,9 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      * This default implementation checks for class compatibility and calls equals(T).
      */
     @Override
-    @SuppressWarnings("unchecked")
-    final public boolean equals(Object o) {
+    public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        return equals((T)o);
-    }
-
-    /**
-     * Every object also provides a type-specific equals implementation for
-     * higher performance.
-     */
-    public boolean equals(T other) {
-        if(other==null) return false;
+        @SuppressWarnings("unchecked") T other = (T)o;
         return getKey().equals(other.getKey());
     }
 

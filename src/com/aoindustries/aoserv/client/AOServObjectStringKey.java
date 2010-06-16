@@ -43,6 +43,13 @@ abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T>> 
         return key;
     }
 
+    @Override
+    final public boolean equals(Object o) {
+        if(o==null || getClass()!=o.getClass()) return false;
+        @SuppressWarnings("unchecked") T other = (T)o;
+        return key==other.key; // OK because interned
+    }
+
     /**
      * Compares keys in a case-insensitive manner using the English locale.
      */
