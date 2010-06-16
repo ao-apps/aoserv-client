@@ -5,6 +5,9 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.ApproveTransactionCommand;
+import com.aoindustries.aoserv.client.command.DeclineTransactionCommand;
+import com.aoindustries.aoserv.client.command.HoldTransactionCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
@@ -277,6 +280,20 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     } */
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    public void approve(int creditCardTransaction) throws RemoteException {
+        new ApproveTransactionCommand(key, creditCardTransaction).execute(getService().getConnector());
+    }
+
+    public void decline(int creditCardTransaction) throws RemoteException {
+        new DeclineTransactionCommand(key, creditCardTransaction).execute(getService().getConnector());
+    }
+
+    public void hold(int creditCardTransaction) throws RemoteException {
+        new HoldTransactionCommand(key, creditCardTransaction).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Monetary Calculations">
     /**
      * Gets the amount of the transaction, which is the quantity*rate scaled
@@ -285,118 +302,5 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     public Money getAmount() {
         return getRate().multiply(getQuantity(), RoundingMode.HALF_UP);
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /*
-    public void approved(final int creditCardTransaction) throws RemoteException {
-        getService().getConnector().requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                IntList invalidateList;
-
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_APPROVED.ordinal());
-                    out.writeCompressedInt(pkey);
-                    out.writeCompressedInt(creditCardTransaction);
-                }
-
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                    else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-
-                public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
-                }
-            }
-        );
-    }
-
-    public void declined(final int creditCardTransaction) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                IntList invalidateList;
-
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_DECLINED.ordinal());
-                    out.writeCompressedInt(pkey);
-                    out.writeCompressedInt(creditCardTransaction);
-                }
-
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                    else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-
-                public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
-                }
-            }
-        );
-    }
-
-    public void held(final int creditCardTransaction) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                IntList invalidateList;
-
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_HELD.ordinal());
-                    out.writeCompressedInt(pkey);
-                    out.writeCompressedInt(creditCardTransaction);
-                }
-
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-                    else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
-
-                public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
-                }
-            }
-        );
-    }
-    */
-
-    /**
-     * @deprecated  Please directly access via <code>getCreditCardTransaction()</code>.
-     *              Beware that <code>getCreditCardTransaction()</code> might return <code>null</code>.
-     *
-     * @see  #getCreditCardTransaction()
-     * @see  CreditCardTransaction#getAuthorizationApprovalCode()
-     */
-    /* TODO
-    public String getAprNum() throws SQLException, IOException {
-        CreditCardTransaction cct = getCreditCardTransaction();
-        return cct==null ? null : cct.getAuthorizationApprovalCode();
-    }
-    */
-
-    /* TODO
-    private long getPennies() {
-        long pennies=(long)quantity*(long)rate/(long)100;
-        int fraction=(int)(pennies%10);
-        pennies/=10;
-        if(fraction>=5) pennies++;
-        else if(fraction<=-5) pennies--;
-        return pennies;
-    }
-    */
     // </editor-fold>
 }

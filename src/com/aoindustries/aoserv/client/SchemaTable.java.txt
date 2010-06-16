@@ -50,11 +50,11 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         this.last_version=last_version;
     }
 
-    public AOServTable<?,? extends AOServObject> getAOServTable(AOServConnector connector) {
+    public AOServTable<?,? extends AOServObject> getAOServTable(AOServConnector<?,?> connector) {
         return connector.getTable(pkey);
     }
 
-    public List<AOSHCommand> getAOSHCommands(AOServConnector connector) throws IOException, SQLException {
+    public List<AOSHCommand> getAOSHCommands(AOServConnector<?,?> connector) throws IOException, SQLException {
         return connector.getAoshCommands().getAOSHCommands(this);
     }
 
@@ -96,19 +96,19 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         return name;
     }
 
-    public SchemaColumn getSchemaColumn(AOServConnector connector, String name) throws IOException, SQLException {
+    public SchemaColumn getSchemaColumn(AOServConnector<?,?> connector, String name) throws IOException, SQLException {
         return connector.getSchemaColumns().getSchemaColumn(this, name);
     }
 
-    public SchemaColumn getSchemaColumn(AOServConnector connector, int index) throws IOException, SQLException {
+    public SchemaColumn getSchemaColumn(AOServConnector<?,?> connector, int index) throws IOException, SQLException {
         return connector.getSchemaColumns().getSchemaColumn(this, index);
     }
 
-    public List<SchemaColumn> getSchemaColumns(AOServConnector connector) throws IOException, SQLException {
+    public List<SchemaColumn> getSchemaColumns(AOServConnector<?,?> connector) throws IOException, SQLException {
         return connector.getSchemaColumns().getSchemaColumns(this);
     }
 
-    public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector connector) throws IOException, SQLException {
+    public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector<?,?> connector) throws IOException, SQLException {
         return connector.getSchemaForeignKeys().getSchemaForeignKeys(this);
     }
 

@@ -56,7 +56,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
         }
     }
 
-    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
+    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector<?,?> connector) throws IOException, SQLException {
         return getNetBind().getAppProtocol().getHttpdJKProtocol(connector);
     }
 

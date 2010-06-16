@@ -21,7 +21,7 @@ final public class SQLColumnValue extends SQLExpression {
     final private SchemaColumn column;
     final private SchemaType columnType;
 
-    public SQLColumnValue(AOServConnector conn, SchemaColumn column) throws SQLException, IOException {
+    public SQLColumnValue(AOServConnector<?,?> conn, SchemaColumn column) throws SQLException, IOException {
         if(column==null) throw new NullPointerException("column is null");
         this.column=column;
         this.columnType=column.getSchemaType(conn);
@@ -31,7 +31,7 @@ final public class SQLColumnValue extends SQLExpression {
         return column.column_name;
     }
 
-    public Object getValue(AOServConnector conn, AOServObject obj) {
+    public Object getValue(AOServConnector<?,?> conn, AOServObject obj) {
         return obj.getColumn(column.getIndex());
     }
 
@@ -40,7 +40,7 @@ final public class SQLColumnValue extends SQLExpression {
     }
 
     @Override
-    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws SQLException, IOException {
+    public void getReferencedTables(AOServConnector<?,?> conn, List<SchemaTable> tables) throws SQLException, IOException {
         SchemaTable table=column.getSchemaTable(conn);
         if(!tables.contains(table)) tables.add(table);
     }

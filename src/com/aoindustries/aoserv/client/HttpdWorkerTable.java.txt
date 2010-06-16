@@ -18,7 +18,7 @@ import java.util.logging.Level;
  */
 final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 
-    HttpdWorkerTable(AOServConnector connector) {
+    HttpdWorkerTable(AOServConnector<?,?> connector) {
 	super(connector, HttpdWorker.class);
     }
 

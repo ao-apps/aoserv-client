@@ -18,7 +18,7 @@ import java.util.*;
  */
 public final class EmailAttachmentBlockTable extends CachedTableIntegerKey<EmailAttachmentBlock> {
 
-    EmailAttachmentBlockTable(AOServConnector connector) {
+    EmailAttachmentBlockTable(AOServConnector<?,?> connector) {
 	super(connector, EmailAttachmentBlock.class);
     }
 

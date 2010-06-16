@@ -149,7 +149,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
         return getService().getConnector().getPostgresEncodings().filterIndexed(PostgresEncoding.COLUMN_POSTGRES_VERSION, this);
     }
     /* TODO
-    public PostgresEncoding getPostgresEncoding(AOServConnector connector, String encoding) throws IOException, SQLException {
+    public PostgresEncoding getPostgresEncoding(AOServConnector<?,?> connector, String encoding) throws IOException, SQLException {
         return connector.getPostgresEncodings().getPostgresEncoding(this, encoding);
     }
      */

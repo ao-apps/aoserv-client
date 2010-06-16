@@ -26,7 +26,7 @@
      */
     TableEventThread thread;
 
-    protected AOServTable(AOServConnector connector, Class<V> clazz) {
+    protected AOServTable(AOServConnector<?,?> connector, Class<V> clazz) {
         this.connector=connector;
         //this.client=new SimpleAOClient(connector);
         this.clazz=clazz;
@@ -301,7 +301,7 @@
     /**
      * Prints the contents of this table.
      */
-    final public void printTable(AOServConnector conn, PrintWriter out, boolean isInteractive) throws IOException, SQLException {
+    final public void printTable(AOServConnector<?,?> conn, PrintWriter out, boolean isInteractive) throws IOException, SQLException {
         SchemaTable schemaTable=getTableSchema();
         List<SchemaColumn> cols=schemaTable.getSchemaColumns(conn);
         int numCols=cols.size();

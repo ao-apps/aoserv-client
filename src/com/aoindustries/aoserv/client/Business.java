@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.AddCreditCardCommand;
+import com.aoindustries.aoserv.client.command.AddTransactionCommand;
 import com.aoindustries.aoserv.client.command.CancelBusinessCommand;
 import com.aoindustries.aoserv.client.command.SetCreditCardUseMonthlyCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
@@ -542,6 +543,33 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     public void setCreditCardUseMonthly(CreditCard creditCard) throws RemoteException {
         new SetCreditCardUseMonthlyCommand(getKey(), creditCard==null ? null : creditCard.getKey()).execute(getService().getConnector());
     }
+
+    public int addTransaction(
+        Business sourceBusiness,
+        BusinessAdministrator username,
+        TransactionType type,
+        String description,
+        BigDecimal quantity,
+        Money rate,
+        PaymentType paymentType,
+        String paymentInfo,
+        CreditCardProcessor processor,
+    	Transaction.Status status
+    ) throws RemoteException {
+        return new AddTransactionCommand(
+            getKey(),
+            sourceBusiness.getAccounting(),
+            username.getKey(),
+            type.getName(),
+            description,
+            quantity,
+            rate,
+            paymentType==null ? null : paymentType.getName(),
+            paymentInfo,
+            processor==null ? null : processor.getProviderId(),
+            status
+        ).execute(getService().getConnector());
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Group">
@@ -642,7 +670,9 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
      */
     public SortedMap<Currency,Money> getAccountBalances() throws RemoteException {
         SortedMap<Currency,Money> totals = new TreeMap<Currency,Money>(CurrencyComparator.getInstance());
-        // TODO: Add each currency that is used by any package definition that is part of this account.
+        // Add the currency that is used by the package definition of this account
+        Currency pdCurrency = getPackageDefinition().getMonthlyRate().getCurrency();
+        totals.put(pdCurrency, new Money(pdCurrency, BigDecimal.ZERO));
 
         // Get the total for each currency
         for(Transaction tr : getTransactions()) {
@@ -656,10 +686,10 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             }
         }
 
-        // Add USD0.00 if there is no balance yet
+        // Add $0.00 if there is no balance yet
         if(totals.isEmpty()) {
             Currency usd = Currency.getInstance("USD");
-            totals.put(usd, new Money(usd, BigDecimal.valueOf(0, usd.getDefaultFractionDigits())));
+            totals.put(usd, new Money(usd, BigDecimal.ZERO));
         }
         return Collections.unmodifiableSortedMap(totals);
     }
@@ -850,33 +880,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             type,
             transid
 	);
-    }
-
-    public int addTransaction(
-        Business sourceBusiness,
-        BusinessAdministrator business_administrator,
-        TransactionType type,
-        String description,
-        int quantity,
-        int rate,
-        PaymentType paymentType,
-        String paymentInfo,
-        CreditCardProcessor processor,
-    	byte payment_confirmed
-    ) throws IOException, SQLException {
-    	return getService().getConnector().getTransactions().addTransaction(
-            this,
-            sourceBusiness,
-            business_administrator,
-            type.pkey,
-            description,
-            quantity,
-            rate,
-            paymentType,
-            paymentInfo,
-            processor,
-            payment_confirmed
-        );
     }
 
     public boolean isRootBusiness() throws IOException, SQLException {

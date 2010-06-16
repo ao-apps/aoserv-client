@@ -170,7 +170,7 @@ final public class AOSH extends ShellInterpreter {
         this.connector=connector;
     }
 
-    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
+    public AOSH(AOServConnector<?,?> connector, Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
     	super(in, out, err, args);
         this.connector=connector;
     }
@@ -237,6 +237,7 @@ final public class AOSH extends ShellInterpreter {
      *
      * @return  <code>true</code> if more commands should be processed (used for exit command)
      */
+    @Override
     protected boolean handleCommand(String[] args) throws IOException {
         int argCount=args.length;
         if(argCount>0) {
@@ -444,15 +445,15 @@ final public class AOSH extends ShellInterpreter {
         if(password==null || password.length()==0) {
             err.print(ApplicationResources.accessor.getMessage("AOSH.prompt.password"));
             err.flush();
-            try {
-                // Java 1.6: return new String(System.console().readPassword());
-                Object console = System.class.getMethod("console").invoke(null);
-                return new String((char[])console.getClass().getMethod("readPassword").invoke(console));
-            } catch(Exception exception) {
+            //try {
+                return new String(System.console().readPassword());
+                //Object console = System.class.getMethod("console").invoke(null);
+                //return new String((char[])console.getClass().getMethod("readPassword").invoke(console));
+            //} catch(Exception exception) {
                 // Not Java 1.6
-            }
+            //}
             // Prompt for the password
-            password=readLine(in);
+            //password=readLine(in);
         }
         return password;
     }

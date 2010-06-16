@@ -19,7 +19,7 @@ import java.util.*;
  */
 final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMessage> {
 
-    SpamEmailMessageTable(AOServConnector connector) {
+    SpamEmailMessageTable(AOServConnector<?,?> connector) {
 	super(connector, SpamEmailMessage.class);
     }
     

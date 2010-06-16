@@ -15,7 +15,7 @@ import java.sql.SQLException;
  */
 public final class EmailSmtpSmartHostTable extends CachedTableIntegerKey<EmailSmtpSmartHost> {
 
-    EmailSmtpSmartHostTable(AOServConnector connector) {
+    EmailSmtpSmartHostTable(AOServConnector<?,?> connector) {
         super(connector, EmailSmtpSmartHost.class);
     }
 

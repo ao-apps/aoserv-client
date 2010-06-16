@@ -66,6 +66,8 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
         add_ticket,
         edit_ticket,
         get_ticket_details,
+        // transactions
+        add_transaction,
         // virtual_servers
         vnc_console
         ;

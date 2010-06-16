@@ -19,7 +19,7 @@ import java.util.*;
  */
 final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 
-    EmailListTable(AOServConnector connector) {
+    EmailListTable(AOServConnector<?,?> connector) {
 	super(connector, EmailList.class);
     }
 

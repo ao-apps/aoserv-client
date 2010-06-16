@@ -523,7 +523,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServConnector conn=getService().getConnector();
+        AOServConnector<?,?> conn=getService().getConnector();
 
         if(equals(conn.getThisBusinessAdministrator())) reasons.add(new CannotRemoveReason<BusinessAdministrator>("Not allowed to remove self", this));
 

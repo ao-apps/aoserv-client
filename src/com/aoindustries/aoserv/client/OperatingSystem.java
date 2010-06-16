@@ -103,7 +103,7 @@ final public class OperatingSystem extends AOServObjectStringKey<OperatingSystem
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
+    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector<?,?> conn, String version, Architecture architecture) throws IOException, SQLException {
         return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
     }*/
     // </editor-fold>

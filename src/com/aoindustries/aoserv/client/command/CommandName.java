@@ -17,6 +17,9 @@ import java.util.Set;
  * Each command has a unique name.  These IDs may change over time, but
  * are constant for one release.
  *
+ * TODO: Find some way either at start-up or in a unit test to ensure that all
+ * command classes are represented in this list.
+ *
  * @author  AO Industries, Inc.
  */
 public enum CommandName {
@@ -33,6 +36,8 @@ public enum CommandName {
     set_business_administrator_password(SetBusinessAdministratorPasswordCommand.class, ServiceName.business_administrators),
     // credit_cards
     add_credit_card(AddCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.add_credit_card),
+    update_credit_card(UpdateCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.edit_credit_card),
+    reactivate_credit_card(ReactivateCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.edit_credit_card),
     // failover_file_logs
     add_failover_file_log(AddFailoverFileLogCommand.class, ServiceName.failover_file_log, AOServPermission.Permission.add_failover_file_log),
     // failover_file_replications
@@ -62,6 +67,11 @@ public enum CommandName {
     set_ticket_contact_phone_numbers(SetTicketContactPhoneNumbersCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
     set_ticket_client_priority(SetTicketClientPriorityCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
     set_ticket_summary(SetTicketSummaryCommand.class, ServiceName.tickets, AOServPermission.Permission.edit_ticket),
+    // transactions
+    add_transaction(AddTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),
+    approve_transaction(ApproveTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),
+    decline_transaction(DeclineTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),
+    hold_transaction(HoldTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),
     // usernames
     set_username_password(
         SetUsernamePasswordCommand.class,
@@ -122,7 +132,6 @@ public enum CommandName {
     // TODO: add_postgres_user(TODO.class, TODO),
     // TODO: add_spam_email_message(TODO.class, TODO),
     // TODO: add_ticket_work(TODO.class, TODO),
-    // TODO: add_transaction(TODO.class, TODO),
     // TODO: add_username(TODO.class, TODO),
     // TODO: are_linux_account_passwords_set(TODO.class, TODO),
     // TODO: are_postgres_user_passwords_set(TODO.class, TODO),

@@ -21,7 +21,7 @@ import java.util.List;
  */
 final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossSite> {
 
-    protected HttpdJBossSiteTable(AOServConnector connector) {
+    protected HttpdJBossSiteTable(AOServConnector<?,?> connector) {
     	super(connector, HttpdJBossSite.class);
     }
 

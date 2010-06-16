@@ -20,7 +20,7 @@ import java.util.List;
  */
 final public class CreditCardTransactionTable extends CachedTableIntegerKey<CreditCardTransaction> {
 
-    CreditCardTransactionTable(AOServConnector connector) {
+    CreditCardTransactionTable(AOServConnector<?,?> connector) {
 	super(connector, CreditCardTransaction.class);
     }
 

@@ -19,7 +19,7 @@ import java.util.Map;
  */
 final public class SignupRequestTable extends CachedTableIntegerKey<SignupRequest> {
 
-    SignupRequestTable(AOServConnector connector) {
+    SignupRequestTable(AOServConnector<?,?> connector) {
 	super(connector, SignupRequest.class);
     }
 

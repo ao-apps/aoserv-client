@@ -19,7 +19,7 @@ import java.util.*;
  */
 final public class BlackholeEmailAddressTable extends CachedTableIntegerKey<BlackholeEmailAddress> {
 
-    BlackholeEmailAddressTable(AOServConnector connector) {
+    BlackholeEmailAddressTable(AOServConnector<?,?> connector) {
 	super(connector, BlackholeEmailAddress.class);
     }
 

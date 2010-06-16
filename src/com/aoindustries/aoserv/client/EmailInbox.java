@@ -440,7 +440,7 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
     }
 
     public void setPassword(String password) throws IOException, SQLException {
-        AOServConnector connector=getService().getConnector();
+        AOServConnector<?,?> connector=getService().getConnector();
         if(!connector.isSecure()) throw new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
         connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
     }

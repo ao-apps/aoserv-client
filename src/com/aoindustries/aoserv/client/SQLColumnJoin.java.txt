@@ -27,7 +27,7 @@ final public class SQLColumnJoin extends SQLExpression {
     final private int valueIndex;
 
     public SQLColumnJoin(
-        AOServConnector conn,
+        AOServConnector<?,?> conn,
         SQLExpression expression,
         SchemaColumn keyColumn,
         SchemaColumn valueColumn
@@ -45,7 +45,7 @@ final public class SQLColumnJoin extends SQLExpression {
         return valueColumn.column_name;
     }
 
-    public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
+    public Object getValue(AOServConnector<?,?> conn, AOServObject obj) throws IOException, SQLException {
         Object keyValue=expression.getValue(conn, obj);
         if(keyValue!=null) {
             AOServObject row=table.getUniqueRow(keyIndex, keyValue);
@@ -59,7 +59,7 @@ final public class SQLColumnJoin extends SQLExpression {
     }
 
     @Override
-    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
+    public void getReferencedTables(AOServConnector<?,?> conn, List<SchemaTable> tables) throws IOException, SQLException {
         expression.getReferencedTables(conn, tables);
         SchemaTable table=keyColumn.getSchemaTable(conn);
         if(!tables.contains(table)) tables.add(table);

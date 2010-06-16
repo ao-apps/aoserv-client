@@ -212,7 +212,7 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
+    public List<Shell> getAllowedShells(AOServConnector<?,?> connector) throws SQLException, IOException {
         String[] paths=getShellList(pkey);
 
         ShellService shellTable=connector.getShells();

@@ -22,7 +22,7 @@ import java.util.List;
  */
 public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRelay> {
 
-    EmailSmtpRelayTable(AOServConnector connector) {
+    EmailSmtpRelayTable(AOServConnector<?,?> connector) {
     	super(connector, EmailSmtpRelay.class);
     }
 

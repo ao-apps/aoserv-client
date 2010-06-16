@@ -189,7 +189,7 @@ final public class TransactionSearchCriteria implements Streamable {
 	return sortSecond;
     }
 
-    public List<Transaction> getTransactions(AOServConnector connector) throws IOException, SQLException {
+    public List<Transaction> getTransactions(AOServConnector<?,?> connector) throws IOException, SQLException {
 	return connector.getTransactions().getTransactions(this);
     }
 

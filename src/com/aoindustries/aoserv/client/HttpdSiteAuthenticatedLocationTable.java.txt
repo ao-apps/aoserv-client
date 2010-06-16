@@ -18,7 +18,7 @@ import java.util.*;
  */
 final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntegerKey<HttpdSiteAuthenticatedLocation> {
 
-    HttpdSiteAuthenticatedLocationTable(AOServConnector connector) {
+    HttpdSiteAuthenticatedLocationTable(AOServConnector<?,?> connector) {
 	super(connector, HttpdSiteAuthenticatedLocation.class);
     }
 

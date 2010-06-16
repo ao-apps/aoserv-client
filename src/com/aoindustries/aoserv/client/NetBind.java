@@ -469,7 +469,7 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServConnector conn=getService().getConnector();
+        AOServConnector<?,?> conn=getService().getConnector();
 
         // Must be able to access business
         BusinessServer bs = getBusinessServer();

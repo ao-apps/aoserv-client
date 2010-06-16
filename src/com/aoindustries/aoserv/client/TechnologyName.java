@@ -70,7 +70,7 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
+    public TechnologyVersion getTechnologyVersion(AOServConnector<?,?> connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
         return connector.getTechnologyVersions().getTechnologyVersion(this, version, osv);
     } */
     // </editor-fold>

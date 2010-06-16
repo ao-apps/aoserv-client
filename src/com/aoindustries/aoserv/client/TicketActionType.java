@@ -85,7 +85,7 @@ final public class TicketActionType extends AOServObjectStringKey<TicketActionTy
     /**
      * Generates a locale-specific summary.
      */
-    String generateSummary(AOServConnector connector, String oldValue, String newValue) {
+    String generateSummary(AOServConnector<?,?> connector, String oldValue, String newValue) {
         if(oldValue==null) {
             if(newValue==null) return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.null.null");
             return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.null.notNull", newValue);

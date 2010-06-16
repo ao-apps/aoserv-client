@@ -5,6 +5,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.ReactivateCreditCardCommand;
+import com.aoindustries.aoserv.client.command.UpdateCreditCardCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -346,6 +348,7 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.CreditCard getBean() {
         return new com.aoindustries.aoserv.client.beans.CreditCard(
             key,
@@ -410,6 +413,53 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Commands">
+    /**
+     * Updates the credit card information (not including the card number).
+     */
+    public void update(
+        String firstName,
+        String lastName,
+        String companyName,
+        Email email,
+        String phone,
+        String fax,
+        String customerTaxId,
+        String streetAddress1,
+        String streetAddress2,
+        String city,
+        String state,
+        String postalCode,
+        CountryCode countryCode,
+        String description
+    ) throws RemoteException {
+        new UpdateCreditCardCommand(
+            key,
+            firstName,
+            lastName,
+            companyName,
+            email,
+            phone,
+            fax,
+            customerTaxId,
+            streetAddress1,
+            streetAddress2,
+            city,
+            state,
+            postalCode,
+            countryCode.getCode(),
+            description
+        ).execute(getService().getConnector());
+    }
+
+    /**
+     * Reactivates a credit card.
+     */
+    public void reactivate() throws RemoteException {
+        new ReactivateCreditCardCommand(key).execute(getService().getConnector());
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -450,47 +500,6 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
 
     public void remove() throws IOException, SQLException {
     	getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
-    }
-    */
-    /**
-     * Updates the credit card information (not including the card number).
-     */
-    /* TODO
-    public void update(
-        String firstName,
-        String lastName,
-        String companyName,
-        String email,
-        String phone,
-        String fax,
-        String customerTaxId,
-        String streetAddress1,
-        String streetAddress2,
-        String city,
-        String state,
-        String postalCode,
-        CountryCode countryCode,
-        String description
-    ) throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
-            true,
-            AOServProtocol.CommandID.UPDATE_CREDIT_CARD,
-            pkey,
-            firstName,
-            lastName,
-            companyName==null ? "" : companyName,
-            email==null ? "" : email,
-            phone==null ? "" : phone,
-            fax==null ? "" : fax,
-            customerTaxId==null ? "" : customerTaxId,
-            streetAddress1,
-            streetAddress2==null ? "" : streetAddress2,
-            city,
-            state==null ? "" : state,
-            postalCode==null ? "" : postalCode,
-            countryCode.getCode(),
-            description==null ? "" : description
-        );
     }
     */
     /**
@@ -575,18 +584,6 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
                 encryptionRecipient.getPkey()
             );
         }
-    }
-    */
-    /**
-     * Reactivates a credit card.
-     */
-    /* TODO
-    public void reactivate() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
-            true,
-            AOServProtocol.CommandID.REACTIVATE_CREDIT_CARD,
-            pkey
-        );
     }
     */
     /* TODO

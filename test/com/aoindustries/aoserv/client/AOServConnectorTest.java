@@ -67,7 +67,7 @@ public class AOServConnectorTest extends TestCase {
     /* TODO
     public void testClearCaches() throws Exception {
         System.out.println("Testing clearCaches");
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
             for(int c=0;c<1000;c++) conn.clearCaches();
@@ -80,7 +80,7 @@ public class AOServConnectorTest extends TestCase {
     /* TODO
     public void testExecuteCommand() throws Exception {
         System.out.println("Testing executeCommand");
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
             assertEquals(username+"\n", conn.executeCommand(new String[] {"whoami"}));
@@ -92,10 +92,10 @@ public class AOServConnectorTest extends TestCase {
      */
     /* TODOpublic void testGetConnectorID() throws Exception {
         System.out.println("Testing getConnectorID");
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             System.out.println("    "+conn.getThisBusinessAdministrator());
             UUID connectorID=conn.getConnectorId();
-            for(AOServConnector conn2 : conns) {
+            for(AOServConnector<?,?> conn2 : conns) {
                 UUID connectorID2 = conn2.getConnectorId();
                 if(conn==conn2) {
                     // Must have same connector ID
@@ -114,7 +114,7 @@ public class AOServConnectorTest extends TestCase {
     /* TODO
     public void testGetHostname() throws Exception {
         System.out.println("Testing getHostname");
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
             assertEquals("192.168.1.129", conn.getHostname());
@@ -127,7 +127,7 @@ public class AOServConnectorTest extends TestCase {
     /* TODO
     public void testGetPort() throws Exception {
         System.out.println("Testing getPort");
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
             assertEquals(4582, conn.getPort());
@@ -140,7 +140,7 @@ public class AOServConnectorTest extends TestCase {
     /* TODO
     public void testGetProtocol() throws Exception {
         System.out.println("Testing getProtocol");
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
             assertEquals(NetProtocol.TCP, conn.getProtocol());
@@ -154,7 +154,7 @@ public class AOServConnectorTest extends TestCase {
     public void testGetRandom() throws Exception {
         System.out.println("Testing getRandom");
         Random random=AOServConnector.getRandom();
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
             final int NUM_BYTES=1000000;
@@ -187,7 +187,7 @@ public class AOServConnectorTest extends TestCase {
     /* TODO
     public void testIsSecure() throws Exception {
         System.out.println("Testing isSecure");
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
             assertTrue(conn.isSecure());
@@ -200,7 +200,7 @@ public class AOServConnectorTest extends TestCase {
     /* TODO
     public void testPing() throws Exception {
         System.out.print("Testing ping: ");
-        for(AOServConnector conn : conns) {
+        for(AOServConnector<?,?> conn : conns) {
             String username = conn.getThisBusinessAdministrator().pkey;
             System.out.println("    "+username);
             int totalTime=0;

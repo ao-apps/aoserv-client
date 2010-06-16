@@ -165,7 +165,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     }
 
     /* TODO
-    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
+    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector<?,?> connector) throws IOException, SQLException {
         return connector.getHttpdJKProtocols().get(pkey);
     }*/
     // </editor-fold>
