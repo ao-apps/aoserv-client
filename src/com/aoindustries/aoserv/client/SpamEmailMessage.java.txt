@@ -20,8 +20,6 @@ import java.util.List;
  *
  * @see  EmailSmtpRelay
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessage> implements SingleTableObject<Integer,SpamEmailMessage> {

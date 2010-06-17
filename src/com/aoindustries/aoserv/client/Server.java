@@ -73,7 +73,7 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(Server other) throws RemoteException {
-        int diff = accounting.equals(other.accounting) ? 0 : getBusiness().compareTo(other.getBusiness());
+        int diff = accounting==other.accounting ? 0 : getBusiness().compareToImpl(other.getBusiness()); // OK - interned
         if(diff!=0) return diff;
         return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
     }

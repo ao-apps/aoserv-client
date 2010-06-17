@@ -73,9 +73,9 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(Resource other) throws RemoteException {
-        int diff = accounting.equals(other.accounting) ? 0 : getBusiness().compareTo(other.getBusiness());
+        int diff = accounting==other.accounting ? 0 : getBusiness().compareToImpl(other.getBusiness()); // OK - interned
         if(diff!=0) return diff;
-        diff = resourceType.equals(other.resourceType) ? 0 : getResourceType().compareTo(other.getResourceType());
+        diff = resourceType==other.resourceType ? 0 : getResourceType().compareToImpl(other.getResourceType()); // OK - interned
         if(diff!=0) return diff;
         return AOServObjectUtils.compare(key, other.key);
     }
@@ -142,6 +142,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Resource getBean() {
         return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, getBean(accounting), created, getBean(createdBy), disableLog, lastEnabled);
     }

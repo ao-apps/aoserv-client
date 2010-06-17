@@ -356,7 +356,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
         if(diff!=0) return diff;
         AOServerResource aoResource1 = getAoServerResource();
         AOServerResource aoResource2 = other.getAoServerResource();
-        return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+        return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareToImpl(aoResource2.getAoServer());
     }
     // </editor-fold>
 

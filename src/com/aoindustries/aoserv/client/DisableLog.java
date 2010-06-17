@@ -63,7 +63,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     protected int compareToImpl(DisableLog other) throws RemoteException {
         int diff = time.compareTo(other.time);
         if(diff!=0) return diff;
-        diff = accounting.equals(other.accounting) ? 0 : getBusiness().compareTo(other.getBusiness());
+        diff = accounting==other.accounting ? 0 : getBusiness().compareToImpl(other.getBusiness()); // OK - interned
         if(diff!=0) return diff;
         return AOServObjectUtils.compare(key, other.key);
     }
@@ -107,6 +107,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.DisableLog getBean() {
         return new com.aoindustries.aoserv.client.beans.DisableLog(key, time, getBean(accounting), getBean(disabledBy), disableReason);
     }

@@ -17,8 +17,6 @@ import java.util.List;
  *
  * @see  AOServObject
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public interface Removable {

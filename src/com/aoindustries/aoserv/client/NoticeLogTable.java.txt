@@ -13,8 +13,6 @@ import java.util.*;
 /**
  * @see  NoticeLog
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {

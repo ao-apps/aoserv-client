@@ -51,7 +51,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSe
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(FileBackupSetting other) throws RemoteException {
-        int diff = replication==other.replication ? 0 : getReplication().compareTo(other.getReplication());
+        int diff = replication==other.replication ? 0 : getReplication().compareToImpl(other.getReplication());
         if(diff!=0) return diff;
         return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
     }

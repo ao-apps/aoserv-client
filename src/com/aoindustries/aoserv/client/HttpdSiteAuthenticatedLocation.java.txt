@@ -16,8 +16,6 @@ import java.util.List;
 /**
  * @see  HttpdSite
  *
- * @version  1.18
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey<HttpdSiteAuthenticatedLocation> implements Removable {

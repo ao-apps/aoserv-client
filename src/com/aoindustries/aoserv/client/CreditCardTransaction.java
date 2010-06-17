@@ -327,20 +327,22 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         return key;
     }
 
+    static final String COLUMN_PROCESSOR_ID = "processor_id";
     /**
      * Gets the credit card processor used for this transaction.
      */
-    @SchemaColumn(order=1, name="processor_id", description="the name of the processor used for this transaction")
+    @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, index=IndexType.INDEXED, description="the name of the processor used for this transaction")
     public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
         return getService().getConnector().getCreditCardProcessors().get(processorId);
     }
 
+    static final String COLUMN_ACCOUNTING = "accounting";
     /**
      * For AOServ sub-account support, this is the business that is making the payment.
      * For application-only use (not a sub-account to parent-account payment), use the same business
      * as the owner of the credit card processor.
      */
-    @SchemaColumn(order=2, name="accounting", description="the accounting code for the source of this transaction")
+    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code for the source of this transaction")
     public Business getBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(accounting);
     }
@@ -458,12 +460,13 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         return shippingPostalCode;
     }
 
+    static final String COLUMN_SHIPPING_COUNTRY_CODE = "shipping_country_code";
     /**
      * Gets the shipping two-digit ISO 3166-1 alpha-2 country code.
      *
      * See <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2</a>
      */
-    @SchemaColumn(order=20, name="shipping_country_code", description="the shipping two-digit ISO 3166-1 alpha-2 country code")
+    @SchemaColumn(order=20, name=COLUMN_SHIPPING_COUNTRY_CODE, index=IndexType.INDEXED, description="the shipping two-digit ISO 3166-1 alpha-2 country code")
     public CountryCode getShippingCountryCode() throws RemoteException {
         if(shippingCountryCode==null) return null;
         return getService().getConnector().getCountryCodes().get(shippingCountryCode);
@@ -494,7 +497,8 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         return description;
     }
 
-    @SchemaColumn(order=26, name="credit_card_created_by", description="the business administrator account that provided this credit card")
+    static final String COLUMN_CREDIT_CARD_CREATED_BY = "credit_card_created_by";
+    @SchemaColumn(order=26, name=COLUMN_CREDIT_CARD_CREATED_BY, index=IndexType.INDEXED, description="the business administrator account that provided this credit card")
     public BusinessAdministrator getCreditCardCreatedBy() throws RemoteException {
         return getService().getConnector().getBusinessAdministrators().get(creditCardCreatedBy);
     }
@@ -507,7 +511,8 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         return creditCardPrincipalName;
     }
 
-    @SchemaColumn(order=28, name="credit_card_accounting", description="the accounting code of the business that provided this credit card")
+    static final String COLUMN_CREDIT_CARD_ACCOUNTING = "credit_card_accounting";
+    @SchemaColumn(order=28, name=COLUMN_CREDIT_CARD_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business that provided this credit card")
     public Business getCreditCardBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(creditCardAccounting);
     }
@@ -587,12 +592,13 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         return creditCardPostalCode;
     }
 
+    static final String COLUMN_CREDIT_CARD_COUNTRY_CODE = "credit_card_country_code";
     /**
      * Gets the credit card two-digit ISO 3166-1 alpha-2 country code.
      *
      * See <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2</a>
      */
-    @SchemaColumn(order=44, name="credit_card_country_code", description="the two-digit ISO 3166-1 alpha-2 country code of the card holder")
+    @SchemaColumn(order=44, name=COLUMN_CREDIT_CARD_COUNTRY_CODE, index=IndexType.INDEXED, description="the two-digit ISO 3166-1 alpha-2 country code of the card holder")
     public CountryCode getCreditCardCountryCode() throws RemoteException {
         return getService().getConnector().getCountryCodes().get(creditCardCountryCode);
     }
@@ -610,11 +616,12 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         return authorizationTime;
     }
 
+    static final String COLUMN_AUTHORIZATION_USERNAME = "authorization_username";
     /**
      * Gets the <code>BusinessAdministrator</code> who authorized this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
-    @SchemaColumn(order=47, name="authorization_username", description="the username of the business_administrator account that processed the transaction")
+    @SchemaColumn(order=47, name=COLUMN_AUTHORIZATION_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the transaction")
     public BusinessAdministrator getAuthorizationAdministrator() throws RemoteException {
         if(authorizationUsername==null) return null;
         return getService().getConnector().getBusinessAdministrators().get(authorizationUsername);
@@ -717,11 +724,12 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         return captureTime;
     }
 
+    static final String COLUMN_CAPTURE_USERNAME = "capture_username";
     /**
      * Gets the <code>BusinessAdministrator</code> who captured this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
-    @SchemaColumn(order=66, name="capture_username", description="the username of the business_administrator account that processed the capture")
+    @SchemaColumn(order=66, name=COLUMN_CAPTURE_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the capture")
     public BusinessAdministrator getCaptureAdministrator() throws RemoteException {
         if(captureUsername==null) return null;
         return getService().getConnector().getBusinessAdministrators().get(captureUsername);
@@ -768,12 +776,13 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
     public Timestamp getVoidTime() {
         return voidTime;
     }
-    
+
+    static final String COLUMN_VOID_USERNAME = "void_username";
     /**
      * Gets the <code>BusinessAdministrator</code> who voided this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
-    @SchemaColumn(order=74, name="void_username", description="the username of the business_administrator account that processed the void")
+    @SchemaColumn(order=74, name=COLUMN_VOID_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the void")
     public BusinessAdministrator getVoidAdministrator() throws RemoteException {
         if(voidUsername==null) return null;
         return getService().getConnector().getBusinessAdministrators().get(voidUsername);

@@ -19,8 +19,6 @@ import java.sql.SQLException;
  *
  * @see  SchemaColumn
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeignKey> {

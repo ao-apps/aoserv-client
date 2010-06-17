@@ -17,8 +17,6 @@ import java.sql.*;
  * is never closed, allowing it to be used for multiple
  * nested streams.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public final class NestedInputStream extends InputStream {

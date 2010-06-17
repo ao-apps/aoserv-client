@@ -16,8 +16,6 @@ import java.util.*;
  * for a <code>Transaction</code> search.wraps all the different
  * ways in which the transaction table may be searched.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class TransactionSearchCriteria implements Streamable {

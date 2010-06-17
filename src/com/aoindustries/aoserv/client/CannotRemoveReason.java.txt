@@ -15,8 +15,6 @@ import java.util.List;
  *
  * @see Removable
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public final class CannotRemoveReason<T extends AOServObject> {

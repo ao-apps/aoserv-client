@@ -108,6 +108,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TechnologyVersion getBean() {
         return new com.aoindustries.aoserv.client.beans.TechnologyVersion(key, name, version, updated, getBean(owner), operatingSystemVersion);
     }

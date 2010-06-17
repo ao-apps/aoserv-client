@@ -51,7 +51,7 @@ public interface PostgresServerService<C extends AOServConnector<C,F>, F extends
 	int size=table.size();
 	for(int c=0;c<size;c++) {
             PostgresServer ps=table.get(c);
-            if(ps.name.equals(name)) return ps;
+            if(ps.name==name) return ps; // OK - interned
 	}
 	return null;
     }

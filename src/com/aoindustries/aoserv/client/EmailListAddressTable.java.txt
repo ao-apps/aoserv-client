@@ -13,8 +13,6 @@ import java.util.*;
 /**
  * @see  EmailListAddress
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class EmailListAddressTable extends CachedTableIntegerKey<EmailListAddress> {

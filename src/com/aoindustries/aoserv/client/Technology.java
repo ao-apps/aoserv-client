@@ -49,9 +49,9 @@ final public class Technology extends AOServObjectIntegerKey<Technology> impleme
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(Technology other) throws RemoteException {
-        int diff = name.equals(other.name) ? 0 : getTechnologyName().compareTo(other.getTechnologyName());
+        int diff = name==other.name ? 0 : getTechnologyName().compareToImpl(other.getTechnologyName()); // OK - interned
         if(diff!=0) return diff;
-        return technologyClass.equals(other.technologyClass) ? 0 : getTechnologyClass().compareTo(other.getTechnologyClass());
+        return technologyClass==other.technologyClass ? 0 : getTechnologyClass().compareToImpl(other.getTechnologyClass()); // OK - interned
     }
     // </editor-fold>
 
@@ -75,6 +75,7 @@ final public class Technology extends AOServObjectIntegerKey<Technology> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Technology getBean() {
         return new com.aoindustries.aoserv.client.beans.Technology(key, name, technologyClass);
     }

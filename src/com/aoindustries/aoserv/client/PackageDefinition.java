@@ -27,13 +27,10 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
     private String category;
     final private String name;
     final private String version;
-    final private String display;
-    final private String description;
     final private Money setupFee;
     private String setupFeeTransactionType;
     final private Money monthlyRate;
     private String monthlyRateTransactionType;
-    final private boolean active;
     final private boolean approved;
 
     public PackageDefinition(
@@ -42,26 +39,20 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
         String category,
         String name,
         String version,
-        String display,
-        String description,
         Money setupFee,
         String setupFeeTransactionType,
         Money monthlyRate,
         String monthlyRateTransactionType,
-        boolean active,
         boolean approved
     ) {
         super(service, pkey);
         this.category = category;
         this.name = name;
         this.version = version;
-        this.display = display;
-        this.description = description;
         this.setupFee = setupFee;
         this.setupFeeTransactionType = setupFeeTransactionType;
         this.monthlyRate = monthlyRate;
         this.monthlyRateTransactionType = monthlyRateTransactionType;
-        this.active = active;
         this.approved = approved;
         intern();
     }
@@ -81,7 +72,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(PackageDefinition other) throws RemoteException {
-        int diff = category==other.category ? 0 : getCategory().compareTo(other.getCategory());
+        int diff = category==other.category ? 0 : getCategory().compareToImpl(other.getCategory());
         if(diff!=0) return diff;
         diff = monthlyRate.compareTo(other.monthlyRate);
         if(diff!=0) return diff;
@@ -113,49 +104,34 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
         return version;
     }
 
-    @SchemaColumn(order=4, name="display", description="a short description for display use")
-    public String getDisplay() {
-        return display;
-    }
-
-    @SchemaColumn(order=5, name="description", description="a description of the package definition")
-    public String getDescription() {
-        return description;
-    }
-
     /**
      * Gets the setup fee or <code>null</code> for none.
      */
-    @SchemaColumn(order=6, name="setup_fee", description="the setup fee for this package definition")
+    @SchemaColumn(order=4, name="setup_fee", description="the setup fee for this package definition")
     public Money getSetupFee() {
         return setupFee;
     }
 
     static final String COLUMN_SETUP_FEE_TRANSACTION_TYPE = "setup_fee_transaction_type";
-    @SchemaColumn(order=7, name=COLUMN_SETUP_FEE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction of the setup fee")
+    @SchemaColumn(order=5, name=COLUMN_SETUP_FEE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction of the setup fee")
     public TransactionType getSetupFeeTransactionType() throws RemoteException {
         if(setupFeeTransactionType==null) return null;
         return getService().getConnector().getTransactionTypes().get(setupFeeTransactionType);
     }
 
-    @SchemaColumn(order=8, name="monthly_rate", description="the default monthly charge for this package")
+    @SchemaColumn(order=6, name="monthly_rate", description="the default monthly charge for this package")
     public Money getMonthlyRate() {
         return monthlyRate;
     }
 
     static final String COLUMN_MONTHLY_RATE_TRANSACTION_TYPE = "monthly_rate_transaction_type";
-    @SchemaColumn(order=9, name=COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction for the monthly fee")
+    @SchemaColumn(order=7, name=COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction for the monthly fee")
     public TransactionType getMonthlyRateTransactionType() throws RemoteException {
         if(monthlyRateTransactionType==null) return null;
         return getService().getConnector().getTransactionTypes().get(monthlyRateTransactionType);
     }
 
-    @SchemaColumn(order=10, name="active", description="allows new accounts for this package")
-    public boolean isActive() {
-        return active;
-    }
-
-    @SchemaColumn(order=11, name="approved", description="once approved a definition may be used for packages, but may not be modified")
+    @SchemaColumn(order=8, name="approved", description="once approved a definition may be used for businesses, but may not be modified")
     public boolean isApproved() {
         return approved;
     }
@@ -169,13 +145,10 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
             category,
             name,
             version,
-            display,
-            description,
             getBean(setupFee),
             setupFeeTransactionType,
             getBean(monthlyRate),
             monthlyRateTransactionType,
-            active,
             approved
         );
     }
@@ -194,8 +167,9 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            getBusinesses()
-            // TODO: getLimits(),
+            getBusinesses(),
+            getLimits(),
+            getPackageDefinitionBusinesses()
             // TODO: getSignupRequests()
         );
     }
@@ -204,7 +178,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
-        return display;
+        return category+"|"+name+"|"+version;
     }
     // </editor-fold>
 
@@ -215,14 +189,19 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
     public IndexedSet<Business> getBusinesses() throws RemoteException {
         return getService().getConnector().getBusinesses().filterIndexed(Business.COLUMN_PACKAGE_DEFINITION, this);
     }
+
+    public IndexedSet<PackageDefinitionLimit> getLimits() throws RemoteException {
+        return getService().getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION, this);
+    }
+
+    public IndexedSet<PackageDefinitionBusiness> getPackageDefinitionBusinesses() throws RemoteException {
+        return getService().getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_PACKAGE_DEFINITION, this);
+    }
+
     /* TODO
     public PackageDefinitionLimit getLimit(ResourceType resourceType) throws RemoteException {
         if(resourceType==null) throw new AssertionError("resourceType is null");
         return getService().getConnector().getPackageDefinitionLimits().getPackageDefinitionLimit(this, resourceType);
-    }
-
-    public List<PackageDefinitionLimit> getLimits() throws RemoteException {
-        return getService().getConnector().getPackageDefinitionLimits().getPackageDefinitionLimits(this);
     }
 
     public List<SignupRequest> getSignupRequests() throws RemoteException {

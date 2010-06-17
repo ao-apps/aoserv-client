@@ -95,7 +95,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
     protected int compareToImpl(PostgresEncoding other) throws RemoteException {
         int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(encoding, other.encoding);
         if(diff!=0) return diff;
-        return postgresVersion==other.postgresVersion ? 0 : getPostgresVersion().compareTo(other.getPostgresVersion());
+        return postgresVersion==other.postgresVersion ? 0 : getPostgresVersion().compareToImpl(other.getPostgresVersion());
     }
     // </editor-fold>
 

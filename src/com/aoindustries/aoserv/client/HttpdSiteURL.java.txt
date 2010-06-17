@@ -21,8 +21,6 @@ import java.util.*;
  * @see  HttpdSite
  * @see  HttpdBind
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> implements Removable {

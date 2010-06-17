@@ -39,7 +39,7 @@ final public class AOServServiceUtils {
             if(annoServiceName!=null) {
                 ServiceName newTname = annoServiceName.value();
                 if(tname!=null) {
-                    if(!tname.equals(newTname)) throw new AssertionError("Incompatible services names found in interface hierarchy: "+tname+" and "+newTname);
+                    if(tname!=newTname) throw new AssertionError("Incompatible services names found in interface hierarchy: "+tname+" and "+newTname);
                 } else {
                     tname = newTname;
                 }

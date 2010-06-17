@@ -59,7 +59,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVe
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(HttpdJBossVersion other) throws RemoteException {
-        return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+        return key==other.key ? 0 : getTechnologyVersion().compareToImpl(other.getTechnologyVersion());
     }
     // </editor-fold>
 

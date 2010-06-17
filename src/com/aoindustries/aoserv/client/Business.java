@@ -349,8 +349,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             getBusinessServers(),
             getCreditCards(),
             getCreditCardProcessors(),
-            // TODO: getCreditCardTransactions(),
-            // TODO: getCreditCardTransactionsByCreditCardAccounting(),
+            getCreditCardTransactions(),
+            getCreditCardTransactionsByCreditCardAccounting(),
             getDisableLogs(),
             // TODO: getDnsZones(),
             getGroupNames(),
@@ -431,6 +431,14 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     	return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_ACCOUNTING, this);
     }
 
+    public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
+    	return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_ACCOUNTING, this);
+    }
+
+    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws RemoteException {
+    	return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, this);
+    }
+
     public IndexedSet<TicketAction> getTicketActionsByOldBusiness() throws RemoteException {
         return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ACCOUNTING, this);
     }
@@ -478,6 +486,25 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     public BusinessProfile getBusinessProfile() throws RemoteException {
         return Collections.min(getBusinessProfiles());
     }
+
+    /**
+     * Gets all active package definitions for this business.
+     */
+    /* TODO
+    public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
+        // Determine the active packages per category
+        List<PackageCategory> allCategories = getService().getConnector().getPackageCategories().getRows();
+        Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<PackageCategory,List<PackageDefinition>>(allCategories.size()*4/3+1);
+        for(PackageCategory category : allCategories) {
+            List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
+            List<PackageDefinition> definitions = new ArrayList<PackageDefinition>(allDefinitions.size());
+            for(PackageDefinition definition : allDefinitions) {
+                if(definition.isActive()) definitions.add(definition);
+            }
+            if(!definitions.isEmpty()) categories.put(category, Collections.unmodifiableList(definitions));
+        }
+        return Collections.unmodifiableMap(categories);
+    }*/
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Commands">
@@ -952,7 +979,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         String rootAccounting=getService().getConnector().getBusinesses().getRootAccounting();
         Business bu=this;
         Business tempParent;
-        while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
+        while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting()==rootAccounting) bu=tempParent; // OK - interned
         return bu;
     }*/
 
@@ -979,14 +1006,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
     	return getService().getConnector().getTransactions().getConfirmedAccountBalance(pkey, before);
-    }
-
-    public List<CreditCardTransaction> getCreditCardTransactions() throws IOException, SQLException {
-    	return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_ACCOUNTING, pkey);
-    }
-
-    public List<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws IOException, SQLException {
-    	return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, pkey);
     }
 
     public Server getDefaultServer() throws IOException, SQLException {
@@ -1109,14 +1128,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     /* TODO
     public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
         return getService().getConnector().getEncryptionKeys().getEncryptionKeys(this);
-    }*/
-
-    /**
-     * Gets the most recent credit card transaction.
-     */
-    /*
-    public CreditCardTransaction getLastCreditCardTransaction() throws IOException, SQLException {
-        return getService().getConnector().getCreditCardTransactions().getLastCreditCardTransaction(this);
     }
 
     public int addPackageDefinition(
@@ -1150,28 +1161,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
         return getService().getConnector().getPackageDefinitions().getPackageDefinitions(this, category);
-    }*/
+    }
 
-    /**
-     * Gets all active package definitions for this business.
-     */
-    /*
-    public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
-        // Determine the active packages per category
-        List<PackageCategory> allCategories = getService().getConnector().getPackageCategories().getRows();
-        Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<PackageCategory,List<PackageDefinition>>(allCategories.size()*4/3+1);
-        for(PackageCategory category : allCategories) {
-            List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
-            List<PackageDefinition> definitions = new ArrayList<PackageDefinition>(allDefinitions.size());
-            for(PackageDefinition definition : allDefinitions) {
-                if(definition.isActive()) definitions.add(definition);
-            }
-            if(!definitions.isEmpty()) categories.put(category, Collections.unmodifiableList(definitions));
-        }
-        return Collections.unmodifiableMap(categories);
-    }*/
-
-    /*
     public void addDnsZone(String zone, String ip, int ttl) throws IOException, SQLException {
 	    getService().getConnector().getDnsZones().addDnsZone(this, zone, ip, ttl);
     }
@@ -1265,7 +1256,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public Server getServer(String name) throws IOException, SQLException {
         // Use index first
-        for(Server se : getServers()) if(se.getName().equals(name)) return se;
+        for(Server se : getServers()) if(se.getName()==name) return se; // OK - interned
         return null;
     }
 

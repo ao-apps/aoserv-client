@@ -91,10 +91,10 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public String getVerb() throws SQLException {
-        if(pkey.equals(ALLOW)) return "allowed regular access";
-        if(pkey.equals(ALLOW_RELAY)) return "allowed unauthenticated relay access";
-        if(pkey.equals(DENY_SPAM)) return "blocked for sending unsolicited bulk email";
-        if(pkey.equals(DENY)) return "blocked";
+        if(pkey==ALLOW) return "allowed regular access"; // OK - interned
+        if(pkey==ALLOW_RELAY) return "allowed unauthenticated relay access"; // OK - interned
+        if(pkey==DENY_SPAM) return "blocked for sending unsolicited bulk email"; // OK - interned
+        if(pkey==DENY) return "blocked"; // OK - interned
         throw new SQLException("Unknown value for name: "+pkey);
     }
      */

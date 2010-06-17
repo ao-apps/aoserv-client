@@ -16,8 +16,6 @@ import java.util.*;
  *
  * @see  HttpdTomcatSite
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcatContext> implements Removable {

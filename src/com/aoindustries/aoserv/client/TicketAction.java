@@ -124,7 +124,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(TicketAction other) throws RemoteException {
-        int diff = ticket==other.ticket ? 0 : getTicket().compareTo(other.getTicket());
+        int diff = ticket==other.ticket ? 0 : getTicket().compareToImpl(other.getTicket());
         if(diff!=0) return diff;
         diff = time.compareTo(other.time);
         if(diff!=0) return diff;
@@ -264,10 +264,10 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
         if(!oldValueLoaded) {
             // Only perform the query for action types that have old values
             if(
-                actionType.equals(TicketActionType.SET_CONTACT_EMAILS)
-                || actionType.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
-                || actionType.equals(TicketActionType.SET_SUMMARY)
-                || actionType.equals(TicketActionType.SET_INTERNAL_NOTES)
+                actionType==TicketActionType.SET_CONTACT_EMAILS // OK - interned
+                || actionType==TicketActionType.SET_CONTACT_PHONE_NUMBERS // OK - interned
+                || actionType==TicketActionType.SET_SUMMARY // OK - interned
+                || actionType==TicketActionType.SET_INTERNAL_NOTES // OK - interned
             ) {
                 oldValue = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
             } else {
@@ -285,10 +285,10 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
         if(!newValueLoaded) {
             // Only perform the query for action types that have new values
             if(
-                actionType.equals(TicketActionType.SET_CONTACT_EMAILS)
-                || actionType.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
-                || actionType.equals(TicketActionType.SET_SUMMARY)
-                || actionType.equals(TicketActionType.SET_INTERNAL_NOTES)
+                actionType==TicketActionType.SET_CONTACT_EMAILS // OK - interned
+                || actionType==TicketActionType.SET_CONTACT_PHONE_NUMBERS // OK - interned
+                || actionType==TicketActionType.SET_SUMMARY // OK - interned
+                || actionType==TicketActionType.SET_INTERNAL_NOTES // OK - interned
             ) {
                 newValue = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_NEW_VALUE, pkey);
             } else {
@@ -313,37 +313,37 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
         if(summary!=null) return summary;
         final String myOldValue;
         final String myNewValue;
-        if(actionType.equals(TicketActionType.SET_BUSINESS)) {
+        if(actionType==TicketActionType.SET_BUSINESS) { // OK - interned
             myOldValue = oldAccounting==null ? null : oldAccounting.toString();
             myNewValue = newAccounting==null ? null : newAccounting.toString();
         } else if(
-            actionType.equals(TicketActionType.SET_CLIENT_PRIORITY)
-            || actionType.equals(TicketActionType.SET_ADMIN_PRIORITY)
+            actionType==TicketActionType.SET_CLIENT_PRIORITY // OK - interned
+            || actionType==TicketActionType.SET_ADMIN_PRIORITY // OK - interned
         ) {
             myOldValue = oldPriority;
             myNewValue = newPriority;
-        } else if(actionType.equals(TicketActionType.SET_TYPE)) {
+        } else if(actionType==TicketActionType.SET_TYPE) { // OK - interned
             myOldValue = getOldType().toStringImpl();
             myNewValue = getNewType().toStringImpl();
-        } else if(actionType.equals(TicketActionType.SET_STATUS)) {
+        } else if(actionType==TicketActionType.SET_STATUS) { // OK - interned
             myOldValue = getOldStatus().toStringImpl();
             myNewValue = getNewStatus().toStringImpl();
-        } else if(actionType.equals(TicketActionType.ASSIGN)) {
+        } else if(actionType==TicketActionType.ASSIGN) { // OK - interned
             BusinessAdministrator myOldAssignedTo = getOldAssignedTo();
             BusinessAdministrator myNewAssignedTo = getNewAssignedTo();
             myOldValue = myOldAssignedTo!=null ? myOldAssignedTo.getName() : myOldAssignedTo!=null ? ApplicationResources.accessor.getMessage("TicketAction.old_assigned_to.filtered") : null;
             myNewValue = myNewAssignedTo!=null ? myNewAssignedTo.getName() : myNewAssignedTo!=null ? ApplicationResources.accessor.getMessage("TicketAction.new_assigned_to.filtered") : null;
-        } else if(actionType.equals(TicketActionType.SET_CATEGORY)) {
+        } else if(actionType==TicketActionType.SET_CATEGORY) { // OK - interned
             TicketCategory myOldCategory = getOldCategory();
             TicketCategory myNewCategory = getNewCategory();
             myOldValue = myOldCategory!=null ? myOldCategory.toStringImpl() : null;
             myNewValue = myNewCategory!=null ? myNewCategory.toStringImpl() : null;
         } else if(
-            actionType.equals(TicketActionType.SET_CONTACT_EMAILS)
-            || actionType.equals(TicketActionType.SET_CONTACT_PHONE_NUMBERS)
-            || actionType.equals(TicketActionType.SET_SUMMARY)
-            || actionType.equals(TicketActionType.SET_INTERNAL_NOTES)
-            || actionType.equals(TicketActionType.ADD_ANNOTATION)
+            actionType==TicketActionType.SET_CONTACT_EMAILS // OK - interned
+            || actionType==TicketActionType.SET_CONTACT_PHONE_NUMBERS // OK - interned
+            || actionType==TicketActionType.SET_SUMMARY // OK - interned
+            || actionType==TicketActionType.SET_INTERNAL_NOTES // OK - interned
+            || actionType==TicketActionType.ADD_ANNOTATION // OK - interned
         ) {
             // These either have no old/new value or their value is not altered in any way
             /* TODO
@@ -363,7 +363,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     synchronized public String getDetails() throws RemoteException {
         if(!detailsLoaded) {
             // Only perform the query for action types that have details
-            if(actionType.equals(TicketActionType.ADD_ANNOTATION)) {
+            if(actionType==TicketActionType.ADD_ANNOTATION) { // OK - interned
                 details = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_DETAILS, pkey);
             } else {
                 details = null;
@@ -379,7 +379,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     synchronized public String getRawEmail() throws RemoteException {
         if(!rawEmailLoaded) {
             // Only perform the query for action types that may have raw email
-            if(actionType.equals(TicketActionType.ADD_ANNOTATION)) {
+            if(actionType==TicketActionType.ADD_ANNOTATION) { // OK - interned
                 rawEmail = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_RAW_EMAIL, pkey);
             } else {
                 rawEmail = null;

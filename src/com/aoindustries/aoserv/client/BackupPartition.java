@@ -56,7 +56,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(BackupPartition other) throws RemoteException {
-        int diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
+        int diff = aoServer==other.aoServer ? 0 : getAOServer().compareToImpl(other.getAOServer());
         if(diff!=0) return diff;
         return path.compareTo(other.path);
     }

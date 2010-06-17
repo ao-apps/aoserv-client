@@ -13,8 +13,6 @@ import java.sql.SQLException;
  * 
  * TODO: Remove this interface once everything switched to resources.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 public interface Disablable {

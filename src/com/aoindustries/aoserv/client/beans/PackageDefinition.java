@@ -14,13 +14,10 @@ public class PackageDefinition {
     private String category;
     private String name;
     private String version;
-    private String display;
-    private String description;
     private Money setupFee;
     private String setupFeeTransactionType;
     private Money monthlyRate;
     private String monthlyRateTransactionType;
-    private boolean active;
     private boolean approved;
 
     public PackageDefinition() {
@@ -31,26 +28,20 @@ public class PackageDefinition {
         String category,
         String name,
         String version,
-        String display,
-        String description,
         Money setupFee,
         String setupFeeTransactionType,
         Money monthlyRate,
         String monthlyRateTransactionType,
-        boolean active,
         boolean approved
     ) {
         this.pkey = pkey;
         this.category = category;
         this.name = name;
         this.version = version;
-        this.display = display;
-        this.description = description;
         this.setupFee = setupFee;
         this.setupFeeTransactionType = setupFeeTransactionType;
         this.monthlyRate = monthlyRate;
         this.monthlyRateTransactionType = monthlyRateTransactionType;
-        this.active = active;
         this.approved = approved;
     }
 
@@ -86,22 +77,6 @@ public class PackageDefinition {
         this.version = version;
     }
 
-    public String getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(String display) {
-        this.display = display;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Money getSetupFee() {
         return setupFee;
     }
@@ -132,14 +107,6 @@ public class PackageDefinition {
 
     public void setMonthlyRateTransactionType(String monthlyRateTransactionType) {
         this.monthlyRateTransactionType = monthlyRateTransactionType;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public boolean isApproved() {

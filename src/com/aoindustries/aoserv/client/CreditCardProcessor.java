@@ -78,7 +78,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(CreditCardProcessor other) throws RemoteException {
-        int diff = accounting.equals(other.accounting) ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness());
+        int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness()); // OK - interned
         if(diff!=0) return diff;
         return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
@@ -181,7 +181,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
         return AOServObjectUtils.createDependencySet(
             // TODO: getBankTransactions(),
             getCreditCards(),
-            // TODO: getCreditCardTransactions(),
+            getCreditCardTransactions(),
             getTransactions()
         );
     }
@@ -199,10 +199,9 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
         return getService().getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_PROCESSOR, pkey);
     }
-
+    */
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
-        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_PROCESSOR_ID, pkey);
+        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_PROCESSOR_ID, this);
     }
-     */
     // </editor-fold>
 }

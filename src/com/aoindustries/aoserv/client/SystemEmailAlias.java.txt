@@ -16,8 +16,6 @@ import java.util.List;
  * <code>Package</code>.  These are a standard part of the email
  * configuration and are contained in <code>SystemEmailAlias</code>es.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAlias> {

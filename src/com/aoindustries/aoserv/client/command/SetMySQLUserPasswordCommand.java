@@ -50,7 +50,9 @@ final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
         Map<String,List<String>> errors = Collections.emptyMap();
         MySQLUser mu = connectedUser.getService().getConnector().getMysqlUsers().get(mysqlUser);
         if(mu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_MYSQL_USER, "SetMySQLUserPasswordCommand.validate.disabled");
-        if(mu.getUsername().getUsername().equals(MySQLUser.ROOT.getUserId())) errors = addValidationError(errors, PARAM_MYSQL_USER, "SetMySQLUserPasswordCommand.validate.noSetRoot");
+        if(
+            mu.getUsername().getUsername()==MySQLUser.ROOT.getUserId() // OK - interned
+        ) errors = addValidationError(errors, PARAM_MYSQL_USER, "SetMySQLUserPasswordCommand.validate.noSetRoot");
         // TODO: Check password strength
         return errors;
     }

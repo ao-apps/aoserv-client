@@ -45,7 +45,7 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverF
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(FailoverFileSchedule other) throws RemoteException {
-        int diff = replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+        int diff = replication==other.replication ? 0 : getFailoverFileReplication().compareToImpl(other.getFailoverFileReplication());
         if(diff!=0) return diff;
         diff = AOServObjectUtils.compare(hour, other.hour);
         if(diff!=0) return diff;

@@ -97,9 +97,9 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(PostgresUser other) throws RemoteException {
-        int diff = username.equals(other.username) ? 0 : getUsername().compareTo(other.getUsername());
+        int diff = username==other.username ? 0 : getUsername().compareToImpl(other.getUsername());
         if(diff!=0) return diff;
-        return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareTo(other.getPostgresServer());
+        return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareToImpl(other.getPostgresServer());
     }
     // </editor-fold>
 
@@ -148,6 +148,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.PostgresUser getBean() {
         return new com.aoindustries.aoserv.client.beans.PostgresUser(key, getBean(username), postgresServer, createdb, trace, superPriv, catupd, predisablePassword);
     }
@@ -242,7 +243,9 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        if(username.equals(PostgresUser.POSTGRES)) reasons.add(new CannotRemoveReason<PostgresServerUser>("Not allowed to remove the "+PostgresUser.POSTGRES+" PostgreSQL user", this));
+        if(
+            username==PostgresUser.POSTGRES // OK - interned
+        ) reasons.add(new CannotRemoveReason<PostgresServerUser>("Not allowed to remove the "+PostgresUser.POSTGRES+" PostgreSQL user", this));
 
         for(PostgresDatabase pd : getPostgresDatabases()) {
             PostgresServer ps=pd.getPostgresServer();

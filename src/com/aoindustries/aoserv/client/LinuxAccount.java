@@ -133,11 +133,11 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     @Override
     protected int compareToImpl(LinuxAccount other) throws RemoteException {
         if(key==other.key) return 0;
-        int diff = username.equals(other.username) ? 0 : getUsername().compareTo(other.getUsername());
+        int diff = username==other.username ? 0 : getUsername().compareToImpl(other.getUsername()); // OK - interned
         if(diff!=0) return diff;
         AOServerResource aor1 = getAoServerResource();
         AOServerResource aor2 = other.getAoServerResource();
-        return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareTo(aor2.getAoServer());
+        return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareToImpl(aor2.getAoServer());
     }
     // </editor-fold>
 
@@ -254,7 +254,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public EmailInbox getEmailInbox() throws RemoteException {
-        if(!linuxAccountType.equals(ResourceType.EMAIL_INBOX) && !linuxAccountType.equals(ResourceType.SHELL_ACCOUNT)) return null;
+        if(linuxAccountType!=ResourceType.EMAIL_INBOX && linuxAccountType!=ResourceType.SHELL_ACCOUNT) return null; // OK - interned
         return getService().getConnector().getEmailInboxes().get(key);
     }
 

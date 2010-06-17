@@ -14,8 +14,6 @@ import java.util.*;
 /**
  * @see  HttpdTomcatContext
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTomcatContext> {

@@ -49,9 +49,9 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(LinuxAccountGroup other) throws RemoteException {
-        int diff = linuxAccount==other.linuxAccount ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
+        int diff = linuxAccount==other.linuxAccount ? 0 : getLinuxAccount().compareToImpl(other.getLinuxAccount());
         if(diff!=0) return diff;
-        return linuxGroup==other.linuxGroup ? 0 : getLinuxGroup().compareTo(other.getLinuxGroup());
+        return linuxGroup==other.linuxGroup ? 0 : getLinuxGroup().compareToImpl(other.getLinuxGroup());
     }
     // </editor-fold>
 

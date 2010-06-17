@@ -210,9 +210,9 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(MySQLUser other) throws RemoteException {
-        int diff = username.equals(other.username) ? 0 : getUsername().compareTo(other.getUsername());
+        int diff = username==other.username ? 0 : getUsername().compareToImpl(other.getUsername()); // OK - interned
         if(diff!=0) return diff;
-        return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareTo(other.getMysqlServer());
+        return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareToImpl(other.getMysqlServer());
     }
     // </editor-fold>
 
@@ -495,7 +495,9 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        if(username.equals(ROOT)) reasons.add(new CannotRemoveReason<MySQLUser>("Not allowed to remove the "+ROOT+" MySQL user", this));
+        if(
+            username==ROOT // OK - interned
+        ) reasons.add(new CannotRemoveReason<MySQLUser>("Not allowed to remove the "+ROOT+" MySQL user", this));
         return reasons;
     }
 

@@ -98,7 +98,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     protected int compareToImpl(Protocol other) throws RemoteException {
         int diff = port.compareTo(other.port);
         if(diff!=0) return diff;
-        return netProtocol.equals(other.netProtocol) ? 0 : getNetProtocol().compareTo(other.getNetProtocol());
+        return netProtocol==other.netProtocol ? 0 : getNetProtocol().compareToImpl(other.getNetProtocol()); // OK - interned
     }
     // </editor-fold>
 
@@ -131,6 +131,7 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Protocol getBean() {
         return new com.aoindustries.aoserv.client.beans.Protocol(getKey(), getBean(port), name, isUserService, netProtocol);
     }

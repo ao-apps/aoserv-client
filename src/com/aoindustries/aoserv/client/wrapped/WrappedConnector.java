@@ -146,6 +146,10 @@ import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategory;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.PackageDefinition;
+import com.aoindustries.aoserv.client.PackageDefinitionBusiness;
+import com.aoindustries.aoserv.client.PackageDefinitionBusinessService;
+import com.aoindustries.aoserv.client.PackageDefinitionLimit;
+import com.aoindustries.aoserv.client.PackageDefinitionLimitService;
 import com.aoindustries.aoserv.client.PackageDefinitionService;
 import com.aoindustries.aoserv.client.PaymentType;
 import com.aoindustries.aoserv.client.PaymentTypeService;
@@ -372,7 +376,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         operatingSystemVersions = new WrappedOperatingSystemVersionService(this);
         operatingSystems = new WrappedOperatingSystemService(this);
         packageCategories = new WrappedPackageCategoryService(this);
-        // TODO: packageDefinitionLimits = new WrappedPackageDefinitionLimitService(this);
+        packageDefinitionBusinesses = new WrappedPackageDefinitionBusinessService(this);
+        packageDefinitionLimits = new WrappedPackageDefinitionLimitService(this);
         packageDefinitions = new WrappedPackageDefinitionService(this);
         paymentTypes = new WrappedPaymentTypeService(this);
         // TODO: physicalServers = new WrappedPhysicalServerService(this);
@@ -1527,9 +1532,29 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return packageCategories;
     }
     // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PackageDefinitionBusinessService">
+    static class WrappedPackageDefinitionBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinitionBusiness> implements PackageDefinitionBusinessService<C,F> {
+        WrappedPackageDefinitionBusinessService(C connector) {
+            super(connector, Integer.class, PackageDefinitionBusiness.class);
+        }
+    }
+    final WrappedPackageDefinitionBusinessService<C,F> packageDefinitionBusinesses;
+    @Override
+    final public PackageDefinitionBusinessService<C,F> getPackageDefinitionBusinesses() {
+        return packageDefinitionBusinesses;
+    }
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionLimitService">
-    // TODO: final WrappedPackageDefinitionLimitService<C,F> packageDefinitionLimits;
-    // TODO: final public PackageDefinitionLimitService<C,F> getPackageDefinitionLimits();
+    static class WrappedPackageDefinitionLimitService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinitionLimit> implements PackageDefinitionLimitService<C,F> {
+        WrappedPackageDefinitionLimitService(C connector) {
+            super(connector, Integer.class, PackageDefinitionLimit.class);
+        }
+    }
+    final WrappedPackageDefinitionLimitService<C,F> packageDefinitionLimits;
+    @Override
+    final public PackageDefinitionLimitService<C,F> getPackageDefinitionLimits() {
+        return packageDefinitionLimits;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionService">
     static class WrappedPackageDefinitionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinition> implements PackageDefinitionService<C,F> {

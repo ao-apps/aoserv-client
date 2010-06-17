@@ -18,8 +18,6 @@ import java.util.*;
  * @see  EmailList
  * @see  EmailAddress
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddress> implements Removable {

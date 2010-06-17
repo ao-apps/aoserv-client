@@ -57,7 +57,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey<NetTcpRedirect>
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(NetTcpRedirect other) throws RemoteException {
-        return key==other.key ? 0 : getNetBind().compareTo(other.getNetBind());
+        return key==other.key ? 0 : getNetBind().compareToImpl(other.getNetBind());
     }
     // </editor-fold>
 

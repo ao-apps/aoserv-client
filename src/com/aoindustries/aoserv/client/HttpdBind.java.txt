@@ -20,8 +20,6 @@ import java.util.List;
  * @see  HttpdServer
  * @see  NetBind
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {

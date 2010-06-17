@@ -96,7 +96,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     protected int compareToImpl(PostgresDatabase other) throws RemoteException {
         int diff = name.compareTo(other.name);
         if(diff!=0) return diff;
-        return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareTo(other.getPostgresServer());
+        return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareToImpl(other.getPostgresServer());
     }
     // </editor-fold>
 
@@ -267,9 +267,9 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
         if(!allowConn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
         if(isTemplate) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
         if(
-            name.equals(AOINDUSTRIES)
-            || name.equals(AOSERV)
-            || name.equals(AOWEB)
+            name==AOINDUSTRIES // OK - interned
+            || name==AOSERV // OK - interned
+            || name==AOWEB // OK - interned
         ) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
 
         return reasons;

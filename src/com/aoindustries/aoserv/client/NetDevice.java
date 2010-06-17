@@ -88,7 +88,7 @@ final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implement
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(NetDevice other) throws RemoteException {
-        int diff = server==other.server ? 0 : getServer().compareTo(other.getServer());
+        int diff = server==other.server ? 0 : getServer().compareToImpl(other.getServer());
         if(diff!=0) return diff;
         return deviceId.compareTo(other.deviceId);
     }

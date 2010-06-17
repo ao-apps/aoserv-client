@@ -40,7 +40,7 @@ final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(HttpdJKProtocol other) throws RemoteException {
-        return getKey()==other.getKey() ? 0 : getProtocol().compareTo(other.getProtocol());
+        return getKey()==other.getKey() ? 0 : getProtocol().compareToImpl(other.getProtocol());
     }
     // </editor-fold>
 

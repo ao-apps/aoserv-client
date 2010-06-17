@@ -53,7 +53,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDae
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(AOServerDaemonHost other) throws RemoteException {
-        int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
+        int diff = aoServer==other.aoServer ? 0 : getAoServer().compareToImpl(other.getAoServer());
         if(diff!=0) return diff;
         return host.compareTo(other.host);
     }

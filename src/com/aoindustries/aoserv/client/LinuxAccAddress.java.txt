@@ -22,8 +22,6 @@ import java.util.List;
  * @see  LinuxAccount
  * @see  EmailAddress
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddress> implements Removable {

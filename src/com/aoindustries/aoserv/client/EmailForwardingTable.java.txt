@@ -17,8 +17,6 @@ import java.util.List;
  * An <code>Architecture</code> wraps all the data for a single supported
  * computer architecture.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwarding> {

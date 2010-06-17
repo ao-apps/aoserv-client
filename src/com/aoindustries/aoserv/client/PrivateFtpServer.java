@@ -70,7 +70,7 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(PrivateFtpServer other) throws RemoteException {
-        return netBind==other.netBind ? 0 : getNetBind().compareTo(other.getNetBind());
+        return netBind==other.netBind ? 0 : getNetBind().compareToImpl(other.getNetBind());
     }
     // </editor-fold>
 

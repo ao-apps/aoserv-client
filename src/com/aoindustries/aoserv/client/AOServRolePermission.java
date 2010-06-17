@@ -44,9 +44,9 @@ final public class AOServRolePermission extends AOServObjectIntegerKey<AOServRol
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(AOServRolePermission other) throws RemoteException {
-        int diff = role==other.role ? 0 : getRole().compareTo(other.getRole());
+        int diff = role==other.role ? 0 : getRole().compareToImpl(other.getRole());
         if(diff!=0) return diff;
-        return permission==other.permission ? 0 : getPermission().compareTo(other.getPermission());
+        return permission==other.permission ? 0 : getPermission().compareToImpl(other.getPermission());
     }
     // </editor-fold>
 

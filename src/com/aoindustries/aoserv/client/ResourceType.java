@@ -90,16 +90,15 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
         String key = getKey();
-        AOServObject obj;
         if(
-            key.equals(ResourceType.EMAIL_INBOX)
-            || key.equals(ResourceType.FTPONLY_ACCOUNT)
-            || key.equals(ResourceType.SHELL_ACCOUNT)
-            || key.equals(ResourceType.SYSTEM_ACCOUNT)
+            key==ResourceType.EMAIL_INBOX // OK - interned
+            || key==ResourceType.FTPONLY_ACCOUNT // OK - interned
+            || key==ResourceType.SHELL_ACCOUNT // OK - interned
+            || key==ResourceType.SYSTEM_ACCOUNT // OK - interned
         ) return getLinuxAccountType();
         if(
-            key.equals(ResourceType.SHELL_GROUP)
-            || key.equals(ResourceType.SYSTEM_GROUP)
+            key==ResourceType.SHELL_GROUP // OK - interned
+            || key==ResourceType.SYSTEM_GROUP // OK - interned
         ) return getLinuxGroupType();
         return null;
     }

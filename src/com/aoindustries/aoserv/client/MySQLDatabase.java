@@ -95,7 +95,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     protected int compareToImpl(MySQLDatabase other) throws RemoteException {
         int diff = name.compareTo(other.name);
         if(diff!=0) return diff;
-        return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareTo(other.getMysqlServer());
+        return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareToImpl(other.getMysqlServer());
     }
     // </editor-fold>
 
@@ -119,6 +119,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.MySQLDatabase getBean() {
         return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, getBean(name), mysqlServer);
     }
@@ -276,8 +277,12 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        if(name.equals(MYSQL)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+MYSQL, this));
-        if(name.equals(INFORMATION_SCHEMA)) {
+        if(
+            name==MYSQL // OK - interned
+        ) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+MYSQL, this));
+        if(
+            name==INFORMATION_SCHEMA // OK - interned
+        ) {
             String version = getMySQLServer().getVersion().getVersion();
             if(
                 version.startsWith(MySQLServer.VERSION_5_0_PREFIX)

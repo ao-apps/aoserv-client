@@ -55,9 +55,9 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(TicketAssignment other) throws RemoteException {
-        int diff = ticket==other.ticket ? 0 : getTicket().compareTo(other.getTicket());
+        int diff = ticket==other.ticket ? 0 : getTicket().compareToImpl(other.getTicket());
         if(diff!=0) return diff;
-        return reseller.equals(other.reseller) ? 0 : getReseller().compareTo(other.getReseller());
+        return reseller==other.reseller ? 0 : getReseller().compareToImpl(other.getReseller());
     }
     // </editor-fold>
 

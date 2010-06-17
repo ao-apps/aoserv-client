@@ -818,7 +818,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
             String version=preferredMinorVersions[c];
             for(int d=0;d<pss.size();d++) {
                 PostgresServer ps=pss.get(d);
-                if(ps.getPostgresVersion().getMinorVersion().equals(version)) {
+                if(ps.getPostgresVersion().getMinorVersion()==version) {
                     return ps;
                 }
             }

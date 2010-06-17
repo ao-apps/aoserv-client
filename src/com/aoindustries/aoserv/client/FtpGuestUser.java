@@ -34,7 +34,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> imp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(FtpGuestUser other) throws RemoteException {
-        return key==other.key ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
+        return key==other.key ? 0 : getLinuxAccount().compareToImpl(other.getLinuxAccount());
     }
     // </editor-fold>
 

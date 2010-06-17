@@ -12,8 +12,6 @@ import java.util.*;
 /**
  * @see  HttpdSiteAuthenticatedLocation
  *
- * @version  1.18
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntegerKey<HttpdSiteAuthenticatedLocation> {

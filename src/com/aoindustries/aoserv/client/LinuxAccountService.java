@@ -87,7 +87,7 @@ public interface LinuxAccountService<C extends AOServConnector<C,F>, F extends A
             LinuxAccount linuxAccount = cached.get(c);
             if (
                 linuxAccount.getType().isEmail()
-                && linuxAccount.getUsername().accounting.equals(accounting)
+                && linuxAccount.getUsername().accounting==accounting // OK - interned
             ) matches.add(linuxAccount);
         }
         return matches;

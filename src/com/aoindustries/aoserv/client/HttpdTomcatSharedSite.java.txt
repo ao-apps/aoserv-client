@@ -19,8 +19,6 @@ import java.util.List;
  * @see  HttpdSharedTomcat
  * @see  HttpdTomcatSite
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTomcatSharedSite> {

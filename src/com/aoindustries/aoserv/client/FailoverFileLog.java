@@ -58,7 +58,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLo
     protected int compareToImpl(FailoverFileLog other) throws RemoteException {
         int diff = -endTime.compareTo(other.endTime);
         if(diff!=0) return diff;
-        return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+        return replication==other.replication ? 0 : getFailoverFileReplication().compareToImpl(other.getFailoverFileReplication());
     }
     // </editor-fold>
 

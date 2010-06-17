@@ -62,7 +62,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(HttpdTomcatVersion other) throws RemoteException {
-        return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+        return key==other.key ? 0 : getTechnologyVersion().compareToImpl(other.getTechnologyVersion());
     }
     // </editor-fold>
 
@@ -85,6 +85,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.HttpdTomcatVersion getBean() {
         return new com.aoindustries.aoserv.client.beans.HttpdTomcatVersion(key, getBean(installDir), requiresModJk);
     }
@@ -128,12 +129,12 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
 
     public boolean isTomcat3_1() throws RemoteException {
         String version = getTechnologyVersion().getVersion();
-        return version.equals(VERSION_3_1);
+        return version==VERSION_3_1; // OK - interned
     }
 
     public boolean isTomcat3_2_4() throws RemoteException {
         String version = getTechnologyVersion().getVersion();
-        return version.equals(VERSION_3_2_4);
+        return version==VERSION_3_2_4; // OK - interned
     }
 
     public boolean isTomcat4_1_X() throws RemoteException {

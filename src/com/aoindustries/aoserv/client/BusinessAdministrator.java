@@ -272,11 +272,10 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
             ),
             getBusinessAdministratorRoles(),
             getCreditCardsByCreatedBy(),
-            /* TODO
+            getCreditCardTransactionsByCreditCardCreatedBy(),
             getCreditCardTransactionsByAuthorizationUsername(),
             getCreditCardTransactionsByCaptureUsername(),
             getCreditCardTransactionsByVoidUsername(),
-             */
             getDisableLogs(),
             /* TODO
             getMonthlyCharges(),
@@ -305,6 +304,22 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     public IndexedSet<CreditCard> getCreditCardsByCreatedBy() throws RemoteException {
         return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_CREATED_BY, this);
+    }
+
+    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardCreatedBy() throws RemoteException {
+        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_CREATED_BY, this);
+    }
+
+    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByAuthorizationUsername() throws RemoteException {
+        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_AUTHORIZATION_USERNAME, this);
+    }
+
+    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCaptureUsername() throws RemoteException {
+        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CAPTURE_USERNAME, this);
+    }
+
+    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByVoidUsername() throws RemoteException {
+        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_VOID_USERNAME, this);
     }
 
     public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
@@ -644,22 +659,6 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     /* TODO
     public boolean hasPermission(String permission) throws IOException, SQLException {
         return getService().getConnector().getBusinessAdministratorPermissions().hasPermission(this, permission);
-    }
-
-    public List<CreditCardTransaction> getCreditCardTransactionsByCreditCardCreatedBy() throws IOException, SQLException {
-        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CREDIT_CARD_CREATED_BY, pkey);
-    }
-
-    public List<CreditCardTransaction> getCreditCardTransactionsByAuthorizationUsername() throws IOException, SQLException {
-        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_AUTHORIZATION_USERNAME, pkey);
-    }
-
-    public List<CreditCardTransaction> getCreditCardTransactionsByCaptureUsername() throws IOException, SQLException {
-        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_CAPTURE_USERNAME, pkey);
-    }
-
-    public List<CreditCardTransaction> getCreditCardTransactionsByVoidUsername() throws IOException, SQLException {
-        return getService().getConnector().getCreditCardTransactions().getIndexedRows(CreditCardTransaction.COLUMN_VOID_USERNAME, pkey);
     }
 
     public List<MonthlyCharge> getMonthlyChargesByCreatedBy() throws IOException, SQLException {

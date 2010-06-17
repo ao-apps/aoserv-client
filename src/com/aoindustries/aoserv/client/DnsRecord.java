@@ -79,11 +79,11 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(DnsRecord other) throws RemoteException {
-        int diff = zone==other.zone ? 0 : getZone().compareTo(other.getZone());
+        int diff = zone==other.zone ? 0 : getZone().compareToImpl(other.getZone());
         if(diff!=0) return diff;
         diff = domain.compareTo(other.getDomain());
         if(diff!=0) return diff;
-        diff = type.equals(other.type) ? 0 : getType().compareTo(other.getType());
+        diff = type==other.type ? 0 : getType().compareToImpl(other.getType()); // OK - interned
         if(diff!=0) return diff;
         diff = AOServObjectUtils.compare(mxPriority, other.mxPriority);
         if(diff!=0) return diff;
@@ -151,6 +151,7 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.DnsRecord getBean() {
         return new com.aoindustries.aoserv.client.beans.DnsRecord(key, zone, domain, type, mxPriority, getBean(dataIpAddress), getBean(dataDomainName), dataText, dhcpAddress, ttl);
     }
@@ -199,7 +200,7 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
      * Gets the domain, but in fully-qualified, absolute path (with trailing period).
      */
     public String getFullyQualifiedDomain() throws RemoteException {
-        if(domain.equals("@")) return getZone().getZone().toString()+'.';
+        if(domain=="@") return getZone().getZone().toString()+'.'; // OK - interned
         if(domain.endsWith(".")) return domain;
         return domain+'.'+getZone().getZone().toString()+'.';
     }
@@ -231,8 +232,8 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
         if(domain1.equals(domain2)) {
             // If either (or both) are CNAME, there is a conflict
             if(
-                type.equals(DnsType.CNAME)
-                || other.type.equals(DnsType.CNAME)
+                type==DnsType.CNAME // OK - interned
+                || other.type==DnsType.CNAME // OK - interned
             ) {
                 return true;
             }

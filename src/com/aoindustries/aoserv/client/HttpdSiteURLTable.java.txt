@@ -13,8 +13,6 @@ import java.util.*;
 /**
  * @see  HttpdSiteURL
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL> {

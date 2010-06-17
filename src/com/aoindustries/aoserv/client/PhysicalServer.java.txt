@@ -17,8 +17,6 @@ import java.util.List;
  * A <code>PhysicalServer</code> consumes space and electricity in a rack
  * and provides resources.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer> {

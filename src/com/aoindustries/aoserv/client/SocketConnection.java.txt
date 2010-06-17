@@ -22,8 +22,6 @@ import java.util.logging.Level;
  *
  * @see  TCPConnector
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SocketConnection extends AOServConnection {

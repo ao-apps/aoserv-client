@@ -13,8 +13,6 @@ import java.util.*;
 /**
  * @see  HttpdSiteBind
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBind> {

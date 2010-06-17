@@ -75,69 +75,85 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         this.wrapped = wrapped;
     }
 
+    @Override
     public int size() {
         return wrapped.size();
     }
 
+    @Override
     public boolean isEmpty() {
         return wrapped.isEmpty();
     }
 
+    @Override
     public boolean contains(Object o) {
         return wrapped.contains(o);
     }
 
+    @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
 
             private final Iterator<E> iter = wrapped.iterator();
 
+            @Override
             public boolean hasNext() {
                 return iter.hasNext();
             }
 
+            @Override
             public E next() {
                 return iter.next();
             }
 
+            @Override
             public void remove() {
         	    throw new UnsupportedOperationException();
             }
         };
     }
 
+    @Override
     public Object[] toArray() {
         return wrapped.toArray();
     }
 
+    @Override
     public <T> T[] toArray(T[] a) {
         return wrapped.toArray(a);
     }
 
+    @Override
     public boolean add(E e) {
 	    throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean remove(Object o) {
 	    throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean containsAll(Collection<?> c) {
         return wrapped.containsAll(c);
     }
 
+    @Override
     public boolean addAll(Collection<? extends E> c) {
 	    throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean removeAll(Collection<?> c) {
 	    throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean retainAll(Collection<?> c) {
 	    throw new UnsupportedOperationException();
     }
 
+    @Override
     public void clear() {
 	    throw new UnsupportedOperationException();
     }
@@ -198,6 +214,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         return uniqueHash;
     }
 
+    @Override
     public E filterUnique(String columnName, Object value) throws RemoteException {
         if(value==null || wrapped.isEmpty()) return null;
         synchronized(wrapped) {
@@ -205,6 +222,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         }
     }
 
+    @Override
     public IndexedSet<E> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet();
         synchronized(wrapped) {
@@ -270,6 +288,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         return indexedHash;
     }
 
+    @Override
     public IndexedSet<E> filterIndexed(String columnName, Object value) throws RemoteException {
         if(value==null || wrapped.isEmpty()) return emptyIndexedSet();
         synchronized(wrapped) {
@@ -279,6 +298,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         }
     }
 
+    @Override
     public IndexedSet<E> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet();
         synchronized(wrapped) {

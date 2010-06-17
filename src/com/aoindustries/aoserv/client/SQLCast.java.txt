@@ -13,8 +13,6 @@ import java.util.List;
 /**
  * Casts one result type to another.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SQLCast extends SQLExpression {

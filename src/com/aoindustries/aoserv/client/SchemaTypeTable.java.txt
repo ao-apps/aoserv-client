@@ -13,8 +13,6 @@ import java.util.List;
 /**
  * @see  SchemaType
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {

@@ -77,8 +77,8 @@ public interface PackageDefinitionService<C extends AOServConnector<C,F>, F exte
         for(int c=0;c<size;c++) {
             PackageDefinition pd=pds.get(c);
             if(
-                pd.accounting.equals(accounting)
-                && pd.category.equals(categoryName)
+                pd.accounting==accounting // OK - interned
+                && pd.category==categoryName // OK - interned
                 && pd.name.equals(name)
                 && pd.version.equals(version)
             ) return pd;
@@ -96,8 +96,8 @@ public interface PackageDefinitionService<C extends AOServConnector<C,F>, F exte
         for(int c=0;c<size;c++) {
             PackageDefinition pd=cached.get(c);
             if(
-                pd.accounting.equals(accounting)
-                && pd.category.equals(categoryName)
+                pd.accounting==accounting // OK - interned
+                && pd.category==categoryName // OK - interned
             ) matches.add(pd);
         }
         return matches;

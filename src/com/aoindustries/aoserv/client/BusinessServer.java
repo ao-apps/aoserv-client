@@ -63,7 +63,7 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
     protected int compareToImpl(BusinessServer other) throws RemoteException {
         int diff = accounting.compareTo(other.accounting);
         if(diff!=0) return diff;
-        return server==other.server ? 0 : getServer().compareTo(other.getServer());
+        return server==other.server ? 0 : getServer().compareToImpl(other.getServer());
     }
     // </editor-fold>
 
@@ -100,6 +100,7 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.BusinessServer getBean() {
         return new com.aoindustries.aoserv.client.beans.BusinessServer(key, getBean(accounting), server, isDefault, canVncConsole);
     }

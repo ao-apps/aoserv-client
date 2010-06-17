@@ -12,8 +12,6 @@ import java.util.List;
 /**
  * An expression in used in select statements and internal sorting.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 abstract public class SQLExpression {

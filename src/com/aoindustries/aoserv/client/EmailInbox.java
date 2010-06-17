@@ -98,7 +98,7 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(EmailInbox other) throws RemoteException {
-        return key==other.key ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
+        return key==other.key ? 0 : getLinuxAccount().compareToImpl(other.getLinuxAccount());
     }
     // </editor-fold>
 

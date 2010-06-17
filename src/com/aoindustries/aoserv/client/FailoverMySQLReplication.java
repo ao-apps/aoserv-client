@@ -57,11 +57,11 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(FailoverMySQLReplication other) throws RemoteException {
-        int diff = mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
+        int diff = mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareToImpl(other.getMySQLServer());
         if(diff!=0) return diff;
-        diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
+        diff = aoServer==other.aoServer ? 0 : getAOServer().compareToImpl(other.getAOServer());
         if(diff!=0) return diff;
-        return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+        return replication==other.replication ? 0 : getFailoverFileReplication().compareToImpl(other.getFailoverFileReplication());
     }
     // </editor-fold>
 

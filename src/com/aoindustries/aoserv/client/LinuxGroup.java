@@ -107,11 +107,11 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     @Override
     protected int compareToImpl(LinuxGroup other) throws RemoteException {
         if(key==other.key) return 0;
-        int diff = groupName.equals(other.groupName) ? 0 : getGroupName().compareTo(other.getGroupName());
+        int diff = groupName==other.groupName ? 0 : getGroupName().compareToImpl(other.getGroupName());
         if(diff!=0) return diff;
         AOServerResource aor1 = getAoServerResource();
         AOServerResource aor2 = other.getAoServerResource();
-        return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareTo(aor2.getAoServer());
+        return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareToImpl(aor2.getAoServer());
     }
     // </editor-fold>
 

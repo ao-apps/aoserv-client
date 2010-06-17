@@ -12,8 +12,6 @@ import java.util.List;
 /**
  * Gets the value for one column.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SQLColumnValue extends SQLExpression {

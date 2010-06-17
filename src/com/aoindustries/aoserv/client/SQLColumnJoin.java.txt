@@ -12,8 +12,6 @@ import java.util.List;
 /**
  * Gets the value for one column by following its reference to another table.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SQLColumnJoin extends SQLExpression {

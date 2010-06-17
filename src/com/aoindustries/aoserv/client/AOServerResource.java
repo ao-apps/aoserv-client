@@ -37,7 +37,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(AOServerResource other) throws RemoteException {
-        return key==other.key ? 0 : getResource().compareTo(other.getResource());
+        return key==other.key ? 0 : getResource().compareToImpl(other.getResource());
     }
     // </editor-fold>
 
@@ -65,6 +65,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.AOServerResource getBean() {
         return new com.aoindustries.aoserv.client.beans.AOServerResource(key, aoServer, businessServer);
     }
@@ -90,33 +91,33 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
         String resourceType = getResource().getResourceType().getName();
         AOServObject obj;
-        if(resourceType.equals(ResourceType.MYSQL_DATABASE)) obj = getMysqlDatabase();
-        else if(resourceType.equals(ResourceType.MYSQL_SERVER)) obj = getMysqlServer();
-        else if(resourceType.equals(ResourceType.MYSQL_USER)) obj = getMysqlUser();
-        else if(resourceType.equals(ResourceType.POSTGRESQL_DATABASE)) obj = getPostgresDatabase();
-        else if(resourceType.equals(ResourceType.POSTGRESQL_SERVER)) obj = getPostgresServer();
-        else if(resourceType.equals(ResourceType.POSTGRESQL_USER)) obj = getPostgresUser();
+        if(resourceType==ResourceType.MYSQL_DATABASE) obj = getMysqlDatabase(); // OK - interned
+        else if(resourceType==ResourceType.MYSQL_SERVER) obj = getMysqlServer(); // OK - interned
+        else if(resourceType==ResourceType.MYSQL_USER) obj = getMysqlUser(); // OK - interned
+        else if(resourceType==ResourceType.POSTGRESQL_DATABASE) obj = getPostgresDatabase(); // OK - interned
+        else if(resourceType==ResourceType.POSTGRESQL_SERVER) obj = getPostgresServer(); // OK - interned
+        else if(resourceType==ResourceType.POSTGRESQL_USER) obj = getPostgresUser(); // OK - interned
         else if(
             // linux_accounts
-            resourceType.equals(ResourceType.EMAIL_INBOX)
-            || resourceType.equals(ResourceType.FTPONLY_ACCOUNT)
-            || resourceType.equals(ResourceType.SHELL_ACCOUNT)
-            || resourceType.equals(ResourceType.SYSTEM_ACCOUNT)
+            resourceType==ResourceType.EMAIL_INBOX // OK - interned
+            || resourceType==ResourceType.FTPONLY_ACCOUNT // OK - interned
+            || resourceType==ResourceType.SHELL_ACCOUNT // OK - interned
+            || resourceType==ResourceType.SYSTEM_ACCOUNT // OK - interned
         ) obj = getLinuxAccount();
         else if(
             // linux_groups
-            resourceType.equals(ResourceType.SHELL_GROUP)
-            || resourceType.equals(ResourceType.SYSTEM_GROUP)
+            resourceType==ResourceType.SHELL_GROUP // OK - interned
+            || resourceType==ResourceType.SYSTEM_GROUP // OK - interned
         ) obj = getLinuxGroup();
         else if(
             // httpd_sites
-            resourceType.equals(ResourceType.HTTPD_JBOSS_SITE)
-            || resourceType.equals(ResourceType.HTTPD_STATIC_SITE)
-            || resourceType.equals(ResourceType.HTTPD_TOMCAT_SHARED_SITE)
-            || resourceType.equals(ResourceType.HTTPD_TOMCAT_STD_SITE)
+            resourceType==ResourceType.HTTPD_JBOSS_SITE // OK - interned
+            || resourceType==ResourceType.HTTPD_STATIC_SITE // OK - interned
+            || resourceType==ResourceType.HTTPD_TOMCAT_SHARED_SITE // OK - interned
+            || resourceType==ResourceType.HTTPD_TOMCAT_STD_SITE // OK - interned
         ) obj = getHttpdSite();
-        else if(resourceType.equals(ResourceType.CVS_REPOSITORY)) obj = getCvsRepository();
-        else if(resourceType.equals(ResourceType.HTTPD_SERVER)) obj = getHttpdServer();
+        else if(resourceType==ResourceType.CVS_REPOSITORY) obj = getCvsRepository(); // OK - interned
+        else if(resourceType==ResourceType.HTTPD_SERVER) obj = getHttpdServer(); // OK - interned
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
         return obj;

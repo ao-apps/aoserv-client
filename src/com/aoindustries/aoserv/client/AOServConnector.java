@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.RemoteCommand;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.rmi.Remote;
@@ -202,7 +202,8 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     OperatingSystemVersionService<C,F> getOperatingSystemVersions() throws RemoteException;
     OperatingSystemService<C,F> getOperatingSystems() throws RemoteException;
     PackageCategoryService<C,F> getPackageCategories() throws RemoteException;
-    // TODO: PackageDefinitionLimitService<C,F> getPackageDefinitionLimits() throws RemoteException;
+    PackageDefinitionBusinessService<C,F> getPackageDefinitionBusinesses() throws RemoteException;
+    PackageDefinitionLimitService<C,F> getPackageDefinitionLimits() throws RemoteException;
     PackageDefinitionService<C,F> getPackageDefinitions() throws RemoteException;
     PaymentTypeService<C,F> getPaymentTypes() throws RemoteException;
     // TODO: PhysicalServerService<C,F> getPhysicalServers() throws RemoteException;

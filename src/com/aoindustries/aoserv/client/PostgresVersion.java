@@ -84,7 +84,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(PostgresVersion other) throws RemoteException {
-        return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+        return key==other.key ? 0 : getTechnologyVersion().compareToImpl(other.getTechnologyVersion());
     }
     // </editor-fold>
 
@@ -117,6 +117,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.PostgresVersion getBean() {
         return new com.aoindustries.aoserv.client.beans.PostgresVersion(key, minorVersion, postgisVersion);
     }

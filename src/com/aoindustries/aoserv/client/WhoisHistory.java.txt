@@ -15,8 +15,6 @@ import java.util.List;
 /**
  * Logs the whois history for each account and domain combination.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {

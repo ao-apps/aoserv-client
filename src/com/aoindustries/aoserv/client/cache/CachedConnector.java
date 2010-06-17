@@ -146,6 +146,10 @@ import com.aoindustries.aoserv.client.OperatingSystemVersionService;
 import com.aoindustries.aoserv.client.PackageCategory;
 import com.aoindustries.aoserv.client.PackageCategoryService;
 import com.aoindustries.aoserv.client.PackageDefinition;
+import com.aoindustries.aoserv.client.PackageDefinitionBusiness;
+import com.aoindustries.aoserv.client.PackageDefinitionBusinessService;
+import com.aoindustries.aoserv.client.PackageDefinitionLimit;
+import com.aoindustries.aoserv.client.PackageDefinitionLimitService;
 import com.aoindustries.aoserv.client.PackageDefinitionService;
 import com.aoindustries.aoserv.client.PaymentType;
 import com.aoindustries.aoserv.client.PaymentTypeService;
@@ -367,7 +371,8 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         operatingSystemVersions = new CachedOperatingSystemVersionService(this, wrapped.getOperatingSystemVersions());
         operatingSystems = new CachedOperatingSystemService(this, wrapped.getOperatingSystems());
         packageCategories = new CachedPackageCategoryService(this, wrapped.getPackageCategories());
-        // TODO: packageDefinitionLimits = new CachedPackageDefinitionLimitService(this, wrapped.getPackageDefinitionLimits());
+        packageDefinitionBusinesses = new CachedPackageDefinitionBusinessService(this, wrapped.getPackageDefinitionBusinesses());
+        packageDefinitionLimits = new CachedPackageDefinitionLimitService(this, wrapped.getPackageDefinitionLimits());
         packageDefinitions = new CachedPackageDefinitionService(this, wrapped.getPackageDefinitions());
         paymentTypes = new CachedPaymentTypeService(this, wrapped.getPaymentTypes());
         // TODO: physicalServers = new CachedPhysicalServerService(this, wrapped.getPhysicalServers());
@@ -1440,9 +1445,29 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         return packageCategories;
     }
     // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PackageDefinitionBusinessService">
+    static class CachedPackageDefinitionBusinessService extends CachedService<Integer,PackageDefinitionBusiness> implements PackageDefinitionBusinessService<CachedConnector,CachedConnectorFactory> {
+        CachedPackageDefinitionBusinessService(CachedConnector connector, PackageDefinitionBusinessService<?,?> wrapped) {
+            super(connector, Integer.class, PackageDefinitionBusiness.class, wrapped);
+        }
+    }
+    final CachedPackageDefinitionBusinessService packageDefinitionBusinesses;
+    @Override
+    public PackageDefinitionBusinessService<CachedConnector,CachedConnectorFactory> getPackageDefinitionBusinesses() {
+        return packageDefinitionBusinesses;
+    }
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionLimitService">
-    // TODO: final CachedPackageDefinitionLimitService packageDefinitionLimits;
-    // TODO: public PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> getPackageDefinitionLimits();
+    static class CachedPackageDefinitionLimitService extends CachedService<Integer,PackageDefinitionLimit> implements PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> {
+        CachedPackageDefinitionLimitService(CachedConnector connector, PackageDefinitionLimitService<?,?> wrapped) {
+            super(connector, Integer.class, PackageDefinitionLimit.class, wrapped);
+        }
+    }
+    final CachedPackageDefinitionLimitService packageDefinitionLimits;
+    @Override
+    public PackageDefinitionLimitService<CachedConnector,CachedConnectorFactory> getPackageDefinitionLimits() {
+        return packageDefinitionLimits;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionService">
     static class CachedPackageDefinitionService extends CachedService<Integer,PackageDefinition> implements PackageDefinitionService<CachedConnector,CachedConnectorFactory> {

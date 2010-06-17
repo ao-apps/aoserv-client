@@ -143,17 +143,5 @@ public interface CreditCardTransactionService<C extends AOServConnector<C,F>, F 
             }
         );
     }
-
-    CreditCardTransaction getLastCreditCardTransaction(Business bu) throws IOException, SQLException {
-        String accounting = bu.pkey;
-        // Sorted by accounting, time, so we search for first match from the bottom
-        // TODO: We could do a binary search on accounting code and time to make this faster
-        List<CreditCardTransaction> ccts = getRows();
-        for(int c=ccts.size()-1; c>=0; c--) {
-            CreditCardTransaction cct = ccts.get(c);
-            if(cct.accounting.equals(accounting)) return cct;
-        }
-        return null;
-    }
      */
 }

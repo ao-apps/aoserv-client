@@ -37,7 +37,7 @@ final public class ServerResource extends AOServObjectIntegerKey<ServerResource>
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(ServerResource other) throws RemoteException {
-        return key==other.key ? 0 : getResource().compareTo(other.getResource());
+        return key==other.key ? 0 : getResource().compareToImpl(other.getResource());
     }
     // </editor-fold>
 
@@ -65,6 +65,7 @@ final public class ServerResource extends AOServObjectIntegerKey<ServerResource>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.ServerResource getBean() {
         return new com.aoindustries.aoserv.client.beans.ServerResource(key, server, businessServer);
     }
@@ -90,7 +91,7 @@ final public class ServerResource extends AOServObjectIntegerKey<ServerResource>
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
         String resourceType = getResource().getResourceType().getName();
         AOServObject obj;
-        if(resourceType.equals(ResourceType.IP_ADDRESS)) obj = getIpAddress();
+        if(resourceType==ResourceType.IP_ADDRESS) obj = getIpAddress(); // OK - interned
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific server resource object not found: "+key);
         return obj;

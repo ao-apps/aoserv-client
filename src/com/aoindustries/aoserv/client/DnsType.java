@@ -52,6 +52,7 @@ final public class DnsType extends AOServObjectStringKey<DnsType> implements Bea
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.DnsType getBean() {
         return new com.aoindustries.aoserv.client.beans.DnsType(getKey());
     }

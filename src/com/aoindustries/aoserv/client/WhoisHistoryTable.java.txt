@@ -12,8 +12,6 @@ import java.util.*;
 /**
  * @see  WhoisHistory
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory> {

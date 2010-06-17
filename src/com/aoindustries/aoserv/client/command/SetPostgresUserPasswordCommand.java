@@ -50,7 +50,9 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
         Map<String,List<String>> errors = Collections.emptyMap();
         PostgresUser pu = connectedUser.getService().getConnector().getPostgresUsers().get(postgresUser);
         if(pu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.disabled");
-        if(pu.getUsername().getUsername().equals(PostgresUser.POSTGRES.getUserId())) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
+        if(
+            pu.getUsername().getUsername()==PostgresUser.POSTGRES.getUserId() // OK - interned
+        ) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
         // TODO: Check password strength
         return errors;
     }

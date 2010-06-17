@@ -101,9 +101,9 @@ final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> imple
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(MySQLDBUser other) throws RemoteException {
-        int diff = mysqlDatabase==other.mysqlDatabase ? 0 : getMysqlDatabase().compareTo(other.getMysqlDatabase());
+        int diff = mysqlDatabase==other.mysqlDatabase ? 0 : getMysqlDatabase().compareToImpl(other.getMysqlDatabase());
         if(diff!=0) return diff;
-        return mysqlUser==other.mysqlUser ? 0 : getMysqlUser().compareTo(other.getMysqlUser());
+        return mysqlUser==other.mysqlUser ? 0 : getMysqlUser().compareToImpl(other.getMysqlUser());
     }
     // </editor-fold>
 

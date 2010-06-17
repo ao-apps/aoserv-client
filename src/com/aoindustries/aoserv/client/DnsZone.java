@@ -120,6 +120,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.DnsZone getBean() {
         return new com.aoindustries.aoserv.client.beans.DnsZone(key, getBean(zone), file, getBean(hostmaster), serial, ttl);
     }
@@ -232,7 +233,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
         // Find the first nameserver
         DnsRecord firstNS=null;
         for(DnsRecord record : records) {
-            if(record.getType().getType().equals(DnsType.NS)) {
+            if(record.getType().getType()==DnsType.NS) { // OK - interned
                 firstNS=record;
                 break;
             }
@@ -378,7 +379,7 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        if(pkey.equals(API_ZONE)) reasons.add(new CannotRemoveReason<DnsZone>("Not allowed to remove the API Zone: "+API_ZONE));
+        if(pkey==API_ZONE) reasons.add(new CannotRemoveReason<DnsZone>("Not allowed to remove the API Zone: "+API_ZONE)); // OK - interned
         return reasons;
     }
 

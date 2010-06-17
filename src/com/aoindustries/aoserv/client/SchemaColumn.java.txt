@@ -21,8 +21,6 @@ import java.util.List;
  * @see  SchemaTable
  * @see  AOServObject
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {

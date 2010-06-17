@@ -58,9 +58,9 @@ final public class MasterServer extends AOServObjectIntegerKey<MasterServer> imp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(MasterServer other) throws RemoteException {
-        int diff = username.equals(other.username) ? 0 : getMasterUser().compareTo(other.getMasterUser());
+        int diff = username==other.username ? 0 : getMasterUser().compareToImpl(other.getMasterUser());
         if(diff!=0) return diff;
-        return server==other.server ? 0 : getServer().compareTo(other.getServer());
+        return server==other.server ? 0 : getServer().compareToImpl(other.getServer());
     }
     // </editor-fold>
 
@@ -84,6 +84,7 @@ final public class MasterServer extends AOServObjectIntegerKey<MasterServer> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.MasterServer getBean() {
         return new com.aoindustries.aoserv.client.beans.MasterServer(key, getBean(username), server);
     }

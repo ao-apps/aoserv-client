@@ -20,8 +20,6 @@ import java.util.List;
  * @see  EmailDomain
  * @see  MajordomoList
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServer> implements Removable {

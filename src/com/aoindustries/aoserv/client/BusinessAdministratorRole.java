@@ -46,9 +46,9 @@ final public class BusinessAdministratorRole extends AOServObjectIntegerKey<Busi
     @Override
     protected int compareToImpl(BusinessAdministratorRole other) throws RemoteException {
         if(key==other.key) return 0;
-        int diff = username==other.username ? 0 : getBusinessAdministrator().compareTo(other.getBusinessAdministrator());
+        int diff = username==other.username ? 0 : getBusinessAdministrator().compareToImpl(other.getBusinessAdministrator());
         if(diff!=0) return diff;
-        return role==other.role ? 0 : getRole().compareTo(other.getRole());
+        return role==other.role ? 0 : getRole().compareToImpl(other.getRole());
     }
     // </editor-fold>
 

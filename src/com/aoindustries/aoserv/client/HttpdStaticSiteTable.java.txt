@@ -11,8 +11,6 @@ import java.sql.*;
 /**
  * @see  HttpdStaticSite
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class HttpdStaticSiteTable extends CachedTableIntegerKey<HttpdStaticSite> {

@@ -13,8 +13,6 @@ import java.util.Comparator;
 /**
  * Compares columns.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SQLComparator<T> implements Comparator<T> {

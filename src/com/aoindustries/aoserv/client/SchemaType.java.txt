@@ -23,8 +23,6 @@ import java.sql.SQLException;
  *
  * @see  SchemaColumn#getSchemaType(AOServConnector)
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {

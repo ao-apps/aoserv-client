@@ -1,10 +1,9 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
 
 /**
  * @see  TechnologyVersion
@@ -67,7 +66,11 @@ public interface TechnologyVersionService<C extends AOServConnector<C,F>, F exte
 	int size=table.size();
 	for(int c=0;c<size;c++) {
             TechnologyVersion tv=table.get(c);
-            if(tv.name.equals(name) && tv.version.equals(version) && tv.operating_system_version==osvPKey) return tv;
+            if(
+                tv.name==name // OK - interned
+                && tv.version.equals(version)
+                && tv.operating_system_version==osvPKey
+            ) return tv;
 	}
 	return null;
     }

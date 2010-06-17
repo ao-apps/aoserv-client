@@ -46,7 +46,7 @@ final public class AddTransactionCommand extends RemoteCommand<Integer> {
         @Param(name="paymentType", nullable=true) String paymentType,
         @Param(name="paymentInfo", nullable=true) String paymentInfo,
         @Param(name="processor", nullable=true) String processor,
-        @Param(name="status") Transaction.Status status
+        @Param(name="status", syntax="{Y|N|W}") Transaction.Status status
     ) {
         this.accounting = accounting;
         this.sourceAccounting = sourceAccounting;

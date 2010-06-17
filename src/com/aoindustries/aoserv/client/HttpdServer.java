@@ -72,7 +72,7 @@ final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> imple
         if(key==other.key) return 0;
         AOServerResource aoResource1 = getAoServerResource();
         AOServerResource aoResource2 = other.getAoServerResource();
-        int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+        int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareToImpl(aoResource2.getAoServer());
         if(diff!=0) return diff;
         return AOServObjectUtils.compare(number, other.number);
     }

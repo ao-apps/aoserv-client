@@ -81,10 +81,12 @@ final public class TicketLoggingHandler extends QueuedHandler {
         ticketType = connector.getTicketTypes().get(TicketType.LOGS);
     }
 
+    @Override
     protected boolean useCustomLogging(LogRecord record) {
         return record.getLevel().intValue()>Level.FINE.intValue();
     }
 
+    @Override
     protected void doCustomLogging(Formatter formatter, LogRecord record, String fullReport) {
         try {
             Level level = record.getLevel();
@@ -100,10 +102,10 @@ final public class TicketLoggingHandler extends QueuedHandler {
                 String status = ticket.getStatus().getStatus();
                 if(
                     (
-                        TicketStatus.OPEN.equals(status)
-                        || TicketStatus.HOLD.equals(status)
-                        || TicketStatus.BOUNCED.equals(status)
-                    ) && brand.equals(ticket.getBrand())
+                        TicketStatus.OPEN==status // OK - interned
+                        || TicketStatus.HOLD==status // OK - interned
+                        || TicketStatus.BOUNCED==status // OK - interned
+                    ) && brand==ticket.getBrand() // OK - interned
                     && business.equals(ticket.getBusiness())
                     && language.equals(ticket.getLanguage())
                     && ticketType.equals(ticket.getTicketType())
