@@ -219,7 +219,6 @@ import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.aoserv.client.VirtualServer;
 import com.aoindustries.aoserv.client.VirtualServerService;
 import com.aoindustries.aoserv.client.command.RemoteCommand;
-import com.aoindustries.aoserv.client.command.ReadOnlyException;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.aoserv.client.validator.DomainName;
@@ -247,20 +246,18 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     private final UserId authenticateAs;
     private final String password;
     private final DomainName daemonServer;
-    private final boolean readOnly;
 
     final Object connectionLock = new Object();
     private AOServConnector<?,?> wrapped;
 
     @SuppressWarnings("unchecked")
-    protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException {
+    protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
         this.factory = factory;
         this.locale = locale;
         this.connectAs = connectAs;
         this.authenticateAs = authenticateAs;
         this.password = password;
         this.daemonServer = daemonServer;
-        this.readOnly = readOnly;
         aoserverDaemonHosts = new WrappedAOServerDaemonHostService(this);
         aoserverResources = new WrappedAOServerResourceService(this);
         aoservers = new WrappedAOServerService(this);
@@ -447,7 +444,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     final protected AOServConnector<?,?> getWrapped() throws RemoteException, LoginException {
         synchronized(connectionLock) {
             // (Re)connects to the wrapped factory
-            if(wrapped==null) wrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer, readOnly);
+            if(wrapped==null) wrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
             return wrapped;
         }
     }
@@ -534,14 +531,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
 
     @Override
-    final public boolean isReadOnly() {
-        return readOnly;
-    }
-
-    @Override
     final public <R> CommandResult<R> executeCommand(final RemoteCommand<R> command, final boolean isInteractive) throws RemoteException {
-        // Check read-only commands
-        if(readOnly && !command.isReadOnlyCommand()) throw new ReadOnlyException();
         return call(
             new Callable<CommandResult<R>>() {
                 @Override

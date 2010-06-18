@@ -11,14 +11,12 @@ package com.aoindustries.aoserv.client.beans;
 public class BackupRetention {
 
     private short days;
-    private String display;
 
     public BackupRetention() {
     }
 
-    public BackupRetention(short days, String display) {
+    public BackupRetention(short days) {
         this.days = days;
-        this.display = display;
     }
 
     public short getDays() {
@@ -27,13 +25,5 @@ public class BackupRetention {
 
     public void setDays(short days) {
         this.days = days;
-    }
-
-    public String getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(String display) {
-        this.display = display;
     }
 }

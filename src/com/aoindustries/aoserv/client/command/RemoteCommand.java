@@ -127,12 +127,6 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
     }
 
     /**
-     * Checks if this command is read-only.  Read-only commands must have no side-affects.
-     * Read-only connectors may only execute read-only commands.
-     */
-    abstract public boolean isReadOnlyCommand();
-
-    /**
      * Determines if this command may be retried in the event of an error.  Defaults to <code>true</code>.
      */
     public boolean isRetryableCommand() {

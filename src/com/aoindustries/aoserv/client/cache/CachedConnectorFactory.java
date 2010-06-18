@@ -30,9 +30,9 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
     private final AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory> connectors = new AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory>();
 
     @Override
-    public CachedConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
+    public CachedConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
-            CachedConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer, readOnly);
+            CachedConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
             if(connector!=null) {
                 connector.setLocale(locale);
             } else {
@@ -41,8 +41,7 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
                     connectAs,
                     authenticateAs,
                     password,
-                    daemonServer,
-                    readOnly
+                    daemonServer
                 );
             }
             return connector;
@@ -50,15 +49,14 @@ final public class CachedConnectorFactory implements AOServConnectorFactory<Cach
     }
 
     @Override
-    public CachedConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
+    public CachedConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
-            CachedConnector connector = new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer, readOnly));
+            CachedConnector connector = new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
             connectors.put(
                 connectAs,
                 authenticateAs,
                 password,
                 daemonServer,
-                readOnly,
                 connector
             );
             return connector;

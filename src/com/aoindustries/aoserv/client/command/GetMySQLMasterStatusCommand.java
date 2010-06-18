@@ -56,11 +56,6 @@ final public class GetMySQLMasterStatusCommand extends RemoteCommand<GetMySQLMas
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return true;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();

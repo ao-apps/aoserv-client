@@ -37,11 +37,6 @@ final public class SetTicketContactEmailsCommand extends RemoteCommand<Void> {
         return contactEmails;
     }
 
-    @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();

@@ -103,11 +103,6 @@ final public class AddTicketCommand extends RemoteCommand<Integer> {
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();

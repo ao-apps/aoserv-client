@@ -41,11 +41,6 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         if(connectedUser.getService().get(username).getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, "SetBusinessAdministratorPasswordCommand.validate.disabled");

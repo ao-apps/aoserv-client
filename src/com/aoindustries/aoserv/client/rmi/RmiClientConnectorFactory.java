@@ -74,9 +74,9 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
         }
 
         @Override
-        public AOServConnector<?,?> getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
+        public AOServConnector<?,?> getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
             synchronized(connectors) {
-                AOServConnector<?,?> connector = connectors.get(connectAs, authenticateAs, password, daemonServer, readOnly);
+                AOServConnector<?,?> connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
                 if(connector!=null) {
                     connector.setLocale(locale);
                 } else {
@@ -85,8 +85,7 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
                         connectAs,
                         authenticateAs,
                         password,
-                        daemonServer,
-                        readOnly
+                        daemonServer
                     );
                 }
                 return connector;
@@ -95,19 +94,18 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
 
         @SuppressWarnings("unchecked")
         @Override
-        public AOServConnector<?,?> newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
+        public AOServConnector<?,?> newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
             try {
                 // Connect to the remote registry and get each of the stubs
                 Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
                 AOServConnectorFactory<?,?> serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
                 synchronized(connectors) {
-                    AOServConnector<?,?> connector = serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer, readOnly);
+                    AOServConnector<?,?> connector = serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
                     connectors.put(
                         connectAs,
                         authenticateAs,
                         password,
                         daemonServer,
-                        readOnly,
                         connector
                     );
                     return connector;
@@ -128,7 +126,7 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
     }
 
     @Override
-    protected RmiClientConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
-        return new RmiClientConnector(this, locale, connectAs, authenticateAs, password, daemonServer, readOnly);
+    protected RmiClientConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+        return new RmiClientConnector(this, locale, connectAs, authenticateAs, password, daemonServer);
     }
 }

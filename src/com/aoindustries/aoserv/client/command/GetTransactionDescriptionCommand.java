@@ -31,11 +31,6 @@ final public class GetTransactionDescriptionCommand extends RemoteCommand<String
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return true;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();

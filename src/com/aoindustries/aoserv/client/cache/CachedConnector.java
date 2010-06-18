@@ -219,7 +219,6 @@ import com.aoindustries.aoserv.client.UsernameService;
 import com.aoindustries.aoserv.client.VirtualServer;
 import com.aoindustries.aoserv.client.VirtualServerService;
 import com.aoindustries.aoserv.client.command.RemoteCommand;
-import com.aoindustries.aoserv.client.command.ReadOnlyException;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.aoserv.client.validator.DomainName;
@@ -246,7 +245,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     final UserId connectAs;
     private final UserId authenticateAs;
     private final String password;
-    private final boolean readOnly;
 
     CachedConnector(CachedConnectorFactory factory, AOServConnector<?,?> wrapped) throws RemoteException, LoginException {
         this.factory = factory;
@@ -255,7 +253,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         connectAs = wrapped.getConnectAs();
         authenticateAs = wrapped.getAuthenticateAs();
         password = wrapped.getPassword();
-        readOnly = wrapped.isReadOnly();
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAoServerDaemonHosts());
         aoserverResources = new CachedAOServerResourceService(this, wrapped.getAoServerResources());
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
@@ -459,14 +456,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
 
     @Override
-    public boolean isReadOnly() {
-        return readOnly;
-    }
-
-    @Override
     public <R> CommandResult<R> executeCommand(RemoteCommand<R> command, boolean isInteractive) throws RemoteException {
-        // Check read-only commands
-        if(readOnly && !command.isReadOnlyCommand()) throw new ReadOnlyException();
         return wrapped.executeCommand(command, isInteractive);
     }
 

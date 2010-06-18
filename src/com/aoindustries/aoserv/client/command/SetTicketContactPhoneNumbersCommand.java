@@ -38,10 +38,6 @@ final public class SetTicketContactPhoneNumbersCommand extends RemoteCommand<Voi
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();

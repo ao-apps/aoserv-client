@@ -38,11 +38,6 @@ final public class SetLinuxAccountPredisablePasswordCommand extends RemoteComman
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();

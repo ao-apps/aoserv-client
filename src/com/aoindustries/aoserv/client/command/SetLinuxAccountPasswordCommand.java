@@ -41,11 +41,6 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);

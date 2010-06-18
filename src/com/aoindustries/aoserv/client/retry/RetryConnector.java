@@ -21,8 +21,8 @@ import java.util.concurrent.Callable;
  */
 final public class RetryConnector extends WrappedConnector<RetryConnector,RetryConnectorFactory> {
 
-    RetryConnector(RetryConnectorFactory factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException {
-        super(factory, locale, connectAs, authenticateAs, password, daemonServer, readOnly);
+    RetryConnector(RetryConnectorFactory factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
+        super(factory, locale, connectAs, authenticateAs, password, daemonServer);
     }
 
     @Override

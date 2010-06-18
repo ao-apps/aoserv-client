@@ -39,11 +39,6 @@ final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO: Check LinuxAccountType.Constant for no password set allowed
         // TODO

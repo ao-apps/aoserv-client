@@ -21,21 +21,8 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private String display;
-
-    public BackupRetention(BackupRetentionService<?,?> service, short days, String display) {
+    public BackupRetention(BackupRetentionService<?,?> service, short days) {
         super(service, days);
-        this.display = display;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        display = intern(display);
     }
     // </editor-fold>
 
@@ -44,16 +31,12 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
     public short getDays() {
         return key;
     }
-
-    @SchemaColumn(order=1, name="display", description="the text displayed for this time increment")
-    public String getDisplay() {
-        return display;
-    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.BackupRetention getBean() {
-        return new com.aoindustries.aoserv.client.beans.BackupRetention(key, display);
+        return new com.aoindustries.aoserv.client.beans.BackupRetention(key);
     }
     // </editor-fold>
 
@@ -71,7 +54,7 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
-    	return display;
+        return ApplicationResources.accessor.getMessage("BackupRetention."+key+".toString");
     }
     // </editor-fold>
 

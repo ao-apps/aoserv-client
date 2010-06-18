@@ -41,11 +41,6 @@ final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         MySQLUser mu = connectedUser.getService().getConnector().getMysqlUsers().get(mysqlUser);

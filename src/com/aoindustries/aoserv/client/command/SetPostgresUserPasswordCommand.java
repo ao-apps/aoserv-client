@@ -41,11 +41,6 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return false;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         PostgresUser pu = connectedUser.getService().getConnector().getPostgresUsers().get(postgresUser);

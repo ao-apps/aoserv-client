@@ -32,11 +32,6 @@ final public class RequestVncConsoleAccessCommand extends RemoteCommand<AOServer
     }
 
     @Override
-    public boolean isReadOnlyCommand() {
-        return true;
-    }
-
-    @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         // TODO
         return Collections.emptyMap();

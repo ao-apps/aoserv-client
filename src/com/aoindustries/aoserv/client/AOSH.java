@@ -395,7 +395,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             UserId username = getConfigUsername(in, err);
             String password = getConfigPassword(in, err);
-            AOServConnector<?,?> connector = AOServClientConfiguration.getConnector(username, password, AOServClientConfiguration.getReadOnly());
+            AOServConnector<?,?> connector = AOServClientConfiguration.getConnector(username, password);
             AOSH aosh = new AOSH(connector, in, out, err, args);
             aosh.run();
             if(aosh.isInteractive()) {
@@ -924,8 +924,7 @@ final public class AOSH extends ShellInterpreter {
                         UserId.valueOf(args[1]),
                         connector.getAuthenticateAs(),
                         connector.getPassword(),
-                        null,
-                        connector.isReadOnly()
+                        null
                     ),
                     in,
                     out,
