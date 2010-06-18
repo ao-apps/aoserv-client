@@ -125,10 +125,10 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     @Override
     public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            getBusinesses(),
-            getBusinessAdministrators(),
-            getGroupNames(),
-            getUsernames()
+            // Caused loop in dependency DAG: getBusinesses(),
+            // Caused loop in dependency DAG: getBusinessAdministrators(),
+            getGroupNames()
+            // Caused loop in dependency DAG: getUsernames()
         );
     }
     // </editor-fold>

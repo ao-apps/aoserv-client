@@ -259,8 +259,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getUsername(),
-            getCountry(),
-            getDisableLog()
+            getCountry()
+            // Caused loop in dependency DAG: getDisableLog()
         );
     }
 

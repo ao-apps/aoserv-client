@@ -83,7 +83,8 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="the unique ID of the package definition")
+    static final String COLUMN_PKEY = "pkey";
+    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="the unique ID of the package definition")
     public int getPkey() {
         return key;
     }

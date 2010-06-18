@@ -82,8 +82,8 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
     @Override
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
-            getBusiness(),
-            getDisableLog()
+            getBusiness()
+            // Caused loop in dependency DAG: getDisableLog()
         );
     }
 

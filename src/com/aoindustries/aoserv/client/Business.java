@@ -243,10 +243,13 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         return billParent;
     }
 
+    /**
+     * May be filtered.
+     */
     static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
     @SchemaColumn(order=13, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the definition of the package")
     public PackageDefinition getPackageDefinition() throws RemoteException {
-        return getService().getConnector().getPackageDefinitions().get(packageDefinition);
+        return getService().getConnector().getPackageDefinitions().filterUnique(PackageDefinition.COLUMN_PKEY, packageDefinition);
     }
 
     /**
@@ -331,7 +334,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     public Set<? extends AOServObject> getDependencies() throws RemoteException {
         return AOServObjectUtils.createDependencySet(
             getParentBusiness(),
-            getDisableLog(),
+            // Caused loop in dependency DAG: getDisableLog(),
             getPackageDefinition(),
             getCreatedBy()
         );

@@ -23,8 +23,8 @@ import junit.framework.TestSuite;
  */
 public class AOServConnectorTest extends TestCase {
 
-    static final String REGULAR_USER_USERNAME="testuser";
-    static final String REGULAR_USER_PASSWORD="T3st1234";
+    static final String REGULAR_USER_USERNAME = "danshome";
+    static final String REGULAR_USER_PASSWORD = "4TiveKluve4";
 
     /**
      * Gets the list of connectors to be used during testing.  This represents the three different
@@ -33,9 +33,10 @@ public class AOServConnectorTest extends TestCase {
      */
     static List<AOServConnector<?,?>> getTestConnectors() throws IOException, RemoteException, LoginException, ValidationException {
         List<AOServConnector<?,?>> conns = new ArrayList<AOServConnector<?,?>>();
-        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("aoweb_app"), "changeme", true));
+        // conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("aoweb_app"), "changeme", true));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("orion"), "Ixal9Uvilt7", true));
         conns.add(AOServClientConfiguration.getConnector(UserId.valueOf(REGULAR_USER_USERNAME), REGULAR_USER_PASSWORD, true));
-        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("test_svr"), "Ogrol3Veve5", true));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("suspendo_svr"), "68OrfulSkuza", true));
         return conns;
     }
 
