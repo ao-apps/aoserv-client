@@ -71,7 +71,8 @@ final public class TransactionType extends AOServObjectStringKey<TransactionType
         return AOServObjectUtils.createDependencySet(
             getTransactions(),
             getPackageDefinitionsBySetupFeeTransactionType(),
-            getPackageDefinitionsByMonthlyRateTransactionType()
+            getPackageDefinitionsByMonthlyRateTransactionType(),
+            getPackageDefinitionLimits()
         );
     }
     // </editor-fold>
@@ -102,6 +103,10 @@ final public class TransactionType extends AOServObjectStringKey<TransactionType
 
     public IndexedSet<PackageDefinition> getPackageDefinitionsByMonthlyRateTransactionType() throws RemoteException {
         return getService().getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, this);
+    }
+
+    public IndexedSet<PackageDefinitionLimit> getPackageDefinitionLimits() throws RemoteException {
+        return getService().getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_ADDITIONAL_TRANSACTION_TYPE, this);
     }
     // </editor-fold>
 }

@@ -369,6 +369,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
             // TODO: getMonthlyChargesBySourceBusiness(),
             // TODO: getMysqlDatabases(),
             // TODO: getNoticeLogs(),
+            getPackageDefinitionBusinesses(),
             getResources(),
             getServers(),
             getServerFarms(),
@@ -412,6 +413,10 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     public IndexedSet<Resource> getResources() throws RemoteException {
         return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_ACCOUNTING, this);
+    }
+
+    public IndexedSet<PackageDefinitionBusiness> getPackageDefinitionBusinesses() throws RemoteException {
+        return getService().getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<Server> getServers() throws RemoteException {

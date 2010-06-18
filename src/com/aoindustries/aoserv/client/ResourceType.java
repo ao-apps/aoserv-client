@@ -84,7 +84,8 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
             AOServObjectUtils.createDependencySet(
                 getDependentObjectByResourceType()
             ),
-            getResources()
+            getResources(),
+            getPackageDefinitionLimits()
         );
     }
 
@@ -115,6 +116,10 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
 
     public LinuxGroupType getLinuxGroupType() throws RemoteException {
         return getService().getConnector().getLinuxGroupTypes().get(getKey());
+    }
+
+    public IndexedSet<PackageDefinitionLimit> getPackageDefinitionLimits() throws RemoteException {
+        return getService().getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_RESOURCE_TYPE, this);
     }
     // </editor-fold>
 
