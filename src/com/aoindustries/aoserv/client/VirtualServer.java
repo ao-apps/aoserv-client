@@ -138,7 +138,7 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
     /**
      * Gets the minimum processor type or <code>null</code> if none.
      */
-    @SchemaColumn(order=5, name=COLUMN_MINIMUM_PROCESSOR_TYPE, description="the minimum processor type")
+    @SchemaColumn(order=5, name=COLUMN_MINIMUM_PROCESSOR_TYPE, index=IndexType.INDEXED, description="the minimum processor type")
     public ProcessorType getMinimumProcessorType() throws RemoteException {
         if(minimumProcessorType==null) return null;
         return getService().getConnector().getProcessorTypes().get(minimumProcessorType);

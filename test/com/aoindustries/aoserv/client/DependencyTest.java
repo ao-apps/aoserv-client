@@ -49,12 +49,14 @@ public class DependencyTest extends TestCase {
     }
 
     class DependenciesGetter extends ChildGetter {
+        @Override
         Set<? extends AOServObject> getChildren(AOServObject<?,?> obj) throws IOException, SQLException {
             return obj.getDependencies();
         }
     }
 
     class DependentObjectsGetter extends ChildGetter {
+        @Override
         Set<? extends AOServObject> getChildren(AOServObject<?,?> obj) throws IOException, SQLException {
             return obj.getDependentObjects();
         }

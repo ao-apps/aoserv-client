@@ -195,10 +195,13 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     }
 
     static final String COLUMN_CREDIT_CARD_TRANSACTION = "credit_card_transaction";
+    /**
+     * May be filtered.
+     */
     @SchemaColumn(order=12, name=COLUMN_CREDIT_CARD_TRANSACTION, index=IndexType.UNIQUE, description="the credit card transaction for this transaction")
     public CreditCardTransaction getCreditCardTransaction() throws RemoteException {
         if(creditCardTransaction==null) return null;
-        return getService().getConnector().getCreditCardTransactions().get(creditCardTransaction);
+        return getService().getConnector().getCreditCardTransactions().filterUnique(CreditCardTransaction.COLUMN_PKEY, creditCardTransaction);
     }
 
     @SchemaColumn(order=13, name="status", description="the status of the transaction")

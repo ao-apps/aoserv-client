@@ -322,7 +322,8 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="the unique ID of this transaction")
+    static final String COLUMN_PKEY = "pkey";
+    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="the unique ID of this transaction")
     public int getPkey() {
         return key;
     }

@@ -168,13 +168,13 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     /**
      * Gets the processor that is storing the credit card numbers.
      */
-    @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, description="the processor that is storing the card number and expiration date")
+    @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, index=IndexType.INDEXED, description="the processor that is storing the card number and expiration date")
     public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
         return getService().getConnector().getCreditCardProcessors().get(processorId);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
-    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, description="the accounting code for the card")
+    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code for the card")
     public Business getBusiness() throws RemoteException {
         return getService().getConnector().getBusinesses().get(accounting);
     }
@@ -262,7 +262,7 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     }
 
     static final String COLUMN_COUNTRY_CODE = "country_code";
-    @SchemaColumn(order=18, name=COLUMN_COUNTRY_CODE, description="the two-character country code")
+    @SchemaColumn(order=18, name=COLUMN_COUNTRY_CODE, index=IndexType.INDEXED, description="the two-character country code")
     public CountryCode getCountryCode() throws RemoteException {
         return getService().getConnector().getCountryCodes().get(this.countryCode);
     }
@@ -273,7 +273,7 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     }
 
     static final String COLUMN_CREATED_BY = "created_by";
-    @SchemaColumn(order=20, name=COLUMN_CREATED_BY, description="the business_administrator who added the card to the database")
+    @SchemaColumn(order=20, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the business_administrator who added the card to the database")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         return getService().getConnector().getBusinessAdministrators().get(createdBy);
     }

@@ -31,6 +31,7 @@ final public class TimeoutConnectorFactory extends WrappedConnectorFactory<Timeo
 
     static final ExecutorService executorService = Executors.newCachedThreadPool(
         new ThreadFactory() {
+            @Override
             public Thread newThread(Runnable r) {
                 return new Thread(r, TimeoutConnectorFactory.class.getName());
             }
