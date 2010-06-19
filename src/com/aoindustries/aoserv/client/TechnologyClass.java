@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>TechnologyClass</code> is one type of software package
@@ -63,10 +63,9 @@ final public class TechnologyClass extends AOServObjectStringKey<TechnologyClass
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTechnologies()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologies());
+        return unionSet;
     }
     // </editor-fold>
 

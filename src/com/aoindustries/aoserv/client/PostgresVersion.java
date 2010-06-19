@@ -1,16 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2002-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A <code>PostgresVersion</code> flags which <code>TechnologyVersion</code>s
@@ -125,19 +125,17 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTechnologyVersion(),
-            getPostgisVersion()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgisVersion());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getPostgresServers(),
-            getPostgresEncodings()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresEncodings());
+        return unionSet;
     }
     // </editor-fold>
 

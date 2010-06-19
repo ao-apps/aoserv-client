@@ -9,9 +9,9 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Set;
 
 /**
  * <code>TicketAction</code>s represent a complete history of the changes that have been made to a ticket.
@@ -420,24 +420,23 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTicket(),
-            getAdministrator(),
-            getActionType(),
-            getOldBusiness(),
-            getNewBusiness(),
-            getOldPriority(),
-            getNewPriority(),
-            getOldType(),
-            getNewType(),
-            getOldStatus(),
-            getNewStatus(),
-            getOldAssignedTo(),
-            getNewAssignedTo(),
-            getOldCategory(),
-            getNewCategory()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicket());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAdministrator());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getActionType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldStatus());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewStatus());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldAssignedTo());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewAssignedTo());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldCategory());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewCategory());
+        return unionSet;
     }
     // </editor-fold>
 

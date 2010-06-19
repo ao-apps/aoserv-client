@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.lang.reflect.Method;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -75,68 +76,25 @@ public class AOServObjectUtils {
     }*/
 
     /**
-     * Returns an unmodifiable set of the provided objects, not including any null values.
+     * Adds the set of objects to the union.
      */
-    public static Set<? extends AOServObject> createDependencySet() {
-        return Collections.emptySet();
+    public static UnionSet<AOServObject> addDependencySet(UnionSet<AOServObject> unionSet, Set<? extends AOServObject> set) {
+        if(!set.isEmpty()) {
+            if(unionSet==null) unionSet = new UnionSet<AOServObject>(set);
+            else unionSet.addAll(set);
+        }
+        return unionSet;
     }
 
     /**
-     * Returns an unmodifiable set of the provided objects, not including any null values.
+     * Adds an object to the union if the reference is not null.
      */
-    public static Set<? extends AOServObject> createDependencySet(AOServObject obj) {
-        if(obj==null) return Collections.emptySet();
-        return Collections.singleton(obj);
-    }
-
-    /**
-     * Returns an unmodifiable set of the provided objects, not including any null values.
-     * It is assumed that the set passed-in is unmodifiable and it will be returned directly if
-     * it contains no null values.
-     */
-    public static Set<? extends AOServObject> createDependencySet(Set<? extends AOServObject> objs) {
-        boolean hasNull = false;
-        for(AOServObject obj : objs) {
-            if(obj==null) {
-                hasNull = true;
-                break;
-            }
+    public static UnionSet<AOServObject> addDependencySet(UnionSet<AOServObject> unionSet, AOServObject obj) {
+        if(obj!=null) {
+            if(unionSet==null) unionSet = new UnionSet<AOServObject>();
+            unionSet.add(obj);
         }
-        if(!hasNull) return objs;
-        Set<AOServObject> set = new HashSet<AOServObject>(objs.size()*4/3+1);
-        for(AOServObject obj : objs) {
-            if(obj!=null) set.add(obj);
-        }
-        return AOServServiceUtils.unmodifiableSet(set);
-    }
-
-    /**
-     * Returns an unmodifiable set of the provided objects, not including any null values.
-     */
-    @SuppressWarnings("unchecked")
-    public static Set<? extends AOServObject> createDependencySet(Set... objss) {
-        int totalSize = 0;
-        for(Set<? extends AOServObject> objs : objss) totalSize+=objs.size();
-        Set<AOServObject> set = new HashSet<AOServObject>(totalSize*4/3+1);
-        for(Set<? extends AOServObject> objs : objss) {
-            for(AOServObject obj : objs) {
-                if(obj!=null) set.add(obj);
-            }
-        }
-        if(set.size()==0) return Collections.emptySet();
-        return AOServServiceUtils.unmodifiableSet(set);
-    }
-
-    /**
-     * Returns an unmodifiable set of the provided objects, not including any null values.
-     */
-    public static Set<? extends AOServObject> createDependencySet(AOServObject... objs) {
-        Set<AOServObject> set = new HashSet<AOServObject>(objs.length*4/3+1);
-        for(AOServObject obj : objs) {
-            if(obj!=null) set.add(obj);
-        }
-        if(set.size()==0) return Collections.emptySet();
-        return AOServServiceUtils.unmodifiableSet(set);
+        return unionSet;
     }
 
     private static final ConcurrentMap<Class<? extends AOServObject>,List<MethodColumn>> columns = new ConcurrentHashMap<Class<? extends AOServObject>, List<MethodColumn>>(ServiceName.values.size()*4/3+1);

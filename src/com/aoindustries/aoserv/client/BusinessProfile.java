@@ -10,12 +10,12 @@ import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Contact information associated with a <code>Business</code>.
@@ -225,6 +225,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.BusinessProfile getBean() {
         return new com.aoindustries.aoserv.client.beans.BusinessProfile(key, getBean(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
     }
@@ -232,11 +233,10 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness(),
-            getCountry()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountry());
+        return unionSet;
     }
     // </editor-fold>
 

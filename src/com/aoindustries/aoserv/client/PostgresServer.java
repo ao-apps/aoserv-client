@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Locale;
@@ -290,20 +291,18 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResource(),
-            getPostgresVersion(),
-            getNetBind()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getPostgresDatabases(),
-            getPostgresUsers()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresUsers());
+        return unionSet;
     }
     // </editor-fold>
 

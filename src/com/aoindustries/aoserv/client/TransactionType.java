@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>TransactionType</code> is one type that may be used
@@ -67,13 +67,12 @@ final public class TransactionType extends AOServObjectStringKey<TransactionType
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTransactions(),
-            getPackageDefinitionsBySetupFeeTransactionType(),
-            getPackageDefinitionsByMonthlyRateTransactionType(),
-            getPackageDefinitionLimits()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionsBySetupFeeTransactionType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionsByMonthlyRateTransactionType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionLimits());
+        return unionSet;
     }
     // </editor-fold>
 

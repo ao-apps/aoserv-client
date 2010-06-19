@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2005-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>PackageCategory</code> represents one type of service
@@ -61,10 +61,9 @@ final public class PackageCategory extends AOServObjectStringKey<PackageCategory
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getPackageDefinitions()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitions());
+        return unionSet;
     }
     // </editor-fold>
 

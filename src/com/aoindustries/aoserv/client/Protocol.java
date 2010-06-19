@@ -1,14 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>Protocol</code> represents one type of application
@@ -139,20 +139,16 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements B
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getNetProtocol()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetProtocol());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getHttpdJKProtocol()
-            ),
-            getNetBinds()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJKProtocol());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
+        return unionSet;
     }
     // </editor-fold>
 

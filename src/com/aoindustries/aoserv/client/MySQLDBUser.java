@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>MySQLDBUser</code> grants a <code>MySQLUser</code>
@@ -222,6 +222,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.MySQLDBUser getBean() {
         return new com.aoindustries.aoserv.client.beans.MySQLDBUser(key, mysqlDatabase, mysqlUser, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, grantPriv, referencesPriv, indexPriv, alterPriv, createTmpTablePriv, lockTablesPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, executePriv, eventPriv, triggerPriv);
     }
@@ -229,11 +230,10 @@ final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> imple
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getMysqlDatabase(),
-            getMysqlUser()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabase());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUser());
+        return unionSet;
     }
     // </editor-fold>
 

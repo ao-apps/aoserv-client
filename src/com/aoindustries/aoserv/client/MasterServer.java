@@ -1,14 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * <code>MasterUser</code>s are restricted to data based on a list
@@ -92,11 +92,10 @@ final public class MasterServer extends AOServObjectIntegerKey<MasterServer> imp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getMasterUser(),
-            getServer()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
+        return unionSet;
     }
     // </editor-fold>
 }

@@ -1,14 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2002-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * <code>BackupPartition</code> stores backup data.
@@ -99,6 +99,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.BackupPartition getBean() {
         return new com.aoindustries.aoserv.client.beans.BackupPartition(key, aoServer, getBean(path), enabled, quotaEnabled);
     }
@@ -106,17 +107,15 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAOServer()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServer());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // TODO: getFailoverFileReplications()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
+        return unionSet;
     }
     // </editor-fold>
 

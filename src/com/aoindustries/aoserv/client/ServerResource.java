@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>Resource</code> that exists on a <code>Server</code>.  All resources on a server must
@@ -73,19 +73,17 @@ final public class ServerResource extends AOServObjectIntegerKey<ServerResource>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getResource(),
-            getServer(),
-            getBusinessServer()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServer());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getDependentObjectByResourceType()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDependentObjectByResourceType());
+        return unionSet;
     }
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {

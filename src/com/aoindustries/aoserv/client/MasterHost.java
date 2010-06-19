@@ -8,8 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>MasterHost</code> controls which hosts a <code>MasterUser</code>
@@ -89,10 +89,9 @@ final public class MasterHost extends AOServObjectIntegerKey<MasterHost> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getMasterUser()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
+        return unionSet;
     }
     // </editor-fold>
 }

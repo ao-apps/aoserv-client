@@ -11,10 +11,10 @@ import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.Hostname;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A brand has separate website, packages, nameservers, and support.
@@ -428,6 +428,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Brand getBean() {
         return new com.aoindustries.aoserv.client.beans.Brand(
             getBean(getKey()),
@@ -475,31 +476,27 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness(),
-            getSmtpEmailInbox(),
-            getImapEmailInbox(),
-            // TODO: getSupportEmailAddress(),
-            // TODO: getSignupEmailAddress(),
-            // TODO: getTicketEncryptionFrom(),
-            // TODO: getTicketEncryptionRecipient(),
-            // TODO: getSignupEncryptionFrom(),
-            // TODO: getSignupEncryptionRecipient(),
-            getAowebStrutsVncBind()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getSmtpEmailInbox());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getImapEmailInbox());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSupportEmailAddress());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupEmailAddress);
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketEncryptionFrom());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketEncryptionRecipient());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupEncryptionFrom());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupEncryptionRecipient());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAowebStrutsVncBind());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getReseller()
-            ),
-            getTickets()
-            // TODO: getSignupRequests(),
-            // TODO: getTicketBrandCategories()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupRequests());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketBrandCategories());
+        return unionSet;
     }
     // </editor-fold>
 

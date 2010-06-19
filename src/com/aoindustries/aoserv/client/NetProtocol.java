@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * Each <code>NetBind</code> is listening on a <code>NetProtocol</code>.  The
@@ -43,6 +43,7 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.NetProtocol getBean() {
         return new com.aoindustries.aoserv.client.beans.NetProtocol(getKey());
     }
@@ -50,11 +51,10 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implem
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getNetBinds(),
-            getProtocols()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getProtocols());
+        return unionSet;
     }
     // </editor-fold>
 

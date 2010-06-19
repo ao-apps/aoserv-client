@@ -9,8 +9,8 @@ import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * When a <code>PrivateFtpServer</code> is attached to a
@@ -121,12 +121,11 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getNetBind(),
-            getLinuxAccountGroup(),
-            getAoServerResource()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        return unionSet;
     }
     // </editor-fold>
 

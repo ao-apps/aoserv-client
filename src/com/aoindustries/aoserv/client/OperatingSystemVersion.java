@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * One version of a operating system.
@@ -139,19 +139,17 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getOperatingSystem(),
-            getArchitecture()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystem());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getArchitecture());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getServers(),
-            getTechnologyVersions()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersions());
+        return unionSet;
     }
     // </editor-fold>
 

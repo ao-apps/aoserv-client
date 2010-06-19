@@ -9,12 +9,12 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Set;
 
 /**
  * A <code>CreditCardTransaction</code> stores the complete history of credit card transactions.
@@ -921,25 +921,23 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getCreditCardProcessor(),
-            getBusiness(),
-            getShippingCountryCode(),
-            getCreditCardCreatedBy(),
-            getCreditCardBusiness(),
-            getCreditCardCountryCode(),
-            getAuthorizationAdministrator(),
-            getCaptureAdministrator(),
-            getVoidAdministrator()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessor());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getShippingCountryCode());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardCreatedBy());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardCountryCode());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAuthorizationAdministrator());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCaptureAdministrator());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getVoidAdministrator());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTransaction()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransaction());
+        return unionSet;
     }
     // </editor-fold>
 

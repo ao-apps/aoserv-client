@@ -16,9 +16,9 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Set;
 
 /**
  * The <code>Ticket</code> system allows clients to submit support
@@ -290,27 +290,25 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBrand(),
-            getReseller(),
-            getBusiness(),
-            getLanguage(),
-            getCreatedBy(),
-            getCategory(),
-            getTicketType(),
-            getClientPriority(),
-            getAdminPriority(),
-            getStatus()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLanguage());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCategory());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getClientPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAdminPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getStatus());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTicketActions(),
-            getTicketAssignments()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
+        return unionSet;
     }
     // </editor-fold>
 

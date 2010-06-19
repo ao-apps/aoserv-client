@@ -7,8 +7,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * Associates a role with a business administrator.
@@ -72,6 +72,7 @@ final public class BusinessAdministratorRole extends AOServObjectIntegerKey<Busi
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.BusinessAdministratorRole getBean() {
         return new com.aoindustries.aoserv.client.beans.BusinessAdministratorRole(key, getBean(username), role);
     }
@@ -79,11 +80,10 @@ final public class BusinessAdministratorRole extends AOServObjectIntegerKey<Busi
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusinessAdministrator(),
-            getRole()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getRole());
+        return unionSet;
     }
     // </editor-fold>
 

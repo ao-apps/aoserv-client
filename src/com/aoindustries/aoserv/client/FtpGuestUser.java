@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * If a <code>LinuxAccount</code> has a <code>FtpGuestUser</code> attached to it,
@@ -47,6 +47,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> imp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.FtpGuestUser getBean() {
         return new com.aoindustries.aoserv.client.beans.FtpGuestUser(key);
     }
@@ -54,10 +55,9 @@ final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> imp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getLinuxAccount()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
+        return unionSet;
     }
     // </editor-fold>
 

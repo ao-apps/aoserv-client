@@ -1,18 +1,18 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.SetPostgresUserPasswordCommand;
 import com.aoindustries.aoserv.client.command.SetPostgresUserPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>PostgresUser</code> has access to one PostgreSQL server.
@@ -156,19 +156,17 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResource(),
-            getUsername(),
-            getPostgresServer()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServer());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getPostgresDatabases()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
+        return unionSet;
     }
     // </editor-fold>
 

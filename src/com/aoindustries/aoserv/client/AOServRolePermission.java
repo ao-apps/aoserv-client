@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * All of the permissions granted for each role.
@@ -78,11 +78,10 @@ final public class AOServRolePermission extends AOServObjectIntegerKey<AOServRol
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getRole(),
-            getPermission()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getRole());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPermission());
+        return unionSet;
     }
     // </editor-fold>
 

@@ -10,8 +10,8 @@ import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * Each <code>IPAddress</code> represents a unique IPv6 or IPv4 address.
@@ -154,6 +154,7 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.IPAddress getBean() {
         return new com.aoindustries.aoserv.client.beans.IPAddress(
             key,
@@ -173,19 +174,17 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getServerResource(),
-            getNetDevice()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevice());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // TODO: getDhcpDnsRecords(),
-            getNetBinds()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getDhcpDnsRecords());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
+        return unionSet;
     }
     // </editor-fold>
 

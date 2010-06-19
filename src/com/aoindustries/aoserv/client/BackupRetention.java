@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * The possible backup retention values allowed in the system.
@@ -42,12 +42,11 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getEmailInboxesByTrashEmailRetention(),
-            getEmailInboxesByJunkEmailRetention()
-            // TODO: getEmailInboxAddresses()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxesByTrashEmailRetention());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxesByJunkEmailRetention());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxAddresses());
+        return unionSet;
     }
     // </editor-fold>
 

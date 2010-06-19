@@ -7,8 +7,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A reseller may handle support tickets..
@@ -63,6 +63,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Reseller getBean() {
         return new com.aoindustries.aoserv.client.beans.Reseller(getBean(getKey()), ticketAutoEscalate);
     }
@@ -70,18 +71,16 @@ final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> impl
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBrand()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTickets(),
-            getTicketAssignments()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
+        return unionSet;
     }
     // </editor-fold>
 

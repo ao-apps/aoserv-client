@@ -1,16 +1,15 @@
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 /*
  * Copyright 2006-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
+import java.rmi.RemoteException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * All of the time zones on a server.
@@ -37,6 +36,7 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TimeZone getBean() {
         return new com.aoindustries.aoserv.client.beans.TimeZone(getKey());
     }
@@ -44,10 +44,9 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServers()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServers());
+        return unionSet;
     }
     // </editor-fold>
 

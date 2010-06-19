@@ -7,8 +7,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>BusinessServer</code> grants a <code>Business</code> permission to
@@ -108,20 +108,18 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness(),
-            getServer()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResources(),
-            getNetBinds(),
-            getServerResources()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResources());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerResources());
+        return unionSet;
     }
     // </editor-fold>
 

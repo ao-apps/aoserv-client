@@ -1,16 +1,15 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.GetMySQLSlaveStatusCommand;
 import com.aoindustries.aoserv.client.command.GetMySQLSlaveStatusCommand.SlaveStatus;
 import com.aoindustries.table.IndexType;
-import java.io.Serializable;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * Represents MySQL replication for one a <code>FailoverFileReplication</code> or <code>AOServer</code>.
@@ -112,6 +111,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.FailoverMySQLReplication getBean() {
         return new com.aoindustries.aoserv.client.beans.FailoverMySQLReplication(key, aoServer, replication, mysqlServer, monitoringSecondsBehindLow, monitoringSecondsBehindMedium, monitoringSecondsBehindHigh, monitoringSecondsBehindCritical);
     }
@@ -119,12 +119,11 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAOServer(),
-            getFailoverFileReplication(),
-            getMySQLServer()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplication());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServer());
+        return unionSet;
     }
     // </editor-fold>
 

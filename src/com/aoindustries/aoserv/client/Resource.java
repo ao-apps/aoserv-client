@@ -1,13 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -168,20 +169,18 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     }
 
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getResourceType(),
-            getBusiness(),
-            getCreatedBy(),
-            getDisableLog()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getDependentObjectByResourceType()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDependentObjectByResourceType());
+        return unionSet;
     }
 
     private static final Set<String> aoServerResourceTypes = new HashSet<String>(

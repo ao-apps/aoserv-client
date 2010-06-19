@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>TechnologyName</code> represents one piece of software installed in
@@ -38,6 +38,7 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TechnologyName getBean() {
         return new com.aoindustries.aoserv.client.beans.TechnologyName(getKey());
     }
@@ -45,11 +46,10 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTechnologyVersions(),
-            getTechnologies()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologies());
+        return unionSet;
     }
     // </editor-fold>
 

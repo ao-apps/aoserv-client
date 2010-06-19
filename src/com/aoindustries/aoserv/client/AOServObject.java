@@ -1,17 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.Row;
 import com.aoindustries.util.Internable;
+import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -198,9 +200,14 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      *
      * @see #getDependentObjects() for the opposite direction
      */
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-        );
+    final public Set<? extends AOServObject> getDependencies() throws RemoteException {
+        UnionSet<AOServObject> unionSet = addDependencies(null);
+        if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
+        else return Collections.unmodifiableSet(unionSet);
+    }
+
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        return unionSet;
     }
 
     /**
@@ -211,9 +218,14 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      *
      * @see #getDependencies() for the opposite direction
      */
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-        );
+    final public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
+        UnionSet<AOServObject> unionSet = addDependentObjects(null);
+        if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
+        else return Collections.unmodifiableSet(unionSet);
+    }
+
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        return unionSet;
     }
 
     /**

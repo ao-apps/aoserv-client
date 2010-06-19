@@ -1,16 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>LinuxGroup</code> may exist on multiple <code>Server</code>s.
@@ -141,6 +141,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.LinuxGroup getBean() {
         return new com.aoindustries.aoserv.client.beans.LinuxGroup(
             key,
@@ -153,25 +154,23 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResource(),
-            getLinuxGroupType(),
-            getGroupName()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroupType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupName());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getLinuxAccountGroups()
-            // TODO: getCvsRepositories(),
-            // TODO: getEmailLists(),
-            // TODO: getHttpdServers(),
-            // TODO: getHttpdSites(),
-            // TODO: getHttpdSharedTomcats(),
-            // TODO: getMajordomoServers()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroups());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getCvsRepositories());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailLists());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSites());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSharedTomcats());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMajordomoServers());
+        return unionSet;
     }
     // </editor-fold>
 

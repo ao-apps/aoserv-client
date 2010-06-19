@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.AddFailoverFileLogCommand;
 import com.aoindustries.aoserv.client.command.RequestReplicationDaemonAccessCommand;
 import com.aoindustries.aoserv.client.validator.InetAddress;
@@ -12,9 +12,9 @@ import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Set;
 
 /**
  * Causes a server to replicate itself to another machine on a regular basis.
@@ -166,20 +166,18 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getServer(),
-            getBackupPartition(),
-            getRetention()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBackupPartition());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getRetention());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // TODO: getFailoverFileSchedules(),
-            getFailoverMySQLReplications()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileSchedules());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
+        return unionSet;
     }
     // </editor-fold>
 

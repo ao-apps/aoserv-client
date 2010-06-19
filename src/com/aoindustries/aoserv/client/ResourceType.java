@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>ResourceType</code> is a measurable hardware resource.  A <code>PackageDefinition</code>
@@ -79,14 +79,11 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getDependentObjectByResourceType()
-            ),
-            getResources(),
-            getPackageDefinitionLimits()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDependentObjectByResourceType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionLimits());
+        return unionSet;
     }
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {

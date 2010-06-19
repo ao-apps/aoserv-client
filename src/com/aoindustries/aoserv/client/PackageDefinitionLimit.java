@@ -6,11 +6,11 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>PackageDefinitionLimit</code> stores the per-resource type limit and rates that are part of a <code>PackageDefinition</code>.
@@ -134,12 +134,11 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey<Package
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getPackageDefinition(),
-            getResourceType(),
-            getAdditionalTransactionType()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAdditionalTransactionType());
+        return unionSet;
     }
     // </editor-fold>
 

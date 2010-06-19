@@ -1,17 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2002-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A <code>CvsRepository</code> represents one repository directory for the CVS pserver.
@@ -107,6 +107,7 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.CvsRepository getBean() {
         return new com.aoindustries.aoserv.client.beans.CvsRepository(key, getBean(path), linuxAccountGroup, mode);
     }
@@ -114,11 +115,10 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResource(),
-            getLinuxAccountGroup()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
+        return unionSet;
     }
     // </editor-fold>
 

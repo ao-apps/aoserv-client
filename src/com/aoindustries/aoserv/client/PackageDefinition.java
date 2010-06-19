@@ -6,11 +6,11 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>PackageDefinition</code> stores one unique set of resource types, limits, and prices.
@@ -157,22 +157,20 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getCategory(),
-            getSetupFeeTransactionType(),
-            getMonthlyRateTransactionType()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCategory());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getSetupFeeTransactionType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyRateTransactionType());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusinesses(),
-            getLimits(),
-            getPackageDefinitionBusinesses()
-            // TODO: getSignupRequests()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinesses());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLimits());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionBusinesses());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupRequests());
+        return unionSet;
     }
     // </editor-fold>
 

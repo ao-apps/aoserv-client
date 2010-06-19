@@ -6,10 +6,10 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * @see  Ticket
@@ -101,21 +101,19 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getParent()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getParent());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTickets(),
-            getChildrenCategories(),
-            getTicketActionsByOldCategory(),
-            getTicketActionsByNewCategory()
-            // TODO: getTicketBrandCategories()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getChildrenCategories());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldCategory());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewCategory());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketBrandCategories());
+        return unionSet;
     }
     // </editor-fold>
 

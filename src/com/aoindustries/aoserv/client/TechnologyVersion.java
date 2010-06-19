@@ -1,15 +1,15 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Set;
 
 /**
  * Each <code>TechnologyName</code> may have multiple versions installed.
@@ -116,25 +116,21 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTechnologyName(),
-            getOwner(),
-            getOperatingSystemVersion()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyName());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOwner());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersion());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getHttpdJBossVersion(),
-                getHttpdTomcatVersion(),
-                getPostgresVersion()
-            ),
-            getHttpdServers(),
-            getMySQLServers()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServers());
+        return unionSet;
     }
     // </editor-fold>
 

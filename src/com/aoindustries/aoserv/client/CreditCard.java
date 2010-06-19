@@ -11,11 +11,11 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Set;
 
 /**
  * A <code>CreditCard</code> stores credit card information.
@@ -390,19 +390,18 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness(),
-            getCreditCardProcessor(),
-            getCountryCode(),
-            getCreatedBy()
-            /* TODO
-            getEncryptionCardNumberFrom(),
-            getEncryptionCardNumberRecipient(),
-            getEncryptionExpirationFrom(),
-            getEncryptionExpirationRecipient()
-             */
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessor());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountryCode());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
+        /* TODO
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionCardNumberFrom());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionCardNumberRecipient());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionExpirationFrom());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionExpirationRecipient());
+         */
+        return unionSet;
     }
     // </editor-fold>
 

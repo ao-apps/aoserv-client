@@ -8,8 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * An <code>HttpdSite</code> is one unique set of web content and resides in
@@ -153,24 +153,20 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
         // Could serverAdmin be a dependency when hosted on AO?  Or, at least a removal warning?
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResource(),
-            getLinuxAccountGroup()
-        );
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // TODO: createDependencyList(
-                // TODO: getHttpdStaticSite(),
-                // TODO: getHttpdTomcatSite()
-            // TODO: ),
-            // TODO: getHttpdSiteAuthenticatedLocations(),
-            // TODO: getHttpdSiteBinds()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdStaticSite());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatSite());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSiteAuthenticatedLocations());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSiteBinds());
+        return unionSet;
     }
     // </editor-fold>
 

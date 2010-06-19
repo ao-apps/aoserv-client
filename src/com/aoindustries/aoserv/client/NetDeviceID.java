@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * An <code>NetDeviceID</code> is a simple wrapper for the
@@ -57,6 +57,7 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.NetDeviceID getBean() {
         return new com.aoindustries.aoserv.client.beans.NetDeviceID(getKey(), isLoopback);
     }
@@ -64,11 +65,10 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServers(),
-            getNetDevices()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevices());
+        return unionSet;
     }
     // </editor-fold>
 

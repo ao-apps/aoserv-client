@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.ApproveTransactionCommand;
 import com.aoindustries.aoserv.client.command.DeclineTransactionCommand;
 import com.aoindustries.aoserv.client.command.GetTransactionDescriptionCommand;
@@ -12,6 +12,7 @@ import com.aoindustries.aoserv.client.command.HoldTransactionCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +20,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Set;
 
 /**
  * Each <code>Business</code> has an account of all the
@@ -233,23 +233,21 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness(),
-            getSourceBusiness(),
-            getBusinessAdministrator(),
-            getType(),
-            getPaymentType(),
-            getProcessor(),
-            getCreditCardTransaction()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getSourceBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPaymentType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getProcessor());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransaction());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // TODO: getNoticeLogs()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
+        return unionSet;
     }
     // </editor-fold>
 

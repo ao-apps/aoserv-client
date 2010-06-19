@@ -1,17 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2002-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * When a resource or resources are disabled, the reason and time is logged.
@@ -115,21 +115,19 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness(),
-            getDisabledBy()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisabledBy());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // Caused loop in dependency DAG: getBusinesses(),
-            // Caused loop in dependency DAG: getBusinessAdministrators(),
-            getGroupNames()
-            // Caused loop in dependency DAG: getUsernames()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getBusinesses());
+        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrators());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupNames());
+        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getUsernames());
+        return unionSet;
     }
     // </editor-fold>
 

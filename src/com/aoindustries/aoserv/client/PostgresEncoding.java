@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * Beginning with PostgreSQL 7.1, multiple character encoding formats are
@@ -118,6 +118,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.PostgresEncoding getBean() {
         return new com.aoindustries.aoserv.client.beans.PostgresEncoding(key, encoding, postgresVersion);
     }
@@ -125,17 +126,15 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getPostgresVersion()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getPostgresDatabases()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
+        return unionSet;
     }
     // </editor-fold>
 

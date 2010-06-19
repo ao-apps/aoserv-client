@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * Each <code>Ticket</code> is of a specific <code>TicketType</code>.
@@ -47,6 +47,7 @@ final public class TicketType extends AOServObjectStringKey<TicketType> implemen
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TicketType getBean() {
         return new com.aoindustries.aoserv.client.beans.TicketType(getKey());
     }
@@ -54,12 +55,11 @@ final public class TicketType extends AOServObjectStringKey<TicketType> implemen
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTicketActionsByOldType(),
-            getTicketActionsByNewType(),
-            getTickets()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
+        return unionSet;
     }
     // </editor-fold>
 

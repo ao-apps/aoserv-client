@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
 import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -399,6 +400,7 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.MySQLServer getBean() {
         return new com.aoindustries.aoserv.client.beans.MySQLServer(key, getBean(name), version, maxConnections, netBind);
     }
@@ -406,21 +408,19 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResource(),
-            getVersion(),
-            getNetBind()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getFailoverMySQLReplications(),
-            getMysqlDatabases(),
-            getMysqlUsers()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabases());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUsers());
+        return unionSet;
     }
     // </editor-fold>
 

@@ -8,8 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>PostgresDatabase</code> corresponds to a unique PostgreSQL table
@@ -163,13 +163,12 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResource(),
-            getPostgresServer(),
-            getDatDBA(),
-            getPostgresEncoding()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDatDBA());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresEncoding());
+        return unionSet;
     }
     // </editor-fold>
 

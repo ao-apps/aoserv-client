@@ -1,13 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -16,7 +17,6 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -170,37 +170,35 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusinessServer(),
-            getIpAddress(),
-            getNetProtocol(),
-            getAppProtocol()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getIpAddress());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetProtocol());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAppProtocol());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAOServerByDaemonNetBind(),
-            getAOServerByDaemonConnectNetBind(),
-            getAOServerByJilterNetBind(),
-            getBrandByAowebStrutsVncBind(),
-            getMySQLServer(),
-            getNetTcpRedirect(),
-            getPostgresServer(),
-            getPrivateFtpServer()
-            // TODO: getEmailSmartHost(),
-            // TODO: getHttpdBind(),
-            // TODO: getHttpdJBossSiteByJNPPort(),
-            // TODO: getHttpdJBossSiteByWebserverPort(),
-            // TODO: getHttpdJBossSiteByRMIPort(),
-            // TODO: getHttpdJBossSiteByHypersonicPort(),
-            // TODO: getHttpdJBossSiteByJMXPort(),
-            // TODO: getHttpdSharedTomcatByShutdownPort(),
-            // TODO: getHttpdWorker(),
-            // TODO: getHttpdTomcatStdSiteByShutdownPort(),
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServerByDaemonNetBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServerByDaemonConnectNetBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServerByJilterNetBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandByAowebStrutsVncBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetTcpRedirect());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPrivateFtpServer());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmartHost(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdBind(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByJNPPort(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByWebserverPort(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByRMIPort(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByHypersonicPort(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByJMXPort(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSharedTomcatByShutdownPort(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdWorker(),
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatStdSiteByShutdownPort(),
+        return unionSet;
     }
     // </editor-fold>
 

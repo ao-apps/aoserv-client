@@ -1,15 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.SetBusinessAdministratorPasswordCommand;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -256,40 +257,35 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getUsername(),
-            getCountry()
-            // Caused loop in dependency DAG: getDisableLog()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountry());
+        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getMasterUser()
-            ),
-            getBusinessAdministratorRoles(),
-            getCreditCardsByCreatedBy(),
-            getCreditCardTransactionsByCreditCardCreatedBy(),
-            getCreditCardTransactionsByAuthorizationUsername(),
-            getCreditCardTransactionsByCaptureUsername(),
-            getCreditCardTransactionsByVoidUsername(),
-            getDisableLogs(),
-            /* TODO
-            getMonthlyCharges(),
-            getMonthlyChargesByCreatedBy(),*/
-            getBusinessesByCreatedBy(),
-            getResources(),
-            getTicketsByCreatedBy(),
-            // TODO: getCompletedSignupRequests(),
-            getTicketActions(),
-            getTicketActionsByOldAssignedTo(),
-            getTicketActionsByNewAssignedTo(),
-            // TODO: getTicketAssignments(),
-            getTransactions()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministratorRoles());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardsByCreatedBy());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactionsByCreditCardCreatedBy());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactionsByAuthorizationUsername());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactionsByCaptureUsername());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactionsByVoidUsername());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLogs());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyCharges());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyChargesByCreatedBy());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessesByCreatedBy());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketsByCreatedBy());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getCompletedSignupRequests());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldAssignedTo());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewAssignedTo());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
+        return unionSet;
     }
     // </editor-fold>
 

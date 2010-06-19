@@ -1,16 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.SetUsernamePasswordCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * Each <code>Username</code> is unique across all systems and must
@@ -80,23 +80,19 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness()
-            // Caused loop in dependency DAG: getDisableLog()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getBusinessAdministrator()
-            ),
-            getLinuxAccounts(),
-            getMysqlUsers(),
-            getPostgresUsers()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccounts());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUsers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresUsers());
+        return unionSet;
     }
     // </editor-fold>
 

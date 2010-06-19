@@ -8,8 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * @see  Ticket
@@ -94,12 +94,11 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTicket(),
-            getReseller(),
-            getBusinessAdministrator()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicket());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
+        return unionSet;
     }
     // </editor-fold>
 

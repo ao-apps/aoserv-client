@@ -8,9 +8,9 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MacAddress;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * Each server has multiple network devices, each listening on different
@@ -186,18 +186,16 @@ final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implement
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getServer(),
-            getNetDeviceID()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDeviceID());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getIpAddresses()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getIpAddresses());
+        return unionSet;
     }
     // </editor-fold>
 

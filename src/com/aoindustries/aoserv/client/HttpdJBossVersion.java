@@ -7,8 +7,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * An <code>HttpdJBossVersion</code> flags which
@@ -83,6 +83,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVe
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.HttpdJBossVersion getBean() {
         return new com.aoindustries.aoserv.client.beans.HttpdJBossVersion(key, tomcatVersion, getBean(templateDir));
     }
@@ -90,18 +91,16 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVe
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTechnologyVersion(),
-            getHttpdTomcatVersion()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatVersion());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // TODO: getHttpdJBossSites()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSites());
+        return unionSet;
     }
     // </editor-fold>
 

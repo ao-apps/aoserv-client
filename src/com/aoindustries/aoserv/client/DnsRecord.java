@@ -8,8 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>DnsRecord</code> is one line of a <code>DnsZone</code>
@@ -159,13 +159,12 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getResource(),
-            getZone(),
-            getType(),
-            getDhcpAddress()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getZone());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDhcpAddress());
+        return unionSet;
     }
     // </editor-fold>
 

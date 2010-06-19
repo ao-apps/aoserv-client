@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2003-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
@@ -15,11 +15,11 @@ import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.aoserv.client.validator.NetPort;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
@@ -267,34 +267,32 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getServer(),
-            getDaemonBind(),
-            getFailoverServer(),
-            getDaemonDeviceID(),
-            getDaemonConnectBind(),
-            getTimeZone(),
-            getJilterBind()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDaemonBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDaemonDeviceID());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDaemonConnectBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTimeZone());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getJilterBind());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerDaemonHosts(),
-            getAoServerResources(),
-            getBackupPartitions(),
-            getNestedAoServers()
-            // TODO: getLinuxServerAccounts(),
-            // TODO: getEmailDomains(),
-            // TODO: getLinuxServerGroups(),
-            // TODO: getEmailPipes(),
-            // TODO: getSystemEmailAliases(),
-            // TODO: getEmailSmtpRelays(),
-            // TODO: getFailoverMySQLReplications(),
-            // TODO: getHttpdSharedTomcats(),
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerDaemonHosts());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResources());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBackupPartitions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNestedAoServers());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxServerAccounts());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailDomains());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxServerGroups());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailPipes());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSystemEmailAliases());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmtpRelays());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSharedTomcats());
+        return unionSet;
     }
     // </editor-fold>
 

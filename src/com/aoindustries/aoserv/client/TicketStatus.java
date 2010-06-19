@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * The <code>TicketStatus</code> of a <code>Ticket</code> changes
@@ -64,6 +64,7 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TicketStatus getBean() {
         return new com.aoindustries.aoserv.client.beans.TicketStatus(getKey(), sortOrder);
     }
@@ -71,12 +72,11 @@ final public class TicketStatus extends AOServObjectStringKey<TicketStatus> impl
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTicketActionsByOldStatus(),
-            getTicketActionsByNewStatus(),
-            getTickets()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldStatus());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewStatus());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
+        return unionSet;
     }
     // </editor-fold>
 

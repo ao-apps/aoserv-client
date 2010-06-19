@@ -7,8 +7,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * All of the roles within the system.
@@ -74,6 +74,7 @@ final public class AOServRole extends AOServObjectIntegerKey<AOServRole> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.AOServRole getBean() {
         return new com.aoindustries.aoserv.client.beans.AOServRole(key, getBean(accounting), name);
     }
@@ -81,18 +82,16 @@ final public class AOServRole extends AOServObjectIntegerKey<AOServRole> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoservRolePermissions(),
-            getBusinessAdministratorRoles()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoservRolePermissions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministratorRoles());
+        return unionSet;
     }
     // </editor-fold>
 

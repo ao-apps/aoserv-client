@@ -7,10 +7,10 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.RequestVncConsoleAccessCommand;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>VirtualServer</code> consumes physical resources within the
@@ -239,12 +239,11 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getServer(),
-            getMinimumProcessorType(),
-            getMinimumProcessorArchitecture()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMinimumProcessorType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMinimumProcessorArchitecture());
+        return unionSet;
     }
 
     /* TODO

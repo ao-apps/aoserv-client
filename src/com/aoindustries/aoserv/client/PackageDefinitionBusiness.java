@@ -7,10 +7,10 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>PackageDefinitionBusiness</code> grants a business the ability to add subaccounts of the specified package definition.
@@ -119,11 +119,10 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey<Pack
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getPackageDefinition(),
-            getBusiness()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        return unionSet;
     }
     // </editor-fold>
 

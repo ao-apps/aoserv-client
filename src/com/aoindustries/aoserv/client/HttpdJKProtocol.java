@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * Apache's <code>mod_jk</code> supports multiple versions of the
@@ -53,6 +53,7 @@ final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.HttpdJKProtocol getBean() {
         return new com.aoindustries.aoserv.client.beans.HttpdJKProtocol(getKey());
     }
@@ -60,10 +61,9 @@ final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getProtocol()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getProtocol());
+        return unionSet;
     }
     // </editor-fold>
 }

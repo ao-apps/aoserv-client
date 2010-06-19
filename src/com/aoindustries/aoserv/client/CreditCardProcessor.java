@@ -1,14 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2007-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * A <code>CreditCardProcessor</code> represents on Merchant account used for credit card processing.
@@ -170,20 +170,18 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getBusiness()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // TODO: getBankTransactions(),
-            getCreditCards(),
-            getCreditCardTransactions(),
-            getTransactions()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCards());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
+        return unionSet;
     }
     // </editor-fold>
 

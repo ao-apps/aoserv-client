@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * <code>Ticket</code>s are prioritized by both the client and
@@ -47,6 +47,7 @@ final public class TicketPriority extends AOServObjectStringKey<TicketPriority> 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.TicketPriority getBean() {
         return new com.aoindustries.aoserv.client.beans.TicketPriority(getKey());
     }
@@ -54,13 +55,12 @@ final public class TicketPriority extends AOServObjectStringKey<TicketPriority> 
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getTicketActionsByOldPriority(),
-            getTicketActionsByNewPriority(),
-            getTicketsByClientPriority(),
-            getTicketsByAdminPriority()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketsByClientPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketsByAdminPriority());
+        return unionSet;
     }
     // </editor-fold>
 

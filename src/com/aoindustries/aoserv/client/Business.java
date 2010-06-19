@@ -13,6 +13,7 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.CurrencyComparator;
 import com.aoindustries.util.i18n.Money;
@@ -27,7 +28,6 @@ import java.util.Currency;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -331,55 +331,51 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getParentBusiness(),
-            // Caused loop in dependency DAG: getDisableLog(),
-            getPackageDefinition(),
-            getCreatedBy()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getParentBusiness());
+        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getBrand()
-            ),
-            getAoservRoles(),
-            getChildBusinesses(),
-            getBusinessProfiles(),
-            getBusinessServers(),
-            getCreditCards(),
-            getCreditCardProcessors(),
-            getCreditCardTransactions(),
-            getCreditCardTransactionsByCreditCardAccounting(),
-            getDisableLogs(),
-            // TODO: getDnsZones(),
-            getGroupNames(),
-            // TODO: getIPAddresses(),
-            // TODO: getEmailDomains(),
-            // TODO: getLinuxGroups(),
-            // TODO: getEncryptionKeys(),
-            // TODO: getEmailPipes(),
-            // TODO: getEmailSmtpRelays(),
-            // TODO: getHttpdServers(),
-            // TODO: getHttpdSites(),
-            // TODO: getMonthlyCharges(),
-            // TODO: getMonthlyChargesBySourceBusiness(),
-            // TODO: getMysqlDatabases(),
-            // TODO: getNoticeLogs(),
-            getPackageDefinitionBusinesses(),
-            getResources(),
-            getServers(),
-            getServerFarms(),
-            getUsernames(),
-            getTickets(),
-            getTicketActionsByOldBusiness(),
-            getTicketActionsByNewBusiness(),
-            getTransactions(),
-            getTransactionsBySourceAccounting()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoservRoles());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getChildBusinesses());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessProfiles());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCards());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessors());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactionsByCreditCardAccounting());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLogs());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getDnsZones());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupNames());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getIPAddresses());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailDomains());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroups());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionKeys());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailPipes());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmtpRelays());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSites());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyCharges());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyChargesBySourceBusiness());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabases());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionBusinesses());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerFarms());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsernames());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactionsBySourceAccounting());
+        return unionSet;
     }
     // </editor-fold>
 

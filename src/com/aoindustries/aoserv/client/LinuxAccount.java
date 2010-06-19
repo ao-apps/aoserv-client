@@ -13,8 +13,8 @@ import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * One user may have shell, FTP, and/or email access to any number
@@ -224,24 +224,20 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getAoServerResource(),
-            getLinuxAccountType(),
-            getUsername(),
-            getShell()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getShell());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getFtpGuestUser(),
-                getEmailInbox()
-            ),
-            getLinuxAccountGroups()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFtpGuestUser());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInbox());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroups());
+        return unionSet;
     }
     // </editor-fold>
 

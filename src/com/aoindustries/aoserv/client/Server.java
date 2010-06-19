@@ -1,16 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainLabel;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * A <code>Server</code> stores the details about a single, physical server.
@@ -132,28 +132,24 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getServerFarm(),
-            getOperatingSystemVersion(),
-            getBusiness()
-        );
+    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerFarm());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
+        return unionSet;
     }
 
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            AOServObjectUtils.createDependencySet(
-                getAoServer(),
-                // TODO: getPhysicalServer(),
-                getVirtualServer()
-            ),
-            getBusinessServers(),
-            getFailoverFileReplications(),
-            getMasterServers(),
-            getNetDevices(),
-            getServerResources()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServer());
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getPhysicalServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServer());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevices());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerResources());
+        return unionSet;
     }
     // </editor-fold>
 

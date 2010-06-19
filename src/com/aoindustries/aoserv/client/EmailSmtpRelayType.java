@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * The <code>EmailSmtpRelayType</code> of an <code>EmailSmtpRelay</code>
@@ -66,6 +66,7 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.EmailSmtpRelayType getBean() {
         return new com.aoindustries.aoserv.client.beans.EmailSmtpRelayType(getKey(), sendmailConfig);
     }
@@ -73,10 +74,9 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            // TODO: getEmailSmtpRelays()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmtpRelays());
+        return unionSet;
     }
     // </editor-fold>
 

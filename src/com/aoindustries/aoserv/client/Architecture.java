@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.util.Set;
 
 /**
  * An <code>Architecture</code> is a simple wrapper for the type
@@ -62,6 +62,7 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.Architecture getBean() {
         return new com.aoindustries.aoserv.client.beans.Architecture(getKey(), bits);
     }
@@ -69,11 +70,10 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getOperatingSystemVersions(),
-            getVirtualServersByMinimumProcessorArchitecture()
-        );
+    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersions());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServersByMinimumProcessorArchitecture());
+        return unionSet;
     }
     // </editor-fold>
 
