@@ -21,9 +21,8 @@ import java.util.concurrent.ConcurrentMap;
  * <ul>
  *   <li>Be non-null</li>
  *   <li>Be non-empty</li>
- *   <li>
- *     Confirm to definition in {@link http://en.wikipedia.org/wiki/DNS_label#Parts_of_a_domain_name}
- *   </li>
+ *   <li>Confirm to definition in {@link http://en.wikipedia.org/wiki/DNS_label#Parts_of_a_domain_name}</li>
+ *   <li>And allow all numeric as described in {@link http://tools.ietf.org/html/rfc1123#page-13}</li>
  * </ul>
  *
  * 
@@ -43,21 +42,21 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
         int len = label.length();
         if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.empty");
         if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.tooLong", MAX_LENGTH, len);
-        boolean foundNonDigit = false;
+        // boolean foundNonDigit = false;
         for(int pos=0; pos<len; pos++) {
             char ch = label.charAt(pos);
             if(ch=='-') {
-                foundNonDigit = true;
+                // foundNonDigit = true;
                 if(pos==0) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.startsDash");
                 if(pos==(len-1)) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.endsDash");
             } else if(
                 (ch>='a' && ch<='z')
                 || (ch>='A' && ch<='Z')
             ) {
-                foundNonDigit = true;
+                // foundNonDigit = true;
             } else if(ch<'0' || ch>'9') throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.invalidCharacter", ch, pos);
         }
-        if(!foundNonDigit) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.allDigits");
+        // if(!foundNonDigit) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.allDigits");
     }
 
     private static final ConcurrentMap<String,DomainLabel> interned = new ConcurrentHashMap<String,DomainLabel>();

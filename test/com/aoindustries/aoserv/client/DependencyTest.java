@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.util.Sequence;
 import com.aoindustries.util.UnsynchronizedSequence;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -135,30 +134,30 @@ public class DependencyTest extends TestCase {
     }
 
     private void doTestGetDependencies() throws Exception {
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
         doTestGetDependencies(new DependenciesGetter(), new DependentObjectsGetter());
-        long endTime = System.currentTimeMillis() - startTime;
-        System.out.println("    Finished in "+BigDecimal.valueOf(endTime, 3)+" sec");
+        //long endTime = System.currentTimeMillis() - startTime;
+        //System.out.println("    Finished in "+BigDecimal.valueOf(endTime, 3)+" sec");
     }
 
     public void testGetDependencies() throws Exception {
         System.out.println("Testing getDependencies:");
-        for(int c=0; c<10; c++) {
+        //for(int c=0; c<10; c++) {
             doTestGetDependencies();
-        }
+        //}
     }
 
     private void doTestGetDependentObjects() throws Exception {
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
         doTestGetDependencies(new DependentObjectsGetter(), new DependenciesGetter());
-        long endTime = System.currentTimeMillis() - startTime;
-        System.out.println("    Finished in "+BigDecimal.valueOf(endTime, 3)+" sec");
+        //long endTime = System.currentTimeMillis() - startTime;
+        //System.out.println("    Finished in "+BigDecimal.valueOf(endTime, 3)+" sec");
     }
 
     public void testGetDependentObjects() throws Exception {
         System.out.println("Testing getDependentObjects:");
-        for(int c=0; c<10; c++) {
+        //for(int c=0; c<10; c++) {
             doTestGetDependentObjects();
-        }
+        //}
     }
 }

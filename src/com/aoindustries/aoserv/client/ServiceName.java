@@ -54,15 +54,11 @@ public enum ServiceName {
     dns_tlds,
     dns_types,
     dns_zones,
-    /* TODO
-    email_addresses,
-    email_attachment_blocks,
-     */
+    // TODO: email_addresses,
+    // TODO: email_attachment_blocks,
     email_attachment_types,
-    /* TODO
-    email_domains,
-    email_forwarding,
-     */
+    // TODO: email_domains,
+    // TODO: email_forwarding,
     email_inboxes,
     /* TODO
     email_list_addresses,

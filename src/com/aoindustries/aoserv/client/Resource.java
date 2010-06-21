@@ -213,7 +213,9 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     );
 
     private AOServObject getDependentObjectByResourceType() throws RemoteException {
-        AOServObject obj;
+        // The following string comparisons safely use == instead of .equals because resourceType is interned.
+        if(resourceType==ResourceType.DNS_RECORD) return getDnsRecord();
+        if(resourceType==ResourceType.DNS_ZONE) return getDnsZone();
         if(aoServerResourceTypes.contains(resourceType)) return getAoServerResource();
         if(serverResourceTypes.contains(resourceType)) return getServerResource();
         /* TODO: else*/ throw new AssertionError("Unexpected resource type: "+resourceType);
@@ -229,6 +231,14 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
 
     public ServerResource getServerResource() throws RemoteException {
         return getService().getConnector().getServerResources().get(key);
+    }
+
+    public DnsRecord getDnsRecord() throws RemoteException {
+        return getService().getConnector().getDnsRecords().get(key);
+    }
+
+    public DnsZone getDnsZone() throws RemoteException {
+        return getService().getConnector().getDnsZones().get(key);
     }
     // </editor-fold>
 

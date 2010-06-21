@@ -26,9 +26,10 @@ import java.util.concurrent.ConcurrentMap;
  *     Confirm to definition in {@link http://en.wikipedia.org/wiki/Hostname#Internet_hostnames}
  *     and {@link http://en.wikipedia.org/wiki/DNS_label#Parts_of_a_domain_name}
  *   </li>
+ *   <li>Last domain label must be alphabetic (not be all numeric)</li>
+ *   <li>For reverse IP address delegation, if the domain ends with ".in-addr.arpa", the first label may also be in the format "##/##".</li>
  *   <li>Not end with a period (.)</li>
  * </ul>
- *
  * 
  * @author  AO Industries, Inc.
  */
@@ -37,6 +38,28 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
     private static final long serialVersionUID = 1L;
 
     public static final int MAX_LENGTH = 253;
+
+    private static boolean isNumeric(String label) {
+        int len = label.length();
+        if(len==0) throw new IllegalArgumentException("label.length()==0");
+        for(int i=0; i<len; i++) {
+            char ch = label.charAt(i);
+            if(ch<'0' || ch>'9') return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if is in the format numeric / numeric.
+     */
+    private static boolean isArpaDelegationFirstLabel(String label) {
+        int slashPos = label.indexOf('/');
+        return
+            slashPos!=-1
+            && isNumeric(label.substring(0, slashPos))
+            && isNumeric(label.substring(slashPos+1))
+        ;
+    }
 
     /**
      * Validates a domain name, but doesn't allow an ending period.
@@ -49,14 +72,20 @@ final public class DomainName implements Comparable<DomainName>, Serializable, O
         if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.empty");
         if("default".equalsIgnoreCase(domain)) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.isDefault");
         if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.tooLong", MAX_LENGTH, len);
+        boolean isArpa = domain.endsWith(".in-addr.arpa");
         int labelStart = 0;
         for(int pos=0; pos<len; pos++) {
             if(domain.charAt(pos)=='.') {
-                DomainLabel.validate(domain.substring(labelStart, pos));
+                String label = domain.substring(labelStart, pos);
+                // For reverse IP address delegation, if the domain ends with ".in-addr.arpa", the first label may also be in the format "##/##".
+                if(!isArpa || labelStart!=0 || !isArpaDelegationFirstLabel(label)) DomainLabel.validate(label);
                 labelStart = pos+1;
             }
         }
-        DomainLabel.validate(domain.substring(labelStart, len));
+        String lastLabel = domain.substring(labelStart, len);
+        DomainLabel.validate(lastLabel);
+        // Last domain label must be alphabetic (not be all numeric)
+        if(isNumeric(lastLabel)) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.lastLabelAllDigits");
     }
 
     private static final ConcurrentMap<String,DomainName> interned = new ConcurrentHashMap<String,DomainName>();

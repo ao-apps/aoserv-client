@@ -128,6 +128,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersionsByPostgisVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServers());
         return unionSet;
@@ -152,7 +153,11 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     }
 
     public PostgresVersion getPostgresVersion() throws RemoteException {
-        return getService().getConnector().getPostgresVersions().filterUnique(MySQLServer.COLUMN_VERSION, this);
+        return getService().getConnector().getPostgresVersions().filterUnique(PostgresVersion.COLUMN_VERSION, this);
+    }
+
+    public IndexedSet<PostgresVersion> getPostgresVersionsByPostgisVersion() throws RemoteException {
+        return getService().getConnector().getPostgresVersions().filterIndexed(PostgresVersion.COLUMN_POSTGIS_VERSION, this);
     }
 
     /* TODO

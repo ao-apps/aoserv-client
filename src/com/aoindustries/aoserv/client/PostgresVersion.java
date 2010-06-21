@@ -89,7 +89,8 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="version", index=IndexType.PRIMARY_KEY, description="a reference to the PostgreSQL details in the <code>technology_versions</code> table")
+    static final String COLUMN_VERSION = "version";
+    @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="a reference to the PostgreSQL details in the <code>technology_versions</code> table")
     public TechnologyVersion getTechnologyVersion() throws RemoteException {
         return getService().getConnector().getTechnologyVersions().get(key);
     }
@@ -102,7 +103,8 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     /**
      * Gets the PostGIS version of <code>null</code> if not supported by this PostgreSQL version....
      */
-    @SchemaColumn(order=2, name="postgis_version", description="a reference to the PostGIS defails in the <code>technology_versions</code>")
+    static final String COLUMN_POSTGIS_VERSION = "postgis_version";
+    @SchemaColumn(order=2, name=COLUMN_POSTGIS_VERSION, index=IndexType.INDEXED, description="a reference to the PostGIS defails in the <code>technology_versions</code>")
     public TechnologyVersion getPostgisVersion() throws RemoteException {
         if(postgisVersion==null) return null;
         TechnologyVersion tv = getService().getConnector().getTechnologyVersions().get(postgisVersion);
