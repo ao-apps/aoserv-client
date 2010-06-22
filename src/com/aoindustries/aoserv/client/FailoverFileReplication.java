@@ -15,6 +15,7 @@ import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.NoSuchElementException;
 
 /**
  * Causes a server to replicate itself to another machine on a regular basis.
@@ -80,7 +81,7 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     protected int compareToImpl(FailoverFileReplication other) throws RemoteException {
         int diff = server==other.server ? 0 : getServer().compareToImpl(other.getServer());
         if(diff!=0) return diff;
-        return backupPartition==other.backupPartition ? 0 : getBackupPartition().compareToImpl(other.getBackupPartition());
+        return AOServObjectUtils.compare(backupPartition, other.backupPartition); // Sorting by pkey only because BackupPartition objects may be filtered
     }
     // </editor-fold>
 
@@ -96,9 +97,17 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         return getService().getConnector().getServers().get(server);
     }
 
-    @SchemaColumn(order=2, name="backup_partition", description="the pkey of the backup partition that the files are going to")
+    static final String COLUMN_BACKUP_PARTITION = "backup_partition";
+    /**
+     * May be filtered.
+     */
+    @SchemaColumn(order=2, name=COLUMN_BACKUP_PARTITION, index=IndexType.INDEXED, description="the pkey of the backup partition that the files are going to")
     public BackupPartition getBackupPartition() throws RemoteException {
-        return getService().getConnector().getBackupPartitions().get(backupPartition);
+        try {
+            return getService().getConnector().getBackupPartitions().get(backupPartition);
+        } catch(NoSuchElementException err) {
+            return null;
+        }
     }
 
     @SchemaColumn(order=3, name="max_bit_rate", description="the maximum bit rate for files being replicated")
@@ -112,7 +121,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
         return useCompression;
     }
 
-    @SchemaColumn(order=5, name="retention", description="the number of days backups will be kept")
+    static final String COLUMN_RETENTION = "retention";
+    @SchemaColumn(order=5, name=COLUMN_RETENTION, index=IndexType.INDEXED, description="the number of days backups will be kept")
     public BackupRetention getRetention() throws RemoteException {
         return getService().getConnector().getBackupRetentions().get(retention);
     }
