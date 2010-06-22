@@ -5043,32 +5043,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Removes a <code>BlackholeEmailAddress</code> from the system.
-     *
-     * @param  address  the part of the email address before the <code>@</code>
-     * @param  domain  the part of the email address after the <code>@</code>
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>EmailDomain</code>,
-     *					<code>EmailAddress</code>, or <code>BlackholeEmailAddress</code>
-     *
-     * @see  BlackholeEmailAddress#remove
-     */
-    public void removeBlackholeEmailAddress(
-        String address,
-        String domain,
-        String aoServer
-    ) throws IllegalArgumentException, IOException, SQLException {
-        EmailAddress addr=getEmailAddress(aoServer, domain, address);
-        BlackholeEmailAddress bea=addr.getBlackholeEmailAddress();
-        if(bea==null) throw new IllegalArgumentException("Unable to find BlackholeEmailAddress: "+address+'@'+domain+" on "+aoServer);
-        bea.remove();
-        if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
-    }
-
-    /**
      * Removes a <code>BusinessAdministrator</code> from the system.
      *
      * @param  username  the <code>username</code> of the <code>BusinessAdministrator</code>

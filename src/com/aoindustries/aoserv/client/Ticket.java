@@ -19,6 +19,7 @@ import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.NoSuchElementException;
 
 /**
  * The <code>Ticket</code> system allows clients to submit support
@@ -148,7 +149,11 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     @SchemaColumn(order=2, name=COLUMN_RESELLER, index=IndexType.INDEXED, description="the reseller that received the ticket")
     public Reseller getReseller() throws RemoteException {
         if(reseller==null) return null;
-        return getService().getConnector().getResellers().get(reseller);
+        try {
+            return getService().getConnector().getResellers().get(reseller);
+        } catch(NoSuchElementException err) {
+            return null;
+        }
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";

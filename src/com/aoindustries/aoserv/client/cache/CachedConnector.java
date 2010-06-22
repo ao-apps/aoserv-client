@@ -266,7 +266,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         bankTransactionTypes = new CachedBankTransactionTypeService(this, wrapped.getBankTransactionTypes());
         // TODO: bankTransactions = new CachedBankTransactionService(this, wrapped.getBankTransactions());
         // TODO: banks = new CachedBankService(this, wrapped.getBanks());
-        // TODO: blackholeEmailAddresss = new CachedBlackholeEmailAddressService(this, wrapped.getBlackholeEmailAddresss());
         brands = new CachedBrandService(this, wrapped.getBrands());
         businessAdministrators = new CachedBusinessAdministratorService(this, wrapped.getBusinessAdministrators());
         businessAdministratorRoles = new CachedBusinessAdministratorRoleService(this, wrapped.getBusinessAdministratorRoles());
@@ -602,10 +601,6 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     // <editor-fold defaultstate="collapsed" desc="BankService">
     // TODO: final CachedBankService banks;
     // TODO: public BankService<CachedConnector,CachedConnectorFactory> getBanks();
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="BlackholeEmailAddressService">
-    // TODO: final CachedBlackholeEmailAddressService blackholeEmailAddresss;
-    // TODO: public BlackholeEmailAddressService<CachedConnector,CachedConnectorFactory> getBlackholeEmailAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BrandService">
     static class CachedBrandService extends CachedService<AccountingCode,Brand> implements BrandService<CachedConnector,CachedConnectorFactory> {

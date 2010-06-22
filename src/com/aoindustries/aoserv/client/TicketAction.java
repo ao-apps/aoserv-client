@@ -12,6 +12,7 @@ import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.NoSuchElementException;
 
 /**
  * <code>TicketAction</code>s represent a complete history of the changes that have been made to a ticket.
@@ -231,7 +232,11 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     @SchemaColumn(order=13, name=COLUMN_OLD_ASSIGNED_TO, index=IndexType.INDEXED, description="if changed, contains the old assignment")
     public BusinessAdministrator getOldAssignedTo() throws RemoteException {
         if(oldAssignedTo==null) return null;
-        return getService().getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, oldAssignedTo);
+        try {
+            return getService().getConnector().getBusinessAdministrators().get(oldAssignedTo);
+        } catch(NoSuchElementException err) {
+            return null;
+        }
     }
 
     static final String COLUMN_NEW_ASSIGNED_TO = "new_assigned_to";
@@ -241,7 +246,11 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     @SchemaColumn(order=14, name=COLUMN_NEW_ASSIGNED_TO, index=IndexType.INDEXED, description="if changed, contains the new assignment")
     public BusinessAdministrator getNewAssignedTo() throws RemoteException {
         if(newAssignedTo==null) return null;
-        return getService().getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, newAssignedTo);
+        try {
+            return getService().getConnector().getBusinessAdministrators().get(newAssignedTo);
+        } catch(NoSuchElementException err) {
+            return null;
+        }
     }
 
     static final String COLUMN_OLD_CATEGORY = "old_category";

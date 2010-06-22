@@ -15,6 +15,7 @@ import com.aoindustries.util.UnionSet;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.NoSuchElementException;
 
 /**
  * A brand has separate website, packages, nameservers, and support.
@@ -217,9 +218,16 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     }
 
     static final String COLUMN_SMTP_EMAIL_INBOX = "smtp_email_inbox";
+    /**
+     * May be filtered.
+     */
     @SchemaColumn(order=5, name=COLUMN_SMTP_EMAIL_INBOX, index=IndexType.UNIQUE, description="the inbox used for outgoing email")
     public EmailInbox getSmtpEmailInbox() throws RemoteException {
-        return getService().getConnector().getEmailInboxes().get(smtpEmailInbox);
+        try {
+            return getService().getConnector().getEmailInboxes().get(smtpEmailInbox);
+        } catch(NoSuchElementException err) {
+            return null;
+        }
     }
 
     /**
@@ -240,9 +248,16 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     }
 
     static final String COLUMN_IMAP_EMAIL_INBOX = "imap_email_inbox";
+    /**
+     * May be filtered.
+     */
     @SchemaColumn(order=8, name=COLUMN_IMAP_EMAIL_INBOX, index=IndexType.UNIQUE, description="the inbox used for incoming email")
     public EmailInbox getImapEmailInbox() throws RemoteException {
-        return getService().getConnector().getEmailInboxes().get(imapEmailInbox);
+        try {
+            return getService().getConnector().getEmailInboxes().get(imapEmailInbox);
+        } catch(NoSuchElementException err) {
+            return null;
+        }
     }
 
     /**
@@ -392,9 +407,16 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     }
 
     static final String COLUMN_AOWEB_STRUTS_VNC_BIND = "aoweb_struts_vnc_bind";
+    /**
+     * May be filtered.
+     */
     @SchemaColumn(order=30, name=COLUMN_AOWEB_STRUTS_VNC_BIND, index=IndexType.UNIQUE, description="the port that listens for VNC connections")
     public NetBind getAowebStrutsVncBind() throws RemoteException {
-        return getService().getConnector().getNetBinds().get(aowebStrutsVncBind);
+        try {
+            return getService().getConnector().getNetBinds().get(aowebStrutsVncBind);
+        } catch(NoSuchElementException err) {
+            return null;
+        }
     }
 
     /**

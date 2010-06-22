@@ -271,7 +271,6 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         bankTransactionTypes = new WrappedBankTransactionTypeService(this);
         // TODO: bankTransactions = new WrappedBankTransactionService(this);
         // TODO: banks = new WrappedBankService(this);
-        // TODO: blackholeEmailAddresss = new WrappedBlackholeEmailAddressService(this);
         brands = new WrappedBrandService(this);
         businessAdministrators = new WrappedBusinessAdministratorService(this);
         businessAdministratorRoles = new WrappedBusinessAdministratorRoleService(this);
@@ -689,10 +688,6 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // <editor-fold defaultstate="collapsed" desc="BankService">
     // TODO: final WrappedBankService<C,F> banks;
     // TODO: final public BankService<C,F> getBanks();
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="BlackholeEmailAddressService">
-    // TODO: final WrappedBlackholeEmailAddressService<C,F> blackholeEmailAddresss;
-    // TODO: final public BlackholeEmailAddressService<C,F> getBlackholeEmailAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BrandService">
     static class WrappedBrandService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Brand> implements BrandService<C,F> {

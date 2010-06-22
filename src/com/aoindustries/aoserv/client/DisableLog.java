@@ -127,6 +127,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
         // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrators());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupNames());
         // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getUsernames());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
         return unionSet;
     }
     // </editor-fold>
@@ -146,6 +147,10 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     public IndexedSet<Username> getUsernames() throws RemoteException {
         return getService().getConnector().getUsernames().filterIndexed(Username.COLUMN_DISABLE_LOG, this);
+    }
+
+    public IndexedSet<Resource> getResources() throws RemoteException {
+        return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_DISABLE_LOG, this);
     }
     // </editor-fold>
 
@@ -173,33 +178,6 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
                 .getBusiness()
             )
         ;
-    }
-
-    public List<? extends AOServObject> getDependencies() throws IOException, SQLException {
-        return createDependencyList(
-            getBusiness(),
-            getDisabledBy()
-        );
-    }
-
-    public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
-        return createDependencyList(
-            getLinuxServerAccounts(),
-            getUsernames(),
-            getEmailLists(),
-            getEmailPipes(),
-            getEmailSmtpRelays(),
-            getHttpdSites(),
-            getHttpdSharedTomcats(),
-            getHttpdSiteBinds(),
-            getPostgresServerUsers(),
-            getPostgresUsers(),
-            getResources()
-        );
-    }
-
-    public List<Resource> getResources() throws IOException, SQLException {
-        return getService().getConnector().getResources().getIndexedRows(Resource.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {

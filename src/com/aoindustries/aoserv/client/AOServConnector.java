@@ -102,7 +102,6 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     /* TODO
     BankTransactionService<C,F> getBankTransactions() throws RemoteException;
     BankService<C,F> getBanks() throws RemoteException;
-    BlackholeEmailAddressService<C,F> getBlackholeEmailAddresses() throws RemoteException;
      */
     BrandService<C,F> getBrands() throws RemoteException;
     BusinessAdministratorService<C,F> getBusinessAdministrators() throws RemoteException;

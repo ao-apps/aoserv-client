@@ -414,10 +414,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     }
 
     /* TODO
-    public List<BlackholeEmailAddress> getBlackholeEmailAddresses() throws IOException {
-    	return getService().getConnector().getBlackholeEmailAddresses().getBlackholeEmailAddresses(this);
-    }
-
     public IPAddress getDaemonIPAddress() throws IOException {
         NetBind nb=getDaemonBind();
         if(nb==null) throw new AssertionError("Unable to find daemon NetBind for AOServer: "+pkey);

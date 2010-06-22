@@ -126,7 +126,8 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
         }
     }
 
-    @SchemaColumn(order=5, name="disable_log", description="indicates the resource is disabled")
+    static final String COLUMN_DISABLE_LOG = "disable_log";
+    @SchemaColumn(order=5, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the resource is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
         return getService().getConnector().getDisableLogs().get(disableLog);

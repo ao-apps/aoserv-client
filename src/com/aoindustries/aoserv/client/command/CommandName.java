@@ -255,7 +255,6 @@ public enum CommandName {
     // TODO: print_zone_file(TODO.class, TODO),
     // TODO: reactivate_ticket(TODO.class, TODO),
     // TODO: refresh_email_smtp_relay(TODO.class, TODO),
-    // TODO: remove_blackhole_email_address(TODO.class, TODO),
     // TODO: remove_business_administrator(TODO.class, TODO),
     // TODO: remove_business_server(TODO.class, TODO),
     // TODO: remove_credit_card(TODO.class, TODO),

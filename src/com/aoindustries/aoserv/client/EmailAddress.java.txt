@@ -16,7 +16,6 @@ import java.util.*;
  * may only go to one destination,
  *
  *
- * @see  BlackholeEmailAddress
  * @see  EmailForwarding
  * @see  EmailListAddress
  * @see  EmailPipeAddress
@@ -42,10 +41,6 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 
     public String getAddress() {
 	return address;
-    }
-
-    public BlackholeEmailAddress getBlackholeEmailAddress() throws IOException, SQLException {
-	return getService().getConnector().getBlackholeEmailAddresses().get(pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -130,8 +125,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     public boolean isUsed() throws IOException, SQLException {
         // Anything using this address must be removable
         return
-            getBlackholeEmailAddress()!=null
-            || !getEmailForwardings().isEmpty()
+            !getEmailForwardings().isEmpty()
             || !getEmailListAddresses().isEmpty()
             || !getEmailPipeAddresses().isEmpty()
             || !getLinuxAccAddresses().isEmpty()
@@ -185,7 +179,6 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     public List<? extends AOServObject> getDependentObjects() throws IOException, SQLException {
         return createDependencyList(
             createDependencyList(
-                getBlackholeEmailAddress(),
                 getBrandBySupportEmailAddress(),
                 getBrandBySignupEmailAddress()
             ),
@@ -205,9 +198,6 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Everything using this address must be removable
-        BlackholeEmailAddress bea=getBlackholeEmailAddress();
-        if(bea!=null) reasons.addAll(bea.getCannotRemoveReasons());
-
         for(EmailForwarding ef : getEmailForwardings()) reasons.addAll(ef.getCannotRemoveReasons());
 
         for(EmailListAddress ela : getService().getConnector().getEmailListAddresses().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons());
