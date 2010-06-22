@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.ErrorPrinter;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -278,6 +279,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
             } catch(IllegalAccessException err) {
                 throw new RemoteException(err.getMessage(), err);
             } catch(InvocationTargetException err) {
+                // ErrorPrinter.printStackTraces(err);
                 throw new RemoteException(err.getMessage(), err);
             }
             // Make each set indexed

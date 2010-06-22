@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.NoSuchElementException;
 
 /**
  * Each <code>Business</code> has an account of all the
@@ -150,7 +151,11 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
      */
     @SchemaColumn(order=4, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the admin involved in the transaction")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, username);
+        try {
+            return getService().getConnector().getBusinessAdministrators().get(username);
+        } catch(NoSuchElementException err) {
+            return null;
+        }
     }
 
     static final String COLUMN_TYPE = "type";

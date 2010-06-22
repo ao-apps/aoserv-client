@@ -65,14 +65,17 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         return getServiceName().toString();
     }
 
+    @Override
     final public CachedConnector getConnector() {
         return connector;
     }
 
+    @Override
     final public boolean isAoServObjectServiceSettable() {
         return false;
     }
 
+    @Override
     final public IndexedSet<V> getSet() throws RemoteException {
         synchronized(cachedSetLock) {
             if(cachedSet==null) cachedSet = AOServServiceUtils.setServices(wrapped.getSet(), this);
@@ -80,26 +83,32 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         }
     }
 
+    @Override
     final public ServiceName getServiceName() {
         return serviceName;
     }
 
+    @Override
     final public Table<MethodColumn,V> getTable() {
         return table;
     }
 
+    @Override
     final public Map<K,V> getMap() {
         return map;
     }
 
+    @Override
     final public boolean isEmpty() throws RemoteException {
         return getSet().isEmpty();
     }
 
+    @Override
     final public int getSize() throws RemoteException {
         return getSet().size();
     }
 
+    @Override
     final public V get(K key) throws RemoteException, NoSuchElementException {
         if(key==null) return null;
         V result;
@@ -118,6 +127,7 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         return result;
     }
 
+    @Override
     final public V filterUnique(String columnName, Object value) throws RemoteException {
         if(value==null) return null;
         IndexType indexType = table.getColumn(columnName).getIndexType();
@@ -128,6 +138,7 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
     /**
      * The filtered set is based on the intersection of the values set and uniqueHash.keySet
      */
+    @Override
     final public IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet();
         IndexType indexType = table.getColumn(columnName).getIndexType();
@@ -135,11 +146,13 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
         return getSet().filterUniqueSet(columnName, values);
     }
 
+    @Override
     final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
         if(value==null) return IndexedSet.emptyIndexedSet();
         return getSet().filterIndexed(columnName, value);
     }
 
+    @Override
     final public IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet();
         return getSet().filterIndexedSet(columnName, values);
