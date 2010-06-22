@@ -24,7 +24,6 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int aoServer;
     private UnixPath path;
-    final private boolean enabled;
     final private boolean quotaEnabled;
 
     public BackupPartition(
@@ -32,13 +31,11 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
         int pkey,
         int aoServer,
         UnixPath path,
-        boolean enabled,
         boolean quotaEnabled
     ) {
         super(service, pkey);
         this.aoServer = aoServer;
         this.path = path;
-        this.enabled = enabled;
         this.quotaEnabled = quotaEnabled;
         intern();
     }
@@ -79,11 +76,6 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
         return path;
     }
 
-    @SchemaColumn(order=3, name="enabled", description="flags the partition as currently accepting new data")
-    public boolean isEnabled() {
-        return enabled;
-    }
-
     /**
      * When quota is enabled, all replications/backups into the partition must have quota_gid set.
      * When quota is disabled, all replications/backups into the partition must have quota_gid not set.
@@ -92,7 +84,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
      *
      * @return the enabled flag
      */
-    @SchemaColumn(order=4, name="quota_enabled", description="When quota is enabled, all replications/backups into the partition must have quota_gid set.")
+    @SchemaColumn(order=3, name="quota_enabled", description="When quota is enabled, all replications/backups into the partition must have quota_gid set.")
     public boolean isQuotaEnabled() {
         return quotaEnabled;
     }
@@ -101,7 +93,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     @Override
     public com.aoindustries.aoserv.client.beans.BackupPartition getBean() {
-        return new com.aoindustries.aoserv.client.beans.BackupPartition(key, aoServer, getBean(path), enabled, quotaEnabled);
+        return new com.aoindustries.aoserv.client.beans.BackupPartition(key, aoServer, getBean(path), quotaEnabled);
     }
     // </editor-fold>
 
@@ -114,7 +106,7 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
         return unionSet;
     }
     // </editor-fold>
@@ -127,11 +119,9 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    public List<FailoverFileReplication> getFailoverFileReplications() throws IOException, SQLException {
-        return getService().getConnector().getFailoverFileReplications().getIndexedRows(FailoverFileReplication.COLUMN_BACKUP_PARTITION, pkey);
+    public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
+        return getService().getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_BACKUP_PARTITION, this);
     }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

@@ -46,6 +46,7 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxesByTrashEmailRetention());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxesByJunkEmailRetention());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxAddresses());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
         return unionSet;
     }
     // </editor-fold>
@@ -64,6 +65,10 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
 
     public IndexedSet<EmailInbox> getEmailInboxesByJunkEmailRetention() throws RemoteException {
         return getService().getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_JUNK_EMAIL_RETENTION, this);
+    }
+
+    public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
+        return getService().getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_RETENTION, this);
     }
     // </editor-fold>
 }

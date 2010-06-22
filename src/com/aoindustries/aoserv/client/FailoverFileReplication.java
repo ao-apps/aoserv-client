@@ -194,7 +194,8 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return getServer().toStringImpl()+"->"+getBackupPartition().toStringImpl();
+        BackupPartition bp = getBackupPartition();
+        return getServer().toStringImpl()+"->"+(bp==null ? Integer.toString(backupPartition) : bp.toStringImpl());
     }
     // </editor-fold>
 

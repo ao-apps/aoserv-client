@@ -13,7 +13,6 @@ public class BackupPartition {
     private int pkey;
     private int aoServer;
     private UnixPath path;
-    private boolean enabled;
     private boolean quotaEnabled;
 
     public BackupPartition() {
@@ -23,13 +22,11 @@ public class BackupPartition {
         int pkey,
         int aoServer,
         UnixPath path,
-        boolean enabled,
         boolean quotaEnabled
     ) {
         this.pkey = pkey;
         this.aoServer = aoServer;
         this.path = path;
-        this.enabled = enabled;
         this.quotaEnabled = quotaEnabled;
     }
 
@@ -55,14 +52,6 @@ public class BackupPartition {
 
     public void setPath(UnixPath path) {
         this.path = path;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public boolean isQuotaEnabled() {
