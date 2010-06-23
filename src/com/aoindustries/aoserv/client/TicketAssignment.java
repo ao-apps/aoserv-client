@@ -79,7 +79,8 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
         return getService().getConnector().getResellers().get(reseller);
     }
 
-    @SchemaColumn(order=3, name="administrator", description="the individual that the ticket is assigned to within the reseller")
+    static final String COLUMN_ADMINISTRATOR = "administrator";
+    @SchemaColumn(order=3, name=COLUMN_ADMINISTRATOR, index=IndexType.INDEXED, description="the individual that the ticket is assigned to within the reseller")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         return getService().getConnector().getBusinessAdministrators().get(administrator);
     }

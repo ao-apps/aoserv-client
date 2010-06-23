@@ -283,7 +283,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldAssignedTo());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewAssignedTo());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
         return unionSet;
     }
@@ -340,6 +340,10 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     public IndexedSet<TicketAction> getTicketActionsByNewAssignedTo() throws RemoteException {
         return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ASSIGNED_TO, this);
+    }
+
+    public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
+        return getService().getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_ADMINISTRATOR, this);
     }
 
     public IndexedSet<Ticket> getTicketsByCreatedBy() throws RemoteException {
@@ -472,10 +476,6 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     public void enable() throws IOException, SQLException {
         service.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
-    }
-
-    public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
-        return getService().getConnector().getTicketAssignments().getTicketAssignments(this);
     }
 
     public boolean isDisabled() {
