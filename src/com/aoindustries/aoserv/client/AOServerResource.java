@@ -116,6 +116,7 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
         ) obj = getHttpdSite();
         else if(resourceType==ResourceType.CVS_REPOSITORY) obj = getCvsRepository(); // OK - interned
         else if(resourceType==ResourceType.HTTPD_SERVER) obj = getHttpdServer(); // OK - interned
+        else if(resourceType==ResourceType.PRIVATE_FTP_SERVER) obj = getPrivateFtpServer(); // OK - interned
         else throw new AssertionError("Unexpected resource type: "+resourceType);
         if(obj==null) throw new RemoteException("Type-specific aoserver resource object not found: "+key);
         return obj;
@@ -153,6 +154,10 @@ final public class AOServerResource extends AOServObjectIntegerKey<AOServerResou
 
     public MySQLUser getMysqlUser() throws RemoteException {
         return getService().getConnector().getMysqlUsers().get(key);
+    }
+
+    public PrivateFtpServer getPrivateFtpServer() throws RemoteException {
+        return getService().getConnector().getPrivateFtpServers().get(key);
     }
 
     public PostgresDatabase getPostgresDatabase() throws RemoteException {

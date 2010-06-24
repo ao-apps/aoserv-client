@@ -101,6 +101,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCvsRepositories());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSites());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPrivateFtpServers());
         return unionSet;
     }
     // </editor-fold>
@@ -129,6 +130,10 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
 
     public IndexedSet<HttpdServer> getHttpdServers() throws RemoteException {
         return getService().getConnector().getHttpdServers().filterIndexed(HttpdServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
+    }
+
+    public IndexedSet<PrivateFtpServer> getPrivateFtpServers() throws RemoteException {
+        return getService().getConnector().getPrivateFtpServers().filterIndexed(PrivateFtpServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
     // </editor-fold>
 

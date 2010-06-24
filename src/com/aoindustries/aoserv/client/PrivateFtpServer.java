@@ -83,7 +83,7 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
     static final String COLUMN_NET_BIND = "net_bind";
     @SchemaColumn(order=1, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the pkey of the net_bind that the FTP server is on")
     public NetBind getNetBind() throws RemoteException {
-        return getService().getConnector().getNetBinds().get(key);
+        return getService().getConnector().getNetBinds().get(netBind);
     }
 
     @SchemaColumn(order=2, name="logfile", description="the file transfers are logged to")
@@ -101,7 +101,8 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
         return email;
     }
 
-    @SchemaColumn(order=5, name="linux_account_group", description="the Linux account and group this FTP server runs as")
+    static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    @SchemaColumn(order=5, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the Linux account and group this FTP server runs as")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getService().getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
