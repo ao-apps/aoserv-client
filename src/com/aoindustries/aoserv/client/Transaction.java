@@ -52,7 +52,7 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private Timestamp time;
+    final private long time;
     private AccountingCode accounting;
     private AccountingCode sourceAccounting;
     private UserId username;
@@ -69,7 +69,7 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     public Transaction(
         TransactionService<?,?> service,
         int transid,
-        Timestamp time,
+        long time,
         AccountingCode accounting,
         AccountingCode sourceAccounting,
         UserId username,
@@ -116,7 +116,7 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(Transaction other) {
-        int diff = time.compareTo(other.time);
+        int diff = AOServObjectUtils.compare(time, other.time);
         if(diff!=0) return diff;
         return AOServObjectUtils.compare(key, other.key);
     }
@@ -130,7 +130,7 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
 
     @SchemaColumn(order=1, name="time", description="the time the transaction occured")
     public Timestamp getTime() {
-    	return time;
+    	return new Timestamp(time);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
@@ -220,7 +220,7 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     public com.aoindustries.aoserv.client.beans.Transaction getBean() {
         return new com.aoindustries.aoserv.client.beans.Transaction(
             key,
-            time,
+            getTime(),
             getBean(accounting),
             getBean(sourceAccounting),
             getBean(username),

@@ -30,9 +30,9 @@ final public class MajordomoVersion extends AOServObjectStringKey<MajordomoVersi
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private Timestamp created;
+    final private long created;
 
-    public MajordomoVersion(MajordomoVersionService<?,?> service, String version, Timestamp created) {
+    public MajordomoVersion(MajordomoVersionService<?,?> service, String version, long created) {
         super(service, version);
         this.created = created;
     }
@@ -46,13 +46,14 @@ final public class MajordomoVersion extends AOServObjectStringKey<MajordomoVersi
 
     @SchemaColumn(order=1, name="created", description="the time the version was added")
     public Timestamp getCreated() {
-        return created;
+        return new Timestamp(created);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.MajordomoVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.MajordomoVersion(getKey(), created);
+        return new com.aoindustries.aoserv.client.beans.MajordomoVersion(getKey(), getCreated());
     }
     // </editor-fold>
 }

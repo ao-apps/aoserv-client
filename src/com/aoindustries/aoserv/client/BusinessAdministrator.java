@@ -35,12 +35,12 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private HashedPassword password;
-    private String name;
+    private String fullName;
     private String title;
     final private Date birthday;
     final private boolean isPreferred;
     final private boolean isPrivate;
-    final private Timestamp created;
+    final private long created;
     private String workPhone;
     private String homePhone;
     private String cellPhone;
@@ -60,12 +60,12 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         BusinessAdministratorService<?,?> service,
         UserId username,
         HashedPassword password,
-        String name,
+        String fullName,
         String title,
         Date birthday,
         boolean isPreferred,
         boolean isPrivate,
-        Timestamp created,
+        long created,
         String workPhone,
         String homePhone,
         String cellPhone,
@@ -83,7 +83,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     ) {
         super(service, username);
         this.password = password;
-        this.name = name;
+        this.fullName = fullName;
         this.title = title;
         this.birthday = birthday;
         this.isPreferred = isPreferred;
@@ -112,7 +112,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
 
     private void intern() {
-        name = intern(name);
+        fullName = intern(fullName);
         title = intern(title);
         workPhone = intern(workPhone);
         homePhone = intern(homePhone);
@@ -141,9 +141,9 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     	return password;
     }
 
-    @SchemaColumn(order=2, name="name", description="the name of this admin")
+    @SchemaColumn(order=2, name="full_name", description="the name of this admin")
     public String getFullName() {
-    	return name;
+    	return fullName;
     }
 
     @SchemaColumn(order=3, name="title", description="the admins title within their organization")
@@ -168,7 +168,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     @SchemaColumn(order=7, name="created", description="the time the admin entry was created")
     public Timestamp getCreated() {
-    	return created;
+    	return new Timestamp(created);
     }
 
     @SchemaColumn(order=8, name="work_phone", description="the work phone number (if different than business)")
@@ -251,7 +251,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     @Override
     public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(getBean(getKey()), getBean(password), name, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, getBean(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
+        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(getBean(getKey()), getBean(password), fullName, title, birthday, isPreferred, isPrivate, getCreated(), workPhone, homePhone, cellPhone, fax, getBean(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
     // </editor-fold>
 

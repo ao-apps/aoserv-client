@@ -12,7 +12,7 @@ public class BusinessAdministrator {
 
     private UserId username;
     private HashedPassword password;
-    private String name;
+    private String fullName;
     private String title;
     private java.util.Date birthday;
     private boolean isPreferred;
@@ -39,7 +39,7 @@ public class BusinessAdministrator {
     public BusinessAdministrator(
         UserId username,
         HashedPassword password,
-        String name,
+        String fullName,
         String title,
         java.util.Date birthday,
         boolean isPreferred,
@@ -62,7 +62,7 @@ public class BusinessAdministrator {
     ) {
         this.username = username;
         this.password = password;
-        this.name = name;
+        this.fullName = fullName;
         this.title = title;
         this.birthday = birthday;
         this.isPreferred = isPreferred;
@@ -100,12 +100,12 @@ public class BusinessAdministrator {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getTitle() {

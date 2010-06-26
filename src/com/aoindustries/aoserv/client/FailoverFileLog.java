@@ -19,13 +19,13 @@ import java.sql.Timestamp;
 final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLog> implements BeanFactory<com.aoindustries.aoserv.client.beans.FailoverFileLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int replication;
-    final private Timestamp startTime;
-    final private Timestamp endTime;
+    final private long startTime;
+    final private long endTime;
     final private int scanned;
     final private int updated;
     final private long bytes;
@@ -35,8 +35,8 @@ final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLo
         FailoverFileLogService<?,?> service,
         int pkey,
         int replication,
-        Timestamp startTime,
-        Timestamp endTime,
+        long startTime,
+        long endTime,
         int scanned,
         int updated,
         long bytes,
@@ -56,7 +56,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLo
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(FailoverFileLog other) throws RemoteException {
-        int diff = -endTime.compareTo(other.endTime);
+        int diff = AOServObjectUtils.compare(other.endTime, endTime); // Descending
         if(diff!=0) return diff;
         return replication==other.replication ? 0 : getFailoverFileReplication().compareToImpl(other.getFailoverFileReplication());
     }
@@ -76,12 +76,12 @@ final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLo
 
     @SchemaColumn(order=2, name="start_time", description="the time the replication started")
     public Timestamp getStartTime() {
-        return startTime;
+        return new Timestamp(startTime);
     }
 
     @SchemaColumn(order=3, name="end_time", description="the time the replication finished")
     public Timestamp getEndTime() {
-        return endTime;
+        return new Timestamp(endTime);
     }
 
     @SchemaColumn(order=4, name="scanned", description="the number of files scanned")
@@ -106,8 +106,18 @@ final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLo
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    @Override
     public com.aoindustries.aoserv.client.beans.FailoverFileLog getBean() {
-        return new com.aoindustries.aoserv.client.beans.FailoverFileLog(key, replication, startTime, endTime, scanned, updated, bytes, isSuccessful);
+        return new com.aoindustries.aoserv.client.beans.FailoverFileLog(
+            key,
+            replication,
+            getStartTime(),
+            getEndTime(),
+            scanned,
+            updated,
+            bytes,
+            isSuccessful
+        );
     }
     // </editor-fold>
 }

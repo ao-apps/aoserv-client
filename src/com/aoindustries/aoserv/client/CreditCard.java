@@ -48,12 +48,12 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     final private String state;
     final private String postalCode;
     private String countryCode;
-    final private Timestamp created;
+    final private long created;
     private UserId createdBy;
     final private String principalName;
     final private boolean useMonthly;
     final private boolean active;
-    final private Timestamp deactivatedOn;
+    final private Long deactivatedOn;
     final private String deactivateReason;
     final private String description;
     final private String encryptedCardNumber;
@@ -84,12 +84,12 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
         String state,
         String postalCode,
         String countryCode,
-        Timestamp created,
+        long created,
         UserId createdBy,
         String principalName,
         boolean useMonthly,
         boolean active,
-        Timestamp deactivatedOn,
+        Long deactivatedOn,
         String deactivateReason,
         String description,
         String encryptedCardNumber,
@@ -154,7 +154,7 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     protected int compareToImpl(CreditCard other) {
         int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(accounting, other.accounting);
         if(diff!=0) return diff;
-        return created.compareTo(other.created);
+        return AOServObjectUtils.compare(created, other.created);
     }
     // </editor-fold>
 
@@ -269,7 +269,7 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
 
     @SchemaColumn(order=19, name="created", description="the time the card was added to the database")
     public Timestamp getCreated() {
-        return created;
+        return new Timestamp(created);
     }
 
     static final String COLUMN_CREATED_BY = "created_by";
@@ -298,7 +298,7 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
 
     @SchemaColumn(order=24, name="deactivated_on", description="the time the card was deactivated")
     public Timestamp getDeactivatedOn() {
-        return deactivatedOn;
+        return deactivatedOn==null ? null : new Timestamp(deactivatedOn);
     }
 
     @SchemaColumn(order=25, name="deactivate_reason", description="the reason the card was deactivated")
@@ -370,12 +370,12 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
             state,
             postalCode,
             countryCode,
-            created,
+            getCreated(),
             getBean(createdBy),
             principalName,
             useMonthly,
             active,
-            deactivatedOn,
+            getDeactivatedOn(),
             deactivateReason,
             description,
             encryptedCardNumber,

@@ -87,8 +87,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private String contractVersion;
-    final private Timestamp created;
-    final private Timestamp canceled;
+    final private long created;
+    final private Long canceled;
     private String cancelReason;
     private AccountingCode parent;
     final private boolean canAddBackupServer;
@@ -111,8 +111,8 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         BusinessService<?,?> service,
         AccountingCode accounting,
         String contractVersion,
-        Timestamp created,
-        Timestamp canceled,
+        long created,
+        Long canceled,
         String cancelReason,
         AccountingCode parent,
         boolean canAddBackupServer,
@@ -183,12 +183,12 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
 
     @SchemaColumn(order=2, name="created", description="the time the account was created")
     public Timestamp getCreated() {
-    	return created;
+    	return new Timestamp(created);
     }
 
     @SchemaColumn(order=3, name="canceled", description="the time the account was deactivated")
     public Timestamp getCanceled() {
-    	return canceled;
+    	return canceled==null ? null : new Timestamp(canceled);
     }
 
     @SchemaColumn(order=4, name="cancel_reason", description="the reason the account was canceled")
@@ -325,7 +325,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     @Override
     public com.aoindustries.aoserv.client.beans.Business getBean() {
-        return new com.aoindustries.aoserv.client.beans.Business(getBean(getKey()), contractVersion, created, canceled, cancelReason, getBean(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getBean(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
+        return new com.aoindustries.aoserv.client.beans.Business(getBean(getKey()), contractVersion, getCreated(), getCanceled(), cancelReason, getBean(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getBean(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
     // </editor-fold>
 

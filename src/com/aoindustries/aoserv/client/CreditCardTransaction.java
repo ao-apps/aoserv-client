@@ -73,7 +73,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
     final private String creditCardPostalCode;
     private String creditCardCountryCode;
     final private String creditCardComments;
-    final private Timestamp authorizationTime;
+    final private long authorizationTime;
     private UserId authorizationUsername;
     final private String authorizationPrincipalName;
     private String authorizationCommunicationResult;
@@ -92,7 +92,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
     final private String authorizationProviderAvsResult;
     private String authorizationAvsResult;
     final private String authorizationApprovalCode;
-    final private Timestamp captureTime;
+    final private Long captureTime;
     private UserId captureUsername;
     final private String capturePrincipalName;
     private String captureCommunicationResult;
@@ -100,7 +100,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
     private String captureErrorCode;
     final private String captureProviderErrorMessage;
     final private String captureProviderUniqueId;
-    final private Timestamp voidTime;
+    final private Long voidTime;
     private UserId voidUsername;
     final private String voidPrincipalName;
     private String voidCommunicationResult;
@@ -158,7 +158,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         String creditCardPostalCode,
         String creditCardCountryCode,
         String creditCardComments,
-        Timestamp authorizationTime,
+        long authorizationTime,
         UserId authorizationUsername,
         String authorizationPrincipalName,
         String authorizationCommunicationResult,
@@ -177,7 +177,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         String authorizationProviderAvsResult,
         String authorizationAvsResult,
         String authorizationApprovalCode,
-        Timestamp captureTime,
+        Long captureTime,
         UserId captureUsername,
         String capturePrincipalName,
         String captureCommunicationResult,
@@ -185,7 +185,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
         String captureErrorCode,
         String captureProviderErrorMessage,
         String captureProviderUniqueId,
-        Timestamp voidTime,
+        Long voidTime,
         UserId voidUsername,
         String voidPrincipalName,
         String voidCommunicationResult,
@@ -315,7 +315,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
     protected int compareToImpl(CreditCardTransaction other) {
         int diff = accounting.compareTo(other.accounting);
         if(diff!=0) return diff;
-        diff = authorizationTime.compareTo(other.authorizationTime);
+        diff = AOServObjectUtils.compare(authorizationTime, other.authorizationTime);
         if(diff!=0) return diff;
         return AOServObjectUtils.compare(key, other.key);
     }
@@ -614,7 +614,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
      */
     @SchemaColumn(order=46, name="authorization_time", description="the time the authorization was attempted")
     public Timestamp getAuthorizationTime() {
-        return authorizationTime;
+        return new Timestamp(authorizationTime);
     }
 
     static final String COLUMN_AUTHORIZATION_USERNAME = "authorization_username";
@@ -722,7 +722,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
      */
     @SchemaColumn(order=65, name="capture_time", description="the time the capture was attempted")
     public Timestamp getCaptureTime() {
-        return captureTime;
+        return captureTime==null ? null : new Timestamp(captureTime);
     }
 
     static final String COLUMN_CAPTURE_USERNAME = "capture_username";
@@ -775,7 +775,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
      */
     @SchemaColumn(order=73, name="void_time", description="the time the void was attempted")
     public Timestamp getVoidTime() {
-        return voidTime;
+        return voidTime==null ? null : new Timestamp(voidTime);
     }
 
     static final String COLUMN_VOID_USERNAME = "void_username";
@@ -879,7 +879,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
             creditCardPostalCode,
             creditCardCountryCode,
             creditCardComments,
-            authorizationTime,
+            getAuthorizationTime(),
             getBean(authorizationUsername),
             authorizationPrincipalName,
             authorizationCommunicationResult,
@@ -898,7 +898,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
             authorizationProviderAvsResult,
             authorizationAvsResult,
             authorizationApprovalCode,
-            captureTime,
+            getCaptureTime(),
             getBean(captureUsername),
             capturePrincipalName,
             captureCommunicationResult,
@@ -906,7 +906,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
             captureErrorCode,
             captureProviderErrorMessage,
             captureProviderUniqueId,
-            voidTime,
+            getVoidTime(),
             getBean(voidUsername),
             voidPrincipalName,
             voidCommunicationResult,

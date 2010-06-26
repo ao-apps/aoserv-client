@@ -25,7 +25,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private Timestamp time;
+    final private long time;
     private AccountingCode accounting;
     private UserId disabledBy;
     private String disableReason;
@@ -33,7 +33,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     public DisableLog(
         DisableLogService<?,?> service,
         int pkey,
-        Timestamp time,
+        long time,
         AccountingCode accounting,
         UserId disabledBy,
         String disableReason
@@ -61,7 +61,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(DisableLog other) throws RemoteException {
-        int diff = time.compareTo(other.time);
+        int diff = AOServObjectUtils.compare(time, other.time);
         if(diff!=0) return diff;
         diff = accounting==other.accounting ? 0 : getBusiness().compareToImpl(other.getBusiness()); // OK - interned
         if(diff!=0) return diff;
@@ -77,7 +77,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
 
     @SchemaColumn(order=1, name="time", description="the time the stuff was disabled")
     public Timestamp getTime() {
-        return time;
+        return new Timestamp(time);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
@@ -109,7 +109,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     @Override
     public com.aoindustries.aoserv.client.beans.DisableLog getBean() {
-        return new com.aoindustries.aoserv.client.beans.DisableLog(key, time, getBean(accounting), getBean(disabledBy), disableReason);
+        return new com.aoindustries.aoserv.client.beans.DisableLog(key, getTime(), getBean(accounting), getBean(disabledBy), disableReason);
     }
     // </editor-fold>
 

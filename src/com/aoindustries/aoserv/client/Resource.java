@@ -34,20 +34,20 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private String resourceType;
     private AccountingCode accounting;
-    final private Timestamp created;
+    final private long created;
     private UserId createdBy;
     final private Integer disableLog;
-    final private Timestamp lastEnabled;
+    final private long lastEnabled;
 
     public Resource(
         ResourceService<?,?> service,
         int pkey,
         String resourceType,
         AccountingCode accounting,
-        Timestamp created,
+        long created,
         UserId createdBy,
         Integer disableLog,
-        Timestamp lastEnabled
+        long lastEnabled
     ) {
         super(service, pkey);
         this.resourceType = resourceType;
@@ -109,7 +109,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      */
     @SchemaColumn(order=3, name="created", description="the time the resources was created")
     public Timestamp getCreated() {
-    	return created;
+    	return new Timestamp(created);
     }
 
     /**
@@ -139,14 +139,14 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
      */
     @SchemaColumn(order=6, name="last_enabled", description="the time the resources was last enabled or the creation time if never disabled")
     public Timestamp getLastEnabled() {
-        return lastEnabled;
+        return new Timestamp(lastEnabled);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     @Override
     public com.aoindustries.aoserv.client.beans.Resource getBean() {
-        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, getBean(accounting), created, getBean(createdBy), disableLog, lastEnabled);
+        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, getBean(accounting), getCreated(), getBean(createdBy), disableLog, getLastEnabled());
     }
     // </editor-fold>
 

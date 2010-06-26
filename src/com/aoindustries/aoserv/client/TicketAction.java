@@ -32,7 +32,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int ticket;
     private UserId administrator;
-    final private Timestamp time;
+    final private long time;
     private String actionType;
     private AccountingCode oldAccounting;
     private AccountingCode newAccounting;
@@ -62,7 +62,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
         int pkey,
         int ticket,
         UserId administrator,
-        Timestamp time,
+        long time,
         String actionType,
         AccountingCode oldAccounting,
         AccountingCode newAccounting,
@@ -127,7 +127,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
     protected int compareToImpl(TicketAction other) throws RemoteException {
         int diff = ticket==other.ticket ? 0 : getTicket().compareToImpl(other.getTicket());
         if(diff!=0) return diff;
-        diff = time.compareTo(other.time);
+        diff = AOServObjectUtils.compare(time, other.time);
         if(diff!=0) return diff;
         return AOServObjectUtils.compare(key, other.key);
     }
@@ -154,7 +154,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
 
     @SchemaColumn(order=3, name="time", description="the time this action was performed")
     public Timestamp getTime() {
-        return time;
+        return new Timestamp(time);
     }
 
     static final String COLUMN_ACTION_TYPE = "action_type";
@@ -407,7 +407,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
             key,
             ticket,
             getBean(administrator),
-            time,
+            getTime(),
             actionType,
             getBean(oldAccounting),
             getBean(newAccounting),

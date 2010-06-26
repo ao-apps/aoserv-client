@@ -52,6 +52,10 @@ public class AOServObjectUtils {
         return s1<s2 ? -1 : s1==s2 ? 0 : 1;
     }
 
+    public static int compare(long l1, long l2) {
+        return l1<l2 ? -1 : l1==l2 ? 0 : 1;
+    }
+
     /**
      * Compares two objects allowing for nulls, sorts non-null before null.
      */

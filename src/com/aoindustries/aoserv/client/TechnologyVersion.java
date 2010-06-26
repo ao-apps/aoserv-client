@@ -28,7 +28,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private String name;
     private String version;
-    final private Timestamp updated;
+    final private long updated;
     private UserId owner;
     final int operatingSystemVersion;
 
@@ -37,7 +37,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
         int pkey,
         String name,
         String version,
-        Timestamp updated,
+        long updated,
         UserId owner,
         int operatingSystemVersion
     ) {
@@ -90,7 +90,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
 
     @SchemaColumn(order=3, name="updated", description="the time this package was last updated")
     public Timestamp getUpdated() {
-    	return updated;
+    	return new Timestamp(updated);
     }
 
     static final String COLUMN_OWNER = "owner";
@@ -110,7 +110,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     @Override
     public com.aoindustries.aoserv.client.beans.TechnologyVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.TechnologyVersion(key, name, version, updated, getBean(owner), operatingSystemVersion);
+        return new com.aoindustries.aoserv.client.beans.TechnologyVersion(key, name, version, getUpdated(), getBean(owner), operatingSystemVersion);
     }
     // </editor-fold>
 

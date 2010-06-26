@@ -38,7 +38,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     final private HashedPassword daemonKey;
     final private int poolSize;
     final private int distroHour;
-    final private Timestamp lastDistroTime;
+    final private Long lastDistroTime;
     final private Integer failoverServer;
     private String daemonDeviceId;
     final private Integer daemonConnectBind;
@@ -60,7 +60,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         HashedPassword daemonKey,
         int poolSize,
         int distroHour,
-        Timestamp lastDistroTime,
+        Long lastDistroTime,
         Integer failoverServer,
         String daemonDeviceId,
         Integer daemonConnectBind,
@@ -159,7 +159,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     @SchemaColumn(order=6, name="last_distro_time", description="the time the last distro check was started")
     public Timestamp getLastDistroTime() {
-        return lastDistroTime;
+        return lastDistroTime==null ? null : new Timestamp(lastDistroTime);
     }
 
     static final String COLUMN_FAILOVER_SERVER = "failover_server";
@@ -261,7 +261,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     @Override
     public com.aoindustries.aoserv.client.beans.AOServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServer(key, getBean(hostname), daemonBind, getBean(daemonKey), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getBean(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
+        return new com.aoindustries.aoserv.client.beans.AOServer(key, getBean(hostname), daemonBind, getBean(daemonKey), poolSize, distroHour, getLastDistroTime(), failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getBean(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 

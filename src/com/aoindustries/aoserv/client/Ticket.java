@@ -51,11 +51,11 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     transient private String details;
     transient private boolean rawEmailLoaded;
     transient private String rawEmail;
-    final private Timestamp openDate;
+    final private long openDate;
     private String clientPriority;
     private String adminPriority;
     private String status;
-    final private Timestamp statusTimeout;
+    final private Long statusTimeout;
     final private String contactEmails;
     final private String contactPhoneNumbers;
     transient private boolean internalNotesLoaded;
@@ -73,11 +73,11 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
         String ticketType,
         Email fromAddress,
         String summary,
-        Timestamp openDate,
+        long openDate,
         String clientPriority,
         String adminPriority,
         String status,
-        Timestamp statusTimeout,
+        Long statusTimeout,
         String contactEmails,
         String contactPhoneNumbers
     ) {
@@ -124,7 +124,7 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     protected int compareToImpl(Ticket other) {
-        int diff = other.openDate.compareTo(openDate); // Descending
+        int diff = AOServObjectUtils.compare(other.openDate, openDate); // Descending
         if(diff!=0) return diff;
         return AOServObjectUtils.compare(other.key, key); // Descending
     }
@@ -220,7 +220,7 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
 
     @SchemaColumn(order=11, name="open_date", description="the time the ticket was opened")
     public Timestamp getOpenDate() {
-        return openDate;
+        return new Timestamp(openDate);
     }
 
     static final String COLUMN_CLIENT_PRIORITY = "client_priority";
@@ -244,7 +244,7 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
 
     @SchemaColumn(order=15, name="status_timeout", description="the time the ticket status will automatically return to \"opened\"")
     public Timestamp getStatusTimeout() {
-        return statusTimeout;
+        return statusTimeout==null ? null : new Timestamp(statusTimeout);
     }
 
     @SchemaColumn(order=16, name="contact_emails", description="the set of email addresses that will be notified for the ticket")
@@ -282,11 +282,11 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
             ticketType,
             getBean(fromAddress),
             summary,
-            openDate,
+            getOpenDate(),
             clientPriority,
             adminPriority,
             status,
-            statusTimeout,
+            getStatusTimeout(),
             contactEmails,
             contactPhoneNumbers
         );

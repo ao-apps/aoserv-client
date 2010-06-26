@@ -42,7 +42,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
     private String country;
     final private String zip;
     final private boolean sendInvoice;
-    final private Timestamp created;
+    final private long created;
     final private String billingContact;
     final private String billingEmail;
     final private String technicalContact;
@@ -64,7 +64,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
         String country,
         String zip,
         boolean sendInvoice,
-        Timestamp created,
+        long created,
         String billingContact,
         String billingEmail,
         String technicalContact,
@@ -187,7 +187,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
 
     @SchemaColumn(order=14, name="created", description="the time this entry was created")
     public Timestamp getCreated() {
-        return created;
+        return new Timestamp(created);
     }
 
     @SchemaColumn(order=15, name="billing_contact", description="the name to contact for billing information")
@@ -227,7 +227,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
     // <editor-fold defaultstate="collapsed" desc="JavaBeans">
     @Override
     public com.aoindustries.aoserv.client.beans.BusinessProfile getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessProfile(key, getBean(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
+        return new com.aoindustries.aoserv.client.beans.BusinessProfile(key, getBean(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, getCreated(), billingContact, billingEmail, technicalContact, technicalEmail);
     }
     // </editor-fold>
 
