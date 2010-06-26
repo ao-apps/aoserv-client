@@ -6,11 +6,14 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.ErrorPrinter;
+import com.aoindustries.util.ArraySet;
+import com.aoindustries.util.ArraySortedSet;
+import com.aoindustries.util.HashCodeComparator;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,14 +41,40 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
     }
 
     /**
-     * Chooses the best constructor.
+     * Chooses the best constructor, preferring faster wrapping speed.
      */
-    public static <T extends AOServObject> IndexedSet<T> wrap(Set<T> wrapped) {
+    /*
+    public static <T extends AOServObject> IndexedSet<T> wrapFast(Set<T> wrapped) {
         int size = wrapped.size();
         if(size==0) return emptyIndexedSet();
         if(wrapped instanceof IndexedSet) return (IndexedSet<T>)wrapped;
         if(size==1) return new IndexedSet<T>(wrapped.iterator().next());
         return new IndexedSet<T>(wrapped);
+    }*/
+
+    /**
+     * Chooses the best constructor, preferring the most heap-efficient storage.
+     */
+    public static <T extends AOServObject> IndexedSet<T> wrap(Set<T> wrapped) {
+        int size = wrapped.size();
+        // Empty
+        if(size==0) return emptyIndexedSet();
+        // Already IndexedSet
+        if(wrapped instanceof IndexedSet) return (IndexedSet<T>)wrapped;
+        if(size==1) return new IndexedSet<T>(wrapped.iterator().next());
+        // These are already compact
+        if(wrapped instanceof ArraySet) {
+            ((ArraySet)wrapped).trimToSize();
+            return new IndexedSet<T>(wrapped);
+        }
+        if(wrapped instanceof ArraySortedSet) {
+            ((ArraySortedSet)wrapped).trimToSize();
+            return new IndexedSet<T>(wrapped);
+        }
+        // Make it be an ArraySet
+        ArrayList<T> elements = new ArrayList<T>(wrapped);
+        Collections.sort(elements, HashCodeComparator.getInstance());
+        return new IndexedSet<T>(new ArraySet<T>(elements));
     }
 
     private final Set<E> wrapped;

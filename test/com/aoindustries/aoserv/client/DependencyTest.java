@@ -1,9 +1,10 @@
-package com.aoindustries.aoserv.client;
 /*
  * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.util.Sequence;
 import com.aoindustries.util.UnsynchronizedSequence;
 import java.io.IOException;
@@ -117,7 +118,6 @@ public class DependencyTest extends TestCase {
             Map<AOServObject,AOServObject> predecessors = new HashMap<AOServObject,AOServObject>();
             Sequence time = new UnsynchronizedSequence();
             for(ServiceName serviceName : ServiceName.values) {
-
                 AOServService<?,?,?,?> service = conn.getServices().get(serviceName);
                 Set<? extends AOServObject<?,? extends AOServObject>> set = service.getSet();
                 int numRows = set.size();
@@ -142,7 +142,7 @@ public class DependencyTest extends TestCase {
 
     public void testGetDependencies() throws Exception {
         System.out.println("Testing getDependencies:");
-        //for(int c=0; c<10; c++) {
+        //for(int c=0; c<1000; c++) {
             doTestGetDependencies();
         //}
     }
@@ -156,7 +156,7 @@ public class DependencyTest extends TestCase {
 
     public void testGetDependentObjects() throws Exception {
         System.out.println("Testing getDependentObjects:");
-        //for(int c=0; c<10; c++) {
+        //for(int c=0; c<1000; c++) {
             doTestGetDependentObjects();
         //}
     }
