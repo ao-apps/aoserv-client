@@ -290,7 +290,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailPipes());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSystemEmailAliases());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmtpRelays());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSharedTomcats());
         return unionSet;
     }
@@ -413,6 +413,10 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return nd.getPrimaryIPAddress();
     }
 
+    public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
+        return getService().getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_AO_SERVER, this);
+    }
+
     /* TODO
     public IPAddress getDaemonIPAddress() throws IOException {
         NetBind nb=getDaemonBind();
@@ -495,10 +499,6 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
 
     public List<SystemEmailAlias> getSystemEmailAliases() throws IOException {
         return getService().getConnector().getSystemEmailAliases().getSystemEmailAliases(this);
-    }
-
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException {
-        return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
     }
      */
     // </editor-fold>

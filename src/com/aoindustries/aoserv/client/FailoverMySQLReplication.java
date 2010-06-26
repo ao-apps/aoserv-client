@@ -70,7 +70,8 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
         return key;
     }
 
-    @SchemaColumn(order=1, name="ao_server", description="the ao_server that receives the replication")
+    static final String COLUMN_AO_SERVER = "ao_server";
+    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the ao_server that receives the replication")
     public AOServer getAOServer() throws RemoteException {
         if(aoServer==null) return null;
         return getService().getConnector().getAoServers().get(aoServer);

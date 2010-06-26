@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentMap;
  *   <li>Be non-null</li>
  *   <li>Be non-empty</li>
  *   <li>Be between 1 and 64 characters</li>
- *   <li>Must start with <code>[a-z]</code></li>
- *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
+ *   <li>Must start with <code>[a-z], [A-Z], or [0-9]</code></li>
+ *   <li>The rest of the characters may contain [a-z], [A-Z], [0-9], and underscore (_)</li>
  *   <li>Must not be a MySQL reserved word</li>
  * </ul>
  *
@@ -47,11 +47,12 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
         if(len==0) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.isEmpty");
         if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.tooLong", MAX_LENGTH, len);
 
-        // The first character must be [a-z] or [0-9]
+        // The first character must be [a-z],  or [0-9]
         char ch = name.charAt(0);
         if(
             (ch < 'a' || ch > 'z')
-            && (ch<'0' || ch>'9')
+            && (ch < 'A' || ch > 'Z')
+            && (ch < '0' || ch > '9')
         ) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.startAtoZor0to9");
 
         // The rest may have additional characters
@@ -59,8 +60,9 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
             ch = name.charAt(c);
             if (
                 (ch<'a' || ch>'z')
-                && (ch<'0' || ch>'9')
-                && ch!='_'
+                && (ch < 'A' || ch > 'Z')
+                && (ch < '0' || ch > '9')
+                && ch != '_'
             ) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.illegalCharacter");
     	}
         if(MySQLServer.ReservedWord.isReservedWord(name)) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.reservedWord");
