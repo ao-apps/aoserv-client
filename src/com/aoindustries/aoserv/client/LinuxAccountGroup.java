@@ -113,8 +113,8 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
         return ApplicationResources.accessor.getMessage(
             "LinuxAccountGroup.toString",
             la.getAoServerResource().getAoServer().getHostname(),
-            la.getUsername().getUsername(),
-            getLinuxGroup().getGroupName().getGroupName()
+            la.getUserId(),
+            getLinuxGroup().getGroupId()
         );
     }
     // </editor-fold>

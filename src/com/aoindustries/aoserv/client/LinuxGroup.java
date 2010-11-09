@@ -133,6 +133,9 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
     public GroupName getGroupName() throws RemoteException {
         return getService().getConnector().getGroupNames().get(groupName);
     }
+    public GroupId getGroupId() {
+        return groupName;
+    }
 
     @SchemaColumn(order=3, name="gid", description="the gid of the group on the machine")
     public LinuxID getGid() {

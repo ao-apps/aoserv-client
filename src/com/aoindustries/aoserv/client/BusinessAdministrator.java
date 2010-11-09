@@ -136,6 +136,9 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     public Username getUsername() throws RemoteException {
         return getService().getConnector().getUsernames().get(getKey());
     }
+    public UserId getUserId() {
+        return getKey();
+    }
 
     @SchemaColumn(order=1, name="password", description="the encrypted password for this admin")
     public HashedPassword getPassword() {
@@ -427,9 +430,14 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Access Control">
-    /**
-     * Determines if this user can access the provided accounting code.
-     */
+    public boolean canAccessAoServer(AOServer server) throws RemoteException {
+        return canAccessServer(server.getServer());
+    }
+
+    public boolean canAccessBusiness(Business business) throws RemoteException {
+        return canAccessBusiness(business.getAccounting());
+    }
+
     public boolean canAccessBusiness(AccountingCode accounting) throws RemoteException {
         MasterUser mu = getMasterUser();
         if(mu!=null) {
@@ -454,29 +462,79 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         }
     }
 
-    /**
-     * Checks if this user can access the provided accounting code.
-     *
-     * @exception  SecurityException  if does not have access
-     */
-    /*
-    public static void checkAccessBusiness(DatabaseConnection conn, RequestSource source, String action, String accounting) throws RemoteException, SecurityException {
-        if(!canAccessBusiness(conn, source, accounting)) {
-            String message=
-            "business_administrator.username="
-            +source.getUsername()
-            +" is not allowed to access business: action='"
-            +action
-            +"', accounting="
-            +accounting
-            ;
-            throw new SQLException(message);
-        }
-    }*/
+    public boolean canAccessLinuxAccount(LinuxAccount linuxAccount) throws RemoteException {
+        return canAccessLinuxAccount(linuxAccount.getAoServerResource().getResource().getPkey());
+    }
 
-    /**
-     * Determines if this user can access the provided server.
-     */
+    public boolean canAccessLinuxAccount(int aoServerResource) throws RemoteException {
+        MasterUser mu = getMasterUser();
+        if(mu!=null) {
+            IndexedSet<MasterServer> mss = mu.getMasterServers();
+            if(mss.isEmpty()) {
+                // Unrestricted master
+                return true;
+            } else {
+                // Restricted by server
+                LinuxAccount la = getService().getConnector().getLinuxAccounts().filterUnique(LinuxAccount.COLUMN_AO_SERVER_RESOURCE, aoServerResource);
+                return la!=null && canAccessAoServer(la.getAoServerResource().getAoServer());
+            }
+        } else {
+            // Regular user
+            LinuxAccount la = getService().getConnector().getLinuxAccounts().filterUnique(LinuxAccount.COLUMN_AO_SERVER_RESOURCE, aoServerResource);
+            return la!=null && canAccessUsername(la.getUserId());
+        }
+    }
+
+    public boolean canAccessMySQLUser(MySQLUser mysqlUser) throws RemoteException {
+        return canAccessMySQLUser(mysqlUser.getAoServerResource().getResource().getPkey());
+    }
+
+    public boolean canAccessMySQLUser(int mysqlUser) throws RemoteException {
+        MasterUser mu = getMasterUser();
+        if(mu!=null) {
+            IndexedSet<MasterServer> mss = mu.getMasterServers();
+            if(mss.isEmpty()) {
+                // Unrestricted master
+                return true;
+            } else {
+                // Restricted by server
+                MySQLUser mysqlUserObj = getService().getConnector().getMysqlUsers().filterUnique(MySQLUser.COLUMN_AO_SERVER_RESOURCE, mysqlUser);
+                return mysqlUserObj!=null && canAccessAoServer(mysqlUserObj.getAoServerResource().getAoServer());
+            }
+        } else {
+            // Regular user
+            MySQLUser mysqlUserObj = getService().getConnector().getMysqlUsers().filterUnique(MySQLUser.COLUMN_AO_SERVER_RESOURCE, mysqlUser);
+            return mysqlUserObj!=null && canAccessUsername(mysqlUserObj.getUsername().getUsername());
+        }
+    }
+
+    public boolean canAccessPostgresUser(PostgresUser postgresUser) throws RemoteException {
+        return canAccessPostgresUser(postgresUser.getAoServerResource().getResource().getPkey());
+    }
+
+    public boolean canAccessPostgresUser(int postgresUser) throws RemoteException {
+        MasterUser mu = getMasterUser();
+        if(mu!=null) {
+            IndexedSet<MasterServer> mss = mu.getMasterServers();
+            if(mss.isEmpty()) {
+                // Unrestricted master
+                return true;
+            } else {
+                // Restricted by server
+                PostgresUser postgresUserObj = getService().getConnector().getPostgresUsers().filterUnique(PostgresUser.COLUMN_AO_SERVER_RESOURCE, postgresUser);
+                return postgresUserObj!=null && canAccessAoServer(postgresUserObj.getAoServerResource().getAoServer());
+            }
+        } else {
+            // Regular user
+            PostgresUser postgresUserObj = getService().getConnector().getPostgresUsers().filterUnique(PostgresUser.COLUMN_AO_SERVER_RESOURCE, postgresUser);
+            return postgresUserObj!=null && canAccessUsername(postgresUserObj.getUsername().getUsername());
+        }
+    }
+
+    public boolean canAccessServer(Server server) throws RemoteException {
+        return canAccessServer(server.getPkey());
+    }
+
     public boolean canAccessServer(int server) throws RemoteException {
         MasterUser mu = getMasterUser();
         if(mu!=null) {
@@ -496,9 +554,13 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         }
     }
 
+    public boolean canAccessUsername(Username username) throws RemoteException {
+        return canAccessUsername(username.getUsername());
+    }
+
     public boolean canAccessUsername(UserId username) throws RemoteException {
         Username un = getService().getConnector().getUsernames().filterUnique(Username.COLUMN_USERNAME, username);
-        return un!=null && canAccessBusiness(un.getBusiness().getAccounting());
+        return un!=null && canAccessBusiness(un.getBusiness());
     }
     // </editor-fold>
 

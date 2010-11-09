@@ -413,6 +413,14 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         return nd.getPrimaryIPAddress();
     }
 
+    public InetAddress getDaemonConnectorIP() throws RemoteException {
+        InetAddress address = getDaemonConnectAddress();
+        if(address!=null) return address;
+        address = getDaemonConnectBind().getIpAddress().getIpAddress();
+        if(address.isUnspecified()) address = getPrimaryIPAddress().getIpAddress();
+        return address;
+    }
+
     public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
         return getService().getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_AO_SERVER, this);
     }

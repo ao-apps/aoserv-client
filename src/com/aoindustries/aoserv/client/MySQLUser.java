@@ -72,7 +72,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
      * A password may be set to null, which means that the account will
      * be disabled.
      */
-    public static final String NO_PASSWORD=null;
+    //public static final String NO_PASSWORD=null;
 
     public static final String NO_PASSWORD_DB_VALUE="*";
     // </editor-fold>
@@ -217,7 +217,8 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
+    public static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
+    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
     public AOServerResource getAoServerResource() throws RemoteException {
         return getService().getConnector().getAoServerResources().get(key);
     }
@@ -226,6 +227,9 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the MySQL user")
     public Username getUsername() throws RemoteException {
         return getService().getConnector().getUsernames().get(username.getUserId());
+    }
+    public MySQLUserId getUserId() {
+        return username;
     }
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";

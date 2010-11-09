@@ -99,7 +99,7 @@ public class GetUniqueRowTest extends TestCase {
             for(AOServer ao : conn.getAoServers().getSet()) {
                 System.out.println("        "+ao);
                 for(LinuxAccount la : new TreeSet<LinuxAccount>(ao.getLinuxAccounts())) {
-                    UserId userId = la.getUsername().getUsername();
+                    UserId userId = la.getUserId();
                     System.out.println("            "+userId+"->"+ao.getLinuxAccount(userId));
                 }
             }

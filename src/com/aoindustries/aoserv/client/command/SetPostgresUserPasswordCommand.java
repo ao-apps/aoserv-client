@@ -1,12 +1,14 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.PostgresUser;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -20,13 +22,14 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
     private static final long serialVersionUID = 1L;
 
     public static final String PARAM_POSTGRES_USER = "postgresUser";
+    public static final String PARAM_PLAINTEXT = "plaintext";
 
     final private int postgresUser;
     final private String plaintext;
 
     public SetPostgresUserPasswordCommand(
         @Param(name=PARAM_POSTGRES_USER) int postgresUser,
-        @Param(name="plaintext") String plaintext
+        @Param(name=PARAM_PLAINTEXT) String plaintext
     ) {
         this.postgresUser = postgresUser;
         this.plaintext = plaintext;
@@ -43,12 +46,29 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
     @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
-        PostgresUser pu = connectedUser.getService().getConnector().getPostgresUsers().get(postgresUser);
-        if(pu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.disabled");
-        if(
-            pu.getUsername().getUsername()==PostgresUser.POSTGRES.getUserId() // OK - interned
-        ) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
-        // TODO: Check password strength
+        // Check access
+        if(!connectedUser.canAccessPostgresUser(postgresUser)) {
+            errors = addValidationError(errors, PARAM_POSTGRES_USER, "Common.validate.accessDenied");
+        } else {
+            // No setting root password
+            PostgresUser pu = connectedUser.getService().getConnector().getPostgresUsers().get(postgresUser);
+            PostgresUserId username = pu.getUserId();
+            if(
+                username==PostgresUser.POSTGRES // OK - interned
+            ) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
+            else {
+                // Make sure not disabled
+                if(pu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.disabled");
+                else {
+                    // Check password strength
+                    try {
+                        if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, PostgresUser.checkPassword(username, plaintext));
+                    } catch(IOException err) {
+                        throw new RemoteException(err.getMessage(), err);
+                    }
+                }
+            }
+        }
         return errors;
     }
 }

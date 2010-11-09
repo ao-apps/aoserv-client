@@ -1,12 +1,14 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.LinuxAccount;
+import com.aoindustries.aoserv.client.LinuxAccountType;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -20,13 +22,14 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
     private static final long serialVersionUID = 1L;
 
     public static final String PARAM_LINUX_ACCOUNT = "linuxAccount";
+    public static final String PARAM_PLAINTEXT = "plaintext";
 
     final private int linuxAccount;
     final private String plaintext;
 
     public SetLinuxAccountPasswordCommand(
         @Param(name=PARAM_LINUX_ACCOUNT) int linuxAccount,
-        @Param(name="plaintext") String plaintext
+        @Param(name=PARAM_PLAINTEXT) String plaintext
     ) {
         this.linuxAccount = linuxAccount;
         this.plaintext = plaintext;
@@ -43,10 +46,25 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
     @Override
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
-        LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
-        if(la.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.disabled");
-        if(!la.getLinuxAccountType().isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
-        // TODO: Check password strength
+        // Check access
+        if(!connectedUser.canAccessLinuxAccount(linuxAccount)) {
+            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "Common.validate.accessDenied");
+        } else {
+            LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
+            // Enforce can't set password type
+            LinuxAccountType lat = la.getLinuxAccountType();
+            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
+            // Make sure not disabled
+            if(la.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.disabled");
+            else {
+                // Check password strength
+                try {
+                    if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, lat.checkPassword(la.getUserId(), plaintext));
+                } catch(IOException err) {
+                    throw new RemoteException(err.getMessage(), err);
+                }
+            }
+        }
         return errors;
     }
 }

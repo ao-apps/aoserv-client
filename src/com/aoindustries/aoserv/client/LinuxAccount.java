@@ -159,6 +159,9 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     public Username getUsername() throws RemoteException {
         return getService().getConnector().getUsernames().get(username);
     }
+    public UserId getUserId() {
+        return username;
+    }
 
     static final String COLUMN_UID = "uid";
     @SchemaColumn(order=3, name=COLUMN_UID, index=IndexType.INDEXED, description="the uid of the user on the machine")
@@ -309,10 +312,6 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getUsername().disable_log==-1;
-    }
-
-    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
-        return checkPassword(pkey, type, password);
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {

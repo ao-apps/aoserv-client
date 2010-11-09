@@ -198,7 +198,7 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
     @Override
     String toStringImpl() throws RemoteException {
         LinuxAccount la = getLinuxAccount();
-        return ApplicationResources.accessor.getMessage("EmailInbox.toString", la.getUsername().getUsername(), la.getAoServerResource().getAoServer().getHostname());
+        return ApplicationResources.accessor.getMessage("EmailInbox.toString", la.getUserId(), la.getAoServerResource().getAoServer().getHostname());
     }
     // </editor-fold>
 
