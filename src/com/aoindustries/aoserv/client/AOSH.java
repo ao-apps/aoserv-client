@@ -1,16 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.command.AOServCommand;
 import com.aoindustries.aoserv.client.command.AOServPermissionException;
 import com.aoindustries.aoserv.client.command.CommandName;
 import com.aoindustries.aoserv.client.command.Param;
-import com.aoindustries.aoserv.client.command.ValidationException;
+import com.aoindustries.aoserv.client.command.CommandValidationException;
 import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.sql.SQLUtility;
@@ -46,7 +47,7 @@ final public class AOSH extends ShellInterpreter {
     private static final Reader nullInput=new CharArrayReader(new char[0]);
 
     // TODO: Make this be a -d (debug) switch
-    private static final boolean STACK_TRACES = true;
+    private static final boolean STACK_TRACES = false;
 
     /**
      * Built-in commands.
@@ -230,6 +231,18 @@ final public class AOSH extends ShellInterpreter {
         return ApplicationResources.accessor.getMessage("AOSH.prompt", connector.getConnectAs());
     }
 
+    private class ParameterException extends Exception {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String parameterName;
+
+        private ParameterException(String parameterName, Throwable cause) {
+            super(cause.getMessage(), cause);
+            this.parameterName = parameterName;
+        }
+    }
+
     /**
      * Processes one command and returns.
      *
@@ -271,50 +284,68 @@ final public class AOSH extends ShellInterpreter {
                                 err.println(ApplicationResources.accessor.getMessage("AOSH.tooManyParameters", command));
                                 err.flush();
                             } else {
-                                // Convert the parameters
-                                Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
-                                Object[] parameters = new Object[parameterTypes.length];
-                                for(int c=0; c<parameterTypes.length; c++) {
-                                    // Find the @Param annotation
-                                    Param paramAnnotation = null;
-                                    String arg = args[c+1];
-                                    for(Annotation anno : parameterAnnotations[c]) {
-                                        if(anno instanceof Param) {
-                                            paramAnnotation = (Param)anno;
-                                            break;
-                                        }
-                                    }
-                                    Class<?> parameterType = parameterTypes[c];
-                                    if(parameterType==String.class) {
-                                        // If allows null, convert empty string to null
-                                        if(arg.length()==0 && paramAnnotation.nullable()) parameters[c] = null;
-                                        else parameters[c] = arg;
-                                    } else {
-                                        throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
-                                    }
-                                }
                                 try {
-                                    AOServCommand<?> aoservCommand = constructor.newInstance(parameters);
-                                    // TODO: Make sure current user is enabled
-
-                                    // TODO: Check read-only status
-                                    
-                                    // TODO: Check permissions
-
-                                    // Validate
-                                    Map<String,List<String>> errors = aoservCommand.validate(connector);
-                                    if(!errors.isEmpty()) throw new ValidationException(aoservCommand, errors);
-
-                                    Object resultObj = aoservCommand.execute(connector, isInteractive());
-                                    if(resultObj!=null) {
-                                        String s = resultObj.toString();
-                                        if(isInteractive()) {
-                                            printBoldItalic(s, out);
-                                        } else {
-                                            out.print(s);
+                                    // Convert the parameters
+                                    Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
+                                    Object[] parameters = new Object[parameterTypes.length];
+                                    for(int c=0; c<parameterTypes.length; c++) {
+                                        // Find the @Param annotation
+                                        Param paramAnnotation = null;
+                                        String arg = args[c+1];
+                                        for(Annotation anno : parameterAnnotations[c]) {
+                                            if(anno instanceof Param) {
+                                                paramAnnotation = (Param)anno;
+                                                break;
+                                            }
                                         }
-                                        if(!s.endsWith(eol)) out.println();
-                                        out.flush();
+                                        Class<?> parameterType = parameterTypes[c];
+                                        if(parameterType==String.class) {
+                                            // If allows null, convert empty string to null
+                                            if(arg.length()==0 && paramAnnotation.nullable()) parameters[c] = null;
+                                            else parameters[c] = arg;
+                                        } else if(parameterType==UserId.class) {
+                                            // If allows null, convert empty string to null
+                                            if(arg.length()==0 && paramAnnotation.nullable()) parameters[c] = null;
+                                            else {
+                                                try {
+                                                    parameters[c] = UserId.valueOf(arg);
+                                                } catch(ValidationException validationException) {
+                                                    throw new ParameterException(paramAnnotation.name(), validationException);
+                                                }
+                                            }
+                                        } else {
+                                            throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
+                                        }
+                                    }
+                                    AOServCommand<?> aoservCommand = constructor.newInstance(parameters);
+                                    // Make sure current user is enabled (this is done server-side)
+
+                                    // Check permissions
+                                    Set<AOServPermission.Permission> permissions = aoservCommand.getCommandName().getPermissions();
+                                    BusinessAdministrator thisBa = connector.getThisBusinessAdministrator();
+                                    if(thisBa.hasPermissions(permissions)) {
+                                        // Validate
+                                        Map<String,List<String>> errors = aoservCommand.validate(connector);
+                                        if(!errors.isEmpty()) throw new CommandValidationException(aoservCommand, errors);
+
+                                        Object resultObj = aoservCommand.execute(connector, isInteractive());
+                                        if(resultObj!=null) {
+                                            String s = resultObj.toString();
+                                            if(isInteractive()) {
+                                                printBoldItalic(s, out);
+                                            } else {
+                                                out.print(s);
+                                            }
+                                            if(!s.endsWith(eol)) out.println();
+                                            out.flush();
+                                        }
+                                    } else {
+                                        err.println(ApplicationResources.accessor.getMessage("AOSH.PermissionDenied.command", command));
+                                        for(AOServPermission.Permission permission : permissions) {
+                                            if(thisBa.hasPermission(permission)) err.println(ApplicationResources.accessor.getMessage("AOSH.PermissionDenied.hasPermission", permission));
+                                            else err.println(ApplicationResources.accessor.getMessage("AOSH.PermissionDenied.notHasPermission", permission));
+                                        }
+                                        err.flush();
                                     }
                                 } catch(InstantiationException exc) {
                                     err.println(ApplicationResources.accessor.getMessage("AOSH.InstantiationException", command, exc.getMessage()));
@@ -333,14 +364,18 @@ final public class AOSH extends ShellInterpreter {
                                     // TODO
                                     if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
-                                } catch(ValidationException exc) {
+                                } catch(CommandValidationException exc) {
                                     StringBuilder SB = new StringBuilder();
-                                    SB.append(ApplicationResources.accessor.getMessage("AOSH.validationFailed", command)).append(eol);
+                                    SB.append(ApplicationResources.accessor.getMessage("AOSH.CommandValidationException", command)).append(eol);
                                     for(Map.Entry<String,List<String>> entry : exc.getErrors().entrySet()) {
                                         String paramName = entry.getKey();
-                                        for(String message : entry.getValue()) SB.append(ApplicationResources.accessor.getMessage("AOSH.validationFailedError", paramName, message)).append(eol);
+                                        for(String message : entry.getValue()) SB.append(ApplicationResources.accessor.getMessage("AOSH.CommandValidationExceptionError", paramName, message)).append(eol);
                                     }
                                     err.print(SB.toString());
+                                    if(STACK_TRACES) exc.printStackTrace(err);
+                                    err.flush();
+                                } catch(ParameterException exc) {
+                                    err.print(ApplicationResources.accessor.getMessage("AOSH.ParameterException", command, exc.parameterName, exc.getCause().getMessage()));
                                     if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(RemoteException exc) {

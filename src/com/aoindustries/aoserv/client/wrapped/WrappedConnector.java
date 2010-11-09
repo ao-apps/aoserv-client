@@ -542,7 +542,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
                     }
                 }
             },
-            command.isRetryableCommand()
+            command.isIdempotent()
         );
     }
 

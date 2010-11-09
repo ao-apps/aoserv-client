@@ -441,8 +441,8 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Commands">
-    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
-        return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
+    public static PasswordChecker.Result[] checkPassword(MySQLUserId username, String password) throws IOException {
+        return PasswordChecker.checkPassword(username.getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
     }
 
     public void setPredisablePassword(String password) throws RemoteException {

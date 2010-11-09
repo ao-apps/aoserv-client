@@ -456,7 +456,10 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
 
     @Override
     public <R> CommandResult<R> executeCommand(RemoteCommand<R> command, boolean isInteractive) throws RemoteException {
-        return wrapped.executeCommand(command, isInteractive);
+        CommandResult<R> result = wrapped.executeCommand(command, isInteractive);
+        Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>> services = getServices();
+        for(ServiceName service : result.getModifiedServiceNames()) ((CachedService)services.get(service)).clearCache();
+        return result;
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<CachedConnector,CachedConnectorFactory,?,?>>>();

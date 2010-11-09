@@ -1,30 +1,18 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.AOServConnector;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
- * <p>
  * A command that runs remotely (accesses the master).  It may be transferred
  * via serialization or a combination of the getParamMap and createRemoteCommand
  * methods.
- * </p>
  *
  * @author  AO Industries, Inc.
  */
@@ -32,7 +20,7 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
 
     private static final long serialVersionUID = 1L;
 
-    private static final Object[] emptyObjectArray = new Object[0];
+    //private static final Object[] emptyObjectArray = new Object[0];
 
     /**
      * <p>
@@ -49,6 +37,7 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
      * </p>
      * @see  #createRemoteCommand  to reconstruct the command object
      */
+    /*
     public Map<String,String> getParamMap() {
         try {
             Constructor<? extends AOServCommand<?>> constructor = getCommandConstructor(getCommandName());
@@ -104,32 +93,12 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
             throw new RuntimeException(err);
         }
     }
-
-    /**
-     * <p>
-     * Constructs a remote command given its name and parameter map.
-     * </p>
-     * <p>
-     * Commands are passed as a map of name, value pairs.
-     * To help maintain compatibility between versions, any extra parameters
-     * are ignored, while any missing parameters will default to null.  If
-     * a parameter is non-nullable and missing, it will result in an error.
-     * </p>
-     * <p>
-     * Just like AOSH, any parameters that are nullable and an empty string will
-     * be converted to null.
-     * </p>
-     *
-     * @see  #getParamMap()
-     */
-    public static RemoteCommand<?> createRemoteCommand(CommandName commandName, Map<String,String> paramMap) {
-        throw new RuntimeException("TODO: Implement method");
-    }
+    */
 
     /**
      * Determines if this command may be retried in the event of an error.  Defaults to <code>true</code>.
      */
-    public boolean isRetryableCommand() {
+    public boolean isIdempotent() {
         return true;
     }
 

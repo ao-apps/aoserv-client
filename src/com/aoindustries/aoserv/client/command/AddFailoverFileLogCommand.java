@@ -20,8 +20,8 @@ final public class AddFailoverFileLogCommand extends RemoteCommand<Integer> {
     private static final long serialVersionUID = 1L;
 
     final private int replication;
-    final private Timestamp startTime;
-    final private Timestamp endTime;
+    final private long startTime;
+    final private long endTime;
     final private int scanned;
     final private int updated;
     final private long bytes;
@@ -37,8 +37,8 @@ final public class AddFailoverFileLogCommand extends RemoteCommand<Integer> {
         @Param(name="isSuccessful") boolean isSuccessful
     ) {
         this.replication = replication;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startTime = startTime.getTime();
+        this.endTime = endTime.getTime();
         this.scanned = scanned;
         this.updated = updated;
         this.bytes = bytes;
@@ -50,11 +50,11 @@ final public class AddFailoverFileLogCommand extends RemoteCommand<Integer> {
     }
 
     public Timestamp getStartTime() {
-        return startTime;
+        return new Timestamp(startTime);
     }
 
     public Timestamp getEndTime() {
-        return endTime;
+        return new Timestamp(endTime);
     }
 
     public int getScanned() {

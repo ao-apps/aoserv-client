@@ -8,15 +8,16 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Cached for various AOServConnectorFactory implementations.  Not intended for direct use.
- * This class is not thread safe.
+ * This class is not thread safe and must be externally synchronized.
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> {
+final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> implements Iterable<C> {
 
     static class CacheKey {
 
@@ -79,5 +80,10 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector<C,F>, F
         C connector
     ) {
         connectors.put(new CacheKey(connectAs, authenticateAs, password, daemonServer), connector);
+    }
+
+    @Override
+    public Iterator<C> iterator() {
+        return connectors.values().iterator();
     }
 }

@@ -213,8 +213,8 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
         return checkPassword(pkey, password);
     }
     */
-    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
-        return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
+    public static PasswordChecker.Result[] checkPassword(PostgresUserId username, String password) throws IOException {
+        return PasswordChecker.checkPassword(username.getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
     }
 
     /*

@@ -52,7 +52,8 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="username", index=IndexType.PRIMARY_KEY, description="the unique username")
+    public static final String COLUMN_USERNAME = "username";
+    @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique username")
     public UserId getUsername() {
         return getKey();
     }

@@ -160,11 +160,9 @@ abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>
 
     /**
      * Clears the cache, freeing up memory.  The data will be reloaded upon next use.
-     * TODO: Clear when table invalidated
+     * TODO: Clear in asynchronous mode
      */
-    //@Override
     void clearCache() {
-        //super.clearCache();
         synchronized(cachedSetLock) {
             cachedSet = null;
         }

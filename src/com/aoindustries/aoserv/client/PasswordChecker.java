@@ -5,6 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.EncodingUtils;
 import com.aoindustries.util.zip.CorrectedGZIPInputStream;
@@ -85,7 +86,7 @@ final public class PasswordChecker {
         STRICT
     }
 
-    public static Result[] checkPassword(String username, String password, PasswordStrength strength) throws IOException {
+    public static Result[] checkPassword(UserId username, String password, PasswordStrength strength) throws IOException {
         if(strength==null) throw new IllegalArgumentException("strength==null");
         Result[] results = getAllGoodResults();
         int passwordLen = password.length();
@@ -150,7 +151,7 @@ final public class PasswordChecker {
             /*
              * Must not be the same as your username
              */
-            if(username!=null && username.equalsIgnoreCase(password)) {
+            if(username!=null && username.toString().equalsIgnoreCase(password)) {
                 results[4].result = ApplicationResources.accessor.getMessage("PasswordChecker.dictionary.notSameAsUsername");
             }
 
@@ -269,10 +270,10 @@ final public class PasswordChecker {
     public static boolean hasResults(Result[] results) {
         if(results==null) return false;
         String good = ApplicationResources.accessor.getMessage(GOOD_KEY);
-	for(int c=0;c<NUM_CATEGORIES;c++) {
+    	for(int c=0;c<NUM_CATEGORIES;c++) {
             if(!results[c].result.equals(good)) return true;
-	}
-	return false;
+    	}
+    	return false;
     }
 
     public static int indexOfIgnoreCase(String string,byte[] buffer,int wordstart,int wordlen) {

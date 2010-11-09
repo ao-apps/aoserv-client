@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.io.IOException;
@@ -205,7 +206,7 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
      *
      * @see PasswordChecker
      */
-    public PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
+    public PasswordChecker.Result[] checkPassword(UserId username, String password) throws IOException {
         return PasswordChecker.checkPassword(username, password, getPasswordStrength());
     }
 

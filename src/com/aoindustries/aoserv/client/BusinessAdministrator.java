@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.SetBusinessAdministratorPasswordCommand;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -360,7 +361,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
+    public static PasswordChecker.Result[] checkPassword(UserId username, String password) throws IOException {
         return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
     }
 
@@ -422,6 +423,82 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     @Override
     public String getName() {
         return getKey().toString();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Access Control">
+    /**
+     * Determines if this user can access the provided accounting code.
+     */
+    public boolean canAccessBusiness(AccountingCode accounting) throws RemoteException {
+        MasterUser mu = getMasterUser();
+        if(mu!=null) {
+            IndexedSet<MasterServer> mss = mu.getMasterServers();
+            if(mss.isEmpty()) {
+                // Unrestricted master
+                return true;
+            } else {
+                // Restricted by server
+                Business business = getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
+                if(business!=null) {
+                    IndexedSet<Server> businessServers = business.getServers();
+                    // There is usually only one MasterServer - iterate by it first
+                    for(MasterServer ms : mss) if(businessServers.contains(ms.getServer())) return true;
+                }
+                return false;
+            }
+        } else {
+            // Regular user
+            Business business = getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
+            return business!=null && getUsername().getBusiness().isBusinessOrParentOf(business);
+        }
+    }
+
+    /**
+     * Checks if this user can access the provided accounting code.
+     *
+     * @exception  SecurityException  if does not have access
+     */
+    /*
+    public static void checkAccessBusiness(DatabaseConnection conn, RequestSource source, String action, String accounting) throws RemoteException, SecurityException {
+        if(!canAccessBusiness(conn, source, accounting)) {
+            String message=
+            "business_administrator.username="
+            +source.getUsername()
+            +" is not allowed to access business: action='"
+            +action
+            +"', accounting="
+            +accounting
+            ;
+            throw new SQLException(message);
+        }
+    }*/
+
+    /**
+     * Determines if this user can access the provided server.
+     */
+    public boolean canAccessServer(int server) throws RemoteException {
+        MasterUser mu = getMasterUser();
+        if(mu!=null) {
+            IndexedSet<MasterServer> mss = mu.getMasterServers();
+            if(mss.isEmpty()) {
+                // Unrestricted master
+                return true;
+            } else {
+                // Restricted by server
+                for(MasterServer ms : mss) if(ms.getServer().key==server) return true;
+                return false;
+            }
+        } else {
+            // Regular user
+            Server serverObj = getService().getConnector().getServers().filterUnique(Server.COLUMN_PKEY, server);
+            return serverObj!=null && getUsername().getBusiness().getServers().contains(serverObj);
+        }
+    }
+
+    public boolean canAccessUsername(UserId username) throws RemoteException {
+        Username un = getService().getConnector().getUsernames().filterUnique(Username.COLUMN_USERNAME, username);
+        return un!=null && canAccessBusiness(un.getBusiness().getAccounting());
     }
     // </editor-fold>
 

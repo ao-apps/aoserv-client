@@ -33,7 +33,7 @@ public enum CommandName {
     // business_administrators
     crypt(CryptCommand.class, ServiceName.business_administrators),
     hash_password(HashPasswordCommand.class, ServiceName.business_administrators),
-    set_business_administrator_password(SetBusinessAdministratorPasswordCommand.class, ServiceName.business_administrators),
+    set_business_administrator_password(SetBusinessAdministratorPasswordCommand.class, ServiceName.business_administrators, AOServPermission.Permission.set_business_administrator_password),
     // credit_cards
     add_credit_card(AddCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.add_credit_card),
     update_credit_card(UpdateCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.edit_credit_card),

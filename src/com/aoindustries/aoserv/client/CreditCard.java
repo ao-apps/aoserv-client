@@ -21,7 +21,6 @@ import java.sql.Timestamp;
  * A <code>CreditCard</code> stores credit card information.
  *
  * @author  AO Industries, Inc.
- * @author  AO Industries, Inc.
  */
 final public class CreditCard extends AOServObjectIntegerKey<CreditCard> implements BeanFactory<com.aoindustries.aoserv.client.beans.CreditCard> /*, TODO: Removable */ {
 

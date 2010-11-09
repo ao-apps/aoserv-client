@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client.command;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.PasswordChecker;
 import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -132,6 +133,29 @@ abstract public class AOServCommand<R> {
         List<String> list = errors.get(param);
         if(list==null) errors.put(param, list = new ArrayList<String>());
         list.add(message);
+        return errors;
+    }
+
+    /**
+     * Adds password errors.
+     */
+    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, PasswordChecker.Result[] results) {
+        if(PasswordChecker.hasResults(results)) {
+            for(PasswordChecker.Result result : results) {
+                errors = addValidationError(errors, param, result.getCategory()+": "+result.getResult());
+            }
+        }
+        return errors;
+    }
+
+    /**
+     * Merges validation errors.
+     */
+    protected static Map<String,List<String>> addValidationErrors(Map<String,List<String>> errors, Map<String,List<String>> additional) {
+        for(Map.Entry<String,List<String>> entry : additional.entrySet()) {
+            String param = entry.getKey();
+            for(String message : entry.getValue()) errors = addValidationError(errors, param, message);
+        }
         return errors;
     }
 

@@ -5,7 +5,6 @@
  */
 package com.aoindustries.aoserv.client.validate;
 
-import com.aoindustries.aoserv.client.command.ValidationException;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.math.LongLong;
 import com.aoindustries.sql.SQLUtility;

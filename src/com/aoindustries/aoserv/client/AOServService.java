@@ -102,6 +102,7 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * any rows.
      * The column must have an index type of PRIMARY_KEY or UNIQUE.
      */
+    @Override
     V filterUnique(String columnName, Object value) throws RemoteException;
 
     /**
@@ -109,6 +110,7 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * any rows.
      * The column must have an index type of PRIMARY_KEY or UNIQUE.
      */
+    @Override
     IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException;
 
     /**
@@ -116,6 +118,7 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * any rows.
      * The column must have an index type of INDEXED.
      */
+    @Override
     IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException;
 
     /**
@@ -123,5 +126,6 @@ public interface AOServService<C extends AOServConnector<C,F>, F extends AOServC
      * any rows.
      * The column must have an index type of INDEXED.
      */
+    @Override
     IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException;
 }
