@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.command.AddTicketAnnotationCommand;
+import com.aoindustries.aoserv.client.command.AddTicketCommand;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.StringUtility;
@@ -117,10 +119,11 @@ final public class TicketLoggingHandler extends QueuedHandler {
                 }
             }
             if(existingTicket!=null) {
-                existingTicket.addAnnotation(
+                new AddTicketAnnotationCommand(
+                    existingTicket,
                     generateActionSummary(formatter, record),
                     fullReport
-                );
+                ).execute(existingTicket.getService().getConnector());
             } else {
                 // The priority depends on the log level
                 String priorityName;
@@ -130,7 +133,8 @@ final public class TicketLoggingHandler extends QueuedHandler {
                 else if(intLevel<=Level.WARNING.intValue()) priorityName = TicketPriority.HIGH;    // INFO < level <=WARNING
                 else priorityName = TicketPriority.URGENT;                                         // WARNING < level
                 TicketPriority priority = connector.getTicketPriorities().get(priorityName);
-                brand.addTicket(
+                new AddTicketCommand(
+                    brand,
                     business,
                     language,
                     category,
@@ -141,7 +145,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
                     priority,
                     "",
                     ""
-                );
+                ).execute(connector);
             }
         } catch(Exception err) {
             ErrorPrinter.printStackTraces(err);

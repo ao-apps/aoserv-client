@@ -5,8 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.ReactivateCreditCardCommand;
-import com.aoindustries.aoserv.client.command.UpdateCreditCardCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -408,53 +406,6 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     @Override
     String toStringImpl() {
     	return cardInfo;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    /**
-     * Updates the credit card information (not including the card number).
-     */
-    public void update(
-        String firstName,
-        String lastName,
-        String companyName,
-        Email email,
-        String phone,
-        String fax,
-        String customerTaxId,
-        String streetAddress1,
-        String streetAddress2,
-        String city,
-        String state,
-        String postalCode,
-        CountryCode countryCode,
-        String description
-    ) throws RemoteException {
-        new UpdateCreditCardCommand(
-            key,
-            firstName,
-            lastName,
-            companyName,
-            email,
-            phone,
-            fax,
-            customerTaxId,
-            streetAddress1,
-            streetAddress2,
-            city,
-            state,
-            postalCode,
-            countryCode.getCode(),
-            description
-        ).execute(getService().getConnector());
-    }
-
-    /**
-     * Reactivates a credit card.
-     */
-    public void reactivate() throws RemoteException {
-        new ReactivateCreditCardCommand(key).execute(getService().getConnector());
     }
     // </editor-fold>
 

@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client.command;
 
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.CreditCard;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -21,9 +22,9 @@ final public class ReactivateCreditCardCommand extends RemoteCommand<Void> {
     final private int pkey;
 
     public ReactivateCreditCardCommand(
-        @Param(name="pkey") int pkey
+        @Param(name="creditCard") CreditCard creditCard
     ) {
-        this.pkey = pkey;
+        this.pkey = creditCard.getPkey();
     }
 
     public int getPkey() {

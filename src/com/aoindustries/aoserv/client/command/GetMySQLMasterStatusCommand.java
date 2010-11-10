@@ -1,11 +1,12 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.MySQLServer;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -46,9 +47,9 @@ final public class GetMySQLMasterStatusCommand extends RemoteCommand<GetMySQLMas
     final private int pkey;
 
     public GetMySQLMasterStatusCommand(
-        @Param(name="pkey") int pkey
+        @Param(name="mysqlServer") MySQLServer mysqlServer
     ) {
-        this.pkey = pkey;
+        this.pkey = mysqlServer.getKey();
     }
 
     public int getPkey() {

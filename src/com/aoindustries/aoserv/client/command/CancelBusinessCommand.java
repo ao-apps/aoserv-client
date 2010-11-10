@@ -1,10 +1,11 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
+import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import java.rmi.RemoteException;
@@ -23,10 +24,10 @@ final public class CancelBusinessCommand extends RemoteCommand<Void> {
     final private String cancelReason;
 
     public CancelBusinessCommand(
-        @Param(name="accounting") AccountingCode accounting,
+        @Param(name="business") Business business,
         @Param(name="cancelReason", nullable=true) String cancelReason
     ) {
-        this.accounting = accounting;
+        this.accounting = business.getAccounting();
         this.cancelReason = nullIfEmpty(cancelReason);
     }
 

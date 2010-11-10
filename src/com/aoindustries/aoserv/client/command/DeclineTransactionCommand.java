@@ -6,6 +6,8 @@
 package com.aoindustries.aoserv.client.command;
 
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.CreditCardTransaction;
+import com.aoindustries.aoserv.client.Transaction;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -22,11 +24,11 @@ final public class DeclineTransactionCommand extends RemoteCommand<Void> {
     final private int creditCardTransaction;
 
     public DeclineTransactionCommand(
-        @Param(name="transid") int transid,
-        @Param(name="creditCardTransaction") int creditCardTransaction
+        @Param(name="transaction") Transaction transaction,
+        @Param(name="creditCardTransaction") CreditCardTransaction creditCardTransaction
     ) {
-        this.transid = transid;
-        this.creditCardTransaction = creditCardTransaction;
+        this.transid = transaction.getTransid();
+        this.creditCardTransaction = creditCardTransaction.getPkey();
     }
 
     public int getTransid() {

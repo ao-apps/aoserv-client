@@ -1,11 +1,17 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
+import com.aoindustries.aoserv.client.Brand;
+import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.Language;
+import com.aoindustries.aoserv.client.TicketCategory;
+import com.aoindustries.aoserv.client.TicketPriority;
+import com.aoindustries.aoserv.client.TicketType;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import java.rmi.RemoteException;
@@ -33,27 +39,27 @@ final public class AddTicketCommand extends RemoteCommand<Integer> {
     final private String contactPhoneNumbers;
 
     public AddTicketCommand(
-        @Param(name="brand") AccountingCode brand,
-        @Param(name="business", nullable=true) AccountingCode business,
-        @Param(name="language") String language,
-        @Param(name="category", nullable=true) Integer category,
-        @Param(name="ticketType") String ticketType,
+        @Param(name="brand") Brand brand,
+        @Param(name="business", nullable=true) Business business,
+        @Param(name="language") Language language,
+        @Param(name="category", nullable=true) TicketCategory category,
+        @Param(name="ticketType") TicketType ticketType,
         @Param(name="fromAddress", nullable=true) Email fromAddress,
         @Param(name="summary") String summary,
         @Param(name="details", nullable=true) String details,
-        @Param(name="clientPriority") String clientPriority,
+        @Param(name="clientPriority") TicketPriority clientPriority,
         @Param(name="contactEmails") String contactEmails,
         @Param(name="contactPhoneNumbers") String contactPhoneNumbers
     ) {
-        this.brand = brand;
-        this.business = business;
-        this.language = language;
-        this.category = category;
-        this.ticketType = ticketType;
+        this.brand = brand.getKey();
+        this.business = business==null ? null : business.getAccounting();
+        this.language = language.getKey();
+        this.category = category==null ? null : category.getKey();
+        this.ticketType = ticketType.getKey();
         this.fromAddress = fromAddress;
         this.summary = summary;
         this.details = nullIfEmpty(details);
-        this.clientPriority = clientPriority;
+        this.clientPriority = clientPriority.getKey();
         this.contactEmails = contactEmails;
         this.contactPhoneNumbers = contactPhoneNumbers;
     }

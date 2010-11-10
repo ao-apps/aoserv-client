@@ -1,11 +1,13 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.CountryCode;
+import com.aoindustries.aoserv.client.CreditCard;
 import com.aoindustries.aoserv.client.validator.Email;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -36,7 +38,7 @@ final public class UpdateCreditCardCommand extends RemoteCommand<Void> {
     final private String description;
 
     public UpdateCreditCardCommand(
-        @Param(name="pkey") int pkey,
+        @Param(name="creditCard") CreditCard creditCard,
         @Param(name="firstName") String firstName,
         @Param(name="lastName") String lastName,
         @Param(name="companyName", nullable=true) String companyName,
@@ -49,10 +51,10 @@ final public class UpdateCreditCardCommand extends RemoteCommand<Void> {
         @Param(name="city") String city,
         @Param(name="state", nullable=true) String state,
         @Param(name="postalCode", nullable=true) String postalCode,
-        @Param(name="countryCode") String countryCode,
+        @Param(name="countryCode") CountryCode countryCode,
         @Param(name="description", nullable=true) String description
     ) {
-        this.pkey = pkey;
+        this.pkey = creditCard.getPkey();
         this.firstName = firstName;
         this.lastName = lastName;
         this.companyName = nullIfEmpty(companyName);
@@ -65,7 +67,7 @@ final public class UpdateCreditCardCommand extends RemoteCommand<Void> {
         this.city = city;
         this.state = nullIfEmpty(state);
         this.postalCode = nullIfEmpty(postalCode);
-        this.countryCode = countryCode;
+        this.countryCode = countryCode.getCode();
         this.description = nullIfEmpty(description);
     }
 

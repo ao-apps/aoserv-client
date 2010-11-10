@@ -5,8 +5,12 @@
  */
 package com.aoindustries.aoserv.client.command;
 
+import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.CreditCardProcessor;
+import com.aoindustries.aoserv.client.PaymentType;
 import com.aoindustries.aoserv.client.Transaction;
+import com.aoindustries.aoserv.client.TransactionType;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.util.i18n.Money;
@@ -36,28 +40,28 @@ final public class AddTransactionCommand extends RemoteCommand<Integer> {
     final private Transaction.Status status;
 
     public AddTransactionCommand(
-        @Param(name="accounting") AccountingCode accounting,
-        @Param(name="sourceAccounting") AccountingCode sourceAccounting,
-        @Param(name="username") UserId username,
-        @Param(name="type") String type,
+        @Param(name="business") Business business,
+        @Param(name="sourceBusiness") Business sourceBusiness,
+        @Param(name="businessAdministrator") BusinessAdministrator businessAdministrator,
+        @Param(name="type") TransactionType type,
         @Param(name="description") String description,
         @Param(name="quantity") BigDecimal quantity,
         @Param(name="rate") Money rate,
-        @Param(name="paymentType", nullable=true) String paymentType,
+        @Param(name="paymentType", nullable=true) PaymentType paymentType,
         @Param(name="paymentInfo", nullable=true) String paymentInfo,
-        @Param(name="processor", nullable=true) String processor,
+        @Param(name="processor", nullable=true) CreditCardProcessor processor,
         @Param(name="status", syntax="{Y|N|W}") Transaction.Status status
     ) {
-        this.accounting = accounting;
-        this.sourceAccounting = sourceAccounting;
-        this.username = username;
-        this.type = type;
+        this.accounting = business.getAccounting();
+        this.sourceAccounting = sourceBusiness.getAccounting();
+        this.username = businessAdministrator.getUserId();
+        this.type = type.getName();
         this.description = description;
         this.quantity = quantity;
         this.rate = rate;
-        this.paymentType = nullIfEmpty(paymentType);
+        this.paymentType = paymentType==null ? null : paymentType.getName();
         this.paymentInfo = nullIfEmpty(paymentInfo);
-        this.processor = nullIfEmpty(processor);
+        this.processor = processor==null ? null : processor.getProviderId();
         this.status = status;
     }
 

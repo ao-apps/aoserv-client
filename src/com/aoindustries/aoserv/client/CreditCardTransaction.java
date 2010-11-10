@@ -947,7 +947,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Commands">
+    // <editor-fold defaultstate="collapsed" desc="TODO">
     /**
      * Called when a sale (combined authorization and capture) has been completed.
      */

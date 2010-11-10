@@ -1,11 +1,13 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
+import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.Ticket;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -24,13 +26,13 @@ final public class SetTicketBusinessCommand extends RemoteCommand<Boolean> {
     final private AccountingCode newAccounting;
 
     public SetTicketBusinessCommand(
-        @Param(name="ticketId") int ticketId,
-        @Param(name="oldAccounting", nullable=true) AccountingCode oldAccounting,
-        @Param(name="newAccounting", nullable=true) AccountingCode newAccounting
+        @Param(name="ticket") Ticket ticket,
+        @Param(name="oldBusiness", nullable=true) Business oldBusiness,
+        @Param(name="newBusiness", nullable=true) Business newBusiness
     ) {
-        this.ticketId = ticketId;
-        this.oldAccounting = oldAccounting;
-        this.newAccounting = newAccounting;
+        this.ticketId = ticket.getTicketId();
+        this.oldAccounting = oldBusiness==null ? null : oldBusiness.getAccounting();
+        this.newAccounting = newBusiness==null ? null : newBusiness.getAccounting();
     }
 
     public int getTicketId() {

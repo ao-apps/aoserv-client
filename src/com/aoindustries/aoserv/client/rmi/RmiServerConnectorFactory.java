@@ -86,6 +86,7 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
         Registry registry = RegistryManager.createRegistry(port.getPort(), csf, ssf);
         Remote stub = UnicastRemoteObject.exportObject(this, port.getPort(), csf, ssf);
         registry.rebind(AOServConnectorFactory.class.getName()+"_Stub", stub);
+        //System.err.println("DEBUG: Finished rebind");
         this.port = port;
         this.wrapped = wrapped;
     }

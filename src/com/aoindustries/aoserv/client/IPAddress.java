@@ -5,7 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.SetIpAddressDhcpAddress;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.table.IndexType;
@@ -204,12 +203,6 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     public IndexedSet<DnsRecord> getDhcpDnsRecords() throws IOException, SQLException {
         return getService().getConnector().getDnsRecords().getIndexedRows(DnsRecord.COLUMN_DHCP_ADDRESS, pkey);
     }*/
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public void setDhcpAddress(InetAddress ipAddress) throws RemoteException {
-        new SetIpAddressDhcpAddress(key, ipAddress).execute(getService().getConnector());
-    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

@@ -47,6 +47,7 @@ public enum CommandName {
     // ip_addresses
     set_ip_address_dhcp_address(SetIpAddressDhcpAddress.class, ServiceName.ip_addresses, AOServPermission.Permission.set_ip_address_dhcp_address),
     // linux_accounts
+    check_linux_account_password(CheckLinuxAccountPasswordCommand.class, ServiceName.linux_accounts),
     set_linux_account_password(SetLinuxAccountPasswordCommand.class, ServiceName.linux_accounts, AOServPermission.Permission.set_linux_account_password),
     set_linux_account_predisable_password(SetLinuxAccountPredisablePasswordCommand.class, ServiceName.linux_accounts, AOServPermission.Permission.set_linux_account_predisable_password),
     // mysql_servers
@@ -154,7 +155,6 @@ public enum CommandName {
     // TODO: check_ip_address(TODO.class, TODO),
     // TODO: check_linux_account_username(TODO.class, TODO),
     // TODO: check_linux_account_name(TODO.class, TODO),
-    // TODO: check_linux_account_password(TODO.class, TODO),
     // TODO: check_linux_group_name(TODO.class, TODO),
     // TODO: check_majordomo_list_name(TODO.class, TODO),
     // TODO: check_mysql_database_name(TODO.class, TODO),

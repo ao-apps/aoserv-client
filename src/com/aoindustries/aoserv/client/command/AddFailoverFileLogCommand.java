@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client.command;
 
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.FailoverFileReplication;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -28,7 +29,7 @@ final public class AddFailoverFileLogCommand extends RemoteCommand<Integer> {
     final private boolean isSuccessful;
 
     public AddFailoverFileLogCommand(
-        @Param(name="replication") int replication,
+        @Param(name="replication") FailoverFileReplication replication,
         @Param(name="startTime") Timestamp startTime,
         @Param(name="endTime") Timestamp endTime,
         @Param(name="scanned") int scanned,
@@ -36,7 +37,7 @@ final public class AddFailoverFileLogCommand extends RemoteCommand<Integer> {
         @Param(name="bytes") long bytes,
         @Param(name="isSuccessful") boolean isSuccessful
     ) {
-        this.replication = replication;
+        this.replication = replication.getPkey();
         this.startTime = startTime.getTime();
         this.endTime = endTime.getTime();
         this.scanned = scanned;

@@ -1,11 +1,14 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
+import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.CountryCode;
+import com.aoindustries.aoserv.client.CreditCardProcessor;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import java.rmi.RemoteException;
@@ -45,8 +48,8 @@ final public class AddCreditCardCommand extends RemoteCommand<Integer> {
     final private short expirationYear;
 
     public AddCreditCardCommand(
-        @Param(name="processorId") String processorId,
-        @Param(name="accounting") AccountingCode accounting,
+        @Param(name="processor") CreditCardProcessor processor,
+        @Param(name="business") Business business,
         @Param(name="groupName", nullable=true) String groupName,
         @Param(name="cardInfo") String cardInfo,
         @Param(name="providerUniqueId") String providerUniqueId,
@@ -62,15 +65,15 @@ final public class AddCreditCardCommand extends RemoteCommand<Integer> {
         @Param(name="city") String city,
         @Param(name="state", nullable=true) String state,
         @Param(name="postalCode", nullable=true) String postalCode,
-        @Param(name="countryCode") String countryCode,
+        @Param(name="countryCode") CountryCode countryCode,
         @Param(name="principalName", nullable=true) String principalName,
         @Param(name="description", nullable=true) String description,
         @Param(name="cardNumber") String cardNumber,
         @Param(name="expirationMonth") byte expirationMonth,
         @Param(name="expirationYear") short expirationYear
     ) {
-        this.processorId = processorId;
-        this.accounting = accounting;
+        this.processorId = processor.getProviderId();
+        this.accounting = business.getAccounting();
         this.groupName = nullIfEmpty(groupName);
         this.cardInfo = cardInfo;
         this.providerUniqueId = providerUniqueId;
@@ -86,7 +89,7 @@ final public class AddCreditCardCommand extends RemoteCommand<Integer> {
         this.city = city;
         this.state = nullIfEmpty(state);
         this.postalCode = nullIfEmpty(postalCode);
-        this.countryCode = countryCode;
+        this.countryCode = countryCode.getCode();
         this.principalName = nullIfEmpty(principalName);
         this.description = nullIfEmpty(description);
         this.cardNumber = cardNumber;

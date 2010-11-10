@@ -20,17 +20,17 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
 
     private static final long serialVersionUID = 1L;
 
-    public static final String PARAM_USERNAME = "username";
+    public static final String PARAM_BUSINESS_ADMINISTRATOR = "businessAdministrator";
     public static final String PARAM_PLAINTEXT = "plaintext";
 
     final private UserId username;
     final private String plaintext;
 
     public SetBusinessAdministratorPasswordCommand(
-        @Param(name=PARAM_USERNAME) UserId username,
+        @Param(name=PARAM_BUSINESS_ADMINISTRATOR) BusinessAdministrator businessAdministrator,
         @Param(name=PARAM_PLAINTEXT) String plaintext
     ) {
-        this.username = username;
+        this.username = businessAdministrator.getUserId();
         this.plaintext = plaintext;
     }
 
@@ -47,11 +47,11 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
         if(!connectedUser.canAccessUsername(username)) {
-            errors = addValidationError(errors, PARAM_USERNAME, "Common.validate.accessDenied");
+            errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, "Common.validate.accessDenied");
         } else {
             // Make sure not disabled
             BusinessAdministrator other = connectedUser.getService().get(username);
-            if(other.getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, "SetBusinessAdministratorPasswordCommand.validate.disabled");
+            if(other.getDisableLog()!=null) errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, "SetBusinessAdministratorPasswordCommand.validate.disabled");
             else {
                 // Check password strength
                 try {

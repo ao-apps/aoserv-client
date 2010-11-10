@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.command.AOServPermissionException;
 import com.aoindustries.aoserv.client.command.CommandName;
 import com.aoindustries.aoserv.client.command.Param;
 import com.aoindustries.aoserv.client.command.CommandValidationException;
+import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.TerminalWriter;
@@ -28,9 +29,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -47,7 +50,7 @@ final public class AOSH extends ShellInterpreter {
     private static final Reader nullInput=new CharArrayReader(new char[0]);
 
     // TODO: Make this be a -d (debug) switch
-    private static final boolean STACK_TRACES = false;
+    private static final boolean STACK_TRACES = true;
 
     /**
      * Built-in commands.
@@ -231,18 +234,6 @@ final public class AOSH extends ShellInterpreter {
         return ApplicationResources.accessor.getMessage("AOSH.prompt", connector.getConnectAs());
     }
 
-    private class ParameterException extends Exception {
-
-        private static final long serialVersionUID = 1L;
-
-        private final String parameterName;
-
-        private ParameterException(String parameterName, Throwable cause) {
-            super(cause.getMessage(), cause);
-            this.parameterName = parameterName;
-        }
-    }
-
     /**
      * Processes one command and returns.
      *
@@ -298,24 +289,7 @@ final public class AOSH extends ShellInterpreter {
                                                 break;
                                             }
                                         }
-                                        Class<?> parameterType = parameterTypes[c];
-                                        if(parameterType==String.class) {
-                                            // If allows null, convert empty string to null
-                                            if(arg.length()==0 && paramAnnotation.nullable()) parameters[c] = null;
-                                            else parameters[c] = arg;
-                                        } else if(parameterType==UserId.class) {
-                                            // If allows null, convert empty string to null
-                                            if(arg.length()==0 && paramAnnotation.nullable()) parameters[c] = null;
-                                            else {
-                                                try {
-                                                    parameters[c] = UserId.valueOf(arg);
-                                                } catch(ValidationException validationException) {
-                                                    throw new ParameterException(paramAnnotation.name(), validationException);
-                                                }
-                                            }
-                                        } else {
-                                            throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
-                                        }
+                                        parameters[c] = parseParameter(paramAnnotation.name(), parameterTypes[c], paramAnnotation.nullable(), arg);
                                     }
                                     AOServCommand<?> aoservCommand = constructor.newInstance(parameters);
                                     // Make sure current user is enabled (this is done server-side)
@@ -323,22 +297,12 @@ final public class AOSH extends ShellInterpreter {
                                     // Check permissions
                                     Set<AOServPermission.Permission> permissions = aoservCommand.getCommandName().getPermissions();
                                     BusinessAdministrator thisBa = connector.getThisBusinessAdministrator();
-                                    if(thisBa.hasPermissions(permissions)) {
+                                    if(permissions.isEmpty() || thisBa.hasPermissions(permissions)) {
                                         // Validate
                                         Map<String,List<String>> errors = aoservCommand.validate(connector);
                                         if(!errors.isEmpty()) throw new CommandValidationException(aoservCommand, errors);
 
-                                        Object resultObj = aoservCommand.execute(connector, isInteractive());
-                                        if(resultObj!=null) {
-                                            String s = resultObj.toString();
-                                            if(isInteractive()) {
-                                                printBoldItalic(s, out);
-                                            } else {
-                                                out.print(s);
-                                            }
-                                            if(!s.endsWith(eol)) out.println();
-                                            out.flush();
-                                        }
+                                        displayCommandResult(aoservCommand.execute(connector, isInteractive()));
                                     } else {
                                         err.println(ApplicationResources.accessor.getMessage("AOSH.PermissionDenied.command", command));
                                         for(AOServPermission.Permission permission : permissions) {
@@ -375,7 +339,15 @@ final public class AOSH extends ShellInterpreter {
                                     if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(ParameterException exc) {
-                                    err.print(ApplicationResources.accessor.getMessage("AOSH.ParameterException", command, exc.parameterName, exc.getCause().getMessage()));
+                                    Throwable cause = exc.getCause();
+                                    err.print(
+                                        ApplicationResources.accessor.getMessage(
+                                            "AOSH.ParameterException",
+                                            command,
+                                            exc.parameterName,
+                                            (cause==null ? exc : cause).getMessage()
+                                        )
+                                    );
                                     if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(RemoteException exc) {
@@ -399,6 +371,135 @@ final public class AOSH extends ShellInterpreter {
         }
         return true;
     }
+
+    private void displayCommandResult(Object result) throws IOException {
+        if(result!=null) {
+            if(result instanceof Collection) {
+                int num=1;
+                for(Object obj : (Collection)result) {
+                    String s = (num++) + ": " +(obj==null ? "null" : obj.toString());
+                    if(isInteractive()) {
+                        printBoldItalic(s, out);
+                    } else {
+                        out.print(s);
+                    }
+                    if(!s.endsWith(eol)) out.println();
+                }
+            } else {
+                String s = result.toString();
+                if(isInteractive()) {
+                    printBoldItalic(s, out);
+                } else {
+                    out.print(s);
+                }
+                if(!s.endsWith(eol)) out.println();
+            }
+            out.flush();
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Parameter Conversion">
+    public static class ParameterException extends Exception {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String parameterName;
+
+        public ParameterException(String parameterName, String message) {
+            super(message);
+            this.parameterName = parameterName;
+        }
+
+        public ParameterException(String parameterName, Throwable cause) {
+            super(cause.getMessage(), cause);
+            this.parameterName = parameterName;
+        }
+
+        public String getParameterName() {
+            return parameterName;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T parseParameter(String paramName, Class<T> parameterType, boolean nullable, String arg) throws ParameterException, RemoteException {
+        if(parameterType==AOServer.class) return (T)parseParameterAoServer(paramName, nullable, arg);
+        if(parameterType==DomainName.class) return (T)parseParameterDomainName(paramName, nullable, arg);
+        if(parameterType==LinuxAccount.class) return (T)parseParameterLinuxAccount(paramName, nullable, arg);
+        if(parameterType==String.class) return (T)parseParameterString(paramName, nullable, arg);
+        if(parameterType==UserId.class) return (T)parseParameterUserId(paramName, nullable, arg);
+        throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
+    }
+
+    /**
+     * Parses an AoServer as either integer pkey or hostname
+     */
+    public AOServer parseParameterAoServer(String paramName, boolean nullable, String arg) throws ParameterException, RemoteException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        AOServer aoServer;
+        try {
+            Integer server = Integer.valueOf(arg);
+            try {
+                Server se = connector.getServers().get(server);
+                aoServer = se.getAoServer();
+            } catch(NoSuchElementException exc) {
+                throw new ParameterException(paramName, exc);
+            }
+        } catch(NumberFormatException exc) {
+            aoServer = connector.getAoServers().filterUnique(AOServer.COLUMN_HOSTNAME, parseParameterDomainName(paramName, false, arg));
+        }
+        if(aoServer==null) throw new ParameterException(paramName, ApplicationResources.accessor.getMessage("AOSH.parseParameterAoServer.aoServerNotFound", arg));
+        return aoServer;
+    }
+
+    public static DomainName parseParameterDomainName(String paramName, boolean nullable, String arg) throws ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        else {
+            try {
+                return DomainName.valueOf(arg);
+            } catch(ValidationException validationException) {
+                throw new ParameterException(paramName, validationException);
+            }
+        }
+    }
+
+    /**
+     * Parses a linux account as either an integer pkey or as username@server
+     */
+    public LinuxAccount parseParameterLinuxAccount(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        try {
+            int atPos = arg.lastIndexOf('@');
+            if(atPos==-1) {
+                return connector.getLinuxAccounts().get(Integer.parseInt(arg));
+            } else {
+                return parseParameterAoServer(paramName, false, arg.substring(atPos+1)).getLinuxAccount(parseParameterUserId(paramName, false, arg.substring(0, atPos)));
+            }
+        } catch(NoSuchElementException exc) {
+            throw new ParameterException(paramName, exc);
+        }
+    }
+
+    public static String parseParameterString(String paramName, boolean nullable, String arg) {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        else return arg;
+    }
+
+    public static UserId parseParameterUserId(String paramName, boolean nullable, String arg) throws ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        else {
+            try {
+                return UserId.valueOf(arg);
+            } catch(ValidationException validationException) {
+                throw new ParameterException(paramName, validationException);
+            }
+        }
+    }
+    // </editor-fold>
 
     /* TODO
     private void invalidate(String[] args) throws IllegalArgumentException, IOException {

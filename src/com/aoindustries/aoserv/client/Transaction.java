@@ -5,10 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.ApproveTransactionCommand;
-import com.aoindustries.aoserv.client.command.DeclineTransactionCommand;
 import com.aoindustries.aoserv.client.command.GetTransactionDescriptionCommand;
-import com.aoindustries.aoserv.client.command.HoldTransactionCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
@@ -166,7 +163,7 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
 
     @SchemaColumn(order=6, name="description", description="description of the transaction")
     synchronized public String getDescription() throws RemoteException {
-        if(description==null) description = new GetTransactionDescriptionCommand(key).execute(getService().getConnector());
+        if(description==null) description = new GetTransactionDescriptionCommand(this).execute(getService().getConnector());
         return description;
     }
 
@@ -282,20 +279,6 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
         return getService().getConnector().getNoticeLogs().getIndexedRows(NoticeLog.COLUMN_TRANSID, pkey);
     } */
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public void approve(int creditCardTransaction) throws RemoteException {
-        new ApproveTransactionCommand(key, creditCardTransaction).execute(getService().getConnector());
-    }
-
-    public void decline(int creditCardTransaction) throws RemoteException {
-        new DeclineTransactionCommand(key, creditCardTransaction).execute(getService().getConnector());
-    }
-
-    public void hold(int creditCardTransaction) throws RemoteException {
-        new HoldTransactionCommand(key, creditCardTransaction).execute(getService().getConnector());
-    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Monetary Calculations">

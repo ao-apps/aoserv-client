@@ -1,11 +1,12 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.Ticket;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -18,22 +19,22 @@ final public class AddTicketAnnotationCommand extends RemoteCommand<Integer> {
 
     private static final long serialVersionUID = 1L;
 
-    final private int ticket;
+    final private int ticketId;
     final private String summary;
     final private String details;
 
     public AddTicketAnnotationCommand(
-        @Param(name="ticket") int ticket,
+        @Param(name="ticket") Ticket ticket,
         @Param(name="summary") String summary,
         @Param(name="details", nullable=true) String details
     ) {
-        this.ticket = ticket;
+        this.ticketId = ticket.getTicketId();
         this.summary = summary;
         this.details = nullIfEmpty(details);
     }
 
-    public int getTicket() {
-        return ticket;
+    public int getTicketId() {
+        return ticketId;
     }
 
     public String getSummary() {

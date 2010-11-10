@@ -1,11 +1,12 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.FailoverMySQLReplication;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Gets the slave status or <code>null</code> if no slave status provided by MySQL.
+ *
  * @author  AO Industries, Inc.
  */
 final public class GetMySQLSlaveStatusCommand extends RemoteCommand<GetMySQLSlaveStatusCommand.SlaveStatus> {
@@ -130,9 +133,9 @@ final public class GetMySQLSlaveStatusCommand extends RemoteCommand<GetMySQLSlav
     final private int pkey;
 
     public GetMySQLSlaveStatusCommand(
-        @Param(name="pkey") int pkey
+        @Param(name="mysqlReplication") FailoverMySQLReplication mysqlReplication
     ) {
-        this.pkey = pkey;
+        this.pkey = mysqlReplication.getPkey();
     }
 
     public int getPkey() {

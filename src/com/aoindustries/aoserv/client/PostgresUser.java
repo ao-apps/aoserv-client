@@ -5,14 +5,13 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.SetPostgresUserPasswordCommand;
-import com.aoindustries.aoserv.client.command.SetPostgresUserPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * A <code>PostgresUser</code> has access to one PostgreSQL server.
@@ -187,16 +186,6 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public void setPredisablePassword(String password) throws RemoteException {
-        new SetPostgresUserPredisablePasswordCommand(key, password).execute(getService().getConnector());
-    }
-
-    public void setPassword(String password) throws RemoteException {
-        new SetPostgresUserPasswordCommand(key, password).execute(getService().getConnector());
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public int arePasswordsSet() throws IOException, SQLException {
@@ -217,7 +206,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
         return checkPassword(pkey, password);
     }
     */
-    public static PasswordChecker.Result[] checkPassword(PostgresUserId username, String password) throws IOException {
+    public static List<PasswordChecker.Result> checkPassword(PostgresUserId username, String password) throws IOException {
         return PasswordChecker.checkPassword(username.getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
     }
 

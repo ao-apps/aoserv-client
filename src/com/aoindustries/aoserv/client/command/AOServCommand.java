@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.PasswordChecker;
@@ -139,7 +139,7 @@ abstract public class AOServCommand<R> {
     /**
      * Adds password errors.
      */
-    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, PasswordChecker.Result[] results) {
+    protected static Map<String,List<String>> addValidationError(Map<String,List<String>> errors, String param, List<PasswordChecker.Result> results) {
         if(PasswordChecker.hasResults(results)) {
             for(PasswordChecker.Result result : results) {
                 errors = addValidationError(errors, param, result.getCategory()+": "+result.getResult());

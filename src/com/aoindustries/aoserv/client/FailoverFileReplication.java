@@ -5,8 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.AddFailoverFileLogCommand;
-import com.aoindustries.aoserv.client.command.RequestReplicationDaemonAccessCommand;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.LinuxID;
 import com.aoindustries.io.BitRateProvider;
@@ -14,7 +12,6 @@ import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
 import java.util.NoSuchElementException;
 
 /**
@@ -214,16 +211,6 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
 
     public IndexedSet<FailoverFileLog> getFailoverFileLogs() throws RemoteException {
         return getService().getConnector().getFailoverFileLogs().filterIndexed(FailoverFileLog.COLUMN_REPLICATION, this);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public int addFailoverFileLog(Timestamp startTime, Timestamp endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws RemoteException {
-        return new AddFailoverFileLogCommand(key, startTime, endTime, scanned, updated, bytes, isSuccessful).execute(getService().getConnector());
-    }
-
-    public AOServer.DaemonAccess requestReplicationDaemonAccess() throws RemoteException {
-        return new RequestReplicationDaemonAccessCommand(key).execute(getService().getConnector());
     }
     // </editor-fold>
 

@@ -28,10 +28,10 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
     final private String plaintext;
 
     public SetPostgresUserPasswordCommand(
-        @Param(name=PARAM_POSTGRES_USER) int postgresUser,
+        @Param(name=PARAM_POSTGRES_USER) PostgresUser postgresUser,
         @Param(name=PARAM_PLAINTEXT) String plaintext
     ) {
-        this.postgresUser = postgresUser;
+        this.postgresUser = postgresUser.getKey();
         this.plaintext = plaintext;
     }
 

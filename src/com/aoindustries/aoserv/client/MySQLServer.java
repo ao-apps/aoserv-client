@@ -466,17 +466,6 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Master Status">
-    /**
-     * Gets the master status or <code>null</code> if no master status provided by MySQL.
-     *
-     * @exception  RemoteException  If any error occurs.
-     */
-    public GetMySQLMasterStatusCommand.MasterStatus getMasterStatus() throws RemoteException {
-        return new GetMySQLMasterStatusCommand(key).execute(getService().getConnector());
-    }
-    // </editor-fold>
-
     /**
      * Gets the minor version number in X.X[-max] format.  This corresponds to the installation
      * directory under /usr/mysql/X.X[-max] or /opt/mysql-X.X[-max]

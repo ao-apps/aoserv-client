@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.SetMySQLUserPasswordCommand;
-import com.aoindustries.aoserv.client.command.SetMySQLUserPredisablePasswordCommand;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
@@ -14,6 +13,7 @@ import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * A <code>MySQLUser</code> stores the details of a MySQL account
@@ -445,16 +445,8 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Commands">
-    public static PasswordChecker.Result[] checkPassword(MySQLUserId username, String password) throws IOException {
+    public static List<PasswordChecker.Result> checkPassword(MySQLUserId username, String password) throws IOException {
         return PasswordChecker.checkPassword(username.getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
-    }
-
-    public void setPredisablePassword(String password) throws RemoteException {
-        new SetMySQLUserPredisablePasswordCommand(key, password).execute(getService().getConnector());
-    }
-
-    public void setPassword(String password) throws RemoteException {
-        new SetMySQLUserPasswordCommand(key, password).execute(getService().getConnector());
     }
     // </editor-fold>
 

@@ -1,11 +1,13 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.Ticket;
+import com.aoindustries.aoserv.client.TicketPriority;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -22,11 +24,11 @@ final public class SetTicketClientPriorityCommand extends RemoteCommand<Void> {
     final private String clientPriority;
 
     public SetTicketClientPriorityCommand(
-        @Param(name="ticketId") int ticketId,
-        @Param(name="clientPriority") String clientPriority
+        @Param(name="ticket") Ticket ticket,
+        @Param(name="clientPriority") TicketPriority clientPriority
     ) {
-        this.ticketId = ticketId;
-        this.clientPriority = clientPriority;
+        this.ticketId = ticket.getTicketId();
+        this.clientPriority = clientPriority.getPriority();
     }
 
     public int getTicketId() {

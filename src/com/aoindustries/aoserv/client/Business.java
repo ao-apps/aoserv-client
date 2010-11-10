@@ -5,12 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.AddCreditCardCommand;
-import com.aoindustries.aoserv.client.command.AddTransactionCommand;
-import com.aoindustries.aoserv.client.command.CancelBusinessCommand;
-import com.aoindustries.aoserv.client.command.SetCreditCardUseMonthlyCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
@@ -509,98 +504,6 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
         }
         return Collections.unmodifiableMap(categories);
     }*/
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public void cancel(String cancelReason) throws RemoteException {
-        new CancelBusinessCommand(getKey(), cancelReason).execute(getService().getConnector());
-    }
-
-    public int addCreditCard(
-        CreditCardProcessor processor,
-        String groupName,
-        String cardInfo,
-        String providerUniqueId,
-        String firstName,
-        String lastName,
-        String companyName,
-        Email email,
-        String phone,
-        String fax,
-        String customerTaxId,
-        String streetAddress1,
-        String streetAddress2,
-        String city,
-        String state,
-        String postalCode,
-        CountryCode countryCode,
-        String principalName,
-        String description,
-        String cardNumber,
-        byte expirationMonth,
-        short expirationYear
-    ) throws RemoteException {
-        return new AddCreditCardCommand(
-            processor.getProviderId(),
-            getAccounting(),
-            groupName,
-            cardInfo,
-            providerUniqueId,
-            firstName,
-            lastName,
-            companyName,
-            email,
-            phone,
-            fax,
-            customerTaxId,
-            streetAddress1,
-            streetAddress2,
-            city,
-            state,
-            postalCode,
-            countryCode.getCode(),
-            principalName,
-            description,
-            cardNumber,
-            expirationMonth,
-            expirationYear
-        ).execute(getService().getConnector());
-    }
-
-    /**
-     * Sets the credit card that will be used monthly.  Any other selected card will
-     * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
-     */
-    public void setCreditCardUseMonthly(CreditCard creditCard) throws RemoteException {
-        new SetCreditCardUseMonthlyCommand(getKey(), creditCard==null ? null : creditCard.getKey()).execute(getService().getConnector());
-    }
-
-    public int addTransaction(
-        Business sourceBusiness,
-        BusinessAdministrator username,
-        TransactionType type,
-        String description,
-        BigDecimal quantity,
-        Money rate,
-        PaymentType paymentType,
-        String paymentInfo,
-        CreditCardProcessor processor,
-    	Transaction.Status status
-    ) throws RemoteException {
-        return new AddTransactionCommand(
-            getKey(),
-            sourceBusiness.getAccounting(),
-            username.getKey(),
-            type.getName(),
-            description,
-            quantity,
-            rate,
-            paymentType==null ? null : paymentType.getName(),
-            paymentInfo,
-            processor==null ? null : processor.getProviderId(),
-            status
-        ).execute(getService().getConnector());
-    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Group">

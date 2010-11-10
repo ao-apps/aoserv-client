@@ -5,7 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.AddTicketCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Email;
@@ -552,35 +551,6 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         return getService().getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_BRAND, pkey);
     }
      */
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public int addTicket(
-        Business business,
-        Language language,
-        TicketCategory category,
-        TicketType ticketType,
-        Email fromAddress,
-        String summary,
-        String details,
-        TicketPriority clientPriority,
-        String contactEmails,
-        String contactPhoneNumbers
-    ) throws RemoteException {
-        return new AddTicketCommand(
-            getKey(),
-            business==null ? null : business.getAccounting(),
-            language.getKey(),
-            category==null ? null : category.getKey(),
-            ticketType.getKey(),
-            fromAddress,
-            summary,
-            details,
-            clientPriority.getKey(),
-            contactEmails,
-            contactPhoneNumbers
-        ).execute(getService().getConnector());
-    }
     // </editor-fold>
 
     public URL getAowebStrutsHttpURL() throws MalformedURLException {

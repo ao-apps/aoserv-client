@@ -5,8 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.GetMySQLSlaveStatusCommand;
-import com.aoindustries.aoserv.client.command.GetMySQLSlaveStatusCommand.SlaveStatus;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
@@ -133,17 +131,6 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     String toStringImpl() throws RemoteException {
         if(aoServer!=null) return getMySQLServer().toStringImpl()+"->"+getAOServer().toStringImpl();
         else return getMySQLServer().toStringImpl()+"->"+getFailoverFileReplication().toStringImpl();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Slave Status">
-    /**
-     * Gets the slave status or <code>null</code> if no slave status provided by MySQL.
-     *
-     * @exception  RemoteException  If any error occurs
-     */
-    public SlaveStatus getSlaveStatus() throws RemoteException {
-        return new GetMySQLSlaveStatusCommand(key).execute(getService().getConnector());
     }
     // </editor-fold>
 }

@@ -5,7 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.SetUsernamePasswordCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
@@ -112,12 +111,6 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
 
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
         return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_USERNAME, this);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public void setPassword(String password) throws RemoteException {
-        new SetUsernamePasswordCommand(getKey(), password).execute(getService().getConnector());
     }
     // </editor-fold>
 

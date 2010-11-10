@@ -5,9 +5,11 @@
  */
 package com.aoindustries.aoserv.client.command;
 
+import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
 import com.aoindustries.aoserv.client.LinuxAccount;
 import com.aoindustries.aoserv.client.LinuxAccountType;
+import com.aoindustries.aoserv.client.PasswordChecker;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -17,30 +19,27 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
-
-    private static final long serialVersionUID = 1L;
+final public class CheckLinuxAccountPasswordCommand extends AOServCommand<List<PasswordChecker.Result>> {
 
     public static final String PARAM_LINUX_ACCOUNT = "linuxAccount";
-    public static final String PARAM_PLAINTEXT = "plaintext";
 
-    final private int linuxAccount;
-    final private String plaintext;
+    private final int linuxAccount;
+    private final String password;
 
-    public SetLinuxAccountPasswordCommand(
+    public CheckLinuxAccountPasswordCommand(
         @Param(name=PARAM_LINUX_ACCOUNT) LinuxAccount linuxAccount,
-        @Param(name=PARAM_PLAINTEXT) String plaintext
+        @Param(name="password") String password
     ) {
         this.linuxAccount = linuxAccount.getKey();
-        this.plaintext = plaintext;
+        this.password = password;
     }
 
     public int getLinuxAccount() {
         return linuxAccount;
     }
 
-    public String getPlaintext() {
-        return plaintext;
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -53,18 +52,18 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
             LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
             // Enforce can't set password type
             LinuxAccountType lat = la.getLinuxAccountType();
-            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
-            // Make sure not disabled
-            if(la.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.disabled");
-            else {
-                // Check password strength
-                try {
-                    if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, lat.checkPassword(la.getUserId(), plaintext));
-                } catch(IOException err) {
-                    throw new RemoteException(err.getMessage(), err);
-                }
-            }
+            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "CheckLinuxAccountPasswordCommand.validate.typeNotAllowed");
         }
         return errors;
+    }
+
+    @Override
+    public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+        try {
+            LinuxAccount la = connector.getLinuxAccounts().get(linuxAccount);
+            return la.getLinuxAccountType().checkPassword(la.getUserId(), password);
+        } catch(IOException err) {
+            throw new RemoteException(err.getMessage(), err);
+        }
     }
 }

@@ -5,13 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.AddTicketAnnotationCommand;
 import com.aoindustries.aoserv.client.command.GetTicketDetailsCommand;
-import com.aoindustries.aoserv.client.command.SetTicketBusinessCommand;
-import com.aoindustries.aoserv.client.command.SetTicketClientPriorityCommand;
-import com.aoindustries.aoserv.client.command.SetTicketContactEmailsCommand;
-import com.aoindustries.aoserv.client.command.SetTicketContactPhoneNumbersCommand;
-import com.aoindustries.aoserv.client.command.SetTicketSummaryCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -202,7 +196,7 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     @SchemaColumn(order=10, name="details", description="the details of the ticket")
     synchronized public String getDetails() throws RemoteException {
         if(!detailsLoaded) {
-            details = new GetTicketDetailsCommand(key).execute(getService().getConnector());
+            details = new GetTicketDetailsCommand(this).execute(getService().getConnector());
             detailsLoaded = true;
         }
         return details;
@@ -334,44 +328,7 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public int addAnnotation(String summary, String details) throws RemoteException {
-        return new AddTicketAnnotationCommand(
-            key,
-            summary,
-            details
-        ).execute(getService().getConnector());
-    }
-
-    /**
-     * Updates the ticket business if the old business matches the current value.
-     *
-     * @return <code>true</code> if successfully updated or <code>false</code> if oldBusiness doesn't match the current business.
-     */
-    public boolean setBusiness(Business oldBusiness, Business newBusiness) throws RemoteException {
-        return new SetTicketBusinessCommand(
-            key,
-            oldBusiness==null ? null : oldBusiness.getAccounting(),
-            newBusiness==null ? null : newBusiness.getAccounting()
-        ).execute(getService().getConnector());
-    }
-
-    public void setContactEmails(String contactEmails) throws RemoteException {
-        new SetTicketContactEmailsCommand(key, contactEmails).execute(getService().getConnector());
-    }
-
-    public void setContactPhoneNumbers(String contactPhoneNumbers) throws RemoteException {
-        new SetTicketContactPhoneNumbersCommand(key, contactPhoneNumbers).execute(getService().getConnector());
-    }
-
-    public void setClientPriority(TicketPriority clientPriority) throws RemoteException {
-        new SetTicketClientPriorityCommand(key, clientPriority.getPriority()).execute(getService().getConnector());
-    }
-
-    public void setSummary(String summary) throws RemoteException {
-        new SetTicketSummaryCommand(key, summary).execute(getService().getConnector());
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="TODO">
     // TODO
 //    /*
 //    public void actBounceTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {

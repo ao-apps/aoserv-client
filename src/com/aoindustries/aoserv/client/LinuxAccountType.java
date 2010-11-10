@@ -14,6 +14,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -206,7 +207,7 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
      *
      * @see PasswordChecker
      */
-    public PasswordChecker.Result[] checkPassword(UserId username, String password) throws IOException {
+    public List<PasswordChecker.Result> checkPassword(UserId username, String password) throws IOException {
         return PasswordChecker.checkPassword(username, password, getPasswordStrength());
     }
 

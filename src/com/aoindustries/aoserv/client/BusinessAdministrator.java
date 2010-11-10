@@ -5,7 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.SetBusinessAdministratorPasswordCommand;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
@@ -17,6 +16,7 @@ import java.rmi.RemoteException;
 import java.security.Principal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -364,12 +364,8 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public static PasswordChecker.Result[] checkPassword(UserId username, String password) throws IOException {
+    public static List<PasswordChecker.Result> checkPassword(UserId username, String password) throws IOException {
         return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
-    }
-
-    public void setPassword(String plaintext) throws RemoteException {
-        new SetBusinessAdministratorPasswordCommand(getKey(), plaintext).execute(getService().getConnector());
     }
     // </editor-fold>
 

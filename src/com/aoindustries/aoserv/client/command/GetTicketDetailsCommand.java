@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client.command;
  * All rights reserved.
  */
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.Ticket;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -21,9 +22,9 @@ final public class GetTicketDetailsCommand extends RemoteCommand<String> {
     final private int ticketId;
 
     public GetTicketDetailsCommand(
-        @Param(name="ticketId") int ticketId
+        @Param(name="ticket") Ticket ticket
     ) {
-        this.ticketId = ticketId;
+        this.ticketId = ticket.getTicketId();
     }
 
     public int getTicketId() {

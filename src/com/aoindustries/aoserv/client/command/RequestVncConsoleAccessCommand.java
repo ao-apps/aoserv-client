@@ -1,12 +1,13 @@
-package com.aoindustries.aoserv.client.command;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.command;
+
 import com.aoindustries.aoserv.client.AOServer;
 import com.aoindustries.aoserv.client.BusinessAdministrator;
+import com.aoindustries.aoserv.client.VirtualServer;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -22,9 +23,9 @@ final public class RequestVncConsoleAccessCommand extends RemoteCommand<AOServer
     final private int virtualServer;
 
     public RequestVncConsoleAccessCommand(
-        @Param(name="virtualServer") int virtualServer
+        @Param(name="virtualServer") VirtualServer virtualServer
     ) {
-        this.virtualServer = virtualServer;
+        this.virtualServer = virtualServer.getKey();
     }
 
     public int getVirtualServer() {

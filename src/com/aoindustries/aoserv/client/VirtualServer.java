@@ -5,7 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.RequestVncConsoleAccessCommand;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.io.IOException;
@@ -283,11 +282,5 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
         return null;
     }
     */
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public AOServer.DaemonAccess requestVncConsoleAccess() throws RemoteException {
-        return new RequestVncConsoleAccessCommand(key).execute(getService().getConnector());
-    }
     // </editor-fold>
 }

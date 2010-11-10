@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.noswing.NoSwingConnectorFactory;
 import com.aoindustries.aoserv.client.retry.RetryConnectorFactory;
 import com.aoindustries.aoserv.client.rmi.RmiClientConnectorFactory;
 import com.aoindustries.aoserv.client.timeout.TimeoutConnectorFactory;
+import com.aoindustries.aoserv.client.trace.TraceConnectorFactory;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Hostname;
 import com.aoindustries.aoserv.client.validator.InetAddress;
@@ -125,10 +126,10 @@ final public class AOServClientConfiguration {
     }
 
     /**
-     * Gets the retry flag.  Defaults to true.
+     * Gets the trace flag.  Defaults to false.
      */
-    static boolean getRetry() throws IOException {
-        return !"false".equals(getProperty("aoserv.client.retry"));
+    static boolean isTrace() throws IOException {
+        return "true".equals(getProperty("aoserv.client.trace"));
     }
 
     /**
@@ -148,6 +149,13 @@ final public class AOServClientConfiguration {
     }
 
     /**
+     * Gets the retry flag.  Defaults to true.
+     */
+    static boolean isRetry() throws IOException {
+        return !"false".equals(getProperty("aoserv.client.retry"));
+    }
+
+    /**
      * Gets the use cache flag.  Defaults to true.
      */
     static boolean getUseCache() throws IOException {
@@ -157,7 +165,7 @@ final public class AOServClientConfiguration {
     /**
      * Gets the no swing flag.  Defaults to false.
      */
-    static boolean getNoSwing() throws IOException {
+    static boolean isNoSwing() throws IOException {
         return "true".equals(getProperty("aoserv.client.noSwing"));
     }
 
@@ -253,11 +261,12 @@ final public class AOServClientConfiguration {
                     } else {
                         throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unsupportedProtocol", protocol));
                     }
+                    if(isTrace()) newFactory = new TraceConnectorFactory(newFactory);
                     long timeout = getTimeout();
                     if(timeout>0) newFactory = new TimeoutConnectorFactory(newFactory, timeout, getTimeoutUnit());
-                    if(getRetry()) newFactory = new RetryConnectorFactory(newFactory);
+                    if(isRetry()) newFactory = new RetryConnectorFactory(newFactory);
                     if(getUseCache()) newFactory = new CachedConnectorFactory(newFactory);
-                    if(getNoSwing()) newFactory = new NoSwingConnectorFactory(newFactory);
+                    if(isNoSwing()) newFactory = new NoSwingConnectorFactory(newFactory);
                     factory = newFactory;
                 } catch(IOException err) {
                     throw new RemoteException(err.getMessage(), err);
