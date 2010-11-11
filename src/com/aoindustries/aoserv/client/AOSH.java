@@ -423,6 +423,7 @@ final public class AOSH extends ShellInterpreter {
     @SuppressWarnings("unchecked")
     public <T> T parseParameter(String paramName, Class<T> parameterType, boolean nullable, String arg) throws ParameterException, RemoteException {
         if(parameterType==AOServer.class) return (T)parseParameterAoServer(paramName, nullable, arg);
+        if(parameterType==BusinessAdministrator.class) return (T)parseParameterBusinessAdministrator(paramName, nullable, arg);
         if(parameterType==DomainName.class) return (T)parseParameterDomainName(paramName, nullable, arg);
         if(parameterType==LinuxAccount.class) return (T)parseParameterLinuxAccount(paramName, nullable, arg);
         if(parameterType==String.class) return (T)parseParameterString(paramName, nullable, arg);
@@ -450,6 +451,16 @@ final public class AOSH extends ShellInterpreter {
         }
         if(aoServer==null) throw new ParameterException(paramName, ApplicationResources.accessor.getMessage("AOSH.parseParameterAoServer.aoServerNotFound", arg));
         return aoServer;
+    }
+
+    public BusinessAdministrator parseParameterBusinessAdministrator(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        try {
+            return connector.getBusinessAdministrators().get(parseParameterUserId(paramName, false, arg));
+        } catch(NoSuchElementException exc) {
+            throw new ParameterException(paramName, exc);
+        }
     }
 
     public static DomainName parseParameterDomainName(String paramName, boolean nullable, String arg) throws ParameterException {

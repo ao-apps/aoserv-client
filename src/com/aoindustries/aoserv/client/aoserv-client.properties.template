@@ -11,7 +11,7 @@ aoserv.client.rmi.useSsl=true
 aoserv.client.soap.targetEndpoint=
 
 # Will log tracing details when enabled.
-# Detauls to false.
+# Defaults to false.
 aoserv.client.trace=false
 
 # An optional timeout may be enabled if this value is provided and greater than zero.
@@ -20,7 +20,7 @@ aoserv.client.timeout=300
 # The timeout time unit.  Defaults to SECONDS
 aoserv.client.timeout.unit=SECONDS
 
-# Will retry failed operations when enabled.
+# Will retry failed idempotent operations when enabled.
 # Defaults to true.
 aoserv.client.retry=true
 
