@@ -8,9 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * A <code>PostgresUser</code> has access to one PostgreSQL server.
@@ -175,7 +173,7 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("PostgresUser.toString", username, getPostgresServer().toStringImpl());
+        return username+"@"+getPostgresServer().toStringImpl();
     }
     // </editor-fold>
 
@@ -199,23 +197,6 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
         DisableLog dl=getDisableLog();
         if(dl==null) return false;
         else return dl.canEnable() && getUsername().disable_log==-1;
-    }
-
-    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
-        return checkPassword(pkey, password);
-    }
-    */
-    public static List<PasswordChecker.Result> checkPassword(PostgresUserId username, String password) throws IOException {
-        return PasswordChecker.checkPassword(username.getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
-    }
-
-    /*
-    public String checkPasswordDescribe(String password) {
-        return checkPasswordDescribe(pkey, password);
-    }
-
-    public static String checkPasswordDescribe(String username, String password) {
-        return PasswordChecker.checkPasswordDescribe(username, password, true, false);
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {

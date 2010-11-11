@@ -584,28 +584,6 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         else return dl.canEnable();
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
-        return checkPassword(pkey, password);
-    }
-    */
-
-    /**
-     * Validates a password and returns a description of the problem.  If the
-     * password is valid, then <code>null</code> is returned.
-     */
-    /*public String checkPasswordDescribe(String password) {
-	return checkPasswordDescribe(pkey, password);
-    }*/
-
-    /**
-     * Validates a password and returns a description of the problem.  If the
-     * password is valid, then <code>null</code> is returned.
-     */
-    /*public static String checkPasswordDescribe(String username, String password) {
-	return PasswordChecker.checkPasswordDescribe(username, password, true, false);
-    }*/
-
-    /* TODO
     public void disable(DisableLog dl) throws IOException, SQLException {
         service.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
     }

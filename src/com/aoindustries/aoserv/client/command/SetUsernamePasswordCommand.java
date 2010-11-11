@@ -49,7 +49,6 @@ final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
         if(!connectedUser.canAccessUsername(un)) {
             errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
-            // Check LinuxAccountType.Constant for no password set allowed
             // Make sure not disabled
             if(un.getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "SetUsernamePasswordCommand.validate.disabled");
             else {

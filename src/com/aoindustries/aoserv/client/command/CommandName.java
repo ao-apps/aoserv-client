@@ -57,6 +57,7 @@ public enum CommandName {
     set_mysql_user_password(SetMySQLUserPasswordCommand.class, ServiceName.mysql_users, AOServPermission.Permission.set_mysql_user_password),
     set_mysql_user_predisable_password(SetMySQLUserPredisablePasswordCommand.class, ServiceName.mysql_users, AOServPermission.Permission.set_mysql_user_predisable_password),
     // postgres_users
+    check_postgres_user_password(CheckPostgresUserPasswordCommand.class, ServiceName.postgres_users),
     set_postgres_user_password(SetPostgresUserPasswordCommand.class, ServiceName.postgres_users, AOServPermission.Permission.set_postgres_user_password),
     set_postgres_user_predisable_password(SetPostgresUserPredisablePasswordCommand.class, ServiceName.postgres_users, AOServPermission.Permission.set_postgres_user_predisable_password),
     // ticket_actions
@@ -76,6 +77,7 @@ public enum CommandName {
     decline_transaction(DeclineTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),
     hold_transaction(HoldTransactionCommand.class, ServiceName.transactions, AOServPermission.Permission.add_transaction),
     // usernames
+    check_username_password(CheckUsernamePasswordCommand.class, ServiceName.usernames),
     set_username_password(
         SetUsernamePasswordCommand.class,
         ServiceName.usernames,
@@ -161,13 +163,11 @@ public enum CommandName {
     // TODO: check_mysql_server_name(TODO.class, TODO),
     // TODO: check_mysql_username(TODO.class, TODO),
     // TODO: check_postgres_database_name(TODO.class, TODO),
-    // TODO: check_postgres_password(TODO.class, TODO),
     // TODO: check_postgres_server_name(TODO.class, TODO),
     // TODO: check_postgres_username(TODO.class, TODO),
     // TODO: check_shared_tomcat_name(TODO.class, TODO),
     // TODO: check_site_name(TODO.class, TODO),
     // TODO: check_username(TODO.class, TODO),
-    // TODO: check_username_password(TODO.class, TODO),
     // TODO: clear(TODO.class, TODO),
     // TODO: compare_linux_server_account_password(TODO.class, TODO),
     // TODO: complete_ticket(TODO.class, TODO),

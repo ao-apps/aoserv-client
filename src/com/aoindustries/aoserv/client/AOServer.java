@@ -388,7 +388,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
      *
      * @throws NoSuchElementException if group not found.
      */
-    public PostgresServer getPostgresServer(String name) throws RemoteException {
+    public PostgresServer getPostgresServer(PostgresServerName name) throws RemoteException {
         PostgresServer ps = getPostgresServers().filterUnique(PostgresServer.COLUMN_NAME, name);
         if(ps==null) throw new NoSuchElementException("this="+this+", name="+name);
         return ps;

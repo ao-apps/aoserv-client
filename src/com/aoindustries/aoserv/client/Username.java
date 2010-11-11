@@ -223,37 +223,6 @@ final public class Username extends AOServObjectUserIdKey<Username> implements D
         if(dl==null) return false;
         else return dl.canEnable() && getBusiness().disableLog==null;
     }
-    */
-    /**
-     * Checks the strength of a password as used by this <code>Username</code>.
-     */
-    /*
-    public PasswordChecker.Result[] checkPassword(String password) throws IOException, SQLException {
-        BusinessAdministrator ba=getBusinessAdministrator();
-        if(ba!=null) {
-            PasswordChecker.Result[] results=ba.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
-    	}
-
-        LinuxAccount la=getLinuxAccount();
-    	if(la!=null) {
-            PasswordChecker.Result[] results=la.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
-    	}
-
-        for(MySQLUser mu : getMySQLUsers()) {
-            PasswordChecker.Result[] results=mu.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
-    	}
-
-        PostgresUser pu=getPostgresUser();
-        if(pu!=null) {
-            PasswordChecker.Result[] results=pu.checkPassword(password);
-            if(PasswordChecker.hasResults(results)) return results;
-    	}
-
-        return PasswordChecker.getAllGoodResults();
-    }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);

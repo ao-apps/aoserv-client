@@ -307,7 +307,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("PostgresServer.toString", name, getAoServerResource().getAoServer().getHostname());
+        return getAoServerResource().getAoServer().toStringImpl()+"/"+name;
     }
     // </editor-fold>
 
@@ -338,7 +338,7 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
      */
     public PostgresUser getPostgresUser(PostgresUserId username) throws RemoteException, NoSuchElementException {
         PostgresUser pu = getPostgresUsers().filterUnique(PostgresUser.COLUMN_USERNAME, getService().getConnector().getUsernames().get(username.getUserId()));
-        if(pu==null) throw new NoSuchElementException("Unable to find PostgresUser: "+name+" on "+this);
+        if(pu==null) throw new NoSuchElementException("Unable to find PostgresUser: "+username+"@"+this);
         return pu;
     }
     // </editor-fold>

@@ -452,18 +452,6 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
-        return checkPassword(username, password);
-    }
-
-    public String checkPasswordDescribe(String password) {
-        return checkPasswordDescribe(pkey, password);
-    }
-
-    public static String checkPasswordDescribe(String username, String password) {
-        return PasswordChecker.checkPasswordDescribe(username, password, true, false);
-    }
-
     public void disable(DisableLog dl) throws IOException, SQLException {
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.MYSQL_USERS, dl.pkey, pkey);
     }

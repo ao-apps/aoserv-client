@@ -44,7 +44,7 @@ final public class AOSH extends ShellInterpreter {
     private static final Reader nullInput=new CharArrayReader(new char[0]);
 
     // TODO: Make this be a -d (debug) switch
-    private static final boolean STACK_TRACES = true;
+    private static final boolean STACK_TRACES = false;
 
     /**
      * Built-in commands.
@@ -334,14 +334,25 @@ final public class AOSH extends ShellInterpreter {
                                     err.flush();
                                 } catch(ParameterException exc) {
                                     Throwable cause = exc.getCause();
-                                    err.print(
-                                        ApplicationResources.accessor.getMessage(
-                                            "AOSH.ParameterException",
-                                            command,
-                                            exc.parameterName,
-                                            (cause==null ? exc : cause).getMessage()
-                                        )
-                                    );
+                                    if(cause instanceof NoSuchElementException) {
+                                        err.println(
+                                            ApplicationResources.accessor.getMessage(
+                                                "AOSH.ParameterException.NoSuchElementException",
+                                                command,
+                                                exc.parameterName,
+                                                cause.getMessage()
+                                            )
+                                        );
+                                    } else {
+                                        err.println(
+                                            ApplicationResources.accessor.getMessage(
+                                                "AOSH.ParameterException",
+                                                command,
+                                                exc.parameterName,
+                                                (cause==null ? exc : cause).getMessage()
+                                            )
+                                        );
+                                    }
                                     if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(RemoteException exc) {
@@ -425,7 +436,12 @@ final public class AOSH extends ShellInterpreter {
         if(parameterType==MySQLUser.class) return (T)parseParameterMySQLUser(paramName, nullable, arg);
         if(parameterType==MySQLUserId.class) return (T)parseParameterMySQLUserId(paramName, nullable, arg);
         if(parameterType==String.class) return (T)parseParameterString(paramName, nullable, arg);
+        if(parameterType==PostgresServer.class) return (T)parseParameterPostgresServer(paramName, nullable, arg);
+        if(parameterType==PostgresServerName.class) return (T)parseParameterPostgresServerName(paramName, nullable, arg);
+        if(parameterType==PostgresUser.class) return (T)parseParameterPostgresUser(paramName, nullable, arg);
+        if(parameterType==PostgresUserId.class) return (T)parseParameterPostgresUserId(paramName, nullable, arg);
         if(parameterType==UserId.class) return (T)parseParameterUserId(paramName, nullable, arg);
+        if(parameterType==Username.class) return (T)parseParameterUsername(paramName, nullable, arg);
         throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
     }
 
@@ -557,6 +573,66 @@ final public class AOSH extends ShellInterpreter {
         else return arg;
     }
 
+    /**
+     * Parses a Postgres server as either an integer pkey or as server/name
+     */
+    public PostgresServer parseParameterPostgresServer(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        try {
+            int slashPos = arg.lastIndexOf('/');
+            if(slashPos==-1) {
+                return connector.getPostgresServers().get(Integer.valueOf(arg));
+            } else {
+                return parseParameterAoServer(paramName, false, arg.substring(0, slashPos)).getPostgresServer(parseParameterPostgresServerName(paramName, false, arg.substring(slashPos+1)));
+            }
+        } catch(NoSuchElementException exc) {
+            throw new ParameterException(paramName, exc);
+        }
+    }
+
+    public static PostgresServerName parseParameterPostgresServerName(String paramName, boolean nullable, String arg) throws ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        else {
+            try {
+                return PostgresServerName.valueOf(arg);
+            } catch(ValidationException validationException) {
+                throw new ParameterException(paramName, validationException);
+            }
+        }
+    }
+
+    /**
+     * Parses a Postgres user as either an integer pkey or as username@postgresServer
+     */
+    public PostgresUser parseParameterPostgresUser(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        try {
+            int atPos = arg.lastIndexOf('@');
+            if(atPos==-1) {
+                return connector.getPostgresUsers().get(Integer.valueOf(arg));
+            } else {
+                return parseParameterPostgresServer(paramName, false, arg.substring(atPos+1)).getPostgresUser(parseParameterPostgresUserId(paramName, false, arg.substring(0, atPos)));
+            }
+        } catch(NoSuchElementException exc) {
+            throw new ParameterException(paramName, exc);
+        }
+    }
+
+    public static PostgresUserId parseParameterPostgresUserId(String paramName, boolean nullable, String arg) throws ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        else {
+            try {
+                return PostgresUserId.valueOf(arg);
+            } catch(ValidationException validationException) {
+                throw new ParameterException(paramName, validationException);
+            }
+        }
+    }
+
     public static UserId parseParameterUserId(String paramName, boolean nullable, String arg) throws ParameterException {
         // If allows null, convert empty string to null
         if(nullable && arg.length()==0) return null;
@@ -566,6 +642,16 @@ final public class AOSH extends ShellInterpreter {
             } catch(ValidationException validationException) {
                 throw new ParameterException(paramName, validationException);
             }
+        }
+    }
+
+    public Username parseParameterUsername(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        try {
+            return connector.getUsernames().get(parseParameterUserId(paramName, false, arg));
+        } catch(NoSuchElementException exc) {
+            throw new ParameterException(paramName, exc);
         }
     }
     // </editor-fold>

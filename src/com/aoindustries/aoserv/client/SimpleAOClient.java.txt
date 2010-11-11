@@ -2479,32 +2479,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Checks the strength of a password that will be used for
-     * a <code>BusinessAdministrator</code>.
-     *
-     * @param  username  the username of the <code>BusinessAdministrator</code> whos
-     *					password will be set
-     * @param  password  the new password
-     *
-     * @return  a description of why the password is weak or <code>null</code>
-     *          if all checks succeed
-     *
-     * @exception  IllegalArgumentException  if username is not a valid <code>Username</code>
-     *
-     * @see  #setBusinessAdministratorPassword
-     * @see  Username#isValidUsername
-     * @see  BusinessAdministrator#checkPassword
-     */
-    public static PasswordChecker.Result[] checkBusinessAdministratorPassword(
-        String username,
-        String password
-    ) throws IllegalArgumentException, IOException, SQLException {
-        String check = Username.checkUsername(username);
-        if(check!=null) throw new IllegalArgumentException(check);
-        return BusinessAdministrator.checkPassword(username, password);
-    }
-
-    /**
      * Checks the format of a username that will be used for a <code>BusinessAdministrator</code>.
      *
      * @param  username  the username
@@ -2632,33 +2606,6 @@ final public class SimpleAOClient {
     }
 
     /**
-     * Checks the strength of a password that will be used for a <code>LinuxAccount</code> or
-     * <code>LinuxServerAccount</code>.
-     *
-     * @param  username  the username of the account that will have its password set
-     * @param  password  the new password for the account
-     *
-     * @return  a <code>String</code> describing why the password is not secure or <code>null</code>
-     *					if the password is strong
-     *
-     * @exception  IOException  if unable to contact the server
-     * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if unable to find the <code>LinuxAccount</code>
-     *
-     * @see  LinuxAccount#checkPassword
-     * @see  #setLinuxAccountPassword
-     * @see  #setLinuxServerAccountPassword
-     * @see  PasswordChecker
-     */
-    public PasswordChecker.Result[] checkLinuxAccountPassword(
-        String username,
-        String password
-    ) throws IllegalArgumentException, IOException, SQLException {
-        return getLinuxAccount(username).checkPassword(password);
-    }
-
-    /**
      * Checks the format of a username that will be used for a <code>LinuxAccount</code>.
      *
      * @param  username  the username
@@ -2708,29 +2655,6 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException, IOException, SQLException {
         String invalidReason = connector.getMysqlDatabases().isValidDatabaseName(name);
         if(invalidReason!=null) throw new IllegalArgumentException(invalidReason);
-    }
-
-    /**
-     * Checks the strength of a password that will be used for
-     * a <code>MySQLUser</code>.
-     *
-     * @param  username  the username of the <code>MySQLUser</code> whos
-     *					password will be set
-     * @param  password  the new password
-     *
-     * @return  a description of why the password is weak or <code>null</code>
-     *          if all checks succeed
-     *
-     * @exception  IOException  if unable to load the dictionary resource
-     *
-     * @see  #setMySQLUserPassword
-     * @see  MySQLUser#checkPassword
-     */
-    public static PasswordChecker.Result[] checkMySQLPassword(
-        String username,
-        String password
-    ) throws IOException {
-        return MySQLUser.checkPassword(username, password);
     }
 
     /**
@@ -2784,30 +2708,6 @@ final public class SimpleAOClient {
         String name
     ) throws IllegalArgumentException, IOException, SQLException {
         if(!connector.getPostgresDatabases().isValidDatabaseName(name)) throw new IllegalArgumentException("Invalid PostgreSQL database name: "+name);
-    }
-
-    /**
-     * Checks the strength of a password that will be used for
-     * a <code>PostgresServerUser</code>.
-     *
-     * @param  username  the username of the <code>PostgresServerUser</code> whos
-     *					password will be set
-     * @param  password  the new password
-     *
-     * @return  a description of why the password is weak or <code>null</code>
-     *          if all checks succeed
-     *
-     * @exception  IOException  if unable to load the dictionary resource
-     *
-     * @see  #setPostgresUserPassword
-     * @see  #setPostgresServerUserPassword
-     * @see  PostgresUser#checkPassword
-     */
-    public static PasswordChecker.Result[] checkPostgresPassword(
-        String username,
-        String password
-    ) throws IOException {
-        return PostgresUser.checkPassword(username, password);
     }
 
     /**
@@ -2922,31 +2822,6 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException {
         String check = Username.checkUsername(username);
         if(check!=null) throw new IllegalArgumentException(check);
-    }
-
-    /**
-     * Checks the strength of a password that will be used for
-     * a <code>Username</code>.  The strength requirement is based on
-     * which services use the <code>Username</code>.
-     *
-     * @param  username  the username whos password will be set
-     * @param  password  the new password
-     *
-     * @return  a description of why the password is weak or <code>null</code>
-     *          if all checks succeed
-     *
-     * @exception  IOException  if unable to load the dictionary resource or unable to access the server
-     * @exception  SQLException  if unable to access the database
-     * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
-     *
-     * @see  #setUsernamePassword
-     * @see  Username#checkPassword
-     */
-    public PasswordChecker.Result[] checkUsernamePassword(
-        String username,
-        String password
-    ) throws IllegalArgumentException, IOException, SQLException {
-        return getUsername(username).checkPassword(password);
     }
 
     /**

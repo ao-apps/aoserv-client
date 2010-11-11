@@ -16,30 +16,27 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
-
-    private static final long serialVersionUID = 1L;
+final public class CheckPostgresUserPasswordCommand extends AOServCommand<List<PasswordChecker.Result>> {
 
     public static final String PARAM_POSTGRES_USER = "postgresUser";
-    public static final String PARAM_PLAINTEXT = "plaintext";
 
     final private int postgresUser;
-    final private String plaintext;
+    private final String password;
 
-    public SetPostgresUserPasswordCommand(
+    public CheckPostgresUserPasswordCommand(
         @Param(name=PARAM_POSTGRES_USER) PostgresUser postgresUser,
-        @Param(name=PARAM_PLAINTEXT) String plaintext
+        @Param(name="password") String password
     ) {
         this.postgresUser = postgresUser.getKey();
-        this.plaintext = plaintext;
+        this.password = password;
     }
 
     public int getPostgresUser() {
         return postgresUser;
     }
 
-    public String getPlaintext() {
-        return plaintext;
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -55,19 +52,17 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
             if(
                 username==PostgresUser.POSTGRES // OK - interned
             ) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
-            else {
-                // Make sure not disabled
-                if(pu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.disabled");
-                else {
-                    // Check password strength
-                    try {
-                        if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, PasswordChecker.checkPassword(username.getUserId(), plaintext, PasswordChecker.PasswordStrength.STRICT));
-                    } catch(IOException err) {
-                        throw new RemoteException(err.getMessage(), err);
-                    }
-                }
-            }
         }
         return errors;
+    }
+
+    @Override
+    public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+        try {
+            PostgresUser pu = connector.getPostgresUsers().get(postgresUser);
+            return PasswordChecker.checkPassword(pu.getUserId().getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
+        } catch(IOException err) {
+            throw new RemoteException(err.getMessage(), err);
+        }
     }
 }
