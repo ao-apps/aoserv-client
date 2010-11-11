@@ -241,7 +241,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("LinuxAccount.toString", username, getAoServerResource().getAoServer().getHostname());
+        return username+"@"+getAoServerResource().getAoServer().toStringImpl();
     }
     // </editor-fold>
 

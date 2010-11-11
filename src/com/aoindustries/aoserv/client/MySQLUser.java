@@ -8,9 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * A <code>MySQLUser</code> stores the details of a MySQL account
@@ -431,7 +429,7 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("MySQLUser.toString", username, getMysqlServer().toStringImpl());
+        return username+"@"+getMysqlServer().toStringImpl();
     }
     // </editor-fold>
 
