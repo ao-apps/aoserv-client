@@ -5,7 +5,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.SetMySQLUserPasswordCommand;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;

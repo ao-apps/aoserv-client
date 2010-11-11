@@ -88,11 +88,9 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
         Remote stub = UnicastRemoteObject.exportObject(this, port.getPort(), csf, ssf);
         try {
             registry.bind(AOServConnectorFactory.class.getName()+"_Stub", stub);
-            System.err.println("DEBUG: Finished bind");
         } catch(AlreadyBoundException err) {
             //throw new RemoteException(err.getMessage(), err);
             registry.rebind(AOServConnectorFactory.class.getName()+"_Stub", stub);
-            System.err.println("DEBUG: Finished rebind");
         }
         this.port = port;
         this.wrapped = wrapped;
