@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client.rmi;
-
 /*
  * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.rmi;
+
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorFactory;
 import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
@@ -20,6 +20,7 @@ import com.aoindustries.rmi.RMIServerSocketFactorySSL;
 import com.aoindustries.rmi.RMIServerSocketFactoryTCP;
 import com.aoindustries.rmi.RegistryManager;
 import com.aoindustries.security.LoginException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
@@ -85,8 +86,14 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
 
         Registry registry = RegistryManager.createRegistry(port.getPort(), csf, ssf);
         Remote stub = UnicastRemoteObject.exportObject(this, port.getPort(), csf, ssf);
-        registry.rebind(AOServConnectorFactory.class.getName()+"_Stub", stub);
-        //System.err.println("DEBUG: Finished rebind");
+        try {
+            registry.bind(AOServConnectorFactory.class.getName()+"_Stub", stub);
+            System.err.println("DEBUG: Finished bind");
+        } catch(AlreadyBoundException err) {
+            //throw new RemoteException(err.getMessage(), err);
+            registry.rebind(AOServConnectorFactory.class.getName()+"_Stub", stub);
+            System.err.println("DEBUG: Finished rebind");
+        }
         this.port = port;
         this.wrapped = wrapped;
     }
